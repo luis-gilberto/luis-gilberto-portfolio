@@ -1,0 +1,202 @@
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <img src="assets/images/lgdotcom_logo_for_footer.png" alt="Luis Gilberto" class="footer-logo">
+                </div>
+                <div class="footer-links">
+                    <div class="footer-section">
+                        <h4 style="letter-spacing: 0.025em;">Navigation</h4>
+                        <ul>
+                            <li><a href="Home.html">Home</a></li>
+                            <li><a href="about.html">About Me</a></li>
+                            <li><a href="cv.html">CV</a></li>
+                            <li><a href="timeline.html">Timeline</a></li>
+                            <li><a href="myexperience.html">My experience</a></li>
+                            <li><a href="contact-clean.html">Contact</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h4 style="letter-spacing: 0.025em;">Connect</h4>
+                        <ul>
+                            <li><a href="mailto:me@luis-gilberto.com">Email</a></li>
+                            <li><a href="https://linkedin.com/in/luisgilberto" target="_blank">LinkedIn</a></li>
+                            <li><a href="brand-guide.html">Brand Guide</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Luis Gilberto. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Enhanced scroll indicator functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const heroScrollPrompt = document.getElementById('heroScrollPrompt');
+            const backToTop = document.getElementById('backToTop');
+            const scrollProgressCircle = document.getElementById('scrollProgress');
+            const progressBar = scrollProgressCircle.querySelector('.progress-bar');
+            const progressPercentage = document.getElementById('progressPercentage');
+            
+            let currentScrollIndex = 0;
+            let heroPromptVisible = false;
+            
+            // Define scroll targets
+            const scrollTargets = [
+                'section:nth-of-type(2)', // Project Overview
+                'section:nth-of-type(3)', // Strategy Section
+                'section:nth-of-type(4)', // Stats Section
+                'section:nth-of-type(5)', // Reflection Section
+                'section:nth-of-type(6)'  // CTA Section
+            ];
+            
+            // Calculate circle circumference for stroke-dasharray
+            const radius = 24;
+            const circumference = 2 * Math.PI * radius;
+            progressBar.style.strokeDasharray = circumference;
+            progressBar.style.strokeDashoffset = circumference;
+            
+            // Show hero prompt after a delay
+            setTimeout(() => {
+                if (heroScrollPrompt) {
+                    heroScrollPrompt.classList.add('visible');
+                    heroPromptVisible = true;
+                }
+            }, 1500);
+            
+            // Handle scroll indicator visibility
+            function handleScrollIndicator() {
+                const scrollY = window.scrollY;
+                const heroSection = document.querySelector('section');
+                const heroHeight = heroSection ? heroSection.offsetHeight : window.innerHeight;
+                
+                // Show/hide hero prompt
+                if (scrollY < heroHeight - 100) {
+                    if (!heroPromptVisible && heroScrollPrompt) {
+                        heroScrollPrompt.classList.remove('fade-out');
+                        heroScrollPrompt.classList.add('visible');
+                        heroPromptVisible = true;
+                    }
+                } else {
+                    if (heroPromptVisible && heroScrollPrompt) {
+                        heroScrollPrompt.classList.add('fade-out');
+                        heroPromptVisible = false;
+                    }
+                }
+                
+                // Show/hide back to top button
+                if (backToTop) {
+                    if (scrollY > window.innerHeight) {
+                        backToTop.classList.add('visible');
+                    } else {
+                        backToTop.classList.remove('visible');
+                    }
+                }
+                
+                // Update scroll progress
+                updateScrollProgress();
+            }
+            
+            // Update scroll progress circle
+            function updateScrollProgress() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const ctaSection = document.querySelector('.cta-section') || document.querySelector('section:nth-of-type(6)');
+                
+                let targetHeight;
+                if (ctaSection) {
+                    targetHeight = ctaSection.offsetTop;
+                } else {
+                    targetHeight = document.documentElement.scrollHeight - window.innerHeight;
+                }
+                
+                const scrollPercent = Math.min((scrollTop / (targetHeight - window.innerHeight)) * 100, 100);
+                
+                // Update circle progress
+                const offset = circumference - (scrollPercent / 100) * circumference;
+                progressBar.style.strokeDashoffset = offset;
+                
+                // Update percentage text
+                progressPercentage.textContent = Math.round(scrollPercent) + '%';
+                
+                // Show/hide based on scroll position
+                if (scrollPercent > 5) {
+                    scrollProgressCircle.classList.add('visible');
+                } else {
+                    scrollProgressCircle.classList.remove('visible');
+                }
+            }
+            
+            // Hero prompt click handler
+            if (heroScrollPrompt) {
+                heroScrollPrompt.addEventListener('click', () => {
+                    if (currentScrollIndex < scrollTargets.length) {
+                        const targetElement = document.querySelector(scrollTargets[currentScrollIndex]);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({ 
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                            currentScrollIndex++;
+                        }
+                    }
+                });
+            }
+            
+            // Back to top button click handler
+            if (backToTop) {
+                backToTop.addEventListener('click', () => {
+                    currentScrollIndex = 0; // Reset scroll index
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                });
+            }
+            
+            // Add scroll event listener
+            window.addEventListener('scroll', handleScrollIndicator);
+            
+            // Initial call
+            handleScrollIndicator();
+            
+            // Mobile menu functionality
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.createElement('div');
+            mobileMenu.className = 'fixed top-20 left-0 right-0 bg-gray-900 bg-opacity-95 backdrop-filter backdrop-blur-lg border-b border-gray-700 p-6 space-y-4 z-40 hidden';
+            mobileMenu.innerHTML = `
+                <a href="Home.html" class="block text-gray-300 hover:text-red-400 transition-colors font-medium py-2">Home</a>
+                <a href="about.html" class="block text-gray-300 hover:text-red-400 transition-colors font-medium py-2">About Me</a>
+                <a href="cv.html" class="block text-gray-300 hover:text-red-400 transition-colors font-medium py-2">CV</a>
+                <a href="timeline.html" class="block text-gray-300 hover:text-red-400 transition-colors font-medium py-2">Timeline</a>
+                <a href="myexperience.html" class="block text-gray-300 hover:text-red-400 transition-colors font-medium py-2">My Experience</a>
+                <a href="contact-clean.html" class="block text-gray-300 hover:text-red-400 transition-colors font-medium py-2">Contact</a>
+            `;
+            
+            document.body.appendChild(mobileMenu);
+            
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+            
+            // Smooth scroll for all anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

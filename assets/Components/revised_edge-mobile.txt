@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edge Mobile App Store Rebrand - Luis Gilberto</title>
+    
+    <!-- External Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Big+Shoulders+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Custom CSS Variables and Styles */
+        :root {
+            --coral-red: #F96F6E;
+            --bg-primary: #0F0F0F;
+            --bg-secondary: #1A1A1A;
+            --bg-tertiary: #2A2A2A;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B0B0B0;
+            --text-muted: #808080;
+            --border-color: #404040;
+            --card-bg: #1A1A1A;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            scroll-behavior: smooth;
+        }
+        
+        .font-display {
+            font-family: 'Big Shoulders Display', sans-serif;
+        }
+        
+        .hero-bg {
+            background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('assets/edge screenshot.jpeg');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .coral-gradient {
+            background: linear-gradient(135deg, var(--coral-red), #F96F6E);
+        }
+        
+        .bg-coral {
+            background-color: #F96F6E;
+        }
+        
+        .border-coral {
+            border-color: #F96F6E;
+        }
+        
+        /* Hero Scroll Prompt */
+        .hero-scroll-prompt {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            z-index: 1000;
+            opacity: 0;
+            cursor: pointer;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            pointer-events: none;
+        }
+        
+        .hero-scroll-prompt.visible {
+            opacity: 0.6;
+            pointer-events: auto;
+        }
+        
+        .hero-scroll-prompt.visible:hover,
+        .hero-scroll-prompt.visible:active {
+            opacity: 1;
+        }
+        
+        .hero-scroll-prompt.fade-out {
+            opacity: 0;
+            transform: translateX(-50%) translateY(20px);
+        }
+        
+        .scroll-prompt-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 12px 18px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 50px;
+            border: 3px solid #fff;
+            transition: all 0.3s ease;
+            color: #333;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .hero-scroll-prompt:hover .scroll-prompt-content {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .scroll-prompt-arrow {
+            color: #333;
+        }
+        
+        .scroll-prompt-text {
+            color: #333;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Navigation Button Styles */
+        .nav-button {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            color: #B0B0B0;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(249, 111, 110, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .nav-button:hover {
+            background: rgba(249, 111, 110, 0.1);
+            border-color: var(--coral-red);
+            color: var(--coral-red);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(249, 111, 110, 0.2);
+        }
+        
+        .nav-button:hover::before {
+            left: 100%;
+        }
+        
+        .nav-button:active {
+            transform: translateY(0);
+            background: rgba(249, 111, 110, 0.2);
+        }
+        
+        .nav-button i {
+            font-size: 14px;
+            transition: transform 0.3s ease;
+        }
+        
+        .nav-button-prev:hover i {
+            transform: translateX(-3px);
+        }
+        
+        .nav-button-next:hover i {
+            transform: translateX(3px);
+        }
+        
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #FF6B6B;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.5s ease, transform 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border: 2px solid #fff;
+            pointer-events: none;
+        }
+        
+        .back-to-top.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .back-to-top:hover {
+            transform: translateY(-5px);
+            background-color: #FF6B6B;
+            color: white;
+            border-color: #FF6B6B;
+        }
+        
+        /* Scroll Progress Circle */
+        .scroll-progress-circle {
+            position: fixed;
+            bottom: 30px;
+            right: 100px;
+            width: 60px;
+            height: 60px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .scroll-progress-circle.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .scroll-progress-circle svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+        
+        .scroll-progress-circle .progress-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.2);
+            stroke-width: 3;
+        }
+        
+        .scroll-progress-circle .progress-bar {
+            fill: none;
+            stroke: #FF6B6B;
+            stroke-width: 3;
+            stroke-linecap: round;
+            transition: stroke-dasharray 0.1s ease;
+        }
+        
+        .scroll-progress-circle .progress-percentage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12px;
+            font-weight: 600;
+            color: #FF6B6B;
+            text-align: center;
+        }
+        
+        /* Custom Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        .animate-bounce-custom {
+            animation: bounce 2s infinite;
+        }
+        
+        /* Feature Cards */
+        .feature-card {
+            padding: 1.5rem;
+            border-radius: 1rem;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-color: var(--coral-red);
+        }
+        
+        /* Stats Display */
+        .stats-box {
+            padding: 2rem;
+            border-radius: 0.75rem;
+            background-color: white;
+            color: #333;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .stats-box:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stats-number {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--coral-red);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stats-label {
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        
+        /* Video Container */
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            max-width: 100%;
+            border-radius: 1rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-color);
+        }
+        
+        .video-container iframe,
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* Footer Styles */
+        .footer {
+            background: #000000;
+            color: var(--text-primary);
+            padding: 2.5rem 0 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .footer .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            align-items: start;
+        }
+        
+        .footer-brand {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .footer-logo {
+            width: 220px;
+            height: auto;
+            margin-bottom: 0.25rem;
+        }
+        
+        .footer-links {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        .footer-section h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--coral-red);
+            font-family: 'Big Shoulders Display', sans-serif;
+        }
+        
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .footer-section li {
+            margin-bottom: 0.35rem;
+        }
+        
+        .footer-section a {
+            color: var(--text-primary);
+            text-decoration: none;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .footer-section a:hover {
+            opacity: 1;
+            color: var(--coral-red);
+            transform: translateX(5px);
+        }
+        
+        .footer-bottom {
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        
+        .footer-bottom p {
+            opacity: 0.6;
+            margin: 0;
+            font-size: 0.85rem;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--coral-red);
+            border-radius: 4px;
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                text-align: center;
+            }
+            
+            .footer-links {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .footer-logo {
+                width: 180px;
+                margin: 0 auto 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50" style="background: rgba(15, 15, 15, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid #404040;">
+        <div class="max-w-6xl mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <a href="Home.html" class="flex items-center">
+                    <img src="assets/images/Logo_portfolio_White-and-Coral.png" alt="Luis Gilberto Logo" class="h-10 w-auto">
+                </a>
+                <div class="hidden md:flex space-x-8">
+                    <a href="Home.html" class="hover:text-red-400 transition-colors font-medium" style="color: #B0B0B0;">Home</a>
+                    <a href="about.html" class="hover:text-red-400 transition-colors font-medium" style="color: #B0B0B0;">About Me</a>
+                    <a href="cv.html" class="hover:text-red-400 transition-colors font-medium" style="color: #B0B0B0;">CV</a>
+                    <a href="timeline.html" class="hover:text-red-400 transition-colors font-medium" style="color: #B0B0B0;">Timeline</a>
+                    <a href="myexperience.html" class="hover:text-red-400 transition-colors font-medium" style="color: #B0B0B0;">My Experience</a>
+                    <a href="contact-clean.html" class="hover:text-red-400 transition-colors font-medium" style="color: #B0B0B0;">Contact</a>
+                </div>
+                <button class="md:hidden text-white" id="mobile-menu-btn">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-bg min-h-screen flex items-center pt-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <div class="max-w-2xl animate-fade-in-up">
+                <nav class="text-sm mb-8">
+                    <a href="Home.html" class="text-white hover:underline">Home</a> / 
+                    <a href="myexperience.html" class="text-white hover:underline">Experience</a> / 
+                    <a href="myexperience.html#stories" class="text-white hover:underline">Stories</a> / 
+                    <span class="text-red-400 font-semibold">Edge Mobile App Store Rebrand</span>
+                </nav>
+                <h1 class="font-display text-6xl lg:text-7xl font-extrabold text-white mb-6 leading-tight">
+                    Edge Mobile App Store Rebrand
+                </h1>
+                <p class="text-xl mb-8 leading-relaxed" style="color: #B0B0B0;">
+                    Strategic rebrand of Microsoft Edge mobile app presence across app stores, improving discoverability and conversion
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <span class="bg-red-500 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wider">Rebranding</span>
+                    <span class="bg-red-500 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wider">Mobile Strategy</span>
+                    <span class="bg-red-500 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wider">App Store Optimization</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Hero Scroll Prompt -->
+        <div class="hero-scroll-prompt" id="heroScrollPrompt">
+            <div class="scroll-prompt-content">
+                <div class="scroll-prompt-arrow">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <span class="scroll-prompt-text">Explore the story</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Back to Top Button -->
+    <div class="back-to-top" id="backToTop">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17 14L12 9L7 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </div>
+
+    <!-- Scroll Progress Circle -->
+    <div class="scroll-progress-circle" id="scrollProgress">
+        <svg viewBox="0 0 60 60">
+            <circle class="progress-bg" cx="30" cy="30" r="24"></circle>
+            <circle class="progress-bar" cx="30" cy="30" r="24"></circle>
+        </svg>
+        <div class="progress-percentage" id="progressPercentage">0%</div>
+    </div>
+
+    <!-- Project Overview -->
+    <section class="py-24" style="background-color: #0F0F0F;">
+        <div class="max-w-6xl mx-auto px-6">
+            <!-- Rebrand Images Showcase -->
+            <div class="mb-16">
+                <div class="rounded-2xl overflow-hidden shadow-xl">
+                    <img src="assets/images/edgemobile.png" alt="Edge Mobile Rebrand Visual Assets" class="w-full h-auto">
+                </div>
+            </div>
+            
+            <div class="grid lg:grid-cols-3 gap-12 items-start">
+                <div class="lg:col-span-2">
+                    <h2 class="font-display text-4xl lg:text-5xl font-bold text-white mb-8">Edge Gets a Glow-Up</h2>
+                    <p class="text-lg mb-6 leading-relaxed" style="color: #B0B0B0;">
+                        In early 2025, Microsoft Edge reached a new creative milestone: a complete visual overhaul of its mobile presence across the Google Play and Apple App Stores. As Edge evolved into the AI-powered browser, its first impression on mobile needed to reflect not just functionality—but vision.
+                    </p>
+                    
+                    <h3 class="font-display text-2xl font-bold text-white mt-10 mb-4">Strategic Redesign</h3>
+                    <p class="text-lg leading-relaxed" style="color: #B0B0B0;">
+                        This wasn't just a refresh. It was a strategic redesign shaped by data, cross-team collaboration, and a bold creative partnership. The goal was to create a cohesive, modern, and meaningful first look at Edge that would drive installs and showcase the browser's AI evolution.
+                    </p>
+                </div>
+                <div class="space-y-6">
+                    <div class="p-6 rounded-xl" style="background-color: #1A1A1A; border: 1px solid #404040;">
+                        <h3 class="text-red-400 font-semibold text-sm uppercase tracking-wider mb-2">My Role</h3>
+                        <p class="text-white font-medium">Mobile Store Experience Lead</p>
+                    </div>
+                    <div class="p-6 rounded-xl" style="background-color: #1A1A1A; border: 1px solid #404040;">
+                        <h3 class="text-red-400 font-semibold text-sm uppercase tracking-wider mb-2">Agency Partner</h3>
+                        <p class="text-white font-medium">Koto</p>
+                    </div>
+                    <div class="p-6 rounded-xl" style="background-color: #1A1A1A; border: 1px solid #404040;">
+                        <h3 class="text-red-400 font-semibold text-sm uppercase tracking-wider mb-2">Timeline</h3>
+                        <p class="text-white font-medium">Early 2025</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Strategy Section -->
+    <section class="campaign-section py-24" style="background-color: #1A1A1A;">
+        <div class="max-w-6xl mx-auto px-6">
+            <h2 class="font-display text-4xl lg:text-5xl font-bold text-red-400 text-center mb-12">Beyond Screenshots</h2>
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <img src="assets/edge screenshot.jpeg" alt="Edge Mobile Interface Screenshot" class="w-full h-auto rounded-xl shadow-lg">
+                </div>
+                <div class="space-y-6">
+                    <p class="text-lg leading-relaxed" style="color: #B0B0B0;">
+                        Working closely with the App Store Optimization (ASO) team, IMC, and Brand Creative Lab, we set out to do more than make it "look good." We aligned on performance metrics, platform-specific insights, and user behaviors—particularly learnings from our Holiday campaign—to inform every asset decision.
+                    </p>
+                    
+                    <div class="grid md:grid-cols-1 lg:grid-cols-1 gap-6 mt-8">
+                        <div class="feature-card">
+                            <h3 class="font-display text-xl font-semibold text-white mb-3">Educate Users</h3>
+                            <p style="color: #B0B0B0;">Clearly communicate key Edge features and capabilities to help users understand the browser's value proposition.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h3 class="font-display text-xl font-semibold text-white mb-3">Showcase AI Story</h3>
+                            <p style="color: #B0B0B0;">Highlight Edge's evolution as an AI-powered browser, positioning it at the forefront of browsing innovation.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h3 class="font-display text-xl font-semibold text-white mb-3">Drive Installs</h3>
+                            <p style="color: #B0B0B0;">Create compelling design and clear CTAs that convert app store visitors into active users.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sneak Peek Video Section -->
+    <section class="sneak-peek-section py-24" style="background-color: #0F0F0F;">
+        <div class="max-w-5xl mx-auto px-6">
+            <h2 class="font-display text-4xl lg:text-5xl font-bold text-white text-center mb-12">Sneak Peek</h2>
+            <div class="video-container">
+                <video controls class="w-full h-auto">
+                    <source src="assets/images/Microsoft_Edge_AppStore_Master-16x9__v03.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </div>
+    </section>
+
+    <!-- Platform Strategy -->
+    <section class="platform-section py-24" style="background-color: #1A1A1A;">
+        <div class="max-w-6xl mx-auto px-6">
+            <h2 class="font-display text-4xl lg:text-5xl font-bold text-red-400 text-center mb-12">A Dual Approach to Video</h2>
+            <p class="text-lg text-center mb-12 max-w-3xl mx-auto" style="color: #B0B0B0;">
+                We embraced platform nuance to develop two tailored video approaches, recognizing that each app store has different guidelines and user expectations.
+            </p>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="p-8 rounded-2xl hover:transform hover:-translate-y-2 transition-all duration-300" style="background-color: #2A2A2A; border: 1px solid #404040;">
+                    <h3 class="font-display text-2xl font-semibold text-white mb-4">Google Play Strategy</h3>
+                    <p class="leading-relaxed" style="color: #B0B0B0;">
+                        Motion graphics, playful storytelling, and creative freedom to express the brand's personality while showcasing key features and benefits.
+                    </p>
+                </div>
+                
+                <div class="p-8 rounded-2xl hover:transform hover:-translate-y-2 transition-all duration-300" style="background-color: #2A2A2A; border: 1px solid #404040;">
+                    <h3 class="font-display text-2xl font-semibold text-white mb-4">Apple Store Strategy</h3>
+                    <p class="leading-relaxed" style="color: #B0B0B0;">
+                        Clean, accurate UI walk-through in line with Apple's stricter guidelines—showing users exactly what they'll experience when using Edge.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Creative Partnership -->
+    <section class="partnership-section py-24" style="background-color: #0F0F0F;">
+        <div class="max-w-5xl mx-auto px-6">
+            <h2 class="font-display text-4xl lg:text-5xl font-bold text-white text-center mb-12">Bold Motion, Built with Koto</h2>
+            <p class="text-lg text-center mb-10 max-w-3xl mx-auto" style="color: #B0B0B0;">
+                To elevate the creative, we collaborated with Koto—the same agency that helped redefine our visual identity system. Their motion team helped us bridge brand, storytelling, and UI precision into a video that felt human, high-quality, and helpful.
+            </p>
+            
+            <div class="bg-gradient-to-r from-gray-800 to-gray-900 p-8 rounded-2xl">
+                <h3 class="font-display text-2xl font-semibold text-red-400 mb-4">Design Philosophy</h3>
+                <p class="leading-relaxed" style="color: #B0B0B0;">
+                    The final product emphasized clarity, pacing, and product-first motion—not abstract 3D or fluff. Just a smarter way to introduce a smarter browser. Every element was crafted to showcase Edge's capabilities while maintaining visual consistency with the broader brand identity.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Visual Impact -->
+    <section class="visual-section py-24" style="background-color: #1A1A1A;">
+        <div class="max-w-6xl mx-auto px-6">
+            <h2 class="font-display text-4xl lg:text-5xl font-bold text-red-400 text-center mb-12">Raising the Bar for App Storytelling</h2>
+            
+            <div class="grid lg:grid-cols-5 gap-10 items-center">
+                <div class="lg:col-span-3 space-y-6">
+                    <h3 class="font-display text-3xl font-semibold text-white mb-4">A Smarter First Impression</h3>
+                    <p class="text-lg leading-relaxed" style="color: #B0B0B0;">
+                        The visual refresh focused on creating an intelligent, visually consistent mobile presence that drives engagement and conversion. Every asset—from static screenshots to video previews—delivered a cohesive story about Edge's evolution.
+                    </p>
+                    
+                    <h4 class="font-display text-xl font-semibold text-white mt-8 mb-3">Key Visual Elements</h4>
+                    <ul class="space-y-2 ml-6" style="color: #B0B0B0;">
+                        <li class="flex items-start">
+                            <span class="text-red-400 mr-2">•</span>
+                            <span>Clean, modern interface showcases</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-red-400 mr-2">•</span>
+                            <span>AI feature demonstrations</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-red-400 mr-2">•</span>
+                            <span>Consistent brand visual language</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-red-400 mr-2">•</span>
+                            <span>Platform-optimized content</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="lg:col-span-2">
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="stats-box">
+                            <div class="stats-number">2</div>
+                            <div class="stats-label">Platform Strategies</div>
+                        </div>
+                        
+                        <div class="stats-box">
+                            <div class="stats-number">100%</div>
+                            <div class="stats-label">Visual Refresh</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Future Impact -->
+    <section class="future-section py-24" style="background-color: #0F0F0F;">
+        <div class="max-w-5xl mx-auto px-6">
+            <h2 class="font-display text-4xl lg:text-5xl font-bold text-white text-center mb-12">Looking Ahead</h2>
+            <div class="space-y-8">
+                <p class="text-lg leading-relaxed" style="color: #B0B0B0;">
+                    This visual refresh wasn't just about app store aesthetics—it was about optimizing a key touchpoint in the user journey. With this redesign, we're building a more intelligent, visually consistent mobile presence that drives engagement and conversion, while introducing users to what Edge has become: the AI browser designed to empower.
+                </p>
+                
+                <div class="bg-gradient-to-r from-gray-800 to-gray-900 p-8 rounded-2xl mt-10">
+                    <h3 class="font-display text-2xl font-semibold text-red-400 mb-4">Scalable Creative System</h3>
+                    <p class="leading-relaxed" style="color: #B0B0B0;">
+                        As more features roll out, these new visuals give us a scalable creative system to grow with. Clean, smart, and conversion-ready, the rebrand provides a foundation for continued mobile marketing success.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reflection -->
+    <section class="reflection-section py-24" style="background-color: #1A1A1A;">
+        <div class="max-w-5xl mx-auto px-6 text-center">
+            <h2 class="font-display text-4xl lg:text-5xl font-bold text-red-400 mb-12">Reflection</h2>
+            <div class="space-y-6">
+                <p class="text-lg leading-relaxed" style="color: #B0B0B0;">
+                    The Edge mobile app store rebrand represents a strategic evolution in how we present Microsoft Edge to mobile users. By combining data-driven insights with creative excellence, we created a mobile presence that truly reflects Edge's position as an AI-powered browser.
+                </p>
+                
+                <p class="text-lg leading-relaxed" style="color: #B0B0B0;">
+                    The collaboration with Koto and the dual-platform approach demonstrated the importance of understanding platform nuances while maintaining brand consistency. This project sets a new standard for how technology brands can present themselves in mobile app stores.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section py-24" style="background-color: #0F0F0F;">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <h2 class="font-display text-4xl font-bold text-white mb-6">Ready to Create Something Amazing?</h2>
+            <p class="text-xl mb-12 leading-relaxed" style="color: #B0B0B0;">Let's collaborate on your next integrated marketing campaign or creative strategy project.</p>
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-8">
+                <a href="contact-clean.html" class="bg-coral hover:bg-transparent hover:border-2 hover:border-coral text-white px-8 py-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 border-2 border-coral">
+                    Start a Conversation
+                </a>
+                <a href="myexperience.html" class="bg-transparent border-2 border-white text-white px-8 py-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 hover:bg-white hover:text-gray-900">
+                    View More Work
+                </a>
+            </div>
+            <div class="h-px my-16" style="background-color: #404040;"></div>
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-8">
+                <a href="case-study-ai-browsing.html" class="nav-button nav-button-prev">
+                    <i class="fas fa-chevron-left"></i>
+                    <span>Previous: AI-powered Browser</span>
+                </a>
+                <a href="myexperience.html" class="nav-button nav-button-next">
+                    <span>Back to More Case Studies</span>
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <img src="assets/images/lgdotcom_logo_for_footer.png" alt="Luis Gilberto" class="footer-logo">
+                </div>
+                <div class="footer-links">
+                    <div class="footer-section">
+                        <h4 style="letter-spacing: 0.025em;">Navigation</h4>
+                        <ul>
+                            <li><a href="Home.html">Home</a></li>
+                            <li><a href="about.html">About Me</a></li>
+                            <li><a href="cv.html">CV</a></li>
+                            <li><a href="timeline.html">Timeline</a></li>
+                            <li><a href="myexperience.html">My experience</a></li>
+                            <li><a href="contact-clean.html">Contact</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h4 style="letter-spacing: 0.025em;">Connect</h4>
+                        <ul>
+                            <li><a href="mailto:me@luis-gilberto.com">Email</a></li>
+                            <li><a href="https://linkedin.com/in/luisgilberto" target="_blank">LinkedIn</a></li>
+                            <li><a href="brand-guide.html">Brand Guide</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Luis Gilberto. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll Progress Circle -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const heroScrollPrompt = document.getElementById('heroScrollPrompt');
+            const backToTop = document.getElementById('backToTop');
+            const scrollProgressCircle = document.getElementById('scrollProgress');
+            const progressBar = scrollProgressCircle.querySelector('.progress-bar');
+            const progressPercentage = document.getElementById('progressPercentage');
+            
+            let currentScrollIndex = 0;
+            let heroPromptVisible = false;
+            
+            // Define scroll targets
+            const scrollTargets = [
+                'section:nth-of-type(2)', // Project Overview
+                'section:nth-of-type(3)', // Strategy Section
+                'section:nth-of-type(4)', // Sneak Peek
+                'section:nth-of-type(5)', // Platform Strategy
+                'section:nth-of-type(6)', // Creative Partnership
+                'section:nth-of-type(7)', // Visual Impact
+                'section:nth-of-type(8)', // Future Impact
+                'section:nth-of-type(9)', // Reflection
+                'section:nth-of-type(10)' // CTA Section
+            ];
+            
+            // Calculate circle circumference for stroke-dasharray
+            const radius = 24;
+            const circumference = 2 * Math.PI * radius;
+            progressBar.style.strokeDasharray = circumference;
+            progressBar.style.strokeDashoffset = circumference;
+            
+            // Show hero prompt after a delay
+            setTimeout(() => {
+                if (heroScrollPrompt) {
+                    heroScrollPrompt.classList.add('visible');
+                    heroPromptVisible = true;
+                }
+            }, 1500);
+            
+            // Handle scroll indicator visibility
+            function handleScrollIndicator() {
+                const scrollY = window.scrollY;
+                const heroSection = document.querySelector('section');
+                const heroHeight = heroSection ? heroSection.offsetHeight : window.innerHeight;
+                
+                // Show/hide hero prompt
+                if (scrollY < heroHeight - 100) {
+                    if (!heroPromptVisible && heroScrollPrompt) {
+                        heroScrollPrompt.classList.remove('fade-out');
+                        heroScrollPrompt.classList.add('visible');
+                        heroPromptVisible = true;
+                    }
+                } else {
+                    if (heroPromptVisible && heroScrollPrompt) {
+                        heroScrollPrompt.classList.add('fade-out');
+                        heroPromptVisible = false;
+                    }
+                }
+                
+                // Show/hide back to top button
+                if (backToTop) {
+                    if (scrollY > window.innerHeight) {
+                        backToTop.classList.add('visible');
+                    } else {
+                        backToTop.classList.remove('visible');
+                    }
+                }
+                
+                // Update scroll progress
+                updateScrollProgress();
+            }
+            
+            // Update scroll progress circle
+            function updateScrollProgress() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const ctaSection = document.querySelector('.cta-section') || document.querySelector('section:nth-of-type(10)');
+                
+                let targetHeight;
+                if (ctaSection) {
+                    targetHeight = ctaSection.offsetTop;
+                } else {
+                    targetHeight = document.documentElement.scrollHeight - window.innerHeight;
+                }
+                
+                const scrollPercent = Math.min((scrollTop / (targetHeight - window.innerHeight)) * 100, 100);
+                
+                // Update circle progress
+                const offset = circumference - (scrollPercent / 100) * circumference;
+                progressBar.style.strokeDashoffset = offset;
+                
+                // Update percentage text
+                progressPercentage.textContent = Math.round(scrollPercent) + '%';
+                
+                // Show/hide based on scroll position
+                if (scrollPercent > 5) {
+                    scrollProgressCircle.classList.add('visible');
+                } else {
+                    scrollProgressCircle.classList.remove('visible');
+                }
+            }
+            
+            // Hero prompt click handler
+            if (heroScrollPrompt) {
+                heroScrollPrompt.addEventListener('click', () => {
+                    if (currentScrollIndex < scrollTargets.length) {
+                        const targetElement = document.querySelector(scrollTargets[currentScrollIndex]);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({ 
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                            currentScrollIndex++;
+                        }
+                    }
+                });
+            }
+            
+            // Back to top button click handler
+            if (backToTop) {
+                backToTop.addEventListener('click', () => {
+                    currentScrollIndex = 0; // Reset scroll index
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                });
+            }
+            
+            // Add scroll event listener
+            window.addEventListener('scroll', handleScrollIndicator);
+            
+            // Initial call
+            handleScrollIndicator();
+            
+            // Mobile menu functionality
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.createElement('div');
+            mobileMenu.className = 'fixed top-20 left-0 right-0 bg-gray-900 bg-opacity-95 backdrop-filter backdrop-blur-lg border-b border-gray-700 p-6 space-y-4 z-40 hidden';
+            mobileMenu.innerHTML = `
+                <a href="Home.html" class="block text-gray-300 hover:text-red-400 transition-colors font-medium py-2">Home</a>
+                <a href="about.html" class="block text-gray-300 hover:text-red-400 transition-colors font-medium py-2">About Me</a>
+                <a href="cv.html" class="block text-gray-300 hover:text-red-400 transition-colors font-medium py-2">CV</a>
+                <a href="timeline.html" class="block text-gray-300 hover:text-red-400 transition-colors font-medium py-2">Timeline</a>
+                <a href="myexperience.html" class="block text-gray-300 hover:text-red-400 transition-colors font-medium py-2">My Experience</a>
+                <a href="contact-clean.html" class="block text-gray-300 hover:text-red-400 transition-colors font-medium py-2">Contact</a>
+            `;
+            
+            document.body.appendChild(mobileMenu);
+            
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+        });
+    </script>
+</body>
+</html>

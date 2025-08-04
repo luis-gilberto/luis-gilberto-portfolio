@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Move at the Speed of What Matters: A Personal Reset</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Source+Sans+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Light mode - HSL for easier manipulation */
+            --accent-color: hsl(4, 100%, 75%);
+            --accent-light: hsla(4, 100%, 75%, 0.15);
+            --text-primary: hsl(0, 0%, 20%);
+            --text-secondary: hsl(0, 0%, 40%);
+            --text-tertiary: hsl(0, 0%, 60%);
+            --background: hsl(0, 0%, 98%);
+            --background-elevated: hsl(0, 0%, 100%);
+            --card-background: hsla(0, 0%, 97%, 0.8);
+            --border-color: hsl(0, 0%, 93%);
+            --shadow-color: hsla(0, 0%, 0%, 0.1);
+            --serif: 'Playfair Display', Georgia, serif;
+            --sans: 'Source Sans Pro', Helvetica, Arial, sans-serif;
+        }
+        
+        [data-theme="dark"] {
+            /* Dark mode - softer colors, proper hierarchy */
+            --accent-color: hsl(4, 85%, 65%);
+            --accent-light: hsla(4, 85%, 65%, 0.15);
+            --text-primary: hsl(0, 0%, 90%);
+            --text-secondary: hsl(0, 0%, 70%);
+            --text-tertiary: hsl(0, 0%, 50%);
+            --background: hsl(0, 0%, 8%);
+            --background-elevated: hsl(0, 0%, 12%);
+            --card-background: hsla(0, 0%, 15%, 0.8);
+            --border-color: hsl(0, 0%, 20%);
+            --shadow-color: hsla(0, 0%, 0%, 0.3);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 250ms ease, color 250ms ease, border-color 250ms ease, box-shadow 250ms ease;
+        }
+        
+        body {
+            font-family: var(--sans);
+            line-height: 1.8;
+            color: var(--text-primary);
+            background-color: var(--background);
+            max-width: 100%;
+            overflow-x: hidden;
+            padding-bottom: 3rem;
+        }
+        
+        .container {
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        .hero {
+            position: relative;
+            height: 90vh;
+            width: 100%;
+            background-color: #000;
+            overflow: hidden;
+            margin-bottom: 3rem;
+        }
+        
+        .hero-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.85;
+            filter: contrast(1.1);
+        }
+        
+        .hero-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(241, 112, 103, 0.9);
+            padding: 2rem 3rem;
+            text-align: center;
+            width: 80%;
+            max-width: 800px;
+        }
+        
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            color: white;
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+            letter-spacing: 0.5px;
+        }
+        
+        .subtitle {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: #444;
+            margin-bottom: 2rem;
+            text-align: center;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            font-weight: 400;
+            font-style: italic;
+        }
+        
+        .byline {
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+        }
+        
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            margin: 2.5rem 0 1.5rem;
+            color: #333;
+            position: relative;
+            display: inline-block;
+        }
+        
+        h2::after {
+            content: '';
+            display: block;
+            height: 3px;
+            width: 40%;
+            background-color: rgba(241, 112, 103, 0.8);
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+        }
+        
+        .article-content {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 30px;
+            padding: 0 20px;
+        }
+        
+        .lead {
+            grid-column: 3 / 11;
+            font-size: 1.3rem;
+            line-height: 1.7;
+            margin-bottom: 2.5rem;
+            position: relative;
+            padding-left: 2rem;
+        }
+        
+        .lead::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background-color: rgba(241, 112, 103, 0.6);
+        }
+        
+        .main-content {
+            grid-column: 3 / 11;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+        
+        .full-width {
+            grid-column: 1 / 13;
+            margin: 2rem 0;
+        }
+        
+        .quote {
+            grid-column: 2 / 12;
+            font-family: var(--serif);
+            font-size: 1.8rem;
+            line-height: 1.6;
+            font-style: italic;
+            color: var(--accent-color);
+            text-align: center;
+            margin: 3rem auto;
+            padding: 2rem;
+            max-width: 800px;
+            position: relative;
+            background-color: var(--accent-light);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px var(--shadow-color);
+        }
+        
+        .quote::before, .quote::after {
+            content: '"';
+            font-size: 4rem;
+            position: absolute;
+            color: rgba(241, 112, 103, 0.2);
+        }
+        
+        .quote::before {
+            top: -20px;
+            left: -20px;
+        }
+        
+        .quote::after {
+            bottom: -60px;
+            right: -20px;
+        }
+        
+        .tools-list {
+            grid-column: 3 / 11;
+            background-color: var(--card-background);
+            border: 1px solid var(--border-color);
+            padding: 2.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px var(--shadow-color);
+            margin: 2rem 0;
+        }
+        
+        .tools-heading {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+        
+        .tool-item {
+            display: flex;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-left: 25px;
+        }
+        
+        .tool-item:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 14px;
+            width: 15px;
+            height: 2px;
+            background-color: rgba(241, 112, 103, 0.8);
+        }
+        
+        .tool-name {
+            font-weight: 600;
+            margin-right: 8px;
+            color: #333;
+        }
+        
+        .tool-description {
+            color: #666;
+            font-style: italic;
+        }
+        
+        .final-thought {
+            grid-column: 2 / 12;
+            margin: 3rem auto;
+            padding: 2rem;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            max-width: 900px;
+        }
+        
+        .final-thought h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: rgba(241, 112, 103, 0.9);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .final-thought h2::after {
+            display: none;
+        }
+        
+        .drop-cap {
+            float: left;
+            font-family: 'Playfair Display', serif;
+            font-size: 4.5rem;
+            line-height: 0.8;
+            padding-right: 10px;
+            padding-top: 4px;
+            color: rgba(241, 112, 103, 0.9);
+            font-weight: 700;
+            margin-bottom: -6px;
+        }
+        
+        .next-up {
+            grid-column: 3 / 11;
+            margin: 2rem 0;
+            font-style: italic;
+        }
+        
+        .author-bio {
+            grid-column: 3 / 11;
+            margin: 3rem 0;
+            padding-top: 2rem;
+            border-top: 1px solid #ddd;
+            font-size: 0.95rem;
+            color: #666;
+        }
+        
+        .footer {
+            grid-column: 1 / 13;
+            text-align: center;
+            margin-top: 4rem;
+            padding: 1rem;
+            color: #888;
+            font-size: 0.9rem;
+        }
+        
+        .divider {
+            grid-column: 3 / 11;
+            height: 1px;
+            background-color: rgba(241, 112, 103, 0.3);
+            margin: 2rem 0;
+        }
+        
+        /* Dark Mode Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            background: var(--background-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            padding: 0.5rem;
+            cursor: pointer;
+            box-shadow: 0 2px 12px var(--shadow-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            backdrop-filter: blur(10px);
+        }
+        
+        .theme-toggle:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px var(--shadow-color);
+        }
+        
+        .toggle-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: var(--accent-color);
+            color: white;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Dark Mode Toggle -->
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+        <span class="toggle-icon" id="toggleIcon">🌙</span>
+        <span id="toggleText">Dark</span>
+    </button>
+    
+    <div class="hero">
+        <img src="../assets/images/Other/A personal Reset - Hero.png" alt="Portrait" class="hero-image">
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="article-content">
+            <div class="lead">
+                <span class="drop-cap">I</span> left Microsoft in a state of confusion. After years of pouring myself into the work—high-impact campaigns, global brand storytelling, creative leadership—I was suddenly out. One bad review. One manager's perception. That's all it took to unravel a career built on results, relationships, and relentless drive.
+            </div>
+            
+            <div class="main-content">
+                <p>But here's the thing: I've never stayed down for long. And honestly? I wasn't going to start now. If there's one thing I've learned about myself, it's that every setback comes with a hidden syllabus. It's a curriculum you don't ask for, but one that teaches you more than any title ever could… if you're willing to lean in and listen.</p>
+                <p>So, I began a different kind of journey. I didn't choose it, but I owned it. This wasn't just time off. It was time in. Time to get quiet, curious, and intentional. I broke the productivity spell, reconnected with my creative rhythm, and started asking questions about what success could look like on my own terms.</p>
+            </div>
+            
+            <div class="quote">
+                This wasn't just time off. It was time in. Time to get quiet, curious, and intentional.
+            </div>
+            
+            <div class="main-content">
+                <p>What came next was messy and magical. I rebuilt my portfolio from scratch, learned how to rest without guilt, helped my sister plan a wedding in a week (thank you, AI), and found new ways to use the same strategic brain, but with a lot more heart.</p>
+                <p>This post is the first in a series of reflections from that season. It's not a sob story and it's not a comeback. It's a redesign. A Renaissance. A reminder that sometimes the detour is the destination.</p>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <div class="main-content">
+                <h2>Breaking the Productivity Spell</h2>
+                <p>I didn't realize how addicted I'd become to being productive until I stopped.</p>
+                <p>The first few weeks after leaving Microsoft were jarring. I didn't miss the meetings or inbox chaos. I missed the validation. I had no sprint to run, no one to impress, and no reason to polish executive updates at 11:58 PM. Without that drumbeat of urgency, I felt lost, floaty, and untethered.</p>
+                <p>That was the withdrawal.</p>
+                <p>For years, my worth was wrapped up in how many balls I could juggle and how gracefully I pulled it all off. I wore busyness like a badge and treated rest as something to be earned only after the deadline, the quarter, or the fire drill. When that noise disappeared, so did the armor. Beneath it, I found exhaustion, a creative voice I hadn't listened to in years, and a newfound instinct to do things simply because they felt good.</p>
+            </div>
+            
+            <div class="quote">
+                There was a mantra floating around the org right before I left: "moving at the speed of AI." Every time I heard it, something in me clenched. Because here's the truth: we are not machines.
+            </div>
+            
+            <div class="main-content">
+                <p>There was a mantra floating around the org right before I left: "moving at the speed of AI." It popped up in town halls, emails, slide decks—like a corporate prophecy. Every time I heard it, something in me clenched. Because here's the truth: we are not machines. We're not built for infinite acceleration. And pretending we are, while catchy, is the kind of logic that burns out great people under the banner of innovation.</p>
+                <p>So, I slowed down.</p>
+                <p>I gave myself permission to stop optimizing every second. I learned things that had no deliverables. I sat with discomfort instead of trying to outrun it. I took silent walks. Cooked meals for no reason. Measured my days not by output, but by alignment.</p>
+                <p>It was uncomfortable. And exactly what I needed.</p>
+                <p>Because once I stopped performing productivity, I realized I wasn't broken…I was burned out. And my value had never been about the volume of my workload. It had always been about vision, voice, and the way I connect dots others don't see.</p>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <div class="main-content">
+                <h2>A Website, a Blank Page, and the Return of Curiosity</h2>
+                <p>Once the noise quieted, curiosity came back.</p>
+                <p>Real curiosity. Not the performative kind you add to LinkedIn bios. The kind that keeps you up late, not from anxiety, but from excitement. The kind that makes you tinker, test, and teach yourself things you never thought you'd take on solo.</p>
+                <p>That's how my portfolio site was born.</p>
+                <p>No agency. No team. Just me, a blank Framer canvas, some AI-powered sidekicks, and one big question: what would it look like to design something that feels like me?</p>
+                <p>It turned out to be more than a website. It became a playground for everything I'd been learning and unlearning. Branding, typography, UX, storytelling—I pieced it all together intuitively, imperfectly, and proudly. And somewhere between debugging CSS and choosing font weights, I realized I wasn't just building a portfolio. I was rebuilding myself.</p>
+            </div>
+            
+            <div class="quote">
+                Somewhere between debugging CSS and choosing font weights, I realized I wasn't just building a portfolio. I was rebuilding myself.
+            </div>
+            
+            <div class="tools-list">
+                <h3 class="tools-heading">Tools that shaped the process:</h3>
+                <div class="tool-item">
+                    <span class="tool-name">Framer</span>
+                    <span class="tool-description">(visual playground)</span>
+                </div>
+                <div class="tool-item">
+                    <span class="tool-name">ChatGPT, Copilot, GenSpark</span>
+                    <span class="tool-description">(brainstorm buddies and problem solvers)</span>
+                </div>
+                <div class="tool-item">
+                    <span class="tool-name">Trae</span>
+                    <span class="tool-description">(IDE for adaptive AI development and autonomous coding workflows)</span>
+                </div>
+                <div class="tool-item">
+                    <span class="tool-name">Canva Pro</span>
+                    <span class="tool-description">(design polish and assets)</span>
+                </div>
+                <div class="tool-item">
+                    <span class="tool-name">A healthy dose of intuition and YouTube rabbit holes</span>
+                </div>
+            </div>
+            
+            <div class="main-content">
+                <p>I'll share more behind-the-scenes next—especially how I used AI to save time and supercharge creativity. But for now, that site wasn't just a calling card. It was the spark.</p>
+            </div>
+            
+            <div class="final-thought">
+                <h2>Final Thought: Rest Isn't the End. Sometimes It's the Beginning.</h2>
+                <p><span class="drop-cap">I</span>f you're in a season of uncertainty—feeling underestimated, unarmored, or just plain tired: you're not broken.</p>
+                <p>You may simply be between versions. And what's emerging might surprise you.</p>
+            </div>
+            
+            <div class="next-up">
+                <p><span class="drop-cap">N</span>ext up: From Résumé to Reinvention: How I Built a Site That Finally Felt Like Me</p>
+                <p>Stay tuned</p>
+            </div>
+            
+            <div class="author-bio">
+                <h3>Luis Gilberto</h3>
+                <p>Luis is a seasoned creative strategist who helped shape brand and innovation narratives at Microsoft. Today, he explores the intersection of technology, creativity, and intentional career design through writing and thought leadership. This article kicks off a new series examining how professional identity can evolve beyond traditional corporate titles.</p>
+                <p>LUIS-GILBERTO.COM • SUMMER 2025</p>
+            </div>
+            
+            <div class="footer">
+                © 2025 All Rights Reserved
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Dark mode toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const toggleIcon = document.getElementById('toggleIcon');
+        const toggleText = document.getElementById('toggleText');
+        const body = document.body;
+        
+        // Check for saved theme preference or default to light mode
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        
+        // Apply saved theme on page load
+        if (savedTheme === 'dark') {
+            body.setAttribute('data-theme', 'dark');
+            toggleIcon.textContent = '☀️';
+            toggleText.textContent = 'Light';
+        }
+        
+        // Toggle theme function
+        function toggleTheme() {
+            const currentTheme = body.getAttribute('data-theme');
+            
+            if (currentTheme === 'dark') {
+                body.removeAttribute('data-theme');
+                toggleIcon.textContent = '🌙';
+                toggleText.textContent = 'Dark';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                toggleIcon.textContent = '☀️';
+                toggleText.textContent = 'Light';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+        
+        // Add click event listener
+        themeToggle.addEventListener('click', toggleTheme);
+        
+        // Keyboard accessibility
+        themeToggle.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleTheme();
+            }
+        });
+    </script>
+</body>
+</html>

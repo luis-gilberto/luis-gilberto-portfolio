@@ -1,0 +1,230 @@
+<!-- Constellation Background Animation Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Only initialize if the section exists
+    if (!document.getElementById('constellationCanvas')) return;
+
+    const canvas = document.getElementById('constellationCanvas');
+    const ctx = canvas.getContext('2d');
+    const container = canvas.parentElement;
+    
+    // Device detection
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    // Set canvas size
+    function resizeCanvas() {
+        canvas.width = container.offsetWidth;
+        canvas.height = container.offsetHeight;
+        createNodes(); // Recreate nodes on resize for best appearance
+    }
+    
+    // Set initial size
+    resizeCanvas();
+    
+    // Handle window resize
+    window.addEventListener('resize', resizeCanvas);
+    
+    // Mouse position tracking
+    let mouseX = 0;
+    let mouseY = 0;
+    const mouseRadius = isMobile ? 80 : 150; // Smaller activation radius on mobile
+    
+    // Track mouse movement
+    document.getElementById('whats-next-section').addEventListener('mousemove', function(e) {
+        const rect = canvas.getBoundingClientRect();
+        mouseX = e.clientX - rect.left;
+        mouseY = e.clientY - rect.top;
+    });
+    
+    // Node storage
+    const nodes = [];
+    
+    // Configuration
+    const nodeConfig = {
+        count: isMobile ? 60 : 120, // Fewer nodes on mobile for performance
+        connectionDistance: isMobile ? 80 : 100,
+        sizes: [2, 3, 4],
+        colors: {
+            bg: '#171717',
+            line: 'rgba(100, 100, 100, 0.3)',
+            node: 'rgba(150, 150, 150, 0.7)',
+            highlight: '#FF6B6B', // Your coral brand color
+            specialNode: '#FF6B6B'  // Your coral brand color for special nodes
+        },
+        specialNodeRatio: 0.1 // 10% of nodes will be coral colored
+    };
+    
+    // Create nodes
+    function createNodes() {
+        // Clear existing nodes
+        nodes.length = 0;
+        
+        // Generate new set
+        for (let i = 0; i < nodeConfig.count; i++) {
+            const isSpecialNode = Math.random() < nodeConfig.specialNodeRatio;
+            
+            nodes.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: nodeConfig.sizes[Math.floor(Math.random() * nodeConfig.sizes.length)],
+                speedX: (Math.random() - 0.5) * 0.3,
+                speedY: (Math.random() - 0.5) * 0.3,
+                isSpecial: isSpecialNode,
+                highlighted: false,
+                originalColor: isSpecialNode ? nodeConfig.colors.specialNode : nodeConfig.colors.node,
+                currentColor: isSpecialNode ? nodeConfig.colors.specialNode : nodeConfig.colors.node
+            });
+        }
+    }
+    
+    // Update nodes position and check for mouse proximity
+    function updateNodes() {
+        nodes.forEach(node => {
+            // Very slight movement
+            node.x += node.speedX;
+            node.y += node.speedY;
+            
+            // Boundary checking with bounce
+            if (node.x < 0 || node.x > canvas.width) node.speedX *= -1;
+            if (node.y < 0 || node.y > canvas.height) node.speedY *= -1;
+            
+            // Reset highlight status
+            node.highlighted = false;
+            node.currentColor = node.originalColor;
+            
+            // Check mouse proximity
+            const dx = mouseX - node.x;
+            const dy = mouseY - node.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance < mouseRadius) {
+                const intensity = 1 - (distance / mouseRadius);
+                node.highlighted = true;
+                
+                if (node.isSpecial) {
+                    // For special nodes, increase brightness
+                    node.currentColor = nodeConfig.colors.specialNode;
+                } else {
+                    // For regular nodes, fade towards white
+                    const r = 150 + Math.round(105 * intensity);
+                    const g = 150 + Math.round(105 * intensity);
+                    const b = 150 + Math.round(105 * intensity);
+                    const a = 0.7 + (0.3 * intensity);
+                    
+                    node.currentColor = `rgba(${r}, ${g}, ${b}, ${a})`;
+                }
+            }
+        });
+    }
+    
+    // Draw connections between nodes
+    function drawConnections() {
+        for (let i = 0; i < nodes.length; i++) {
+            for (let j = i + 1; j < nodes.length; j++) {
+                const dx = nodes[i].x - nodes[j].x;
+                const dy = nodes[i].y - nodes[j].y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < nodeConfig.connectionDistance) {
+                    // Calculate opacity based on distance
+                    const opacity = 1 - (distance / nodeConfig.connectionDistance);
+                    
+                    // Check if either node is highlighted by mouse
+                    const isHighlighted = nodes[i].highlighted || nodes[j].highlighted;
+                    
+                    // Set line color based on highlight state and special nodes
+                    if (isHighlighted) {
+                        // If either node is near mouse, brighten the connection
+                        ctx.strokeStyle = `rgba(200, 200, 200, ${opacity * 0.8})`;
+                        
+                        if (nodes[i].isSpecial && nodes[j].isSpecial) {
+                            // Special connection between two coral nodes
+                            ctx.strokeStyle = `rgba(255, 107, 107, ${opacity * 0.9})`;
+                        }
+                    } else {
+                        ctx.strokeStyle = `rgba(100, 100, 100, ${opacity * 0.3})`;
+                        
+                        if (nodes[i].isSpecial && nodes[j].isSpecial) {
+                            // Dimmer connection between coral nodes when not highlighted
+                            ctx.strokeStyle = `rgba(255, 107, 107, ${opacity * 0.4})`;
+                        }
+                    }
+                    
+                    // Set line width based on distance and highlight
+                    ctx.lineWidth = isHighlighted ? 0.8 : 0.5;
+                    
+                    // Draw the connection line
+                    ctx.beginPath();
+                    ctx.moveTo(nodes[i].x, nodes[i].y);
+                    ctx.lineTo(nodes[j].x, nodes[j].y);
+                    ctx.stroke();
+                }
+            }
+        }
+    }
+    
+    // Draw nodes
+    function drawNodes() {
+        nodes.forEach(node => {
+            ctx.fillStyle = node.currentColor;
+            ctx.beginPath();
+            ctx.arc(node.x, node.y, node.size, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Add glow effect to highlighted nodes
+            if (node.highlighted) {
+                const glow = node.isSpecial ? 8 : 4;
+                ctx.shadowBlur = glow;
+                ctx.shadowColor = node.isSpecial ? nodeConfig.colors.specialNode : '#ffffff';
+                ctx.beginPath();
+                ctx.arc(node.x, node.y, node.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        });
+    }
+    
+    // Mobile animation - randomly highlight nodes for visual interest
+    function animateRandomNodes() {
+        if (!isMobile) return;
+        
+        // Randomly highlight 1-3 nodes every interval
+        const nodesToHighlight = Math.floor(Math.random() * 3) + 1;
+        
+        for (let i = 0; i < nodesToHighlight; i++) {
+            const randomNodeIndex = Math.floor(Math.random() * nodes.length);
+            nodes[randomNodeIndex].highlighted = true;
+            
+            setTimeout(() => {
+                if (nodes[randomNodeIndex]) {
+                    nodes[randomNodeIndex].highlighted = false;
+                }
+            }, 800 + Math.random() * 500);
+        }
+    }
+    
+    // Set up mobile animation interval
+    if (isMobile) {
+        setInterval(animateRandomNodes, 1200);
+    }
+    
+    // Main animation loop
+    function animate() {
+        // Clear canvas
+        ctx.fillStyle = nodeConfig.colors.bg;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Update and draw
+        updateNodes();
+        drawConnections();
+        drawNodes();
+        
+        // Continue animation
+        requestAnimationFrame(animate);
+    }
+    
+    // Initialize
+    createNodes();
+    animate();
+});
+</script>

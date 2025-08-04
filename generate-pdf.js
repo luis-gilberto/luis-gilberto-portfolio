@@ -1,0 +1,113 @@
+const fs = require('fs');
+const path = require('path');
+
+// Simple PDF generation instruction
+console.log('To generate a PDF from your CV:');
+console.log('1. Open http://localhost:8000/cv-onepager.html in your browser');
+console.log('2. Press Ctrl+P (or Cmd+P on Mac)');
+console.log('3. Select "Save as PDF" as the destination');
+console.log('4. Choose "More settings" and set:');
+console.log('   - Paper size: A4');
+console.log('   - Margins: Minimum');
+console.log('   - Options: Background graphics (checked)');
+console.log('5. Click "Save" and choose your download location');
+console.log('');
+console.log('The CV is already optimized for print with proper styling!');
+console.log('Preview URL: http://localhost:8000/cv-onepager.html');
+
+// Alternative: Create a simple download link page
+const downloadPageHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download CV - Luis Gilberto</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0F0F0F;
+            color: #FFFFFF;
+            padding: 2rem;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #1A1A1A;
+            padding: 3rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 107, 107, 0.1);
+        }
+        h1 {
+            color: #FF6B6B;
+            margin-bottom: 2rem;
+        }
+        .download-btn {
+            display: inline-block;
+            background: #FF6B6B;
+            color: white;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            border-radius: 8px;
+            margin: 1rem;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+        .download-btn:hover {
+            background: #ff5252;
+        }
+        .instructions {
+            background: rgba(255, 107, 107, 0.05);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #FF6B6B;
+            margin: 2rem 0;
+            text-align: left;
+        }
+        .instructions h3 {
+            color: #FF6B6B;
+            margin-bottom: 1rem;
+        }
+        .instructions ol {
+            color: #B0B0B0;
+            line-height: 1.6;
+        }
+        .instructions li {
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Download Luis Gilberto's CV</h1>
+        
+        <a href="cv-onepager.html" class="download-btn" target="_blank">View CV Online</a>
+        <a href="assets/Luis_At_A_Glance.pdf" class="download-btn" download>Download Original PDF</a>
+        
+        <div class="instructions">
+            <h3>Generate Updated PDF:</h3>
+            <ol>
+                <li>Click "View CV Online" above</li>
+                <li>Press <strong>Ctrl+P</strong> (or <strong>Cmd+P</strong> on Mac)</li>
+                <li>Select <strong>"Save as PDF"</strong> as destination</li>
+                <li>In "More settings":
+                    <ul>
+                        <li>Paper size: <strong>A4</strong></li>
+                        <li>Margins: <strong>Minimum</strong></li>
+                        <li>Options: <strong>Background graphics</strong> ✓</li>
+                    </ul>
+                </li>
+                <li>Click <strong>"Save"</strong> and choose your location</li>
+            </ol>
+        </div>
+        
+        <p style="color: #808080; font-size: 0.9rem; margin-top: 2rem;">
+            The CV is optimized for print with proper styling and brand colors.
+        </p>
+    </div>
+</body>
+</html>`;
+
+fs.writeFileSync('download-cv.html', downloadPageHTML);
+console.log('\nCreated download-cv.html page for easy PDF generation!');
+console.log('Access it at: http://localhost:8000/download-cv.html');

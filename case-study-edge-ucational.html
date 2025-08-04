@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edge-ucational Video Series - Luis Gilberto</title>
+    
+    <!-- External Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Big+Shoulders+Display:wght@400;500;600;700;800&family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/case-study.css">
+    
+    <style>
+        /* Custom CSS Variables and Styles */
+        :root {
+            --coral-red: #F96F6E;
+            --bg-primary: #0F0F0F;
+            --bg-secondary: #1A1A1A;
+            --bg-tertiary: #2A2A2A;
+            --text-primary: #FFFFFF;
+            --text-secondary: #CCCCCC;
+            --text-muted: #808080;
+            --border-color: #404040;
+            --card-bg: #1A1A1A;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            scroll-behavior: smooth;
+            line-height: 1.75;
+        }
+        
+        .font-display {
+            font-family: 'Big Shoulders Display', sans-serif;
+        }
+        
+        .font-quote {
+            font-family: 'IBM Plex Serif', serif;
+        }
+        
+        .body-text {
+            line-height: 1.75;
+        }
+        
+        .quote {
+            font-family: 'IBM Plex Serif', serif;
+            font-size: 1.25rem;
+            font-style: italic;
+            color: #F96F6E;
+        }
+        
+        .hero-bg {
+            background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('assets/images/How-to-videos_hero_image.png');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .coral-gradient {
+            background: linear-gradient(135deg, var(--coral-red), #F96F6E);
+        }
+        
+        .bg-coral {
+            background-color: #F96F6E;
+        }
+        
+        .border-coral {
+            border-color: #F96F6E;
+        }
+        
+        /* Video Modal Styles */
+        .video-modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        
+        .video-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .video-modal-content {
+            position: relative;
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            max-width: 90vw;
+            max-height: 90vh;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
+            border: 1px solid var(--border-color);
+        }
+        
+        .video-modal-close {
+            position: absolute;
+            top: -60px;
+            right: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .video-modal-close:hover {
+            background: var(--coral-red);
+            transform: scale(1.1);
+        }
+        
+        .video-nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 1rem;
+            cursor: pointer;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .video-nav-btn:hover {
+            background: var(--coral-red);
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .video-nav-prev {
+            left: -80px;
+        }
+        
+        .video-nav-next {
+            right: -80px;
+        }
+        
+        .video-modal-player video {
+            width: 100%;
+            max-width: 900px;
+            height: auto;
+            border-radius: 12px 12px 0 0;
+        }
+        
+        /* Custom Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        .animate-bounce-custom {
+            animation: bounce 2s infinite;
+        }
+        
+        /* Hero Scroll Prompt */
+        .hero-scroll-prompt {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            z-index: 1000;
+            opacity: 0;
+            cursor: pointer;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            pointer-events: none;
+        }
+        
+        .hero-scroll-prompt.visible {
+            opacity: 0.6;
+            pointer-events: auto;
+        }
+        
+        .hero-scroll-prompt.visible:hover,
+        .hero-scroll-prompt.visible:active {
+            opacity: 1;
+        }
+        
+        .hero-scroll-prompt.fade-out {
+            opacity: 0;
+            transform: translateX(-50%) translateY(20px);
+        }
+        
+        /* Navigation Button Styles */
+        .nav-button {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            color: #B0B0B0;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(249, 111, 110, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .nav-button:hover {
+            background: rgba(249, 111, 110, 0.1);
+            border-color: var(--coral-red);
+            color: var(--coral-red);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(249, 111, 110, 0.2);
+        }
+        
+        .nav-button:hover::before {
+            left: 100%;
+        }
+        
+        .nav-button:active {
+            transform: translateY(0);
+            background: rgba(249, 111, 110, 0.2);
+        }
+        
+        .nav-button i {
+            font-size: 14px;
+            transition: transform 0.3s ease;
+        }
+        
+        .nav-button-prev:hover i {
+            transform: translateX(-3px);
+        }
+        
+        .nav-button-next:hover i {
+            transform: translateX(3px);
+        }
+        
+        @media (max-width: 640px) {
+            .nav-button {
+                padding: 14px 20px;
+                gap: 10px;
+                font-size: 14px;
+            }
+        }
+        
+        .scroll-prompt-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 12px 18px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 50px;
+            border: 3px solid #fff;
+            transition: all 0.3s ease;
+            color: #333;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .hero-scroll-prompt:hover .scroll-prompt-content {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .scroll-prompt-arrow {
+            color: #333;
+        }
+        
+        .scroll-prompt-text {
+            color: #333;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #FF6B6B;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.5s ease, transform 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border: 2px solid #fff;
+            pointer-events: none;
+        }
+        
+        .back-to-top.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .back-to-top:hover {
+            transform: translateY(-5px);
+            background-color: #FF6B6B;
+            color: white;
+            border-color: #FF6B6B;
+        }
+        
+        /* Scroll Progress Circle */
+        .scroll-progress-circle {
+            position: fixed;
+            bottom: 30px;
+            right: 100px;
+            width: 60px;
+            height: 60px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .scroll-progress-circle.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .scroll-progress-circle svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+        
+        .scroll-progress-circle .progress-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.2);
+            stroke-width: 3;
+        }
+        
+        .scroll-progress-circle .progress-bar {
+            fill: none;
+            stroke: #FF6B6B;
+            stroke-width: 3;
+            stroke-linecap: round;
+            transition: stroke-dasharray 0.1s ease;
+        }
+        
+        .scroll-progress-circle .progress-percentage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12px;
+            font-weight: 600;
+            color: #FF6B6B;
+            text-align: center;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--coral-red);
+            border-radius: 4px;
+        }
+        
+        /* Footer Styles */
+        .footer {
+            background: #000000;
+            color: var(--text-primary);
+            padding: 2.5rem 0 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .footer .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            align-items: start;
+        }
+        
+        .footer-brand {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .footer-logo {
+            width: 220px;
+            height: auto;
+            margin-bottom: 0.25rem;
+        }
+        
+        .footer-links {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        .footer-section h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--coral-red);
+            font-family: 'Big Shoulders Display', sans-serif;
+        }
+        
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .footer-section li {
+            margin-bottom: 0.35rem;
+        }
+        
+        .footer-section a {
+            color: var(--text-primary);
+            text-decoration: none;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .footer-section a:hover {
+            opacity: 1;
+            color: var(--coral-red);
+            transform: translateX(5px);
+        }
+        
+        .footer-bottom {
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        
+        .footer-bottom p {
+            opacity: 0.6;
+            margin: 0;
+            font-size: 0.85rem;
+        }
+        
+        /* Responsive Video Grid */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .video-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .video-nav-btn {
+                width: 50px;
+                height: 50px;
+                padding: 0.75rem;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                text-align: center;
+            }
+            
+            .footer-links {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .footer-logo {
+                width: 180px;
+                margin: 0 auto 0.5rem;
+            }
+            
+            .video-nav-prev {
+                left: -60px;
+            }
+            
+            .video-nav-next {
+                right: -60px;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .video-nav-prev,
+            .video-nav-next {
+                position: relative;
+                top: auto;
+                left: auto;
+                right: auto;
+                transform: none;
+                margin: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50" style="background: rgba(15, 15, 15, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid #404040;">
+        <div class="max-w-6xl mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <a href="index.html" class="flex items-center">
+                    <img src="assets/images/Logo_portfolio_White-and-Coral.png" alt="Luis Gilberto Logo" class="h-10 w-auto">
+                </a>
+                <div class="hidden md:flex space-x-8">
+                    <a href="index.html" class="hover:text-red-400 transition-colors font-medium" style="color: #B0B0B0;">Home</a>
+                    <a href="about.html" class="hover:text-red-400 transition-colors font-medium" style="color: #B0B0B0;">About Me</a>
+                    <a href="cv.html" class="hover:text-red-400 transition-colors font-medium" style="color: #B0B0B0;">CV</a>
+                    <a href="timeline.html" class="hover:text-red-400 transition-colors font-medium" style="color: #B0B0B0;">Timeline</a>
+                    <a href="myexperience.html" class="hover:text-red-400 transition-colors font-medium" style="color: #F96F6E;">My Experience</a>
+                    <a href="contact-clean.html" class="hover:text-red-400 transition-colors font-medium" style="color: #B0B0B0;">Contact</a>
+                </div>
+                <button class="md:hidden text-white" id="mobile-menu-btn">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-bg min-h-screen flex items-center pt-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <div class="max-w-2xl animate-fade-in-up">
+                <nav class="text-sm mb-8">
+                    <a href="index.html" class="text-white hover:underline">Home</a> / 
+                    <a href="myexperience.html" class="text-white hover:underline">Experience</a> / 
+                    <a href="myexperience.html#stories" class="text-white hover:underline">Stories</a> / 
+                    <span class="text-red-400 font-semibold">How To's</span>
+                </nav>
+                <h1 class="font-display text-6xl lg:text-7xl font-extrabold text-white mb-6 leading-tight">
+                    Edge-ucational Videos
+                </h1>
+                <p class="text-xl mb-8 leading-relaxed" style="color: #B0B0B0;">
+                    A 6-part video series that transforms Edge's most powerful tools into clear, helpful stories
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <span class="bg-red-500 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wider">Educational Content</span>
+                    <span class="bg-red-500 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wider">Video Series</span>
+                    <span class="bg-red-500 text-white px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wider">Product Education</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Hero Scroll Prompt -->
+        <div class="hero-scroll-prompt" id="heroScrollPrompt">
+            <div class="scroll-prompt-content">
+                <div class="scroll-prompt-arrow">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <span class="scroll-prompt-text">Explore the story</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Back to Top Button -->
+     <div class="back-to-top" id="backToTop">
+         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+             <path d="M17 14L12 9L7 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+         </svg>
+     </div>
+
+     <!-- Scroll Progress Circle -->
+     <div class="scroll-progress-circle" id="scrollProgress">
+         <svg viewBox="0 0 60 60">
+             <circle class="progress-bg" cx="30" cy="30" r="24"></circle>
+             <circle class="progress-bar" cx="30" cy="30" r="24"></circle>
+         </svg>
+         <div class="progress-percentage" id="progressPercentage">0%</div>
+     </div>
+
+    <!-- Project Overview -->
+    <section class="py-24" style="background-color: #0F0F0F;">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="grid lg:grid-cols-3 gap-12 items-start">
+                <div class="lg:col-span-2">
+                    <h2 class="font-display text-4xl lg:text-5xl font-bold text-white mb-8">Vision & Opportunity</h2>
+                    <p class="text-lg mb-6 body-text" style="color: var(--text-secondary);">
+                        How might we make Edge's most advanced features feel effortless and inviting to everyday users? We created the Edge-ucational series—a campaign of friendly, bite-sized videos that helped users not only understand Edge, but love it.
+                    </p>
+                    <blockquote class="quote mb-6">
+                        "We turned product features into real-life storytelling moments that educated, delighted, and empowered."
+                    </blockquote>
+                    <p class="text-lg body-text" style="color: var(--text-secondary);">
+                        Built in collaboration with the award-winning agency Buck, this project transformed complex browser capabilities into accessible, engaging content that resonates with users across all skill levels.
+                    </p>
+                </div>
+                <div class="space-y-6">
+                    <div class="p-6 rounded-xl" style="background-color: #1A1A1A; border: 1px solid #404040;">
+                        <h3 class="text-red-400 font-semibold text-sm uppercase tracking-wider mb-2">My Role</h3>
+                        <p class="text-white font-medium">Strategy Lead<br>Creative Alignment<br>Messaging Development</p>
+                    </div>
+                    <div class="p-6 rounded-xl" style="background-color: #1A1A1A; border: 1px solid #404040;">
+                        <h3 class="text-red-400 font-semibold text-sm uppercase tracking-wider mb-2">Agency Partner</h3>
+                        <p class="text-white font-medium"><a href="https://buck.co/" target="_blank" class="hover:text-red-400 transition-colors">Buck</a></p>
+                    </div>
+                    <div class="p-6 rounded-xl" style="background-color: #1A1A1A; border: 1px solid #404040;">
+                        <h3 class="text-red-400 font-semibold text-sm uppercase tracking-wider mb-2">Timeline</h3>
+                        <p class="text-white font-medium">2023</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Strategy Section -->
+    <section class="py-24" style="background-color: #1A1A1A;">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="font-display text-4xl lg:text-5xl font-bold text-red-400 mb-6">How We Translated Complexity Into Clarity</h2>
+                <p class="text-xl max-w-4xl mx-auto body-text" style="color: var(--text-secondary);">
+                    Developing an educational framework that makes advanced browser capabilities feel intuitive and immediately valuable to users across all skill levels.
+                </p>
+            </div>
+            
+            <div class="strategy-flow">
+                <div class="strategy-milestone">
+                    <div class="milestone-number">01</div>
+                    <div class="milestone-content">
+                        <h3>User Research & Analysis</h3>
+                        <p>We identified common friction points across Edge's tools and mapped user mindsets to create educational content that truly resonates.</p>
+                    </div>
+                </div>
+                
+                <div class="strategy-milestone reverse">
+                    <div class="milestone-number">02</div>
+                    <div class="milestone-content">
+                        <h3>Content Framework Development</h3>
+                        <p>We grouped capabilities into intuitive themes that reflect how users think — not how tech is structured — making complex features feel accessible.</p>
+                    </div>
+                </div>
+                
+                <div class="strategy-milestone">
+                    <div class="milestone-number">03</div>
+                    <div class="milestone-content">
+                        <h3>Visual Language Design</h3>
+                        <p>We created a style that blends clarity, friendliness, and confidence to match the Edge brand while maintaining educational effectiveness.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Educational Features -->
+    <section class="py-24" style="background-color: #0F0F0F;">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-20">
+                <h2 class="font-display text-4xl lg:text-5xl font-bold text-white mb-8">Educational Content Pillars</h2>
+            </div>
+            
+            <div class="space-y-16">
+                <div class="coral-gradient rounded-3xl p-12 text-center text-white">
+                    <div class="inline-block bg-white bg-opacity-20 px-6 py-3 rounded-full text-sm font-semibold uppercase tracking-wider mb-8">Core Focus</div>
+                    <h3 class="font-display text-4xl font-bold mb-6">Productivity & Learning Flow</h3>
+                    <p class="text-xl opacity-95 max-w-3xl mx-auto body-text">Teaching users how to maintain focus and optimize their workflow with Edge's productivity features.</p>
+                </div>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="p-8 rounded-2xl text-center hover:transform hover:-translate-y-2 transition-all duration-300" style="background-color: #1A1A1A; border: 1px solid #404040;">
+                        <div class="text-5xl mb-6">⚡</div>
+                        <h4 class="font-display text-xl font-semibold text-white mb-4">Flow & Focus</h4>
+                        <p class="body-text" style="color: var(--text-secondary);">Comprehensive tutorials on maintaining concentration and optimizing workflow for better digital productivity.</p>
+                    </div>
+                    
+                    <div class="p-8 rounded-2xl text-center hover:transform hover:-translate-y-2 transition-all duration-300" style="background-color: #1A1A1A; border: 1px solid #404040;">
+                        <div class="text-5xl mb-6">📋</div>
+                        <h4 class="font-display text-xl font-semibold text-white mb-4">Organization Tools</h4>
+                        <p class="body-text" style="color: var(--text-secondary);">Essential guidance on collections, tab management, and workspace organization for streamlined browsing.</p>
+                    </div>
+                    
+                    <div class="p-8 rounded-2xl text-center hover:transform hover:-translate-y-2 transition-all duration-300" style="background-color: #1A1A1A; border: 1px solid #404040;">
+                        <div class="text-5xl mb-6">🛡️</div>
+                        <h4 class="font-display text-xl font-semibold text-white mb-4">Safety & Security</h4>
+                        <p class="body-text" style="color: var(--text-secondary);">Critical knowledge on staying safe online, understanding privacy controls, and protecting personal information.</p>
+                    </div>
+                    
+                    <div class="p-8 rounded-2xl text-center hover:transform hover:-translate-y-2 transition-all duration-300" style="background-color: #1A1A1A; border: 1px solid #404040;">
+                        <div class="text-5xl mb-6">🤖</div>
+                        <h4 class="font-display text-xl font-semibold text-white mb-4">AI-Powered Learning</h4>
+                        <p class="body-text" style="color: var(--text-secondary);">Introducing users to Bing AI capabilities within Edge, demonstrating practical applications for creativity and productivity.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Video Showcase -->
+    <section class="py-24" style="background-color: #1A1A1A;">
+        <div class="max-w-6xl mx-auto px-6">
+            <h2 class="font-display text-4xl lg:text-5xl font-bold text-red-400 text-center mb-16">The Edge of AI: Watch the Work</h2>
+            <div class="video-grid">
+                <div class="video-item rounded-2xl overflow-hidden hover:transform hover:-translate-y-2 transition-all duration-300 cursor-pointer" style="background-color: #2A2A2A; border: 1px solid #404040;" data-video-index="0">
+                    <div class="relative w-full h-0 pb-9/16" style="padding-bottom: 56.25%;">
+                        <video class="absolute top-0 left-0 w-full h-full object-cover" controls playsinline webkit-playsinline preload="metadata">
+                            <source src="assets/How-to-keep-your-flow-and-focus-with-Microsoft-Edge.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="p-8">
+                        <h3 class="font-display text-xl font-semibold text-white mb-4" style="letter-spacing: 0.025em;">Flow & Focus</h3>
+                        <p class="leading-relaxed" style="color: #B0B0B0;">Demonstrating productivity features that help users maintain concentration and workflow in their daily browsing.</p>
+                    </div>
+                </div>
+                
+                <div class="video-item rounded-2xl overflow-hidden hover:transform hover:-translate-y-2 transition-all duration-300 cursor-pointer" style="background-color: #2A2A2A; border: 1px solid #404040;" data-video-index="1">
+                    <div class="relative w-full h-0 pb-9/16" style="padding-bottom: 56.25%;">
+                        <video class="absolute top-0 left-0 w-full h-full object-cover" controls playsinline webkit-playsinline preload="metadata">
+                            <source src="assets/How-to-stay-organized-with-Microsoft-Edge.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="p-8">
+                        <h3 class="font-display text-xl font-semibold text-white mb-4" style="letter-spacing: 0.025em;">Stay Organized</h3>
+                        <p class="leading-relaxed" style="color: #B0B0B0;">Showcasing organizational tools and features for better browsing management and digital productivity.</p>
+                    </div>
+                </div>
+                
+                <div class="video-item rounded-2xl overflow-hidden hover:transform hover:-translate-y-2 transition-all duration-300 cursor-pointer" style="background-color: #2A2A2A; border: 1px solid #404040;" data-video-index="2">
+                    <div class="relative w-full h-0 pb-9/16" style="padding-bottom: 56.25%;">
+                        <video class="absolute top-0 left-0 w-full h-full object-cover" controls playsinline webkit-playsinline preload="metadata">
+                            <source src="assets/How-to-stay-safer-online-with-Microsoft-Edge.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="p-8">
+                        <h3 class="font-display text-xl font-semibold text-white mb-4" style="letter-spacing: 0.025em;">Online Safety</h3>
+                        <p class="leading-relaxed" style="color: #B0B0B0;">Highlighting security features and safe browsing practices that protect users in the digital world.</p>
+                    </div>
+                </div>
+                
+                <div class="video-item rounded-2xl overflow-hidden hover:transform hover:-translate-y-2 transition-all duration-300 cursor-pointer" style="background-color: #2A2A2A; border: 1px solid #404040;" data-video-index="3">
+                    <div class="relative w-full h-0 pb-9/16" style="padding-bottom: 56.25%;">
+                        <video class="absolute top-0 left-0 w-full h-full object-cover" controls playsinline webkit-playsinline preload="metadata">
+                            <source src="assets/How-to-use-Bing-AI-in-Microsoft-Edge-to-get-inspired-and-boost-creativity.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="p-8">
+                        <h3 class="font-display text-xl font-semibold text-white mb-4" style="letter-spacing: 0.025em;">AI-Powered Creativity</h3>
+                        <p class="leading-relaxed" style="color: #B0B0B0;">Introducing AI-powered features for creative inspiration and intelligent assistance in everyday tasks.</p>
+                    </div>
+                </div>
+                
+                <div class="video-item rounded-2xl overflow-hidden hover:transform hover:-translate-y-2 transition-all duration-300 cursor-pointer" style="background-color: #2A2A2A; border: 1px solid #404040;" data-video-index="4">
+                    <div class="relative w-full h-0 pb-9/16" style="padding-bottom: 56.25%;">
+                        <video class="absolute top-0 left-0 w-full h-full object-cover" controls playsinline webkit-playsinline preload="metadata">
+                            <source src="assets/How-to-save_money.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="p-8">
+                        <h3 class="font-display text-xl font-semibold text-white mb-4" style="letter-spacing: 0.025em;">Save Money</h3>
+                        <p class="leading-relaxed" style="color: #B0B0B0;">Discover how Edge's smart shopping features help you find deals, compare prices, and save money while browsing.</p>
+                    </div>
+                </div>
+                
+                <div class="video-item rounded-2xl overflow-hidden hover:transform hover:-translate-y-2 transition-all duration-300 cursor-pointer" style="background-color: #2A2A2A; border: 1px solid #404040;" data-video-index="5">
+                    <div class="relative w-full h-0 pb-9/16" style="padding-bottom: 56.25%;">
+                        <video class="absolute top-0 left-0 w-full h-full object-cover" controls playsinline webkit-playsinline preload="metadata">
+                            <source src="assets/how-to-save_time_shopping-online.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="p-8">
+                        <h3 class="font-display text-xl font-semibold text-white mb-4" style="letter-spacing: 0.025em;">Save Time Shopping</h3>
+                        <p class="leading-relaxed" style="color: #B0B0B0;">Learn time-saving shopping techniques and features that streamline your online purchasing experience.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Video Modal -->
+    <div id="videoModal" class="video-modal">
+        <div class="video-modal-content">
+            <button class="video-modal-close" id="modalClose">
+                <i class="fas fa-times"></i>
+            </button>
+            <button class="video-nav-btn video-nav-prev" id="prevVideo">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="video-nav-btn video-nav-next" id="nextVideo">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+            <div class="video-modal-player">
+                <video id="modalVideo" controls autoplay playsinline webkit-playsinline>
+                    <source id="modalVideoSource" src="" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div class="p-8 text-center">
+                <h3 id="modalVideoTitle" class="font-display text-2xl font-semibold text-white mb-4"></h3>
+                <p id="modalVideoDescription" class="text-gray-300 leading-relaxed"></p>
+            </div>
+            <div class="flex justify-center space-x-4 pb-8 sm:hidden">
+                <button class="video-nav-btn" onclick="previousVideo()">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="video-nav-btn" onclick="nextVideo()">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toolkit Section -->
+    <section class="py-24" style="background-color: #0F0F0F;">
+        <div class="max-w-6xl mx-auto px-6">
+            <h2 class="font-display text-4xl lg:text-5xl font-bold text-red-400 text-center mb-16">A Toolkit That Powered a Movement</h2>
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <p class="text-lg text-gray-300 mb-6 leading-relaxed">Included in the campaign toolkit:</p>
+                    <ul class="space-y-4 text-lg text-gray-300">
+                        <li class="flex items-start space-x-3">
+                            <i class="fas fa-check text-red-400 mt-1"></i>
+                            <span>Planning and messaging templates</span>
+                        </li>
+                        <li class="flex items-start space-x-3">
+                            <i class="fas fa-check text-red-400 mt-1"></i>
+                            <span>Partner-ready promo scripts</span>
+                        </li>
+                        <li class="flex items-start space-x-3">
+                            <i class="fas fa-check text-red-400 mt-1"></i>
+                            <span>Short-form video and modular content</span>
+                        </li>
+                        <li class="flex items-start space-x-3">
+                            <i class="fas fa-check text-red-400 mt-1"></i>
+                            <span>Distribution guidelines and tags</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="text-center">
+                    <img src="assets/images/Marketing-Toolkit.gif" alt="Edge How-To Toolkit Animation" class="max-w-full h-auto rounded-xl shadow-2xl">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Impact Section -->
+    <section class="py-24 bg-gray-800">
+        <div class="max-w-6xl mx-auto px-6">
+            <h2 class="font-display text-4xl lg:text-5xl font-bold text-red-400 text-center mb-16">Campaign Impact</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="p-8 rounded-2xl text-center" style="background-color: #1A1A1A; border: 1px solid #404040;">
+                        <div class="font-display text-4xl font-bold text-red-400 mb-2">2.5M+</div>
+                        <div class="text-sm uppercase tracking-wider" style="color: #B0B0B0;">viewers</div>
+                    </div>
+                    <div class="p-8 rounded-2xl text-center" style="background-color: #1A1A1A; border: 1px solid #404040;">
+                        <div class="font-display text-4xl font-bold text-red-400 mb-2">85%</div>
+                        <div class="text-sm uppercase tracking-wider" style="color: #B0B0B0;">completion rate</div>
+                    </div>
+                    <div class="p-8 rounded-2xl text-center" style="background-color: #1A1A1A; border: 1px solid #404040;">
+                        <div class="font-display text-4xl font-bold text-red-400 mb-2">40%</div>
+                        <div class="text-sm uppercase tracking-wider" style="color: #B0B0B0;">feature adoption uplift</div>
+                    </div>
+                    <div class="p-8 rounded-2xl text-center" style="background-color: #1A1A1A; border: 1px solid #404040;">
+                        <div class="font-display text-4xl font-bold text-red-400 mb-2">25%</div>
+                        <div class="text-sm uppercase tracking-wider" style="color: #B0B0B0;">support request reduction</div>
+                    </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reflection Section -->
+    <section id="strategic-collaboration" class="py-24" style="background-color: #0F0F0F;">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <h2 class="font-display text-4xl lg:text-5xl font-bold text-red-400 mb-16">Strategic Collaboration & Reflection</h2>
+            <p class="text-lg mb-8 leading-relaxed" style="color: #B0B0B0;">
+                Collaborating with cross-functional teams and an external partner, we built a content system that scaled across product, marketing, and support.
+            </p>
+            <p class="text-lg leading-relaxed" style="color: #B0B0B0;">
+                This work taught us how strategic clarity, tight framing, and warm tone can unlock confidence and adoption in tools people previously avoided.
+            </p>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-24" style="background-color: #1A1A1A;">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <h2 class="font-display text-4xl font-bold text-white mb-6">Ready to explore more work?</h2>
+            <p class="text-xl mb-12 leading-relaxed" style="color: #B0B0B0;">Discover how strategic creativity drives meaningful connections across platforms and experiences.</p>
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-8">
+                <a href="myexperience.html" class="bg-coral hover:bg-transparent hover:border-2 hover:border-coral text-white px-8 py-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 border-2 border-coral">
+                    View All Projects
+                </a>
+            </div>
+            <div class="h-px my-16" style="background-color: #404040;"></div>
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-8">
+                <a href="case-study-teams-final-dm.html" class="nav-button nav-button-prev">
+                    <i class="fas fa-chevron-left"></i>
+                    <span>Previous: TFL Launch</span>
+                </a>
+                <a href="case-study-ai-browsing.html" class="nav-button nav-button-next">
+                    <span>Next: AI-powered Browser</span>
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <img src="assets/images/lgdotcom_logo_for_footer.png" alt="Luis Gilberto" class="footer-logo">
+                </div>
+                <div class="footer-links">
+                    <div class="footer-section">
+                        <h4 style="letter-spacing: 0.025em;">Navigation</h4>
+                        <ul>
+                            <li><a href="index.html">Home</a></li>
+                            <li><a href="about.html">About Me</a></li>
+                            <li><a href="cv.html">CV</a></li>
+                            <li><a href="timeline.html">Timeline</a></li>
+                            <li><a href="myexperience.html">My experience</a></li>
+                            <li><a href="contact-clean.html">Contact</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h4 style="letter-spacing: 0.025em;">Connect</h4>
+                        <ul>
+                            <li><a href="mailto:me@luis-gilberto.com">Email</a></li>
+                            <li><a href="https://linkedin.com/in/luisgilberto" target="_blank">LinkedIn</a></li>
+                            <li><a href="brand-guide.html">Brand Guide</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Luis Gilberto. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Video Modal Functionality
+        const videoItems = document.querySelectorAll('.video-item');
+        const modal = document.getElementById('videoModal');
+        const modalVideo = document.getElementById('modalVideo');
+        const modalVideoSource = document.getElementById('modalVideoSource');
+        const modalTitle = document.getElementById('modalVideoTitle');
+        const modalDescription = document.getElementById('modalVideoDescription');
+        const closeBtn = document.getElementById('modalClose');
+        const prevBtn = document.getElementById('prevVideo');
+        const nextBtn = document.getElementById('nextVideo');
+        
+        let currentVideoIndex = 0;
+        
+        const videoData = [
+            {
+                src: 'assets/How-to-keep-your-flow-and-focus-with-Microsoft-Edge.mp4',
+                title: 'Flow & Focus',
+                description: 'Demonstrating productivity features that help users maintain concentration and workflow in their daily browsing.'
+            },
+            {
+                src: 'assets/How-to-stay-organized-with-Microsoft-Edge.mp4',
+                title: 'Stay Organized',
+                description: 'Showcasing organizational tools and features for better browsing management and digital productivity.'
+            },
+            {
+                src: 'assets/How-to-stay-safer-online-with-Microsoft-Edge.mp4',
+                title: 'Online Safety',
+                description: 'Highlighting security features and safe browsing practices that protect users in the digital world.'
+            },
+            {
+                src: 'assets/How-to-use-Bing-AI-in-Microsoft-Edge-to-get-inspired-and-boost-creativity.mp4',
+                title: 'AI-Powered Creativity',
+                description: 'Introducing AI-powered features for creative inspiration and intelligent assistance in everyday tasks.'
+            },
+            {
+                src: 'assets/How-to-save_money.mp4',
+                title: 'Save Money',
+                description: 'Discover how Edge\'s smart shopping features help you find deals, compare prices, and save money while browsing.'
+            },
+            {
+                src: 'assets/how-to-save_time_shopping-online.mp4',
+                title: 'Save Time Shopping',
+                description: 'Learn time-saving shopping techniques and features that streamline your online purchasing experience.'
+            }
+        ];
+        
+        // Open modal
+        videoItems.forEach((item, index) => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                currentVideoIndex = index;
+                openModal();
+            });
+        });
+        
+        function openModal() {
+            const video = videoData[currentVideoIndex];
+            modalVideoSource.src = video.src;
+            modalVideo.load();
+            modalTitle.textContent = video.title;
+            modalDescription.textContent = video.description;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal() {
+            modal.classList.remove('active');
+            modalVideo.pause();
+            document.body.style.overflow = 'auto';
+        }
+        
+        function previousVideo() {
+            currentVideoIndex = (currentVideoIndex - 1 + videoData.length) % videoData.length;
+            openModal();
+        }
+        
+        function nextVideo() {
+            currentVideoIndex = (currentVideoIndex + 1) % videoData.length;
+            openModal();
+        }
+        
+        // Event listeners
+        closeBtn.addEventListener('click', closeModal);
+        prevBtn.addEventListener('click', previousVideo);
+        nextBtn.addEventListener('click', nextVideo);
+        
+        // Close modal when clicking outside
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (modal.classList.contains('active')) {
+                if (e.key === 'Escape') {
+                    closeModal();
+                } else if (e.key === 'ArrowLeft') {
+                    previousVideo();
+                } else if (e.key === 'ArrowRight') {
+                    nextVideo();
+                }
+            }
+        });
+        
+        // Enhanced scroll indicator functionality
+         let currentScrollIndex = 0;
+         let heroPromptVisible = false;
+         let userInteracted = false;
+         let flashTimer = null;
+         
+         // Define scroll targets
+         const scrollTargets = [
+             'section:nth-of-type(2)', // Project Overview
+             'section:nth-of-type(3)', // Strategy Section
+             'section:nth-of-type(4)', // Educational Features
+             'section:nth-of-type(5)', // Video Showcase
+             'section:nth-of-type(6)', // Toolkit Section
+             'section:nth-of-type(7)', // Impact Section
+             'section:nth-of-type(8)'  // Reflection Section
+         ];
+         
+         function initializeScrollPrompts() {
+             const heroPrompt = document.getElementById('heroScrollPrompt');
+             const backToTop = document.getElementById('backToTop');
+             
+             if (!heroPrompt || !backToTop) return;
+             
+             // Show hero prompt after a delay
+             setTimeout(() => {
+                 heroPrompt.classList.add('visible');
+                 heroPromptVisible = true;
+             }, 1500);
+             
+             // Hero prompt click handler
+             heroPrompt.addEventListener('click', () => {
+                 userInteracted = true;
+                 if (flashTimer) {
+                     clearInterval(flashTimer);
+                 }
+                 
+                 if (currentScrollIndex < scrollTargets.length) {
+                     const targetElement = document.querySelector(scrollTargets[currentScrollIndex]);
+                     if (targetElement) {
+                         // Smooth scroll to target section
+                         targetElement.scrollIntoView({ 
+                             behavior: 'smooth',
+                             block: 'start'
+                         });
+                         
+                         currentScrollIndex++;
+                     }
+                 }
+             });
+             
+             // Back to top button click handler
+              backToTop.addEventListener('click', () => {
+                  currentScrollIndex = 0; // Reset scroll index
+                  window.scrollTo({
+                      top: 0,
+                      behavior: 'smooth'
+                  });
+              });
+         }
+         
+         function handleScrollIndicator() {
+             const heroPrompt = document.getElementById('heroScrollPrompt');
+             const backToTop = document.getElementById('backToTop');
+             if (!heroPrompt || !backToTop) return;
+             
+             const scrollY = window.scrollY;
+             const heroSection = document.querySelector('section');
+             const heroHeight = heroSection ? heroSection.offsetHeight : window.innerHeight;
+             const documentHeight = Math.max(
+                 document.body.scrollHeight,
+                 document.documentElement.scrollHeight,
+                 document.body.offsetHeight,
+                 document.documentElement.offsetHeight
+             );
+             
+             // Show hero prompt when in hero section (top of page)
+             if (scrollY < heroHeight - 100) {
+                 if (!heroPromptVisible) {
+                     heroPrompt.classList.remove('fade-out');
+                     heroPrompt.classList.add('visible');
+                     heroPromptVisible = true;
+                 }
+             } else {
+                 // Hide hero prompt when scrolled past hero section
+                 if (heroPromptVisible) {
+                     heroPrompt.classList.add('fade-out');
+                     heroPromptVisible = false;
+                 }
+             }
+             
+             // Show back to top button when scrolled down significantly
+             if (scrollY > window.innerHeight) {
+                 backToTop.classList.add('visible');
+             } else {
+                 backToTop.classList.remove('visible');
+             }
+             
+             // When near bottom of page, show back to top more prominently
+             if (scrollY + window.innerHeight > documentHeight - 300) {
+                 backToTop.style.transform = 'scale(1.1)';
+                 setTimeout(() => {
+                     backToTop.style.transform = 'scale(1)';
+                 }, 300);
+             }
+         }
+         
+         // Scroll Progress Circle functionality
+         function initScrollProgressCircle() {
+             const progressCircle = document.getElementById('scrollProgress');
+             const progressBar = progressCircle.querySelector('.progress-bar');
+             const progressPercentage = progressCircle.querySelector('.progress-percentage');
+             
+             // Calculate circle circumference for stroke-dasharray
+             const radius = 24; // radius of the circle (60px width / 2 - stroke-width)
+             const circumference = 2 * Math.PI * radius;
+             
+             // Set initial stroke-dasharray
+             progressBar.style.strokeDasharray = circumference;
+             progressBar.style.strokeDashoffset = circumference;
+             
+             function updateProgress() {
+                 const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                 
+                 // Find the CTA section to calculate progress until article ends
+                 const ctaSection = document.querySelector('.cta-section');
+                 let targetHeight;
+                 
+                 if (ctaSection) {
+                     // Calculate height until CTA section begins (where article content ends)
+                     targetHeight = ctaSection.offsetTop;
+                 } else {
+                     // Fallback to full document height if CTA section not found
+                     targetHeight = document.documentElement.scrollHeight - window.innerHeight;
+                 }
+                 
+                 // Calculate scroll percentage based on article content (until CTA)
+                 const scrollPercent = Math.min((scrollTop / (targetHeight - window.innerHeight)) * 100, 100);
+                 
+                 // Update circle progress
+                 const offset = circumference - (scrollPercent / 100) * circumference;
+                 progressBar.style.strokeDashoffset = offset;
+                 
+                 // Update percentage text
+                 progressPercentage.textContent = Math.round(scrollPercent) + '%';
+                 
+                 // Show/hide based on scroll position
+                 if (scrollPercent > 5) {
+                     progressCircle.classList.add('visible');
+                 } else {
+                     progressCircle.classList.remove('visible');
+                 }
+             }
+             
+             // Add scroll event listener
+             window.addEventListener('scroll', updateProgress);
+             
+             // Initial call
+             updateProgress();
+         }
+         
+         // Initialize everything when DOM is loaded
+         document.addEventListener('DOMContentLoaded', function() {
+             initializeScrollPrompts();
+             initScrollProgressCircle();
+         });
+         
+         // Add scroll event listener
+         window.addEventListener('scroll', handleScrollIndicator);
+         
+         // Track user interaction
+         document.addEventListener('click', function() {
+             userInteracted = true;
+             if (flashTimer) {
+                 clearInterval(flashTimer);
+             }
+         });
+         
+         // Initial call
+         handleScrollIndicator();
+        
+        // Mobile menu functionality
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.createElement('div');
+        mobileMenu.className = 'fixed top-20 left-0 right-0 bg-gray-900 bg-opacity-95 backdrop-filter backdrop-blur-lg border-b border-gray-700 p-6 space-y-4 z-40 hidden';
+        mobileMenu.innerHTML = `
+            <a href="index.html" class="block text-gray-300 hover:text-red-400 transition-colors font-medium py-2">Home</a>
+            <a href="about.html" class="block text-gray-300 hover:text-red-400 transition-colors font-medium py-2">About Me</a>
+            <a href="cv.html" class="block text-gray-300 hover:text-red-400 transition-colors font-medium py-2">CV</a>
+            <a href="timeline.html" class="block text-gray-300 hover:text-red-400 transition-colors font-medium py-2">Timeline</a>
+            <a href="myexperience.html" class="block text-gray-300 hover:text-red-400 transition-colors font-medium py-2">My Experience</a>
+            <a href="contact-clean.html" class="block text-gray-300 hover:text-red-400 transition-colors font-medium py-2">Contact</a>
+        `;
+        
+        document.body.appendChild(mobileMenu);
+        
+        mobileMenuBtn.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // Smooth scroll for all anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
