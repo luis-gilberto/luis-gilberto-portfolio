@@ -45,7 +45,7 @@ A modern, responsive portfolio showcasing creative strategy, brand storytelling,
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/luis-gilberto-portfolio.git
+git clone https://github.com/luis-gilberto/luis-gilberto-portfolio.git
 cd luis-gilberto-portfolio
 ```
 
