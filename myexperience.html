@@ -559,7 +559,7 @@
                 <p>Let's collaborate on your next integrated marketing campaign or creative strategy project.</p>
                 <div class="cta-buttons">
                     <a href="contact-clean.html" class="btn btn-primary">Start a Conversation</a>
-                    <a href="cv.html" class="btn btn-secondary">View My Experience</a>
+                    <a href="cv.html" class="btn btn-secondary">View my credentials</a>
                 </div>
             </div>
         </div>
@@ -680,8 +680,36 @@
                 });
             });
             
-            // Initialize with first tab active
-            switchToTab(0);
+            // Check for URL parameters or hash to determine initial tab
+            function getInitialTab() {
+                // Check URL hash first (e.g., #stories)
+                const hash = window.location.hash.substring(1);
+                if (hash === 'stories' || hash === 'blog') {
+                    return 1; // Stories tab
+                } else if (hash === 'cv' || hash === 'resume') {
+                    return 2; // CV tab
+                } else if (hash === 'numbers' || hash === 'sum') {
+                    return 0; // Numbers tab
+                }
+                
+                // Check URL parameters (e.g., ?tab=stories)
+                const urlParams = new URLSearchParams(window.location.search);
+                const tabParam = urlParams.get('tab');
+                if (tabParam === 'stories' || tabParam === 'blog') {
+                    return 1; // Stories tab
+                } else if (tabParam === 'cv' || tabParam === 'resume') {
+                    return 2; // CV tab
+                } else if (tabParam === 'numbers' || tabParam === 'sum') {
+                    return 0; // Numbers tab
+                }
+                
+                // Default to first tab
+                return 0;
+            }
+            
+            // Initialize with appropriate tab based on URL
+            const initialTab = getInitialTab();
+            switchToTab(initialTab);
             
             // Optional: Hide scroll indicator when user scrolls manually
             let scrollTimer;

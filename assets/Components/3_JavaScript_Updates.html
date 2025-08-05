@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Updates - Homepage Transformation</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #1a1a1a; color: white; }
+        .code-block { background: #2d2d2d; border-radius: 8px; padding: 20px; margin: 20px 0; overflow-x: auto; }
+        pre { margin: 0; white-space: pre-wrap; }
+        .section { margin-bottom: 40px; }
+        .highlight { color: #FF6B6B; font-weight: 600; }
+    </style>
+</head>
+<body class="p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-4xl font-bold mb-6 text-center"><i class="fas fa-code mr-3"></i>JavaScript Updates</h1>
+        <p class="text-xl text-gray-300 text-center mb-12">Complete JavaScript functionality for pain-point cards, shuffle animation, and navigation</p>
+
+        <div class="section">
+            <h2 class="text-2xl font-bold mb-4 text-yellow-400"><i class="fas fa-info-circle mr-2"></i>Implementation Instructions</h2>
+            <div class="bg-yellow-900 bg-opacity-30 border border-yellow-600 rounded-lg p-4 mb-6">
+                <p><strong>For Trae:</strong> Replace the existing JavaScript functionality in your homepage file with the complete code below. This handles all card interactions, shuffle animations, and navigation.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="text-2xl font-bold mb-4 text-green-400"><i class="fas fa-magic mr-2"></i>Complete JavaScript Code</h2>
+            <div class="code-block">
+                <pre><code>&lt;script&gt;
+document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.tour-card');
+    const shuffleButton = document.querySelector('.shuffle-button');
+    const blurOverlay = document.querySelector('.blur-overlay');
+    const cardStack = document.querySelector('.card-stack');
+    let focusedCard = null;
+    let isShuffling = false;
+
+    // Card entrance animation with intersection observer
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                cards.forEach((card, index) => {
+                    setTimeout(() => {
+                        card.classList.add('animate-in');
+                        // Set initial positions for shuffle reference
+                        const position = getCardPosition(index);
+                        card.style.setProperty('--card-transform', 
+                            `translateX(${position.left}px) translateY(${position.top}px) rotate(${position.rotation}deg)`);
+                    }, index * 400);
+                });
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.3 });
+
+    if (cardStack) {
+        observer.observe(cardStack);
+    }
+
+    // Get card position based on index
+    function getCardPosition(index) {
+        const positions = [
+            { top: 0, left: 0, rotation: -2, zIndex: 5 },
+            { top: 15, left: 25, rotation: 1, zIndex: 4 },
+            { top: 30, left: 50, rotation: -1, zIndex: 3 },
+            { top: 45, left: 75, rotation: 2, zIndex: 2 },
+            { top: 60, left: 100, rotation: -1, zIndex: 1 }
+        ];
+        return positions[index] || positions[0];
+    }
+
+    // Card click functionality with focus management
+    cards.forEach((card, index) => {
+        card.addEventListener('click', function(e) {
+            e.stopPropagation();
+            
+            if (isShuffling) return; // Prevent clicks during shuffle
+            
+            if (focusedCard && focusedCard !== this) {
+                // Remove focus from previous card
+                focusedCard.classList.remove('focused');
+            }
+            
+            if (this.classList.contains('focused')) {
+                // Unfocus current card
+                this.classList.remove('focused');
+                blurOverlay.classList.remove('active');
+                focusedCard = null;
+                document.body.style.overflow = 'auto'; // Restore scroll
+            } else {
+                // Focus this card
+                this.classList.add('focused');
+                blurOverlay.classList.add('active');
+                focusedCard = this;
+                document.body.style.overflow = 'hidden'; // Prevent background scroll
+                
+                // Smooth scroll to prevent page jump
+                this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+
+        // Enhanced hover effects
+        card.addEventListener('mouseenter', function() {
+            if (!this.classList.contains('focused') && !isShuffling) {
+                this.style.transform = this.style.getPropertyValue('--card-transform') + ' scale(1.02) translateY(-5px)';
+            }
+        });
+
+        card.addEventListener('mouseleave', function() {
+            if (!this.classList.contains('focused') && !isShuffling) {
+                this.style.transform = this.style.getPropertyValue('--card-transform');
+            }
+        });
+    });
+
+    // Click outside to unfocus functionality
+    blurOverlay.addEventListener('click', function() {
+        if (focusedCard) {
+            focusedCard.classList.remove('focused');
+            blurOverlay.classList.remove('active');
+            focusedCard = null;
+            document.body.style.overflow = 'auto';
+        }
+    });
+
+    // ESC key to unfocus
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && focusedCard) {
+            focusedCard.classList.remove('focused');
+            blurOverlay.classList.remove('active');
+            focusedCard = null;
+            document.body.style.overflow = 'auto';
+        }
+    });
+
+    // Enhanced shuffle functionality with casino effect
+    shuffleButton.addEventListener('click', function() {
+        if (isShuffling) return;
+        
+        isShuffling = true;
+        cardStack.classList.add('shuffling');
+        
+        // Create array of positions
+        const positions = [
+            { top: 0, left: 0, rotation: -2, zIndex: 5 },
+            { top: 15, left: 25, rotation: 1, zIndex: 4 },
+            { top: 30, left: 50, rotation: -1, zIndex: 3 },
+            { top: 45, left: 75, rotation: 2, zIndex: 2 },
+            { top: 60, left: 100, rotation: -1, zIndex: 1 }
+        ];
+
+        // Shuffle positions array
+        const shuffledPositions = [...positions].sort(() => Math.random() - 0.5);
+
+        // Apply new positions with staggered animation
+        cards.forEach((card, index) => {
+            const pos = shuffledPositions[index];
+            
+            setTimeout(() => {
+                card.style.setProperty('--card-transform', 
+                    `translateX(${pos.left}px) translateY(${pos.top}px) rotate(${pos.rotation}deg)`);
+                card.style.zIndex = pos.zIndex;
+                
+                // Update transform immediately for smooth transition
+                if (!card.classList.contains('focused')) {
+                    card.style.transform = `translateX(${pos.left}px) translateY(${pos.top}px) rotate(${pos.rotation}deg)`;
+                }
+            }, index * 100);
+        });
+
+        // Reset shuffling state
+        setTimeout(() => {
+            cardStack.classList.remove('shuffling');
+            isShuffling = false;
+        }, 1400);
+    });
+
+    // CTA button navigation functionality
+    document.querySelectorAll('.card-cta').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const cardType = this.closest('.tour-card').getAttribute('data-card');
+            
+            // Handle navigation based on pain point
+            switch(cardType) {
+                case 'product-launch':
+                    window.location.href = 'myexperience.html#family-safety';
+                    break;
+                case 'brand-differentiation':
+                    window.location.href = 'myexperience.html#teams-consumer';
+                    break;
+                case 'campaign-conversion':
+                    window.location.href = 'myexperience.html#edge-campaigns';
+                    break;
+                case 'memorable-story':
+                    window.location.href = 'myexperience.html#storytelling';
+                    break;
+                case 'platform-consistency':
+                    window.location.href = 'myexperience.html#integrated-campaigns';
+                    break;
+                default:
+                    window.location.href = 'myexperience.html';
+            }
+        });
+    });
+
+    // Mobile touch enhancements
+    if ('ontouchstart' in window) {
+        cards.forEach(card => {
+            card.addEventListener('touchstart', function() {
+                this.style.transition = 'all 0.2s ease';
+            });
+            
+            card.addEventListener('touchend', function() {
+                this.style.transition = 'all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            });
+        });
+    }
+
+    // Strategy Parallax Animation (for DISRUPT.CONNECT.CONVERT banner)
+    function initStrategyParallax() {
+        const strategySection = document.querySelector('.strategy-parallax');
+        const strategySlide = document.querySelector('.strategy-slide');
+        
+        if (strategySection && strategySlide) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        strategySlide.classList.add('animate');
+                    } else {
+                        strategySlide.classList.remove('animate');
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            
+            observer.observe(strategySection);
+        }
+    }
+
+    // Performance optimization: Throttle resize events
+    let resizeTimeout;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            // Reset card positions on resize
+            cards.forEach((card, index) => {
+                if (!card.classList.contains('focused')) {
+                    const position = getCardPosition(index);
+                    card.style.setProperty('--card-transform', 
+                        `translateX(${position.left}px) translateY(${position.top}px) rotate(${position.rotation}deg)`);
+                    card.style.transform = card.style.getPropertyValue('--card-transform');
+                }
+            });
+        }, 250);
+    });
+
+    // Initialize all animations
+    initStrategyParallax();
+    
+    // Preload important pages for faster navigation
+    const preloadLinks = ['myexperience.html'];
+    preloadLinks.forEach(link => {
+        const linkElement = document.createElement('link');
+        linkElement.rel = 'prefetch';
+        linkElement.href = link;
+        document.head.appendChild(linkElement);
+    });
+
+    // Analytics tracking for card interactions (optional)
+    function trackCardInteraction(cardType, action) {
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'card_interaction', {
+                'card_type': cardType,
+                'action': action
+            });
+        }
+    }
+
+    // Add tracking to card clicks and CTA clicks
+    cards.forEach(card => {
+        card.addEventListener('click', function() {
+            const cardType = this.getAttribute('data-card');
+            trackCardInteraction(cardType, 'focus');
+        });
+    });
+
+    document.querySelectorAll('.card-cta').forEach(button => {
+        button.addEventListener('click', function() {
+            const cardType = this.closest('.tour-card').getAttribute('data-card');
+            trackCardInteraction(cardType, 'cta_click');
+        });
+    });
+});
+&lt;/script&gt;</code></pre>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="text-2xl font-bold mb-4 text-blue-400"><i class="fas fa-features mr-2"></i>JavaScript Features</h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-gray-800 p-6 rounded-lg">
+                    <h3 class="text-lg font-bold mb-3 text-green-400"><i class="fas fa-mouse-pointer mr-2"></i>Card Interactions</h3>
+                    <ul class="text-sm space-y-2">
+                        <li>• Click to focus/unfocus cards</li>
+                        <li>• Smooth hover animations</li>
+                        <li>• Progressive content disclosure</li>
+                        <li>• ESC key and click-outside to close</li>
+                        <li>• Touch optimizations for mobile</li>
+                    </ul>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-lg">
+                    <h3 class="text-lg font-bold mb-3 text-purple-400"><i class="fas fa-magic mr-2"></i>Shuffle Animation</h3>
+                    <ul class="text-sm space-y-2">
+                        <li>• Casino-style card shuffle effect</li>
+                        <li>• Position randomization</li>
+                        <li>• Staggered animation timing</li>
+                        <li>• Prevents clicks during shuffle</li>
+                        <li>• Smooth transitions</li>
+                    </ul>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-lg">
+                    <h3 class="text-lg font-bold mb-3 text-yellow-400"><i class="fas fa-route mr-2"></i>Navigation</h3>
+                    <ul class="text-sm space-y-2">
+                        <li>• Pain-point to case study routing</li>
+                        <li>• CTA button functionality</li>
+                        <li>• Page prefetching for speed</li>
+                        <li>• Anchor link navigation</li>
+                        <li>• Smooth scroll behavior</li>
+                    </ul>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-lg">
+                    <h3 class="text-lg font-bold mb-3 text-red-400"><i class="fas fa-mobile-alt mr-2"></i>Mobile Optimization</h3>
+                    <ul class="text-sm space-y-2">
+                        <li>• Touch event handling</li>
+                        <li>• Responsive breakpoint logic</li>
+                        <li>• Scroll management</li>
+                        <li>• Performance throttling</li>
+                        <li>• Analytics tracking</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="text-2xl font-bold mb-4 text-red-400"><i class="fas fa-exclamation-triangle mr-2"></i>Important Notes</h2>
+            <div class="bg-red-900 bg-opacity-30 border border-red-600 rounded-lg p-6">
+                <ul class="space-y-3">
+                    <li><strong>• Replace Existing JavaScript:</strong> This code completely replaces your current card JavaScript</li>
+                    <li><strong>• Card Data Attributes:</strong> Ensure cards have the correct <code class="highlight">data-card</code> attributes</li>
+                    <li><strong>• Navigation Links:</strong> Update case study anchor links in your experience page</li>
+                    <li><strong>• Mobile Testing:</strong> Test thoroughly on mobile devices for touch interactions</li>
+                    <li><strong>• Analytics:</strong> Includes optional Google Analytics tracking (requires gtag)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="text-2xl font-bold mb-4 text-green-400"><i class="fas fa-check-circle mr-2"></i>Testing Checklist</h2>
+            <div class="bg-green-900 bg-opacity-30 border border-green-600 rounded-lg p-6">
+                <div class="grid gap-2">
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" class="form-checkbox">
+                        <span>Cards animate in on scroll</span>
+                    </label>
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" class="form-checkbox">
+                        <span>Click to focus/unfocus works</span>
+                    </label>
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" class="form-checkbox">
+                        <span>Shuffle button creates casino effect</span>
+                    </label>
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" class="form-checkbox">
+                        <span>CTA buttons navigate correctly</span>
+                    </label>
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" class="form-checkbox">
+                        <span>Mobile touch interactions work</span>
+                    </label>
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" class="form-checkbox">
+                        <span>ESC key closes focused cards</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+    <script id="html_badge_script1">
+        window.__genspark_remove_badge_link = "https://www.genspark.ai/api/html_badge/" +
+            "remove_badge?token=To%2FBnjzloZ3UfQdcSaYfDhyzhXTQ8G3Nwl7ORRdA%2BPR9DkLy2L0%2BkuoZYQdUT9hZw94MQu7kP1ymYwYBZSl%2Bkhjf4mc3dIWvEfk8Npm5xuPCLJhzNnITyO0jBJWpGFQI78aG8q8IBZ5dDDZRROg8vTg1%2FEpmu0PnbHxKWLcxd8uUVvcdEKT2kWGyhHtfKz2ivnbmpZistI0gUBbEYNHtbydCKNem3457RKV%2Bfw%2FV8Na6%2FCjywzs18CZ4ZUpujq2p4FAAlY96MvdwNIOj63fKPSDgjyjwHGriGZvihFt7ToWCuXQ%2FziuvkxwaDQ%2B2AreEtrxhIZyyx7P8MjefHfCNU6%2BhrGCh8TwLdkPnUhpaxx4Je%2FSbFR%2BGrYwXoi2XPQnTidHCYLgT1rTwmbe0ENRpPe%2FaNC9IlosJGP%2BjwaIhVReH0b2V3RsjyuEWDpI68%2BfJLVZZChFWAHJ6aIErhbOLBV9HgYMUBB8qaNzWFkVAV3G0SQQhyNJM4zh7b7EWUlaBaYuF9tx9A3QTWMsdUmUXNA%3D%3D";
+        window.__genspark_locale = "en-US";
+        window.__genspark_token = "To/BnjzloZ3UfQdcSaYfDhyzhXTQ8G3Nwl7ORRdA+PR9DkLy2L0+kuoZYQdUT9hZw94MQu7kP1ymYwYBZSl+khjf4mc3dIWvEfk8Npm5xuPCLJhzNnITyO0jBJWpGFQI78aG8q8IBZ5dDDZRROg8vTg1/Epmu0PnbHxKWLcxd8uUVvcdEKT2kWGyhHtfKz2ivnbmpZistI0gUBbEYNHtbydCKNem3457RKV+fw/V8Na6/Cjywzs18CZ4ZUpujq2p4FAAlY96MvdwNIOj63fKPSDgjyjwHGriGZvihFt7ToWCuXQ/ziuvkxwaDQ+2AreEtrxhIZyyx7P8MjefHfCNU6+hrGCh8TwLdkPnUhpaxx4Je/SbFR+GrYwXoi2XPQnTidHCYLgT1rTwmbe0ENRpPe/aNC9IlosJGP+jwaIhVReH0b2V3RsjyuEWDpI68+fJLVZZChFWAHJ6aIErhbOLBV9HgYMUBB8qaNzWFkVAV3G0SQQhyNJM4zh7b7EWUlaBaYuF9tx9A3QTWMsdUmUXNA==";
+    </script>
+    
+    <script id="html_notice_dialog_script" src="https://www.genspark.ai/notice_dialog.js"></script>
+    
