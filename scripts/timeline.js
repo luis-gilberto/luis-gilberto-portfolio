@@ -120,22 +120,62 @@ const timelineData = {
     }
 };
 
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    // Simple overlay hide functionality
+// Initialize reveal overlay functionality
+function initializeRevealOverlay() {
     const startButton = document.getElementById('startJourney');
+    const closeButton = document.getElementById('revealClose');
     const overlay = document.getElementById('revealOverlay');
+    const revealContent = document.querySelector('.reveal-content');
     
-    if (startButton && overlay) {
-        startButton.addEventListener('click', function() {
-            overlay.style.display = 'none';
-            // Make timeline hero visible
-            const timelineHero = document.getElementById('timelineHero');
-            if (timelineHero) {
-                timelineHero.classList.add('visible');
-            }
+    if (!overlay) return;
+    
+    // Function to close the overlay
+    function closeOverlay() {
+        overlay.style.display = 'none';
+        // Make timeline hero visible
+        const timelineHero = document.getElementById('timelineHero');
+        if (timelineHero) {
+            timelineHero.classList.add('visible');
+        }
+    }
+    
+    // Close overlay when clicking the start journey button
+    if (startButton) {
+        startButton.addEventListener('click', closeOverlay);
+    }
+    
+    // Close overlay when clicking the X button
+    if (closeButton) {
+        closeButton.addEventListener('click', closeOverlay);
+    }
+    
+    // Close overlay when clicking outside the content area
+    overlay.addEventListener('click', function(e) {
+        // Only close if clicking the overlay itself, not the content
+        if (e.target === overlay) {
+            closeOverlay();
+        }
+    });
+    
+    // Prevent clicks on the content from bubbling up to the overlay
+    if (revealContent) {
+        revealContent.addEventListener('click', function(e) {
+            e.stopPropagation();
         });
     }
+    
+    // Close overlay with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && overlay.style.display !== 'none') {
+            closeOverlay();
+        }
+    });
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize reveal overlay functionality
+    initializeRevealOverlay();
     
     // Initialize timeline
     initializeTimeline();

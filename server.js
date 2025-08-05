@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const server = http.createServer((req, res) => {
-    let filePath = req.url === '/' ? '/timeline.html' : req.url;
+    let filePath = req.url === '/' ? '/index.html' : req.url;
     filePath = path.join(__dirname, filePath);
     
     const extname = path.extname(filePath).toLowerCase();
@@ -36,6 +36,6 @@ const server = http.createServer((req, res) => {
     });
 });
 
-server.listen(3001, () => {
-    console.log('Server running at http://localhost:3001/');
+server.listen(8000, () => {
+    console.log('Server running at http://localhost:8000/');
 });

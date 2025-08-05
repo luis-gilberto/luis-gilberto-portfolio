@@ -186,6 +186,13 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- Back to Top Button for Numbers Section -->
+            <div class="back-to-top-btn" data-section="numbers">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M17 14L12 9L7 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
         </section>
         </div>
         
@@ -386,6 +393,13 @@
             </div>
         </div>
     </section>
+    
+    <!-- Back to Top Button for Stories Section -->
+    <div class="back-to-top-btn" data-section="blog">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M17 14L12 9L7 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </div>
                 </div>
             </section>
         </div>
@@ -548,6 +562,13 @@
                     </div>
                 </div>
             </section>
+            
+            <!-- Back to Top Button for CV Section -->
+            <div class="back-to-top-btn" data-section="cv">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M17 14L12 9L7 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
         </div>
     </div>
 
@@ -559,7 +580,7 @@
                 <p>Let's collaborate on your next integrated marketing campaign or creative strategy project.</p>
                 <div class="cta-buttons">
                     <a href="contact-clean.html" class="btn btn-primary">Start a Conversation</a>
-                    <a href="cv.html" class="btn btn-secondary">View My Experience</a>
+                    <a href="cv.html" class="btn btn-secondary">View my credentials</a>
                 </div>
             </div>
         </div>
@@ -682,6 +703,47 @@
             
             // Initialize with first tab active
             switchToTab(0);
+            
+            // Back to Top Button functionality
+            const backToTopBtns = document.querySelectorAll('.back-to-top-btn');
+            const portfolioHero = document.querySelector('.portfolio-hero');
+            
+            // Show/hide back to top buttons based on scroll and active tab
+            function updateBackToTopVisibility() {
+                const activeTab = document.querySelector('.tab-btn.active');
+                const activeTabData = activeTab ? activeTab.getAttribute('data-tab') : 'numbers';
+                const scrollY = window.scrollY;
+                const heroHeight = portfolioHero ? portfolioHero.offsetHeight : 600;
+                
+                backToTopBtns.forEach(btn => {
+                    const btnSection = btn.getAttribute('data-section');
+                    if (btnSection === activeTabData && scrollY > heroHeight * 0.5) {
+                        btn.classList.add('visible');
+                    } else {
+                        btn.classList.remove('visible');
+                    }
+                });
+            }
+            
+            // Smooth scroll to top functionality
+            backToTopBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                });
+            });
+            
+            // Update visibility on scroll
+            window.addEventListener('scroll', updateBackToTopVisibility);
+            
+            // Update visibility when tab changes
+            const originalSwitchToTab = switchToTab;
+            switchToTab = function(index) {
+                originalSwitchToTab(index);
+                setTimeout(updateBackToTopVisibility, 100);
+            };
             
             // Optional: Hide scroll indicator when user scrolls manually
             let scrollTimer;
