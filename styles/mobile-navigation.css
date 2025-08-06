@@ -1,0 +1,392 @@
+/* Mobile Article Navigation System
+ * Unified navigation for optimal mobile reading experience
+ * Author: Luis Gilberto
+ */
+
+/* Mobile Navigation Container */
+.mobile-article-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(26, 26, 26, 0.95);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 12px 20px 20px;
+    z-index: 1000;
+    transform: translateY(0);
+    transition: transform 0.3s ease;
+    display: none; /* Hidden by default, shown on mobile */
+}
+
+.mobile-article-nav.hidden {
+    transform: translateY(100%);
+}
+
+/* Progress Bar */
+.nav-progress-bar {
+    width: 100%;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    margin-bottom: 16px;
+    overflow: hidden;
+}
+
+.nav-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #FF6B6B, #FF8E8E);
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.1s ease;
+}
+
+/* Navigation Controls */
+.nav-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+/* Reading Info */
+.nav-reading-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 80px;
+}
+
+.nav-progress-text {
+    font-size: 12px;
+    color: #FF6B6B;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.nav-time-estimate {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Section Navigation */
+.nav-sections {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    justify-content: center;
+    max-width: 200px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.nav-sections::-webkit-scrollbar {
+    display: none;
+}
+
+.nav-section-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.nav-section-dot.active {
+    background: #FF6B6B;
+    transform: scale(1.5);
+}
+
+.nav-section-dot.completed {
+    background: rgba(255, 107, 107, 0.6);
+}
+
+/* Action Buttons */
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.nav-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 16px;
+}
+
+.nav-btn:hover,
+.nav-btn:active {
+    background: rgba(255, 107, 107, 0.2);
+    border-color: #FF6B6B;
+    transform: scale(1.1);
+}
+
+.nav-btn.primary {
+    background: #FF6B6B;
+    border-color: #FF6B6B;
+}
+
+.nav-btn.primary:hover {
+    background: #FF5252;
+    transform: scale(1.1);
+}
+
+/* Table of Contents Overlay */
+.nav-toc-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1001;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.nav-toc-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.nav-toc-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(26, 26, 26, 0.98);
+    backdrop-filter: blur(20px);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    padding: 24px;
+    max-height: 70vh;
+    overflow-y: auto;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+}
+
+.nav-toc-overlay.active .nav-toc-content {
+    transform: translateY(0);
+}
+
+.nav-toc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nav-toc-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: white;
+}
+
+.nav-toc-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-toc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-toc-item {
+    margin-bottom: 12px;
+}
+
+.nav-toc-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+}
+
+.nav-toc-link:hover,
+.nav-toc-link.active {
+    background: rgba(255, 107, 107, 0.1);
+    border-left-color: #FF6B6B;
+    color: white;
+}
+
+.nav-toc-number {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
+.nav-toc-link.active .nav-toc-number {
+    background: #FF6B6B;
+}
+
+/* Reading Controls */
+.nav-reading-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nav-control-btn {
+    flex: 1;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: white;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.nav-control-btn:hover {
+    background: rgba(255, 107, 107, 0.1);
+    border-color: #FF6B6B;
+}
+
+.nav-control-btn.active {
+    background: #FF6B6B;
+    border-color: #FF6B6B;
+}
+
+/* Auto-scroll indicator */
+.nav-auto-scroll {
+    position: absolute;
+    top: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #FF6B6B, transparent);
+    opacity: 0;
+    animation: autoScrollPulse 2s infinite;
+}
+
+.nav-auto-scroll.active {
+    opacity: 1;
+}
+
+@keyframes autoScrollPulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .mobile-article-nav {
+        display: block;
+    }
+    
+    /* Hide existing navigation elements on mobile */
+    .scroll-progress-circle,
+    .back-to-top,
+    .hero-scroll-prompt {
+        display: none !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .mobile-article-nav {
+        padding: 10px 16px 16px;
+    }
+    
+    .nav-controls {
+        gap: 12px;
+    }
+    
+    .nav-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+    }
+    
+    .nav-reading-info {
+        min-width: 70px;
+    }
+    
+    .nav-progress-text {
+        font-size: 11px;
+    }
+    
+    .nav-time-estimate {
+        font-size: 9px;
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .mobile-article-nav,
+    .nav-progress-fill,
+    .nav-section-dot,
+    .nav-btn,
+    .nav-toc-overlay,
+    .nav-toc-content {
+        transition: none;
+    }
+    
+    .nav-auto-scroll {
+        animation: none;
+    }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .mobile-article-nav {
+        background: black;
+        border-top-color: white;
+    }
+    
+    .nav-progress-bar {
+        background: #333;
+    }
+    
+    .nav-section-dot {
+        background: #666;
+    }
+    
+    .nav-section-dot.active {
+        background: #FF6B6B;
+    }
+}

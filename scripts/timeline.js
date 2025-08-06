@@ -124,17 +124,24 @@ const timelineData = {
 document.addEventListener('DOMContentLoaded', function() {
     // Simple overlay hide functionality
     const startButton = document.getElementById('startJourney');
+    const closeButton = document.getElementById('closeOverlay');
     const overlay = document.getElementById('revealOverlay');
     
+    function hideOverlay() {
+        overlay.style.display = 'none';
+        // Make timeline hero visible
+        const timelineHero = document.getElementById('timelineHero');
+        if (timelineHero) {
+            timelineHero.classList.add('visible');
+        }
+    }
+    
     if (startButton && overlay) {
-        startButton.addEventListener('click', function() {
-            overlay.style.display = 'none';
-            // Make timeline hero visible
-            const timelineHero = document.getElementById('timelineHero');
-            if (timelineHero) {
-                timelineHero.classList.add('visible');
-            }
-        });
+        startButton.addEventListener('click', hideOverlay);
+    }
+    
+    if (closeButton && overlay) {
+        closeButton.addEventListener('click', hideOverlay);
     }
     
     // Initialize timeline
