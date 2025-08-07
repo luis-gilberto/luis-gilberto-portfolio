@@ -335,7 +335,10 @@
         }
         
         @media print {
-            body { -webkit-print-color-adjust: exact; }
+            body { 
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
             .no-print { display: none; }
         }
         
@@ -438,7 +441,7 @@
                     <a href="timeline.html" class="nav-link">Timeline</a>
                     <a href="myexperience.html" class="nav-link">Experience</a>
                     <a href="contact-clean.html" class="nav-link">Contact</a>
-                    <a href="brand-guide.html" class="text-brand-coral font-semibold">Brand Guide</a>
+                    <a href="brand-guide.html" class="nav-link text-brand-coral font-semibold">Brand Guide</a>
                     <!-- Theme Toggle -->
                     <div class="theme-toggle" id="theme-toggle">
                         <i class="fas fa-sun theme-toggle-icon sun-icon"></i>
@@ -467,7 +470,7 @@
                     <p class="text-xl text-gray-300 max-w-2xl">Enhanced visual identity and strategic guidelines that define my creative approach and business impact</p>
                 </div>
                 <div class="text-right">
-                    <div class="signature-style">Luis Gilberto</div>
+                    <div class="signature-style text-4xl mb-2">Luis Gilberto</div>
                     <p class="text-gray-300">Version 2.0 • 2025</p>
                 </div>
             </div>
@@ -824,8 +827,10 @@
                 <h4 class="big-shoulders text-xl font-bold mb-4">Signature Elements</h4>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="text-center">
-                        <img src="assets/initiales.png" alt="Luis Gilberto Signature" class="mx-auto h-16 mb-4">
-                        <h5 class="font-bold mb-2 text-primary">Personal Signature</h5>
+                        <div class="bg-gray-800 p-4 rounded-lg inline-block">
+                            <img src="assets/initiales.png" alt="Luis Gilberto Signature" class="mx-auto h-16 mb-0">
+                        </div>
+                        <h5 class="font-bold mb-2 mt-4 text-primary">Personal Signature</h5>
                         <p class="text-sm text-secondary">Use for personal touches, authenticity, and humanizing brand moments</p>
                     </div>
                     <div class="text-center">
@@ -979,26 +984,26 @@
 
     <script>
         // Enhanced scroll animations
-        const observerOptions = {
+        const brandGuideObserverOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -50px 0px'
         };
 
-        const observer = new IntersectionObserver((entries) => {
+        const brandGuideObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.style.opacity = '1';
                     entry.target.style.transform = 'translateY(0)';
                 }
             });
-        }, observerOptions);
+        }, brandGuideObserverOptions);
 
         // Observe all sections
         document.querySelectorAll('section').forEach(section => {
             section.style.opacity = '0';
             section.style.transform = 'translateY(20px)';
             section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-            observer.observe(section);
+            brandGuideObserver.observe(section);
         });
 
         // Theme toggle functionality
@@ -1068,12 +1073,25 @@
             }
         }
 
+        // Update personal signature based on theme
+        function updatePersonalSignature(theme) {
+            const signature = document.getElementById('personal-signature');
+            if (signature) {
+                if (theme === 'light') {
+                    signature.src = 'assets/images/signature_gray.png';
+                } else {
+                    signature.src = 'assets/initiales.png';
+                }
+            }
+        }
+
         // Update all logos based on theme
         function updateAllLogos(theme) {
             updateHeaderLogo(theme);
             updateLogomark(theme);
             updatePrimaryLogo(theme);
             updateDotcomLogos(theme);
+            updatePersonalSignature(theme);
         }
 
         // Initialize theme
@@ -1114,6 +1132,36 @@
                 }
             });
         });
+    </script>
+    <script>
+        // Set active navigation link based on current page
+        function setActiveNavLink() {
+            const currentPath = window.location.pathname;
+            const currentPage = currentPath.split('/').pop() || 'index.html';
+            
+            // Remove active class from all nav links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Add active class to current page link
+            document.querySelectorAll('.nav-link').forEach(link => {
+                const href = link.getAttribute('href');
+                
+                // Handle different page scenarios
+                if ((currentPage === 'index.html' || currentPage === '') && (href === '#' || href === 'index.html')) {
+                    link.classList.add('active');
+                } else if (href === currentPage) {
+                    link.classList.add('active');
+                } else if ((currentPage.startsWith('case-study-') || currentPage.startsWith('caseStudy_')) && href === 'myexperience.html') {
+                    // Case studies are part of the experience section
+                    link.classList.add('active');
+                }
+            });
+        }
+        
+        // Set active nav link on page load
+        document.addEventListener('DOMContentLoaded', setActiveNavLink);
     </script>
 </body>
 </html>
