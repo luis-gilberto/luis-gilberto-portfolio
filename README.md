@@ -114,7 +114,14 @@ php -S localhost:8000
 
 ## 🌐 Deployment
 
-### Vercel (Recommended)
+### Cloudflare Pages (Recommended)
+1. Connect GitHub repository to Cloudflare Pages
+2. **Build command**: Leave empty (static site)
+3. **Deploy command**: Leave empty (remove any `npx wrangler deploy` commands)
+4. Deploy automatically on push to main branch
+5. Custom domain configuration available
+
+### Vercel
 1. Connect GitHub repository to Vercel
 2. Deploy automatically on push to main branch
 3. Custom domain configuration available
