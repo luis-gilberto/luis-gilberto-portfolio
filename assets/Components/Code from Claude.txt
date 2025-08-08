@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luis Gilberto | Interactive Card Experience</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@400;700;900&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #1a1a1a;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* Quick Tour Section */
+        .quick-tour-section {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+
+        /* Section Header */
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .section-subtitle {
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            color: #FF6B6B;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .main-headline {
+            font-size: 3.2rem;
+            font-weight: 400;
+            line-height: 1.2;
+            color: white;
+            margin-bottom: 24px;
+            font-family: 'Big Shoulders Display', cursive;
+            letter-spacing: -0.01em;
+        }
+
+        .section-description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #FF6B6B;
+            opacity: 0.9;
+            margin-bottom: 0;
+            font-weight: 400;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Cards Container */
+        .cards-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .card-stack {
+            position: relative;
+            width: 400px;
+            height: 600px;
+            margin-bottom: 40px;
+        }
+
+        /* Tour Card Base Styles */
+        .tour-card {
+            position: absolute;
+            width: 300px;
+            height: 500px;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-back {
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 500"><defs><pattern id="dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="3" fill="%23FF6B6B" opacity="0.6"/></pattern></defs><rect width="300" height="500" fill="%23000"/><rect width="300" height="500" fill="url(%23dots)"/><g transform="translate(150,250)"><path d="M-20,-30 Q-20,-40 -10,-40 L10,-40 Q20,-40 20,-30 L20,-10 Q20,0 10,0 L-10,0 Q-20,0 -20,-10 Z" fill="%23FF6B6B"/><path d="M10,-35 Q25,-25 25,-10 Q25,5 10,15" stroke="white" stroke-width="3" fill="none"/></g><rect x="5" y="5" width="290" height="490" fill="none" stroke="%23FF6B6B" stroke-width="2"/></svg>') center/cover;
+            transform: rotateY(0deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(20, 20, 20, 0.95));
+            border: 2px solid rgba(255, 107, 107, 0.3);
+            padding: 25px;
+            color: white;
+            backdrop-filter: blur(10px);
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            border-radius: 15px;
+        }
+
+        /* Card flip state */
+        .tour-card.flipped {
+            transform: rotateY(180deg) !important;
+        }
+        
+        /* Ensure proper 3D context */
+        .tour-card {
+            perspective: 1000px;
+        }
+
+        /* Card positioning */
+        .tour-card.position-1 {
+            top: 0;
+            left: 50px;
+            z-index: 5;
+            transform: translateX(0) rotate(-2deg);
+        }
+
+        .tour-card.position-2 {
+            top: 15px;
+            left: 40px;
+            z-index: 4;
+            transform: translateX(0) rotate(1deg);
+        }
+
+        .tour-card.position-3 {
+            top: 30px;
+            left: 30px;
+            z-index: 3;
+            transform: translateX(0) rotate(-1deg);
+        }
+
+        .tour-card.position-4 {
+            top: 45px;
+            left: 20px;
+            z-index: 2;
+            transform: translateX(0) rotate(2deg);
+        }
+
+        .tour-card.position-5 {
+            top: 60px;
+            left: 10px;
+            z-index: 1;
+            transform: translateX(0) rotate(-1deg);
+        }
+
+        /* Flipped positioning - using !important to override */
+        .tour-card.position-1.flipped {
+            transform: translateX(0) rotate(-2deg) rotateY(180deg) !important;
+        }
+
+        .tour-card.position-2.flipped {
+            transform: translateX(0) rotate(1deg) rotateY(180deg) !important;
+        }
+
+        .tour-card.position-3.flipped {
+            transform: translateX(0) rotate(-1deg) rotateY(180deg) !important;
+        }
+
+        .tour-card.position-4.flipped {
+            transform: translateX(0) rotate(2deg) rotateY(180deg) !important;
+        }
+
+        .tour-card.position-5.flipped {
+            transform: translateX(0) rotate(-1deg) rotateY(180deg) !important;
+        }
+
+        /* Card Content Styles */
+        .pain-point-stat {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #FF6B6B;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+            line-height: 1.3;
+            text-align: center;
+            background: rgba(255, 107, 107, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #FF6B6B;
+            text-align: center;
+            filter: drop-shadow(0 0 10px rgba(255, 107, 107, 0.5));
+        }
+
+        .card-title {
+            font-family: 'Big Shoulders Display', cursive;
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #FFFFFF;
+            line-height: 1.2;
+            text-align: center;
+        }
+
+        .card-description {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            color: #CCCCCC;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+
+        .proof-heading {
+            color: #FF6B6B;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: center;
+        }
+
+        .proof-points {
+            margin-bottom: 25px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .proof-points ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .proof-points li {
+            color: #CCCCCC;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: flex-start;
+            line-height: 1.4;
+            padding-left: 0;
+        }
+
+        .proof-points li::before {
+            content: '✓';
+            color: #FF6B6B;
+            font-weight: bold;
+            margin-right: 10px;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        /* Scrollbar styling */
+        .proof-points::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .proof-points::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .proof-points::-webkit-scrollbar-thumb {
+            background: rgba(255, 107, 107, 0.6);
+            border-radius: 3px;
+        }
+
+        .proof-points::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 107, 107, 0.8);
+        }
+
+        .card-cta {
+            margin-top: auto;
+            display: inline-block;
+            background: linear-gradient(45deg, #FF6B6B, #ff5252);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 25px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-cta:hover {
+            background: linear-gradient(45deg, #ff5252, #ff3030);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        /* Shuffle Button */
+        .shuffle-button {
+            background: rgba(255, 107, 107, 0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 107, 107, 0.4);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 40px;
+        }
+
+        .shuffle-button:hover {
+            background: rgba(255, 107, 107, 0.3);
+            border-color: rgba(255, 107, 107, 0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-headline {
+                font-size: 2.5rem;
+            }
+            
+            .card-stack {
+                width: 320px;
+                height: 520px;
+            }
+
+            .tour-card {
+                width: 280px;
+                height: 450px;
+            }
+
+            .tour-card.position-1 {
+                left: 20px;
+            }
+
+            .tour-card.position-2 {
+                left: 15px;
+            }
+
+            .tour-card.position-3 {
+                left: 10px;
+            }
+
+            .tour-card.position-4 {
+                left: 5px;
+            }
+
+            .tour-card.position-5 {
+                left: 0px;
+            }
+        }
+
+        /* Shuffle Animation */
+        .card-stack.shuffling .tour-card {
+            transition: all 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .shuffling .tour-card.position-1 { 
+            transform: translateX(0) rotate(-2deg) translateY(-30px) scale(0.9); 
+        }
+        .shuffling .tour-card.position-2 { 
+            transform: translateX(0) rotate(1deg) translateY(-25px) scale(0.9); 
+        }
+        .shuffling .tour-card.position-3 { 
+            transform: translateX(0) rotate(-1deg) translateY(-20px) scale(0.9); 
+        }
+        .shuffling .tour-card.position-4 { 
+            transform: translateX(0) rotate(2deg) translateY(-15px) scale(0.9); 
+        }
+        .shuffling .tour-card.position-5 { 
+            transform: translateX(0) rotate(-1deg) translateY(-10px) scale(0.9); 
+        }
+
+        /* Preserve flip state during shuffling */
+        .shuffling .tour-card.position-1.flipped { 
+            transform: translateX(0) rotate(-2deg) translateY(-30px) scale(0.9) rotateY(180deg); 
+        }
+        .shuffling .tour-card.position-2.flipped { 
+            transform: translateX(0) rotate(1deg) translateY(-25px) scale(0.9) rotateY(180deg); 
+        }
+        .shuffling .tour-card.position-3.flipped { 
+            transform: translateX(0) rotate(-1deg) translateY(-20px) scale(0.9) rotateY(180deg); 
+        }
+        .shuffling .tour-card.position-4.flipped { 
+            transform: translateX(0) rotate(2deg) translateY(-15px) scale(0.9) rotateY(180deg); 
+        }
+        .shuffling .tour-card.position-5.flipped { 
+            transform: translateX(0) rotate(-1deg) translateY(-10px) scale(0.9) rotateY(180deg); 
+        }
+    </style>
+</head>
+<body>
+    <!-- Quick Tour Section -->
+    <section id="quick-tour" class="quick-tour-section">
+        <div class="container">
+            <div class="section-header">
+                <p class="section-subtitle">YOUR BIGGEST CHALLENGES</p>
+                <h2 class="main-headline">
+                    I don't just solve marketing problems,<br>
+                    I eliminate the ones keeping you up at night.
+                </h2>
+                <p class="section-description">
+                    From invisible brands to campaigns that don't convert,<br>
+                    here's how I've solved these exact problems at global scale.
+                </p>
+            </div>
+            <div class="cards-container">
+                <div class="card-stack" id="cardStack">
+                    <!-- Card 1: Launch Challenge -->
+                    <div class="tour-card position-1" data-card="1">
+                        <div class="card-face card-back"></div>
+                        <div class="card-face card-front">
+                            <div class="pain-point-stat">73% OF LAUNCHES FAIL TO MEET TARGETS</div>
+                            
+                            <div class="card-icon">
+                                <i class="fas fa-rocket"></i>
+                            </div>
+                            
+                            <div class="card-title">Your Launch Gets Buried<br>in the Noise</div>
+                            
+                            <div class="card-description">You've built something amazing, but nobody notices. Your launch gets buried under competitor announcements and confusing messaging.</div>
+                            
+                            <div class="proof-heading">How I've Delivered Launch Success at Scale:</div>
+                            <div class="proof-points">
+                                <ul>
+                                    <li>12 Major Product Launches</li>
+                                    <li>2.5M+ views, 40% adoption</li>
+                                    <li>85% success above KPIs</li>
+                                    <li>Strategic positioning workshops</li>
+                                    <li>Multi-touchpoint messaging maps</li>
+                                    <li>Performance tracking dashboards</li>
+                                    <li>Crisis communication protocols</li>
+                                    <li>Competitive analysis and differentiation</li>
+                                    <li>Media relations and PR coordination</li>
+                                    <li>Launch timeline optimization</li>
+                                    <li>Cross-functional team alignment</li>
+                                    <li>Post-launch performance analysis</li>
+                                </ul>
+                            </div>
+                            
+                            <a href="https://luis-gilberto.netlify.app/myexperience.html#stories" target="_blank" class="card-cta">See Launch Case Studies</a>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Brand Differentiation Challenge -->
+                    <div class="tour-card position-2" data-card="2">
+                        <div class="card-face card-back"></div>
+                        <div class="card-face card-front">
+                            <div class="pain-point-stat">89% OF BRANDS FAIL TO DIFFERENTIATE</div>
+                            
+                            <div class="card-icon">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            
+                            <div class="card-title">Your Brand Blends Into<br>the Background</div>
+                            
+                            <div class="card-description">Your competitors use the same buzzwords and claims. Customers can't tell you apart, so they choose based on price.</div>
+                            
+                            <div class="proof-heading">My Track Record Repositioning Brands:</div>
+                            <div class="proof-points">
+                                <ul>
+                                    <li>150M+ users reached</li>
+                                    <li>6 Microsoft products repositioned</li>
+                                    <li>75% engagement increase</li>
+                                    <li>Brand architecture development</li>
+                                    <li>Competitive positioning strategies</li>
+                                    <li>Voice and tone guidelines creation</li>
+                                    <li>Visual identity system design</li>
+                                    <li>Market research and insights analysis</li>
+                                    <li>Brand personality definition</li>
+                                    <li>Messaging hierarchy frameworks</li>
+                                    <li>Cross-platform consistency guidelines</li>
+                                    <li>Brand performance measurement</li>
+                                </ul>
+                            </div>
+                            
+                            <a href="https://luis-gilberto.netlify.app/case-study-free-to-be-free.html" target="_blank" class="card-cta">Explore Brand Work</a>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Campaign Conversion Challenge -->
+                    <div class="tour-card position-3" data-card="3">
+                        <div class="card-face card-back"></div>
+                        <div class="card-face card-front">
+                            <div class="pain-point-stat">68% OF CAMPAIGNS DON'T DRIVE RESULTS</div>
+                            
+                            <div class="card-icon">
+                                <i class="fas fa-chart-bar"></i>
+                            </div>
+                            
+                            <div class="card-title">Your Campaigns Don't<br>Convert</div>
+                            
+                            <div class="card-description">Beautiful creative that gets likes but not leads. Impressive reach that doesn't translate to revenue.</div>
+                            
+                            <div class="proof-heading">Proven Results I've Delivered:</div>
+                            <div class="proof-points">
+                                <ul>
+                                    <li>$25M+ media investment managed</li>
+                                    <li>60% feature adoption lift</li>
+                                    <li>90% user satisfaction scores</li>
+                                    <li>A/B testing and optimization protocols</li>
+                                    <li>Multi-channel attribution modeling</li>
+                                    <li>Customer journey mapping and analysis</li>
+                                    <li>Conversion funnel optimization</li>
+                                    <li>ROI tracking and performance reporting</li>
+                                    <li>Audience segmentation strategies</li>
+                                    <li>Creative testing methodologies</li>
+                                    <li>Budget allocation optimization</li>
+                                    <li>Cross-platform campaign coordination</li>
+                                </ul>
+                            </div>
+                            
+                            <a href="https://luis-gilberto.netlify.app/myexperience.html#edge-campaigns" target="_blank" class="card-cta">View Performance Results</a>
+                        </div>
+                    </div>
+
+                    <!-- Card 4: Message Retention Challenge -->
+                    <div class="tour-card position-4" data-card="4">
+                        <div class="card-face card-back"></div>
+                        <div class="card-face card-front">
+                            <div class="pain-point-stat">95% OF MESSAGES ARE FORGOTTEN</div>
+                            
+                            <div class="card-icon">
+                                <i class="fas fa-comment"></i>
+                            </div>
+                            
+                            <div class="card-title">Your Message Doesn't<br>Stick</div>
+                            
+                            <div class="card-description">People see your content then immediately forget you exist. Your message lacks emotional connection.</div>
+                            
+                            <div class="proof-heading">How I Create Messages That Stick:</div>
+                            <div class="proof-points">
+                                <ul>
+                                    <li>Character-driven narratives</li>
+                                    <li>6-year story arc development</li>
+                                    <li>92% brand sentiment improvement</li>
+                                    <li>Emotional resonance testing and validation</li>
+                                    <li>Memorable hook and tagline development</li>
+                                    <li>Storytelling framework implementation</li>
+                                    <li>Content series and narrative continuity</li>
+                                    <li>Brand voice consistency across touchpoints</li>
+                                    <li>Psychological triggers and cognitive biases</li>
+                                    <li>Memory palace and retention strategies</li>
+                                    <li>Visual and auditory memory anchors</li>
+                                    <li>Message testing and recall measurement</li>
+                                </ul>
+                            </div>
+                            
+                            <a href="https://luis-gilberto.netlify.app/case-study-fsa.html" target="_blank" class="card-cta">Experience Storytelling</a>
+                        </div>
+                    </div>
+
+                    <!-- Card 5: Messaging Consistency Challenge -->
+                    <div class="tour-card position-5" data-card="5">
+                        <div class="card-face card-back"></div>
+                        <div class="card-face card-front">
+                            <div class="pain-point-stat">INCONSISTENT MESSAGING COSTS 23%</div>
+                            
+                            <div class="card-icon">
+                                <i class="fas fa-link"></i>
+                            </div>
+                            
+                            <div class="card-title">Your Messaging is<br>Inconsistent</div>
+                            
+                            <div class="card-description">LinkedIn sounds corporate, TikTok tries too hard, website is formal. Customers get confused.</div>
+                            
+                            <div class="proof-heading">My Experience Unifying Brand Voice:</div>
+                            <div class="proof-points">
+                                <ul>
+                                    <li>8 global markets harmonized</li>
+                                    <li>100M+ impressions, unified voice</li>
+                                    <li>Cross-platform ecosystem success</li>
+                                    <li>Brand voice guidelines and documentation</li>
+                                    <li>Cross-team training and implementation</li>
+                                    <li>Content approval workflows and systems</li>
+                                    <li>Voice consistency monitoring tools</li>
+                                    <li>Multi-language adaptation strategies</li>
+                                    <li>Comprehensive voice audit across channels</li>
+                                    <li>Stakeholder alignment workshops</li>
+                                    <li>Tone of voice matrix development</li>
+                                    <li>Content style guide creation</li>
+                                </ul>
+                            </div>
+                            
+                            <a href="https://luis-gilberto.netlify.app/case-study-teams-final-dm.html" target="_blank" class="card-cta">See Teams Launch System</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="shuffle-button" id="shuffleBtn">Shuffle Problems</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Ensure script runs when page loads
+        (function() {
+            console.log('Card flip script loading...');
+            
+            function initializeCards() {
+                console.log('Initializing card flip functionality...');
+                
+                const cards = document.querySelectorAll('.tour-card');
+                console.log('Found', cards.length, 'cards');
+                
+                if (cards.length === 0) {
+                    console.error('No cards found!');
+                    return;
+                }
+                
+                cards.forEach((card, index) => {
+                    console.log('Setting up card', index + 1);
+                    
+                    // Ensure card is clickable
+                    card.style.pointerEvents = 'auto';
+                    card.style.cursor = 'pointer';
+                    
+                    // Remove any existing event listeners
+                    const newCard = card.cloneNode(true);
+                    card.parentNode.replaceChild(newCard, card);
+                    
+                    // Add click event to the new card
+                    newCard.addEventListener('click', function(e) {
+                        // Don't flip if clicking on a link
+                        if (e.target.tagName === 'A' || e.target.closest('a')) {
+                            console.log('Link clicked, not flipping card');
+                            return;
+                        }
+                        
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        console.log('Card', index + 1, 'clicked!');
+                        
+                        // Toggle flip state
+                        if (newCard.classList.contains('flipped')) {
+                            newCard.classList.remove('flipped');
+                            console.log('Card', index + 1, 'showing back (design)');
+                        } else {
+                            newCard.classList.add('flipped');
+                            console.log('Card', index + 1, 'showing front (content)');
+                        }
+                        
+                        console.log('Card classes after flip:', newCard.className);
+                    });
+                    
+                    // Add hover effect for better UX
+                    newCard.addEventListener('mouseenter', function() {
+                        if (!newCard.classList.contains('flipped')) {
+                            newCard.style.transform = newCard.style.transform + ' scale(1.02)';
+                        }
+                    });
+                    
+                    newCard.addEventListener('mouseleave', function() {
+                        if (!newCard.classList.contains('flipped')) {
+                            newCard.style.transform = newCard.style.transform.replace(' scale(1.02)', '');
+                        }
+                    });
+                    
+                    console.log('Card', index + 1, 'setup complete');
+                });
+                
+                console.log('All cards initialized!');
+                
+                // Update cards reference for shuffle function
+                window.gameCards = document.querySelectorAll('.tour-card');
+            }
+            
+            // Shuffle functionality
+            function shuffleCards() {
+                const cards = window.gameCards || document.querySelectorAll('.tour-card');
+                const cardStack = document.querySelector('.card-stack');
+                
+                if (cards.length === 0) {
+                    console.error('No cards found to shuffle');
+                    return;
+                }
+                
+                console.log('Shuffling', cards.length, 'cards');
+                
+                // Add shuffling animation class
+                cardStack.classList.add('shuffling');
+                
+                // Create array of position classes
+                const positions = ['position-1', 'position-2', 'position-3', 'position-4', 'position-5'];
+                
+                // Shuffle the positions array
+                const shuffledPositions = [...positions].sort(() => Math.random() - 0.5);
+                
+                // Apply new positions to cards
+                cards.forEach((card, index) => {
+                    // Store current flip state
+                    const wasFlipped = card.classList.contains('flipped');
+                    
+                    // Remove old position class
+                    card.className = card.className.replace(/position-\d+/g, '');
+                    // Add new position class
+                    card.classList.add(shuffledPositions[index]);
+                    
+                    // Restore flip state
+                    if (wasFlipped) {
+                        card.classList.add('flipped');
+                    }
+                    
+                    console.log('Card', index + 1, 'moved to', shuffledPositions[index]);
+                });
+                
+                // Remove shuffling class after animation
+                setTimeout(() => {
+                    cardStack.classList.remove('shuffling');
+                    console.log('Shuffle animation complete');
+                }, 1200);
+            }
+            
+            // Initialize when DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    console.log('DOM loaded, initializing...');
+                    initializeCards();
+                    
+                    // Set up shuffle button
+                    const shuffleButton = document.getElementById('shuffleBtn');
+                    if (shuffleButton) {
+                        shuffleButton.addEventListener('click', shuffleCards);
+                        console.log('Shuffle button initialized');
+                    } else {
+                        console.error('Shuffle button not found');
+                    }
+                });
+            } else {
+                console.log('DOM already loaded, initializing immediately...');
+                initializeCards();
+                
+                // Set up shuffle button
+                const shuffleButton = document.getElementById('shuffleBtn');
+                if (shuffleButton) {
+                    shuffleButton.addEventListener('click', shuffleCards);
+                    console.log('Shuffle button initialized');
+                } else {
+                    console.error('Shuffle button not found');
+                }
+            }
+            
+            // Additional fallback
+            setTimeout(function() {
+                console.log('Fallback initialization...');
+                const cards = document.querySelectorAll('.tour-card');
+                if (cards.length > 0 && !window.cardsInitialized) {
+                    initializeCards();
+                    window.cardsInitialized = true;
+                }
+            }, 2000);
+            
+        })();
+    </script>
+</body>
+</html>

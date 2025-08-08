@@ -75,7 +75,7 @@ const observer = new IntersectionObserver((entries) => {
 
 // Observe elements for animation
 document.addEventListener('DOMContentLoaded', () => {
-    const animateElements = document.querySelectorAll('.tour-card, .about-content, .whats-next');
+    const animateElements = document.querySelectorAll('.about-content, .whats-next');
     
     animateElements.forEach(el => {
         el.style.opacity = '0';

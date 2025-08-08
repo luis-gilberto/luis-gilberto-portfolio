@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luis Gilberto - Interactive Flip Cards</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@400;700;900&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Global Styles */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 100vh;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 50vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .hero-content h1 {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: white;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .hero-content p {
+            color: #F96F6E;
+            text-align: center;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Quick Tour Section */
+        .quick-tour-section {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .section-subtitle {
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            color: #F96F6E;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .main-headline {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 3.2rem;
+            font-weight: 400;
+            line-height: 1.2;
+            color: white;
+            margin-bottom: 24px;
+            letter-spacing: -0.01em;
+        }
+
+        .section-description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #F96F6E;
+            opacity: 0.9;
+            margin-bottom: 0;
+            font-weight: 400;
+        }
+
+        /* Cards Container */
+        .cards-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .card-stack {
+            position: relative;
+            width: 400px;
+            height: 500px;
+            margin-bottom: 40px;
+        }
+
+        /* Tour Card Styles */
+        .tour-card {
+            position: absolute;
+            width: 300px;
+            height: 420px;
+            transform-style: preserve-3d;
+            transition: transform 0.8s ease-in-out;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateX(-400px);
+        }
+
+        .tour-card.animate-in {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .tour-card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        /* Card Face Styles */
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+        }
+
+        .card-back {
+            background-image: url('C:/Users/luisg/OneDrive/Documents/Luis Gilberto/assets/images/card.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transform: rotateY(0deg);
+        }
+
+        .card-front {
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 25px;
+            color: white;
+            backdrop-filter: blur(10px);
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            overflow-y: auto;
+        }
+
+        .card-front::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .card-front::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .card-front::-webkit-scrollbar-thumb {
+            background: rgba(249, 111, 110, 0.6);
+            border-radius: 3px;
+        }
+
+        .card-front::-webkit-scrollbar-thumb:hover {
+            background: rgba(249, 111, 110, 0.8);
+        }
+
+        /* Card Positions */
+        .tour-card.position-1 {
+            top: 0;
+            left: 50px;
+            z-index: 5;
+            transform: translateX(-400px) rotate(-3deg);
+        }
+
+        .tour-card.position-1.animate-in {
+            transform: translateX(0) rotate(-3deg);
+        }
+
+        .tour-card.position-1.flipped {
+            transform: translateX(0) rotate(-3deg) rotateY(180deg);
+        }
+
+        .tour-card.position-2 {
+            top: 15px;
+            left: 65px;
+            z-index: 4;
+            transform: translateX(-400px) rotate(2deg);
+        }
+
+        .tour-card.position-2.animate-in {
+            transform: translateX(15px) rotate(2deg);
+        }
+
+        .tour-card.position-2.flipped {
+            transform: translateX(15px) rotate(2deg) rotateY(180deg);
+        }
+
+        .tour-card.position-3 {
+            top: 30px;
+            left: 80px;
+            z-index: 3;
+            transform: translateX(-400px) rotate(-1deg);
+        }
+
+        .tour-card.position-3.animate-in {
+            transform: translateX(30px) rotate(-1deg);
+        }
+
+        .tour-card.position-3.flipped {
+            transform: translateX(30px) rotate(-1deg) rotateY(180deg);
+        }
+
+        .tour-card.position-4 {
+            top: 45px;
+            left: 95px;
+            z-index: 2;
+            transform: translateX(-400px) rotate(3deg);
+        }
+
+        .tour-card.position-4.animate-in {
+            transform: translateX(45px) rotate(3deg);
+        }
+
+        .tour-card.position-4.flipped {
+            transform: translateX(45px) rotate(3deg) rotateY(180deg);
+        }
+
+        .tour-card.position-5 {
+            top: 60px;
+            left: 110px;
+            z-index: 1;
+            transform: translateX(-400px) rotate(-2deg);
+        }
+
+        .tour-card.position-5.animate-in {
+            transform: translateX(60px) rotate(-2deg);
+        }
+
+        .tour-card.position-5.flipped {
+            transform: translateX(60px) rotate(-2deg) rotateY(180deg);
+        }
+
+        /* Card Content */
+        .pain-point-stat {
+            color: #F96F6E;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: #F96F6E;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-title {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #FFFFFF;
+            line-height: 1.3;
+        }
+
+        .card-description {
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: #CCCCCC;
+            font-size: 0.9rem;
+        }
+
+        .proof-points-header {
+            color: #F96F6E;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .proof-points {
+            margin-bottom: 20px;
+        }
+
+        .proof-points ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .proof-points li {
+            color: #CCCCCC;
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: flex-start;
+            line-height: 1.4;
+        }
+
+        .proof-points li::before {
+            content: '✓';
+            color: #F96F6E;
+            font-weight: bold;
+            margin-right: 10px;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .card-cta {
+            margin-top: auto;
+        }
+
+        .card-cta a {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-cta a:hover {
+            background: rgba(249, 111, 110, 0.2);
+            border-color: rgba(249, 111, 110, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(249, 111, 110, 0.3);
+        }
+
+        /* Interaction Prompts */
+        .interaction-prompt {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            color: #333;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-align: center;
+            z-index: 10;
+            animation: gentlePulse 2s ease-in-out infinite;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .interaction-prompt.show {
+            opacity: 1;
+        }
+
+        @keyframes gentlePulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.05); }
+        }
+
+        /* Shuffle Button */
+        .shuffle-button {
+            background: linear-gradient(45deg, #F96F6E, #ff5252);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(249, 111, 110, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .shuffle-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(249, 111, 110, 0.4);
+        }
+
+        .shuffle-button.pulsate {
+            animation: buttonPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes buttonPulse {
+            0%, 100% { transform: translateY(-2px) scale(1); }
+            50% { transform: translateY(-2px) scale(1.05); }
+        }
+
+        /* Shuffle Animation */
+        .card-stack.shuffling .tour-card {
+            transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .card-stack.shuffling .tour-card.position-1 {
+            transform: translateX(-100px) rotate(-15deg) translateY(-50px) scale(0.9);
+        }
+
+        .card-stack.shuffling .tour-card.position-2 {
+            transform: translateX(120px) rotate(20deg) translateY(-30px) scale(0.9);
+        }
+
+        .card-stack.shuffling .tour-card.position-3 {
+            transform: translateX(-80px) rotate(-10deg) translateY(-40px) scale(0.9);
+        }
+
+        .card-stack.shuffling .tour-card.position-4 {
+            transform: translateX(100px) rotate(25deg) translateY(-20px) scale(0.9);
+        }
+
+        .card-stack.shuffling .tour-card.position-5 {
+            transform: translateX(-60px) rotate(-20deg) translateY(-60px) scale(0.9);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .card-stack {
+                width: 320px;
+                height: 400px;
+            }
+
+            .tour-card {
+                width: 280px;
+                height: 380px;
+            }
+
+            .main-headline {
+                font-size: 2.5rem;
+            }
+
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card-stack {
+                width: 300px;
+                height: 380px;
+            }
+
+            .tour-card {
+                width: 260px;
+                height: 360px;
+            }
+
+            .main-headline {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1>Where Art Meets ROI</h1>
+            <p>Interactive challenges that reveal proven solutions at global scale.</p>
+        </div>
+    </section>
+
+    <!-- Quick Tour Section -->
+    <section id="quick-tour" class="quick-tour-section">
+        <div class="container mx-auto px-4">
+            <div class="section-header">
+                <p class="section-subtitle">YOUR BIGGEST CHALLENGES</p>
+                <h2 class="main-headline">
+                    I don't just solve marketing problems,<br>
+                    I eliminate the ones keeping you up at night.
+                </h2>
+                <p class="section-description">
+                    From invisible brands to campaigns that don't convert,<br>
+                    here's how I've solved these exact problems at global scale.
+                </p>
+            </div>
+
+            <div class="cards-container">
+                <div class="card-stack" id="cardStack">
+                    <!-- Card 1: Launches -->
+                    <div class="tour-card position-1" data-card="1">
+                        <div class="card-face card-back"></div>
+                        <div class="card-face card-front">
+                            <div class="pain-point-stat">73% OF LAUNCHES FAIL TO MEET TARGETS</div>
+                            <div class="card-icon">🚀</div>
+                            <div class="card-title">Your Launch Gets Buried in the Noise</div>
+                            <div class="card-description">You've built something amazing, but nobody notices. Your launch gets buried under competitor announcements, confusing messaging, and campaigns that look like everyone else's. Months of development deserve more than crickets.</div>
+                            
+                            <div class="proof-points-header">Proven Solutions from My Experience:</div>
+                            <div class="proof-points">
+                                <ul>
+                                    <li>12 Major Product Launches at Microsoft</li>
+                                    <li>Family Safety: 2.5M+ views, 40% adoption</li>
+                                    <li>Teams Consumer: 10M+ new users</li>
+                                    <li>85% Average success above KPIs</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="card-cta">
+                                <a href="#" onclick="alert('View Launch Experience')">View Launch Experience</a>
+                            </div>
+                        </div>
+                        <div class="interaction-prompt">Click to reveal</div>
+                    </div>
+
+                    <!-- Card 2: Brands -->
+                    <div class="tour-card position-2" data-card="2">
+                        <div class="card-face card-back"></div>
+                        <div class="card-face card-front">
+                            <div class="pain-point-stat">89% OF BRANDS FAIL TO DIFFERENTIATE</div>
+                            <div class="card-icon">⚡</div>
+                            <div class="card-title">Your Brand Blends Into the Background</div>
+                            <div class="card-description">Your competitors use the same buzzwords, same stock photos, same "revolutionary" claims. Customers can't tell you apart, so they choose based on price or whoever they heard of first. Your unique value gets lost in the sea of sameness.</div>
+                            
+                            <div class="proof-points-header">Proven Solutions from My Experience:</div>
+                            <div class="proof-points">
+                                <ul>
+                                    <li>150M+ Total users reached</li>
+                                    <li>Teams: B2B to consumer transformation</li>
+                                    <li>Free to Be Free: 75% engagement increase</li>
+                                    <li>568M campaign impressions</li>
+                                    <li>6 Microsoft products repositioned</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="card-cta">
+                                <a href="#" onclick="alert('View Brand Work')">View Brand Work</a>
+                            </div>
+                        </div>
+                        <div class="interaction-prompt">Click to reveal</div>
+                    </div>
+
+                    <!-- Card 3: Campaigns -->
+                    <div class="tour-card position-3" data-card="3">
+                        <div class="card-face card-back"></div>
+                        <div class="card-face card-front">
+                            <div class="pain-point-stat">68% OF CAMPAIGNS DON'T DRIVE RESULTS</div>
+                            <div class="card-icon">📊</div>
+                            <div class="card-title">Your Campaigns Don't Convert</div>
+                            <div class="card-description">Your campaigns win awards but not customers. Beautiful creative that gets likes but not leads. Impressive reach numbers that don't translate to revenue. Leadership questions every marketing dollar because they can't see the business impact.</div>
+                            
+                            <div class="proof-points-header">Proven Solutions from My Experience:</div>
+                            <div class="proof-points">
+                                <ul>
+                                    <li>$25M+ Media investment managed</li>
+                                    <li>Edge-ucational: 60% feature adoption lift</li>
+                                    <li>AI Browsing: 15M+ feature activations</li>
+                                    <li>85% Success rate above KPI targets</li>
+                                    <li>90% User satisfaction scores</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="card-cta">
+                                <a href="#" onclick="alert('View Campaign Results')">View Campaign Results</a>
+                            </div>
+                        </div>
+                        <div class="interaction-prompt">Click to reveal</div>
+                    </div>
+
+                    <!-- Card 4: Messages -->
+                    <div class="tour-card position-4" data-card="4">
+                        <div class="card-face card-back"></div>
+                        <div class="card-face card-front">
+                            <div class="pain-point-stat">95% OF MESSAGES ARE FORGOTTEN</div>
+                            <div class="card-icon">💭</div>
+                            <div class="card-title">Your Message Doesn't Stick</div>
+                            <div class="card-description">People see your ads, visit your site, even engage with your content—then immediately forget you exist. Your message doesn't create the emotional connection needed to influence decisions weeks or months later when they're ready to buy.</div>
+                            
+                            <div class="proof-points-header">Proven Solutions from My Experience:</div>
+                            <div class="proof-points">
+                                <ul>
+                                    <li>Character-driven narratives at scale</li>
+                                    <li>Family Safety: 6-year story arc</li>
+                                    <li>3x Above benchmark engagement</li>
+                                    <li>92% Brand sentiment improvement</li>
+                                    <li>100M+ Campaign impressions</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="card-cta">
+                                <a href="#" onclick="alert('View Messaging Strategy')">View Messaging Strategy</a>
+                            </div>
+                        </div>
+                        <div class="interaction-prompt">Click to reveal</div>
+                    </div>
+
+                    <!-- Card 5: Consistency -->
+                    <div class="tour-card position-5" data-card="5">
+                        <div class="card-face card-back"></div>
+                        <div class="card-face card-front">
+                            <div class="pain-point-stat">INCONSISTENT MESSAGING COSTS 23%</div>
+                            <div class="card-icon">🔗</div>
+                            <div class="card-title">Your Messaging is Inconsistent</div>
+                            <div class="card-description">Your LinkedIn sounds corporate, your TikTok tries too hard to be cool, your website is formal, and your ads are all over the place. Customers get confused by your multiple personalities and lose trust in who you really are.</div>
+                            
+                            <div class="proof-points-header">Proven Solutions from My Experience:</div>
+                            <div class="proof-points">
+                                <ul>
+                                    <li>Modular campaigns across 8 global markets</li>
+                                    <li>Teams: Consistent messaging, all channels</li>
+                                    <li>Cross-platform Microsoft ecosystem</li>
+                                    <li>100M+ impressions, unified voice</li>
+                                    <li>15+ Market segments harmonized</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="card-cta">
+                                <a href="#" onclick="alert('View Consistency Framework')">View Consistency Framework</a>
+                            </div>
+                        </div>
+                        <div class="interaction-prompt">Click to reveal</div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-8">
+                    <button class="shuffle-button" id="shuffleBtn">
+                        <i class="fas fa-shuffle mr-2"></i>Shuffle Problems
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.tour-card');
+            const shuffleButton = document.getElementById('shuffleBtn');
+            const cardStack = document.querySelector('.card-stack');
+            let lastInteractionTime = Date.now();
+            let promptTimers = new Map();
+            let shuffleButtonPulseInterval;
+
+            // Entrance animation
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        cards.forEach((card, index) => {
+                            setTimeout(() => {
+                                card.classList.add('animate-in');
+                            }, index * 200);
+                        });
+                        observer.unobserve(entry.target);
+                        startShuffleButtonPulse();
+                    }
+                });
+            }, { threshold: 0.3 });
+
+            if (cardStack) {
+                observer.observe(cardStack);
+            }
+
+            // Card flip functionality
+            cards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    lastInteractionTime = Date.now();
+                    clearPromptTimer(this);
+                    
+                    if (this.classList.contains('flipped')) {
+                        this.classList.remove('flipped');
+                        startPromptTimer(this, 'Click to reveal');
+                    } else {
+                        this.classList.add('flipped');
+                        startPromptTimer(this, 'Click to flip');
+                    }
+                });
+                
+                startPromptTimer(card, 'Click to reveal');
+            });
+
+            // Shuffle functionality
+            if (shuffleButton) {
+                shuffleButton.addEventListener('click', function() {
+                    lastInteractionTime = Date.now();
+                    shuffleCards();
+                    stopShuffleButtonPulse();
+                    setTimeout(startShuffleButtonPulse, 30000);
+                });
+            }
+
+            function shuffleCards() {
+                cardStack.classList.add('shuffling');
+                
+                const positions = ['position-1', 'position-2', 'position-3', 'position-4', 'position-5'];
+                const shuffledPositions = [...positions].sort(() => Math.random() - 0.5);
+                
+                cards.forEach((card, index) => {
+                    positions.forEach(pos => card.classList.remove(pos));
+                    card.classList.add(shuffledPositions[index]);
+                    card.classList.remove('flipped');
+                    clearPromptTimer(card);
+                    startPromptTimer(card, 'Click to reveal');
+                });
+                
+                setTimeout(() => {
+                    cardStack.classList.remove('shuffling');
+                }, 800);
+            }
+
+            function startPromptTimer(card, message) {
+                clearPromptTimer(card);
+                const timer = setTimeout(() => {
+                    if (Date.now() - lastInteractionTime >= 15000) {
+                        showPrompt(card, message);
+                    }
+                }, 15000);
+                promptTimers.set(card, timer);
+            }
+
+            function clearPromptTimer(card) {
+                if (promptTimers.has(card)) {
+                    clearTimeout(promptTimers.get(card));
+                    promptTimers.delete(card);
+                }
+                hidePrompt(card);
+            }
+
+            function showPrompt(card, message) {
+                const prompt = card.querySelector('.interaction-prompt');
+                if (prompt) {
+                    prompt.textContent = message;
+                    prompt.classList.add('show');
+                    
+                    setTimeout(() => {
+                        hidePrompt(card);
+                    }, 3000);
+                }
+            }
+
+            function hidePrompt(card) {
+                const prompt = card.querySelector('.interaction-prompt');
+                if (prompt) {
+                    prompt.classList.remove('show');
+                }
+            }
+
+            function startShuffleButtonPulse() {
+                if (shuffleButton && !shuffleButtonPulseInterval) {
+                    shuffleButtonPulseInterval = setInterval(() => {
+                        if (Date.now() - lastInteractionTime >= 30000) {
+                            shuffleButton.classList.add('pulsate');
+                        } else {
+                            shuffleButton.classList.remove('pulsate');
+                        }
+                    }, 1000);
+                }
+            }
+
+            function stopShuffleButtonPulse() {
+                if (shuffleButton) {
+                    shuffleButton.classList.remove('pulsate');
+                }
+                if (shuffleButtonPulseInterval) {
+                    clearInterval(shuffleButtonPulseInterval);
+                    shuffleButtonPulseInterval = null;
+                }
+            }
+
+            // Track user activity
+            ['click', 'scroll', 'mousemove', 'keypress'].forEach(event => {
+                document.addEventListener(event, () => {
+                    lastInteractionTime = Date.now();
+                });
+            });
+
+            // CTA button functionality
+            document.querySelectorAll('.card-cta a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    lastInteractionTime = Date.now();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+    <script id="html_badge_script1">
+        window.__genspark_remove_badge_link = "https://www.genspark.ai/api/html_badge/" +
+            "remove_badge?token=To%2FBnjzloZ3UfQdcSaYfDgu2ZUXiRssZW8U9%2BAvCW6oEVzHd1h%2Bqm6lhft9B3pGHOWAubu4xwP0y33%2F4uRN1So3JXmjXRndqa9oF%2FTxI7cmlHigc%2F1Ha1A8BMpvFm7yU%2Fdm99wvd1RZTXFVx4dcsPncDoqA5ebZSk8Q%2Ff1NTh8kHOStCuE2Mh%2F41Ql%2F%2BjvmS51Y9rFqDF9s4HB931H3pD9MLbgbSyREepwGrn3TeHpQOwfWhqdA8iOqXFZw8wgGyMvSEa0EfVZp1Pi4KagVFWxjOC4l6egF1JbPSSieGv9JX3olGnJOe5FhyIduS%2F0dAX3agGu8NlnYbDpqcYze9VzlpweiCUcXg8vwMq%2F%2BIgJYkxT3XigZgMce0UI%2BQqCKQvr02w%2FlGN3WmK10oaF3XZ8y8QChJKk7UfLEosVB35tLOoaI%2FeguKbv02amr6ECdCUm1FdpWMpSqgET9%2BdSkD7vTbgWV1JsCHCYE9zkbk4bVBYENx%2B3SCfDTxFc3qVxo9DT6KQTMdw0ihmHFUw%2BSIxnos8eMNkeLMra74zS7%2FYKY%3D";
+        window.__genspark_locale = "en-US";
+        window.__genspark_token = "To/BnjzloZ3UfQdcSaYfDgu2ZUXiRssZW8U9+AvCW6oEVzHd1h+qm6lhft9B3pGHOWAubu4xwP0y33/4uRN1So3JXmjXRndqa9oF/TxI7cmlHigc/1Ha1A8BMpvFm7yU/dm99wvd1RZTXFVx4dcsPncDoqA5ebZSk8Q/f1NTh8kHOStCuE2Mh/41Ql/+jvmS51Y9rFqDF9s4HB931H3pD9MLbgbSyREepwGrn3TeHpQOwfWhqdA8iOqXFZw8wgGyMvSEa0EfVZp1Pi4KagVFWxjOC4l6egF1JbPSSieGv9JX3olGnJOe5FhyIduS/0dAX3agGu8NlnYbDpqcYze9VzlpweiCUcXg8vwMq/+IgJYkxT3XigZgMce0UI+QqCKQvr02w/lGN3WmK10oaF3XZ8y8QChJKk7UfLEosVB35tLOoaI/eguKbv02amr6ECdCUm1FdpWMpSqgET9+dSkD7vTbgWV1JsCHCYE9zkbk4bVBYENx+3SCfDTxFc3qVxo9DT6KQTMdw0ihmHFUw+SIxnos8eMNkeLMra74zS7/YKY=";
+    </script>
+    
+    <script id="html_notice_dialog_script" src="https://www.genspark.ai/notice_dialog.js"></script>
+    
