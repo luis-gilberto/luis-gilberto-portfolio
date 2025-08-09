@@ -145,6 +145,11 @@
             border: 1px solid rgba(249, 111, 110, 0.1);
             backdrop-filter: blur(10px);
         }
+        
+        /* Hide mobile progress indicator on desktop */
+        .mobile-timeline-progress {
+            display: none;
+        }
 
         .timeline-header {
             text-align: center;
@@ -523,6 +528,61 @@
                 grid-template-columns: 1fr;
                 gap: 0.5rem;
             }
+            
+            /* Mobile Timeline Optimization */
+            .timeline-sidebar {
+                background: rgba(42, 42, 42, 0.6);
+                border-radius: 12px;
+                padding: 1rem;
+                margin-bottom: 1.5rem;
+                border: 1px solid rgba(249, 111, 110, 0.1);
+            }
+            
+            .timeline-header {
+                margin-bottom: 0.75rem;
+            }
+            
+            .timeline-title {
+                font-size: 1rem !important;
+                margin-bottom: 0.25rem !important;
+            }
+            
+            .timeline-subtitle {
+                font-size: 0.8rem !important;
+                opacity: 0.7;
+            }
+            
+            .timeline-content {
+                display: none; /* Hide detailed timeline content on mobile */
+            }
+            
+            /* Add minimalist progress indicator */
+             .mobile-timeline-progress {
+                 display: flex;
+                 align-items: center;
+                 gap: 0.5rem;
+                 margin-top: 0.75rem;
+             }
+            
+            .mobile-progress-dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: rgba(249, 111, 110, 0.3);
+                transition: all 0.3s ease;
+            }
+            
+            .mobile-progress-dot.active {
+                background: #F96F6E;
+                transform: scale(1.2);
+            }
+            
+            .mobile-progress-line {
+                flex: 1;
+                height: 2px;
+                background: rgba(249, 111, 110, 0.2);
+                border-radius: 1px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -749,6 +809,16 @@
                     </div>
                 </div>
             </div>
+            <!-- Mobile minimalist progress indicator -->
+            <div class="mobile-timeline-progress">
+                <div class="mobile-progress-dot active"></div>
+                <div class="mobile-progress-line"></div>
+                <div class="mobile-progress-dot"></div>
+                <div class="mobile-progress-line"></div>
+                <div class="mobile-progress-dot"></div>
+                <div class="mobile-progress-line"></div>
+                <div class="mobile-progress-dot"></div>
+            </div>
         </div>
     </div>
 
@@ -924,6 +994,12 @@
                     `).join('')}
                 `;
             }
+            
+            // Update mobile progress indicator
+            const progressDots = sidebar.querySelectorAll('.mobile-progress-dot');
+            progressDots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentPage - 1);
+            });
         }
 
         function changePage(direction) {
