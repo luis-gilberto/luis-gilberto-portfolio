@@ -107,7 +107,8 @@ const timelineData = {
         achievements: [
             "<strong><a href='case-study-edge-ucational.html' target='_blank' style='color: inherit; text-decoration: underline;'>Edge-ucational Series</a></strong>",
             "<strong><a href='case-study-ai-browsing.html' target='_blank' style='color: inherit; text-decoration: underline;'>Edge AI Campaign</a></strong>",
-            "<strong>Mobile App Store Rebrand</strong>"
+            "<strong>Mobile App Store Rebrand</strong>",
+            "<strong><a href='insights/' target='_blank' style='color: inherit; text-decoration: underline;'>Personal Insights & Learnings</a></strong> - Reflections on career transitions and creative renaissance"
         ],
         brands: [
             { src: "assets/images/brands/edge.png", alt: "Microsoft Edge" },
