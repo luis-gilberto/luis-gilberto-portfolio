@@ -1,0 +1,32 @@
+# Netlify configuration for ScopeIQ Wizard
+
+[build]
+  publish = "."
+  command = "echo 'ScopeIQ Wizard deployed successfully'"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+[build.environment]
+  NODE_VERSION = "18.20.4"
+
+# Redirect for ScopeIQ wizard
+[[redirects]]
+  from = "/scopeiq"
+  to = "/IMCServices/scopeiq-wizard/"
+  status = 200
+
+[[redirects]]
+  from = "/scopeiq/*"
+  to = "/IMCServices/scopeiq-wizard/:splat"
+  status = 200
+
+# Headers for security
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
