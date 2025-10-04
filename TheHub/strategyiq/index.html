@@ -1,0 +1,2453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StrategyIQ™ Engine | Luis Gilberto</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        // Debug: Override prompt function to catch any calls
+        const originalPrompt = window.prompt;
+        window.prompt = function(...args) {
+            console.error('PROMPT() CALLED - This should not happen!');
+            console.error('Arguments:', args);
+            console.error('Stack trace:', new Error().stack);
+            // Return null instead of calling the original prompt
+            return null;
+        };
+        console.log('StrategyIQ: Debugging prompt() calls - page loaded');
+    </script>
+    
+    <style>
+
+        /* StrategyIQ Page Styles */
+        :root {
+            --coral: #F96F6E;
+            --teal: #2ED3C6;
+            --ink: #0F0F0F;
+            --ink-dim: rgba(255,255,255,.85);
+            --gradient: linear-gradient(90deg, var(--coral), var(--teal));
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --card-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+            --subtle-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.25);
+            --text-primary: #FFFFFF;
+            --text-secondary: #B0B0B0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--ink);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .font-display {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .text-coral { color: var(--coral); }
+        .text-teal { color: var(--teal); }
+        .text-gradient { 
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .bg-coral { background-color: var(--coral); }
+        .bg-teal { background-color: var(--teal); }
+        .bg-gradient { background: var(--gradient); }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .glass-card { 
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--card-shadow);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .admin-toggle {
+            position: fixed;
+            top: 100px;
+            right: 2rem;
+            z-index: 999;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 2rem;
+            padding: 0.75rem 1.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .admin-toggle:hover {
+            background: var(--coral);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .live-engine {
+            display: none;
+        }
+
+        .admin-mode .live-engine {
+            display: block;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, 
+                rgba(249, 111, 110, 0.3) 0%, 
+                rgba(46, 211, 198, 0.2) 50%, 
+                rgba(10, 10, 10, 0.8) 100%);
+        }
+        
+        .service-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .service-card.coral-hover:hover {
+            border-color: var(--coral);
+            box-shadow: 0 25px 50px -12px rgba(249, 111, 110, 0.3);
+        }
+        
+        .service-card.teal-hover:hover {
+            border-color: var(--teal);
+            box-shadow: 0 25px 50px -12px rgba(46, 211, 198, 0.3);
+        }
+        
+        .progress-bar {
+            background: var(--gradient);
+        }
+        
+        .assessment-flow {
+            min-height: 500px;
+            transition: all 0.5s ease-in-out;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .live-scoring {
+            position: sticky;
+            top: 20px;
+        }
+        
+        .consultant-note {
+            background: linear-gradient(135deg, rgba(255, 152, 0, 0.1) 0%, rgba(255, 152, 0, 0.05) 100%);
+            border-left: 4px solid #ff9800;
+            border: 1px solid rgba(255, 152, 0, 0.2);
+        }
+
+        /* Consultant Dashboard Styles */
+        .question-card {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.6s ease;
+        }
+
+        .question-card.fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .question-option {
+            transition: all 0.3s ease;
+            border: 2px solid #e5e7eb;
+        }
+
+        .question-option:hover {
+            border-color: var(--coral);
+            background: rgba(249, 111, 110, 0.05);
+        }
+
+        .question-option.selected {
+            border-color: var(--coral);
+            background: rgba(249, 111, 110, 0.1);
+        }
+
+        .question-option input[type="radio"],
+        .question-option input[type="checkbox"] {
+            accent-color: var(--coral);
+        }
+
+        .progress-bar {
+            transition: width 0.5s ease;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(64, 224, 208, 0.1));
+            border: 1px solid rgba(255, 107, 107, 0.3);
+        }
+
+        .service-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--coral), #ff8a80);
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .hero-section {
+            padding: 6rem 0 4rem;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(78, 205, 196, 0.1));
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 20%, rgba(255, 107, 107, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 80%, rgba(78, 205, 196, 0.15) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .protected-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 2rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            color: var(--coral);
+            margin-bottom: 2rem;
+            font-weight: 500;
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--coral), var(--teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .section-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 4rem 0;
+            gap: 2rem;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--glass-border), transparent);
+        }
+
+        .divider-content {
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            white-space: nowrap;
+        }
+
+        .section-intro {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-intro h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-intro p {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .text-coral { color: var(--coral); }
+        .text-teal { color: var(--teal); }
+
+        .intelligence-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .metric-card {
+            text-align: center;
+            padding: 2rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--coral);
+            box-shadow: 0 20px 40px rgba(255, 107, 107, 0.1);
+        }
+
+        .metric-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--coral);
+            margin-bottom: 0.5rem;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .metric-label {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-description {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .methodology-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .methodology-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .methodology-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--coral), var(--teal));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .methodology-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .methodology-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--coral);
+            box-shadow: 0 20px 40px rgba(255, 107, 107, 0.1);
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-icon.coral { color: var(--coral); }
+        .card-icon.teal { color: var(--teal); }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .card-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+
+        .card-content ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .card-content li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .card-content li svg {
+            color: var(--coral);
+            margin-top: 0.125rem;
+            flex-shrink: 0;
+        }
+
+        .comparison-section {
+            margin: 4rem 0;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .comparison-column {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .comparison-column.traditional {
+            border-color: rgba(128, 128, 128, 0.2);
+        }
+
+        .comparison-column.strategyiq {
+            border-color: var(--coral);
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.05), rgba(78, 205, 196, 0.05));
+        }
+
+        .comparison-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .comparison-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .comparison-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .consultation-cta {
+            text-align: center;
+            background: linear-gradient(135deg, var(--coral), var(--teal));
+            border-radius: 2rem;
+            padding: 4rem 2rem;
+            margin: 4rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .consultation-cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .cta-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+        }
+
+        .consultation-cta h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .consultation-cta p {
+            font-size: 1.125rem;
+            margin-bottom: 2rem;
+            color: rgba(255, 255, 255, 0.9);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            border-radius: 3rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .cta-button-primary {
+            background: white;
+            color: var(--coral);
+        }
+
+        .cta-button-primary:hover {
+            background: transparent;
+            color: white;
+            border-color: white;
+            transform: translateY(-2px);
+        }
+
+        .cta-button-secondary {
+            background: transparent;
+            color: white;
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .cta-button-secondary:hover {
+            background: white;
+            color: var(--coral);
+            transform: translateY(-2px);
+        }
+
+        .proof-points-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .proof-point {
+            text-align: center;
+            padding: 2rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .proof-point:hover {
+            transform: translateY(-5px);
+            border-color: var(--teal);
+            box-shadow: 0 20px 40px rgba(78, 205, 196, 0.1);
+        }
+
+        .proof-point h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .proof-point p {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 1024px) and (min-width: 769px) {
+            .methodology-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .methodology-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .intelligence-metrics {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="public-mode" data-page="strategyiq">
+
+    <!-- Admin Toggle -->
+    <div class="admin-toggle" onclick="toggleEngineMode()">
+        <i class="fas fa-lock"></i>
+        <span id="toggleText">Admin Access</span>
+    </div>
+
+    <div class="page-content">
+        <!-- Hero Section -->
+        <section class="hero-section fade-in">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="protected-badge">
+                        <i class="fas fa-shield-alt"></i>
+                        Proprietary Intelligence Framework
+                    </div>
+                    <h1 class="hero-title font-display">StrategyIQ™ Engine</h1>
+                    <p class="hero-subtitle">
+                        Luis Gilberto's proprietary assessment methodology that transforms strategic complexity into optimal engagement architecture.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Divider -->
+        <div class="section-divider fade-in">
+            <div class="divider-line"></div>
+            <div class="divider-content">Strategic Positioning</div>
+            <div class="divider-line"></div>
+        </div>
+
+        <!-- Intelligence vs Intuition Section -->
+        <section class="fade-in">
+            <div class="container">
+                <div class="section-intro">
+                    <h2>
+                        Why <span class="text-coral">Intelligence</span> Beats Intuition
+                    </h2>
+                    <p>
+                        Most consultants rely on experience and gut feel to make strategic recommendations. StrategyIQ™ uses systematic assessment to match strategic complexity with optimal engagement architecture.
+                    </p>
+                </div>
+
+                <div class="intelligence-metrics">
+                    <div class="metric-card">
+                        <div class="metric-number">5</div>
+                        <div class="metric-label">Years</div>
+                        <div class="metric-description">Refining strategic assessment methodology</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-number">6</div>
+                        <div class="metric-label">Strategic Frameworks</div>
+                        <div class="metric-description">Rigorous intelligence assessment dimensions</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-number">100%</div>
+                        <div class="metric-label">Success Rate</div>
+                        <div class="metric-description">Optimal tier-to-complexity matching</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Divider -->
+        <div class="section-divider fade-in">
+            <div class="divider-line"></div>
+            <div class="divider-content">Intelligence Framework</div>
+            <div class="divider-line"></div>
+        </div>
+
+        <!-- Assessment Framework Section -->
+        <section class="fade-in">
+            <div class="container">
+                <div class="section-intro">
+                    <h2>
+                        The <span class="text-teal">Assessment</span> Framework
+                    </h2>
+                    <p>
+                        Four strategic intelligence areas, each with weighted complexity scoring that determines optimal service tier placement.
+                    </p>
+                </div>
+
+                <div class="methodology-grid">
+                    <div class="methodology-card">
+                        <svg class="card-icon coral" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <line x1="12" y1="17" x2="12.01" y2="17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h3 class="card-title">Go-to-Market Intelligence</h3>
+                        <p class="card-subtitle">Market • Audience • Competitive Landscape</p>
+                        <div class="card-content">
+                            <ul>
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <polyline points="20 6 9 17 4 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    Audience clarity & market position
+                                </li>
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <polyline points="20 6 9 17 4 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    Competitive landscape complexity
+                                </li>
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <polyline points="20 6 9 17 4 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    Market maturity & dynamics
+                                </li>
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <polyline points="20 6 9 17 4 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    Distribution channel requirements
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="methodology-card">
+                        <svg class="card-icon teal" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h3 class="card-title">Brand Positioning</h3>
+                        <p class="card-subtitle">Identity • Differentiation • Architectural Clarity</p>
+                        <div class="card-content">
+                            <ul>
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <polyline points="20 6 9 17 4 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    Brand clarity & market position
+                                </li>
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <polyline points="20 6 9 17 4 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    Differentiation requirements
+                                </li>
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <polyline points="20 6 9 17 4 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    Value proposition complexity
+                                </li>
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <polyline points="20 6 9 17 4 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    Messaging & positioning urgency
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="methodology-card">
+                        <svg class="card-icon coral" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"/>
+                            <line x1="8" y1="21" x2="16" y2="21" stroke-width="2" stroke-linecap="round"/>
+                            <line x1="12" y1="17" x2="12" y2="21" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        <h3 class="card-title">Campaign Execution</h3>
+                        <p class="card-subtitle">Tactical • Channel • Implementation Complexity</p>
+                        <div class="card-content">
+                            <ul>
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <polyline points="20 6 9 17 4 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    Campaign & channel complexity
+                                </li>
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <polyline points="20 6 9 17 4 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    Creative & content requirements
+                                </li>
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <polyline points="20 6 9 17 4 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    Timeline & resource constraints
+                                </li>
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <polyline points="20 6 9 17 4 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    Measurement & optimization needs
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="methodology-card">
+                        <svg class="card-icon teal" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <polyline points="14 2 14 8 20 8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <line x1="16" y1="13" x2="8" y2="13" stroke-width="2" stroke-linecap="round"/>
+                            <line x1="16" y1="17" x2="8" y2="17" stroke-width="2" stroke-linecap="round"/>
+                            <polyline points="10 9 9 9 8 9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h3 class="card-title">Narrative Architecture</h3>
+                        <p class="card-subtitle">Storytelling • Content • Communication Strategy</p>
+                        <div class="card-content">
+                            <ul>
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <polyline points="20 6 9 17 4 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    Narrative complexity & depth
+                                </li>
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <polyline points="20 6 9 17 4 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    Content strategy requirements
+                                </li>
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <polyline points="20 6 9 17 4 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    Stakeholder communication needs
+                                </li>
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <polyline points="20 6 9 17 4 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    Thought leadership & positioning
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Divider -->
+        <div class="section-divider fade-in">
+            <div class="divider-line"></div>
+            <div class="divider-content">Competitive Advantage</div>
+            <div class="divider-line"></div>
+        </div>
+
+        <!-- Why This Changes Everything Section -->
+        <section class="fade-in">
+            <div class="container">
+                <div class="section-intro">
+                    <h2>
+                        Why This <span class="text-coral">Changes</span> Everything
+                    </h2>
+                    <p>
+                        Traditional consulting relies on consultant intuition. StrategyIQ™ uses systematic intelligence assessment for optimal engagement architecture.
+                    </p>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="comparison-column traditional">
+                        <div class="comparison-header">
+                            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: rgba(128, 128, 128, 0.5);">
+                                <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                                <line x1="15" y1="9" x2="9" y2="15" stroke-width="2" stroke-linecap="round"/>
+                                <line x1="9" y1="9" x2="15" y2="15" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            <h3 class="comparison-title" style="color: rgba(255, 255, 255, 0.7);">Traditional Approach</h3>
+                        </div>
+                        <ul class="comparison-list">
+                            <li><span style="color: rgba(128, 128, 128, 0.5); font-size: 1.25rem; line-height: 1;">•</span>Recommendations based on consultant intuition</li>
+                            <li><span style="color: rgba(128, 128, 128, 0.5); font-size: 1.25rem; line-height: 1;">•</span>Relationship-dependent advice quality</li>
+                            <li><span style="color: rgba(128, 128, 128, 0.5); font-size: 1.25rem; line-height: 1;">•</span>Generic service tier placement</li>
+                            <li><span style="color: rgba(128, 128, 128, 0.5); font-size: 1.25rem; line-height: 1;">•</span>Unclear strategic rationale</li>
+                            <li><span style="color: rgba(128, 128, 128, 0.5); font-size: 1.25rem; line-height: 1;">•</span>Inconsistent methodology application</li>
+                        </ul>
+                    </div>
+
+                    <div class="comparison-column strategyiq">
+                        <div class="comparison-header">
+                            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: var(--coral);">
+                                <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                                <path d="M9 12l2 2 4-4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <h3 class="comparison-title">StrategyIQ™ Intelligence</h3>
+                        </div>
+                        <ul class="comparison-list">
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: var(--coral); min-width: 16px;"><polyline points="20 6 9 17 4 12" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Systematic complexity assessment framework</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: var(--coral); min-width: 16px;"><polyline points="20 6 9 17 4 12" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Algorithm-driven tier matching precision</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: var(--coral); min-width: 16px;"><polyline points="20 6 9 17 4 12" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Transparent strategic logic & rationale</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: var(--coral); min-width: 16px;"><polyline points="20 6 9 17 4 12" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Consistent methodology application</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: var(--coral); min-width: 16px;"><polyline points="20 6 9 17 4 12" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Data-informed strategic recommendations</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Divider -->
+        <div class="section-divider fade-in">
+            <div class="divider-line"></div>
+            <div class="divider-content">Experience the Difference</div>
+            <div class="divider-line"></div>
+        </div>
+
+        <!-- Experience CTA Section -->
+        <section class="fade-in">
+            <div class="container">
+                <div class="consultation-cta">
+                    <i class="fas fa-shield-alt cta-icon"></i>
+                    <h2 class="font-display">
+                        Experience Strategic Intelligence
+                    </h2>
+                    <p>
+                        StrategyIQ™ is Luis's proprietary consultation framework—experienced live during your strategic session. See systematic assessment in action, not through self-service forms.
+                    </p>
+                    <div class="cta-buttons">
+                        <a href="/contact/" class="cta-button cta-button-primary">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="stroke-width: 2;">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="16" y1="2" x2="16" y2="6"/>
+                                <line x1="8" y1="2" x2="8" y2="6"/>
+                                <line x1="3" y1="10" x2="21" y2="10"/>
+                            </svg>
+                            Book Strategic Consultation
+                        </a>
+                        <a href="/services/" class="cta-button cta-button-secondary">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="stroke-width: 2;">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
+                            </svg>
+                            Explore Service Tiers
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Divider -->
+        <div class="section-divider fade-in">
+            <div class="divider-line"></div>
+            <div class="divider-content">Proven Foundation</div>
+            <div class="divider-line"></div>
+        </div>
+
+        <!-- Proof Points Section -->
+        <section class="fade-in">
+            <div class="container">
+                <div class="section-intro">
+                    <h2>
+                        Built on <span class="text-teal">Microsoft-Level</span> Rigor
+                    </h2>
+                    <p>Strategic frameworks that scale from startups to enterprise</p>
+                </div>
+
+                <div class="proof-points-grid">
+                    <div class="proof-point">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: var(--coral); margin-bottom: 1.5rem;">
+                            <circle cx="12" cy="8" r="7" stroke-width="2"/>
+                            <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h4>15+ Years</h4>
+                        <p>Strategic marketing expertise across tech, B2B, and consumer markets</p>
+                    </div>
+                    <div class="proof-point">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: var(--teal); margin-bottom: 1.5rem;">
+                            <rect x="4" y="2" width="16" height="20" rx="2" ry="2" stroke-width="2"/>
+                            <path d="M9 22v-4h6v4M8 6h.01M12 6h.01M16 6h.01M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M16 14h.01" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        <h4>Enterprise Heritage</h4>
+                        <p>Microsoft strategic rigor meets boutique marketing agility</p>
+                    </div>
+                    <div class="proof-point">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: var(--coral); margin-bottom: 1.5rem;">
+                            <line x1="18" y1="20" x2="18" y2="10" stroke-width="2" stroke-linecap="round"/>
+                            <line x1="12" y1="20" x2="12" y2="4" stroke-width="2" stroke-linecap="round"/>
+                            <line x1="6" y1="20" x2="6" y2="14" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        <h4>Systematic Approach</h4>
+                        <p>Frameworks, not feelings—intelligence over intuition</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ADMIN-ONLY LIVE ENGINE -->
+        <div class="live-engine">
+            <div class="container" style="padding: 4rem 2rem;">
+                <div style="background: var(--coral); border-radius: 2rem; padding: 4rem; text-align: center; margin-bottom: 3rem;">
+                    <i class="fas fa-unlock-alt" style="font-size: 4rem; margin-bottom: 1.5rem; opacity: 0.9;"></i>
+                    <h2 class="font-display" style="font-size: 2.5rem; margin-bottom: 1rem;">Live StrategyIQ™ Engine</h2>
+                    <p style="font-size: 1.25rem; opacity: 0.95; color: white; margin-bottom: 2rem;">Admin mode active - Full consultation framework accessible</p>
+                    <button onclick="initializeLiveEngine()" class="cta-button cta-button-primary" style="background: white; color: var(--coral); border: none; font-weight: 600; padding: 1rem 2rem; font-size: 1.1rem;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="stroke-width: 2; margin-right: 0.5rem;">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polygon points="10 8 16 12 10 16 10 8"/>
+                        </svg>
+                        Launch Assessment Engine
+                    </button>
+                </div>
+                <div id="liveEngineContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // StrategyIQ Page Scripts
+        let engineMode = 'public';
+        
+        function toggleEngineMode() {
+            const isAdminMode = document.body.classList.contains('admin-mode');
+            
+            if (!isAdminMode) {
+                showAdminModal();
+            } else {
+                document.body.classList.remove('admin-mode');
+                document.body.classList.add('public-mode');
+                document.getElementById('toggleText').textContent = 'Admin Access';
+                engineMode = 'public';
+            }
+        }
+
+        function showAdminModal() {
+            const modal = document.createElement('div');
+            modal.id = 'adminModal';
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="glass-card p-6 max-w-md w-full mx-4">
+                    <h3 class="font-display text-xl font-semibold mb-4 text-white">Admin Access</h3>
+                    <input type="password" id="adminPassword" placeholder="Enter access code" 
+                           class="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white mb-4 focus:border-coral outline-none">
+                    <div class="flex gap-3">
+                        <button onclick="checkAdminPassword()" class="bg-coral hover:bg-red-500 text-white px-4 py-2 rounded-lg flex-1">
+                            Access
+                        </button>
+                        <button onclick="closeAdminModal()" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex-1">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            document.getElementById('adminPassword').focus();
+            
+            // Allow Enter key to submit
+            document.getElementById('adminPassword').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkAdminPassword();
+                }
+            });
+        }
+
+        function checkAdminPassword() {
+            const password = document.getElementById('adminPassword').value;
+            if (password === 'LG100') {
+                document.body.classList.remove('public-mode');
+                document.body.classList.add('admin-mode');
+                document.getElementById('toggleText').textContent = 'Public View';
+                engineMode = 'admin';
+                initializeLiveEngine();
+                closeAdminModal();
+            } else if (password) {
+                // Show error message
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'text-red-400 text-sm mt-2';
+                errorMsg.textContent = 'Invalid access code';
+                const input = document.getElementById('adminPassword');
+                input.parentNode.insertBefore(errorMsg, input.nextSibling);
+                input.value = '';
+                input.focus();
+                
+                // Remove error after 3 seconds
+                setTimeout(() => {
+                    if (errorMsg && errorMsg.parentNode) {
+                        errorMsg.remove();
+                    }
+                }, 3000);
+            }
+        }
+
+        function closeAdminModal() {
+            const modal = document.getElementById('adminModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        // Global variables for consultant dashboard
+        let currentAssessment = null;
+        let currentQuestionIndex = 0;
+        let assessmentData = {};
+        let intelligenceScore = 0;
+        let intelligenceChart = null;
+
+        // Service tiers from consultant dashboard
+        const serviceTiers = {
+            creative_strategy: {
+                name: 'Creative Strategy',
+                price: '$5,500',
+                duration: '2-3 weeks',
+                description: 'Creative direction and brand foundation development',
+                deliverables: [
+                    'Creative brief and strategy',
+                    'Visual direction framework',
+                    'Brand voice guidelines',
+                    'Creative asset templates'
+                ],
+                complexity: 1
+            },
+            gtm_sprint: {
+                name: 'Go-to-Market Sprint',
+                price: '$8,500',
+                duration: '3-4 weeks',
+                description: 'Rapid market entry strategy and execution planning',
+                deliverables: [
+                    'Market analysis and positioning',
+                    'Launch strategy roadmap',
+                    'Channel optimization plan',
+                    'Performance tracking setup'
+                ],
+                complexity: 2
+            },
+            brand_intelligence: {
+                name: 'Brand Intelligence',
+                price: '$13,000',
+                duration: '4-6 weeks',
+                description: 'Comprehensive brand strategy and market intelligence',
+                deliverables: [
+                    'Brand strategy framework',
+                    'Competitive intelligence report',
+                    'Market positioning strategy',
+                    'Brand architecture design'
+                ],
+                complexity: 3
+            },
+            strategic_campaigns: {
+                name: 'Strategic Campaigns',
+                price: '$18,500',
+                duration: '6-8 weeks',
+                description: 'Multi-channel campaign strategy with advanced analytics',
+                deliverables: [
+                    'Integrated campaign strategy',
+                    'Multi-channel execution plan',
+                    'Advanced analytics setup',
+                    'Performance optimization framework'
+                ],
+                complexity: 4
+            }
+        };
+
+        // Complete assessment questions from consultant dashboard
+        const assessmentQuestions = {
+            gtm: [
+                {
+                    id: 'market_readiness',
+                    question: 'How ready is your market for your product/service?',
+                    type: 'single',
+                    options: [
+                        { value: 'emerging', label: 'Emerging market - creating new category', score: 4 },
+                        { value: 'early', label: 'Early market - some awareness exists', score: 3 },
+                        { value: 'developing', label: 'Developing market - growing demand', score: 2 },
+                        { value: 'established', label: 'Established market - clear demand', score: 1 },
+                        { value: 'mature', label: 'Mature market - saturated', score: 0 }
+                    ]
+                },
+                {
+                    id: 'competitive_position',
+                    question: 'What is your competitive position?',
+                    type: 'single',
+                    options: [
+                        { value: 'first_mover', label: 'First mover advantage', score: 4 },
+                        { value: 'differentiated', label: 'Clearly differentiated offering', score: 3 },
+                        { value: 'competitive', label: 'Competitive but not unique', score: 2 },
+                        { value: 'similar', label: 'Similar to existing solutions', score: 1 },
+                        { value: 'commodity', label: 'Commodity/price-based competition', score: 0 }
+                    ]
+                },
+                {
+                    id: 'target_clarity',
+                    question: 'How well-defined is your target audience?',
+                    type: 'single',
+                    options: [
+                        { value: 'precise', label: 'Precisely defined with data', score: 4 },
+                        { value: 'clear', label: 'Clear target segments', score: 3 },
+                        { value: 'general', label: 'General target groups', score: 2 },
+                        { value: 'broad', label: 'Broad target market', score: 1 },
+                        { value: 'undefined', label: 'Target market undefined', score: 0 }
+                    ]
+                },
+                {
+                    id: 'launch_timeline',
+                    question: 'What is your launch timeline?',
+                    type: 'single',
+                    options: [
+                        { value: 'immediate', label: 'Immediate (0-30 days)', score: 4 },
+                        { value: 'quarter', label: 'This quarter (1-3 months)', score: 3 },
+                        { value: 'half_year', label: 'Next 6 months', score: 2 },
+                        { value: 'year', label: 'Within a year', score: 1 },
+                        { value: 'flexible', label: 'Timeline is flexible', score: 0 }
+                    ]
+                },
+                {
+                    id: 'gtm_resources',
+                    question: 'What go-to-market resources do you have available?',
+                    type: 'single',
+                    options: [
+                        { value: 'full_team', label: 'Full marketing team and budget', score: 4 },
+                        { value: 'some_resources', label: 'Some marketing resources', score: 3 },
+                        { value: 'limited', label: 'Limited marketing resources', score: 2 },
+                        { value: 'minimal', label: 'Minimal marketing support', score: 1 },
+                        { value: 'none', label: 'No dedicated marketing resources', score: 0 }
+                    ]
+                }
+            ],
+            brand: [
+                {
+                    id: 'brand_maturity',
+                    question: 'What is your current brand development stage?',
+                    type: 'single',
+                    options: [
+                        { value: 'startup', label: 'Startup - no established brand', score: 4 },
+                        { value: 'early', label: 'Early stage - basic brand elements', score: 3 },
+                        { value: 'developing', label: 'Developing - some brand consistency', score: 2 },
+                        { value: 'established', label: 'Established - strong brand presence', score: 1 },
+                        { value: 'mature', label: 'Mature - well-known brand', score: 0 }
+                    ]
+                },
+                {
+                    id: 'brand_challenges',
+                    question: 'What are your primary brand challenges?',
+                    type: 'single',
+                    options: [
+                        { value: 'identity', label: 'Brand identity and positioning', score: 4 },
+                        { value: 'consistency', label: 'Brand consistency across channels', score: 3 },
+                        { value: 'awareness', label: 'Brand awareness and recognition', score: 2 },
+                        { value: 'differentiation', label: 'Brand differentiation', score: 1 },
+                        { value: 'none', label: 'No significant brand challenges', score: 0 }
+                    ]
+                },
+                {
+                    id: 'audience_understanding',
+                    question: 'How well do you understand your audience?',
+                    type: 'single',
+                    options: [
+                        { value: 'research_based', label: 'Research-based deep understanding', score: 4 },
+                        { value: 'good_insights', label: 'Good insights and data', score: 3 },
+                        { value: 'basic_understanding', label: 'Basic understanding', score: 2 },
+                        { value: 'assumptions', label: 'Based on assumptions', score: 1 },
+                        { value: 'unclear', label: 'Unclear audience understanding', score: 0 }
+                    ]
+                },
+                {
+                    id: 'brand_assets',
+                    question: 'What existing brand assets do you have?',
+                    type: 'single',
+                    options: [
+                        { value: 'comprehensive', label: 'Comprehensive brand system', score: 4 },
+                        { value: 'good_foundation', label: 'Good foundation with some gaps', score: 3 },
+                        { value: 'basic_elements', label: 'Basic logo and colors', score: 2 },
+                        { value: 'minimal', label: 'Minimal brand elements', score: 1 },
+                        { value: 'none', label: 'No established brand assets', score: 0 }
+                    ]
+                },
+                {
+                    id: 'brand_objectives',
+                    question: 'What are your primary brand objectives?',
+                    type: 'single',
+                    options: [
+                        { value: 'transformation', label: 'Complete brand transformation', score: 4 },
+                        { value: 'repositioning', label: 'Brand repositioning', score: 3 },
+                        { value: 'refresh', label: 'Brand refresh and modernization', score: 2 },
+                        { value: 'optimization', label: 'Brand optimization', score: 1 },
+                        { value: 'maintenance', label: 'Brand maintenance', score: 0 }
+                    ]
+                }
+            ],
+            campaign: [
+                {
+                    id: 'campaign_objective',
+                    question: 'What is your primary campaign objective?',
+                    type: 'single',
+                    options: [
+                        { value: 'awareness', label: 'Brand awareness and reach', score: 4 },
+                        { value: 'consideration', label: 'Consideration and engagement', score: 3 },
+                        { value: 'conversion', label: 'Conversion and sales', score: 2 },
+                        { value: 'retention', label: 'Customer retention', score: 1 },
+                        { value: 'advocacy', label: 'Customer advocacy', score: 0 }
+                    ]
+                },
+                {
+                    id: 'budget_range',
+                    question: 'What is your campaign budget range?',
+                    type: 'single',
+                    options: [
+                        { value: 'enterprise', label: '$100K+ campaign budget', score: 4 },
+                        { value: 'substantial', label: '$50K-100K budget', score: 3 },
+                        { value: 'moderate', label: '$10K-50K budget', score: 2 },
+                        { value: 'limited', label: '$5K-10K budget', score: 1 },
+                        { value: 'minimal', label: 'Under $5K budget', score: 0 }
+                    ]
+                },
+                {
+                    id: 'channel_strategy',
+                    question: 'How complex is your channel strategy?',
+                    type: 'single',
+                    options: [
+                        { value: 'omnichannel', label: 'Omnichannel integration', score: 4 },
+                        { value: 'multichannel', label: 'Multi-channel approach', score: 3 },
+                        { value: 'cross_channel', label: 'Cross-channel coordination', score: 2 },
+                        { value: 'dual_channel', label: 'Dual channel focus', score: 1 },
+                        { value: 'single_channel', label: 'Single channel campaign', score: 0 }
+                    ]
+                },
+                {
+                    id: 'creative_needs',
+                    question: 'What are your creative development needs?',
+                    type: 'single',
+                    options: [
+                        { value: 'full_creative', label: 'Full creative development', score: 4 },
+                        { value: 'substantial', label: 'Substantial creative work', score: 3 },
+                        { value: 'moderate', label: 'Moderate creative needs', score: 2 },
+                        { value: 'minimal', label: 'Minimal creative work', score: 1 },
+                        { value: 'existing', label: 'Using existing creative', score: 0 }
+                    ]
+                },
+                {
+                    id: 'success_metrics',
+                    question: 'How complex are your success metrics?',
+                    type: 'single',
+                    options: [
+                        { value: 'advanced', label: 'Advanced attribution modeling', score: 4 },
+                        { value: 'multi_touch', label: 'Multi-touch attribution', score: 3 },
+                        { value: 'cross_channel', label: 'Cross-channel tracking', score: 2 },
+                        { value: 'standard', label: 'Standard analytics', score: 1 },
+                        { value: 'basic', label: 'Basic tracking', score: 0 }
+                    ]
+                }
+            ],
+            creative: [
+                {
+                    id: 'creative_capability',
+                    question: 'What is your current creative capability?',
+                    type: 'single',
+                    options: [
+                        { value: 'no_capability', label: 'No internal creative capability', score: 4 },
+                        { value: 'limited', label: 'Limited creative resources', score: 3 },
+                        { value: 'some_capability', label: 'Some creative capability', score: 2 },
+                        { value: 'good_capability', label: 'Good creative team', score: 1 },
+                        { value: 'strong_capability', label: 'Strong creative capability', score: 0 }
+                    ]
+                },
+                {
+                    id: 'content_needs',
+                    question: 'What are your content production needs?',
+                    type: 'single',
+                    options: [
+                        { value: 'full_production', label: 'Full content production', score: 4 },
+                        { value: 'substantial', label: 'Substantial content needs', score: 3 },
+                        { value: 'moderate', label: 'Moderate content creation', score: 2 },
+                        { value: 'minimal', label: 'Minimal content needs', score: 1 },
+                        { value: 'existing', label: 'Using existing content', score: 0 }
+                    ]
+                },
+                {
+                    id: 'creative_channels',
+                    question: 'How many channels require creative support?',
+                    type: 'single',
+                    options: [
+                        { value: 'omnichannel', label: '8+ channels needing creative', score: 4 },
+                        { value: 'multichannel', label: '5-7 channels', score: 3 },
+                        { value: 'several', label: '3-4 channels', score: 2 },
+                        { value: 'few', label: '2-3 channels', score: 1 },
+                        { value: 'single', label: 'Single channel', score: 0 }
+                    ]
+                },
+                {
+                    id: 'creative_objectives',
+                    question: 'What are your creative objectives?',
+                    type: 'single',
+                    options: [
+                        { value: 'brand_building', label: 'Brand building and awareness', score: 4 },
+                        { value: 'engagement', label: 'Engagement and interaction', score: 3 },
+                        { value: 'conversion', label: 'Conversion optimization', score: 2 },
+                        { value: 'retention', label: 'Customer retention', score: 1 },
+                        { value: 'maintenance', label: 'Creative maintenance', score: 0 }
+                    ]
+                },
+                {
+                    id: 'creative_timeline',
+                    question: 'What is your creative development timeline?',
+                    type: 'single',
+                    options: [
+                        { value: 'immediate', label: 'Immediate (0-2 weeks)', score: 4 },
+                        { value: 'urgent', label: 'Urgent (2-4 weeks)', score: 3 },
+                        { value: 'standard', label: 'Standard (1-2 months)', score: 2 },
+                        { value: 'flexible', label: 'Flexible (2-3 months)', score: 1 },
+                        { value: 'long_term', label: 'Long-term (3+ months)', score: 0 }
+                    ]
+                }
+            ]
+        };
+
+        // Consultant insights from the original dashboard
+        const consultantInsights = {
+            'gtm.market_readiness': {
+                emerging: "Emerging markets require significant education and category creation. Consider thought leadership content and strategic partnerships.",
+                early: "Early markets show promise but need validation. Focus on proof points and early adopter testimonials.",
+                developing: "Growing demand indicates market timing. Accelerate with competitive positioning and market share capture.",
+                established: "Clear demand exists. Optimize for efficiency and differentiation in established channels.",
+                mature: "Saturated markets require innovation or niche positioning. Consider adjacent markets or service evolution."
+            },
+            'brand.brand_maturity': {
+                startup: "No established brand presents both opportunity and challenge. Foundation work is critical for long-term success.",
+                early: "Basic brand elements exist but lack cohesion. Strategic brand development will accelerate market recognition.",
+                developing: "Some consistency exists but gaps remain. Brand optimization can significantly improve market position.",
+                established: "Strong brand presence provides competitive advantage. Focus on evolution and market expansion.",
+                mature: "Well-known brand status enables premium positioning. Consider brand extension opportunities."
+            }
+        };
+
+        function loadScopeIQData() {
+            // Sample data loading - in production this would come from API
+            assessmentData = {
+                gtm: {},
+                brand: {},
+                campaign: {},
+                creative: {}
+            };
+            intelligenceScore = 0;
+            updateIntelligenceScore();
+            updateIntelligenceChart();
+        }
+
+        function initializeLiveEngine() {
+            document.getElementById('liveEngineContent').innerHTML = `
+                <!-- StrategyIQ Consultant Dashboard -->
+                <div class="consultant-dashboard">
+                    <!-- Header -->
+                    <div class="dashboard-header glass-card mb-6">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h1 class="font-display text-3xl font-bold mb-2">StrategyIQ™ Consultant Dashboard</h1>
+                                <p class="text-gray-400">Intelligence-driven assessment & strategic positioning</p>
+                            </div>
+                            <div class="text-right">
+                                <div class="flex items-center gap-4 mb-2">
+                                    <button onclick="openNewClientModal()" class="bg-coral text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-opacity-80 transition-all">
+                                        <i class="fas fa-plus mr-2"></i>New Client
+                                    </button>
+                                    <select id="clientDropdown" onchange="loadClientProfile()" class="bg-gray-800 text-white px-3 py-2 rounded-lg text-sm border border-gray-600 focus:border-coral focus:outline-none">
+                                        <option value="">Select Client...</option>
+                                    </select>
+                                </div>
+                                <div class="text-sm text-gray-400">Client Session</div>
+                                <div id="clientName" class="font-semibold text-lg">No Client Selected</div>
+                                <div id="clientDetails" class="text-sm text-gray-500 mt-1"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Client Data Entry Modal -->
+                    <div id="clientModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+                        <div class="glass-card p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="font-display text-2xl font-semibold text-white">Client Information</h3>
+                                <button onclick="closeClientModal()" class="text-gray-400 hover:text-white transition-colors">
+                                    <i class="fas fa-times text-xl"></i>
+                                </button>
+                            </div>
+                            
+                            <form id="clientForm" class="space-y-4">
+                                <div class="grid md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">Client Name *</label>
+                                        <input type="text" id="clientNameInput" required class="w-full bg-gray-800 text-white px-3 py-2 rounded-lg border border-gray-600 focus:border-coral focus:outline-none">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">Company</label>
+                                        <input type="text" id="companyInput" class="w-full bg-gray-800 text-white px-3 py-2 rounded-lg border border-gray-600 focus:border-coral focus:outline-none">
+                                    </div>
+                                </div>
+                                
+                                <div class="grid md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                                        <input type="email" id="emailInput" class="w-full bg-gray-800 text-white px-3 py-2 rounded-lg border border-gray-600 focus:border-coral focus:outline-none">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">Phone</label>
+                                        <input type="tel" id="phoneInput" class="w-full bg-gray-800 text-white px-3 py-2 rounded-lg border border-gray-600 focus:border-coral focus:outline-none">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Project Type</label>
+                                    <select id="projectTypeInput" onchange="handleProjectTypeChange()" class="w-full bg-gray-800 text-white px-3 py-2 rounded-lg border border-gray-600 focus:border-coral focus:outline-none">
+                                        <option value="">Select Project Type...</option>
+                                        <option value="brand_positioning">Brand Positioning</option>
+                                        <option value="market_entry">Market Entry Strategy</option>
+                                        <option value="campaign_strategy">Campaign Strategy</option>
+                                        <option value="creative_development">Creative Development</option>
+                                        <option value="digital_transformation">Digital Transformation</option>
+                                        <option value="competitive_analysis">Competitive Analysis</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Project Description</label>
+                                    <textarea id="projectDescriptionInput" rows="3" class="w-full bg-gray-800 text-white px-3 py-2 rounded-lg border border-gray-600 focus:border-coral focus:outline-none" placeholder="Brief description of the project goals and challenges..."></textarea>
+                                </div>
+                                
+                                <div class="grid md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">Budget Range</label>
+                                        <select id="budgetRangeInput" class="w-full bg-gray-800 text-white px-3 py-2 rounded-lg border border-gray-600 focus:border-coral focus:outline-none">
+                                            <option value="">Select Budget Range...</option>
+                                            <option value="under_5k">Under $5,000</option>
+                                            <option value="5k_15k">$5,000 - $15,000</option>
+                                            <option value="15k_30k">$15,000 - $30,000</option>
+                                            <option value="30k_plus">$30,000+</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">Timeline</label>
+                                        <select id="timelineInput" class="w-full bg-gray-800 text-white px-3 py-2 rounded-lg border border-gray-600 focus:border-coral focus:outline-none">
+                                            <option value="">Select Timeline...</option>
+                                            <option value="urgent">Urgent (1-2 weeks)</option>
+                                            <option value="standard">Standard (3-6 weeks)</option>
+                                            <option value="extended">Extended (2-3 months)</option>
+                                            <option value="ongoing">Ongoing Partnership</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Notes</label>
+                                    <textarea id="notesInput" rows="2" class="w-full bg-gray-800 text-white px-3 py-2 rounded-lg border border-gray-600 focus:border-coral focus:outline-none" placeholder="Additional notes about the client or project..."></textarea>
+                                </div>
+                                
+                                <div class="flex justify-end gap-3 pt-4">
+                                    <button type="button" onclick="closeClientModal()" class="px-4 py-2 text-gray-400 hover:text-white transition-colors">Cancel</button>
+                                    <button type="submit" class="bg-coral text-white px-6 py-2 rounded-lg font-medium hover:bg-opacity-80 transition-all">Save Client</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Intelligence Score Display -->
+                    <div class="grid md:grid-cols-4 gap-6 mb-8">
+                        <div class="glass-card text-center">
+                            <div class="text-sm text-gray-400 mb-2">Intelligence Score</div>
+                            <div id="intelligenceScore" class="text-4xl font-bold text-coral">0</div>
+                            <div class="text-xs text-gray-500 mt-1">/ 20 Maximum</div>
+                        </div>
+                        <div class="glass-card text-center">
+                            <div class="text-sm text-gray-400 mb-2">Project Value</div>
+                            <div id="projectValue" class="text-2xl font-bold text-teal">$0</div>
+                            <div class="text-xs text-gray-500 mt-1">Estimated Range</div>
+                        </div>
+                        <div class="glass-card text-center">
+                            <div class="text-sm text-gray-400 mb-2">Confidence</div>
+                            <div id="confidenceLevel" class="text-2xl font-bold text-white">0%</div>
+                            <div class="text-xs text-gray-500 mt-1">Assessment Quality</div>
+                        </div>
+                        <div class="glass-card text-center">
+                            <div class="text-sm text-gray-400 mb-2">Close Probability</div>
+                            <div id="closeProbability" class="text-2xl font-bold text-white">0%</div>
+                            <div class="text-xs text-gray-500 mt-1">Based on Intelligence</div>
+                        </div>
+                    </div>
+
+                    <!-- Service Selection -->
+                    <div id="serviceSelection" class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="service-card glass-card cursor-pointer hover-coral transition-all duration-300" onclick="startAssessment('gtm')">
+                            <div class="text-center">
+                                <i class="fas fa-rocket text-3xl text-coral mb-4"></i>
+                                <h3 class="font-display text-xl font-semibold mb-2">Go-to-Market</h3>
+                                <p class="text-sm text-gray-400 mb-4">Launch strategy & resource assessment</p>
+                                <div class="bg-coral text-white px-4 py-2 rounded-lg text-sm font-medium">Start Assessment</div>
+                            </div>
+                        </div>
+                        
+                        <div class="service-card glass-card cursor-pointer hover-coral transition-all duration-300" onclick="startAssessment('brand')">
+                            <div class="text-center">
+                                <i class="fas fa-palette text-3xl text-coral mb-4"></i>
+                                <h3 class="font-display text-xl font-semibold mb-2">Brand Intelligence</h3>
+                                <p class="text-sm text-gray-400 mb-4">Identity & positioning analysis</p>
+                                <div class="bg-coral text-white px-4 py-2 rounded-lg text-sm font-medium">Start Assessment</div>
+                            </div>
+                        </div>
+                        
+                        <div class="service-card glass-card cursor-pointer hover-coral transition-all duration-300" onclick="startAssessment('campaign')">
+                            <div class="text-center">
+                                <i class="fas fa-bullhorn text-3xl text-coral mb-4"></i>
+                                <h3 class="font-display text-xl font-semibold mb-2">Strategic Campaigns</h3>
+                                <p class="text-sm text-gray-400 mb-4">Multi-channel campaign strategy</p>
+                                <div class="bg-coral text-white px-4 py-2 rounded-lg text-sm font-medium">Start Assessment</div>
+                            </div>
+                        </div>
+                        
+                        <div class="service-card glass-card cursor-pointer hover-coral transition-all duration-300" onclick="startAssessment('creative')">
+                            <div class="text-center">
+                                <i class="fas fa-lightbulb text-3xl text-coral mb-4"></i>
+                                <h3 class="font-display text-xl font-semibold mb-2">Creative Strategy</h3>
+                                <p class="text-sm text-gray-400 mb-4">Creative development & content strategy</p>
+                                <div class="bg-coral text-white px-4 py-2 rounded-lg text-sm font-medium">Start Assessment</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Assessment Flow (Hidden by default) -->
+                    <div id="assessmentFlow" class="assessment-flow hidden fade-in">
+                        <div class="glass-card mb-6">
+                            <div class="flex justify-between items-center mb-6">
+                                <h2 class="font-display text-2xl font-semibold">Assessment in Progress</h2>
+                                <button onclick="resetAssessment()" class="text-gray-400 hover:text-white transition-colors">
+                                    <i class="fas fa-times"></i> Reset
+                                </button>
+                            </div>
+                            
+                            <!-- Progress Bar -->
+                            <div class="progress-bar mb-6">
+                                <div class="flex justify-between text-sm text-gray-400 mb-2">
+                                    <span>Progress</span>
+                                    <span id="progressText">0 / 5</span>
+                                </div>
+                                <div class="w-full bg-gray-700 rounded-full h-2">
+                                    <div id="progressBar" class="bg-coral h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                                </div>
+                            </div>
+
+                            <!-- Question Container -->
+                            <div id="questionContainer" class="mb-6">
+                                <!-- Questions will be loaded here dynamically -->
+                            </div>
+
+                            <!-- Navigation -->
+                            <div class="flex justify-between">
+                                <button id="prevBtn" onclick="previousQuestion()" class="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-lg transition-colors" disabled>
+                                    <i class="fas fa-arrow-left mr-2"></i>Previous
+                                </button>
+                                <button id="nextBtn" onclick="nextQuestion()" class="bg-coral hover:bg-red-500 text-white px-6 py-3 rounded-lg transition-colors" disabled>
+                                    Next<i class="fas fa-arrow-right ml-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Results Section (Hidden by default) -->
+                    <div id="resultsSection" class="hidden">
+                        <div class="grid lg:grid-cols-2 gap-8">
+                            <!-- Intelligence Visualization -->
+                            <div class="glass-card">
+                                <h3 class="font-display text-xl font-semibold mb-4">Intelligence Visualization</h3>
+                                <div class="relative h-64 mb-4">
+                                    <canvas id="intelligenceChart"></canvas>
+                                </div>
+                                <div id="complexityIndicators" class="space-y-3">
+                                    <!-- Complexity indicators will be populated here -->
+                                </div>
+                            </div>
+
+                            <!-- Service Recommendation -->
+                            <div class="glass-card">
+                                <h3 class="font-display text-xl font-semibold mb-4">Service Recommendation</h3>
+                                <div id="serviceRecommendation">
+                                    <!-- Service recommendation will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Strategic Brief -->
+                        <div class="glass-card mt-8">
+                            <h3 class="font-display text-xl font-semibold mb-4">Strategic Brief Preview</h3>
+                            <div id="strategicBrief">
+                                <!-- Strategic brief will be populated here -->
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div class="flex flex-wrap gap-4 mt-8">
+                            <button onclick="resetAssessment()" class="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-lg transition-colors">
+                                <i class="fas fa-redo mr-2"></i>Reset
+                            </button>
+                            <button onclick="saveProgress()" class="bg-teal hover:bg-teal-600 text-white px-6 py-3 rounded-lg transition-colors">
+                                <i class="fas fa-save mr-2"></i>Save
+                            </button>
+                            <button onclick="exportAssessment()" class="bg-coral hover:bg-red-500 text-white px-6 py-3 rounded-lg transition-colors">
+                                <i class="fas fa-download mr-2"></i>Export
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Live Scoring Panel -->
+                    <div class="live-scoring glass-card mt-8">
+                        <h3 class="font-display text-xl font-semibold mb-4">Live Intelligence Scoring</h3>
+                        <div class="grid md:grid-cols-3 gap-4">
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-coral" id="liveScore">0</div>
+                                <div class="text-sm text-gray-400">Current Score</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-teal" id="liveComplexity">Low</div>
+                                <div class="text-sm text-gray-400">Complexity</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-white" id="liveRecommendation">Pending</div>
+                                <div class="text-sm text-gray-400">Service Tier</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Consultant Notes -->
+                    <div class="consultant-note glass-card mt-8">
+                        <h3 class="font-display text-xl font-semibold mb-4">Consultant Notes</h3>
+                        <textarea id="consultantNotes" class="w-full h-32 bg-gray-800 border border-gray-600 rounded-lg p-4 text-white resize-none" placeholder="Add your assessment notes here..."></textarea>
+                        <div class="mt-4 flex justify-end">
+                            <button onclick="exportNotes()" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors">
+                                <i class="fas fa-sticky-note mr-2"></i>Export Notes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Initialize the consultant dashboard functionality
+            loadScopeIQData();
+            updateClientDropdown();
+        }
+
+        // StrategyIQ Consultant Dashboard Functionality
+        // Variables already declared above
+
+        // Assessment Questions Database already defined above
+        
+        // Functions for StrategyIQ Assessment
+
+        function startAssessment(assessmentType) {
+            currentAssessment = assessmentType;
+            currentQuestionIndex = 0;
+            assessmentData = {};
+            
+            // Hide service selection, show assessment flow
+            const serviceSelection = document.getElementById('serviceSelection');
+            const assessmentFlow = document.getElementById('assessmentFlow');
+            const resultsSection = document.getElementById('resultsSection');
+            
+            if (serviceSelection) serviceSelection.classList.add('hidden');
+            if (assessmentFlow) {
+                assessmentFlow.classList.remove('hidden');
+                assessmentFlow.classList.add('visible'); // Ensure fade-in animation shows the container
+            }
+            if (resultsSection) resultsSection.classList.add('hidden');
+            
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            console.log('Loading question for assessment:', currentAssessment, 'index:', currentQuestionIndex);
+            const questions = assessmentQuestions[currentAssessment];
+            
+            if (!questions || !questions[currentQuestionIndex]) {
+                console.error('No questions found for assessment:', currentAssessment);
+                return;
+            }
+            
+            const question = questions[currentQuestionIndex];
+            const container = document.getElementById('questionContainer');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            
+            if (!container) {
+                console.error('Question container not found!');
+                return;
+            }
+            
+            // Update progress
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            if (progressBar) progressBar.style.width = progress + '%';
+            if (progressText) progressText.textContent = `${currentQuestionIndex + 1} / ${questions.length}`;
+            
+            // Create question HTML - REMOVED fade-in class, questions show immediately
+            const questionHTML = `
+                <div class="question-card" style="opacity: 1; transform: translateY(0);">
+                    <h3 class="font-display text-xl font-semibold mb-6">${question.question}</h3>
+                    <div class="space-y-3">
+                        ${question.options.map(option => `
+                            <label class="question-option block p-4 border border-gray-600 rounded-lg cursor-pointer hover:border-coral transition-colors">
+                                <input type="${question.type === 'multiple' ? 'checkbox' : 'radio'}" 
+                                       name="question_${question.id}" 
+                                       value="${option.value}" 
+                                       onchange="handleAnswerChange()"
+                                       class="mr-3">
+                                <span class="text-white">${option.label}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = questionHTML;
+            
+            // Update navigation buttons
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            if (prevBtn) prevBtn.disabled = currentQuestionIndex === 0;
+            if (nextBtn) {
+                nextBtn.disabled = true;
+                
+                if (currentQuestionIndex === questions.length - 1) {
+                    nextBtn.innerHTML = 'Complete Assessment<i class="fas fa-check ml-2"></i>';
+                } else {
+                    nextBtn.innerHTML = 'Next<i class="fas fa-arrow-right ml-2"></i>';
+                }
+            }
+        }
+
+        function handleAnswerChange() {
+            const question = assessmentQuestions[currentAssessment][currentQuestionIndex];
+            const selectedValues = [];
+            const inputs = document.querySelectorAll(`input[name="question_${question.id}"]:checked`);
+            
+            // Update visual feedback
+            document.querySelectorAll('.question-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            let questionScore = 0;
+            inputs.forEach(input => {
+                selectedValues.push(input.value);
+                input.closest('.question-option').classList.add('selected');
+                const option = question.options.find(opt => opt.value === input.value);
+                if (option) {
+                    questionScore += option.score;
+                }
+            });
+            
+            assessmentData[question.id] = {
+                values: selectedValues,
+                score: questionScore
+            };
+            
+            // Enable next button
+            document.getElementById('nextBtn').disabled = false;
+            
+            updateIntelligenceScore();
+            updateLiveScoring();
+        }
+
+        function nextQuestion() {
+            const questions = assessmentQuestions[currentAssessment];
+            
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                // Assessment complete
+                completeAssessment();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        }
+
+        function completeAssessment() {
+            // Hide assessment flow, show results
+            document.getElementById('assessmentFlow').classList.add('hidden');
+            document.getElementById('resultsSection').classList.remove('hidden');
+            
+            // Update all result displays
+            updateIntelligenceChart();
+            updateComplexityIndicators();
+            generateRecommendations();
+            updateRevenueProjection();
+        }
+
+        function generateRecommendations() {
+            const recommendation = determineServiceTier();
+            const serviceElement = document.getElementById('serviceRecommendation');
+            
+            if (serviceElement) {
+                serviceElement.innerHTML = `
+                    <div class="border-l-4 border-coral pl-6 mb-6">
+                        <h4 class="font-display text-xl font-semibold mb-2">${recommendation.name}</h4>
+                        <p class="text-gray-400 mb-4">${recommendation.description}</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-400">Recommended Investment</span>
+                            <span class="text-lg font-semibold text-teal">$${recommendation.basePrice.toLocaleString()}</span>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function updateLiveScoring() {
+            // Update live scoring panel
+            const liveScore = document.getElementById('liveScore');
+            const liveComplexity = document.getElementById('liveComplexity');
+            const liveRecommendation = document.getElementById('liveRecommendation');
+            
+            if (liveScore) liveScore.textContent = intelligenceScore;
+            
+            if (liveComplexity) {
+                const complexity = intelligenceScore >= 15 ? 'High' : intelligenceScore >= 10 ? 'Medium' : 'Low';
+                liveComplexity.textContent = complexity;
+            }
+            
+            if (liveRecommendation) {
+                const tier = determineServiceTier();
+                liveRecommendation.textContent = tier.name;
+            }
+        }
+
+        function updateIntelligenceScore() {
+            intelligenceScore = Object.values(assessmentData).reduce((sum, data) => sum + data.score, 0);
+            
+            const scoreElement = document.getElementById('intelligenceScore');
+            if (scoreElement) scoreElement.textContent = intelligenceScore;
+            
+            updateIntelligenceChart();
+            updateComplexityIndicators();
+            updateLiveScoring();
+        }
+
+        function updateIntelligenceChart() {
+            const ctx = document.getElementById('intelligenceChart');
+            if (!ctx) return;
+            
+            if (intelligenceChart) {
+                intelligenceChart.destroy();
+            }
+            
+            intelligenceChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Current Score', 'Potential'],
+                    datasets: [{
+                        data: [intelligenceScore, Math.max(20 - intelligenceScore, 0)],
+                        backgroundColor: ['#FF6B6B', '#f3f4f6'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        function updateComplexityIndicators() {
+            const complexityLevel = Math.ceil(intelligenceScore / 4);
+            const complexityElement = document.getElementById('complexityIndicators');
+            
+            if (!complexityElement) return;
+            
+            complexityElement.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <span class="text-sm">Complexity Level</span>
+                    <div class="flex space-x-1">
+                        ${[1,2,3,4,5].map(i => `
+                            <div class="w-3 h-3 rounded-full ${i <= complexityLevel ? 'bg-coral' : 'bg-gray-700'}"></div>
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-sm">Resource Intensity</span>
+                    <span class="text-sm font-medium">${complexityLevel <= 2 ? 'Low' : complexityLevel <= 4 ? 'Medium' : 'High'}</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-sm">Timeline Sensitivity</span>
+                    <span class="text-sm font-medium">${intelligenceScore >= 12 ? 'Urgent' : 'Flexible'}</span>
+                </div>
+            `;
+        }
+
+        function determineServiceTier() {
+            if (intelligenceScore >= 16) {
+                return {
+                    name: 'Strategic Campaigns',
+                    description: 'Comprehensive campaign strategy with advanced analytics',
+                    basePrice: 75000,
+                    confidence: 95
+                };
+            } else if (intelligenceScore >= 12) {
+                return {
+                    name: 'Brand Intelligence',
+                    description: 'Brand strategy and positioning optimization',
+                    basePrice: 45000,
+                    confidence: 85
+                };
+            } else if (intelligenceScore >= 8) {
+                return {
+                    name: 'GTM Sprint',
+                    description: 'Go-to-market strategy and execution',
+                    basePrice: 25000,
+                    confidence: 75
+                };
+            } else {
+                return {
+                    name: 'Creative Strategy',
+                    description: 'Creative direction and brand foundation',
+                    basePrice: 15000,
+                    confidence: 65
+                };
+            }
+        }
+
+        function updateServiceMatch() {
+            const recommendation = determineServiceTier();
+            const serviceElement = document.getElementById('serviceRecommendation');
+            
+            if (!serviceElement) return;
+            
+            serviceElement.innerHTML = `
+                <div class="border-l-4 border-coral pl-6 mb-6">
+                    <h4 class="font-display text-xl font-semibold mb-2">${recommendation.name}</h4>
+                    <p class="text-gray-400 mb-4">${recommendation.description}</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-400">Recommended Investment</span>
+                        <span class="text-lg font-semibold text-teal">$${recommendation.basePrice.toLocaleString()}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateRevenueProjection() {
+            const recommendation = determineServiceTier();
+            const projectedValue = recommendation.basePrice * (1 + (intelligenceScore / 20));
+            
+            const projectValueEl = document.getElementById('projectValue');
+            const confidenceLevelEl = document.getElementById('confidenceLevel');
+            const closeProbabilityEl = document.getElementById('closeProbability');
+            const strategicBriefEl = document.getElementById('strategicBrief');
+            
+            if (projectValueEl) projectValueEl.textContent = `$${Math.round(projectedValue).toLocaleString()}`;
+            if (confidenceLevelEl) confidenceLevelEl.textContent = `${recommendation.confidence}%`;
+            if (closeProbabilityEl) closeProbabilityEl.textContent = `${Math.min(95, recommendation.confidence + (intelligenceScore * 2))}%`;
+            
+            // Strategic Brief Preview
+            if (!strategicBriefEl) return;
+            
+            strategicBriefEl.innerHTML = `
+                <div class="border-l-4 border-coral pl-6 mb-6">
+                    <h4 class="font-display text-xl font-semibold mb-3">Strategic Intelligence Summary</h4>
+                    <p class="text-gray-400">Assessment reveals systematic approach needed with ${intelligenceScore <= 10 ? 'foundational' : 'advanced'} strategic intervention.</p>
+                </div>
+                <div class="bg-gray-800 rounded-xl p-6">
+                    <h5 class="font-display font-semibold mb-4">Recommended Next Steps</h5>
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div class="bg-gray-700 rounded-lg p-4 text-center border-2 border-coral">
+                            <div class="text-xs text-gray-400 mb-2">Phase 1</div>
+                            <div class="font-semibold text-coral">Discovery & Strategy</div>
+                        </div>
+                        <div class="bg-gray-700 rounded-lg p-4 text-center border-2 border-gray-600">
+                            <div class="text-xs text-gray-400 mb-2">Phase 2</div>
+                            <div class="font-semibold text-white">Development & Build</div>
+                        </div>
+                        <div class="bg-gray-700 rounded-lg p-4 text-center border-2 border-teal">
+                            <div class="text-xs text-gray-400 mb-2">Phase 3</div>
+                            <div class="font-semibold text-teal">Launch & Optimize</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Action functions
+        function generateProposal() {
+            alert('Generating formal proposal based on assessment results...');
+        }
+
+        function scheduleFollowUp() {
+            alert('Opening calendar to schedule follow-up consultation...');
+        }
+
+        function exportAssessment() {
+            const assessmentExport = {
+                client: document.getElementById('clientName').textContent,
+                assessment: currentAssessment,
+                intelligenceScore: intelligenceScore,
+                assessmentData: assessmentData,
+                recommendation: determineServiceTier(),
+                timestamp: new Date().toISOString()
+            };
+            
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(assessmentExport, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `strategyiq-assessment-${Date.now()}.json`);
+            downloadAnchor.click();
+        }
+
+        function exportNotes() {
+            const notes = `
+StrategyIQ Assessment Notes
+Client: ${document.getElementById('clientName').textContent}
+Date: ${new Date().toLocaleDateString()}
+
+Intelligence Score: ${intelligenceScore}
+Recommended Service: ${determineServiceTier().name}
+Assessment Area: ${currentAssessment}
+
+Assessment Responses:
+${Object.entries(assessmentData).map(([key, data]) => `${key}: ${data.values.join(', ')} (Score: ${data.score})`).join('\n')}
+
+Consultant Notes:
+- Use this intelligence to demonstrate systematic thinking
+- Highlight the scoring methodology during proposal presentation
+- Position as evidence-based recommendation vs. experience-based guessing
+            `;
+            
+            const dataStr = "data:text/plain;charset=utf-8," + encodeURIComponent(notes);
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `strategyiq-notes-${Date.now()}.txt`);
+            downloadAnchor.click();
+        }
+
+        function saveProgress() {
+            const progressData = {
+                currentAssessment,
+                currentQuestionIndex,
+                assessmentData,
+                intelligenceScore,
+                timestamp: new Date().toISOString()
+            };
+            
+            localStorage.setItem('strategyiq-progress', JSON.stringify(progressData));
+            alert('Assessment progress saved successfully!');
+        }
+
+        function resetAssessment() {
+            if (confirm('Reset current assessment? This will clear all progress.')) {
+                currentAssessment = null;
+                currentQuestionIndex = 0;
+                assessmentData = {};
+                intelligenceScore = 0;
+                
+                document.getElementById('serviceSelection').classList.remove('hidden');
+                document.getElementById('assessmentFlow').classList.add('hidden');
+                document.getElementById('resultsSection').classList.add('hidden');
+                
+                // Reset displays
+                const scoreElement = document.getElementById('intelligenceScore');
+                if (scoreElement) scoreElement.textContent = '0';
+                
+                const projectValue = document.getElementById('projectValue');
+                if (projectValue) projectValue.textContent = '$0';
+                
+                const confidenceLevel = document.getElementById('confidenceLevel');
+                if (confidenceLevel) confidenceLevel.textContent = '0%';
+                
+                const closeProbability = document.getElementById('closeProbability');
+                if (closeProbability) closeProbability.textContent = '0%';
+                
+                // Reset live scoring
+                updateLiveScoring();
+                
+                // Clear consultant notes
+                const notesElement = document.getElementById('consultantNotes');
+                if (notesElement) notesElement.value = '';
+                
+                // Clear localStorage
+                localStorage.removeItem('strategyiq-progress');
+            }
+        }
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // Client Management Functions
+        let currentClient = null;
+        let clientProfiles = JSON.parse(localStorage.getItem('strategyiq-clients') || '[]');
+
+        function openNewClientModal() {
+            document.getElementById('clientModal').classList.remove('hidden');
+            document.getElementById('clientForm').reset();
+        }
+
+        function closeClientModal() {
+            document.getElementById('clientModal').classList.add('hidden');
+        }
+
+        function handleProjectTypeChange() {
+            const projectType = document.getElementById('projectTypeInput').value;
+            
+            // Smart pre-population: Auto-highlight Brand Intelligence for Brand Positioning projects
+            if (projectType === 'brand_positioning') {
+                // Add visual indicator for recommended assessment
+                setTimeout(() => {
+                    const brandCard = document.querySelector('[onclick="startAssessment(\'brand\')"]');
+                    if (brandCard) {
+                        brandCard.style.border = '2px solid var(--coral)';
+                        brandCard.style.boxShadow = '0 0 20px rgba(255, 107, 107, 0.3)';
+                        
+                        // Add recommendation badge
+                        const existingBadge = brandCard.querySelector('.recommendation-badge');
+                        if (!existingBadge) {
+                            const badge = document.createElement('div');
+                            badge.className = 'recommendation-badge absolute top-2 right-2 bg-coral text-white text-xs px-2 py-1 rounded-full font-medium';
+                            badge.textContent = 'Recommended';
+                            badge.style.position = 'absolute';
+                            badge.style.top = '8px';
+                            badge.style.right = '8px';
+                            brandCard.style.position = 'relative';
+                            brandCard.appendChild(badge);
+                        }
+                    }
+                }, 100);
+            } else {
+                // Remove highlighting from all cards
+                document.querySelectorAll('.service-card').forEach(card => {
+                    card.style.border = '';
+                    card.style.boxShadow = '';
+                    const badge = card.querySelector('.recommendation-badge');
+                    if (badge) badge.remove();
+                });
+            }
+        }
+
+        function saveClientProfile(clientData) {
+            const clientId = Date.now().toString();
+            const newClient = {
+                id: clientId,
+                ...clientData,
+                createdAt: new Date().toISOString(),
+                lastUpdated: new Date().toISOString()
+            };
+
+            clientProfiles.push(newClient);
+            localStorage.setItem('strategyiq-clients', JSON.stringify(clientProfiles));
+            updateClientDropdown();
+            
+            return newClient;
+        }
+
+        function updateClientDropdown() {
+            const dropdown = document.getElementById('clientDropdown');
+            if (!dropdown) return; // Safety check - dropdown doesn't exist yet
+            
+            dropdown.innerHTML = '<option value="">Select Client...</option>';
+            
+            clientProfiles.forEach(client => {
+                const option = document.createElement('option');
+                option.value = client.id;
+                option.textContent = `${client.name}${client.company ? ' - ' + client.company : ''}`;
+                dropdown.appendChild(option);
+            });
+        }
+
+        function loadClientProfile() {
+            const clientId = document.getElementById('clientDropdown').value;
+            if (!clientId) {
+                currentClient = null;
+                document.getElementById('clientName').textContent = 'No Client Selected';
+                document.getElementById('clientDetails').textContent = '';
+                return;
+            }
+
+            currentClient = clientProfiles.find(client => client.id === clientId);
+            if (currentClient) {
+                document.getElementById('clientName').textContent = currentClient.name;
+                document.getElementById('clientDetails').textContent = 
+                    `${currentClient.company || 'Individual'} • ${currentClient.projectType || 'No project type'} • ${currentClient.budgetRange || 'Budget TBD'}`;
+                
+                // Trigger smart pre-population based on project type
+                if (currentClient.projectType === 'brand_positioning') {
+                    handleProjectTypeChange();
+                }
+            }
+        }
+
+        // Handle client form submission
+        document.addEventListener('DOMContentLoaded', () => {
+            const clientForm = document.getElementById('clientForm');
+            if (clientForm) {
+                clientForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(clientForm);
+                    const clientData = {
+                        name: document.getElementById('clientNameInput').value,
+                        company: document.getElementById('companyInput').value,
+                        email: document.getElementById('emailInput').value,
+                        phone: document.getElementById('phoneInput').value,
+                        projectType: document.getElementById('projectTypeInput').value,
+                        projectDescription: document.getElementById('projectDescriptionInput').value,
+                        budgetRange: document.getElementById('budgetRangeInput').value,
+                        timeline: document.getElementById('timelineInput').value,
+                        notes: document.getElementById('notesInput').value
+                    };
+
+                    const savedClient = saveClientProfile(clientData);
+                    currentClient = savedClient;
+                    
+                    // Update UI
+                    document.getElementById('clientDropdown').value = savedClient.id;
+                    loadClientProfile();
+                    closeClientModal();
+                    
+                    // Show success message
+                    alert('Client profile saved successfully!');
+                });
+            }
+        });
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadScopeIQData();
+            const fadeElements = document.querySelectorAll('.fade-in');
+            fadeElements.forEach(el => observer.observe(el));
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+
+    <!-- Hub 2.0 Integration -->
+    <script src="/TheHub/hub-integration-component.js?v=2.7"></script>
+</body>
+</html>

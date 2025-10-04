@@ -1,11 +1,15 @@
-// Mobile Navigation Toggle
-const hamburger = document.getElementById('hamburger');
-const navMenu = document.getElementById('nav-menu');
+// Mobile Navigation Toggle - Handle both standard and contact page IDs
+const hamburger = document.getElementById('hamburger') || document.getElementById('mobile-menu-btn');
+const navMenu = document.getElementById('nav-menu') || document.getElementById('mobileMenuOverlay');
 
 if (hamburger && navMenu) {
     hamburger.addEventListener('click', () => {
-        hamburger.classList.toggle('active');
-        navMenu.classList.toggle('active');
+        if (hamburger && hamburger.classList) {
+            hamburger.classList.toggle('active');
+        }
+        if (navMenu && navMenu.classList) {
+            navMenu.classList.toggle('active');
+        }
     });
 }
 
@@ -17,6 +21,18 @@ if (hamburger && navMenu) {
     }));
 }
 
+// Close mobile menu when clicking outside
+document.addEventListener('click', (e) => {
+    if (hamburger && navMenu && !hamburger.contains(e.target) && !navMenu.contains(e.target)) {
+        if (hamburger && hamburger.classList) {
+            hamburger.classList.remove('active');
+        }
+        if (navMenu && navMenu.classList) {
+            navMenu.classList.remove('active');
+        }
+    }
+});
+
 // Set active navigation link based on current page
 function setActiveNavLink() {
     const currentPath = window.location.pathname;
@@ -24,21 +40,25 @@ function setActiveNavLink() {
     
     // Remove active class from all nav links
     document.querySelectorAll('.nav-link').forEach(link => {
-        link.classList.remove('active');
+        if (link && link.classList) {
+            link.classList.remove('active');
+        }
     });
     
     // Add active class to current page link
     document.querySelectorAll('.nav-link').forEach(link => {
-        const href = link.getAttribute('href');
-        
-        // Handle different page scenarios
-        if ((currentPage === 'index.html' || currentPage === '') && (href === '#' || href === 'index.html')) {
-            link.classList.add('active');
-        } else if (href === currentPage) {
-            link.classList.add('active');
-        } else if ((currentPage.startsWith('case-study-') || currentPage.startsWith('caseStudy_')) && href === 'myexperience.html') {
-            // Case studies are part of the experience section
-            link.classList.add('active');
+        if (link && link.classList) {
+            const href = link.getAttribute('href');
+            
+            // Handle different page scenarios
+            if ((currentPage === 'index.html' || currentPage === '') && (href === '#' || href === 'index.html')) {
+                link.classList.add('active');
+            } else if (href === currentPage) {
+                link.classList.add('active');
+            } else if ((currentPage.startsWith('case-study-') || currentPage.startsWith('caseStudy_')) && href === 'myexperience.html') {
+                // Case studies are part of the experience section
+                link.classList.add('active');
+            }
         }
     });
 }
