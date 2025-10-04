@@ -77,7 +77,7 @@ class AdvancedNavigation {
                 
                 <div class="nav-section">
                     <div class="nav-section-title">IMC HUB</div>
-                    <a href="/TheHub/IMCServices/" class="nav-link" data-tooltip="services">
+                    <a href="../" class="nav-link" data-tooltip="services">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
                             <path d="M2 17l10 5 10-5"></path>
@@ -93,7 +93,7 @@ class AdvancedNavigation {
                         Advisory
                         <div class="nav-info-icon">i</div>
                     </a>
-                    <a href="/TheHub/IMCServices/scopeiq-wizard/" class="nav-link" data-tooltip="scopeiq">
+                    <a href="../scopeiq-wizard/" class="nav-link" data-tooltip="scopeiq">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="3"></circle>
                             <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"></path>

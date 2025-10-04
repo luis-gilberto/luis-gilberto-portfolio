@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI With Soul: Unlocking the Blank Page | Luis Gilberto</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            color: #f5f5f5;
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Frosted badge that hugs its content */
+        .brand-header {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+
+            /* make it size to content, not container */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: max-content;
+            max-width: 92vw;     /* safety on tiny phones */
+            height: auto;
+            padding: 8px 12px;
+            gap: 8px;
+
+            border-radius: 14px;
+            background: rgba(26,26,26,0.9);
+            border: 1px solid rgba(249,111,110,0.3);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+        }
+
+        .brand-header:hover {
+            background: rgba(26,26,26,0.95);
+            border-color: rgba(249,111,110,0.5);
+        }
+
+        /* LOCK aspect ratio — pick one dimension, let the other auto */
+        .brand-logo {
+            height: 22px;        /* base size for mobile */
+            width: auto;         /* keep ratio */
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        /* Larger logo for desktop screens */
+        @media (min-width: 769px) {
+            .brand-logo {
+                height: 28px;    /* increased size for desktop */
+            }
+        }
+
+        /* keep it centered on mobile too (don't flip to right:50%) */
+        @media (max-width: 768px) {
+            .brand-header {
+                left: 50%;
+                transform: translateX(-50%);
+                right: auto;
+            }
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(249, 111, 110, 0.2);
+            z-index: 999;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #F96F6E, #ff8a89);
+            width: 25%;
+            transition: width 0.3s ease;
+        }
+
+        /* Article Container */
+        .article-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 1.5rem 0 6rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .content-area {
+            flex: 0 0 65%;
+            max-width: 65%;
+            margin-left: 5%;
+            margin-right: 0;
+            padding: 0 1.5rem;
+            position: relative;
+        }
+
+        /* Page System */
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-family: 'Big Shoulders Display', cursive;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #F96F6E, #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Banner Images */
+        .banner-container {
+            width: 100%;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .banner-image {
+            width: 100%;
+            max-width: 800px;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .banner-desktop {
+            display: block;
+        }
+
+        .banner-mobile {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .banner-desktop {
+                display: none;
+            }
+            
+            .banner-mobile {
+                display: block;
+            }
+        }
+
+        h2 {
+            font-family: 'Big Shoulders Display', cursive;
+            font-size: 2rem;
+            font-weight: 600;
+            margin: 1.2rem 0 0.8rem;
+            color: #F96F6E;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            color: #e0e0e0;
+        }
+
+        .tldr {
+            background: rgba(249, 111, 110, 0.1);
+            border-left: 4px solid #F96F6E;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .tldr strong {
+            color: #F96F6E;
+        }
+
+        blockquote {
+            background: rgba(249, 111, 110, 0.1);
+            border-left: 4px solid #F96F6E;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            font-style: italic;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .emphasis {
+            color: #F96F6E;
+            font-weight: 600;
+            font-style: italic;
+        }
+
+        .section-divider {
+            margin: 1.5rem 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .section-divider::before {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 2px;
+            background: #F96F6E;
+            margin: 0 auto;
+        }
+
+        .byline {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .byline-author {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #f5f5f5;
+        }
+
+        .byline-subtitle {
+            color: #a0a0a0;
+            margin-top: 0.25rem;
+        }
+
+        .byline-date {
+            color: #888888;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Timeline Sidebar */
+        .timeline-sidebar {
+            flex: 0 0 30%;
+            width: 30%;
+            height: 100vh;
+            background: rgba(26, 26, 26, 0.95);
+            border-left: 1px solid rgba(249, 111, 110, 0.2);
+            padding: 0 2rem;
+            overflow-y: auto;
+            z-index: 100;
+            position: sticky;
+            top: 0;
+        }
+
+        .timeline-header {
+            margin-bottom: 2rem;
+        }
+
+        .timeline-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #F96F6E;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-subtitle {
+            font-size: 0.9rem;
+            color: #cccccc;
+            opacity: 0.8;
+        }
+
+        .timeline-content {
+            position: relative;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: rgba(249, 111, 110, 0.3);
+        }
+
+        .timeline-stage {
+            position: relative;
+            margin-bottom: 1.5rem;
+            padding-left: 3rem;
+        }
+
+        .stage-dot {
+            position: absolute;
+            left: -3px;
+            top: 8px;
+            width: 12px;
+            height: 12px;
+            background: #F96F6E;
+            border-radius: 50%;
+            border: 3px solid rgba(26, 26, 26, 1);
+        }
+
+        .stage-content {
+            background: rgba(42, 42, 42, 0.5);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(249, 111, 110, 0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .stage-icon {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stage-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #F96F6E;
+            margin-bottom: 0.25rem;
+        }
+
+        .stage-description {
+            font-size: 0.85rem;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .stage-detail {
+            font-size: 0.8rem;
+            color: #cccccc;
+            line-height: 1.4;
+        }
+
+        /* Navigation */
+        .content-area .nav-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            margin: 1rem auto 0.5rem;
+            padding: 0.8rem 1.5rem;
+            max-width: 60%;
+            width: 100%;
+            background: rgba(26, 26, 26, 0.95);
+            border-radius: 50px;
+            border: 1px solid rgba(249, 111, 110, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, #F96F6E, #ff8a89);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(249, 111, 110, 0.3);
+        }
+
+        .nav-btn:disabled {
+            background: rgba(249, 111, 110, 0.3);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .page-indicators {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .page-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(249, 111, 110, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .page-dot.active {
+            background: #F96F6E;
+            transform: scale(1.2);
+        }
+
+        .page-dot:hover {
+            background: #F96F6E;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 1024px) {
+            .article-container {
+                flex-direction: column;
+                max-width: 100%;
+            }
+            
+            .content-area {
+                flex: 1;
+                max-width: 100%;
+                margin-left: 0;
+                padding: 0 1rem;
+            }
+            
+            .timeline-sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                margin-top: 2rem;
+                border-left: none;
+                border-top: 1px solid rgba(249, 111, 110, 0.2);
+                padding: 2rem 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+
+
+            
+            /* Hide timeline sidebar on mobile */
+            .timeline-sidebar {
+                display: none;
+            }
+            
+            /* Adjust article container for mobile */
+            .article-container {
+                flex-direction: column;
+                padding: 60px 0 2rem;
+            }
+            
+            /* Full width content on mobile */
+            .content-area {
+                flex: 1;
+                max-width: 100%;
+                margin: 0;
+                padding: 0 1rem;
+            }
+            
+
+            
+            /* Reduce banner margin */
+            .banner-container {
+                margin: 0.5rem 0;
+            }
+            
+            /* Optimize typography for mobile - increased readability */
+            h1 {
+                font-size: 2.2rem;
+                margin-bottom: 1rem;
+                line-height: 1.3;
+            }
+            
+            h2 {
+                font-size: 1.8rem;
+                margin: 1.5rem 0 1rem;
+                line-height: 1.4;
+            }
+            
+            p {
+                font-size: 1.2rem;
+                margin-bottom: 1.2rem;
+                line-height: 1.6;
+            }
+            
+            /* Enhanced byline for readability */
+            .byline {
+                margin-bottom: 1rem;
+                padding-bottom: 0.5rem;
+            }
+            
+            .byline-author {
+                font-size: 1.3rem;
+            }
+            
+            /* Reduce TLDR padding */
+            .tldr {
+                padding: 0.8rem;
+                margin: 1rem 0;
+            }
+            
+            /* Compact blockquotes */
+            blockquote {
+                padding: 0.8rem;
+                margin: 1rem 0;
+            }
+            
+            /* Reduce section divider margins */
+            .section-divider {
+                margin: 0.8rem 0;
+            }
+            
+            /* Optimize navigation for mobile */
+            .content-area .nav-container {
+                padding: 0.6rem 1rem;
+                gap: 0.8rem;
+                max-width: 95%;
+                margin: 0.5rem auto 0;
+            }
+            
+            .nav-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.75rem;
+            }
+            
+            /* Adjust page indicators */
+            .page-indicators {
+                gap: 0.4rem;
+            }
+            
+            .page-dot {
+                 width: 6px;
+                 height: 6px;
+             }
+         }
+         
+         /* Desktop: badge hugs contents, logo reads bigger */
+        @media (min-width: 1025px) {
+            .brand-header {
+                left: 20px;
+                transform: none;
+                width: max-content;
+                padding: 10px 14px;
+                border-radius: 16px;
+            }
+            .brand-logo {
+                height: 30px;
+                width: auto;
+            }
+            
+            /* Page 2 & 3 desktop spacing to prevent logo overlap */
+            #page2, #page3 {
+                padding-top: 80px;
+            }
+        }
+        
+        /* Extra small mobile devices */
+         @media (max-width: 480px) {
+             .article-container {
+                 padding: 50px 0 2rem; /* Reduced for better fit */
+             }
+             
+             .content-area {
+                 padding: 0 0.8rem;
+             }
+             
+             /* Remove all the special page 2 rules */
+             
+             h1 {
+                 font-size: 2rem;
+                 line-height: 1.3;
+             }
+             
+             h2 {
+                 font-size: 1.6rem;
+                 margin: 1.2rem 0 0.8rem;
+                 line-height: 1.4;
+             }
+             
+             p {
+                 font-size: 1.1rem;
+                 line-height: 1.6;
+                 margin-bottom: 1.1rem;
+             }
+             
+             .byline-author {
+                 font-size: 1.2rem;
+             }
+             
+             .tldr, blockquote {
+                 padding: 0.6rem;
+                 margin: 0.8rem 0;
+             }
+             
+             .content-area .nav-container {
+                 padding: 0.5rem 0.8rem;
+                 max-width: 98%;
+             }
+             
+             .nav-btn {
+                 padding: 0.3rem 0.6rem;
+                 font-size: 0.7rem;
+             }
+             
+             /* Mobile page break after 'The Cell of Fear' paragraph */
+             .mobile-page-break {
+                 page-break-after: always;
+             }
+             
+             .navigation-container {
+                 padding: 1rem;
+             }
+             
+             .nav-button {
+                 padding: 0.75rem 1.5rem;
+                 font-size: 0.9rem;
+             }
+             
+             .page-indicators {
+                 gap: 0.5rem;
+             }
+             
+             .page-indicators .dot {
+                 width: 8px;
+                 height: 8px;
+             }
+         }
+         
+         /* MOBILE TYPE TIGHTEN - Ultra compact for 430px and below */
+         @media (max-width: 430px) {
+             /* 1) Paragraph tightening */
+             .article p,
+             .post p,
+             p {
+                 font-size: clamp(15px, 3.7vw, 17px);
+                 line-height: 1.5;
+                 margin-bottom: 0.85rem;
+                 hyphens: auto;
+                 -webkit-hyphens: auto;
+             }
+             
+             /* 2) H1 optimization */
+             .article h1,
+             .post h1,
+             h1.entry-title,
+             h1 {
+                 font-size: clamp(22px, 5.8vw, 28px);
+                 line-height: 1.25;
+                 margin-top: 0.75rem;
+                 margin-bottom: 0.5rem;
+                 letter-spacing: 0;
+             }
+             
+             /* 3) Section title reduction */
+             .section-title,
+             .article h2,
+             .post h2,
+             h2 {
+                 font-size: clamp(20px, 5vw, 24px);
+                 line-height: 1.2;
+                 margin-top: 1.25rem;
+                 margin-bottom: 0.5rem;
+             }
+             
+             /* 4) Section divider compression */
+             .section-divider,
+             .rule,
+             .divider {
+                 height: 2px;
+                 width: 90px;
+                 margin: 0.75rem auto;
+                 opacity: 0.85;
+             }
+             
+             /* 5) Logo badge shrink — CENTERED, not forced left */
+             .brand-badge,
+             .logo-badge,
+             .floating-logo,
+             .brand-header {
+                 width: max-content;
+                 padding: 8px 10px;
+                 top: 10px;
+                 left: 50%;
+                 transform: translateX(-50%);
+                 opacity: 0.95;
+                 pointer-events: none;          /* badge won't steal taps */
+             }
+             .brand-header .brand-logo {       /* keep logo clickable if it's a link */
+                 pointer-events: auto;
+             }
+             
+             .article header,
+             .post header,
+             .content-header,
+             .content-area {
+                 padding-top: 56px;
+             }
+             
+             /* 6) Global content padding reclaim */
+             .content,
+             .article,
+             .post-content,
+             .container,
+             .article-container {
+                 padding-top: 14px;
+                 padding-bottom: 14px;
+             }
+             
+             /* 7) Optional sticky pager */
+             .article-pager,
+             .post-pager,
+             .nav-pills,
+             .nav-container {
+                 position: sticky;
+                 bottom: 10px;
+                 z-index: 60;      /* above content, below the badge at 1000 */
+                 margin-top: 0.75rem;
+             }
+             
+             /* 8) Handoff slot tightening */
+             #p2Handoff p {
+                 margin: 0.7rem 0;
+             }
+         }
+         
+         /* Make each active page fill the screen on small phones,
+            so the sticky pager hugs the bottom nicely */
+         @media (max-width: 430px) {
+             .page.active {
+                 min-height: calc(100dvh - 140px); /* progress bar + top padding + pager */
+             }
+         }
+         
+         /* ---------- Lists: fix indentation globally ---------- */
+         .content-area ul { padding-left: 1.25rem; margin: .6rem 0 1rem; }
+         .content-area li { margin: .25rem 0; }
+         
+         /* ---------- Icon list (replaces plain bullets) ---------- */
+         .icon-list { list-style: none; padding-left: 0; margin: .6rem 0 1rem; }
+         .icon-list li {
+           display: flex; align-items: flex-start; gap: .6rem;
+           padding: .45rem .65rem;
+           background: rgba(249,111,110,.08);
+           border: 1px solid rgba(249,111,110,.25);
+           border-radius: 10px;
+           margin: .4rem 0;
+         }
+         .icon-list .icon { font-size: 1rem; line-height: 1.2; margin-top: .05rem; }
+         .icon-list .text { flex: 1; }
+         
+         /* ---------- Stat cards grid (Why It Matters) ---------- */
+         .fact-grid {
+           display: grid; grid-template-columns: repeat(12,1fr);
+           gap: .75rem; margin: .8rem 0 1rem;
+         }
+         .fact-card {
+           grid-column: span 12;
+           background: rgba(26,26,26,.7);
+           border: 1px solid rgba(249,111,110,.25);
+           border-radius: 12px;
+           padding: .85rem;
+         }
+         .fact-title {
+           font-family: 'Big Shoulders Display', cursive;
+           font-size: 1.15rem; line-height: 1.1; color: #F96F6E; margin-bottom: .25rem;
+         }
+         .fact-note { font-size: .95rem; opacity: .9; }
+         
+         @media (min-width: 600px) { .fact-card { grid-column: span 6; } }
+         @media (min-width: 900px) { .fact-card { grid-column: span 4; } }
+         
+         /* ---------- Chips row (tiny horizontal "graphics") ---------- */
+         /* rail */
+         .story-chips{
+           display:flex; gap:.5rem; overflow-x:auto;
+           padding:.45rem .6rem; margin:.6rem 0 .4rem;
+           border-radius:999px;
+           background:rgba(26,26,26,.55);
+           border:1px solid rgba(249,111,110,.22);
+           box-shadow: inset 0 0 0 1px rgba(255,255,255,.03);
+         }
+         
+         /* pills */
+         .story-chips .chip{
+           padding:.35rem .65rem; border-radius:999px; white-space:nowrap;
+           background:rgba(249,111,110,.12);
+           border:1px solid rgba(249,111,110,.25);
+           font-size:.9rem; line-height:1; display:inline-flex; align-items:center; gap:.35rem;
+         }
+         .story-chips .chip::before{ content:''; width:.5rem; height:.5rem; border-radius:999px; background:rgba(249,111,110,.5); display:none;}
+         @media (min-width:380px){ .story-chips{justify-content:flex-start} }
+         
+         /* Center the chips on wider screens and make them non-scrollable */
+         @media (min-width:768px){
+           .story-chips{ overflow-x: visible; width: max-content; margin: .6rem auto; justify-content: center; }
+         }
+         
+         /* Icon inline styling for pill-style bullets */
+         .icon-inline {
+           list-style: none;
+           padding-left: 0;
+           margin: .6rem 0 1rem;
+           display: flex;
+           flex-wrap: wrap;
+           gap: .5rem;
+           justify-content: center;
+         }
+         
+         .icon-inline li {
+           display: inline-flex;
+           align-items: center;
+           gap: .35rem;
+           padding: .4rem .7rem;
+           background: rgba(249,111,110,.12);
+           border: 1px solid rgba(249,111,110,.25);
+           border-radius: 20px;
+           font-size: .9rem;
+           white-space: nowrap;
+         }
+         
+         .icon-inline .icon {
+           font-size: .9rem;
+           line-height: 1;
+         }
+         
+         .icon-inline .text {
+           font-weight: 500;
+         }
+         
+         /* Two-column layout for outpour paragraph on desktop */
+         @media (min-width: 1200px) {
+           .outpour {
+             column-count: 2;
+             column-gap: 2.5rem;
+             column-rule: 1px solid rgba(249,111,110,.2);
+           }
+         }
+         
+         /* Responsive adjustments for icon-inline */
+          @media (max-width: 768px) {
+            .icon-inline {
+              justify-content: flex-start;
+            }
+            
+            .icon-inline li {
+              padding: .35rem .6rem;
+              font-size: .85rem;
+            }
+          }
+          
+          /* Auto-tighten classes for small screens */
+          .page.fit-1 {
+            font-size: 0.95rem;
+            line-height: 1.5;
+          }
+          
+          .page.fit-1 h2 {
+            font-size: 1.8rem;
+            margin-bottom: 0.8rem;
+          }
+          
+          .page.fit-1 p {
+            margin-bottom: 0.8rem;
+          }
+          
+          .page.fit-1 .icon-inline {
+            margin: 0.4rem 0 0.8rem;
+          }
+          
+          .page.fit-1 .icon-inline li {
+            padding: 0.3rem 0.5rem;
+            font-size: 0.8rem;
+          }
+          
+          .page.fit-2 {
+            font-size: 0.9rem;
+            line-height: 1.4;
+          }
+          
+          .page.fit-2 h2 {
+            font-size: 1.6rem;
+            margin-bottom: 0.6rem;
+          }
+          
+          .page.fit-2 p {
+            margin-bottom: 0.6rem;
+          }
+          
+          .page.fit-2 .icon-inline {
+            margin: 0.3rem 0 0.6rem;
+            gap: 0.3rem;
+          }
+          
+          .page.fit-2 .icon-inline li {
+            padding: 0.25rem 0.4rem;
+            font-size: 0.75rem;
+          }
+          
+          .page.fit-2 .story-chips {
+            margin: 0.4rem auto;
+          }
+          
+          .page.fit-2 .story-chips .chip {
+            padding: 0.3rem 0.6rem;
+            font-size: 0.8rem;
+          }
+         
+         /* ---------- Pull quote ---------- */
+         .pull {
+           margin: 1rem 0; padding: .9rem 1rem;
+           border-left: 3px solid #F96F6E;
+           background: rgba(249,111,110,.08);
+           border-radius: 0 8px 8px 0;
+           font-style: italic;
+         }
+         
+         /* ---------- Decorative divider with small key icon ---------- */
+         .divider-icon {
+           display: flex; align-items: center; justify-content: center; gap: .5rem;
+           margin: .9rem 0; opacity: .9;
+         }
+         .divider-icon .rule { height: 2px; width: 54px; background: #F96F6E; }
+         .divider-icon svg { width: 22px; height: 22px; color: #F96F6E; }
+         
+         /* ---------- Even softer density on phones ---------- */
+         @media (max-width: 430px) {
+           .icon-list li { padding: .4rem .55rem; }
+           .fact-card { padding: .75rem; }
+           .pull { padding: .8rem .9rem; }
+         }
+    .inline-affirm{
+          display:inline-block;
+          margin:.6rem 0 .7rem;
+          padding:.55rem .75rem;
+          background:rgba(249,111,110,.10);
+          border:1px solid rgba(249,111,110,.25);
+          border-radius:10px;
+          font-weight:600;
+        }
+        
+        .epigraph {
+          display: block;
+          margin: 1.5rem 0;
+          text-align: center;
+          font-size: 1.1rem;
+          font-weight: 500;
+          color: #F96F6E;
+          line-height: 1.4;
+        }
+        
+        .custom-divider {
+          display: flex;
+          align-items: center;
+          margin: 2rem 0;
+          justify-content: center;
+        }
+        
+        .divider-line {
+          flex: 1;
+          height: 1px;
+          background: #333;
+          max-width: 100px;
+        }
+        
+        .divider-dot {
+          width: 12px;
+          height: 12px;
+          background: #F96F6E;
+          border-radius: 50%;
+          margin: 0 15px;
+        }
+        
+        .kicker{
+          display:inline-block;
+          margin:.2rem 0 .15rem;
+          padding:.15rem .5rem;
+          border:1px solid rgba(249,111,110,.25);
+          border-radius:999px;
+          font-size:.8rem; letter-spacing:.12em; text-transform:uppercase;
+          color:#ff8a89; background:rgba(249,111,110,.10);
+        }
+        .kicker + h2{ margin-top:.35rem; }
+        
+        @media (max-width:430px){
+          #page3 p{ max-width: 95ch; }
+        }
+        
+        /* ---------- Page 4 visuals (scoped) ---------- */
+        #page4 .icon-list { list-style:none; padding-left:0; margin:.6rem 0 1rem; }
+        #page4 .icon-list li{
+          display:flex; align-items:flex-start; gap:.6rem;
+          padding:.45rem .65rem; margin:.4rem 0;
+          background:rgba(249,111,110,.08);
+          border:1px solid rgba(249,111,110,.25);
+          border-radius:10px;
+        }
+        #page4 .icon-list .icon{ font-size:1rem; line-height:1.2; margin-top:.05rem; }
+        #page4 .icon-list .text{ flex:1; }
+        
+        /* Stat cards */
+        #page4 .fact-grid{
+          display:grid; grid-template-columns:repeat(12,1fr);
+          gap:.75rem; margin:.8rem 0 1rem;
+        }
+        #page4 .fact-card{
+          grid-column:span 12;
+          background:rgba(26,26,26,.70);
+          border:1px solid rgba(249,111,110,.25);
+          border-radius:12px;
+          padding:.9rem;
+        }
+        #page4 .fact-title{
+          font-family:'Big Shoulders Display', cursive;
+          font-size:1.15rem; line-height:1.1; color:#F96F6E; margin-bottom:.25rem;
+        }
+        #page4 .fact-note{ font-size:.97rem; opacity:.95; }
+        
+        /* Break into columns on wider screens */
+        @media (min-width:600px){ #page4 .fact-card{ grid-column:span 6; } }
+        @media (min-width:900px){ #page4 .fact-card{ grid-column:span 4; } }
+        
+        /* Pull quote */
+        #page4 .pull{
+          margin:1rem 0; padding:.9rem 1rem;
+          border-left:3px solid #F96F6E;
+          background:rgba(249,111,110,.08);
+          border-radius:0 8px 8px 0;
+          font-style:italic;
+        }
+        
+        /* Decorative divider w/ key icon (reuse-friendly) */
+        #page4 .divider-icon{display:flex;align-items:center;justify-content:center;gap:.5rem;margin:.9rem 0;opacity:.9}
+        #page4 .divider-icon .rule{height:2px;width:54px;background:#F96F6E}
+        #page4 .divider-icon svg{width:22px;height:22px;color:#F96F6E}
+        
+        /* Slightly softer on tiny phones */
+        @media (max-width:430px){
+          #page4 .icon-list li{ padding:.4rem .55rem; }
+          #page4 .fact-card{ padding:.8rem; }
+          #page4 .pull{ padding:.8rem .9rem; }
+        }
+        
+        /* Reference links styling */
+        #page4 .fact-note a {
+          color: #F96F6E;
+          text-decoration: none;
+          border-bottom: 1px solid rgba(249, 111, 110, 0.3);
+          transition: all 0.2s ease;
+        }
+        
+        #page4 .fact-note a:hover {
+          color: #ff8a89;
+          border-bottom-color: #ff8a89;
+          text-decoration: none;
+        }
+        
+        #page4 .fact-note a:focus {
+          outline: 2px solid #F96F6E;
+          outline-offset: 2px;
+          border-radius: 2px;
+        }
+        
+        /* Fit-on-one-screen mode for Page 4 on phones */
+        .page4-compact #page4 h2{
+          font-size: clamp(18px, 5vw, 20px);
+          margin: .5rem 0 .35rem;
+        }
+        .page4-compact #page4 p{
+          font-size: clamp(14px, 3.6vw, 15.5px);
+          line-height: 1.45;
+          margin: .5rem 0 .55rem;
+        }
+        
+        /* Hide purely decorative spacers on compact */
+        .page4-compact #page4 .section-divider,
+        .page4-compact #page4 .divider-icon,
+        .page4-compact #page4 .pull{ display:none; }
+        
+        /* ICON LIST → chips */
+        #page4 .icon-list.compact{
+          display:flex; flex-wrap:wrap; gap:.45rem;
+          padding:0; margin:.55rem 0 .6rem;
+        }
+        #page4 .icon-list.compact li{
+          display:inline-flex; align-items:center; gap:.4rem;
+          padding:.28rem .55rem; border-radius:999px;
+          background: rgba(249,111,110,.12);
+          border: 1px solid rgba(249,111,110,.25);
+        }
+        #page4 .icon-list.compact .icon{ font-size:.95rem; margin:0; }
+        #page4 .icon-list.compact .text{ white-space:nowrap; }
+        
+        /* FACT CARDS → three mini tiles */
+        #page4 .fact-grid.mini{
+          display:grid; grid-template-columns: repeat(3,1fr);
+          gap:.45rem; margin:.55rem 0 .5rem;
+        }
+        #page4 .fact-grid.mini .fact-card{ padding:.55rem .6rem; border-radius:10px; }
+        #page4 .fact-grid.mini .fact-title{ font-size:.95rem; margin:0 0 .12rem; }
+        #page4 .fact-grid.mini .fact-note{
+          font-size:.84rem; line-height:1.25;
+          display:-webkit-box; -webkit-line-clamp:2; line-clamp:2;
+          -webkit-box-orient:vertical; overflow:hidden;
+        }
+        @media (max-width:360px){
+          #page4 .fact-grid.mini{ grid-template-columns: repeat(2,1fr); }
+        }
+        
+        /* Keep the pager tight on that page */
+        .page4-compact .nav-container{ margin-top:.4rem; }
+        
+        /* Page 5 desktop spacing to push content lower */
+        @media (min-width: 1025px) {
+            #page4 {
+                padding-top: 120px;
+            }
+        }
+        
+        /* Page 3 compact styling - reduce spacing after moving content */
+        @media (max-width: 430px) {
+            #page3 {
+                padding-bottom: 0.5rem;
+            }
+            #page3 .custom-divider {
+                margin: 0.5rem auto 0.75rem;
+            }
+            #page3 .kicker {
+                margin-top: 0.5rem;
+                margin-bottom: 0.25rem;
+            }
+            #page3 h2 {
+                margin-top: 0.5rem;
+                margin-bottom: 0.4rem;
+            }
+            #page3 .icon-list {
+                margin: 0.4rem 0 0.6rem;
+            }
+        }
+        
+        /* Page 4 compact styling for small phones */
+        @media (max-width: 430px) {
+            #page4 {
+                padding-top: 0.5rem;
+            }
+            #page4 .fact-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.45rem;
+                margin: 0.4rem 0 0.6rem;
+            }
+            #page4 .fact-card {
+                padding: 0.55rem 0.6rem;
+            }
+            #page4 .fact-title {
+                font-size: 0.95rem;
+                margin: 0 0 0.12rem;
+            }
+            #page4 .fact-note {
+                font-size: 0.84rem;
+                line-height: 1.25;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+            #page4 .custom-divider {
+                margin: 0.5rem auto;
+            }
+            #page4 h2:last-of-type {
+                margin-top: 0.75rem;
+                margin-bottom: 0.4rem;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            #page4 .fact-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        </style>
+</head>
+<body>
+    <!-- Brand Header -->
+    <a href="../../insights/" class="brand-header" id="brandHeader">
+         <img src="../../assets/images/logo-lockup_white_default.svg" alt="Luis Gilberto" height="22" decoding="async" class="brand-logo">
+     </a>
+
+    <!-- Progress Bar -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <div class="article-container">
+        <div class="content-area">
+            <!-- Page 1: Banner & TL;DR -->
+            <div class="page active" id="page1">
+                <!-- Banner Images -->
+                <div class="banner-container">
+                    <img src="../../assets/images/AI_with_Soul_desktop.png" alt="AI With Soul - Unlocking the Blank Page" class="banner-image banner-desktop">
+                    <img src="../../assets/images/AI_w_soul_mobile.png" alt="AI With Soul - Unlocking the Blank Page" class="banner-image banner-mobile">
+                </div>
+                
+                <div class="byline">
+                    <div class="byline-author">By Luis Gilberto</div>
+                    <div class="byline-subtitle">Creative Strategist | Microsoft Alum</div>
+                    <div class="byline-date">September 2025</div>
+                </div>
+
+                <div class="tldr">
+                    <strong>TL;DR:</strong> I used AI to "unlock the blank page," not to write content for my own website. In this post, I explain how and why. Enjoy!
+                </div>
+            </div>
+            
+            <!-- Page 2: The Panic -->
+            <div class="page" id="page2">
+                <p><strong>It started with panic.</strong></p>
+                <p>The realization that my résumé hadn't been updated in years, and that every artifact of my work was scattered across time, platforms, and tools, hit me like a wave. I had memory, sure. But memory is slippery. And there I was, facing the most intimidating creative opponent of all: a blinking cursor.</p>
+
+                <p>This wasn't just about updating a résumé. I wanted something bigger, maybe even audacious: a living time capsule. Something that didn't just list jobs and dates but captured the rollercoaster of campaigns, launches, late nights, and reinventions that shaped me. A digital archive I could revisit to relive the wins, the pivots, and the lessons hidden in the failures.</p>
+
+                <p>But ambition has a way of making the blank page feel even heavier.</p>
+                
+                <h2>The Cell of Fear</h2>
+                <p>Every creative knows this moment. It isn't the absence of ideas that holds you back. It's their weight. My memories and stories pressed at the edges of my mind like prisoners gripping the bars of a cell, waiting to break free. I wasn't afraid of silence. I was afraid of not knowing how to begin.</p>
+                
+                <!-- Handoff slot for mobile rebalancing -->
+                <div class="handoff-slot" id="p2Handoff"></div>
+            </div>
+            
+            <!-- Page 3: The Key (short + momentum) -->
+            <div class="page" id="page3">
+                <h2>The Key</h2>
+                <p>That's when AI stepped in. Not as a ghostwriter. Not as a stand-in. As a key.</p>
+                <p>It gave me the scaffolding I needed. A frame to build on. A nudge to move past the paralysis of the first line. It wasn't about perfection. It was about momentum. And momentum brought freedom.</p>
+                
+                <div class="story-chips" aria-label="beats">
+                  <span class="chip">🔑 Key</span>
+                  <span class="chip">🚀 Momentum</span>
+                  <span class="chip">❤️ Ownership</span>
+                </div>
+
+                <p>Suddenly, the stories began to pour. Not because AI wrote them, but because it caught them as I poured them out. It helped me shape fragments I'd neglected, amplify sparks I'd left dormant. It unlocked more than words. It unlocked my passion for writing again.</p>
+                <p class="epigraph"><em>AI didn't write my story. It unlocked it.</em></p>
+                
+                <div class="custom-divider">
+                    <div class="divider-line"></div>
+                    <div class="divider-dot"></div>
+                    <div class="divider-line"></div>
+                </div>
+                
+                <p class="kicker">Discovery</p>
+                <h2>Unlocking More Than Words</h2>
+                <p class="outpour">After years at Microsoft reviewing hundreds of creative assets and plenty of campaigns, storytelling became second nature. But when it came to my own reinvention — building a site, rewriting a résumé, putting essays into the world — the problem wasn't storytelling. The problem was starting.</p>
+                <p>AI became my creative sparring partner. It turned a void into a canvas. But the soul was still mine:</p>
+                
+                <!-- icon list converted to inline -->
+                <ul class="icon-inline">
+                    <li><span class="icon">💗</span><span class="text">Empathy for why the stories mattered</span></li>
+                    <li><span class="icon">🧭</span><span class="text">Judgment for what belonged and what didn't</span></li>
+                    <li><span class="icon">🎙️</span><span class="text">Voice to make it sound like me, not like a prompt</span></li>
+                </ul>
+                
+                <p>AI opened the door. I walked through it.</p>
+            </div>
+
+            <!-- Page 4: Why It Matters + Reinvention -->
+            <div class="page" id="page4">
+                <h2>Why It Matters</h2>
+                <p>Here's the thing: people don't actually want AI to do the whole job. They want the human part.</p>
+                
+                <!-- fact cards already styled earlier -->
+                <div class="fact-grid">
+                    <div class="fact-card">
+                        <div class="fact-title">People want the human part</div>
+                        <div class="fact-note">Three in four people still prefer human creators for the content they consume (Ipsos).</div>
+                    </div>
+                    <div class="fact-card">
+                        <div class="fact-title">Human writing outperforms</div>
+                        <div class="fact-note">Human-written stories outrank and outperform AI content in engagement tests (Highwire).</div>
+                    </div>
+                    <div class="fact-card">
+                        <div class="fact-title">Trust lives in networks</div>
+                        <div class="fact-note">Most professionals trust human networks over algorithms for insight (Times of India).</div>
+                    </div>
+                </div>
+                
+                <p>So yes, AI can open the door. But the part that matters — the soul, the resonance, the lived experience — is still on us.</p>
+                
+                <div class="custom-divider">
+                    <div class="divider-line"></div>
+                    <div class="divider-dot"></div>
+                    <div class="divider-line"></div>
+                </div>
+                
+                <h2>Unlocking My Own Reinvention</h2>
+                <p>For me, AI wasn't about shortcuts. It was about courage. It gave me the key to face the blinking cursor and start.</p>
+                <p>Once the door opened, the flood of words, images, and memories reminded me why I've always been a storyteller. And why strategy only works when it's wrapped in soul.</p>
+                <p>Ready to unlock your own story? The cursor is blinking. The page is waiting. And now you have the key.</p>
+            </div>
+            
+            <!-- Navigation -->
+            <div class="nav-container">
+                <button class="nav-btn" id="prevBtn" onclick="changePage(-1)">← Previous</button>
+                <div class="page-indicators">
+                    <div class="page-dot active" onclick="goToPage(1)"></div>
+                    <div class="page-dot" onclick="goToPage(2)"></div>
+                    <div class="page-dot" onclick="goToPage(3)"></div>
+                    <div class="page-dot" onclick="goToPage(4)"></div>
+                </div>
+                <button class="nav-btn" id="nextBtn" onclick="changePage(1)">Next →</button>
+            </div>
+        </div>
+
+        <div class="timeline-sidebar" id="timelineSidebar">
+            <div class="timeline-header">
+                <div class="timeline-title">The Panic</div>
+                <div class="timeline-subtitle">Facing the blank page with years of scattered memories</div>
+            </div>
+            <div class="timeline-content">
+                <div class="timeline-line"></div>
+                <div class="timeline-stage active">
+                    <div class="stage-dot"></div>
+                    <div class="stage-content">
+                        <div class="stage-icon">😰</div>
+                        <div class="stage-title">The Realization</div>
+                        <div class="stage-description">Years of work scattered across time</div>
+                        <div class="stage-detail">The sinking feeling that my professional story was fragmented across platforms, tools, and fading memories.</div>
+                    </div>
+                </div>
+                <div class="timeline-stage">
+                    <div class="stage-dot"></div>
+                    <div class="stage-content">
+                        <div class="stage-icon">🎯</div>
+                        <div class="stage-title">The Ambition</div>
+                        <div class="stage-description">Wanting more than just a résumé</div>
+                        <div class="stage-detail">The vision of creating a living time capsule that captured the adrenaline and reinventions of my career.</div>
+                    </div>
+                </div>
+                <div class="timeline-stage">
+                    <div class="stage-dot"></div>
+                    <div class="stage-content">
+                        <div class="stage-icon">⚡</div>
+                        <div class="stage-title">The Weight</div>
+                        <div class="stage-description">When ambition meets the blank page</div>
+                        <div class="stage-detail">The paralyzing moment when big dreams collide with the blinking cursor.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        // Handle brand header positioning based on screen width
+        function updateBrandHeaderPosition() {
+            const brandHeader = document.getElementById('brandHeader');
+            if (!brandHeader) return;
+            // Position logo on left for desktop, centered for mobile
+            brandHeader.style.top = '16px';
+            brandHeader.style.bottom = '';
+            if (window.innerWidth >= 1025) {
+                brandHeader.style.left = '20px';
+                brandHeader.style.transform = 'none';
+            } else {
+                brandHeader.style.left = '50%';
+                brandHeader.style.transform = 'translateX(-50%)';
+            }
+        }
+
+        // Run on page load
+        updateBrandHeaderPosition();
+        
+        // Run on window resize
+        window.addEventListener('resize', function() {
+            updateBrandHeaderPosition();
+        });
+        
+
+        
+        let currentPage = 1;
+        const totalPages = 4;
+
+        function setPage4CompactFlag(){
+          const isPhone = window.innerWidth <= 430;
+          const compact = (currentPage === 4 && isPhone);
+          document.body.classList.toggle('page4-compact', compact);
+        }
+
+        window.addEventListener('resize', setPage4CompactFlag);
+
+        function updatePage() {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show current page
+            document.getElementById(`page${currentPage}`).classList.add('active');
+            
+            // Scroll to top of the page to ensure proper anchoring
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Update progress bar
+            const progress = (currentPage / totalPages) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            
+            // Update navigation buttons
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = currentPage === totalPages;
+            
+            // Update page indicators
+            document.querySelectorAll('.page-dot').forEach((dot, index) => {
+                dot.classList.toggle('active', index + 1 === currentPage);
+            });
+            
+            // Update timeline sidebar
+            updateTimelineSidebar();
+            
+            // Set Page 4 compact flag
+            setPage4CompactFlag();
+            ensureFits();
+        }
+        
+        function ensureFits() {
+            const page = document.getElementById(`page${currentPage}`);
+            if (!page) return;
+        
+            // clear previous passes
+            page.classList.remove('fit-1','fit-2');
+        
+            // available height = viewport - progress bar (~4px) - nav height - a small buffer
+            const nav = document.querySelector('.nav-container');
+            const navH = nav ? nav.offsetHeight : 0;
+            const buffer = 24; // breathing room so we don't hit the very bottom
+            const available = window.innerHeight - navH - 4 - buffer;
+        
+            // pass 1
+            if (page.scrollHeight > available) {
+                page.classList.add('fit-1');
+            }
+            // pass 2 (only if still too tall)
+            if (page.scrollHeight > available) {
+                page.classList.add('fit-2');
+            }
+        }
+        window.addEventListener('resize', ensureFits);
+        
+        function updateTimelineSidebar() {
+            const sidebar = document.getElementById('timelineSidebar');
+            const timelineData = {
+                1: {
+                    title: 'Introduction',
+                    subtitle: 'Setting the stage for a creative journey',
+                    stages: [
+                        { icon: '📖', title: 'The Story Begins', description: 'A tale of creative breakthrough', detail: 'How AI became a key to unlock creative potential, not replace it.' },
+                        { icon: '🎯', title: 'The Mission', description: 'Beyond traditional content creation', detail: 'Using AI as a catalyst for human creativity rather than a replacement.' },
+                        { icon: '✨', title: 'The Promise', description: 'Unlocking your own potential', detail: 'A guide to turning fear of the blank page into momentum.' }
+                    ]
+                },
+                2: {
+                    title: 'The Panic',
+                    subtitle: 'Facing the blank page with years of scattered memories',
+                    stages: [
+                        { icon: '😰', title: 'The Realization', description: 'Years of work scattered across time', detail: 'A fragmented professional story across platforms, tools, and fading memories.' },
+                        { icon: '🎯', title: 'The Ambition', description: 'Wanting more than just a résumé', detail: 'A living time capsule capturing reinventions and late nights.' },
+                        { icon: '⚡', title: 'The Weight', description: 'When ambition meets the blank page', detail: 'Big dreams colliding with the blinking cursor.' },
+                        { icon: '🔒', title: 'The Cell of Fear', description: 'Ideas trapped behind mental barriers', detail: 'Stories pushing at the edges of the mind, blocked by not knowing how to begin.' }
+                    ]
+                },
+                3: {
+                    title: 'The Key',
+                    subtitle: 'From paralysis to momentum',
+                    stages: [
+                        { icon: '🗝️', title: 'AI as the Key', description: 'Not a ghostwriter, but a catalyst', detail: 'Scaffolding that makes starting easier.' },
+                        { icon: '🌊', title: 'Momentum', description: 'The outpour begins', detail: 'Fragments shaped, sparks amplified, passion for writing unlocked.' },
+                        { icon: '✅', title: 'Ownership', description: 'The soul stays human', detail: 'AI didn\'t write the story — it unlocked it.' }
+                    ]
+                },
+                4: {
+                title: 'More Than Words',
+                subtitle: 'Experience + soul, beyond just starting',
+                stages: [
+                    { icon: '🎭', title: 'Storycraft', description: 'Experience-informed storytelling', detail: 'Reviewing hundreds of creative assets across campaigns at Microsoft.' },
+                    { icon: '🤝', title: 'Sparring Partner', description: 'AI supports, you decide', detail: 'AI turned a void into a canvas; the soul stayed human.' },
+                    { icon: '🚪', title: 'Walking Through', description: 'Momentum over perfection', detail: 'AI opened the door. I walked through it.' }
+                ]
+            },
+            4: {
+                title: 'Why It Matters + Reinvention',
+                subtitle: 'Human preference and the closing loop',
+                stages: [
+                    { icon: '🧑‍🤝‍🧑', title: 'Human Preference', description: 'People want the human part', detail: 'Ipsos: audiences still prefer human creators.' },
+                    { icon: '📈', title: 'Performance', description: 'Human writing outperforms', detail: 'Highwire: human stories outrank/outperform AI content.' },
+                    { icon: '🌐', title: 'Trust', description: 'Networks over algorithms', detail: 'Times of India: pros trust human networks for insight.' },
+                    { icon: '✨', title: 'Reinvention', description: 'Courage to begin', detail: 'AI didn\'t tell my story. It unlocked it.' }
+                ]
+            }
+            };
+            
+            const data = timelineData[currentPage];
+            
+            // Update header
+            sidebar.querySelector('.timeline-title').textContent = data.title;
+            sidebar.querySelector('.timeline-subtitle').textContent = data.subtitle;
+            
+            // Update content
+            const timelineContent = sidebar.querySelector('.timeline-content');
+            timelineContent.innerHTML = `
+                <div class="timeline-line"></div>
+                ${data.stages.map((stage, index) => `
+                    <div class="timeline-stage ${index === 0 ? 'active' : ''}">
+                        <div class="stage-dot"></div>
+                        <div class="stage-content">
+                            <div class="stage-icon">${stage.icon}</div>
+                            <div class="stage-title">${stage.title}</div>
+                            <div class="stage-description">${stage.description}</div>
+                            <div class="stage-detail">${stage.detail}</div>
+                        </div>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        function changePage(direction) {
+            const newPage = currentPage + direction;
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentPage = newPage;
+                updatePage();
+            }
+        }
+
+        function goToPage(page) {
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                updatePage();
+            }
+        }
+
+        // Initialize the page
+        updatePage();
+        
+        // Handle window resize for badge positioning
+        window.addEventListener('resize', function() {
+            updatePage();
+        });
+        
+        // Mobile-only content rebalancing script
+
+    </script>
+</body>
+</html>
