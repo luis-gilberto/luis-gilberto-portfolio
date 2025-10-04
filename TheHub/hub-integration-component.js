@@ -7,13 +7,12 @@
 class HubNavigationIntegration {
     constructor(config = {}) {
         this.config = {
-            // Page URLs - customized for Luis Gilberto's site structure
+            // Hub Pages - Clean local paths only
             navigationItems: [
-                { id: 'services', label: 'Services', url: 'https://luis-gilberto.com/IMCServices/index.html', icon: 'star' },
-                { id: 'advisory', label: 'Advisory', url: 'https://luis-gilberto.com/advisory/index.html', icon: 'check-circle' },
-                { id: 'scopeiq', label: 'ScopeIQ', url: 'https://luis-gilberto.com/IMCServices/scopeiq-wizard/index.html', icon: 'search' },
-                { id: 'strategyiq', label: 'StrategyIQ', url: 'https://luis-gilberto.com/strategyiq/index.html', icon: 'brain' },
-                { id: 'contact', label: 'Contact', url: 'https://luis-gilberto.com/contact.html', icon: 'mail' }
+                { id: 'services', label: 'Services', url: '/IMCServices/', icon: 'star' },
+                { id: 'advisory', label: 'Advisory', url: '/IMCServices/advisory/', icon: 'check-circle' },
+                { id: 'scopeiq', label: 'ScopeIQ', url: '/IMCServices/scopeiq-wizard/', icon: 'search' },
+                { id: 'strategyiq', label: 'StrategyIQ', url: '/TheHub/strategyiq/', icon: 'brain' }
             ],
             
             // Current page detection
@@ -564,7 +563,6 @@ class HubNavigationIntegration {
         if (path.includes('/advisory')) return 'advisory';
         if (path.includes('/scopeiq')) return 'scopeiq';
         if (path.includes('/strategyiq')) return 'strategyiq';
-        if (path.includes('/contact')) return 'contact';
         return null;
     }
 
