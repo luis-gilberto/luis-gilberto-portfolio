@@ -7,11 +7,11 @@
 class HubNavigationIntegration {
     constructor(config = {}) {
         this.config = {
-            // Page URLs - customized for Luis Gilberto's site structure
+            // Page URLs - using local paths for development
             navigationItems: [
-                { id: 'services', label: 'Services', url: 'https://luis-gilberto.com/IMCServices/index.html', icon: 'star' },
-                { id: 'advisory', label: 'Advisory', url: 'https://luis-gilberto.com/advisory/index.html', icon: 'check-circle' },
-                { id: 'scopeiq', label: 'ScopeIQ', url: 'https://luis-gilberto.com/IMCServices/scopeiq-wizard/index.html', icon: 'search' },
+                { id: 'services', label: 'Services', url: '../index.html', icon: 'star' },
+                { id: 'advisory', label: 'Advisory', url: './index.html', icon: 'check-circle' },
+                { id: 'scopeiq', label: 'ScopeIQ', url: '../scopeiq-wizard/index.html', icon: 'search' },
                 { id: 'strategyiq', label: 'StrategyIQ', url: 'https://luis-gilberto.com/strategyiq/index.html', icon: 'brain' },
                 { id: 'contact', label: 'Contact', url: 'https://luis-gilberto.com/contact.html', icon: 'mail' }
             ],
@@ -393,49 +393,65 @@ class HubNavigationIntegration {
         
         if (!this.elements.logoTrigger || !this.elements.coralLine || !this.elements.navContent) {
             console.error('Hub Navigation: Required elements not found for event binding');
+            console.log('Elements found:', {
+                logoTrigger: !!this.elements.logoTrigger,
+                coralLine: !!this.elements.coralLine,
+                navContent: !!this.elements.navContent
+            });
             return;
         }
         
-        // Logo click
-        this.elements.logoTrigger.addEventListener('click', (e) => {
-            e.stopPropagation();
-            this.toggleHub();
-        });
-
-        // Outside click to close
-        document.addEventListener('click', (e) => {
-            if (this.isExpanded && 
-                !this.elements.coralLine.contains(e.target) && 
-                !this.elements.logoTrigger.contains(e.target)) {
-                this.closeHub();
+        try {
+            // Logo click
+            if (this.elements.logoTrigger && typeof this.elements.logoTrigger.addEventListener === 'function') {
+                this.elements.logoTrigger.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.toggleHub();
+                });
             }
-        });
 
-        // Navigation clicks
-        this.elements.navContent.addEventListener('click', (e) => {
-            const navItem = e.target.closest('.hub-nav-item');
-            if (navItem) {
-                e.preventDefault();
-                const page = navItem.dataset.page;
-                const url = navItem.href;
-                this.navigateToPage(page, url);
-            }
-        });
+            // Outside click to close
+            document.addEventListener('click', (e) => {
+                if (this.isExpanded && 
+                    this.elements.coralLine && this.elements.logoTrigger &&
+                    !this.elements.coralLine.contains(e.target) && 
+                    !this.elements.logoTrigger.contains(e.target)) {
+                    this.closeHub();
+                }
+            });
 
-        // Keyboard navigation
-        this.elements.logoTrigger.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                this.toggleHub();
+            // Navigation clicks
+            if (this.elements.navContent && typeof this.elements.navContent.addEventListener === 'function') {
+                this.elements.navContent.addEventListener('click', (e) => {
+                    const navItem = e.target.closest('.hub-nav-item');
+                    if (navItem) {
+                        e.preventDefault();
+                        const page = navItem.dataset.page;
+                        const url = navItem.href;
+                        this.navigateToPage(page, url);
+                    }
+                });
             }
-        });
 
-        // Escape key to close
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && this.isExpanded) {
-                this.closeHub();
+            // Keyboard navigation
+            if (this.elements.logoTrigger && typeof this.elements.logoTrigger.addEventListener === 'function') {
+                this.elements.logoTrigger.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        this.toggleHub();
+                    }
+                });
             }
-        });
+
+            // Escape key to close
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && this.isExpanded) {
+                    this.closeHub();
+                }
+            });
+        } catch (error) {
+            console.error('Hub Navigation: Error binding events:', error);
+        }
     }
 
     // Toggle hub navigation
