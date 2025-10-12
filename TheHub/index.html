@@ -992,6 +992,41 @@
       @media (max-width: 640px){ .lead{ max-width: 100%; } }
 
     </style>
+    
+    <style id="logo-cinematic-override">
+    /* Override the minified logo positioning and add cinematic effects */
+    .hub-logo-overlay {
+        left: 48% !important;
+        transform: translate(-50%, -50%) scale(0.9) !important;
+    }
+
+    @keyframes hubLogoFlickerExit {
+        0% { opacity: 1; transform: translate(-50%, -50%) scale(0.9); }
+        70% { opacity: 1; }
+        75% { opacity: 0.3; }
+        80% { opacity: 1; }
+        85% { opacity: 0.4; }
+        90% { opacity: 1; }
+        95% { opacity: 0; transform: translate(-50%, -50%) scale(0.1); }
+        100% { opacity: 0; transform: translate(-50%, -50%) scale(0.01); }
+    }
+
+    .hub-logo-collapse {
+        animation: hubLogoFlickerExit 2s ease-out forwards !important;
+    }
+
+    @keyframes navLogoPulse {
+        0% { transform: scale(1); opacity: 0.7; }
+        25% { transform: scale(1.15); opacity: 1; }
+        50% { transform: scale(1); opacity: 0.8; }
+        75% { transform: scale(1.1); opacity: 1; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    .nav-logo-attract {
+        animation: navLogoPulse 1.5s ease-in-out 2 forwards !important;
+    }
+    </style>
 </head>
 <body>
     <!-- MAIN CONTENT WRAPPER -->
@@ -1378,23 +1413,41 @@
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const loader = HubLoader.create({
-        videoUrl: './assets/components/hub-animation/coral_laser_line.mp4',
-        duration: 11000,
+        videoUrl: '/TheHub/assets/components/hub-animation/coral_laser_line.mp4',
+        duration: 12000,  // Extended for cinematic timing
+        autoStart: true,
         showProgress: false,  // Turn off progress bar to eliminate lingering text
         skipOnClick: true,
         onComplete: function() {
-          const mainContent = document.getElementById('main-content');
-          if (mainContent) {
-            mainContent.style.display = 'block';
+          // Step 1: Trigger logo flicker and collapse
+          const logoOverlay = document.querySelector('.hub-logo-overlay');
+          if (logoOverlay) {
+            logoOverlay.classList.add('hub-logo-collapse');
           }
-          console.log('Hub loading animation completed');
           
-          const revealElements = document.querySelectorAll('.reveal');
-          revealElements.forEach(el => {
-            if (el.getBoundingClientRect().top < window.innerHeight) {
-              el.classList.add('in');
+          // Step 2: Show main content after collapse
+          setTimeout(() => {
+            const mainContent = document.getElementById('main-content');
+            if (mainContent) {
+              mainContent.style.display = 'block';
             }
-          });
+            
+            // Step 3: Pulse nav logo to show connection
+            setTimeout(() => {
+              const navLogo = document.querySelector('.hub-nav-logo-img');
+              if (navLogo) {
+                navLogo.classList.add('nav-logo-attract');
+              }
+            }, 500);
+            
+            // Reveal other elements
+            const revealElements = document.querySelectorAll('.reveal');
+            revealElements.forEach(el => {
+              if (el.getBoundingClientRect().top < window.innerHeight) {
+                el.classList.add('in');
+              }
+            });
+          }, 2000);
         }
       });
     });
