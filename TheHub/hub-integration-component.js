@@ -10,7 +10,7 @@ class HubNavigationIntegration {
             // Hub Pages - Clean local paths only
             navigationItems: [
                 { id: 'services', label: 'Services', url: '/IMCServices/', icon: 'star' },
-                { id: 'advisory', label: 'Advisory', url: '/IMCServices/advisory/', icon: 'check-circle' },
+                { id: 'advisory', label: 'Advisory', url: '/advisory/', icon: 'check-circle' },
                 { id: 'scopeiq', label: 'ScopeIQ', url: '/IMCServices/scopeiq-wizard/', icon: 'search' },
                 { id: 'strategyiq', label: 'StrategyIQ', url: '/strategyiq/', icon: 'brain' }
             ],
@@ -308,48 +308,22 @@ class HubNavigationIntegration {
         const header = document.createElement('div');
         header.className = 'hub-logo-header';
         header.innerHTML = `
-            <div class="hub-logo-container" id="hubLogoTrigger">
-                <div class="hub-click-hint">Click to navigate</div>
-                <div class="hub-coral-line" id="hubCoralLine">
-                    <div class="hub-close-hint">Click anywhere to close</div>
-                    <div class="hub-navigation-content" id="hubNavContent">
-                        <!-- Navigation items will be inserted here -->
-                    </div>
-                </div>
-                <div class="hub-logo-text">The Hub.</div>
-                <div class="hub-logo-tagline">Built for what's next</div>
-            </div>
+            <!-- Hub logo container removed as requested -->
         `;
 
         document.body.insertBefore(header, document.body.firstChild);
         
-        this.elements.logoTrigger = document.getElementById('hubLogoTrigger');
-        this.elements.coralLine = document.getElementById('hubCoralLine');
-        this.elements.navContent = document.getElementById('hubNavContent');
+        // Remove references to the removed elements
+        this.elements.logoTrigger = null;
+        this.elements.coralLine = null;
+        this.elements.navContent = null;
     }
 
     // Create navigation items
     createNavigation() {
-        // Ensure navContent element exists
-        if (!this.elements.navContent) {
-            this.elements.navContent = document.getElementById('hubNavContent');
-        }
-        
-        if (!this.elements.navContent) {
-            console.error('Hub Navigation: navContent element not found');
-            return;
-        }
-        
-        // Clear existing navigation items to prevent duplicates
-        this.elements.navContent.innerHTML = '';
-        
-        this.config.navigationItems.forEach(item => {
-            const navItem = this.createNavItem(item);
-            this.elements.navContent.appendChild(navItem);
-        });
-
-        // Mark current page
-        this.markCurrentPage();
+        // Navigation elements have been removed, skip navigation creation
+        console.log('Hub Navigation: Navigation elements removed, skipping navigation creation');
+        return;
     }
 
     // Create individual nav item
@@ -395,57 +369,9 @@ class HubNavigationIntegration {
 
     // Bind all event listeners
     bindEvents() {
-        // Ensure elements exist before binding
-        if (!this.elements.logoTrigger) {
-            this.elements.logoTrigger = document.getElementById('hubLogoTrigger');
-        }
-        if (!this.elements.coralLine) {
-            this.elements.coralLine = document.getElementById('hubCoralLine');
-        }
-        if (!this.elements.navContent) {
-            this.elements.navContent = document.getElementById('hubNavContent');
-        }
-        
-        if (!this.elements.logoTrigger || !this.elements.coralLine || !this.elements.navContent) {
-            console.error('Hub Navigation: Required elements not found for event binding');
-            return;
-        }
-        
-        // Logo click
-        this.elements.logoTrigger.addEventListener('click', (e) => {
-            e.stopPropagation();
-            this.toggleHub();
-        });
-
-        // Outside click to close
-        document.addEventListener('click', (e) => {
-            if (this.isExpanded && 
-                !this.elements.coralLine.contains(e.target) && 
-                !this.elements.logoTrigger.contains(e.target)) {
-                this.closeHub();
-            }
-        });
-
-        // Navigation clicks
-        this.elements.navContent.addEventListener('click', (e) => {
-            const navItem = e.target.closest('.hub-nav-item');
-            if (navItem) {
-                e.preventDefault();
-                const page = navItem.dataset.page;
-                const url = navItem.href;
-                this.navigateToPage(page, url);
-            }
-        });
-
-        // Keyboard navigation
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && this.isExpanded) {
-                this.closeHub();
-            }
-        });
-
-        // Start glow effect
-        this.startGlowEffect();
+        // Since hub navigation elements have been removed, skip event binding
+        console.log('Hub Navigation: Navigation elements removed, skipping event binding');
+        return;
     }
 
     // Add content spacer
@@ -462,73 +388,23 @@ class HubNavigationIntegration {
 
     // Toggle hub navigation
     toggleHub() {
-        if (this.isMorphing) return;
-        
-        if (this.isExpanded) {
-            this.closeHub();
-        } else {
-            this.openHub();
-        }
+        // Navigation elements removed, no toggle functionality
+        console.log('Hub Navigation: Toggle functionality disabled - elements removed');
+        return;
     }
 
     // Open hub
     openHub() {
-        if (this.isMorphing) return;
-        
-        this.isMorphing = true;
-        this.isExpanded = true;
-        
-        // Stop pulsing
-        this.elements.logoTrigger.style.animation = 'none';
-        
-        // Morphing stages
-        this.elements.coralLine.classList.add('morphing-stage-1');
-        
-        setTimeout(() => {
-            this.elements.coralLine.classList.remove('morphing-stage-1');
-            this.elements.coralLine.classList.add('morphing-stage-2');
-            
-            setTimeout(() => {
-                this.elements.coralLine.classList.remove('morphing-stage-2');
-                this.elements.coralLine.classList.add('morphing-stage-3');
-                
-                setTimeout(() => {
-                    this.isMorphing = false;
-                }, 400);
-            }, 200);
-        }, 200);
-        
-        this.trackEvent('hub_opened');
+        // Navigation elements removed, no open functionality
+        console.log('Hub Navigation: Open functionality disabled - elements removed');
+        return;
     }
 
     // Close hub
     closeHub() {
-        if (this.isMorphing) return;
-        
-        this.isMorphing = true;
-        this.isExpanded = false;
-        
-        // Reverse morphing
-        this.elements.coralLine.classList.remove('morphing-stage-3');
-        this.elements.coralLine.classList.add('morphing-stage-2');
-        
-        setTimeout(() => {
-            this.elements.coralLine.classList.remove('morphing-stage-2');
-            this.elements.coralLine.classList.add('morphing-stage-1');
-            
-            setTimeout(() => {
-                this.elements.coralLine.classList.remove('morphing-stage-1');
-                
-                // Restart pulsing
-                this.elements.logoTrigger.style.animation = 'hubLogoPulse 2s ease-in-out infinite';
-                
-                setTimeout(() => {
-                    this.isMorphing = false;
-                }, 200);
-            }, 200);
-        }, 200);
-        
-        this.trackEvent('hub_closed');
+        // Navigation elements removed, no close functionality
+        console.log('Hub Navigation: Close functionality disabled - elements removed');
+        return;
     }
 
     // Navigate to page
@@ -544,15 +420,9 @@ class HubNavigationIntegration {
 
     // Mark current page as active
     markCurrentPage() {
-        const currentPath = window.location.pathname;
-        const navItems = this.elements.navContent.querySelectorAll('.hub-nav-item');
-        
-        navItems.forEach(item => {
-            const itemPath = new URL(item.href, window.location.origin).pathname;
-            if (currentPath === itemPath || currentPath.startsWith(itemPath + '/')) {
-                item.classList.add('active');
-            }
-        });
+        // Navigation elements removed, no page marking functionality
+        console.log('Hub Navigation: Page marking disabled - elements removed');
+        return;
     }
 
     // Detect current page
@@ -568,14 +438,9 @@ class HubNavigationIntegration {
 
     // Start glow effect
     startGlowEffect() {
-        setInterval(() => {
-            if (!this.isExpanded && !this.isMorphing) {
-                this.elements.logoTrigger.classList.add('glowing');
-                setTimeout(() => {
-                    this.elements.logoTrigger.classList.remove('glowing');
-                }, 1500);
-            }
-        }, 8000);
+        // Navigation elements removed, no glow effect
+        console.log('Hub Navigation: Glow effect disabled - elements removed');
+        return;
     }
 
     // Track events

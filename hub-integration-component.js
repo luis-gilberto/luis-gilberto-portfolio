@@ -11,7 +11,7 @@ class HubNavigationIntegration {
             navigationItems: [
                 { id: 'home', label: 'Home', url: '/TheHub/', icon: 'home' },
                 { id: 'services', label: 'Services', url: '/IMCServices/', icon: 'star' },
-                { id: 'advisory', label: 'Advisory', url: '/IMCServices/advisory/', icon: 'check-circle' },
+                { id: 'advisory', label: 'Advisory', url: '/TheHub/advisory/', icon: 'check-circle' },
                 { id: 'scopeiq', label: 'ScopeIQ', url: '/IMCServices/scopeiq-wizard/', icon: 'search' },
                 { id: 'strategyiq', label: 'StrategyIQ', url: '/TheHub/strategyiq/', icon: 'brain' }
             ],

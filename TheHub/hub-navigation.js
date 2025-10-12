@@ -52,11 +52,11 @@ class HubSystem {
                 
                 <div class="hub-nav-mobile-menu" id="hubNavMobileMenu">
                     <div class="hub-nav-mobile-content">
-                        <a href="/IMCServices/" class="hub-nav-mobile-link">
+                        <a href="/TheHub/IMCServices/" class="hub-nav-mobile-link">
                              <img src="./advisory/assets/IMC_Services_100x100.png" alt="Services">
                              <span>Services</span>
                          </a>
-                         <a href="/IMCServices/advisory/" class="hub-nav-mobile-link">
+                         <a href="/advisory/" class="hub-nav-mobile-link">
                              <img src="./advisory/assets/Advisory_100x100.png" alt="Advisory">
                              <span>Advisory</span>
                          </a>
@@ -315,11 +315,11 @@ class HubSystem {
                         
                         <div class="hub-footer-links">
                             <div class="hub-footer-links-grid">
-                                <a href="/IMCServices/" class="hub-footer-link">
+                                <a href="/TheHub/IMCServices/" class="hub-footer-link">
                                     <img src="./advisory/assets/IMC_Services_Simple_100x100.png" alt="Services" class="hub-footer-link-icon">
                                     <span class="hub-footer-link-label">Services</span>
                                 </a>
-                                <a href="/IMCServices/advisory/" class="hub-footer-link">
+                                <a href="/advisory/" class="hub-footer-link">
                                     <img src="./advisory/assets/Advisory_100x100.png" alt="Advisory" class="hub-footer-link-icon">
                                     <span class="hub-footer-link-label">Advisory</span>
                                 </a>

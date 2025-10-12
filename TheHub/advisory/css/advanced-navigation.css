@@ -4,65 +4,75 @@
     --lg-fg: #ffffff;
     --text-secondary: rgba(255, 255, 255, 0.7);
     --text-muted: rgba(255, 255, 255, 0.6);
+    --coral: #F96F6E;
+    --dark-bg: rgba(20, 20, 20, 0.9);
+    --glass-border: rgba(255, 255, 255, 0.2);
 }
 
-.advanced-nav-trigger {
+/* Navigation Toggle Button */
+.lg-nav-toggle {
     position: fixed;
-    top: 24px;
-    left: 24px;
-    z-index: 1001;
+    top: 40px;
+    left: 40px;
     width: 60px;
     height: 60px;
+    background: var(--dark-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
     border-radius: 50%;
-    background: rgba(20, 20, 20, 0.9);
-    border: 2px solid rgba(249, 111, 110, 0.3);
-    cursor: move;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    backdrop-filter: blur(20px);
+    cursor: move;
+    pointer-events: all;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    user-select: none;
+    z-index: 10001;
+    color: var(--coral);
 }
 
-.advanced-nav-trigger::before {
-    content: '';
-    position: absolute;
-    inset: -4px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--lg-coral), var(--lg-teal));
-    opacity: 0;
-    animation: heartbeat 2s ease-in-out infinite;
-    z-index: -1;
+/* Navigation Toggle Active State */
+.lg-nav-toggle.active {
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 32px rgba(249, 111, 110, 0.4);
 }
 
-@keyframes heartbeat {
-    0%, 100% { transform: scale(1); opacity: 0.3; }
-    50% { transform: scale(1.1); opacity: 0.6; }
+.lg-nav-toggle:hover {
+    transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
 }
 
-.advanced-nav-trigger:hover {
-    transform: scale(1.05);
-    border-color: var(--lg-coral);
+.lg-nav-toggle.dragging {
+    transform: scale(1.2);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+    cursor: grabbing;
 }
 
-.advanced-nav-trigger:hover::before {
-    opacity: 0.8;
-}
-
-.nav-trigger-logo {
+.lg-nav-toggle svg {
     width: 24px;
     height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    transition: transform 0.3s ease;
 }
 
-.nav-trigger-logo img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    filter: brightness(0) saturate(100%) invert(65%) sepia(85%) saturate(2341%) hue-rotate(325deg) brightness(102%) contrast(96%);
+.lg-nav-toggle:hover svg {
+    transform: rotate(90deg);
+}
+
+/* Pulse Glow Animation */
+@keyframes pulse-glow {
+    0%, 100% { 
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); 
+    }
+    50% { 
+        box-shadow: 0 8px 32px rgba(249, 111, 110, 0.4); 
+    }
+}
+
+.lg-nav-toggle:not(.dragging):not(:hover) {
+    animation: pulse-glow 3s ease-in-out infinite;
 }
 
 .advanced-nav-panel {
@@ -93,24 +103,58 @@
 
 .nav-content {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0.9);
+    top: 120px; /* Position below toggle button (60px height + 40px top + 20px spacing) */
+    left: 0;
+    transform: translateX(-100%);
     width: 90%;
     max-width: 400px;
-    max-height: 90vh;
+    max-height: calc(100vh - 140px); /* Account for top positioning */
     background: rgba(20, 20, 20, 0.95);
     border: 1px solid rgba(249, 111, 110, 0.3);
-    border-radius: 24px;
+    border-radius: 0 24px 24px 0; /* Rounded on right side only */
     padding: 32px;
     overflow-y: auto;
     backdrop-filter: blur(40px);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Integrated Scrollbar for Navigation - Matching Main IMCServices Design */
+.nav-content {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(249, 111, 110, 0.6) transparent;
+}
+
+.nav-content::-webkit-scrollbar {
+    width: 8px;
+    background: transparent;
+}
+
+.nav-content::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 8px 0;
+}
+
+.nav-content::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(249, 111, 110, 0.4) 0%, rgba(46, 211, 198, 0.4) 100%);
+    border-radius: 4px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+    transition: all 0.3s ease;
+}
+
+.nav-content::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, rgba(249, 111, 110, 0.7) 0%, rgba(46, 211, 198, 0.7) 100%);
+    background-clip: content-box;
+}
+
+.nav-content::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
 .advanced-nav-panel.active .nav-content {
-    transform: translate(-50%, -50%) scale(1);
+    transform: translateX(0);
 }
 
 .nav-header {
@@ -354,61 +398,36 @@
     display: none;
 }
 
-/* Native-style Integrated Scrollbar for Navigation */
-.nav-content {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(249, 111, 110, 0.3) rgba(255, 255, 255, 0.05);
-    padding-right: 4px; /* Add space for scrollbar */
-}
-
-.nav-content::-webkit-scrollbar {
-    width: 6px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 3px;
-}
-
-.nav-content::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 3px;
-    margin: 12px 0;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.nav-content::-webkit-scrollbar-thumb {
-    background: rgba(249, 111, 110, 0.4);
-    border-radius: 3px;
-    border: 1px solid rgba(249, 111, 110, 0.2);
-    transition: all 0.2s ease;
-    min-height: 20px;
-}
-
-.nav-content::-webkit-scrollbar-thumb:hover {
-    background: rgba(249, 111, 110, 0.6);
-    border-color: rgba(249, 111, 110, 0.4);
-    box-shadow: 0 0 8px rgba(249, 111, 110, 0.3);
-}
-
-.nav-content::-webkit-scrollbar-thumb:active {
-    background: rgba(249, 111, 110, 0.8);
-    border-color: rgba(249, 111, 110, 0.6);
-}
-
-.nav-content::-webkit-scrollbar-corner {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 3px;
-}
-
 @media (max-width: 768px) {
-    .advanced-nav-trigger {
-        top: 16px;
-        left: 50%;
-        transform: translateX(-50%);
+    .lg-nav-toggle {
+        top: 20px;
+        left: 20px;
         width: 50px;
         height: 50px;
     }
+    
     .nav-content {
+        top: 90px; /* Position below mobile toggle button (50px height + 20px top + 20px spacing) */
         width: 95%;
+        max-width: 320px;
         padding: 24px;
-        max-height: 85vh;
+        max-height: calc(100vh - 110px); /* Account for mobile top positioning */
+        border-radius: 0 20px 20px 0;
+    }
+    
+    /* Hide hero value proposition on mobile to save space */
+    .hero-value-prop {
+        display: none;
+    }
+    
+    /* Adjust section heights for mobile */
+    .hero, .services, .investment, .testimonials {
+        min-height: 90vh; /* Slightly reduced for mobile */
+        padding: 4rem 0 3rem; /* Reduced padding for mobile */
+    }
+    
+    .microsoft-legacy {
+        min-height: 70vh; /* Proportionally reduced for mobile */
+        padding: 3rem 0; /* Reduced padding for mobile */
     }
 }
