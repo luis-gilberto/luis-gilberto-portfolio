@@ -15,7 +15,17 @@
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="./assets/favicon.ico">
     
+    <!-- Hub Loading Animation -->
+    <script src="./assets/components/hub-animation/hub-loader.min.js"></script>
+    
     <style>
+        /* ==========================================
+           LOADING ANIMATION STYLES
+           ========================================== */
+        #main-content {
+            display: none;
+        }
+        
         /* ==========================================
            CSS VARIABLES
            ========================================== */
@@ -979,6 +989,8 @@
     </style>
 </head>
 <body>
+    <!-- MAIN CONTENT WRAPPER -->
+    <div id="main-content">
     <!-- HEADER NAVIGATION -->
     <header class="hub-header" id="hubHeader">
         <div class="header-container">
@@ -1353,6 +1365,39 @@
       }, { rootMargin: '0px 0px -10% 0px', threshold: 0.1 });
       els.forEach(el => io.observe(el));
     })();
+  </script>
+  
+  </div> <!-- End main-content -->
+  
+  <!-- Hub Loading Animation Initialization -->
+  <script>
+    // Initialize the Hub loading animation
+    document.addEventListener('DOMContentLoaded', function() {
+      const loader = HubLoader.create({
+        videoUrl: './assets/components/hub-animation/coral_laser_line.mp4',
+        duration: 8000,
+        showProgress: true,
+        skipOnClick: true,
+        onComplete: function() {
+          // Show the main Hub content
+          const mainContent = document.getElementById('main-content');
+          if (mainContent) {
+            mainContent.style.display = 'block';
+          }
+          
+          // Optional: Track completion event
+          console.log('Hub loading animation completed');
+          
+          // Trigger any existing reveal animations
+          const revealElements = document.querySelectorAll('.reveal');
+          revealElements.forEach(el => {
+            if (el.getBoundingClientRect().top < window.innerHeight) {
+              el.classList.add('in');
+            }
+          });
+        }
+      });
+    });
   </script>
 </body>
 </html>
