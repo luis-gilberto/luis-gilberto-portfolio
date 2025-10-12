@@ -31,72 +31,7 @@
     <link rel="stylesheet" href="../../brand-refresh.css">
     
     <style>
-      /* ================================ 
-         🎬 Intro Overlay (Video → Page Dissolve) 
-         ================================ */ 
-      .intro { 
-        position: fixed; 
-        inset: 0; 
-        z-index: 1000; 
-        display: none; /* becomes flex when visible */ 
-        align-items: center; 
-        justify-content: center; 
-        background: #0e0e0f; /* fallback behind video */ 
-      } 
-      .intro.is-visible { display: flex; } 
-
-      .intro__video { 
-        width: 100%; 
-        height: 100%; 
-        object-fit: cover; 
-        object-position: 50% 50%; 
-        filter: none; 
-      } 
-
-      .intro__vignette { 
-        position: absolute; 
-        inset: 0; 
-        pointer-events: none; 
-        background: 
-          radial-gradient(100% 120% at 50% 20%, rgba(255,255,255,0.04), rgba(0,0,0,0) 45%), 
-          radial-gradient(80% 80% at 50% 50%, rgba(0,0,0,0), rgba(0,0,0,0.20) 70%); 
-      } 
-
-      .intro__skip { 
-        position: absolute; 
-        right: 16px; 
-        bottom: 16px; 
-        padding: 10px 14px; 
-        font-weight: 600; 
-        border-radius: 12px; 
-        border: 1px solid rgba(255,255,255,0.18); 
-        color: #f5f5f5; 
-        background: rgba(0,0,0,0.35); 
-        backdrop-filter: blur(4px); 
-        cursor: pointer; 
-        transition: transform .15s ease, background .2s ease, box-shadow .2s ease; 
-      } 
-      .intro__skip:hover{ transform: translateY(-1px); background: rgba(0,0,0,0.5); box-shadow: 0 6px 18px rgba(0,0,0,0.25); } 
-
-      /* Fade out animation when video ends or user skips */ 
-      .intro--fadeout { 
-        animation: introFadeOut 1200ms ease forwards; 
-      } 
-      @keyframes introFadeOut { 
-        from { opacity: 1; } 
-        to   { opacity: 0; visibility: hidden; } 
-      } 
-
-      /* Respect user preferences & touch devices */ 
-      @media (prefers-reduced-motion: reduce) { 
-        .intro__video { display:none; } 
-        .intro { display:none !important; } 
-      } 
-
-      @media (hover:none), (pointer:coarse){ 
-        /* Keep it simple on mobile if desired (optional) */ 
-        /* .intro__video { object-position:center; } */ 
-      } 
+ 
 
       /* Prevent page jump when overlay disappears */ 
       html, body { background:#111; } 
@@ -1496,25 +1431,7 @@
         </div>
     </header>
 
-    <!-- Intro Video Overlay -->
-    <div id="introOverlay" class="intro is-visible" aria-hidden="true">
-      <video id="introVideo" 
-             class="intro__video" 
-             src="./assets/videos/TheHub.mp4" 
-             playsinline 
-             muted 
-             autoplay 
-             preload="auto">
-      </video>
 
-      <!-- Optional dark vignette to match site aesthetic -->
-      <div class="intro__vignette" aria-hidden="true"></div>
-
-      <!-- Accessible Skip -->
-      <button id="introSkip" class="intro__skip" aria-label="Skip intro and view page">
-        Skip
-      </button>
-    </div>
 
 
 
@@ -1872,124 +1789,7 @@
     });
     </script>
 
-    <!-- Intro Video Overlay JavaScript -->
-    <script>
-    (function(){
-      const overlay = document.getElementById('introOverlay');
-      const video   = document.getElementById('introVideo');
-      const skipBtn = document.getElementById('introSkip');
 
-      if (!overlay || !video) return;
-
-      // ---------- Config ----------
-      const SHOW_ON_FIRST_VISIT_ONLY = true;
-      const REMEMBER_FOR_DAYS = 7;
-      const MAX_DURATION_FALLBACK = 12000; // ms: safety timeout in case 'ended' doesn't fire
-      const EARLY_CROSSFADE_MS = 900; // start fade slightly before hard end
-
-      // ---------- Helpers ----------
-      function lsGet(key){
-        try { return window.localStorage.getItem(key); } catch(_) { return null; }
-      }
-      function lsSet(key, val){
-        try { window.localStorage.setItem(key, val); } catch(_) {}
-      }
-      function daysFromNow(days){
-        const d = new Date(); d.setDate(d.getDate()+days); return d.toISOString();
-      }
-      function shouldShowIntro(){
-        const url = new URL(window.location.href);
-        // Force show with ?intro=1, force hide with ?intro=0
-        if (url.searchParams.get('intro') === '1') return true;
-        if (url.searchParams.get('intro') === '0') return false;
-        if (!SHOW_ON_FIRST_VISIT_ONLY) return true;
-        const seen = lsGet('lg_intro_seen_until');
-        if (!seen) return true;
-        return new Date(seen) < new Date();
-      }
-      function hideOverlay(){
-        overlay.classList.add('intro--fadeout');
-        // disable focusability
-        overlay.setAttribute('aria-hidden', 'true');
-        // after animation, remove from flow
-        setTimeout(()=>{
-          overlay.style.display = 'none';
-        }, 1300);
-      }
-
-      // ---------- Boot ----------
-      if (shouldShowIntro()){
-        overlay.classList.add('is-visible');
-      } else {
-        overlay.style.display = 'none';
-        return; // nothing else to do
-      }
-
-      // Play once ready (iOS requires muted + playsinline)
-      video.muted = true;
-      video.playsInline = true;
-
-      // Begin fallback timer (in case 'ended' never fires)
-      let fallbackTimer = setTimeout(hideOverlay, MAX_DURATION_FALLBACK);
-
-      // Early crossfade timer (start fade before video actually ends)
-      let crossfadeTimer = null;
-      if (video.duration && !isNaN(video.duration)) {
-        const crossfadeStart = Math.max(0, (video.duration * 1000) - EARLY_CROSSFADE_MS);
-        crossfadeTimer = setTimeout(hideOverlay, crossfadeStart);
-      }
-
-      // Video event handlers
-      video.addEventListener('loadedmetadata', () => {
-        if (crossfadeTimer) clearTimeout(crossfadeTimer);
-        const crossfadeStart = Math.max(0, (video.duration * 1000) - EARLY_CROSSFADE_MS);
-        crossfadeTimer = setTimeout(hideOverlay, crossfadeStart);
-      });
-
-      video.addEventListener('ended', () => {
-        clearTimeout(fallbackTimer);
-        if (crossfadeTimer) clearTimeout(crossfadeTimer);
-        hideOverlay();
-        // Remember this visit
-        lsSet('lg_intro_seen_until', daysFromNow(REMEMBER_FOR_DAYS));
-      });
-
-      video.addEventListener('error', () => {
-        clearTimeout(fallbackTimer);
-        if (crossfadeTimer) clearTimeout(crossfadeTimer);
-        hideOverlay();
-      });
-
-      // Skip button handler
-      if (skipBtn) {
-        skipBtn.addEventListener('click', () => {
-          clearTimeout(fallbackTimer);
-          if (crossfadeTimer) clearTimeout(crossfadeTimer);
-          hideOverlay();
-          // Remember this visit
-          lsSet('lg_intro_seen_until', daysFromNow(REMEMBER_FOR_DAYS));
-        });
-      }
-
-      // Keyboard accessibility (ESC to skip)
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && overlay.classList.contains('is-visible')) {
-          clearTimeout(fallbackTimer);
-          if (crossfadeTimer) clearTimeout(crossfadeTimer);
-          hideOverlay();
-          lsSet('lg_intro_seen_until', daysFromNow(REMEMBER_FOR_DAYS));
-        }
-      });
-
-      // Auto-play attempt (some browsers block this)
-      video.play().catch(() => {
-        // If autoplay fails, show a play button or just skip to main content
-        console.log('Autoplay blocked, skipping intro');
-        hideOverlay();
-      });
-
-    })();
-    </script>
 
     <!-- FOOTER -->
     <footer class="hub-footer">
