@@ -12,7 +12,7 @@ class HubNavigationIntegration {
                 { id: 'services', label: 'Services', url: '/IMCServices/', icon: 'star' },
                 { id: 'advisory', label: 'Advisory', url: '/IMCServices/advisory/', icon: 'check-circle' },
                 { id: 'scopeiq', label: 'ScopeIQ', url: '/IMCServices/scopeiq-wizard/', icon: 'search' },
-                { id: 'strategyiq', label: 'StrategyIQ', url: '/TheHub/strategyiq/', icon: 'brain' }
+                { id: 'strategyiq', label: 'StrategyIQ', url: '/strategyiq/', icon: 'brain' }
             ],
             
             // Current page detection

@@ -9,6 +9,7 @@ class HubNavigationIntegration {
         this.config = {
             // Hub Pages - Clean local paths only
             navigationItems: [
+                { id: 'home', label: 'Home', url: '/TheHub/', icon: 'home' },
                 { id: 'services', label: 'Services', url: '/IMCServices/', icon: 'star' },
                 { id: 'advisory', label: 'Advisory', url: '/IMCServices/advisory/', icon: 'check-circle' },
                 { id: 'scopeiq', label: 'ScopeIQ', url: '/IMCServices/scopeiq-wizard/', icon: 'search' },
