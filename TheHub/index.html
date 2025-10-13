@@ -1672,12 +1672,21 @@
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       // Check if user accessed the page directly (not through internal navigation)
-      const isDirectAccess = !document.referrer || 
-                            !document.referrer.includes('luis-gilberto.com') ||
-                            document.referrer === '' ||
-                            window.performance.navigation.type === 1; // Direct navigation
+      const referrer = document.referrer;
+      const currentDomain = window.location.hostname;
+      const isFromSameDomain = referrer && (referrer.includes('luis-gilberto.com') || referrer.includes(currentDomain));
+      const navigationType = window.performance.getEntriesByType('navigation')[0]?.type || 'navigate';
+      
+      // Only show animation for direct access (typed URL, bookmark, or external link)
+      const isDirectAccess = !referrer || 
+                            !isFromSameDomain || 
+                            navigationType === 'reload' ||
+                            window.location.href.includes('TheHub') && !sessionStorage.getItem('hubNavigated');
       
       if (isDirectAccess) {
+        // Clear any previous navigation tracking for fresh direct access
+        sessionStorage.removeItem('hubNavigated');
+        
         // Only show animation for direct access
         const loader = HubLoader.create({
           videoUrl: '/TheHub/assets/components/hub-animation/coral_laser_line.mp4',
@@ -1718,6 +1727,9 @@
         }
       });
       } else {
+        // Mark that user has navigated internally
+        sessionStorage.setItem('hubNavigated', 'true');
+        
         // For internal navigation, show content immediately without animation
         const mainContent = document.getElementById('main-content');
         if (mainContent) {
@@ -1737,9 +1749,16 @@
         }
       }
     });
+    
+    // Track navigation clicks to Hub homepage from other pages
+    document.addEventListener('click', function(e) {
+      const link = e.target.closest('a');
+      if (link && (link.href.includes('/TheHub/index.html') || link.href.includes('/TheHub/') && link.href.endsWith('/'))) {
+        sessionStorage.setItem('hubNavigated', 'true');
+      }
+    });
   </script>
     <!-- Hub Premium Scripts -->
-    <script src="../assets/Components/luis-gilberto.com_thehub/js/loader.js" defer></script>
     <script src="../assets/Components/luis-gilberto.com_thehub/js/main.js" defer></script>
     <script src="../assets/Components/luis-gilberto.com_thehub/js/premium-interactions.js" defer></script>
 </body>
