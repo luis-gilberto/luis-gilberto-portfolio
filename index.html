@@ -525,6 +525,18 @@
         #finalPeriod {
             opacity: 0;
             transform: scale(1); /* Initial normal size */
+            transition: opacity 600ms ease, transform 600ms ease;
+        }
+
+        /* Reveal state for the final period */
+        .hero-section h1 .period.reveal {
+            opacity: 1;
+            transform: scale(1.25);
+        }
+
+        /* Start breathing animation when hero becomes visible */
+        .hero-section.hero-visible .breathing-text {
+            animation: breathe 3s ease-in-out infinite;
         }
 
         .hero-portrait {
@@ -1192,6 +1204,148 @@
 
         /* Duplicate mobile menu styles removed - using unified navigation styles above */
 
+/* Enhanced Navigation - Fixed Top Bar */
+.enhanced-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.6);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(14px) saturate(160%);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+}
+
+.nav-logo .desktop-logo {
+    height: 48px;
+    display: block;
+}
+
+.nav-logo .mobile-logo {
+    display: none;
+}
+
+.desktop-nav {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+}
+
+.desktop-nav a {
+    color: var(--muted);
+    text-decoration: none;
+    padding: 0.6rem 0.9rem;
+    border-radius: 12px;
+    transition: all 0.25s ease;
+    position: relative;
+    font-weight: 600;
+}
+
+.desktop-nav a:hover {
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-1px);
+}
+
+.desktop-nav a.active {
+    color: white;
+    background: rgba(249, 111, 110, 0.18);
+}
+
+.desktop-nav a.active::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 28px;
+    height: 2px;
+    background: var(--coral);
+    border-radius: 1px;
+}
+
+/* Mobile Menu Overlay */
+.mobile-menu-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.82);
+    z-index: 1002;
+    opacity: 0;
+    visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.mobile-menu-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.mobile-menu-panel {
+    background: rgba(18, 18, 18, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(10px) saturate(150%);
+    -webkit-backdrop-filter: blur(10px) saturate(150%);
+    border-radius: 16px;
+    width: calc(100% - 2rem);
+    max-width: 420px;
+    padding: 2rem 1.5rem;
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+}
+
+.mobile-menu-overlay.active .mobile-menu-panel {
+    transform: translateY(0);
+}
+
+.mobile-nav-btn {
+    display: none;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(0, 0, 0, 0.25);
+    color: white;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.mobile-nav-btn:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+@media (max-width: 768px) {
+    .nav-container { height: 60px; padding: 0 1rem; }
+    .desktop-nav { display: none; }
+    .mobile-nav-btn { display: flex; }
+    .nav-logo .desktop-logo { display: none; }
+    .nav-logo .mobile-logo { display: block; height: 40px; }
+}
+
+
         .mobile-menu-links {
             display: flex;
             flex-direction: column;
@@ -1761,43 +1915,42 @@
     </style>
 </head>
 <body>
-    <!-- Hub Header for Navigation -->
-    <header class="hub-header" id="hubHeader">
-        <h1 class="hub-logo-main">The Hub.</h1>
-        <p class="hub-tagline">Built for what's next</p>
-        
-        <!-- Interactive trigger line -->
-        <div class="nav-trigger-line"></div>
-        <div class="nav-hint">Hover to navigate</div>
-        
-        <!-- Navigation Menu - Hidden by default -->
-        <nav class="hub-nav-menu">
-            <div class="nav-links">
-                <a href="/TheHub/" class="nav-link">
-                    <img src="TheHub/advisory/assets/Home_Simple_100x100.png" alt="Home" class="nav-icon">
-                    <span class="nav-label">Home</span>
-                </a>
-                <a href="/TheHub/IMCServices/" class="nav-link">
-                    <img src="TheHub/advisory/assets/IMC_Services_Sophisticated.png" alt="Services" class="nav-icon">
-                    <span class="nav-label">Services</span>
-                </a>
-                <a href="/TheHub/advisory/" class="nav-link">
-                    <img src="TheHub/advisory/assets/Advisory_Sophisticated_Clean.png" alt="Advisory" class="nav-icon">
-                    <span class="nav-label">Advisory</span>
-                </a>
-                <a href="/IMCServices/scopeiq-wizard/" class="nav-link">
-                    <img src="TheHub/advisory/assets/ScopeIQ_Sophisticated_Clean.png" alt="ScopeIQ" class="nav-icon">
-                    <span class="nav-label">ScopeIQ</span>
-                </a>
-                <a href="/TheHub/strategyiq/" class="nav-link">
-                    <img src="TheHub/advisory/assets/StrategyIQ_Sophisticated.png" alt="StrategyIQ" class="nav-icon">
-                    <span class="nav-label">StrategyIQ</span>
-                </a>
+    <!-- Enhanced Navigation -->
+    <nav class="enhanced-nav">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="assets/images/AUg_logo_White.png" alt="Luis Gilberto Logo" class="desktop-logo">
+                <img src="assets/images/Logomark_White_a.png" alt="Luis Gilberto symbol" width="40" height="40" class="mobile-logo">
+            </a>
+            
+            <div class="desktop-nav">
+                <a href="index.html" class="active">Home</a>
+                <a href="about.html">About Me</a>
+                <a href="cv.html">Resume</a>
+                <a href="timeline.html">Timeline</a>
+                <a href="myexperience.html">Experience</a>
+                <a href="contact.html">Contact</a>
             </div>
-        </nav>
-    </header>
+            
+            <button class="mobile-nav-btn" id="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
 
-
+<!-- Mobile Menu Overlay -->
+<div class="mobile-menu-overlay" id="mobile-menu-overlay" aria-hidden="true">
+  <div class="mobile-menu-panel" role="dialog" aria-modal="true" aria-label="Navigation menu">
+    <nav class="mobile-menu-links">
+      <a href="index.html" class="mobile-menu-link active">Home</a>
+      <a href="about.html" class="mobile-menu-link">About Me</a>
+      <a href="cv.html" class="mobile-menu-link">Resume</a>
+      <a href="timeline.html" class="mobile-menu-link">Timeline</a>
+      <a href="myexperience.html" class="mobile-menu-link">Experience</a>
+      <a href="contact.html" class="mobile-menu-link">Contact</a>
+    </nav>
+  </div>
+</div>
 
     <!-- Hero Container with Animated Landing -->
     <div class="hero-container">
@@ -2155,31 +2308,35 @@
         }
 
         // Mobile interactions - click to toggle
-        hubLogoMain.addEventListener('click', (e) => {
-            if (isMobile()) {
-                e.preventDefault();
-                e.stopPropagation();
-                if (isNavActive) {
-                    unpinNavigation();
-                } else {
-                    showNavigation();
-                    pinNavigation();
+        if (hubLogoMain) {
+            hubLogoMain.addEventListener('click', (e) => {
+                if (isMobile()) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (isNavActive) {
+                        unpinNavigation();
+                    } else {
+                        showNavigation();
+                        pinNavigation();
+                    }
                 }
-            }
-        });
+            });
+        }
 
-        navTriggerLine.addEventListener('click', (e) => {
-            if (isMobile()) {
-                e.preventDefault();
-                e.stopPropagation();
-                if (isNavActive) {
-                    unpinNavigation();
-                } else {
-                    showNavigation();
-                    pinNavigation();
+        if (navTriggerLine) {
+            navTriggerLine.addEventListener('click', (e) => {
+                if (isMobile()) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (isNavActive) {
+                        unpinNavigation();
+                    } else {
+                        showNavigation();
+                        pinNavigation();
+                    }
                 }
-            }
-        });
+            });
+        }
 
 
 
@@ -2313,6 +2470,627 @@
             card.style.transform = 'translateY(20px)';
             card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
             observer.observe(card);
+        });
+    </script>
+    <script>
+        // Enhanced Mobile Hero Animation
+        function initMobileHeroAnimation() {
+            const isMobile = window.innerWidth <= 768;
+            if (!isMobile) return;
+            
+            const heroTiles = document.querySelectorAll('.hero-tile');
+            const heroSection = document.getElementById('heroSection');
+            const tilesContainer = document.getElementById('heroTilesContainer');
+            const coralFormation = document.getElementById('coralFormation');
+            const finalPeriod = document.getElementById('finalPeriod');
+            
+            // Set initial positions
+            heroTiles.forEach((tile, index) => {
+                tile.style.position = 'absolute';
+                tile.style.width = '320px';
+                tile.style.height = '140px';
+                tile.style.filter = 'blur(2px)';
+                
+                const topPosition = 80 + (index * 90);
+                const isEven = index % 2 === 0;
+                const leftPosition = isEven ? '40%' : '60%';
+                
+                tile.style.top = `${topPosition}px`;
+                tile.style.left = leftPosition;
+                tile.style.transform = isEven ? 'translateX(-60%) rotate(-5deg) scale(0.8)' : 'translateX(-40%) rotate(5deg) scale(0.8)';
+                tile.style.opacity = '0';
+                tile.style.transition = 'all 1.2s cubic-bezier(0.4, 0, 0.2, 1)';
+            });
+            
+            // Phase 1: Fade in
+            setTimeout(() => {
+                heroTiles.forEach((tile, index) => {
+                    setTimeout(() => {
+                        tile.style.opacity = '1';
+                        tile.style.filter = 'blur(0px)';
+                        const isEven = index % 2 === 0;
+                        tile.style.transform = isEven ? 'translateX(-60%) rotate(-5deg) scale(1)' : 'translateX(-40%) rotate(5deg) scale(1)';
+                    }, index * 100);
+                });
+            }, 300);
+            
+            // Phase 2: Convergence to period formation point
+            setTimeout(() => {
+                heroTiles.forEach((tile, index) => {
+                    tile.style.left = '50%';
+                    tile.style.top = '35%';
+                    tile.style.transform = `translateX(-50%) rotate(${(index % 2 === 0 ? -3 : 3)}deg) scale(0.95)`;
+                    tile.style.transitionDelay = `${index * 0.08}s`;
+                });
+            }, 1200);
+            
+            // Phase 3: Stack formation
+            setTimeout(() => {
+                heroTiles.forEach((tile, index) => {
+                    tile.style.top = '35%';
+                    tile.style.transform = `translateX(-50%) translateY(-50%) scale(0.85) rotate(${(index - 2) * 3}deg)`;
+                    tile.style.zIndex = 5 - index;
+                    tile.style.opacity = 1 - (index * 0.05);
+                    tile.style.transitionDelay = '0s';
+                });
+            }, 2200);
+            
+            // Phase 4: Collapse into coral period
+            setTimeout(() => {
+                heroTiles.forEach((tile, index) => {
+                    setTimeout(() => {
+                        tile.style.left = '50%';
+                        tile.style.top = '35%';
+                        tile.style.transform = 'translate(-50%, -50%) scale(0.01) rotate(540deg)';
+                        tile.style.opacity = '0';
+                        tile.style.filter = 'brightness(1.3) saturate(0.7) blur(2px)';
+                        tile.style.transition = 'all 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+                    }, index * 120);
+                });
+            }, 3200);
+            
+            // Phase 5: Coral period formation
+            setTimeout(() => {
+                coralFormation.style.top = '35%';
+                coralFormation.style.left = '50%';
+                coralFormation.classList.add('form');
+            }, 4500);
+            
+            // Phase 6: Period travels to headline (reveal on animation end)
+            setTimeout(() => {
+                coralFormation.classList.remove('form');
+                const onTravelEnd = (e) => {
+                    if (e.animationName === 'periodTravel') {
+                        finalPeriod.classList.add('reveal');
+                        heroSection.classList.add('hero-visible');
+                        tilesContainer.style.display = 'none';
+                        coralFormation.classList.add('hidden');
+                        coralFormation.removeEventListener('animationend', onTravelEnd);
+                    }
+                };
+                coralFormation.addEventListener('animationend', onTravelEnd);
+                coralFormation.classList.add('travel');
+            }, 6000);
+        }
+        
+        // Enhanced Desktop Hero Animation
+        function startEnhancedHeroAnimation() {
+            const heroTiles = document.querySelectorAll('.hero-tile');
+            const heroTilesContainer = document.getElementById('heroTilesContainer');
+            const heroSection = document.getElementById('heroSection');
+            const coralFormation = document.getElementById('coralFormation');
+            const finalPeriod = document.getElementById('finalPeriod');
+
+            // Phase 1: Dramatic Entrance
+            setTimeout(() => {
+                heroTiles.forEach((tile, index) => {
+                    setTimeout(() => {
+                        tile.classList.add('phase-1');
+                        tile.classList.add(`tile-${index + 1}-entry`);
+                    }, index * 150);
+                });
+            }, 200);
+
+            // Phase 2: Convergence
+            setTimeout(() => {
+                heroTiles.forEach((tile, index) => {
+                    setTimeout(() => {
+                        tile.classList.remove('phase-1');
+                        tile.classList.remove(`tile-${index + 1}-entry`);
+                        tile.classList.add('phase-2');
+                    }, index * 100);
+                });
+            }, 1400);
+
+            // Phase 3: Stack Formation
+            setTimeout(() => {
+                heroTiles.forEach((tile, index) => {
+                    setTimeout(() => {
+                        tile.classList.remove('phase-2');
+                        tile.classList.add('phase-3');
+                        tile.classList.add(`tile-${index + 1}-stack`);
+                    }, index * 80);
+                });
+            }, 2700);
+
+            // Phase 4: Collapse into Coral Period
+            setTimeout(() => {
+                heroTiles.forEach((tile, index) => {
+                    setTimeout(() => {
+                        tile.classList.add('phase-4');
+                    }, index * 60);
+                });
+            }, 4200);
+
+            // Phase 5: Coral Period Formation
+            setTimeout(() => {
+                coralFormation.classList.add('form');
+            }, 5500);
+
+            // Phase 6: Period Travel to Headline (reveal on animation end)
+            setTimeout(() => {
+                coralFormation.classList.remove('form');
+                const onTravelEnd = (e) => {
+                    if (e.animationName === 'periodTravel') {
+                        finalPeriod.classList.add('reveal');
+                        heroSection.classList.add('hero-visible');
+                        setTimeout(() => {
+                            heroTilesContainer.style.display = 'none';
+                        }, 500);
+                        coralFormation.classList.add('hidden');
+                        coralFormation.removeEventListener('animationend', onTravelEnd);
+                    }
+                };
+                coralFormation.addEventListener('animationend', onTravelEnd);
+                coralFormation.classList.add('travel');
+            }, 7000);
+
+            // Phase 7: Tiles Fadeout
+            setTimeout(() => {
+                heroTilesContainer.style.opacity = '0';
+                heroTilesContainer.style.transform = 'scale(0.8)';
+                heroTilesContainer.style.transition = 'all 1s ease-out';
+            }, 7500);
+        }
+        
+        // Animation caller
+        document.addEventListener('DOMContentLoaded', function() {
+            const isMobile = window.innerWidth <= 768;
+            if (isMobile) {
+                initMobileHeroAnimation();
+            } else {
+                startEnhancedHeroAnimation();
+            }
+        });
+
+        // Card Game
+        class CardGame {
+            constructor() {
+                this.cards = [];
+                this.cardStack = null;
+                this.shuffleButton = null;
+                this.lastShuffleOrder = null;
+                this.isShuffling = false;
+                this.init();
+            }
+
+            init() {
+                setTimeout(() => this.setup(), 8000);
+            }
+
+            setup() {
+                this.cardStack = document.querySelector('.card-stack');
+                this.cards = Array.from(document.querySelectorAll('.tour-card'));
+                this.shuffleButton = document.getElementById('shuffleBtn');
+
+                if (!this.cardStack || this.cards.length === 0) {
+                    return;
+                }
+
+                this.setupCards();
+                this.setupShuffleButton();
+                this.setupEntranceAnimation();
+            }
+
+            setupCards() {
+                this.cards.forEach((card, index) => {
+                    card.style.cursor = 'pointer';
+                    card.style.pointerEvents = 'auto';
+                    
+                    const flipHandler = (e) => this.flipCard(e, card, index);
+                    card.addEventListener('click', flipHandler);
+                    card.addEventListener('touchstart', flipHandler, { passive: false });
+                    
+                    const cardFaces = card.querySelectorAll('.card-face');
+                    cardFaces.forEach(face => {
+                        face.style.pointerEvents = 'auto';
+                        face.style.cursor = 'pointer';
+                    });
+                });
+            }
+
+            flipCard(e, card, index) {
+                if (e.target.tagName === 'A' || e.target.closest('a') || e.target.classList.contains('card-cta')) {
+                    return;
+                }
+                
+                e.preventDefault();
+                e.stopPropagation();
+                
+                if (this.isShuffling) return;
+                
+                const isFlipped = card.classList.contains('flipped');
+                
+                if (isFlipped) {
+                    card.classList.remove('flipped');
+                } else {
+                    card.classList.add('flipped');
+                }
+            }
+
+            setupShuffleButton() {
+                if (!this.shuffleButton) return;
+                this.shuffleButton.addEventListener('click', () => this.shuffleCards());
+            }
+
+            shuffleCards() {
+                if (this.isShuffling || this.cards.length === 0) return;
+                
+                this.isShuffling = true;
+                this.cardStack.classList.add('shuffling');
+                
+                this.cards.forEach(card => {
+                    card.classList.remove('flipped');
+                });
+                
+                const positions = ['position-1', 'position-2', 'position-3', 'position-4', 'position-5'];
+                let newOrder;
+                let attempts = 0;
+                
+                do {
+                    newOrder = this.fisherYatesShuffle([...positions]);
+                    attempts++;
+                } while (
+                    this.lastShuffleOrder && 
+                    JSON.stringify(newOrder) === JSON.stringify(this.lastShuffleOrder) && 
+                    attempts < 50
+                );
+                
+                this.lastShuffleOrder = [...newOrder];
+                
+                this.cards.forEach((card, index) => {
+                    card.classList.remove('position-1', 'position-2', 'position-3', 'position-4', 'position-5');
+                    card.classList.add(newOrder[index]);
+                });
+                
+                setTimeout(() => {
+                    this.cardStack.classList.remove('shuffling');
+                    this.isShuffling = false;
+                }, 1200);
+            }
+
+            fisherYatesShuffle(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            }
+
+            setupEntranceAnimation() {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            this.cards.forEach((card, index) => {
+                                setTimeout(() => {
+                                    card.style.opacity = '1';
+                                    card.classList.add('animate-in');
+                                }, index * 200);
+                            });
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.3 });
+
+                if (this.cardStack) {
+                    observer.observe(this.cardStack);
+                }
+            }
+        }
+
+        const cardGame = new CardGame();
+
+        // Constellation Canvas
+        function initConstellation() {
+            const canvas = document.getElementById('constellation-canvas');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const section = document.getElementById('whats-next-section');
+            
+            let nodes = [];
+            let mouse = { x: 0, y: 0 };
+            let isMobile = window.innerWidth <= 768;
+            
+            const nodeConfig = {
+                count: isMobile ? 30 : 50,
+                maxSpeed: 0.3,
+                connectionDistance: isMobile ? 80 : 120,
+                activationRadius: isMobile ? 60 : 100,
+                colors: {
+                    bg: '#1a1a1a',
+                    node: '#FF6B6B',
+                    nodeHighlight: '#FF5959',
+                    connection: '#FF6B6B',
+                    connectionHighlight: '#FF5959'
+                }
+            };
+            
+            function resizeCanvas() {
+                const rect = section.getBoundingClientRect();
+                canvas.width = rect.width;
+                canvas.height = rect.height;
+            }
+            
+            section.addEventListener('mousemove', function(e) {
+                const rect = canvas.getBoundingClientRect();
+                mouse.x = e.clientX - rect.left;
+                mouse.y = e.clientY - rect.top;
+            });
+            
+            class Node {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.vx = (Math.random() - 0.5) * nodeConfig.maxSpeed;
+                    this.vy = (Math.random() - 0.5) * nodeConfig.maxSpeed;
+                    this.radius = Math.random() * 2 + 1;
+                    this.highlighted = false;
+                    this.isSpecial = Math.random() < 0.1;
+                }
+                
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    
+                    if (this.x <= 0 || this.x >= canvas.width) this.vx *= -1;
+                    if (this.y <= 0 || this.y >= canvas.height) this.vy *= -1;
+                    
+                    this.x = Math.max(0, Math.min(canvas.width, this.x));
+                    this.y = Math.max(0, Math.min(canvas.height, this.y));
+                    
+                    const distance = Math.sqrt(
+                        Math.pow(this.x - mouse.x, 2) + Math.pow(this.y - mouse.y, 2)
+                    );
+                    this.highlighted = distance < nodeConfig.activationRadius;
+                }
+            }
+            
+            function createNodes() {
+                nodes = [];
+                for (let i = 0; i < nodeConfig.count; i++) {
+                    nodes.push(new Node());
+                }
+            }
+            
+            function updateNodes() {
+                nodes.forEach(node => node.update());
+            }
+            
+            function drawConnections() {
+                for (let i = 0; i < nodes.length; i++) {
+                    for (let j = i + 1; j < nodes.length; j++) {
+                        const distance = Math.sqrt(
+                            Math.pow(nodes[i].x - nodes[j].x, 2) + 
+                            Math.pow(nodes[i].y - nodes[j].y, 2)
+                        );
+                        
+                        if (distance < nodeConfig.connectionDistance) {
+                            const opacity = 1 - (distance / nodeConfig.connectionDistance);
+                            const isHighlighted = nodes[i].highlighted || nodes[j].highlighted;
+                            const isSpecialConnection = nodes[i].isSpecial || nodes[j].isSpecial;
+                            
+                            ctx.strokeStyle = isHighlighted || isSpecialConnection ? 
+                                `rgba(255, 89, 89, ${opacity * 0.8})` : 
+                                `rgba(255, 107, 107, ${opacity * 0.3})`;
+                            ctx.lineWidth = isHighlighted || isSpecialConnection ? 1.5 : 0.8;
+                            
+                            ctx.beginPath();
+                            ctx.moveTo(nodes[i].x, nodes[i].y);
+                            ctx.lineTo(nodes[j].x, nodes[j].y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+            
+            function drawNodes() {
+                nodes.forEach(node => {
+                    const glowSize = node.highlighted || node.isSpecial ? 8 : 4;
+                    const alpha = node.highlighted || node.isSpecial ? 0.8 : 0.4;
+                    
+                    ctx.shadowColor = node.highlighted || node.isSpecial ? 
+                        nodeConfig.colors.nodeHighlight : nodeConfig.colors.node;
+                    ctx.shadowBlur = glowSize;
+                    
+                    ctx.fillStyle = node.highlighted || node.isSpecial ? 
+                        `rgba(255, 89, 89, ${alpha})` : 
+                        `rgba(255, 107, 107, ${alpha})`;
+                    
+                    ctx.beginPath();
+                    ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.shadowBlur = 0;
+                });
+            }
+            
+            function animateRandomNodes() {
+                if (isMobile) {
+                    nodes.forEach(node => node.highlighted = false);
+                    
+                    const numToHighlight = Math.floor(Math.random() * 5) + 2;
+                    for (let i = 0; i < numToHighlight; i++) {
+                        const randomNode = nodes[Math.floor(Math.random() * nodes.length)];
+                        randomNode.highlighted = true;
+                        
+                        setTimeout(() => {
+                            randomNode.highlighted = false;
+                        }, 800 + Math.random() * 500);
+                    }
+                }
+            }
+            
+            if (isMobile) {
+                setInterval(animateRandomNodes, 1200);
+            }
+            
+            function animate() {
+                ctx.fillStyle = nodeConfig.colors.bg;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                updateNodes();
+                drawConnections();
+                drawNodes();
+                
+                requestAnimationFrame(animate);
+            }
+            
+            resizeCanvas();
+            createNodes();
+            animate();
+            
+            window.addEventListener('resize', function() {
+                isMobile = window.innerWidth <= 768;
+                resizeCanvas();
+                createNodes();
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', initConstellation);
+
+        // Banner Rotator
+        document.addEventListener('DOMContentLoaded', function() {
+            const bannerLines = document.querySelectorAll('.banner-line');
+            if (bannerLines.length === 0) return;
+            let currentIndex = 0;
+            let isAnimating = false;
+            bannerLines[0].classList.add('active');
+            function rotateLines() {
+                if (isAnimating) return;
+                isAnimating = true;
+                bannerLines[currentIndex].classList.remove('active');
+                currentIndex = (currentIndex + 1) % bannerLines.length;
+                setTimeout(() => {
+                    bannerLines[currentIndex].classList.add('active');
+                    isAnimating = false;
+                }, 500);
+            }
+            setTimeout(() => {
+                setInterval(rotateLines, 3000);
+            }, 8000);
+        });
+
+        // Mobile Menu Toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileBtn = document.getElementById('mobile-menu-btn');
+            const overlay = document.getElementById('mobile-menu-overlay');
+            if (!mobileBtn || !overlay) return;
+            const panel = overlay.querySelector('.mobile-menu-panel');
+            const links = overlay.querySelectorAll('.mobile-menu-link');
+
+            const openMenu = () => {
+                overlay.classList.add('active');
+                overlay.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+            };
+            const closeMenu = () => {
+                overlay.classList.remove('active');
+                overlay.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+            };
+
+            mobileBtn.addEventListener('click', openMenu);
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    closeMenu();
+                }
+            });
+            if (panel) {
+                panel.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                });
+            }
+            links.forEach((link) => link.addEventListener('click', closeMenu));
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeMenu();
+                }
+            });
+        });
+
+
+        // Touch-responsive portrait effects
+        document.addEventListener('DOMContentLoaded', function() {
+            const heroPortrait = document.querySelector('.hero-portrait');
+            let touchTimer = null;
+            let touchStartTime = 0;
+            let touchIntensity = 0;
+            
+            if (heroPortrait && 'ontouchstart' in window) {
+                heroPortrait.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    touchStartTime = Date.now();
+                    const touch = e.touches[0];
+                    touchIntensity = touch.force || 0.5;
+                    heroPortrait.classList.remove('touch-light', 'touch-medium', 'touch-intense');
+                    if (touchIntensity < 0.3) {
+                        heroPortrait.classList.add('touch-light');
+                    } else if (touchIntensity < 0.7) {
+                        heroPortrait.classList.add('touch-medium');
+                    } else {
+                        heroPortrait.classList.add('touch-intense');
+                    }
+                    if (touchTimer) {
+                        clearTimeout(touchTimer);
+                    }
+                }, { passive: false });
+                
+                heroPortrait.addEventListener('touchmove', function(e) {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    touchIntensity = touch.force || touchIntensity;
+                    heroPortrait.classList.remove('touch-light', 'touch-medium', 'touch-intense');
+                    if (touchIntensity < 0.3) {
+                        heroPortrait.classList.add('touch-light');
+                    } else if (touchIntensity < 0.7) {
+                        heroPortrait.classList.add('touch-medium');
+                    } else {
+                        heroPortrait.classList.add('touch-intense');
+                    }
+                }, { passive: false });
+                
+                heroPortrait.addEventListener('touchend', function(e) {
+                    e.preventDefault();
+                    const touchDuration = Date.now() - touchStartTime;
+                    let fadeDuration = Math.min(touchDuration * 2, 3000);
+                    if (touchIntensity >= 0.7) {
+                        fadeDuration *= 1.5;
+                    } else if (touchIntensity < 0.3) {
+                        fadeDuration *= 0.7;
+                    }
+                    touchTimer = setTimeout(() => {
+                        heroPortrait.classList.remove('touch-light', 'touch-medium', 'touch-intense');
+                    }, fadeDuration);
+                }, { passive: false });
+                
+                heroPortrait.addEventListener('touchcancel', function(e) {
+                    heroPortrait.classList.remove('touch-light', 'touch-medium', 'touch-intense');
+                    if (touchTimer) {
+                        clearTimeout(touchTimer);
+                    }
+                });
+            }
         });
     </script>
 </body>
