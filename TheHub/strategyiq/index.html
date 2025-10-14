@@ -1165,6 +1165,21 @@
          Preserves all backend functionality
          ============================================ */
 
+      /* Scroll-linked framing for buttery viewport sections */
+      .viewport-section {
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+          padding: 4rem 0;
+      }
+
+      .viewport-section > section {
+          width: 100%;
+          will-change: transform, opacity;
+          transform-origin: center center;
+          backface-visibility: hidden;
+      }
+
       /* Section Divider Enhancement */
       .section-divider {
           display: flex;
@@ -2394,12 +2409,12 @@
          }
 
          // Initialize page
-         document.addEventListener('DOMContentLoaded', function() {
-             // Add fade-in animations
-             const observerOptions = {
-                 threshold: 0.1,
-                 rootMargin: '0px 0px -50px 0px'
-             };
+     document.addEventListener('DOMContentLoaded', function() {
+         // Add fade-in animations
+         const observerOptions = {
+             threshold: 0.1,
+             rootMargin: '0px 0px -50px 0px'
+         };
 
              const observer = new IntersectionObserver((entries) => {
                  entries.forEach(entry => {
@@ -2413,6 +2428,60 @@
                  observer.observe(el);
              });
          });
+
+         // Scroll-linked animation for viewport sections (buttery effect)
+         (function() {
+             const isPublic = () => document.getElementById('publicMode')?.style.display !== 'none';
+             let ticking = false;
+
+             function getSections() {
+                 return Array.from(document.querySelectorAll('.public-mode .viewport-section > section'));
+             }
+
+             function update() {
+                 const viewportCenter = window.innerHeight / 2;
+                 const sections = getSections();
+
+                 sections.forEach(section => {
+                     const wrapper = section.parentElement;
+                     const rect = wrapper.getBoundingClientRect();
+                     const inView = rect.top < window.innerHeight && rect.bottom > 0;
+
+                     if (!inView || !isPublic()) {
+                         section.style.transform = 'translateY(60px) scale(0.98)';
+                         section.style.opacity = '0.55';
+                         return;
+                     }
+
+                     const center = rect.top + rect.height / 2;
+                     const distance = Math.abs(center - viewportCenter);
+                     const maxDistance = (window.innerHeight / 2) + (rect.height / 2);
+                     const proximity = Math.max(0, 1 - distance / maxDistance);
+
+                     const translateY = (viewportCenter - center) * 0.06; // subtle tracking to viewport center
+                     const scale = 0.98 + proximity * 0.04;              // gentle scale up near center
+                     const opacity = 0.55 + proximity * 0.45;            // fade in near center, fade out away
+
+                     section.style.transform = `translateY(${translateY}px) scale(${scale})`;
+                     section.style.opacity = opacity.toFixed(3);
+                 });
+
+                 ticking = false;
+             }
+
+             function onScroll() {
+                 if (!ticking) {
+                     ticking = true;
+                     requestAnimationFrame(update);
+                 }
+             }
+
+             window.addEventListener('scroll', onScroll, { passive: true });
+             window.addEventListener('resize', update);
+             document.addEventListener('DOMContentLoaded', update);
+             // Prime initial state
+             update();
+         })();
      </script>
 
      <!-- FOOTER -->
