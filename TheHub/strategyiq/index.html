@@ -560,6 +560,121 @@
             display: none !important;
         }
 
+        /* Admin Assessment UI Enhancements */
+        .assessment-type-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+        }
+
+        .assessment-type-header .type-name {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .assessment-type-header .type-name i {
+            color: var(--coral);
+        }
+
+        .question-content {
+            padding: 4px 0 0;
+        }
+
+        .question-counter {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .question-title {
+            font-size: 1.375rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .option-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .question-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .question-option:hover {
+            border-color: var(--coral);
+            background: rgba(249, 111, 110, 0.06);
+        }
+
+        .question-option.selected {
+            border-color: var(--coral);
+            background: rgba(249, 111, 110, 0.12);
+        }
+
+        .option-radio {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--coral);
+            flex-shrink: 0;
+        }
+
+        .option-label {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .assessment-navigation {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .assessment-navigation button {
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-primary);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+
+        .assessment-navigation button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .assessment-navigation button:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        @media (max-width: 768px) {
+            .question-title { font-size: 1.2rem; }
+            .assessment-navigation { grid-template-columns: 1fr; }
+        }
+
         .hero-section {
             padding: 6rem 0 4rem;
             text-align: center;
@@ -1952,13 +2067,9 @@
                         </div>
                         
                         <!-- Navigation -->
-                        <div class="flex justify-between mt-6">
-                            <button id="prevBtn" class="btn-secondary px-6 py-3 rounded-lg font-medium" onclick="previousQuestion()" disabled>
-                                <i class="fas fa-arrow-left mr-2"></i>Previous
-                            </button>
-                            <button id="nextBtn" class="btn-primary px-6 py-3 rounded-lg font-medium text-white" onclick="nextQuestion()" disabled>
-                                Next<i class="fas fa-arrow-right ml-2"></i>
-                            </button>
+                        <div class="assessment-navigation">
+                            <button id="prevBtn" onclick="previousQuestion()" disabled>Previous</button>
+                            <button id="nextBtn" onclick="nextQuestion()" disabled>Next</button>
                         </div>
                     </div>
                     
@@ -2291,18 +2402,20 @@
              questionCard.classList.remove('fade-in');
              
              questionCard.innerHTML = `
+                 <div class="assessment-type-header">
+                     <div class="type-name">
+                         <i class="${(serviceTiers[currentService] && serviceTiers[currentService].icon) ? serviceTiers[currentService].icon : 'fas fa-cog'}"></i>
+                         <span>${(serviceTiers[currentService] && serviceTiers[currentService].name) ? serviceTiers[currentService].name : 'Assessment'}</span>
+                     </div>
+                 </div>
                  <div class="question-content">
-                     <h3 class="text-xl font-semibold mb-4">Question ${currentQuestion + 1} of ${questions.length}</h3>
-                     <h2 class="text-2xl font-bold mb-6">${question.question}</h2>
-                     <div class="space-y-3" id="questionOptions">
+                     <div class="question-counter">Question ${currentQuestion + 1} of ${questions.length}</div>
+                     <h2 class="question-title">${question.question}</h2>
+                     <div class="option-list" id="questionOptions">
                          ${question.options.map((option, index) => `
-                             <label class="question-option block p-4 rounded-lg cursor-pointer border-2 border-gray-600 hover:border-coral transition-all">
-                                 <div class="flex items-center">
-                                     <input type="${question.type}" name="question_${question.id}" value="${option.value}" class="mr-3">
-                                     <div class="flex-1">
-                                         <div class="font-medium">${option.label}</div>
-                                     </div>
-                                 </div>
+                             <label class="question-option">
+                                 <input class="option-radio" type="${question.type}" name="question_${question.id}" value="${option.value}">
+                                 <span class="option-label">${option.label}</span>
                              </label>
                          `).join('')}
                      </div>
