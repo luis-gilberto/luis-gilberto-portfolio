@@ -9,10 +9,11 @@ class HubNavigationIntegration {
         this.config = {
             // Hub Pages - Clean local paths only
             navigationItems: [
+                { id: 'home', label: 'Home', url: '/TheHub/', icon: 'home' },
                 { id: 'services', label: 'Services', url: '/IMCServices/', icon: 'star' },
-                { id: 'advisory', label: 'Advisory', url: '/advisory/', icon: 'check-circle' },
+                { id: 'advisory', label: 'Advisory', url: '/TheHub/advisory/', icon: 'check-circle' },
                 { id: 'scopeiq', label: 'ScopeIQ', url: '/IMCServices/scopeiq-wizard/', icon: 'search' },
-                { id: 'strategyiq', label: 'StrategyIQ', url: '/strategyiq/', icon: 'brain' }
+                { id: 'strategyiq', label: 'StrategyIQ', url: '/TheHub/strategyiq/', icon: 'brain' }
             ],
             
             // Current page detection
@@ -428,11 +429,11 @@ class HubNavigationIntegration {
     // Detect current page
     detectCurrentPage() {
         const path = window.location.pathname;
-        if (path === '/' || path === '/index.html') return 'home';
+        if (path === '/TheHub/' || path === '/TheHub/index.html' || path === '/' || path === '/index.html') return 'home';
         if (path.includes('/IMCServices')) return 'services';
-        if (path.includes('/advisory')) return 'advisory';
+        if (path.includes('/TheHub/advisory') || path.includes('/advisory')) return 'advisory';
         if (path.includes('/scopeiq')) return 'scopeiq';
-        if (path.includes('/strategyiq')) return 'strategyiq';
+        if (path.includes('/TheHub/strategyiq') || path.includes('/strategyiq')) return 'strategyiq';
         return null;
     }
 

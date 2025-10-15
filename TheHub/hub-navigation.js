@@ -32,13 +32,13 @@ class HubSystem {
                     
                     <div class="hub-nav-brand">
                         <a href="/TheHub/" class="hub-nav-logo">
-                            <img src="./advisory/assets/TheHub_Logo.png" alt="The Hub" class="hub-nav-logo-img">
+                            <img src="/TheHub/advisory/assets/TheHub_Logo.png" alt="The Hub" class="hub-nav-logo-img">
                         </a>
                     </div>
                     
                     <div class="hub-nav-actions">
                         <a href="https://luis-gilberto.com/contact?from=hub#cta-hook" class="hub-nav-contact">
-                            <img src="./advisory/assets/Contact_Simple_100x100.png" alt="Contact" class="hub-nav-contact-icon">
+                            <img src="/TheHub/advisory/assets/Contact_Simple_100x100.png" alt="Contact" class="hub-nav-contact-icon">
                             <span class="hub-nav-contact-text">Contact</span>
                         </a>
                         
@@ -51,25 +51,25 @@ class HubSystem {
                 </div>
                 
                 <div class="hub-nav-mobile-menu" id="hubNavMobileMenu">
-                    <div class="hub-nav-mobile-content">
+                <div class="hub-nav-mobile-content">
                         <a href="/TheHub/IMCServices/" class="hub-nav-mobile-link">
-                             <img src="./advisory/assets/IMC_Services_100x100.png" alt="Services">
+                             <img src="/TheHub/advisory/assets/IMC_Services_Simple_100x100.png" alt="Services">
                              <span>Services</span>
                          </a>
-                         <a href="/advisory/" class="hub-nav-mobile-link">
-                             <img src="./advisory/assets/Advisory_100x100.png" alt="Advisory">
+                         <a href="/TheHub/advisory/" class="hub-nav-mobile-link">
+                             <img src="/TheHub/advisory/assets/Advisory_Simple_100x100.png" alt="Advisory">
                              <span>Advisory</span>
                          </a>
-                         <a href="/IMCServices/scopeiq-wizard/" class="hub-nav-mobile-link">
-                             <img src="./advisory/assets/ScopeIQ_100x100.png" alt="ScopeIQ">
+                         <a href="/TheHub/scopeiq/index.html" class="hub-nav-mobile-link">
+                             <img src="/TheHub/advisory/assets/ScopeIQ_Clean_Telescope_100x100.png" alt="ScopeIQ">
                              <span>ScopeIQ</span>
                          </a>
-                         <a href="/strategyiq/" class="hub-nav-mobile-link">
-                             <img src="./advisory/assets/StrategyIQ_100x100.png" alt="StrategyIQ">
+                         <a href="/TheHub/strategyiq/" class="hub-nav-mobile-link">
+                             <img src="/TheHub/advisory/assets/StrategyIQ_Simple_100x100.png" alt="StrategyIQ">
                              <span>StrategyIQ</span>
                          </a>
                          <a href="https://luis-gilberto.com/contact?from=hub#cta-hook" class="hub-nav-mobile-link hub-nav-mobile-contact">
-                             <img src="./advisory/assets/Contact_Simple_100x100.png" alt="Contact">
+                             <img src="/TheHub/advisory/assets/Contact_Simple_100x100.png" alt="Contact">
                              <span>Contact</span>
                          </a>
                     </div>
@@ -310,33 +310,33 @@ class HubSystem {
                 <div class="hub-footer-container">
                     <div class="hub-footer-content">
                         <div class="hub-footer-brand">
-                            <img src="./advisory/assets/dual_logo-lockup_and_tagline.svg" alt="Luis Gilberto - The Hub" class="hub-footer-dual-lockup">
+                            <img src="/TheHub/advisory/assets/dual_logo-lockup_and_tagline.svg" alt="Luis Gilberto - The Hub" class="hub-footer-dual-lockup">
                         </div>
                         
                         <div class="hub-footer-links">
                             <div class="hub-footer-links-grid">
                                 <a href="/TheHub/IMCServices/" class="hub-footer-link">
-                                    <img src="./advisory/assets/IMC_Services_Simple_100x100.png" alt="Services" class="hub-footer-link-icon">
+                                    <img src="/TheHub/advisory/assets/IMC_Services_Simple_100x100.png" alt="Services" class="hub-footer-link-icon">
                                     <span class="hub-footer-link-label">Services</span>
                                 </a>
-                                <a href="/advisory/" class="hub-footer-link">
-                                    <img src="./advisory/assets/Advisory_100x100.png" alt="Advisory" class="hub-footer-link-icon">
+                                <a href="/TheHub/advisory/" class="hub-footer-link">
+                                    <img src="/TheHub/advisory/assets/Advisory_100x100.png" alt="Advisory" class="hub-footer-link-icon">
                                     <span class="hub-footer-link-label">Advisory</span>
                                 </a>
-                                <a href="/IMCServices/scopeiq-wizard/" class="hub-footer-link">
-                                    <img src="./advisory/assets/ScopeIQ_100x100.png" alt="ScopeIQ" class="hub-footer-link-icon">
+                                <a href="/TheHub/scopeiq/index.html" class="hub-footer-link">
+                                    <img src="/TheHub/advisory/assets/ScopeIQ_Clean_Telescope_100x100.png" alt="ScopeIQ" class="hub-footer-link-icon">
                                     <span class="hub-footer-link-label">ScopeIQ</span>
                                 </a>
-                                <a href="/strategyiq/" class="hub-footer-link">
-                                    <img src="./advisory/assets/StrategyIQ_100x100.png" alt="StrategyIQ" class="hub-footer-link-icon">
+                                <a href="/TheHub/strategyiq/" class="hub-footer-link">
+                                    <img src="/TheHub/advisory/assets/StrategyIQ_Simple_100x100.png" alt="StrategyIQ" class="hub-footer-link-icon">
                                     <span class="hub-footer-link-label">StrategyIQ</span>
                                 </a>
                                 <a href="/IMCServices/brand-guidelines/" class="hub-footer-link">
-                                    <img src="./advisory/assets/Brand_Guidelines_Simple_100x100.png" alt="Brand Guidelines" class="hub-footer-link-icon">
+                                    <img src="/TheHub/advisory/assets/Brand_Guidelines_Simple_100x100.png" alt="Brand Guidelines" class="hub-footer-link-icon">
                                     <span class="hub-footer-link-label">Brand Guidelines</span>
                                 </a>
                                 <a href="https://luis-gilberto.com/contact?from=hub#cta-hook" class="hub-footer-link">
-                                    <img src="./advisory/assets/Contact_Simple_100x100.png" alt="Contact" class="hub-footer-link-icon">
+                                    <img src="/TheHub/advisory/assets/Contact_Simple_100x100.png" alt="Contact" class="hub-footer-link-icon">
                                     <span class="hub-footer-link-label">Contact</span>
                                 </a>
                             </div>
