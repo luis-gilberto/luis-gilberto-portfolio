@@ -14,10 +14,19 @@ try {
         
         $localPath = $request.Url.LocalPath
         if ($localPath -eq '/') {
+            # Root request -> serve project index
             $localPath = '/index.html'
+        } elseif ($localPath.EndsWith('/')) {
+            # Directory request -> serve index.html within that directory
+            $localPath = $localPath + 'index.html'
         }
-        
+
         $filePath = Join-Path $PSScriptRoot $localPath.TrimStart('/')
+
+        # If a directory was resolved without trailing slash, fallback to its index
+        if (Test-Path $filePath -PathType Container) {
+            $filePath = Join-Path $filePath 'index.html'
+        }
         
         if (Test-Path $filePath -PathType Leaf) {
             try {

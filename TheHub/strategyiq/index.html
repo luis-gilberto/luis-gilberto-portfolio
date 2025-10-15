@@ -347,53 +347,9 @@
             scroll-behavior: smooth;
         }
 
-        /* Full Viewport Sections with Snap Scrolling */
-        .main-content {
-            scroll-snap-type: y mandatory;
-            overflow-y: auto;
-            height: calc(100vh - 80px - 200px); /* Account for header and footer */
-            scroll-behavior: smooth;
-        }
-
-        .viewport-section {
-            min-height: calc(100vh - 80px - 200px);
-            scroll-snap-align: start;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            position: relative;
-            padding: 2rem 0;
-            box-sizing: border-box;
-        }
-
-        .viewport-section.hero-viewport {
-            justify-content: center;
-            padding: 0;
-        }
-
-        .viewport-section.metrics-viewport {
-            padding-top: 4rem; /* Extra spacing for Intelligence Metrics */
-        }
-
-        /* Ensure sections fill viewport properly */
-        .viewport-section .container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        /* Adjust section spacing for viewport layout */
-        .viewport-section .section-intro {
-            margin-bottom: 3rem;
-            text-align: center;
-        }
-
-        .viewport-section .section-divider {
-            margin: 2rem 0;
+        /* Simplified section spacing to remove nested scrolling containers */
+        .public-mode section {
+            padding: 4rem 0;
         }
 
         .font-display {
@@ -1165,19 +1121,9 @@
          Preserves all backend functionality
          ============================================ */
 
-      /* Scroll-linked framing for buttery viewport sections */
-      .viewport-section {
-          min-height: 100vh;
-          display: flex;
-          align-items: center;
+      /* Simplified section framing (no forced viewport height or transforms) */
+      .public-mode section {
           padding: 4rem 0;
-      }
-
-      .viewport-section > section {
-          width: 100%;
-          will-change: transform, opacity;
-          transform-origin: center center;
-          backface-visibility: hidden;
       }
 
       /* Section Divider Enhancement */
@@ -1468,9 +1414,7 @@
 
     <!-- Public Mode Content -->
     <div id="publicMode" class="public-mode">
-        <div class="main-content">
             <!-- Hero Section -->
-            <div class="viewport-section hero-viewport">
                 <section class="hero-section">
                     <div class="container">
                         <div class="hero-content">
@@ -1486,10 +1430,8 @@
                         </div>
                     </div>
                 </section>
-            </div>
 
             <!-- Intelligence Metrics -->
-            <div class="viewport-section metrics-viewport">
                 <section class="container">
             <div class="section-intro">
                 <h2 class="font-display">Intelligence <span class="text-coral">Metrics</span></h2>
@@ -1519,10 +1461,8 @@
                 </div>
             </div>
                 </section>
-            </div>
 
             <!-- Methodology Section -->
-            <div class="viewport-section">
                 <!-- Section Divider -->
                 <div class="section-divider">
                     <div class="divider-line"></div>
@@ -1642,10 +1582,8 @@
                 </div>
             </div>
                 </section>
-            </div>
 
             <!-- Comparison Section -->
-            <div class="viewport-section">
                 <section class="container comparison-section">
             <div class="section-intro">
                 <h2 class="font-display">Traditional vs <span class="text-coral">StrategyIQ™</span></h2>
@@ -1714,10 +1652,8 @@
                 </div>
             </div>
                 </section>
-            </div>
 
             <!-- Proof Points -->
-            <div class="viewport-section">
                 <section class="container">
                     <div class="section-intro">
                         <h2 class="font-display">Proven <span class="text-teal">Results</span></h2>
@@ -1739,10 +1675,8 @@
                         </div>
                     </div>
                 </section>
-            </div>
 
             <!-- Consultation CTA -->
-            <div class="viewport-section">
                 <section class="container">
                     <div class="consultation-cta">
                         <i class="fas fa-comments cta-icon"></i>
@@ -1763,10 +1697,7 @@
                         </div>
                     </div>
                 </section>
-            </div>
-        </div>
     </div>
-    </div> <!-- Close main-content -->
 
     <!-- ADMIN-ONLY LIVE ENGINE -->
     <div id="liveEngine" class="live-engine">
@@ -2429,59 +2360,7 @@
              });
          });
 
-         // Scroll-linked animation for viewport sections (buttery effect)
-         (function() {
-             const isPublic = () => document.getElementById('publicMode')?.style.display !== 'none';
-             let ticking = false;
-
-             function getSections() {
-                 return Array.from(document.querySelectorAll('.public-mode .viewport-section > section'));
-             }
-
-             function update() {
-                 const viewportCenter = window.innerHeight / 2;
-                 const sections = getSections();
-
-                 sections.forEach(section => {
-                     const wrapper = section.parentElement;
-                     const rect = wrapper.getBoundingClientRect();
-                     const inView = rect.top < window.innerHeight && rect.bottom > 0;
-
-                     if (!inView || !isPublic()) {
-                         section.style.transform = 'translateY(60px) scale(0.98)';
-                         section.style.opacity = '0.55';
-                         return;
-                     }
-
-                     const center = rect.top + rect.height / 2;
-                     const distance = Math.abs(center - viewportCenter);
-                     const maxDistance = (window.innerHeight / 2) + (rect.height / 2);
-                     const proximity = Math.max(0, 1 - distance / maxDistance);
-
-                     const translateY = (viewportCenter - center) * 0.06; // subtle tracking to viewport center
-                     const scale = 0.98 + proximity * 0.04;              // gentle scale up near center
-                     const opacity = 0.55 + proximity * 0.45;            // fade in near center, fade out away
-
-                     section.style.transform = `translateY(${translateY}px) scale(${scale})`;
-                     section.style.opacity = opacity.toFixed(3);
-                 });
-
-                 ticking = false;
-             }
-
-             function onScroll() {
-                 if (!ticking) {
-                     ticking = true;
-                     requestAnimationFrame(update);
-                 }
-             }
-
-             window.addEventListener('scroll', onScroll, { passive: true });
-             window.addEventListener('resize', update);
-             document.addEventListener('DOMContentLoaded', update);
-             // Prime initial state
-             update();
-         })();
+         
      </script>
 
      <!-- FOOTER -->
@@ -2554,6 +2433,37 @@
              const link = e.target.closest('a');
              if (link && (link.href.includes('/TheHub/index.html') || link.href.includes('../index.html'))) {
                  sessionStorage.setItem('hubNavigated', 'true');
+             }
+         });
+     </script>
+
+     <script>
+         // Mobile menu toggle for production header
+         document.addEventListener('DOMContentLoaded', () => {
+             const mobileToggle = document.getElementById('mobileMenuToggle');
+             const headerNav = document.getElementById('headerNav');
+             if (mobileToggle && headerNav) {
+                 mobileToggle.addEventListener('click', () => {
+                     mobileToggle.classList.toggle('active');
+                     headerNav.classList.toggle('active');
+                 });
+
+                 // Close menu when a nav link is clicked
+                 headerNav.addEventListener('click', (e) => {
+                     const link = e.target.closest('a');
+                     if (link) {
+                         headerNav.classList.remove('active');
+                         mobileToggle.classList.remove('active');
+                     }
+                 });
+
+                 // Close on Escape
+                 document.addEventListener('keydown', (e) => {
+                     if (e.key === 'Escape') {
+                         headerNav.classList.remove('active');
+                         mobileToggle.classList.remove('active');
+                     }
+                 });
              }
          });
      </script>
