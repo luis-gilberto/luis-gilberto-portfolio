@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <script>
         // Debug: Override prompt function to catch any calls
@@ -27,6 +28,20 @@
             return null;
         };
         console.log('StrategyIQ: Debugging prompt() calls - page loaded');
+    </script>
+    <script>
+        // ===== SUPABASE DATABASE CONNECTION =====
+        const SUPABASE_URL = 'https://luqodxrjnprsawtgnyiy.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx1cW9keHJqbnByc2F3dGdueWl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA1MjEwNTUsImV4cCI6MjA3NjA5NzA1NX0.XYGeiXpfC1TaOE47IY0axFStz2Xj8V65IiN0M23kdLA';
+
+        // Initialize Supabase client
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Global session tracking
+        let currentSessionId = null;
+        let currentClientId = null;
+
+        console.log('StrategyIQ: Supabase database connected successfully');
     </script>
     
     <style>
@@ -393,7 +408,7 @@
             position: fixed;
             top: 100px;
             right: 2rem;
-            z-index: 999;
+            z-index: 10001;
             background: var(--glass-bg);
             backdrop-filter: blur(10px);
             border: 1px solid var(--glass-border);
@@ -1964,7 +1979,8 @@
     <!-- ADMIN-ONLY LIVE ENGINE -->
     <div id="liveEngine" class="live-engine">
         <!-- Dashboard Header -->
-        <div class="dashboard-header glass-card rounded-none">
+        <div class="dashboard-header glass-card rounded-none" style="position: relative;">
+            <div id="databaseStatus" style="position: absolute; top: 10px; right: 10px; font-size: 12px; padding: 6px 10px; border-radius: 14px; background: rgba(255,255,255,0.08);"></div>
             <div class="container py-6">
                 <div class="flex items-center justify-between">
                     <div>
@@ -1979,6 +1995,52 @@
                         <button onclick="toggleEngineMode()" class="bg-coral hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors">
                             <i class="fas fa-sign-out-alt mr-2"></i>Exit Engine
                         </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Client Selection Panel -->
+        <div class="container py-4">
+            <div id="clientSelectionPanel" class="glass-card rounded-2xl p-6 mb-8" style="display: none;">
+                <h3 class="font-display text-xl font-semibold mb-4 text-teal">
+                    <i class="fas fa-user-circle mr-2"></i>Client Selection
+                </h3>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Select Client</label>
+                    <select id="clientSelect" class="w-full p-3 rounded-lg bg-gray-800 border border-gray-600 text-white">
+                        <option value="">Loading clients...</option>
+                    </select>
+                </div>
+                <div id="clientContextPanel" style="display: none;">
+                    <div class="grid md:grid-cols-3 gap-4 mt-4">
+                        <div class="bg-gray-800 rounded-lg p-3">
+                            <div class="text-sm text-gray-400">Client</div>
+                            <div id="selectedClientName" class="font-semibold">-</div>
+                        </div>
+                        <div class="bg-gray-800 rounded-lg p-3">
+                            <div class="text-sm text-gray-400">Company</div>
+                            <div id="selectedClientCompany" class="font-semibold">-</div>
+                        </div>
+                        <div class="bg-gray-800 rounded-lg p-3">
+                            <div class="text-sm text-gray-400">Project</div>
+                            <div id="selectedClientProject" class="font-semibold">-</div>
+                        </div>
+                    </div>
+                    <div class="mt-4 p-4 bg-gradient-to-r from-blue-900/20 to-purple-900/20 rounded-lg border border-blue-500/30">
+                        <h4 class="font-semibold text-blue-300 mb-2">Client Context</h4>
+                        <div class="grid md:grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <span class="text-gray-400">Pain Points:</span>
+                                <ul id="clientPainPoints" class="text-white mt-1"></ul>
+                            </div>
+                            <div>
+                                <span class="text-gray-400">Budget:</span>
+                                <div id="clientBudget" class="text-white">-</div>
+                                <span class="text-gray-400 mt-2 block">Timeline:</span>
+                                <div id="clientTimeline" class="text-white">-</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2179,6 +2241,204 @@
         let currentQuestion = 0;
         let assessmentData = {};
         let sessionStartTime = Date.now();
+        // Ensure globals exist without redeclaration conflicts
+        if (typeof window.currentSessionId === 'undefined') { window.currentSessionId = null; }
+        if (typeof window.currentClientId === 'undefined') { window.currentClientId = null; }
+
+        // Database utility functions
+        async function testDatabaseConnection() {
+            try {
+                const { data, error } = await supabase
+                    .from('clients')
+                    .select('name, company')
+                    .limit(3);
+                if (error) throw error;
+                return { success: true, clients: data };
+            } catch (error) {
+                return { success: false, error: error.message };
+            }
+        }
+
+        async function loadClients() {
+            try {
+                const { data, error } = await supabase
+                    .from('clients')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                if (error) throw error;
+                return data || [];
+            } catch (error) {
+                return [];
+            }
+        }
+
+        function calculateCurrentScore() {
+            let totalScore = 0;
+            let maxScore = 0;
+            Object.values(assessmentData).forEach(answers => {
+                answers.forEach(answer => {
+                    totalScore += Number(answer.weight || 0);
+                    maxScore += 4;
+                });
+            });
+            if (maxScore === 0) return 0;
+            const percent = (totalScore / maxScore) * 100;
+            return Math.round((percent * 0.25) * 10) / 10;
+        }
+
+        function getServiceRecommendation(score) {
+            if (score >= 20) return 'Strategic Campaigns';
+            if (score >= 15) return 'Brand Intelligence';
+            if (score >= 12) return 'Growth Partnership';
+            if (score >= 8) return 'Quick-Start Sprint';
+            if (score >= 5) return 'Creative Strategy';
+            return "Founder's Ally";
+        }
+
+        function calculateConfidence(score) {
+            const baseConfidence = Math.min(95, Math.max(65, (score * 3.5) + 15));
+            const randomVariation = (Math.random() - 0.5) * 10;
+            return Math.round(baseConfidence + randomVariation);
+        }
+
+        async function saveAssessmentSession() {
+            try {
+                const questions = assessmentQuestions[currentService] || [];
+                const currentScore = calculateCurrentScore();
+                const sessionData = {
+                    session_name: `Assessment - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`,
+                    assessment_type: currentService || 'comprehensive',
+                    assessment_area: currentService || 'comprehensive',
+                    current_question: currentQuestion + 1,
+                    total_questions: questions.length,
+                    responses: assessmentData,
+                    intelligence_score: currentScore,
+                    service_recommendation: getServiceRecommendation(currentScore),
+                    confidence_percentage: calculateConfidence(currentScore),
+                    status: (questions.length && currentQuestion >= questions.length - 1) ? 'completed' : 'in-progress',
+                    consultant_notes: (function(){
+                        const el = document.getElementById('consultantNote');
+                        return el ? el.textContent : '';
+                    })(),
+                    completion_time: Math.round((Date.now() - sessionStartTime) / 60000)
+                };
+                if (currentClientId) sessionData.client_id = currentClientId;
+                if (currentSessionId) {
+                    const { data, error } = await supabase
+                        .from('assessment_sessions')
+                        .update(sessionData)
+                        .eq('id', currentSessionId)
+                        .select();
+                    if (error) throw error;
+                    return data ? data[0] : null;
+                } else {
+                    const { data, error } = await supabase
+                        .from('assessment_sessions')
+                        .insert([sessionData])
+                        .select();
+                    if (error) throw error;
+                    if (data && data[0]) {
+                        currentSessionId = data[0].id;
+                        return data[0];
+                    }
+                }
+            } catch (error) {
+                const fallbackData = {
+                    sessionId: currentSessionId || ('local_' + Date.now()),
+                    responses: assessmentData,
+                    timestamp: new Date().toISOString(),
+                    score: calculateCurrentScore()
+                };
+                localStorage.setItem('strategyiq_backup', JSON.stringify(fallbackData));
+                return null;
+            }
+        }
+
+        async function loadAssessmentSession(sessionId) {
+            try {
+                const { data, error } = await supabase
+                    .from('assessment_sessions')
+                    .select('*')
+                    .eq('id', sessionId)
+                    .single();
+                if (error) throw error;
+                return data;
+            } catch (error) {
+                return null;
+            }
+        }
+
+        async function populateClientSelection() {
+            const clients = await loadClients();
+            const clientSelect = document.getElementById('clientSelect');
+            const panel = document.getElementById('clientSelectionPanel');
+            if (panel) panel.style.display = 'block';
+            if (clientSelect) {
+                clientSelect.innerHTML = '<option value="">Select client for consultation...</option>';
+                clients.forEach(client => {
+                    const option = document.createElement('option');
+                    option.value = client.id;
+                    option.textContent = `${client.name} - ${client.company} (${client.project_type || 'n/a'})`;
+                    clientSelect.appendChild(option);
+                });
+                clientSelect.addEventListener('change', async function(e) {
+                    if (e.target.value) {
+                        await selectClient(e.target.value);
+                    }
+                });
+            }
+        }
+
+        async function selectClient(clientId) {
+            try {
+                const { data, error } = await supabase
+                    .from('clients')
+                    .select('*')
+                    .eq('id', clientId)
+                    .single();
+                if (error) throw error;
+                currentClientId = clientId;
+                updateClientDisplay(data);
+                suggestAssessmentArea(data.project_type);
+                return data;
+            } catch (error) {
+                return null;
+            }
+        }
+
+        function updateClientDisplay(client) {
+            const clientNameDisplay = document.getElementById('selectedClientName');
+            const clientCompanyDisplay = document.getElementById('selectedClientCompany');
+            const clientProjectDisplay = document.getElementById('selectedClientProject');
+            if (clientNameDisplay) clientNameDisplay.textContent = client.name || '-';
+            if (clientCompanyDisplay) clientCompanyDisplay.textContent = client.company || '-';
+            if (clientProjectDisplay) clientProjectDisplay.textContent = client.project_type || '-';
+            const contextPanel = document.getElementById('clientContextPanel');
+            if (contextPanel) contextPanel.style.display = 'block';
+            const painPointsList = document.getElementById('clientPainPoints');
+            if (painPointsList) painPointsList.innerHTML = Array.isArray(client.pain_points) ? client.pain_points.map(p => `<li>${p}</li>`).join('') : '';
+            const budgetDisplay = document.getElementById('clientBudget');
+            if (budgetDisplay) budgetDisplay.textContent = client.budget_range || 'Not specified';
+            const timelineDisplay = document.getElementById('clientTimeline');
+            if (timelineDisplay) timelineDisplay.textContent = client.timeline || 'Not specified';
+        }
+
+        function suggestAssessmentArea(projectType) {
+            const suggestions = {
+                'brand-positioning': 'brand-strategy',
+                'gtm-strategy': 'go-to-market',
+                'campaign-planning': 'go-to-market',
+                'creative-strategy': 'brand-strategy'
+            };
+            const suggestedArea = suggestions[projectType] || 'go-to-market';
+            const serviceCards = document.querySelectorAll('.service-card');
+            serviceCards.forEach(card => {
+                const onclick = card.getAttribute('onclick');
+                if (onclick && onclick.includes(suggestedArea)) {
+                    card.classList.add('suggested');
+                }
+            });
+        }
         
         // Service tier definitions
         const serviceTiers = {
@@ -2435,28 +2695,35 @@
              });
          }
 
-         function nextQuestion() {
-             // Save current answers
-             const question = assessmentQuestions[currentService][currentQuestion];
-             const selectedOptions = document.querySelectorAll(`input[name="question_${question.id}"]:checked`);
-             
-             if (selectedOptions.length === 0) return;
-             
-             assessmentData[`question_${question.id}`] = Array.from(selectedOptions).map(option => ({
-                 value: option.value,
-                 weight: question.options.find(opt => opt.value === option.value)?.weight || 1
-             }));
-             
-             currentQuestion++;
-             showQuestion();
-         }
+        async function nextQuestion() {
+            const questions = assessmentQuestions[currentService] || [];
+            const question = questions[currentQuestion];
+            if (!question) return;
+            const selectedOptions = document.querySelectorAll(`input[name="question_${question.id}"]:checked`);
+            if (selectedOptions.length === 0) return;
+            assessmentData[`question_${question.id}`] = Array.from(selectedOptions).map(option => ({
+                value: option.value,
+                weight: question.options.find(opt => opt.value === option.value)?.weight || 1
+            }));
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                showQuestion();
+                await saveAssessmentSession();
+            } else {
+                await saveAssessmentSession();
+                if (typeof showResults === 'function') {
+                    showResults();
+                }
+            }
+        }
 
-         function previousQuestion() {
-             if (currentQuestion > 0) {
-                 currentQuestion--;
-                 showQuestion();
-             }
-         }
+        async function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion();
+                await saveAssessmentSession();
+            }
+        }
 
          function updateProgress() {
              const questions = assessmentQuestions[currentService];
@@ -2578,9 +2845,120 @@
              `).join('');
          }
 
-         function exportReport() {
-             alert('Report export functionality would be implemented here');
-         }
+        async function exportReport() {
+            try {
+                let sessionData = null;
+                if (currentSessionId) {
+                    sessionData = await loadAssessmentSession(currentSessionId);
+                }
+                if (!sessionData) {
+                    const score = calculateCurrentScore();
+                    sessionData = {
+                        id: 'temp_' + Date.now(),
+                        session_name: `Assessment Export - ${new Date().toLocaleDateString()}`,
+                        assessment_type: currentService || 'comprehensive',
+                        assessment_area: currentService || 'comprehensive',
+                        responses: assessmentData,
+                        intelligence_score: score,
+                        service_recommendation: getServiceRecommendation(score),
+                        confidence_percentage: calculateConfidence(score),
+                        status: 'exported',
+                        created_at: new Date().toISOString(),
+                        client_id: currentClientId || null
+                    };
+                }
+                const reportData = await generateComprehensiveReport(sessionData);
+                showReportPreview(reportData);
+                if (currentSessionId) {
+                    await supabase
+                        .from('assessment_sessions')
+                        .update({ status: 'exported' })
+                        .eq('id', currentSessionId);
+                }
+            } catch (error) {
+                alert('Export failed. Please try again later.');
+            }
+        }
+
+        async function generateComprehensiveReport(sessionData) {
+            const score = sessionData.intelligence_score || 0;
+            const reportData = {
+                exportDate: new Date().toLocaleDateString(),
+                exportTime: new Date().toLocaleTimeString(),
+                sessionId: sessionData.id,
+                client: null,
+                assessmentType: sessionData.assessment_type,
+                assessmentArea: sessionData.assessment_area,
+                completionTime: sessionData.completion_time || 0,
+                intelligenceScore: score,
+                serviceRecommendation: sessionData.service_recommendation || getServiceRecommendation(score),
+                confidencePercentage: sessionData.confidence_percentage || calculateConfidence(score),
+                responses: sessionData.responses || {},
+                recommendations: generateDetailedRecommendations(sessionData),
+                nextSteps: generateNextSteps(sessionData)
+            };
+            if (sessionData.client_id) {
+                try {
+                    const { data: clientData } = await supabase
+                        .from('clients')
+                        .select('*')
+                        .eq('id', sessionData.client_id)
+                        .single();
+                    reportData.client = clientData;
+                } catch (_) {}
+            }
+            return reportData;
+        }
+
+        function showReportPreview(reportData) {
+            const win = window.open('', '_blank');
+            win.document.write(generateReportHTML(reportData));
+            win.document.close();
+            win.focus();
+        }
+
+        function generateReportHTML(data) {
+            const responsesList = Object.entries(data.responses || {}).map(([qid, answers]) => {
+                const items = Array.isArray(answers) ? answers.map(a => `<li>${a.value} (${a.weight})</li>`).join('') : '';
+                return `<div class="metric"><strong>${qid}</strong><ul>${items}</ul></div>`;
+            }).join('');
+            const recs = (data.recommendations || []).map(r => `<li>${r}</li>`).join('');
+            const steps = (data.nextSteps || []).map(s => `<li>${s}</li>`).join('');
+            return `<!DOCTYPE html>
+<html><head><title>StrategyIQ Report</title><style>body{font-family:Arial,sans-serif;margin:40px;color:#333}.header{text-align:center;border-bottom:3px solid #F96F6E;padding-bottom:20px;margin-bottom:30px}.section{margin:30px 0}.section h2{color:#F96F6E;border-bottom:2px solid #2ED3C6;padding-bottom:10px}.metric{background:#f8f9fa;padding:12px;border-radius:8px;margin:10px 0}.score{font-size:28px;font-weight:bold;color:#2ED3C6}.recommendation{background:linear-gradient(135deg,#F96F6E,#2ED3C6);color:#fff;padding:12px;border-radius:8px}.client-info{background:#f1f3f4;padding:12px;border-radius:8px}</style></head><body>
+<div class="header"><div>Generated: ${data.exportDate} ${data.exportTime} | Session: ${data.sessionId}</div></div>
+${data.client ? `<div class="section"><h2>Client</h2><div class="client-info"><strong>${data.client.name}</strong> - ${data.client.company}<br>Project: ${data.client.project_type||''}<br>Budget: ${data.client.budget_range||''}<br>Timeline: ${data.client.timeline||''}</div></div>`:''}
+<div class="section"><h2>Assessment Overview</h2><p><strong>Type:</strong> ${data.assessmentType}</p><p><strong>Area:</strong> ${data.assessmentArea}</p><p><strong>Completion:</strong> ${data.completionTime} minutes</p></div>
+<div class="section"><h2>Intelligence</h2><div class="metric"><div class="score">Score: ${data.intelligenceScore}</div><div>Recommendation: ${data.serviceRecommendation}</div><div>Confidence: ${data.confidencePercentage}%</div></div></div>
+<div class="section"><h2>Responses</h2>${responsesList || '<em>No responses recorded.</em>'}</div>
+<div class="section"><h2>Recommendations</h2><ul>${recs}</ul></div>
+<div class="section"><h2>Next Steps</h2><ul>${steps}</ul></div>
+</body></html>`;
+        }
+
+        function generateDetailedRecommendations(sessionData) {
+            const score = sessionData.intelligence_score || calculateCurrentScore();
+            const recs = [];
+            if (score < 10) {
+                recs.push('Prioritize foundational strategy alignment and market validation.');
+                recs.push('Establish baseline metrics and data collection processes.');
+            } else if (score < 18) {
+                recs.push('Strengthen competitive positioning with differentiated messaging.');
+                recs.push('Deploy targeted GTM campaigns for priority segments.');
+            } else {
+                recs.push('Scale proven initiatives with performance-focused resource allocation.');
+                recs.push('Implement advanced analytics for predictive decision-making.');
+            }
+            return recs;
+        }
+
+        function generateNextSteps(sessionData) {
+            return [
+                'Align stakeholders on strategic goals and KPIs',
+                'Define target segments and refine market thesis',
+                'Plan execution milestones with owners and timelines'
+            ];
+        }
 
          function startNewAssessment() {
              resetAssessment();
@@ -2597,7 +2975,7 @@
          }
 
          // Initialize page
-     document.addEventListener('DOMContentLoaded', function() {
+     document.addEventListener('DOMContentLoaded', async function() {
          // Add fade-in animations
          const observerOptions = {
              threshold: 0.1,
@@ -2615,6 +2993,31 @@
              document.querySelectorAll('.fade-in').forEach(el => {
                  observer.observe(el);
              });
+
+             // Fallback: ensure admin modal opens on keyboard shortcut
+             document.addEventListener('keydown', (e) => {
+                 if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'a') {
+                     if (typeof showAdminModal === 'function') {
+                         showAdminModal();
+                     }
+                 }
+             });
+
+             const statusEl = document.getElementById('databaseStatus');
+             if (statusEl && typeof supabase !== 'undefined') {
+                 try {
+                     const result = await testDatabaseConnection();
+                     if (result.success) {
+                         statusEl.textContent = 'DB: Connected';
+                     } else {
+                         statusEl.textContent = 'DB: Error';
+                     }
+                 } catch (_) {
+                     statusEl.textContent = 'DB: Unavailable';
+                 }
+             }
+
+             await populateClientSelection();
          });
 
          
