@@ -787,15 +787,17 @@
 
 .portfolio-bridge .bridge-caption { 
   display: flex; 
-  align-items: baseline; 
-  justify-content: space-between; 
-  gap: 1rem; 
+  flex-direction: column; 
+  align-items: center; 
+  text-align: center; 
+  gap: 0.5rem; 
   margin-bottom: 1rem; 
 }
 
 .portfolio-bridge .bridge-caption h3 { 
-  font-size: 1.25rem; 
-  font-weight: 700; 
+  font-family: 'Playfair Display', serif; 
+  font-size: 1.35rem; 
+  font-weight: 600; 
   letter-spacing: -0.01em; 
 }
 
@@ -804,10 +806,44 @@
   font-size: 0.95rem; 
 }
 
+/* Scroll container for narrow screens */
+.portfolio-bridge .bridge-scroll-wrapper {
+  position: relative;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+
+  /* Elegant scrollbar for Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(249, 111, 110, 0.3) transparent;
+
+  /* Spacing to showcase the scrollbar nicely */
+  padding-bottom: 1rem;
+  margin: 0 -1.5rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+/* Elegant scrollbar for WebKit browsers */
+.portfolio-bridge .bridge-scroll-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+.portfolio-bridge .bridge-scroll-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+.portfolio-bridge .bridge-scroll-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(249, 111, 110, 0.3);
+  border-radius: 3px;
+}
+.portfolio-bridge .bridge-scroll-wrapper::-webkit-scrollbar-thumb:hover {
+  background: rgba(249, 111, 110, 0.5);
+}
+
+/* Horizontal card row by default (mobile-first) */
 .portfolio-bridge .bridge-grid { 
-  display: grid; 
-  grid-template-columns: repeat(3, minmax(220px, 1fr)); 
-  gap: 1rem; 
+  display: inline-flex; 
+  gap: 12px; 
 }
 
 .portfolio-bridge .bridge-card { 
@@ -816,6 +852,9 @@
   overflow: hidden; 
   background: rgba(255,255,255,0.03); 
   transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease; 
+  scroll-snap-align: start; 
+  flex: 0 0 85%; 
+  max-width: 360px; 
 }
 
 .portfolio-bridge .bridge-card:hover { 
@@ -898,13 +937,43 @@
   transform: translateX(4px); 
 }
 
-/* Responsive */
-@media (max-width: 900px) { 
-  .portfolio-bridge .bridge-grid { grid-template-columns: repeat(2, minmax(220px, 1fr)); } 
+/* Scroll hint (shown on narrow screens) */
+.portfolio-bridge .scroll-hint {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .portfolio-bridge .scroll-hint {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    padding-top: 6px;
+  }
+}
+
+/* Desktop: revert to 3-up grid */
+@media (min-width: 900px) { 
+  .portfolio-bridge .bridge-scroll-wrapper { 
+    overflow: visible; 
+    margin: 0; 
+    padding: 0; 
+    scroll-snap-type: none; 
+  }
+  .portfolio-bridge .bridge-grid { 
+    display: grid; 
+    grid-template-columns: repeat(3, minmax(220px, 1fr)); 
+    gap: 1rem; 
+  } 
+  .portfolio-bridge .bridge-card { 
+    flex: none; 
+    max-width: none; 
+    scroll-snap-align: unset; 
+  } 
 }
 
 @media (max-width: 600px) { 
-  .portfolio-bridge .bridge-grid { grid-template-columns: 1fr; } 
   .portfolio-bridge .bridge-card picture, 
   .portfolio-bridge .bridge-card img { height: 160px; } 
 }

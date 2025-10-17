@@ -543,6 +543,15 @@
         .metric-label {
             color: var(--ink-dim);
             font-weight: 500;
+            text-transform: uppercase;
+        }
+        .metric-label .metric-subtext {
+            display: block;
+            font-weight: 400;
+            color: var(--ink);
+            opacity: 0.85;
+            margin-top: 0.25rem;
+            text-transform: none;
         }
 
         /* Investment Levels */
@@ -934,9 +943,9 @@
 
         /* Portfolio Bridge (scoped styles, minimal overlap) */
         .portfolio-bridge { margin: 40px 0 0; padding-top: 10px; }
-        .portfolio-bridge .bridge-caption { display:flex; align-items:baseline; justify-content:space-between; gap:1rem; margin-bottom:1rem; }
-        .portfolio-bridge .bridge-caption h3 { font-size:1.25rem; font-weight:700; letter-spacing:-0.01em; }
-        .portfolio-bridge .bridge-caption p { color: var(--ink-muted); font-size:0.95rem; }
+        .portfolio-bridge .bridge-caption { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.5rem; text-align:center; margin-bottom:1rem; }
+        .portfolio-bridge .bridge-caption h3 { font-family:'Playfair Display', serif; font-size:1.35rem; font-weight:700; letter-spacing:-0.01em; }
+        .portfolio-bridge .bridge-caption p { font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif; color: var(--ink-muted); font-size:0.95rem; }
         .portfolio-bridge .bridge-grid { display:grid; grid-template-columns:repeat(3, minmax(220px, 1fr)); gap:1rem; }
         .portfolio-bridge .bridge-card { border:1px solid var(--border); border-radius:14px; overflow:hidden; background:rgba(255,255,255,0.03); transition:transform .25s ease, border-color .25s ease, background .25s ease; }
         .portfolio-bridge .bridge-card:hover { transform:translateY(-4px); border-color: var(--coral); background:rgba(255,255,255,0.04); }
@@ -948,8 +957,60 @@
         .portfolio-bridge .card-link { display:inline-flex; align-items:center; gap:6px; margin-top:8px; color: var(--coral); font-weight:600; text-decoration:none; }
         .portfolio-bridge .card-link svg { width:16px; height:16px; transition: transform .2s ease; }
         .portfolio-bridge .card-link:hover svg { transform: translateX(3px); }
+
+        /* Hover/focus overlay for campaign images */
+        .portfolio-bridge { --bridge-image-h: 180px; }
+        .portfolio-bridge .bridge-card { position: relative; }
+        .portfolio-bridge .card-body {
+          position: absolute;
+          top: 0; left: 0; right: 0;
+          height: var(--bridge-image-h);
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: flex-start;
+          gap: .5rem;
+          padding: 16px;
+          background: rgba(0,0,0,.55);
+          color: #fff;
+          opacity: 0;
+          transform: translateY(4px);
+          transition: opacity .25s ease, transform .25s ease;
+          pointer-events: none;
+          z-index: 2;
+        }
+        .portfolio-bridge .bridge-card:hover .card-body,
+        .portfolio-bridge .bridge-card:focus-within .card-body {
+          opacity: 1;
+          transform: translateY(0);
+          pointer-events: auto;
+        }
+        .portfolio-bridge .card-title { color: #fff; }
+        .portfolio-bridge .pill { border-color: rgba(255,255,255,.6); color: #fff; background: rgba(0,0,0,.25); }
+        .portfolio-bridge .card-link { color: var(--coral); }
+
         @media (max-width: 900px) { .portfolio-bridge .bridge-grid { grid-template-columns:repeat(2, minmax(220px, 1fr)); } }
-        @media (max-width: 600px) { .portfolio-bridge .bridge-grid { grid-template-columns:1fr; } .portfolio-bridge .bridge-card picture, .portfolio-bridge .bridge-card img { height:160px; } }
+        @media (max-width: 600px) {
+          .portfolio-bridge .bridge-grid { grid-template-columns:1fr; }
+          .portfolio-bridge .bridge-card picture, .portfolio-bridge .bridge-card img { height:160px; }
+          .portfolio-bridge { --bridge-image-h: 160px; }
+
+          /* Mobile/touch fallback: restore below-image body */
+          .portfolio-bridge .card-body {
+            position: static;
+            height: auto;
+            display: block;
+            background: transparent;
+            color: var(--ink);
+            opacity: 1;
+            transform: none;
+            pointer-events: auto;
+            z-index: auto;
+            padding: 12px 14px;
+          }
+          .portfolio-bridge .card-title { color: var(--ink); }
+          .portfolio-bridge .pill { border-color: var(--border); color: var(--ink-muted); background: transparent; }
+        }
     </style>
 </head>
 <body>
@@ -1023,72 +1084,6 @@
         </div>
     </section>
 
-    <!-- Proof at Peak Interest: Portfolio Bridge -->
-    <section class="portfolio-bridge" aria-labelledby="proof">
-        <div class="bridge-caption">
-            <h3 id="proof">Real campaigns at your fingertips</h3>
-            <p>Browse quick proofs—then dive deeper when you’re ready.</p>
-        </div>
-        <div class="bridge-grid" role="list">
-            <!-- Teams Card -->
-            <article class="bridge-card" role="listitem">
-                <a href="/case-study-teams-final-dm.html" aria-label="View Microsoft Teams Launch case study">
-                    <picture>
-                        <img src="../../assets/images/portfolio_teams_400x400.jpg" alt="Microsoft Teams launch visuals" width="400" height="180" loading="lazy">
-                    </picture>
-                </a>
-                <div class="card-body">
-                    <h4 class="card-title">Microsoft Teams – Launch</h4>
-                    <div class="card-pills">
-                        <span class="pill">Go-to-market</span>
-                        <span class="pill">Brand system</span>
-                        <span class="pill">Campaign</span>
-                    </div>
-                    <a class="card-link" href="/case-study-teams-final-dm.html">See the work
-                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                    </a>
-                </div>
-            </article>
-            <!-- FSA Card -->
-            <article class="bridge-card" role="listitem">
-                <a href="/case-study-fsa.html" aria-label="View FSA Consumer Launch case study">
-                    <picture>
-                        <img src="../../assets/images/portfolio_fsa_consumer_launch_400x400.jpg" alt="FSA consumer launch visuals" width="400" height="180" loading="lazy">
-                    </picture>
-                </a>
-                <div class="card-body">
-                    <h4 class="card-title">FSA – Consumer Launch</h4>
-                    <div class="card-pills">
-                        <span class="pill">Positioning</span>
-                        <span class="pill">Activation</span>
-                        <span class="pill">Growth</span>
-                    </div>
-                    <a class="card-link" href="/case-study-fsa.html">See the work
-                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                    </a>
-                </div>
-            </article>
-            <!-- Free to Be Free Card -->
-            <article class="bridge-card" role="listitem">
-                <a href="/case-study-free-to-be-free.html" aria-label="View Free to Be Free brand case study">
-                    <picture>
-                        <img src="../../assets/images/portfolio_free2bfree_400x400.jpg" alt="Free to Be Free brand visuals" width="400" height="180" loading="lazy">
-                    </picture>
-                </a>
-                <div class="card-body">
-                    <h4 class="card-title">Free to Be Free – Brand</h4>
-                    <div class="card-pills">
-                        <span class="pill">Identity</span>
-                        <span class="pill">Narrative</span>
-                        <span class="pill">System</span>
-                    </div>
-                    <a class="card-link" href="/case-study-free-to-be-free.html">See the work
-                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                    </a>
-                </div>
-            </article>
-        </div>
-    </section>
 
     <!-- Capabilities Section -->
     <section class="section" id="capabilities">
@@ -1217,22 +1212,84 @@
         
         <div class="proof-grid">
             <div class="proof-metric">
-                <div class="metric-value">300%</div>
-                <div class="metric-label">Campaign Efficiency Gains</div>
+                <div class="metric-value">150M+</div>
+                <div class="metric-label">Total Users Reached <span class="metric-subtext">Across all campaigns</span></div>
             </div>
             <div class="proof-metric">
-                <div class="metric-value">15+</div>
-                <div class="metric-label">Industries Transformed</div>
+                <div class="metric-value">$25M+</div>
+                <div class="metric-label">Media Investment <span class="metric-subtext">Managed &amp; optimized</span></div>
             </div>
             <div class="proof-metric">
                 <div class="metric-value">85%</div>
-                <div class="metric-label">Client Retention Rate</div>
-            </div>
-            <div class="proof-metric">
-                <div class="metric-value">50+</div>
-                <div class="metric-label">Successful Launches</div>
+                <div class="metric-label">Avg. Campaign Success <span class="metric-subtext">Above KPI targets</span></div>
             </div>
         </div>
+        <!-- Proof at Peak Interest: Portfolio Bridge -->
+        <section class="portfolio-bridge" aria-labelledby="proof">
+            <div class="bridge-caption">
+                <h3 id="proof">Real campaigns at your fingertips</h3>
+                <p>Browse quick proofs—then dive deeper when you’re ready.</p>
+            </div>
+            <div class="bridge-grid" role="list">
+                <!-- Teams Card -->
+                <article class="bridge-card" role="listitem">
+                    <a href="/case-study-teams-final-dm.html" aria-label="View Microsoft Teams Launch case study">
+                        <picture>
+                            <img src="../../assets/images/portfolio_teams_400x400.jpg" alt="Microsoft Teams launch visuals" width="400" height="180" loading="lazy">
+                        </picture>
+                    </a>
+                    <div class="card-body">
+                        <h4 class="card-title">Microsoft Teams – Launch</h4>
+                        <div class="card-pills">
+                            <span class="pill">Go-to-market</span>
+                            <span class="pill">Brand system</span>
+                            <span class="pill">Campaign</span>
+                        </div>
+                        <a class="card-link" href="/case-study-teams-final-dm.html">See the work
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                        </a>
+                    </div>
+                </article>
+                <!-- FSA Card -->
+                <article class="bridge-card" role="listitem">
+                    <a href="/case-study-fsa.html" aria-label="View FSA Consumer Launch case study">
+                        <picture>
+                            <img src="../../assets/images/portfolio_fsa_consumer_launch_400x400.jpg" alt="FSA consumer launch visuals" width="400" height="180" loading="lazy">
+                        </picture>
+                    </a>
+                    <div class="card-body">
+                        <h4 class="card-title">FSA – Consumer Launch</h4>
+                        <div class="card-pills">
+                            <span class="pill">Positioning</span>
+                            <span class="pill">Activation</span>
+                            <span class="pill">Growth</span>
+                        </div>
+                        <a class="card-link" href="/case-study-fsa.html">See the work
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                        </a>
+                    </div>
+                </article>
+                <!-- Free to Be Free Card -->
+                <article class="bridge-card" role="listitem">
+                    <a href="/case-study-free-to-be-free.html" aria-label="View Free to Be Free brand case study">
+                        <picture>
+                            <img src="../../assets/images/portfolio_free2bfree_400x400.jpg" alt="Free to Be Free brand visuals" width="400" height="180" loading="lazy">
+                        </picture>
+                    </a>
+                    <div class="card-body">
+                        <h4 class="card-title">Free to Be Free – Brand</h4>
+                        <div class="card-pills">
+                            <span class="pill">Identity</span>
+                            <span class="pill">Narrative</span>
+                            <span class="pill">System</span>
+                        </div>
+                        <a class="card-link" href="/case-study-free-to-be-free.html">See the work
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                        </a>
+                    </div>
+                </article>
+            </div>
+        </section>
     </section>
 
     <!-- Investment Levels -->
