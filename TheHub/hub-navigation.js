@@ -331,7 +331,7 @@ class HubSystem {
                                     <img src="/TheHub/advisory/assets/StrategyIQ_Simple_100x100.png" alt="StrategyIQ" class="hub-footer-link-icon">
                                     <span class="hub-footer-link-label">StrategyIQ</span>
                                 </a>
-                                <a href="/IMCServices/brand-guidelines/" class="hub-footer-link">
+                                <a href="/TheHub/brand-guidelines/" class="hub-footer-link">
                                     <img src="/TheHub/advisory/assets/Brand_Guidelines_Simple_100x100.png" alt="Brand Guidelines" class="hub-footer-link-icon">
                                     <span class="hub-footer-link-label">Brand Guidelines</span>
                                 </a>
