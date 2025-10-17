@@ -37,7 +37,7 @@ class HubSystem {
                     </div>
                     
                     <div class="hub-nav-actions">
-                        <a href="https://luis-gilberto.com/contact?from=hub#cta-hook" class="hub-nav-contact">
+                        <a href="https://luis-gilberto.com/contact?from=imc#cta-hook" class="hub-nav-contact">
                             <img src="/TheHub/advisory/assets/Contact_Simple_100x100.png" alt="Contact" class="hub-nav-contact-icon">
                             <span class="hub-nav-contact-text">Contact</span>
                         </a>
