@@ -188,7 +188,9 @@ class HubSystem {
                 .hub-nav-mobile-toggle {
                     display: none;
                     flex-direction: column;
-                    gap: 4px;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 6px; /* distinct separation between lines */
                     background: none;
                     border: none;
                     padding: 0.5rem;
@@ -196,10 +198,13 @@ class HubSystem {
                 }
 
                 .hub-nav-hamburger {
+                    display: block;
                     width: 24px;
-                    height: 2px;
+                    height: 3px; /* thicker for clarity on mobile/tablet */
                     background: white;
+                    border-radius: 2px; /* rounded ends to avoid dash look */
                     transition: all 0.3s ease;
+                    transform-origin: center; /* align rotations cleanly */
                 }
 
                 .hub-nav-mobile-menu {
@@ -268,8 +273,8 @@ class HubSystem {
                     font-weight: 500;
                 }
 
-                /* Mobile Styles */
-                @media (max-width: 768px) {
+                /* Mobile/Tablet Styles */
+                @media (max-width: 1024px) {
                     .hub-nav-container {
                         padding: 0 1rem;
                     }
