@@ -207,70 +207,85 @@ class HubSystem {
                     transform-origin: center; /* align rotations cleanly */
                 }
 
+                /* UPDATED: Full-screen mobile drawer overlay */
                 .hub-nav-mobile-menu {
-                    position: absolute;
-                    top: 100%;
+                    position: fixed;
+                    top: 0;
                     left: 0;
-                    right: 0;
-                    background: rgba(13, 13, 13, 0.98);
+                    width: 100vw;
+                    height: 100vh;
+                    z-index: 1001;
+                    background: rgba(12, 12, 12, 0.96); /* slightly darker overlay */
                     backdrop-filter: blur(20px);
                     -webkit-backdrop-filter: blur(20px);
-                    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-                    transform: translateY(-100%);
                     opacity: 0;
                     visibility: hidden;
-                    transition: all 0.3s ease;
+                    pointer-events: none;
+                    transition: opacity 0.25s ease, visibility 0.25s ease;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                 }
 
                 .hub-nav-mobile-menu.open {
-                    transform: translateY(0);
                     opacity: 1;
                     visibility: visible;
+                    pointer-events: auto;
                 }
 
+                /* UPDATED: Evenly distributed layout and doubled sizes */
                 .hub-nav-mobile-content {
-                    padding: 1.5rem 2rem;
+                    width: 100%;
+                    height: 100%;
+                    max-width: 720px;
+                    margin: 0 auto;
+                    padding: 2rem;
                     display: flex;
                     flex-direction: column;
-                    gap: 1rem;
+                    justify-content: space-evenly; /* evenly spaced items */
+                    align-items: center;
+                    gap: 0;
                 }
 
                 .hub-nav-mobile-link {
                     display: flex;
                     align-items: center;
-                    gap: 1rem;
-                    padding: 1rem;
+                    gap: 1.25rem; /* slightly larger gap */
+                    padding: 2rem; /* doubled from 1rem */
                     color: white;
                     text-decoration: none;
-                    border-radius: 12px;
-                    transition: all 0.3s ease;
-                    border: 1px solid rgba(255, 255, 255, 0.08);
+                    border-radius: 16px; /* larger radius for bigger cards */
+                    transition: all 0.25s ease;
+                    border: 1px solid rgba(255, 255, 255, 0.10);
+                    width: min(90vw, 520px);
                 }
 
                 .hub-nav-mobile-link:hover {
-                    background: rgba(255, 255, 255, 0.05);
-                    border-color: rgba(249, 111, 110, 0.3);
+                    background: rgba(255, 255, 255, 0.06);
+                    border-color: rgba(226, 93, 82, 0.35); /* brand coral accent */
                 }
 
                 .hub-nav-mobile-contact {
-                    background: rgba(249, 111, 110, 0.1);
-                    border-color: #f96f6e;
+                    background: rgba(226, 93, 82, 0.12); /* match brand coral tone */
+                    border-color: #E25D52; /* brand coral */
                 }
 
                 .hub-nav-mobile-link img {
-                    width: 24px;
-                    height: 24px;
+                    width: 48px; /* doubled from 24px */
+                    height: 48px; /* doubled from 24px */
                     filter: brightness(0) invert(1);
                 }
 
-                /* StrategyIQ: 25% larger in mobile menu */
+                /* Preserve StrategyIQ prominence with doubled scale */
                 .hub-nav-mobile-link img[alt="StrategyIQ"] {
-                    width: 30px;
-                    height: 30px;
+                    width: 60px; /* doubled from 30px */
+                    height: 60px; /* doubled from 30px */
                 }
 
                 .hub-nav-mobile-link span {
-                    font-weight: 500;
+                    font-weight: 600; /* slightly bolder for readability */
+                    font-size: 1.25rem; /* increase text size */
+                    line-height: 1.2;
                 }
 
                 /* Mobile/Tablet Styles */
@@ -577,6 +592,14 @@ class HubSystem {
                     hamburgers[0].style.transform = 'none';
                     hamburgers[1].style.opacity = '1';
                     hamburgers[2].style.transform = 'none';
+                }
+            });
+
+            // NEW: Close drawer when clicking overlay outside content
+            mobileMenu.addEventListener('click', (e) => {
+                const content = mobileMenu.querySelector('.hub-nav-mobile-content');
+                if (e.target === mobileMenu && this.isMenuOpen) {
+                    toggle.click();
                 }
             });
         }
