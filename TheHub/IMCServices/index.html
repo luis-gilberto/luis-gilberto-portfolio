@@ -100,7 +100,7 @@
         /* Hero Section */
         .hero{
           /* mobile-first height avoids address-bar jump */
-          min-height: 88svh;
+          min-height: 75svh;
           display:flex; flex-direction:column; justify-content:center; align-items:center;
           text-align:center; padding: clamp(20px, 4vw, 32px);
           position:relative; overflow:hidden;
@@ -116,14 +116,84 @@
     linear-gradient(180deg, #0B0B0B 0%, #0D0D0D 70%, #0B0B0B 100%);
 }
 /* Suppress both the global orbital and prior arc motif */
-#services-hero.hero::before{ content: none !important; display:none !important; }
-#services-hero.hero::after{ content: none !important; display:none !important; }
+#services-hero.hero::before,
+#services-hero.hero::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+  background-image: none !important;
+  animation: none !important;
+}
+/* Tighten hero vertical spacing on Services */
+#services-hero.hero {
+  justify-content: flex-start;
+  padding-top: 4vh;
+  min-height: 64svh;
+}
 
+/* ===== FLOATING SOPHISTICATED ICON (IMC Services Hero) ===== */
+.hero-icon-wrapper {
+    position: absolute;
+    right: 3%;
+    top: 6vh;
+    transform: none;
+    width: 640px;
+    height: 640px;
+    opacity: 0.12;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.hero-icon {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: brightness(1.2) saturate(1.1) drop-shadow(0 0 50px rgba(249, 111, 110, 0.4));
+    mix-blend-mode: screen;
+    animation: float-hero-icon 9s ease-in-out infinite;
+}
+
+@keyframes float-hero-icon {
+    0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+        filter: brightness(1.2) saturate(1.1) drop-shadow(0 0 50px rgba(249, 111, 110, 0.4));
+    }
+    50% {
+        transform: translateY(-25px) rotate(5deg);
+        filter: brightness(1.3) saturate(1.2) drop-shadow(0 0 70px rgba(249, 111, 110, 0.5));
+    }
+}
+
+/* Responsive sizes */
+@media (max-width: 1024px) {
+    .hero-icon-wrapper {
+        width: 550px;
+        height: 550px;
+        opacity: 0.10;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-icon-wrapper {
+        width: 400px;
+        height: 400px;
+        opacity: 0.08;
+        right: -50px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-icon-wrapper {
+        width: 300px;
+        height: 300px;
+        opacity: 0.06;
+    }
+}
 
         /* ===== ATOMIC ORBITAL BACKGROUND WATERMARKS ===== */
         .hero::before{
           content:"";
-          position:absolute; inset:auto; right:-12vw; top:8vh;
+          position:absolute; inset:auto; right:-12vw; top:22vh;
           width: min(64vw, 520px); aspect-ratio:1/1;
           opacity:.09; filter: blur(.3px);
           background-repeat:no-repeat; background-size:contain; background-position:center;
@@ -1181,7 +1251,7 @@
         .footer-container { max-width: 1200px; margin: 0 auto; padding: 2rem 1rem; }
         .footer-main { display: flex; flex-wrap: wrap; gap: 2rem; align-items: flex-start; justify-content: space-between; }
         .footer-brand { max-width: 420px; }
-        .footer-dual-logo { height: 48px; width: auto; filter: drop-shadow(0px 6px 30px rgba(46,211,198,0.2)); }
+        .footer-dual-logo { height: 60px; width: auto; filter: drop-shadow(0px 6px 30px rgba(46,211,198,0.2)); }
         .footer-tagline { margin-top: 0.75rem; color: var(--ink-muted); }
         .footer-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; flex: 1; min-width: 280px; }
         .footer-link-card { display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 0.9rem; border-radius: 12px; text-decoration: none; color: var(--ink-dim); background: var(--glass-bg); border: 1px solid var(--glass-border); transition: transform 0.2s ease, background 0.2s ease, border 0.2s ease, color 0.2s ease; }
@@ -1201,14 +1271,31 @@
             .header-nav.open {
                 display: flex;
                 flex-direction: column;
-                position: absolute;
-                top: 100%;
+                position: fixed;
+                top: 0;
                 left: 0;
                 right: 0;
-                background: rgba(8,8,10,0.80);
-                backdrop-filter: blur(8px);
-                border-bottom: 1px solid rgba(255,255,255,0.10);
-                padding: 0.5rem 0.75rem;
+                bottom: 0;
+                background: rgba(8,8,10,0.92);
+                backdrop-filter: blur(10px) saturate(120%);
+                z-index: 9999;
+                padding: 1rem;
+                gap: 0.75rem;
+                align-items: center;
+                justify-content: flex-start;
+                overflow-y: auto;
+            }
+            .header-nav.open .nav-icon {
+                width: 48px;
+                height: 48px;
+                image-rendering: -webkit-optimize-contrast;
+                image-rendering: crisp-edges;
+                -ms-interpolation-mode: nearest-neighbor;
+            }
+            .header-nav.open .nav-item {
+                font-size: 1.05rem;
+                border-color: rgba(255,255,255,0.12);
+                background: rgba(255,255,255,0.04);
             }
         }
     </style>
@@ -1394,6 +1481,13 @@
 
     <!-- Hero Section -->
     <section id="services-hero" class="hero">
+      <!-- Floating Sophisticated Icon -->
+      <div class="hero-icon-wrapper">
+        <img src="../advisory/assets/IMC_Services_Sophisticated.png" 
+             alt="" 
+             class="hero-icon">
+      </div>
+      
       <div class="eyebrow">Strategic Marketing Leadership</div>
 
       <h1 class="hero-title">
@@ -1774,34 +1868,19 @@
                     <p class="footer-tagline">Strategic marketing leadership meets creative excellence.</p>
                 </div>
                 <div class="footer-links">
-                    <a href="/TheHub/contact.html" class="footer-link-card">
-                        <img src="./advisory/assets/Contact_Simple_100x100.png" alt="Contact" class="footer-link-icon" width="24" height="24">
-                        <span class="footer-link-text">Contact</span>
-                    </a>
-
-                    <a href="/TheHub/IMCServices/index.html" class="footer-link-card">
-                        <img src="./advisory/assets/IMC_Services_Simple_100x100.png" alt="Services" class="footer-link-icon" width="24" height="24">
-                        <span class="footer-link-text">Services</span>
-                    </a>
-
-                    <a href="/TheHub/advisory/" class="footer-link-card">
-                        <img src="./advisory/assets/Advisory_Simple_100x100.png" alt="Advisory" class="footer-link-icon" width="24" height="24">
-                        <span class="footer-link-text">Advisory</span>
-                    </a>
-
-                    <a href="/TheHub/scopeiq/index.html" class="footer-link-card">
-                        <img src="./advisory/assets/ScopeIQ_Clean_Telescope_100x100.png" alt="ScopeIQ" class="footer-link-icon" width="24" height="24">
-                        <span class="footer-link-text">ScopeIQ</span>
-                    </a>
-
-                    <a href="/TheHub/strategyiq/index.html" class="footer-link-card">
-                        <img src="./advisory/assets/StrategyIQ_Simple_100x100.png" alt="StrategyIQ" class="footer-link-icon" width="24" height="24">
-                        <span class="footer-link-text">StrategyIQ</span>
+                    <a href="/TheHub/system/index.html" class="footer-link-card">
+                        <img src="../advisory/assets/System_100x100.png" alt="The System" class="footer-link-icon" width="24" height="24">
+                        <span class="footer-link-text">The System</span>
                     </a>
 
                     <a href="/TheHub/IMCServices/brand-guidelines/index.html" class="footer-link-card">
                         <img src="./advisory/assets/Brand_Guidelines_Simple_100x100.png" alt="Brand Guidelines" class="footer-link-icon" width="24" height="24">
                         <span class="footer-link-text">Brand Guidelines</span>
+                    </a>
+
+                    <a href="/TheHub/contact.html" class="footer-link-card">
+                        <img src="./advisory/assets/Contact_Simple_100x100.png" alt="Contact" class="footer-link-icon" width="24" height="24">
+                        <span class="footer-link-text">Contact</span>
                     </a>
                 </div>
             </div>
@@ -1810,7 +1889,6 @@
                 <div class="footer-copyright">© 2025 Luis Gilberto. All rights reserved.</div>
                 <div class="footer-social">
                     <a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-                    <a href="/TheHub/IMCServices/brand-guidelines/index.html">Brand Guidelines</a>
                     <a href="https://luisgilberto00.link" target="_blank" rel="noopener noreferrer">luisgilberto00.link</a>
                 </div>
             </div>
@@ -1822,9 +1900,30 @@
       (function(){
         const mobileToggle = document.getElementById('mobileToggle');
         const headerNav = document.getElementById('headerNav');
+        // Placeholder to restore original position after closing
+        let placeholder = null;
+        if (headerNav) {
+          placeholder = document.createElement('div');
+          placeholder.style.display = 'none';
+          headerNav.parentNode.insertBefore(placeholder, headerNav);
+        }
         if (mobileToggle && headerNav) {
           mobileToggle.addEventListener('click', function(){
-            headerNav.classList.toggle('open');
+            const isOpen = !headerNav.classList.contains('open');
+            if (isOpen) {
+              headerNav.classList.add('open');
+              // Reparent to body to avoid clipping under fixed/backdrop-filter header on mobile browsers
+              document.body.appendChild(headerNav);
+              document.body.style.overflow = 'hidden';
+              document.body.style.touchAction = 'none';
+            } else {
+              headerNav.classList.remove('open');
+              if (placeholder && placeholder.parentNode) {
+                placeholder.parentNode.insertBefore(headerNav, placeholder);
+              }
+              document.body.style.overflow = '';
+              document.body.style.touchAction = '';
+            }
           });
         }
       })();

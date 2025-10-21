@@ -215,7 +215,7 @@ class HubSystem {
                     width: 100vw;
                     height: 100vh;
                     z-index: 1001;
-                    background: rgba(12, 12, 12, 0.96); /* slightly darker overlay */
+                    background: rgba(12, 12, 12, 0.96); /* darker, less transparent */
                     backdrop-filter: blur(20px);
                     -webkit-backdrop-filter: blur(20px);
                     opacity: 0;
@@ -258,6 +258,7 @@ class HubSystem {
                     transition: all 0.25s ease;
                     border: 1px solid rgba(255, 255, 255, 0.10);
                     width: min(90vw, 520px);
+                    will-change: transform;
                 }
 
                 .hub-nav-mobile-link:hover {
@@ -274,6 +275,8 @@ class HubSystem {
                     width: 48px; /* doubled from 24px */
                     height: 48px; /* doubled from 24px */
                     filter: brightness(0) invert(1);
+                    image-rendering: -webkit-optimize-contrast; /* improve crispness on WebKit */
+                    image-rendering: crisp-edges; /* hint sharper scaling */
                 }
 
                 /* Preserve StrategyIQ prominence with doubled scale */
@@ -315,6 +318,11 @@ class HubSystem {
                 body[data-hub-nav="true"] {
                     padding-top: 85px;
                 }
+
+                /* Prevent background scroll when mobile drawer open */
+                body.hub-mobile-open {
+                    overflow: hidden;
+                }
             </style>
         `;
 
@@ -335,21 +343,9 @@ class HubSystem {
                         
                         <div class="hub-footer-links">
                             <div class="hub-footer-links-grid">
-                                <a href="/TheHub/IMCServices/" class="hub-footer-link">
-                                    <img src="/TheHub/advisory/assets/IMC_Services_Simple_100x100.png" alt="Services" class="hub-footer-link-icon">
-                                    <span class="hub-footer-link-label">Services</span>
-                                </a>
-                                <a href="/TheHub/advisory/" class="hub-footer-link">
-                                    <img src="/TheHub/advisory/assets/Advisory_100x100.png" alt="Advisory" class="hub-footer-link-icon">
-                                    <span class="hub-footer-link-label">Advisory</span>
-                                </a>
-                                <a href="/TheHub/scopeiq/index.html" class="hub-footer-link">
-                                    <img src="/TheHub/advisory/assets/ScopeIQ_Clean_Telescope_100x100.png" alt="ScopeIQ" class="hub-footer-link-icon">
-                                    <span class="hub-footer-link-label">ScopeIQ</span>
-                                </a>
-                                <a href="/TheHub/strategyiq/" class="hub-footer-link">
-                                    <img src="/TheHub/advisory/assets/StrategyIQ_Simple_100x100.png" alt="StrategyIQ" class="hub-footer-link-icon">
-                                    <span class="hub-footer-link-label">StrategyIQ</span>
+                                <a href="/TheHub/system/" class="hub-footer-link">
+                                    <img src="/TheHub/advisory/assets/TheHub_Logo.png" alt="The System" class="hub-footer-link-icon">
+                                    <span class="hub-footer-link-label">The System</span>
                                 </a>
                                 <a href="/TheHub/brand-guidelines/" class="hub-footer-link">
                                     <img src="/TheHub/advisory/assets/Brand_Guidelines_Simple_100x100.png" alt="Brand Guidelines" class="hub-footer-link-icon">
@@ -417,7 +413,7 @@ class HubSystem {
 
                 .hub-footer-links-grid {
                     display: grid;
-                    grid-template-columns: repeat(2, 1fr);
+                    grid-template-columns: repeat(3, 1fr);
                     gap: 1rem;
                 }
 
@@ -442,22 +438,10 @@ class HubSystem {
                 }
 
                 .hub-footer-link-icon {
-                    width: 32px;
-                    height: 32px;
+                    width: 36px;
+                    height: 36px;
                     filter: brightness(0) invert(1);
                     transition: all 0.3s ease;
-                }
-
-                /* StrategyIQ: footer icon 15% larger */
-                .hub-footer-link img[alt="StrategyIQ"].hub-footer-link-icon {
-                    width: 37px;
-                    height: 37px;
-                }
-
-                /* Make the services icon 1.5x bigger */
-                .hub-footer-link:first-child .hub-footer-link-icon {
-                    width: 48px;
-                    height: 48px;
                 }
 
                 .hub-footer-link:hover .hub-footer-link-icon {
@@ -550,6 +534,12 @@ class HubSystem {
                         flex-direction: column;
                         text-align: center;
                         gap: 1.5rem;
+                        align-items: center;
+                    }
+
+                    .hub-footer-copyright {
+                        text-align: center;
+                        width: 100%;
                     }
 
                     .hub-footer-bottom-links {
@@ -581,6 +571,7 @@ class HubSystem {
             toggle.addEventListener('click', () => {
                 this.isMenuOpen = !this.isMenuOpen;
                 mobileMenu.classList.toggle('open', this.isMenuOpen);
+                document.body.classList.toggle('hub-mobile-open', this.isMenuOpen);
                 
                 // Animate hamburger
                 const hamburgers = toggle.querySelectorAll('.hub-nav-hamburger');
