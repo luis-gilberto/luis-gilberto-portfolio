@@ -436,7 +436,7 @@ window.addEventListener('resize', createMobileMenu);
 createMobileMenu();
 
 // ===================================
-// Admin Mode Toggle with Password Protection
+// Admin Mode Toggle with Password Modal
 // ===================================
 
 let adminModeActive = false;
@@ -445,51 +445,104 @@ const ADMIN_PASSWORD = 'LG100';
 const adminToggleBtn = document.getElementById('admin-toggle');
 const adminContents = document.querySelectorAll('.admin-content');
 
-adminToggleBtn.addEventListener('click', () => {
-    if (!adminModeActive) {
-        // Prompt for password
-        const password = prompt('Enter admin password:');
-        
-        if (password === ADMIN_PASSWORD) {
-            adminModeActive = true;
-            adminToggleBtn.classList.add('active');
-            
-            // Show all admin content
-            adminContents.forEach(content => {
-                content.style.display = 'block';
-            });
-            
-            // Store in session
-            sessionStorage.setItem('adminMode', 'true');
-            
-            console.log('%c🔓 Admin Mode Activated', 'font-size: 16px; font-weight: bold; color: #F96F6E;');
-        } else if (password !== null) {
-            alert('Incorrect password');
-        }
-    } else {
-        // Deactivate admin mode
-        adminModeActive = false;
-        adminToggleBtn.classList.remove('active');
-        
-        // Hide all admin content
-        adminContents.forEach(content => {
-            content.style.display = 'none';
-        });
-        
-        // Remove from session
-        sessionStorage.removeItem('adminMode');
-        
-        console.log('%c🔒 Admin Mode Deactivated', 'font-size: 16px; color: #999;');
-    }
-});
+// Modal elements
+const passwordModal = document.getElementById('passwordModal');
+const passwordModalOverlay = passwordModal ? passwordModal.querySelector('.password-modal-overlay') : null;
+const adminPasswordForm = document.getElementById('adminPasswordForm');
+const passwordInput = document.getElementById('adminPasswordInput');
+const modalCancelBtn = document.getElementById('modalCancel');
+const togglePasswordBtn = document.getElementById('modalTogglePassword');
+const errorMessage = document.getElementById('modalErrorMessage');
 
-// Check if admin mode was previously activated in this session
-if (sessionStorage.getItem('adminMode') === 'true') {
+function openPasswordModal() {
+    if (!passwordModal) return;
+    passwordModal.style.display = 'flex';
+    setTimeout(() => {
+        const content = passwordModal.querySelector('.password-modal-content');
+        if (content) content.style.transform = 'translateY(0) scale(1)';
+        if (passwordInput) passwordInput.focus();
+    }, 20);
+    if (passwordModalOverlay) {
+        passwordModalOverlay.addEventListener('click', closePasswordModal, { once: true });
+    }
+    document.addEventListener('keydown', escToClose);
+}
+
+function closePasswordModal() {
+    if (!passwordModal) return;
+    passwordModal.style.display = 'none';
+    if (errorMessage) errorMessage.style.display = 'none';
+    if (passwordInput) {
+        passwordInput.value = '';
+        passwordInput.type = 'password';
+    }
+    document.removeEventListener('keydown', escToClose);
+}
+
+function escToClose(e) {
+    if (e.key === 'Escape') {
+        closePasswordModal();
+    }
+}
+
+function activateAdminMode() {
     adminModeActive = true;
-    adminToggleBtn.classList.add('active');
-    adminContents.forEach(content => {
-        content.style.display = 'block';
+    if (adminToggleBtn) adminToggleBtn.classList.add('active');
+    adminContents.forEach(content => { content.style.display = 'block'; });
+    sessionStorage.setItem('adminMode', 'true');
+    console.log('%c🔓 Admin Mode Activated', 'font-size: 16px; font-weight: bold; color: #F96F6E;');
+}
+
+function deactivateAdminMode() {
+    adminModeActive = false;
+    if (adminToggleBtn) adminToggleBtn.classList.remove('active');
+    adminContents.forEach(content => { content.style.display = 'none'; });
+    sessionStorage.removeItem('adminMode');
+    console.log('%c🔒 Admin Mode Deactivated', 'font-size: 16px; color: #999;');
+}
+
+// Toggle admin mode via button
+if (adminToggleBtn) {
+    adminToggleBtn.addEventListener('click', () => {
+        if (!adminModeActive) {
+            openPasswordModal();
+        } else {
+            deactivateAdminMode();
+        }
     });
+}
+
+// Handle form submit for password verification
+if (adminPasswordForm) {
+    adminPasswordForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const value = passwordInput ? passwordInput.value.trim() : '';
+        if (value === ADMIN_PASSWORD) {
+            closePasswordModal();
+            activateAdminMode();
+        } else {
+            if (errorMessage) errorMessage.style.display = 'block';
+        }
+    });
+}
+
+// Cancel button closes modal
+if (modalCancelBtn) {
+    modalCancelBtn.addEventListener('click', closePasswordModal);
+}
+
+// Toggle password visibility
+if (togglePasswordBtn && passwordInput) {
+    togglePasswordBtn.addEventListener('click', () => {
+        const newType = passwordInput.type === 'password' ? 'text' : 'password';
+        passwordInput.type = newType;
+        togglePasswordBtn.classList.toggle('revealed', newType === 'text');
+    });
+}
+
+// Restore admin mode from session
+if (sessionStorage.getItem('adminMode') === 'true') {
+    activateAdminMode();
 }
 
 // ===================================
