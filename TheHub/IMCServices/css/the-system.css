@@ -637,6 +637,122 @@ section {
 .flow-arrow {
     font-size: 2rem;
     color: var(--ink-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    font-family: "Segoe UI Symbol", "Noto Sans Symbols", "Apple Symbols", system-ui, sans-serif;
+}
+
+/* Desktop: Single arrows point horizontally */
+.flow-arrow:not(.dual-arrows) {
+    font-size: 0; /* Hide original arrow content */
+}
+
+.flow-arrow:not(.dual-arrows)::before {
+    content: "→";
+    display: block;
+    font-size: 2rem;
+    color: var(--ink-muted);
+}
+
+/* Dual arrows for the first flow arrow */
+.flow-arrow.dual-arrows {
+    gap: 1rem;
+    position: relative;
+    flex-direction: column; /* stack vertically on desktop */
+}
+
+.flow-arrow.dual-arrows .arrow-left,
+.flow-arrow.dual-arrows .arrow-right {
+    font-size: 2rem;
+    transition: all 0.3s ease;
+}
+
+.flow-arrow.dual-arrows .arrow-left {
+    transform: translateX(-0.5rem);
+}
+
+.flow-arrow.dual-arrows .arrow-right {
+    transform: translateX(0.5rem);
+}
+
+/* Default: Combined card visible, split cards hidden */
+.combined-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    backdrop-filter: blur(10px);
+    contain: layout style;
+}
+
+.split-cards-container {
+    display: none;
+}
+
+/* Split cards layout - Desktop only (above 1024px) */
+@media (min-width: 1025px) {
+    .split-cards-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .split-card {
+        min-height: auto;
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    .split-card h3 {
+        font-size: 1.1rem;
+        margin: 0.5rem 0 0 0;
+    }
+
+    .combined-card {
+        display: none;
+    }
+}
+
+/* Combined card layout - Tablet and Mobile (1024px and below) */
+@media (max-width: 1024px) {
+    .split-cards-container {
+        display: none;
+    }
+    
+    .combined-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .combined-card .card-icon {
+        margin-bottom: 1rem;
+    }
+    
+    .combined-card h3 {
+        margin: 0.5rem 0;
+        font-size: 1.2rem;
+        text-align: center;
+        width: 100%;
+    }
+    
+    .combined-card p {
+        margin: 0;
+        text-align: center;
+        width: 100%;
+    }
 }
 
 .ecosystem-conclusion {
@@ -992,6 +1108,13 @@ section {
    Responsive Design
    =================================== */
 
+/* Desktop: Ensure arrows point horizontally */
+@media (min-width: 1025px) {
+    .flow-arrow:not(.dual-arrows)::before {
+        content: "→";
+    }
+}
+
 @media (max-width: 1024px) {
     .nav-links {
         gap: 2rem;
@@ -1001,8 +1124,44 @@ section {
         flex-direction: column;
     }
     
-    .flow-arrow {
-        transform: rotate(90deg);
+    /* Single arrows point downward on mobile */
+    .flow-arrow:not(.dual-arrows) {
+        transform: none;
+    }
+    
+    .flow-arrow:not(.dual-arrows)::before {
+        content: "↓";
+        display: block;
+    }
+    
+    /* Hide the original arrow content on mobile */
+    .flow-arrow:not(.dual-arrows) {
+        font-size: 0;
+    }
+    
+    .flow-arrow:not(.dual-arrows)::before {
+        font-size: 2rem;
+        color: var(--ink-muted);
+    }
+    
+    /* Dual arrows point downward on mobile */
+    .flow-arrow.dual-arrows {
+        flex-direction: row;
+        gap: 0.8rem;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .flow-arrow.dual-arrows .arrow-left,
+    .flow-arrow.dual-arrows .arrow-right {
+        transform: none;
+        font-size: 1.5rem;
+    }
+    
+    /* Keep dual arrows in their original diagonal orientation on mobile */
+    .flow-arrow.dual-arrows .arrow-left,
+    .flow-arrow.dual-arrows .arrow-right {
+        font-size: 1.5rem;
     }
     
     .footer-container {
