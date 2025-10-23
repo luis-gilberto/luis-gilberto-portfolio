@@ -19,6 +19,7 @@
     <link href="https://fonts.googleapis.com/css2?family=General+Sans:wght@400;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Recoleta:wght@600;700&display=swap" rel="stylesheet">
     
+    
     <style>
         :root {
             --coral: #F96F6E;
@@ -97,120 +98,99 @@
             display: block;
         }
 
-        /* Hero Section */
-        .hero{
-          /* mobile-first height avoids address-bar jump */
-          min-height: 75svh;
-          display:flex; flex-direction:column; justify-content:center; align-items:center;
-          text-align:center; padding: clamp(20px, 4vw, 32px);
-          position:relative; overflow:hidden;
-          background: #0E0F10; /* clean dark base; gradients removed to help LCP */
+        /* ===================================================================
+           FINAL HERO FIX - PROPER LAYERING & POSITIONING
+           =================================================================== */
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: clamp(20px, 3vh, 40px) clamp(20px, 4vw, 32px);
+            position: relative;
+            overflow: hidden;
+            background: #0E0F10;
         }
 
-        /* Services hero reflectors (scoped) — simple, elegant, no orbital */
-#services-hero.hero{
-  position: relative;
-  background:
-    radial-gradient(circle at 30% 20%, rgba(249,111,110,0.08) 0%, transparent 50%),
-    radial-gradient(circle at 70% 80%, rgba(46,211,198,0.06) 0%, transparent 50%),
-    linear-gradient(180deg, #0B0B0B 0%, #0D0D0D 70%, #0B0B0B 100%);
-}
-/* Suppress both the global orbital and prior arc motif */
-#services-hero.hero::before,
-#services-hero.hero::after {
-  content: none !important;
-  display: none !important;
-  background: none !important;
-  background-image: none !important;
-  animation: none !important;
-}
-/* Tighten hero vertical spacing on Services */
-#services-hero.hero {
-  justify-content: flex-start;
-  padding-top: 4vh;
-  min-height: 64svh;
-}
-
-/* ===== FLOATING SOPHISTICATED ICON (IMC Services Hero) ===== */
-.hero-icon-wrapper {
-    position: absolute;
-    right: 3%;
-    top: 6vh;
-    transform: none;
-    width: 640px;
-    height: 640px;
-    opacity: 0.12;
-    pointer-events: none;
-    z-index: 0;
-}
-
-.hero-icon {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    filter: brightness(1.2) saturate(1.1) drop-shadow(0 0 50px rgba(249, 111, 110, 0.4));
-    mix-blend-mode: screen;
-    animation: float-hero-icon 9s ease-in-out infinite;
-}
-
-@keyframes float-hero-icon {
-    0%, 100% {
-        transform: translateY(0px) rotate(0deg);
-        filter: brightness(1.2) saturate(1.1) drop-shadow(0 0 50px rgba(249, 111, 110, 0.4));
-    }
-    50% {
-        transform: translateY(-25px) rotate(5deg);
-        filter: brightness(1.3) saturate(1.2) drop-shadow(0 0 70px rgba(249, 111, 110, 0.5));
-    }
-}
-
-/* Responsive sizes */
-@media (max-width: 1024px) {
-    .hero-icon-wrapper {
-        width: 550px;
-        height: 550px;
-        opacity: 0.10;
-    }
-}
-
-@media (max-width: 768px) {
-    .hero-icon-wrapper {
-        width: 400px;
-        height: 400px;
-        opacity: 0.08;
-        right: -50px;
-    }
-}
-
-@media (max-width: 480px) {
-    .hero-icon-wrapper {
-        width: 300px;
-        height: 300px;
-        opacity: 0.06;
-    }
-}
-
-        /* ===== ATOMIC ORBITAL BACKGROUND WATERMARKS ===== */
-        .hero::before{
-          content:"";
-          position:absolute; inset:auto; right:-12vw; top:22vh;
-          width: min(64vw, 520px); aspect-ratio:1/1;
-          opacity:.09; filter: blur(.3px);
-          background-repeat:no-repeat; background-size:contain; background-position:center;
-          /* Simple orbital built as inline SVG for speed */
-          background-image: url("data:image/svg+xml;utf8,\
-          <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 220' fill='none'>\
-            <g stroke='%23F96F6E' stroke-width='16' stroke-linecap='round' stroke-linejoin='round'>\
-              <circle cx='170' cy='60' r='36'/><circle cx='54' cy='90' r='28'/>\
-              <circle cx='110' cy='184' r='28'/>\
-              <path d='M83 103 L136 82 M69 118 L96 170 M146 98 L124 160'/>\
-            </g>\
-          </svg>");
-          pointer-events:none;
-          animation: slowspin 46s linear infinite;
+        #services-hero.hero {
+            position: relative;
+            background:
+                radial-gradient(circle at 30% 20%, rgba(249,111,110,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(46,211,198,0.06) 0%, transparent 50%),
+                linear-gradient(180deg, #0B0B0B 0%, #0D0D0D 70%, #0B0B0B 100%);
         }
-        @keyframes slowspin{ from{ transform: rotate(0deg);} to{ transform: rotate(360deg);} }
-        @media (prefers-reduced-motion:reduce){ .hero::before{ animation:none; } }
+
+        #services-hero.hero::before,
+        #services-hero.hero::after {
+            content: none !important;
+            display: none !important;
+        }
+
+        /* ULTRA-SIMPLE FIX: Fixed atom placement with explicit pixels + override size/opacity/transform */
+        .hero-icon-wrapper {
+            position: fixed !important;
+            right: 100px !important; /* 100 pixels from RIGHT edge */
+            top: 50% !important;
+            margin-top: -300px !important; /* Centers it vertically */
+            width: 600px !important;        /* ADD THIS */
+            height: 600px !important;       /* ADD THIS */
+            opacity: 0.08 !important;       /* ADD THIS */
+            transform: none !important;     /* ADD THIS */
+        }
+
+        .hero-icon {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: brightness(1.1) saturate(1.0) drop-shadow(0 0 40px rgba(249, 111, 110, 0.25));
+            mix-blend-mode: screen;
+            animation: float-hero-icon 15s ease-in-out infinite;
+        }
+
+        @keyframes float-hero-icon {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-15px) rotate(2deg);
+            }
+        }
+
+        /* CRITICAL: Content wrapper with higher z-index */
+        .hero-content {
+            position: relative;
+            z-index: 100 !important; /* WAY above atom */
+            max-width: 900px;
+            width: 100%;
+        }
+
+        /* Individual content elements */
+        .hero .eyebrow,
+        .hero .hero-title,
+        .hero .hero-subtitle,
+        .hero .cta-row,
+        .hero .hero-note {
+            position: relative;
+            z-index: 100 !important;
+        }
+
+        .hero h1,
+        .hero .hero-title {
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Responsive */
+
+
+
+
+        @media (prefers-reduced-motion: reduce) {
+            .hero-icon { animation: none !important; }
+        }
+
 
         .eyebrow {
             font-size: 0.9rem;
@@ -1473,24 +1453,26 @@
              class="hero-icon">
       </div>
       
-      <div class="eyebrow">Strategic Marketing Leadership</div>
+      <div class="hero-content">
+        <div class="eyebrow">Strategic Marketing Leadership</div>
 
-      <h1 class="hero-title">
-        Where Strategy Meets<br><span class="hl-one">Creative</span> Excellence
-      </h1>
+        <h1 class="hero-title">
+          Where Strategy Meets<br><span class="hl-one">Creative</span> Excellence
+        </h1>
 
-      <p class="hero-subtitle">
-        I lead integrated marketing that connects the plan to the pixels, so brands move faster, resonate deeper, and perform smarter.
-      </p>
+        <p class="hero-subtitle">
+          I lead integrated marketing that connects the plan to the pixels, so brands move faster, resonate deeper, and perform smarter.
+        </p>
 
-      <div class="cta-row">
-        <a href="/contact.html" class="btn btn-primary" aria-label="Start the conversation">Start the conversation</a>
-        <a href="#capabilities" class="btn btn-ghost" aria-label="Explore capabilities">Explore capabilities</a>
+        <div class="cta-row">
+          <a href="/contact.html" class="btn btn-primary" aria-label="Start the conversation">Start the conversation</a>
+          <a href="#capabilities" class="btn btn-ghost" aria-label="Explore capabilities">Explore capabilities</a>
+        </div>
+
+        <p class="hero-note">
+          <a href="#bench" class="bench-link">Creative bench strength available</a> <span class="muted">for full-spectrum campaign execution</span>
+        </p>
       </div>
-
-      <p class="hero-note">
-        <a href="#bench" class="bench-link">Creative bench strength available</a> <span class="muted">for full-spectrum campaign execution</span>
-      </p>
     </section>
 
     <!-- The Bridge Section -->
