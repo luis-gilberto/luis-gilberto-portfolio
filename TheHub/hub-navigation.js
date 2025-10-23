@@ -337,82 +337,85 @@ class HubSystem {
     }
 
     createFooter() {
+        // Compute base prefix to work under both /TheHub (root-served) and TheHub-only (folder-served) dev servers
+        const basePrefix = window.location.pathname.startsWith('/TheHub/') ? '/TheHub/' : '/';
+    
         // Create footer HTML
         const footerHTML = `<footer class="hub-footer" id="hubFooter">
-      <div class="footer-container">
-        <div class="footer-main">
-          <div class="footer-brand">
-            <div class="footer-logo">
-              <a href="/index.html" aria-label="The Hub Home">
-                <img src="/advisory/assets/dual_logo-lockup_and_tagline.svg" alt="Luis Gilberto - The Hub">
-              </a>
+          <div class="footer-container">
+            <div class="footer-main">
+              <div class="footer-brand">
+                <div class="footer-logo">
+                  <a href="${basePrefix}index.html" aria-label="The Hub Home">
+                    <img src="${basePrefix}advisory/assets/dual_logo-lockup_and_tagline.svg" alt="Luis Gilberto - The Hub">
+                  </a>
+                </div>
+                <p class="footer-tagline">
+                  Strategic marketing leadership meets creative excellence.
+                </p>
+              </div>
+              <nav class="footer-nav" aria-label="Footer Navigation">
+                <h3 class="footer-nav-title">Explore</h3>
+                <div class="footer-nav-links">
+                  <a href="${basePrefix}system/" class="footer-link">
+                    <img src="${basePrefix}assets/icons/system.png" class="footer-icon" alt="" width="24" height="24" aria-hidden="true" />
+                    <span>The System</span>
+                  </a>
+                  <a href="${basePrefix}brand-guidelines/" class="footer-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect x="3" y="3" width="8" height="8" rx="2" stroke="currentColor" stroke-width="2" />
+                      <rect x="3" y="13" width="8" height="8" rx="2" stroke="currentColor" stroke-width="2" />
+                      <rect x="13" y="3" width="8" height="8" rx="2" stroke="currentColor" stroke-width="2" />
+                      <rect x="13" y="13" width="8" height="8" rx="2" stroke="currentColor" stroke-width="2" />
+                    </svg>
+                    <span>Brand Guidelines</span>
+                  </a>
+                  <a href="https://luis-gilberto.com/contact?from=imc#cta-hook" class="footer-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M3 8L10.89 13.26C11.22 13.48 11.61 13.59 12 13.59C12.39 13.59 12.78 13.48 13.11 13.26L21 8M5 19H19C20.1046 19 21 18.1046 21 17V7C21 5.89543 20.1046 5 19 5H5C3.89543 5 3 5.89543 3 7V17C3 18.1046 3.89543 19 5 19Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <span>Contact</span>
+                  </a>
+                </div>
+              </nav>
+              <div class="footer-connect">
+                <h3 class="footer-nav-title">Connect</h3>
+                <div class="footer-social">
+                  <a href="https://www.linkedin.com/in/luisgilberto00/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Profile">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M16 8C17.5913 8 19.1174 8.63214 20.2426 9.75736C21.3679 10.8826 22 12.4087 22 14V21H18V14C18 13.4696 17.7893 12.9609 17.4142 12.5858C17.0391 12.2107 16.5304 12 16 12C15.4696 12 14.9609 12.2107 14.5858 12.5858C14.2107 12.9609 14 13.4696 14 14V21H10V14C10 12.4087 10.6321 10.8826 11.7574 9.75736C12.8826 8.63214 14.4087 8 16 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M6 9H2V21H6V9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      <circle cx="4" cy="4" r="2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>LinkedIn</span>
+                  </a>
+                  <a href="https://luisgilberto00.link" target="_blank" rel="noopener noreferrer" aria-label="Personal Links">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M10 13C10.4295 13.5741 10.9774 14.0491 11.6066 14.3929C12.2357 14.7367 12.9315 14.9411 13.6467 14.9923C14.3618 15.0435 15.0796 14.9403 15.7513 14.6897C16.4231 14.4392 17.0331 14.047 17.54 13.54L20.54 10.54C21.4508 9.59695 21.9548 8.33394 21.9434 7.02296C21.932 5.71198 21.4061 4.45791 20.4791 3.53087C19.5521 2.60383 18.298 2.07799 16.987 2.0666C15.676 2.0552 14.413 2.55918 13.47 3.46997L11.75 5.17997" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M14 11C13.5705 10.4259 13.0226 9.9508 12.3934 9.60704C11.7642 9.26328 11.0685 9.05885 10.3533 9.00768C9.63816 8.95651 8.92037 9.05964 8.24861 9.31018C7.57685 9.56073 6.96684 9.9529 6.45996 10.46L3.45996 13.46C2.54917 14.403 2.04519 15.666 2.05659 16.977C2.06798 18.288 2.59382 19.542 3.52086 20.4691C4.44791 21.3961 5.70197 21.9219 7.01295 21.9333C8.32393 21.9447 9.58694 21.4408 10.53 20.53L12.24 18.82" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>luisgilberto00.link</span>
+                  </a>
+                  <a href="https://luis-gilberto.com" target="_blank" rel="noopener noreferrer" aria-label="Portfolio Website">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                      <path d="M2 12H22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                      <path d="M12 2C14.5 4.5 16 8 16 12C16 16 14.5 19.5 12 22C9.5 19.5 8 16 8 12C8 8 9.5 4.5 12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <span>luis-gilberto.com</span>
+                  </a>
+                </div>
+              </div>
             </div>
-            <p class="footer-tagline">
-              Strategic marketing leadership meets creative excellence.
-            </p>
-          </div>
-          <nav class="footer-nav" aria-label="Footer Navigation">
-            <h3 class="footer-nav-title">Explore</h3>
-            <div class="footer-nav-links">
-              <a href="/system/" class="footer-link">
-                <img src="/assets/icons/system.png" class="footer-icon" alt="" width="24" height="24" aria-hidden="true" />
-                <span>The System</span>
-              </a>
-              <a href="/brand-guidelines/" class="footer-link">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="3" y="3" width="8" height="8" rx="2" stroke="currentColor" stroke-width="2" />
-                  <rect x="3" y="13" width="8" height="8" rx="2" stroke="currentColor" stroke-width="2" />
-                  <rect x="13" y="3" width="8" height="8" rx="2" stroke="currentColor" stroke-width="2" />
-                  <rect x="13" y="13" width="8" height="8" rx="2" stroke="currentColor" stroke-width="2" />
-                </svg>
-                <span>Brand Guidelines</span>
-              </a>
-              <a href="/contact.html" class="footer-link">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M3 8L10.89 13.26C11.22 13.48 11.61 13.59 12 13.59C12.39 13.59 12.78 13.48 13.11 13.26L21 8M5 19H19C20.1046 19 21 18.1046 21 17V7C21 5.89543 20.1046 5 19 5H5C3.89543 5 3 5.89543 3 7V17C3 18.1046 3.89543 19 5 19Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-                <span>Contact</span>
-              </a>
-            </div>
-          </nav>
-          <div class="footer-connect">
-            <h3 class="footer-nav-title">Connect</h3>
-            <div class="footer-social">
-              <a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Profile">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M16 8C17.5913 8 19.1174 8.63214 20.2426 9.75736C21.3679 10.8826 22 12.4087 22 14V21H18V14C18 13.4696 17.7893 12.9609 17.4142 12.5858C17.0391 12.2107 16.5304 12 16 12C15.4696 12 14.9609 12.2107 14.5858 12.5858C14.2107 12.9609 14 13.4696 14 14V21H10V14C10 12.4087 10.6321 10.8826 11.7574 9.75736C12.8826 8.63214 14.4087 8 16 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M6 9H2V21H6V9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  <circle cx="4" cy="4" r="2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                <span>LinkedIn</span>
-              </a>
-              <a href="https://luisgilberto00.link" target="_blank" rel="noopener noreferrer" aria-label="Personal Links">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M10 13C10.4295 13.5741 10.9774 14.0491 11.6066 14.3929C12.2357 14.7367 12.9315 14.9411 13.6467 14.9923C14.3618 15.0435 15.0796 14.9403 15.7513 14.6897C16.4231 14.4392 17.0331 14.047 17.54 13.54L20.54 10.54C21.4508 9.59695 21.9548 8.33394 21.9434 7.02296C21.932 5.71198 21.4061 4.45791 20.4791 3.53087C19.5521 2.60383 18.298 2.07799 16.987 2.0666C15.676 2.0552 14.413 2.55918 13.47 3.46997L11.75 5.17997" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M14 11C13.5705 10.4259 13.0226 9.9508 12.3934 9.60704C11.7642 9.26328 11.0685 9.05885 10.3533 9.00768C9.63816 8.95651 8.92037 9.05964 8.24861 9.31018C7.57685 9.56073 6.96684 9.9529 6.45996 10.46L3.45996 13.46C2.54917 14.403 2.04519 15.666 2.05659 16.977C2.06798 18.288 2.59382 19.542 3.52086 20.4691C4.44791 21.3961 5.70197 21.9219 7.01295 21.9333C8.32393 21.9447 9.58694 21.4408 10.53 20.53L12.24 18.82" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                <span>luisgilberto00.link</span>
-              </a>
-              <a href="https://luis-gilberto.com" target="_blank" rel="noopener noreferrer" aria-label="Portfolio Website">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-                  <path d="M2 12H22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                  <path d="M12 2C14.5 4.5 16 8 16 12C16 16 14.5 19.5 12 22C9.5 19.5 8 16 8 12C8 8 9.5 4.5 12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-                <span>luis-gilberto.com</span>
-              </a>
+            <div class="footer-bottom">
+              <div class="footer-bottom-content">
+                <p class="footer-copyright"> 2025 Luis Gilberto</p>
+                <div class="footer-accent-line"></div>
+                <p class="footer-tagline-mini">Built for what's next.</p>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="footer-bottom">
-          <div class="footer-bottom-content">
-            <p class="footer-copyright"> 2025 Luis Gilberto</p>
-            <div class="footer-accent-line"></div>
-            <p class="footer-tagline-mini">Built for what's next.</p>
-          </div>
-        </div>
-      </div>
-    </footer>
+        </footer>
 `;
 
         // Create footer styles
@@ -421,11 +424,11 @@ class HubSystem {
       .footer-container { max-width: 1400px; margin: 0 auto; padding: 3rem 2rem 0; }
       .footer-main { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; margin-bottom: 3rem; }
       .footer-brand { text-align: center; display: flex; justify-content: center; align-items: center; }
-      .footer-logo img { height: auto; max-width: 50%; width: auto; }
+      .footer-logo img { height: auto; width: auto; max-width: clamp(220px, 50%, 420px); }
       .footer-tagline { color: rgba(255,255,255,0.7); }
       .footer-nav-title { font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 1rem; }
       .footer-nav-links { display: grid; grid-template-columns: 1fr; gap: 0.75rem; }
-      .footer-link { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; color: #fff; text-decoration: none; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; background: rgba(255,255,255,0.02); transition: all 0.2s ease; }
+      .footer-link { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; min-height: 44px; color: #fff; text-decoration: none; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; background: rgba(255,255,255,0.02); transition: all 0.2s ease; }
       .footer-link:hover { background: rgba(255,255,255,0.05); border-color: #f96f6e; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(249,111,110,0.15); }
       .footer-link img.footer-icon { width: clamp(22px, 3.6vw, 24px); height: clamp(22px, 3.6vw, 24px); flex-shrink: 0; transition: all 0.2s ease; }
       .footer-link:hover img.footer-icon { transform: scale(1.1); }
@@ -434,7 +437,7 @@ class HubSystem {
       .footer-bottom-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
       .footer-accent-line { flex: 1 1 auto; height: 1px; background: rgba(255,255,255,0.1); margin: 0 1rem; }
       .footer-tagline-mini { color: rgba(255,255,255,0.4); font-size: 0.85rem; font-style: italic; }
-      @media (max-width: 1024px) { .footer-main { grid-template-columns: 1fr; gap: 3rem; text-align: center; } .footer-logo img { max-width: 70%; } .footer-bottom-content { flex-direction: column; gap: 1.5rem; text-align: center; } }
+      @media (max-width: 1024px) { .footer-main { grid-template-columns: 1fr; gap: 2rem; text-align: center; } .footer-bottom-content { flex-direction: column; gap: 1.25rem; text-align: center; } }
       @media (max-width: 768px) { .footer-container { padding: 2rem 1rem 0; } }
     </style>`;
 
@@ -528,3 +531,4 @@ window.hubSystem = new HubSystem();
 
 
 
+
