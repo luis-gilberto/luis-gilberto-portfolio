@@ -11,7 +11,17 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@100;300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- Hub Loading Animation -->
+    <script src="./assets/components/hub-animation/hub-loader.min.js"></script>
+    
     <style>
+        /* ==========================================
+           LOADING ANIMATION STYLES
+           ========================================== */
+        #main-content {
+            display: none;
+        }
+        
         /* ==========================================
            CSS VARIABLES
            ========================================== */
@@ -962,12 +972,13 @@
     </style>
 </head>
 <body>
+<div id="main-content">
 
     <!-- Header Navigation -->
     <header class="hub-header">
         <div class="header-container">
             <a href="/TheHub/index.html" class="header-logo">
-                <img src="/advisory/assets/TheHub_Logo.png" alt="The Hub" width="120" height="40">
+                <img src="/advisory/assets/TheHub_Logo.png" alt="The Hub" class="hub-nav-logo-img" width="120" height="40">
             </a>
             <nav class="header-nav" id="headerNav">
                 <a href="/TheHub/index.html" class="nav-item active">
@@ -1667,6 +1678,104 @@
           }
         })();
     </script>
+</div> <!-- End #main-content -->
+
+<!-- Hub Loading Animation Initialization -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const referrer = document.referrer;
+    
+    // Check if user came from internal navigation (any link from luis-gilberto.com)
+    const isInternalNavigation = referrer && referrer.includes('luis-gilberto.com');
+    
+    // Check if user recently navigated internally (prevents animation on back/forward)
+    const hasInternalNavigationFlag = sessionStorage.getItem('hubNavigated') === 'true';
+    
+    // Show animation ONLY when:
+    // - User typed URL directly (no referrer)
+    // - User came from external site (referrer exists but not luis-gilberto.com)
+    // - User came from bookmark
+    // SKIP animation when:
+    // - User clicked any internal link from the site
+    const shouldShowAnimation = !isInternalNavigation && !hasInternalNavigationFlag;
+    
+    if (shouldShowAnimation) {
+      // Clear navigation flag for fresh direct access
+      sessionStorage.removeItem('hubNavigated');
+      
+      // Create and show the animation
+      const loader = HubLoader.create({
+        videoUrl: './assets/components/hub-animation/coral_laser_line.mp4',
+        duration: 12000,
+        autoStart: true,
+        showProgress: false,
+        skipOnClick: true,
+        onComplete: function() {
+          // Logo collapse animation
+          const logoOverlay = document.querySelector('.hub-logo-overlay');
+          if (logoOverlay) {
+            logoOverlay.classList.add('hub-logo-collapse');
+          }
+          
+          // Show main content
+          setTimeout(() => {
+            const mainContent = document.getElementById('main-content');
+            if (mainContent) {
+              mainContent.style.display = 'block';
+            }
+            
+            // Nav logo pulse effect
+            setTimeout(() => {
+              const navLogo = document.querySelector('.hub-nav-logo-img');
+              if (navLogo) {
+                navLogo.classList.add('nav-logo-attract');
+              }
+            }, 500);
+            
+            // Reveal elements
+            const revealElements = document.querySelectorAll('.reveal');
+            revealElements.forEach(el => {
+              if (el.getBoundingClientRect().top < window.innerHeight) {
+                el.classList.add('in');
+              }
+            });
+          }, 2000);
+        }
+      });
+      
+    } else {
+      // User navigated internally - skip animation entirely
+      sessionStorage.setItem('hubNavigated', 'true');
+      
+      // Show content immediately
+      const mainContent = document.getElementById('main-content');
+      if (mainContent) {
+        mainContent.style.display = 'block';
+      }
+      
+      // Immediately reveal all elements
+      const revealElements = document.querySelectorAll('.reveal');
+      revealElements.forEach(el => {
+        el.classList.add('in');
+      });
+      
+      // Hide any loading overlays
+      const logoOverlay = document.querySelector('.hub-logo-overlay');
+      if (logoOverlay) {
+        logoOverlay.style.display = 'none';
+      }
+    }
+  });
+  
+  // Track when user clicks internal links
+  document.addEventListener('click', function(e) {
+    const link = e.target.closest('a');
+    // If clicking any internal link, mark as internal navigation
+    if (link && link.href && link.href.includes('luis-gilberto.com')) {
+      sessionStorage.setItem('hubNavigated', 'true');
+    }
+  });
+</script>
 </body>
 </html>
 

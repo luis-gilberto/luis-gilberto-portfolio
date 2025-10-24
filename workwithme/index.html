@@ -2,30 +2,66 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Redirecting…</title>
-    <meta http-equiv="refresh" content="0; url=/TheHub/">
-    <link rel="canonical" href="/TheHub/">
-    <meta name="robots" content="noindex">
+    <title>Work With Luis — Loading…</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Hub Loading Animation -->
+    <script src="/TheHub/assets/components/hub-animation/hub-loader.min.js"></script>
+
     <style>
+      /* Loading animation styles */
+      #main-content { display: none; }
       body { display:flex; align-items:center; justify-content:center; min-height:100vh; font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; background:#0b0b0b; color:#fff; }
       a { color:#7fd0ff; }
       .box { text-align:center; padding:24px; }
     </style>
-    <script>
-      (function() {
-        var target = '/TheHub/';
-        var q = window.location.search || '';
-        var h = window.location.hash || '';
-        // Use replace to avoid creating a back button loop
-        window.location.replace(target + q + h);
-      })();
-    </script>
   </head>
   <body>
-    <div class="box">
-      <h1>Redirecting…</h1>
-      <p>If you are not redirected automatically, <a href="/TheHub/">go to The Hub</a>.</p>
+    <div id="main-content">
+      <div class="box">
+        <h1>Work With Luis</h1>
+        <p>Redirecting you to The Hub… If this does not happen automatically, <a href="/TheHub/">go to The Hub</a>.</p>
+      </div>
     </div>
+
+    <!-- Hub Loading Animation Initialization -->
+    <script>
+      (function(){
+        const referrer = document.referrer;
+        const isInternalNavigation = referrer && referrer.includes('luis-gilberto.com');
+        const hasInternalNavigationFlag = sessionStorage.getItem('hubNavigated') === 'true';
+        const shouldShowAnimation = !isInternalNavigation && !hasInternalNavigationFlag;
+
+        if (shouldShowAnimation) {
+          sessionStorage.removeItem('hubNavigated');
+          const loader = HubLoader.create({
+            videoUrl: '/TheHub/assets/components/hub-animation/coral_laser_line.mp4',
+            duration: 12000,
+            autoStart: true,
+            showProgress: false,
+            skipOnClick: true,
+            onComplete: function() {
+              // After animation finishes, redirect to The Hub
+              window.location.replace('/TheHub/');
+            }
+          });
+        } else {
+          // Internal navigation - skip animation and redirect immediately
+          sessionStorage.setItem('hubNavigated', 'true');
+          var target = '/TheHub/';
+          var q = window.location.search || '';
+          var h = window.location.hash || '';
+          window.location.replace(target + q + h);
+        }
+
+        // Track internal link clicks in this page as well
+        document.addEventListener('click', function(e) {
+          const link = e.target.closest('a');
+          if (link && link.href && link.href.includes('luis-gilberto.com')) {
+            sessionStorage.setItem('hubNavigated', 'true');
+          }
+        });
+      })();
+    </script>
   </body>
 </html>
