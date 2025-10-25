@@ -80,12 +80,132 @@
             right: auto !important;
             bottom: 1.5rem !important;
             top: auto !important;
+            /* Touch target & accessibility */
+            min-height: 48px !important;
+            min-width: 48px !important;
+            padding: 0.5rem 0.75rem !important;
+            border-radius: 10px !important;
+            touch-action: manipulation;
+        }
+        .hub-skip-button:focus {
+            outline: 2px solid var(--teal);
+            outline-offset: 2px;
         }
         
-        @media (max-width: 768px) {
+        /* Mobile (320px - 767px) */
+        @media (max-width: 767px) {
             .hub-skip-button {
                 left: 1rem !important;
                 bottom: 1rem !important;
+                font-size: 0.9rem !important;
+            }
+        }
+        
+        /* Tablets (768px - 1024px) */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .hub-skip-button {
+                font-size: 1rem !important;
+            }
+        }
+        
+        /* Desktop (1025px and above) */
+        @media (min-width: 1025px) {
+            .hub-skip-button {
+                font-size: 1rem !important;
+            }
+        }
+        
+        /* CTA: Go deeper — responsive sizing & touch targets */
+        .hub-animation-learn-more {
+            min-height: 48px !important;
+            min-width: 48px !important;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .hub-animation-learn-more:focus {
+            outline: 2px solid var(--teal);
+            outline-offset: 2px;
+        }
+        
+        /* Mobile (320px - 767px) */
+        @media (max-width: 767px) {
+            .hub-animation-learn-more {
+                right: 1rem !important;
+                top: 1rem !important;
+                padding: 0.75rem 1rem !important;
+                font-size: 0.95rem !important;
+                gap: 0.5rem !important;
+            }
+            .hub-animation-learn-more .deeper-arrow {
+                width: 20px;
+                height: 20px;
+            }
+        }
+        
+        /* Tablets (768px - 1024px) */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .hub-animation-learn-more {
+                right: 2rem !important;
+                top: 2rem !important;
+                padding: 0.75rem 1.25rem !important;
+                font-size: 0.95rem !important;
+            }
+            .hub-animation-learn-more .deeper-arrow {
+                width: 20px;
+                height: 20px;
+            }
+        }
+        
+        /* Desktop (1025px and above) */
+        @media (min-width: 1025px) {
+            .hub-animation-learn-more {
+                right: 2rem !important;
+                top: 2rem !important;
+                padding: 0.75rem 1.25rem !important;
+                font-size: 1rem !important;
+            }
+            .hub-animation-learn-more .deeper-arrow {
+                width: 18px;
+                height: 18px;
+            }
+        }
+        
+        /* Respect reduced motion preferences */
+        @media (prefers-reduced-motion: reduce) {
+            .hub-animation-learn-more {
+                transition: none !important;
+                animation: none !important;
+            }
+            .hub-animation-learn-more .deeper-arrow {
+                transition: none !important;
+            }
+        }
+
+        /* Safe-area support (iOS notch / Android cutouts) */
+        @supports (padding: env(safe-area-inset-top)) {
+            @media (max-width: 767px) {
+                .hub-animation-learn-more {
+                    top: calc(1rem + env(safe-area-inset-top)) !important;
+                }
+                .hub-skip-button {
+                    bottom: calc(1rem + env(safe-area-inset-bottom)) !important;
+                }
+            }
+            @media (min-width: 768px) and (max-width: 1024px) {
+                .hub-animation-learn-more {
+                    top: calc(2rem + env(safe-area-inset-top)) !important;
+                }
+                .hub-skip-button {
+                    bottom: calc(1.5rem + env(safe-area-inset-bottom)) !important;
+                }
+            }
+            @media (min-width: 1025px) {
+                .hub-animation-learn-more {
+                    top: calc(2rem + env(safe-area-inset-top)) !important;
+                }
+                .hub-skip-button {
+                    bottom: calc(1.5rem + env(safe-area-inset-bottom)) !important;
+                }
             }
         }
 
@@ -1832,6 +1952,7 @@
           const learnMoreCTA = document.createElement('a');
           learnMoreCTA.href = 'https://luis-gilberto.com/TheHub/system/';
           learnMoreCTA.className = 'hub-animation-learn-more';
+          learnMoreCTA.setAttribute('aria-label', 'Go deeper');
           learnMoreCTA.innerHTML = `
             <span>Go deeper</span>
             <svg class="deeper-arrow" viewBox="0 0 24 24" fill="none" width="18" height="18">
@@ -1868,13 +1989,8 @@
             textShadow: '0 0 0 rgba(46, 211, 198, 0)'
           });
           
-          // Mobile responsive
-          if (window.innerWidth <= 768) {
-            learnMoreCTA.style.right = '1rem';
-            learnMoreCTA.style.top = '1rem';
-            learnMoreCTA.style.padding = '0.625rem 1rem';
-            learnMoreCTA.style.fontSize = '0.8125rem';
-          }
+          // Responsive sizing handled via CSS breakpoints
+          // Intentionally no inline adjustments to allow dynamic responsiveness across resize/orientation changes.
           
           // Hover: intensify the mystery
           learnMoreCTA.addEventListener('mouseenter', function() {
@@ -1899,6 +2015,45 @@
             
             const svg = this.querySelector('.deeper-arrow');
             if (svg) svg.style.transform = 'translateX(0)';
+          });
+
+          // Touch interactions mimic hover feedback
+          learnMoreCTA.addEventListener('touchstart', function() {
+            this.style.background = 'rgba(46, 211, 198, 0.18)';
+            this.style.borderColor = 'rgba(46, 211, 198, 0.5)';
+            this.style.color = 'rgba(46, 211, 198, 1)';
+            this.style.transform = 'translateY(0) scale(1.02)';
+            this.style.boxShadow = '0 0 30px rgba(46, 211, 198, 0.3), 0 0 60px rgba(46, 211, 198, 0.1)';
+            this.style.textShadow = '0 0 20px rgba(46, 211, 198, 0.5)';
+            const svg = this.querySelector('.deeper-arrow');
+            if (svg) svg.style.transform = 'translateX(4px)';
+          }, { passive: true });
+
+          learnMoreCTA.addEventListener('touchend', function() {
+            this.style.background = 'rgba(46, 211, 198, 0.08)';
+            this.style.borderColor = 'rgba(46, 211, 198, 0.2)';
+            this.style.color = 'rgba(46, 211, 198, 0.7)';
+            this.style.transform = 'translateY(0) scale(1)';
+            this.style.boxShadow = '0 0 20px rgba(46, 211, 198, 0.15)';
+            this.style.textShadow = '0 0 10px rgba(46, 211, 198, 0.3)';
+            const svg = this.querySelector('.deeper-arrow');
+            if (svg) svg.style.transform = 'translateX(0)';
+          }, { passive: true });
+
+          // Keyboard accessibility: focus/blur visual feedback
+          learnMoreCTA.addEventListener('focus', function() {
+            this.style.background = 'rgba(46, 211, 198, 0.18)';
+            this.style.borderColor = 'rgba(46, 211, 198, 0.5)';
+            this.style.color = 'rgba(46, 211, 198, 1)';
+            this.style.boxShadow = '0 0 30px rgba(46, 211, 198, 0.3), 0 0 60px rgba(46, 211, 198, 0.1)';
+            this.style.textShadow = '0 0 20px rgba(46, 211, 198, 0.5)';
+          });
+          learnMoreCTA.addEventListener('blur', function() {
+            this.style.background = 'rgba(46, 211, 198, 0.08)';
+            this.style.borderColor = 'rgba(46, 211, 198, 0.2)';
+            this.style.color = 'rgba(46, 211, 198, 0.7)';
+            this.style.boxShadow = '0 0 20px rgba(46, 211, 198, 0.15)';
+            this.style.textShadow = '0 0 10px rgba(46, 211, 198, 0.3)';
           });
           
           // Style the arrow
