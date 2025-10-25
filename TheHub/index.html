@@ -72,6 +72,24 @@
         }
 
         /* ==========================================
+           ANIMATION BUTTON POSITIONING OVERRIDE
+           ========================================== */
+        /* Move Skip Intro button to bottom-left */
+        .hub-skip-button {
+            left: 2rem !important;
+            right: auto !important;
+            bottom: 1.5rem !important;
+            top: auto !important;
+        }
+        
+        @media (max-width: 768px) {
+            .hub-skip-button {
+                left: 1rem !important;
+                bottom: 1rem !important;
+            }
+        }
+
+        /* ==========================================
            HUB HEADER NAVIGATION (GOLDEN STANDARD)
            ========================================== */
         /* Header Navigation */
@@ -1815,17 +1833,17 @@
           learnMoreCTA.href = 'https://luis-gilberto.com/TheHub/system/';
           learnMoreCTA.className = 'hub-animation-learn-more';
           learnMoreCTA.innerHTML = `
-            <span>Learn more about The Hub</span>
-            <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
+            <span>Go deeper</span>
+            <svg class="deeper-arrow" viewBox="0 0 24 24" fill="none" width="18" height="18">
               <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
           `;
           
-          // Add inline styles to the CTA (center-bottom, inside threshold)
+          // Mysterious, subtle styling - positioned TOP-RIGHT
           Object.assign(learnMoreCTA.style, {
             position: 'fixed',
-            left: '50%',
-            bottom: '8rem',
+            right: '2rem',
+            top: '2rem',
             zIndex: '10001',
             display: 'inline-flex',
             alignItems: 'center',
@@ -1843,7 +1861,7 @@
             fontSize: '0.875rem',
             letterSpacing: '0.02em',
             opacity: '0',
-            transform: 'translateX(-50%) translateY(10px)',
+            transform: 'translateY(-10px)',
             transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
             pointerEvents: 'none',
             boxShadow: '0 0 0 rgba(46, 211, 198, 0)',
@@ -1852,40 +1870,42 @@
           
           // Mobile responsive
           if (window.innerWidth <= 768) {
-            learnMoreCTA.style.left = '50%';
-            learnMoreCTA.style.bottom = '6rem';
-            learnMoreCTA.style.transform = 'translateX(-50%) translateY(10px)';
+            learnMoreCTA.style.right = '1rem';
+            learnMoreCTA.style.top = '1rem';
             learnMoreCTA.style.padding = '0.625rem 1rem';
             learnMoreCTA.style.fontSize = '0.8125rem';
           }
           
-          // Hover effects
+          // Hover: intensify the mystery
           learnMoreCTA.addEventListener('mouseenter', function() {
-            this.style.background = 'rgba(46, 211, 198, 0.25)';
-            this.style.borderColor = 'rgba(46, 211, 198, 0.6)';
-            this.style.transform = 'translateX(-50%) translateY(0) scale(1.02)';
-            this.style.boxShadow = '0 12px 40px rgba(46, 211, 198, 0.25)';
+            this.style.background = 'rgba(46, 211, 198, 0.18)';
+            this.style.borderColor = 'rgba(46, 211, 198, 0.5)';
+            this.style.color = 'rgba(46, 211, 198, 1)';
+            this.style.transform = 'translateY(0) scale(1.02)';
+            this.style.boxShadow = '0 0 30px rgba(46, 211, 198, 0.3), 0 0 60px rgba(46, 211, 198, 0.1)';
+            this.style.textShadow = '0 0 20px rgba(46, 211, 198, 0.5)';
             
-            // Animate arrow
-            const svg = this.querySelector('svg');
+            const svg = this.querySelector('.deeper-arrow');
             if (svg) svg.style.transform = 'translateX(4px)';
           });
           
           learnMoreCTA.addEventListener('mouseleave', function() {
-            this.style.background = 'rgba(46, 211, 198, 0.15)';
-            this.style.borderColor = 'rgba(46, 211, 198, 0.4)';
-            this.style.transform = 'translateX(-50%) translateY(0) scale(1)';
-            this.style.boxShadow = '0 8px 32px rgba(46, 211, 198, 0.15)';
+            this.style.background = 'rgba(46, 211, 198, 0.08)';
+            this.style.borderColor = 'rgba(46, 211, 198, 0.2)';
+            this.style.color = 'rgba(46, 211, 198, 0.7)';
+            this.style.transform = 'translateY(0) scale(1)';
+            this.style.boxShadow = '0 0 20px rgba(46, 211, 198, 0.15)';
+            this.style.textShadow = '0 0 10px rgba(46, 211, 198, 0.3)';
             
-            // Reset arrow
-            const svg = this.querySelector('svg');
+            const svg = this.querySelector('.deeper-arrow');
             if (svg) svg.style.transform = 'translateX(0)';
           });
           
-          // Add transition to SVG
-          const svg = learnMoreCTA.querySelector('svg');
+          // Style the arrow
+          const svg = learnMoreCTA.querySelector('.deeper-arrow');
           if (svg) {
             svg.style.transition = 'transform 0.3s ease';
+            svg.style.opacity = '0.7';
           }
           
           // Track navigation (prevent animation replay when returning)
@@ -1896,17 +1916,68 @@
           // Add CTA to the hub container
           hubContainer.appendChild(learnMoreCTA);
           
-          // Show CTA after 5 seconds (7 seconds visible before animation ends)
+          // TEASING REVEAL: Fade in slowly from above
           setTimeout(() => {
             learnMoreCTA.style.opacity = '1';
-            learnMoreCTA.style.transform = 'translateX(-50%) translateY(0)';
+            learnMoreCTA.style.transform = 'translateY(0)';
             learnMoreCTA.style.pointerEvents = 'auto';
+            learnMoreCTA.style.boxShadow = '0 0 20px rgba(46, 211, 198, 0.15)';
+            learnMoreCTA.style.textShadow = '0 0 10px rgba(46, 211, 198, 0.3)';
           }, 5000);
           
-          // Hide CTA when animation completes (at 12 seconds)
+          // FLASH/PULSE EFFECT: Create intrigue with periodic flashes
+          let flashCount = 0;
+          const flashInterval = setInterval(() => {
+            if (flashCount >= 3) {
+              clearInterval(flashInterval);
+              return;
+            }
+            
+            // Quick flash to bright
+            learnMoreCTA.style.transition = 'all 0.2s ease-out';
+            learnMoreCTA.style.color = 'rgba(46, 211, 198, 1)';
+            learnMoreCTA.style.borderColor = 'rgba(46, 211, 198, 0.6)';
+            learnMoreCTA.style.boxShadow = '0 0 40px rgba(46, 211, 198, 0.4), 0 0 80px rgba(46, 211, 198, 0.2)';
+            learnMoreCTA.style.textShadow = '0 0 25px rgba(46, 211, 198, 0.6)';
+            
+            // Return to subtle after flash
+            setTimeout(() => {
+              learnMoreCTA.style.transition = 'all 0.6s ease-in';
+              learnMoreCTA.style.color = 'rgba(46, 211, 198, 0.7)';
+              learnMoreCTA.style.borderColor = 'rgba(46, 211, 198, 0.2)';
+              learnMoreCTA.style.boxShadow = '0 0 20px rgba(46, 211, 198, 0.15)';
+              learnMoreCTA.style.textShadow = '0 0 10px rgba(46, 211, 198, 0.3)';
+            }, 200);
+            
+            flashCount++;
+          }, 1500);
+          
+          // CONTINUOUS SUBTLE PULSE
+          setTimeout(() => {
+            const pulseKeyframes = `
+              @keyframes deeperPulse {
+                0%, 100% {
+                  box-shadow: 0 0 20px rgba(46, 211, 198, 0.15);
+                  text-shadow: 0 0 10px rgba(46, 211, 198, 0.3);
+                }
+                50% {
+                  box-shadow: 0 0 30px rgba(46, 211, 198, 0.25);
+                  text-shadow: 0 0 15px rgba(46, 211, 198, 0.4);
+                }
+              }
+            `;
+            
+            const styleSheet = document.createElement('style');
+            styleSheet.textContent = pulseKeyframes;
+            document.head.appendChild(styleSheet);
+            
+            learnMoreCTA.style.animation = 'deeperPulse 3s ease-in-out infinite';
+          }, 10000);
+          
+          // Hide CTA when animation completes (goes back up)
           setTimeout(() => {
             learnMoreCTA.style.opacity = '0';
-            learnMoreCTA.style.transform = 'translateX(-50%) translateY(10px)';
+            learnMoreCTA.style.transform = 'translateY(-10px)';
             setTimeout(() => {
               if (learnMoreCTA.parentNode) {
                 learnMoreCTA.remove();
