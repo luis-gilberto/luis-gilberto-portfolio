@@ -44,7 +44,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const parallaxScroll = () => {
     const scrolled = window.pageYOffset;
     const parallaxElements = document.querySelectorAll('.hero-section');
-    
+    // If we've scrolled past the hero, stop applying transforms to avoid
+    // creating new stacking contexts that could overlap following sections.
+    if (document.body.classList.contains('past-hero')) {
+      ticking = false;
+      return;
+    }
+
     parallaxElements.forEach(element => {
       const speed = 0.5;
       element.style.transform = `translateY(${scrolled * speed}px)`;
@@ -58,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
       window.requestAnimationFrame(parallaxScroll);
       ticking = true;
     }
-  });
+  }, { passive: true });
 
   // Admin Access Modal functionality
   const adminAccessButton = document.getElementById('admin-access-button');
@@ -70,36 +76,49 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (adminAccessButton) {
     adminAccessButton.addEventListener('click', () => {
-      adminModalOverlay.classList.add('open');
-      accessCodeInput.value = ''; // Clear input on open
+      if (adminModalOverlay) {
+        adminModalOverlay.classList.add('open');
+      }
+      if (accessCodeInput) {
+        accessCodeInput.value = ''; // Clear input on open
+      }
     });
   }
 
   if (adminModalCloseButton) {
     adminModalCloseButton.addEventListener('click', () => {
-      adminModalOverlay.classList.remove('open');
+      if (adminModalOverlay) {
+        adminModalOverlay.classList.remove('open');
+      }
     });
   }
 
   if (cancelAccessButton) {
     cancelAccessButton.addEventListener('click', () => {
-      adminModalOverlay.classList.remove('open');
+      if (adminModalOverlay) {
+        adminModalOverlay.classList.remove('open');
+      }
     });
   }
 
   if (accessEngineButton) {
     accessEngineButton.addEventListener('click', () => {
-      const accessCode = accessCodeInput.value;
+      const accessCode = accessCodeInput ? accessCodeInput.value : '';
       // For demonstration, any non-empty code will "unlock"
       if (accessCode) {
-        adminModalOverlay.classList.remove('open');
+        if (adminModalOverlay) {
+          adminModalOverlay.classList.remove('open');
+        }
         document.body.classList.add('admin-unlocked'); // Add a class to body to show/hide admin content
         // Optionally, hide the admin access button
         if (adminAccessButton) {
           adminAccessButton.style.display = 'none';
         }
         // Show the assessment engine modal
-        assessmentModalOverlay.classList.add('open');
+        const assessmentModalOverlayNow = document.getElementById('assessment-modal-overlay');
+        if (assessmentModalOverlayNow) {
+          assessmentModalOverlayNow.classList.add('open');
+        }
         resetAssessment();
       } else {
         alert('Please enter an access code.');
@@ -242,19 +261,19 @@ document.addEventListener('DOMContentLoaded', () => {
     currentQuestionIndex = 0;
     answers = {};
     selectedAssessmentArea = '';
-    assessmentOptionsGrid.style.display = 'grid';
-    liveAssessmentView.style.display = 'none';
-    reportView.style.display = 'none';
-    assessmentProgressBarFill.style.width = '0%';
-    assessmentProgressText.textContent = '0 of 0 questions';
-    prevQuestionButton.disabled = true;
-    nextQuestionButton.disabled = true;
+    if (assessmentOptionsGrid) assessmentOptionsGrid.style.display = 'grid';
+    if (liveAssessmentView) liveAssessmentView.style.display = 'none';
+    if (reportView) reportView.style.display = 'none';
+    if (assessmentProgressBarFill) assessmentProgressBarFill.style.width = '0%';
+    if (assessmentProgressText) assessmentProgressText.textContent = '0 of 0 questions';
+    if (prevQuestionButton) prevQuestionButton.disabled = true;
+    if (nextQuestionButton) nextQuestionButton.disabled = true;
   }
 
   function startAssessment(area) {
     selectedAssessmentArea = area;
-    assessmentOptionsGrid.style.display = 'none';
-    liveAssessmentView.style.display = 'block';
+    if (assessmentOptionsGrid) assessmentOptionsGrid.style.display = 'none';
+    if (liveAssessmentView) liveAssessmentView.style.display = 'block';
     loadQuestion();
   }
 
@@ -266,8 +285,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const questionData = currentQuestions[currentQuestionIndex];
-    currentQuestionText.textContent = questionData.question;
-    questionOptionsContainer.innerHTML = '';
+    if (currentQuestionText) currentQuestionText.textContent = questionData.question;
+    if (questionOptionsContainer) questionOptionsContainer.innerHTML = '';
 
     questionData.options.forEach((option, index) => {
       const optionDiv = document.createElement('label');
@@ -284,7 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
         answers[currentQuestionIndex] = parseInt(e.target.value);
         updateNavigationButtons();
       });
-      questionOptionsContainer.appendChild(optionDiv);
+      if (questionOptionsContainer) questionOptionsContainer.appendChild(optionDiv);
     });
 
     updateProgressBar();
@@ -295,29 +314,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalQuestions = questions[selectedAssessmentArea].length;
     const answeredQuestions = Object.keys(answers).length;
     const progress = (answeredQuestions / totalQuestions) * 100;
-    assessmentProgressBarFill.style.width = `${progress}%`;
-    assessmentProgressText.textContent = `${answeredQuestions} of ${totalQuestions} questions`;
+    if (assessmentProgressBarFill) assessmentProgressBarFill.style.width = `${progress}%`;
+    if (assessmentProgressText) assessmentProgressText.textContent = `${answeredQuestions} of ${totalQuestions} questions`;
   }
 
   function updateNavigationButtons() {
     const totalQuestions = questions[selectedAssessmentArea].length;
-    prevQuestionButton.disabled = currentQuestionIndex === 0;
-    nextQuestionButton.disabled = answers[currentQuestionIndex] === undefined;
+    if (prevQuestionButton) prevQuestionButton.disabled = currentQuestionIndex === 0;
+    if (nextQuestionButton) nextQuestionButton.disabled = answers[currentQuestionIndex] === undefined;
 
     if (currentQuestionIndex === totalQuestions - 1 && answers[currentQuestionIndex] !== undefined) {
-      nextQuestionButton.textContent = 'Submit Assessment';
-      nextQuestionButton.classList.add('bg-gradient-cta');
-      nextQuestionButton.classList.remove('bg-transparent');
+      if (nextQuestionButton) {
+        nextQuestionButton.textContent = 'Submit Assessment';
+        nextQuestionButton.classList.add('bg-gradient-cta');
+        nextQuestionButton.classList.remove('bg-transparent');
+      }
     } else {
-      nextQuestionButton.textContent = 'Next';
-      nextQuestionButton.classList.remove('bg-gradient-cta');
-      nextQuestionButton.classList.add('bg-transparent');
+      if (nextQuestionButton) {
+        nextQuestionButton.textContent = 'Next';
+        nextQuestionButton.classList.remove('bg-gradient-cta');
+        nextQuestionButton.classList.add('bg-transparent');
+      }
     }
   }
 
   function generateReport() {
-    liveAssessmentView.style.display = 'none';
-    reportView.style.display = 'block';
+    if (liveAssessmentView) liveAssessmentView.style.display = 'none';
+    if (reportView) reportView.style.display = 'block';
 
     const currentQuestions = questions[selectedAssessmentArea];
     let totalWeightedScore = 0;
@@ -337,17 +360,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const competitiveEdgeScore = Math.round(overallScore * 0.92);
     const executionCapabilityScore = Math.round(overallScore * 0.78);
 
-    reportOverallScore.textContent = overallScore;
-    reportMarketPosition.textContent = `${marketPositionScore}%`;
-    reportCompetitiveEdge.textContent = `${competitiveEdgeScore}%`;
-    reportExecutionCapability.textContent = `${executionCapabilityScore}%`;
+    if (reportOverallScore) reportOverallScore.textContent = overallScore;
+    if (reportMarketPosition) reportMarketPosition.textContent = `${marketPositionScore}%`;
+    if (reportCompetitiveEdge) reportCompetitiveEdge.textContent = `${competitiveEdgeScore}%`;
+    if (reportExecutionCapability) reportExecutionCapability.textContent = `${executionCapabilityScore}%`;
 
-    reportRecommendationsList.innerHTML = '';
-    recommendations[selectedAssessmentArea].forEach(rec => {
-      const li = document.createElement('li');
-      li.innerHTML = `<i class="fa-solid fa-check text-teal"></i><span>${rec}</span>`;
-      reportRecommendationsList.appendChild(li);
-    });
+    if (reportRecommendationsList) {
+      reportRecommendationsList.innerHTML = '';
+      recommendations[selectedAssessmentArea].forEach(rec => {
+        const li = document.createElement('li');
+        li.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-teal" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg><span>${rec}</span>`;
+        reportRecommendationsList.appendChild(li);
+      });
+    }
   }
 
   // Event listeners for assessment options
@@ -360,7 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (assessmentModalExitButton) {
     assessmentModalExitButton.addEventListener('click', () => {
-      assessmentModalOverlay.classList.remove('open');
+      if (assessmentModalOverlay) assessmentModalOverlay.classList.remove('open');
       document.body.classList.remove('admin-unlocked');
       if (adminAccessButton) {
         adminAccessButton.style.display = 'flex'; // Show admin button again
@@ -396,7 +421,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (newAssessmentButton) {
     newAssessmentButton.addEventListener('click', () => {
       resetAssessment();
-      assessmentModalOverlay.classList.remove('open');
+      if (assessmentModalOverlay) assessmentModalOverlay.classList.remove('open');
       document.body.classList.remove('admin-unlocked');
       if (adminAccessButton) {
         adminAccessButton.style.display = 'flex';
@@ -450,54 +475,84 @@ document.addEventListener('DOMContentLoaded', () => {
     stopAssessmentTimer();
   }
 
-  // Start timer when assessment modal opens
-  assessmentModalOverlay.addEventListener('transitionend', () => {
-    if (assessmentModalOverlay.classList.contains('open')) {
-      seconds = 0;
-      minutes = 0;
-      if (timerElement) {
-        timerElement.textContent = '00:00';
+  // Start/Stop timer when assessment modal opens/closes
+  if (assessmentModalOverlay) {
+    assessmentModalOverlay.addEventListener('transitionend', () => {
+      const timerEl = document.getElementById('assessment-timer');
+      if (assessmentModalOverlay.classList.contains('open')) {
+        if (timerEl) {
+          timerEl.textContent = '00:00';
+        }
+        startAssessmentTimer();
+      } else {
+        stopAssessmentTimer();
       }
-      startTimer();
-    } else {
-      stopTimer();
-    }
-  });
+    });
+  }
 
   // MOBILE MENU TOGGLE FUNCTIONALITY
   const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
   const headerNav = document.querySelector('.header-nav');
   const hubHeader = document.querySelector('.hub-header');
+  const navCloseBtn = document.getElementById('navClose');
+
+  function openMenu() {
+    mobileMenuToggle.classList.add('active');
+    headerNav.classList.add('mobile-active');
+    document.body.classList.add('menu-open');
+    mobileMenuToggle.setAttribute('aria-expanded', 'true');
+    headerNav.setAttribute('aria-hidden', 'false');
+    // Focus the close button for accessibility
+    if (navCloseBtn) navCloseBtn.focus();
+  }
+
+  function closeMenu() {
+    mobileMenuToggle.classList.remove('active');
+    headerNav.classList.remove('mobile-active');
+    document.body.classList.remove('menu-open');
+    mobileMenuToggle.setAttribute('aria-expanded', 'false');
+    headerNav.setAttribute('aria-hidden', 'true');
+  }
 
   if (mobileMenuToggle && headerNav) {
+    // Ensure initial aria-hidden state
+    headerNav.setAttribute('aria-hidden', 'true');
+
     // Mobile menu toggle with hamburger animation
     mobileMenuToggle.addEventListener('click', () => {
-      mobileMenuToggle.classList.toggle('active');
-      headerNav.classList.toggle('mobile-active');
+      const expanded = headerNav.classList.contains('mobile-active');
+      expanded ? closeMenu() : openMenu();
     });
+
+    // Close menu when clicking the close button
+    if (navCloseBtn) {
+      navCloseBtn.addEventListener('click', () => closeMenu());
+    }
 
     // Close menu when clicking on nav items
     const navItems = document.querySelectorAll('.nav-item');
     navItems.forEach(item => {
-      item.addEventListener('click', () => {
-        mobileMenuToggle.classList.remove('active');
-        headerNav.classList.remove('mobile-active');
-      });
+      item.addEventListener('click', () => closeMenu());
     });
 
     // Close menu when clicking outside
     document.addEventListener('click', (e) => {
       if (!mobileMenuToggle.contains(e.target) && !headerNav.contains(e.target)) {
-        mobileMenuToggle.classList.remove('active');
-        headerNav.classList.remove('mobile-active');
+        closeMenu();
       }
     });
 
-    // Close menu on window resize
+    // Close menu on window resize (switching to desktop)
     window.addEventListener('resize', () => {
       if (window.innerWidth > 768) {
-        mobileMenuToggle.classList.remove('active');
-        headerNav.classList.remove('mobile-active');
+        closeMenu();
+      }
+    });
+
+    // Close menu on ESC key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeMenu();
       }
     });
   }
@@ -516,6 +571,29 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       
       lastScrollTop = scrollTop;
-    });
+    }, { passive: true });
   }
+
+  // ==========================================
+  // INTERSECTION OBSERVER: PAST-HERO STATE
+  // Adds body.past-hero when the hero is no longer visible (accounting for
+  // the fixed header height). This lets CSS drop the hero's z-index and
+  // disable transforms so it never overlaps following content.
+  // ==========================================
+  (function initHeroObserver(){
+    const heroEl = document.querySelector('.hero-section');
+    if (!heroEl) return;
+
+    const headerEl = document.querySelector('.hub-header');
+    const headerHeight = headerEl ? headerEl.offsetHeight : 80;
+
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        // When the hero is NOT intersecting, we are past it
+        document.body.classList.toggle('past-hero', !entry.isIntersecting);
+      });
+    }, { threshold: 0, root: null, rootMargin: `-${headerHeight}px 0px 0px 0px` });
+
+    io.observe(heroEl);
+  })();
 });

@@ -29,6 +29,9 @@ class HubSystem {
     }
 
     createNavigation() {
+        // Compute base prefix to work under both /TheHub (root-served) and TheHub-only (folder-served) dev servers
+        const basePrefix = window.location.pathname.startsWith('/TheHub/') ? '/TheHub/' : '/';
+
         // Create navigation HTML
         const navHTML = `
             <nav class="hub-nav" id="hubNav">
@@ -36,7 +39,7 @@ class HubSystem {
                     <div class="hub-nav-spacer"></div>
                     
                     <div class="hub-nav-brand">
-                        <a href="/" class="hub-nav-logo">
+                        <a href="${basePrefix}index.html" class="hub-nav-logo">
                             <img src="/advisory/assets/TheHub_Logo.png" alt="The Hub" class="hub-nav-logo-img">
                         </a>
                     </div>
@@ -57,19 +60,19 @@ class HubSystem {
                 
                 <div class="hub-nav-mobile-menu" id="hubNavMobileMenu">
                 <div class="hub-nav-mobile-content">
-                        <a href="/IMCServices/" class="hub-nav-mobile-link">
+                        <a href="${basePrefix}IMCServices/" class="hub-nav-mobile-link">
                              <img src="/advisory/assets/IMC_Services_Simple_100x100.png" alt="Services">
                              <span>Services</span>
                          </a>
-                         <a href="/advisory/" class="hub-nav-mobile-link">
+                         <a href="${basePrefix}advisory/" class="hub-nav-mobile-link">
                              <img src="/advisory/assets/Advisory_Simple_100x100.png" alt="Advisory">
                              <span>Advisory</span>
                          </a>
-                         <a href="/scopeiq/" class="hub-nav-mobile-link">
+                         <a href="${basePrefix}scopeiq/" class="hub-nav-mobile-link">
                              <img src="/advisory/assets/ScopeIQ_Clean_Telescope_100x100.png" alt="ScopeIQ">
                              <span>ScopeIQ</span>
                          </a>
-                         <a href="/strategyiq/" class="hub-nav-mobile-link">
+                         <a href="${basePrefix}strategyiq/" class="hub-nav-mobile-link">
                              <img src="/advisory/assets/StrategyIQ_Simple_100x100.png" alt="StrategyIQ">
                              <span>StrategyIQ</span>
                          </a>
@@ -531,4 +534,4 @@ window.hubSystem = new HubSystem();
 
 
 
-
+
