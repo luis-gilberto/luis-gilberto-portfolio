@@ -45,6 +45,12 @@ ICON_SOURCES: Dict[str, str] = {
     "tactical-execution": "https://page.gensparksite.com/v1/base64_upload/db75116cf5bfc53b0820b09f5fc1c260",
     # Page 3 right margin, Page 4 hub-card IMC Services
     "automation": "https://page.gensparksite.com/v1/base64_upload/65f92d0cc91405472c7aecb51c7b7845",
+    # TheHub System page: Advisory arm icon (compass variant)
+    "advisory-compass": "https://page.gensparksite.com/v1/base64_upload/55e04233df2023a19da31d8bae72bdb9",
+    # TheHub System page: IMC Services arm icon (atom variant)
+    "imc-atom": "https://page.gensparksite.com/v1/base64_upload/d0d7d64af6f6f7b1b14e28f3c1115955",
+    # TheHub System page: Impact flow icon
+    "impact": "https://page.gensparksite.com/v1/base64_upload/ed7e65a68592be4d3c5a0938dfa78355",
 }
 
 
@@ -108,4 +114,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
