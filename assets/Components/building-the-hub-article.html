@@ -125,6 +125,24 @@
       background-clip: text; 
     }
 
+    /* Brand-aligned hyperlinks with better contrast */
+    a {
+      color: #F96F6E;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(249, 111, 110, 0.3);
+      transition: all 0.2s ease;
+      padding-bottom: 1px;
+    }
+    a:hover {
+      color: #ff8a89;
+      border-bottom-color: #F96F6E;
+    }
+    a:focus-visible {
+      outline: 2px solid #F96F6E;
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+
     /* Hero Icon (3D sophisticated icons) */
     .hero-icon {
       width: 120px; height: 120px; margin: 0 auto 2rem;
@@ -580,6 +598,69 @@
     @media (max-width: 768px) {
       h1 { font-size: 2.2rem; }
       h2 { font-size: 1.8rem; }
+    }
+
+    /* ===== Timeline Option A+ (Minimal + Peek) ===== */
+    .timeline { position: relative; }
+    .timeline .timeline-title { color:#F96F6E; letter-spacing:.08em; }
+
+    /* Compact head row */
+    .tl-head {
+      display:flex; justify-content:space-between; align-items:baseline;
+      gap:.75rem; margin-bottom:.15rem;
+    }
+    .tl-year {
+      font-weight:700; font-size:.92rem; color:#eaeaea;
+    }
+    .tl-title {
+      font-size:.9rem; color:rgba(245,245,245,.92);
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      max-width: 60%;
+    }
+
+    /* Subtle left accent for each item (alternates) */
+    .timeline-item {
+      position:relative; padding:.4rem .25rem .6rem .75rem; border-left:2px solid rgba(255,255,255,.07);
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+      border-radius: 4px;
+    }
+    .timeline-item:nth-child(odd) { border-left-color: rgba(249,111,110,.25); }   /* coral hint */
+    .timeline-item:nth-child(even){ border-left-color: rgba(46,211,198,.22); }     /* teal hint */
+    .timeline-item:hover { transform: translateX(2px); background: rgba(255,255,255,.03); }
+
+    /* Peek button (iconless, tiny) */
+    .tl-peek {
+      appearance:none; border:1px solid rgba(255,255,255,.18); background:transparent; color:#ccc;
+      font-size:.72rem; padding:.18rem .5rem; border-radius:999px; cursor:pointer;
+      transition: background .18s ease, color .18s ease, border-color .18s ease;
+    }
+
+    /* Floating peek card (hidden by default) */
+    .tl-more {
+      position:absolute; left:calc(100% + 10px); top:50%; transform:translateY(-50%);
+      min-width:180px; max-width:220px; padding:.6rem .7rem; font-size:.82rem; line-height:1.35;
+      background: rgba(26,26,26,.95); border:1px solid rgba(249,111,110,.25); border-radius:.5rem;
+      color:rgba(245,245,245,.88); box-shadow:0 10px 30px rgba(0,0,0,.35);
+      opacity:0; visibility:hidden; transition:opacity .18s ease, visibility .18s ease;
+      z-index:5;
+    }
+
+    /* Reveal on hover/focus (mouse + keyboard) */
+    .timeline-item:hover .tl-more,
+    .timeline-item:focus-within .tl-more,
+    .timeline-item .tl-peek[aria-expanded="true"] + .tl-more {
+      opacity:1; visibility:visible;
+    }
+
+    /* Mobile: stack cleanly */
+    @media (max-width:1024px){
+      .tl-more { position:static; transform:none; margin-top:.35rem; opacity:1; visibility:visible; }
+      .tl-peek { display:none; } /* auto-show details on tablet/mobile */
+      .tl-title { max-width:100%; }
+    }
+
+    /* Mobile responsive adjustments */
+    @media (max-width: 480px) {
       .nav-container { bottom: 12px; max-width: 96%; padding: 0.5rem 0.75rem; gap: 0.5rem; }
       .page-dot { --hit-size: 44px; --dot-size: 12px; }
       .nav-btn { padding: 0.6rem 1rem; font-size: 0.95rem; }
@@ -612,53 +693,88 @@
       <div class="page-grid">
         <!-- Left Margin: Timeline -->
         <aside class="left-margin">
-          <div class="timeline timeline--minimal">
+          <div class="timeline">
             <div class="timeline-title">The Journey</div>
 
-            <div class="timeline-item">
-              <span class="timeline-year">2003–2008</span>
-              <span class="timeline-event">Startup foundations — learned to build with little and dream big.</span>
-            </div>
+<div class="timeline-item tl--peek">
+  <div class="tl-head">
+    <span class="tl-year">2003–2008</span>
+    <span class="tl-title">Startup foundations</span>
+  </div>
+  <button class="tl-peek" aria-expanded="false" aria-controls="tl-2003">Peek</button>
+  <div class="tl-more" id="tl-2003">Learned to build with little and dream big.</div>
+</div>
 
-            <div class="timeline-item">
-              <span class="timeline-year">2008–2012</span>
-              <span class="timeline-event">Microsoft ecosystem (vendor) — learned how global brands move.</span>
-            </div>
+<div class="timeline-item tl--peek">
+  <div class="tl-head">
+    <span class="tl-year">2008–2012</span>
+    <span class="tl-title">Entered the Microsoft Ecosystem</span>
+  </div>
+  <button class="tl-peek" aria-expanded="false" aria-controls="tl-2008">Peek</button>
+  <div class="tl-more" id="tl-2008">Entered the orbit; saw how global brands move.</div>
+</div>
 
-            <div class="timeline-item">
-              <span class="timeline-year">2012–2014</span>
-              <span class="timeline-event">Foundations — supported Windows, Surface, and Office launches.</span>
-            </div>
+<div class="timeline-item tl--peek">
+  <div class="tl-head">
+    <span class="tl-year">2012–2014</span>
+    <span class="tl-title">Foundations</span>
+  </div>
+  <button class="tl-peek" aria-expanded="false" aria-controls="tl-2012">Peek</button>
+  <div class="tl-more" id="tl-2012">Supported Windows, Surface, and Office launches.</div>
+</div>
 
-            <div class="timeline-item">
-              <span class="timeline-year">2014–2016</span>
-              <span class="timeline-event">Ascent — shifted into strategic narrative and GTM orchestration.</span>
-            </div>
+<div class="timeline-item tl--peek">
+  <div class="tl-head">
+    <span class="tl-year">2014–2016</span>
+    <span class="tl-title">Ascent</span>
+  </div>
+  <button class="tl-peek" aria-expanded="false" aria-controls="tl-2014">Peek</button>
+  <div class="tl-more" id="tl-2014">Shifted into strategic narrative + GTM orchestration.</div>
+</div>
 
-            <div class="timeline-item">
-              <span class="timeline-year">2016–2018</span>
-              <span class="timeline-event">Rewrite — led consumer storytelling across Office campaigns.</span>
-            </div>
+<div class="timeline-item tl--peek">
+  <div class="tl-head">
+    <span class="tl-year">2016–2018</span>
+    <span class="tl-title">Rewrite</span>
+  </div>
+  <button class="tl-peek" aria-expanded="false" aria-controls="tl-2016">Peek</button>
+  <div class="tl-more" id="tl-2016">Led consumer storytelling across Office campaigns.</div>
+</div>
 
-            <div class="timeline-item">
-              <span class="timeline-year">2019–2020</span>
-              <span class="timeline-event">Pivot — Office 365 → Microsoft 365; Family Safety & Teams preview.</span>
-            </div>
+<div class="timeline-item tl--peek">
+  <div class="tl-head">
+    <span class="tl-year">2019–2020</span>
+    <span class="tl-title">Pivot</span>
+  </div>
+  <button class="tl-peek" aria-expanded="false" aria-controls="tl-2019">Peek</button>
+  <div class="tl-more" id="tl-2019">Office 365 → Microsoft 365; Family Safety & Teams preview.</div>
+</div>
 
-            <div class="timeline-item">
-              <span class="timeline-year">2020–2023</span>
-              <span class="timeline-event">Rise — emotionally resonant work during a deeply human era.</span>
-            </div>
+<div class="timeline-item tl--peek">
+  <div class="tl-head">
+    <span class="tl-year">2020–2023</span>
+    <span class="tl-title">Rise</span>
+  </div>
+  <button class="tl-peek" aria-expanded="false" aria-controls="tl-2020">Peek</button>
+  <div class="tl-more" id="tl-2020">Emotionally resonant work during a deeply human era.</div>
+</div>
 
-            <div class="timeline-item">
-              <span class="timeline-year">2023–2025</span>
-              <span class="timeline-event">Reinvention — Edge + Copilot narrative; reclaimed my own voice.</span>
-            </div>
+<div class="timeline-item tl--peek">
+  <div class="tl-head">
+    <span class="tl-year">2023–2025</span>
+    <span class="tl-title">Reinvention</span>
+  </div>
+  <button class="tl-peek" aria-expanded="false" aria-controls="tl-2023">Peek</button>
+  <div class="tl-more" id="tl-2023">Edge + Copilot narrative; reclaimed my voice.</div>
+</div>
 
-            <div class="timeline-item">
-              <span class="timeline-year">2025</span>
-              <span class="timeline-event">The Hub — a system for clarity, creativity, and scale.</span>
-            </div>
+<div class="timeline-item tl--peek">
+  <div class="tl-head">
+    <span class="tl-title">The Hub</span>
+  </div>
+  <button class="tl-peek" aria-expanded="false" aria-controls="tl-2025">Peek</button>
+  <div class="tl-more" id="tl-2025">A system for clarity, creativity, and scale.</div>
+</div>
           </div>
         </aside>
 
@@ -671,8 +787,10 @@
           <h1>Building <span class="coral">The Hub</span></h1>
           <div class="byline">By Luis Gilberto Sánchez • October 2025 • 6 min read</div>
           <div class="opening">
-    Before The Hub existed as an idea, it existed as a pattern I kept bumping into. Across startups, across Microsoft, across campaigns, teams, eras, and identity shifts — I kept seeing the same truth: the most meaningful marketing isn't just about what you say, it's about <em>how you structure the way you think</em>.<br><br>
-    I didn't wake up one day and decide to "build a consultancy" or become "independent." My career has been a series of expansions: from scrappy startup generalist, to strategic voice inside one of the world's most complex organizations, to someone who could finally articulate <em>my</em> way of working.<br><br>
+    Before <a href="https://luis-gilberto.com/TheHub/">The Hub</a> existed as an idea, it existed as a pattern I kept bumping into. Across startups, across Microsoft, across campaigns, teams, eras, and identity shifts, I kept seeing the same truth: the most meaningful marketing isn't just about what you say, it's about how you structure the way you think.
+
+    I didn't wake up one day and decide to "build a consultancy" or become "independent." My career has been a series of expansions: from scrappy startup generalist, to strategic voice inside one of the world's most complex organizations, to someone who could finally articulate <em>my</em> way of working.
+
     The timeline to the left isn't a highlight reel. It's the architecture of how I learned, unlearned, and rebuilt. It's the scaffolding behind the systems I now share through The Hub.
   </div>
 
@@ -781,9 +899,9 @@
 
           <section class="section">
             <h2><span class="coral">The Tools:</span> Teaching Myself AI, Modern Workflows, and Automation</h2>
-            <p>Building The Hub meant becoming my own R&D department. I taught myself AI-assisted design, workflow automation, and modern web architecture — not because I wanted to become a developer, but because I wanted to control the experience.</p>
+            <p>Building The Hub meant becoming my own R&D department. I taught myself AI-assisted design, workflow automation, and modern web architecture... not because I wanted to become a developer, but because I wanted to control the experience.</p>
             <p>AI became my creative bench. What used to require a designer, a writer, and a developer could now be prototyped in hours. But here's what surprised me: the tools didn't replace creativity. They amplified intentionality.</p>
-            <p>The real skill wasn't mastering the tech — it was learning to design the prompts, the systems, the flows. To think in frameworks that AI could execute but only I could architect.</p>
+            <p>The real skill wasn't mastering the tech; it was learning to design the prompts, the systems, the flows. To think in frameworks that AI could execute but only I could architect.</p>
             <p>This is where marketing is headed. The leaders who win won't be the ones with the biggest teams. They'll be the ones who know how to design systems that scale their thinking.</p>
           </section>
         </article>
@@ -934,7 +1052,7 @@
             <p>I'm opening it to collaborators: strategists, creatives, founders who think differently about how marketing should work. People who want partnership over process, systems over services, clarity over complexity.</p>
             <p>I'm also opening it to companies who are tired of agencies that don't listen and freelancers who can't scale. The Hub offers a third path: strategic architecture, modular creativity, and a methodology that adapts to how you work.</p>
             <p>Because here's what I learned building this: the future of marketing isn't about bigger teams. It's about better systems. It's about leaders who can design frameworks that make great storytelling repeatable.</p>
-            <p>And it's about having the courage to treat your experience like a product — something living, repeatable, and built for what's next.</p>
+            <p>And it's about having the courage to treat your experience like a product: something living, repeatable, and built for what's next.</p>
           </section>
 
           <div class="pull-quote">
@@ -942,7 +1060,7 @@
           </div>
           
           <footer class="cta">
-            <a href="https://luis-gilberto.com/the-hub/" class="cta-text">Ready to explore The System? Visit The Hub →</a>
+            <a href="https://luis-gilberto.com/TheHub/" class="cta-text">Ready to explore The System? Visit The Hub →</a>
           </footer>
         </article>
 
@@ -1127,6 +1245,16 @@
     
     window.addEventListener('resize', function() { 
       updateNavOffset(); setPageMinHeight(); ensureFits(); 
+    });
+  </script>
+
+  <script>
+    // Accessible toggle for the small "Peek" expand behavior
+    document.addEventListener('click', function(e){
+      const btn = e.target.closest('.tl-peek');
+      if(!btn) return;
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!expanded));
     });
   </script>
 </body>
