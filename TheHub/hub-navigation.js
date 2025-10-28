@@ -40,13 +40,13 @@ class HubSystem {
                     
                     <div class="hub-nav-brand">
                         <a href="${basePrefix}index.html" class="hub-nav-logo">
-                            <img src="/advisory/assets/TheHub_Logo.png" alt="The Hub" class="hub-nav-logo-img">
+                            <img src="${basePrefix}advisory/assets/TheHub_Logo.png" alt="The Hub" class="hub-nav-logo-img">
                         </a>
                     </div>
                     
                     <div class="hub-nav-actions">
                         <a href="https://luis-gilberto.com/contact?from=imc#cta-hook" class="hub-nav-contact">
-                            <img src="/advisory/assets/Contact_Simple_100x100.png" alt="Contact" class="hub-nav-contact-icon">
+                            <img src="${basePrefix}advisory/assets/Contact_Simple_100x100.png" alt="Contact" class="hub-nav-contact-icon">
                             <span class="hub-nav-contact-text">Contact</span>
                         </a>
                         
@@ -61,23 +61,23 @@ class HubSystem {
                 <div class="hub-nav-mobile-menu" id="hubNavMobileMenu">
                 <div class="hub-nav-mobile-content">
                         <a href="${basePrefix}IMCServices/" class="hub-nav-mobile-link">
-                             <img src="/advisory/assets/IMC_Services_Simple_100x100.png" alt="Services">
+                             <img src="${basePrefix}advisory/assets/IMC_Services_Simple_100x100.png" alt="Services">
                              <span>Services</span>
                          </a>
                          <a href="${basePrefix}advisory/" class="hub-nav-mobile-link">
-                             <img src="/advisory/assets/Advisory_Simple_100x100.png" alt="Advisory">
+                             <img src="${basePrefix}advisory/assets/Advisory_Simple_100x100.png" alt="Advisory">
                              <span>Advisory</span>
                          </a>
                          <a href="${basePrefix}scopeiq/" class="hub-nav-mobile-link">
-                             <img src="/advisory/assets/ScopeIQ_Clean_Telescope_100x100.png" alt="ScopeIQ">
+                             <img src="${basePrefix}advisory/assets/ScopeIQ_Clean_Telescope_100x100.png" alt="ScopeIQ">
                              <span>ScopeIQ</span>
                          </a>
                          <a href="${basePrefix}strategyiq/" class="hub-nav-mobile-link">
-                             <img src="/advisory/assets/StrategyIQ_Simple_100x100.png" alt="StrategyIQ">
+                             <img src="${basePrefix}advisory/assets/StrategyIQ_Simple_100x100.png" alt="StrategyIQ">
                              <span>StrategyIQ</span>
                          </a>
                          <a href="https://luis-gilberto.com/contact?from=hub#cta-hook" class="hub-nav-mobile-link hub-nav-mobile-contact">
-                             <img src="/advisory/assets/Contact_Simple_100x100.png" alt="Contact">
+                             <img src="${basePrefix}advisory/assets/Contact_Simple_100x100.png" alt="Contact">
                              <span>Contact</span>
                          </a>
                     </div>
