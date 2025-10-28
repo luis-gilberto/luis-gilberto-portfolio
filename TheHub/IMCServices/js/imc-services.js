@@ -83,7 +83,7 @@ function initHeroIcon() {
     const iconSources = [
         `/api/aidrive/file/IMC_Services_Sophisticated.png`,
         `/aidrive/IMC_Services_Sophisticated.png`,
-        `https://page.gensparksite.com/v1/base64_upload/IMC_Services_Sophisticated.png`
+        `/advisory/assets/IMC_Services_Sophisticated.png`
     ];
     
     // Try loading the icon from different possible paths
