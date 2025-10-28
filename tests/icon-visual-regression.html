@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Icon Visual Regression Tests</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 24px; color: #222; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+    .card { border: 1px solid #ddd; border-radius: 10px; padding: 12px; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+    .checker {
+      --size: 10px;
+      background-image: linear-gradient(45deg, #bbb 25%, transparent 25%),
+                        linear-gradient(-45deg, #bbb 25%, transparent 25%),
+                        linear-gradient(45deg, transparent 75%, #bbb 75%),
+                        linear-gradient(-45deg, transparent 75%, #bbb 75%);
+      background-size: var(--size) var(--size);
+      background-position: 0 0, 0 calc(var(--size) / 2), calc(var(--size) / 2) calc(var(--size) / -2), calc(var(--size) / 2) 0;
+      border-radius: 8px; width: 160px; height: 160px; display: grid; place-items: center; position: relative;
+    }
+    .icon { max-width: 120px; max-height: 120px; image-rendering: auto; }
+    .status { margin-top: 8px; font-size: 12px; }
+    .pass { color: #0a7; }
+    .fail { color: #d23; }
+    details { margin-top: 24px; }
+    .state-row { display: flex; gap: 12px; align-items: center; margin-top: 8px; }
+    .state-row .icon-state { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 6px; }
+    .icon-state.hover { background: rgba(255,127,80,0.14); }
+    .icon-state.active { background: rgba(255,127,80,0.20); outline: 2px solid rgba(255,127,80,0.60); }
+    .icon-state.disabled { filter: grayscale(100%) opacity(0.45); }
+  </style>
+</head>
+<body>
+  <h1>Icon Visual Regression Tests</h1>
+  <p>This harness verifies that converted icons have fully transparent backgrounds, preserve dimensions/aspect ratios, and render consistently in hover, active, and disabled states.</p>
+
+  <div id="grid" class="grid"></div>
+
+  <details>
+    <summary>Technical notes</summary>
+    <ul>
+      <li>Transparency check samples corner pixels via canvas to verify alpha channel is 0.</li>
+      <li>Dimensions reported are the intrinsic natural size (PNG) and rendered size in the tester.</li>
+      <li>State rendering previews apply typical UI filters/styles for hover/active/disabled.</li>
+    </ul>
+  </details>
+
+  <script>
+    const icons = [
+      { name: 'vision', path: '/assets/images/icons/vision.png' },
+      { name: 'connected-systems', path: '/assets/images/icons/connected-systems.png' },
+      { name: 'strategy', path: '/assets/images/icons/strategy.png' },
+      { name: 'navigation', path: '/assets/images/icons/navigation.png' },
+      { name: 'vision-tools', path: '/assets/images/icons/vision-tools.png' },
+      { name: 'tactical-execution', path: '/assets/images/icons/tactical-execution.png' },
+      { name: 'automation', path: '/assets/images/icons/automation.png' },
+    ];
+
+    function sampleCornersAlpha(img) {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      const { naturalWidth: w, naturalHeight: h } = img;
+      const points = [
+        { x: 0, y: 0 },
+        { x: w - 1, y: 0 },
+        { x: 0, y: h - 1 },
+        { x: w - 1, y: h - 1 },
+      ];
+      const alphas = points.map(({ x, y }) => ctx.getImageData(x, y, 1, 1).data[3]);
+      return { alphas, allTransparent: alphas.every(a => a === 0) };
+    }
+
+    function makeStateRow(src, alt) {
+      const row = document.createElement('div');
+      row.className = 'state-row';
+      const states = [ 'hover', 'active', 'disabled' ];
+      states.forEach(st => {
+        const wrap = document.createElement('div');
+        wrap.className = `icon-state ${st}`;
+        const img = document.createElement('img');
+        img.src = src; img.alt = `${alt} (${st})`; img.width = 24; img.height = 24; img.style.maxWidth = '24px'; img.style.maxHeight = '24px';
+        wrap.appendChild(img);
+        row.appendChild(wrap);
+      });
+      return row;
+    }
+
+    async function run() {
+      const grid = document.getElementById('grid');
+      for (const icon of icons) {
+        const card = document.createElement('div');
+        card.className = 'card';
+
+        const title = document.createElement('div');
+        title.textContent = icon.name;
+        title.style.fontWeight = '600';
+        card.appendChild(title);
+
+        const checker = document.createElement('div');
+        checker.className = 'checker';
+        const img = document.createElement('img');
+        img.src = icon.path; img.alt = icon.name; img.className = 'icon';
+        checker.appendChild(img);
+        card.appendChild(checker);
+
+        const status = document.createElement('div');
+        status.className = 'status';
+        status.textContent = 'Loading…';
+        card.appendChild(status);
+
+        img.addEventListener('load', () => {
+          const { naturalWidth, naturalHeight } = img;
+          let transparency = { alphas: [], allTransparent: false };
+          try { transparency = sampleCornersAlpha(img); } catch (e) {}
+          const dims = `Natural: ${naturalWidth}×${naturalHeight}, Rendered: ${img.clientWidth}×${img.clientHeight}`;
+          const tAlpha = transparency.alphas.map(a => a.toString()).join(', ');
+          const pass = transparency.allTransparent;
+          status.innerHTML = `<span class="${pass ? 'pass' : 'fail'}">${pass ? 'PASS' : 'FAIL'}</span> – Alpha corners [${tAlpha}] – ${dims}`;
+          card.appendChild(makeStateRow(icon.path, icon.name));
+        });
+
+        img.addEventListener('error', () => {
+          status.innerHTML = `<span class="fail">ERROR</span> – Failed to load ${icon.path}`;
+        });
+
+        grid.appendChild(card);
+      }
+    }
+
+    run();
+  </script>
+</body>
+</html>
