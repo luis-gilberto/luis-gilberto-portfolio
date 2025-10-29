@@ -6,13 +6,44 @@
     <title>Luis Gilberto Insights</title>
     <meta name="description" content="Personal insights and stories exploring creativity, technology, and transformation by Luis Gilberto.">
     <meta name="author" content="Luis Gilberto">
+    
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Big+Shoulders+Display:wght@400;600;700&family=Dancing+Script:wght@400;600&display=swap" as="style">
+    <link rel="preload" href="../styles/main.css" as="style">
+    <link rel="preload" href="./building-the-hub/hero.jpg" as="image">
+    
     <!-- Favicons -->
     <link rel="icon" type="image/x-icon" href="/insights/assets/icons/favicon.ico">
     <link rel="icon" type="image/png" sizes="16x16" href="/insights/assets/icons/favicon-16x16.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/insights/assets/icons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="64x64" href="/insights/assets/icons/favicon-64x64.png">
+    
+    <!-- Styles -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Big+Shoulders+Display:wght@400;600;700&family=Dancing+Script:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles/main.css">
+    
+    <!-- Performance Optimizations -->
+    <script>
+        // Intersection Observer for lazy loading
+        document.addEventListener('DOMContentLoaded', function() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src;
+                        observer.unobserve(img);
+                    }
+                });
+            }, {
+                rootMargin: '50px 0px',
+                threshold: 0.1
+            });
+
+            // Observe all images with data-src
+            document.querySelectorAll('img[data-src]').forEach(img => observer.observe(img));
+        });
+    </script>
+    
     <style>
         * { 
             margin: 0; 
@@ -306,33 +337,140 @@
             line-height: 1.6;
         }
         
-        /* Responsive */
-        @media (max-width: 768px) {
-            .container {
-                padding: 2rem 1rem;
-            }
-            
-            .article-card {
-                padding: 2rem;
-            }
-            
-            .article-meta {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 0.5rem;
-            }
-            
-            .footer-links {
-                flex-direction: column;
-                gap: 1rem;
-            }
+        /* Spotlight Section */
+        .spotlight-section {
+            margin-bottom: 4rem;
+            background: linear-gradient(135deg, rgba(209, 112, 103, 0.1), rgba(46, 211, 198, 0.1));
+            border-radius: 30px;
+            overflow: hidden;
+            position: relative;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        /* Animations */
-        @keyframes fadeInUp {
+        .spotlight-section:hover {
+            transform: translateY(-8px);
+        }
+        
+        .spotlight-content {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 2rem;
+            padding: 3rem;
+        }
+        
+        .spotlight-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+        
+        .spotlight-text {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .spotlight-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #D17067, #2ED3C6);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            width: fit-content;
+        }
+        
+        .spotlight-title {
+            font-family: 'Big Shoulders Display', cursive;
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            background: linear-gradient(135deg, #D17067, #2ED3C6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+        }
+        
+        .spotlight-excerpt {
+            color: rgba(245, 245, 245, 0.9);
+            font-size: 1.2rem;
+            line-height: 1.7;
+            margin-bottom: 2rem;
+        }
+        
+        .spotlight-meta {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            color: rgba(245, 245, 245, 0.7);
+            font-size: 1rem;
+        }
+        
+        .spotlight-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: linear-gradient(135deg, #D17067, #2ED3C6);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .spotlight-cta:hover {
+            transform: translateX(5px);
+            box-shadow: 0 10px 25px rgba(209, 112, 103, 0.3);
+        }
+        
+        /* Article Grid Updates */
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .article-card {
+            animation: fadeInUp 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+        
+        .article-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .article-card:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        /* New/Featured Indicators */
+        .new-indicator {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: linear-gradient(135deg, #D17067, #2ED3C6);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(-10px);
+            animation: fadeInDown 0.6s ease-out forwards;
+        }
+        
+        @keyframes fadeInDown {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(-10px);
             }
             to {
                 opacity: 1;
@@ -340,6 +478,31 @@
             }
         }
         
+        /* Responsive Updates */
+        @media (max-width: 1024px) {
+            .spotlight-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .spotlight-image {
+                height: 300px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .spotlight-section {
+                margin: 2rem 1rem;
+            }
+            
+            .spotlight-content {
+                padding: 2rem;
+            }
+            
+            .articles-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         .article-card {
             animation: fadeInUp 0.6s ease-out;
         }
@@ -505,46 +668,113 @@
                 </a>
             </article>
             
-            <article class="article-card">
-                <h3><a href="./productizing-personal-experience/" class="article-title">Productizing Personal Experience</a></h3>
-                <p class="article-subtitle">From Lessons to Leverage</p>
-                
-                <div class="article-meta">
-                    <div class="meta-item">
-                        <span>📅</span>
-                        <span>October 2025</span>
-                    </div>
-                    <div class="meta-item">
-                        <span>⏱️</span>
-                        <span>6 min read</span>
-                    </div>
-                    <div class="meta-item">
-                        <span>🧭</span>
-                        <span>Systems & Process</span>
+            <section class="articles-section">
+                <!-- Spotlight Section with lazy loading -->
+                <div class="spotlight-section">
+                    <div class="spotlight-content">
+                        <div class="spotlight-image-container">
+                            <img data-src="./building-the-hub/hero.jpg" alt="Building The Hub - Design System Journey" class="spotlight-image" onload="this.classList.add('loaded')">
+                        </div>
+                        <div class="spotlight-text">
+                            <span class="spotlight-label">
+                                <span>✨</span>
+                                <span>Latest Article</span>
+                            </span>
+                            <h2 class="spotlight-title">Building The Hub</h2>
+                            <p class="spotlight-excerpt">
+                                An in-depth look at building luis-gilberto.com/TheHub, featuring an interactive timeline that reveals the evolution from initial concept to a sophisticated design system. Explore the technical decisions, creative challenges, and architectural insights that shaped this digital transformation.
+                            </p>
+                            <div class="spotlight-meta">
+                                <span>📅 March 2024</span>
+                                <span>⏱️ 10 min read</span>
+                                <span>🎨 Interactive Timeline</span>
+                            </div>
+                            <a href="./building-the-hub/" class="spotlight-cta">
+                                Read Full Article →
+                            </a>
+                        </div>
                     </div>
                 </div>
+            
+                <h2 class="section-title">More Insights</h2>
                 
-                <p class="article-description">
-                    How to turn your hard-won experience into simple, useful products—frameworks, tools, and stories that help others move faster with clarity.
-                </p>
-                
-                <div class="article-tags">
-                    <span class="tag">Product Thinking</span>
-                    <span class="tag">Systems</span>
-                    <span class="tag">Process</span>
-                    <span class="tag">Career</span>
-                    <span class="tag">Storytelling</span>
+                <div class="articles-grid">
+                    <!-- AI With Soul Article -->
+                    <article class="article-card">
+                        <h3><a href="./ai-with-soul-unlocking-blank-page/" class="article-title">AI With Soul: Unlocking the Blank Page</a></h3>
+                        <p class="article-subtitle">How AI Became a Key, Not a Replacement</p>
+                        
+                        <div class="article-meta">
+                            <div class="meta-item">
+                                <span>📅</span>
+                                <span>September 2025</span>
+                            </div>
+                            <div class="meta-item">
+                                <span>⏱️</span>
+                                <span>5 min read</span>
+                            </div>
+                            <div class="meta-item">
+                                <span>🤖</span>
+                                <span>AI & Creativity</span>
+                            </div>
+                        </div>
+                        
+                        <p class="article-description">
+                            A reflection on using AI to overcome the blank page while preserving the human soul in storytelling. Explores how AI can unlock creativity without replacing the authentic voice, empathy, and judgment that only humans can provide.
+                        </p>
+                        
+                        <div class="article-tags">
+                            <span class="tag">AI & Creativity</span>
+                            <span class="tag">Writing Process</span>
+                            <span class="tag">Storytelling</span>
+                            <span class="tag">Human Touch</span>
+                        </div>
+                        
+                        <a href="./ai-with-soul-unlocking-blank-page/" class="read-article-btn">
+                            Read Article →
+                        </a>
+                    </article>
+                    
+                    <!-- Move at Speed Article -->
+                    <article class="article-card">
+                        <h3><a href="./move-at-speed-of-what-matters/" class="article-title">Move at the Speed of What Matters</a></h3>
+                        <p class="article-subtitle">A Personal Reset</p>
+                        
+                        <div class="article-meta">
+                            <div class="meta-item">
+                                <span>📅</span>
+                                <span>January 21, 2025</span>
+                            </div>
+                            <div class="meta-item">
+                                <span>⏱️</span>
+                                <span>8 min read</span>
+                            </div>
+                            <div class="meta-item">
+                                <span>🎨</span>
+                                <span>Interactive Article</span>
+                            </div>
+                        </div>
+                        
+                        <p class="article-description">
+                            A personal story about slowing down in the age of AI acceleration and finding creative renaissance through unexpected career transitions. Features an interactive timeline showcasing the complete journey.
+                        </p>
+                        
+                        <div class="article-tags">
+                            <span class="tag">Career Transition</span>
+                            <span class="tag">AI & Productivity</span>
+                            <span class="tag">Creative Process</span>
+                            <span class="tag">Personal Growth</span>
+                        </div>
+                        
+                        <a href="./move-at-speed-of-what-matters/" class="read-article-btn">
+                            Read Article →
+                        </a>
+                    </article>
                 </div>
-                
-                <a href="./productizing-personal-experience/" class="read-article-btn">
-                    Read Article →
-                </a>
-            </article>
             
             <div class="coming-soon">
                 <h3>More Insights Coming Soon</h3>
                 <div class="coming-soon-list">
-                    • The Portfolio as Playground: Building luis-gilberto.com<br>
                     • Tools, Workflows, and Creative Systems<br>
                     • Strategy Meets Creativity: Lessons from Microsoft and Beyond<br>
                     • Building in Public: Lessons from Creative Experimentation
@@ -602,7 +832,7 @@
                 <div class="legal">&copy; <span id="yr"></span> Luis Gilberto · Built with intention.</div>
             </div>
         </footer>
-        <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+        <script.getElementById('yr').textContent = new Date().getFullYear();</script>
     </div>
 </body>
 </html>
