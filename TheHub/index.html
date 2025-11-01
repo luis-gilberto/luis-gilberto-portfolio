@@ -1581,41 +1581,36 @@
         videoUrl: './assets/components/hub-animation/coral_laser_line.mp4',
         duration: 12000,
         autoStart: true,
+        showProgress: false,
         skipOnClick: true,
         onComplete: function() {
-          // --- THE CORRECTED ANIMATION TIMELINE ---
-          // 0.0s: The coral frame appears and expands.
-          // 0.2s: The four shapes start flying through the frame towards the user.
-          // 1.5s: The main page content (with the orbital hero) begins to fade in.
-          // 2.0s: The intro frame and flying shapes begin to fade out.
-          // 3.0s: The intro animation system is completely hidden.
+          // This is the new 2-second hold on the Hub logo.
+          setTimeout(() => {
+            
+            // This is the CORRECT fly-through-the-frame logic that was accidentally deleted.
+            revealSystem.style.opacity = '1';
 
-          revealSystem.style.opacity = '1';
+            setTimeout(() => {
+              revealSystem.classList.add('is-revealing-frame');
+            }, 0);
 
-          // Trigger the frame first
-          setTimeout(() => {
-            revealSystem.classList.add('is-revealing-frame');
-          }, 0);
+            setTimeout(() => {
+              revealSystem.classList.add('is-revealing-shapes');
+            }, 200);
+            
+            setTimeout(() => {
+              showContentAndFinalShapes();
+            }, 1500);
+            
+            setTimeout(() => {
+              revealSystem.classList.add('is-fading-out');
+            }, 2000);
 
-          // Then trigger the shapes to fly through it
-          setTimeout(() => {
-            revealSystem.classList.add('is-revealing-shapes');
-          }, 200);
-          
-          // Show the main page content after the fly-through has started
-          setTimeout(() => {
-            showContentAndFinalShapes();
-          }, 1500);
-          
-          // Begin fading out the entire intro system
-          setTimeout(() => {
-            revealSystem.classList.add('is-fading-out');
-          }, 2000);
+            setTimeout(() => {
+              revealSystem.style.display = 'none';
+            }, 3000);
 
-          // Finally, remove the intro system from the display
-          setTimeout(() => {
-            revealSystem.style.display = 'none';
-          }, 3000);
+          }, 2000); // 2000 milliseconds = 2 second delay before the handoff starts
         }
       });
 
