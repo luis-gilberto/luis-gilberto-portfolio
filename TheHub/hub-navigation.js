@@ -198,24 +198,50 @@ class HubSystem {
                     flex-direction: column;
                     align-items: center;
                     justify-content: center;
-                    gap: 6px; /* distinct separation between lines */
+                    gap: 8px; /* increased separation for better visibility */
                     background: none;
                     border: none;
-                    padding: 0.5rem;
+                    padding: 0.75rem;
                     cursor: pointer;
+                    width: 48px; /* fixed width for better touch target */
+                    height: 48px; /* fixed height for better touch target */
+                    border-radius: 8px;
+                    transition: background-color 0.3s ease;
+                    position: relative;
+                    z-index: 1002; /* ensure it stays above the mobile menu */
+                }
+
+                .hub-nav-mobile-toggle:hover {
+                    background: rgba(255, 255, 255, 0.05);
                 }
 
                 .hub-nav-hamburger {
                     display: block;
-                    width: 24px;
-                    height: 3px; /* thicker for clarity on mobile/tablet */
+                    width: 28px; /* increased width */
+                    height: 2px; /* reduced height for elegance */
                     background: white;
-                    border-radius: 2px; /* rounded ends to avoid dash look */
-                    transition: all 0.3s ease;
-                    transform-origin: center; /* align rotations cleanly */
+                    border-radius: 4px;
+                    transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1),
+                              opacity 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+                    transform-origin: center;
+                    position: relative;
                 }
 
-                /* UPDATED: Full-screen mobile drawer overlay */
+                /* Hamburger animation states */
+                .hub-nav-mobile-toggle[aria-expanded="true"] .hub-nav-hamburger:nth-child(1) {
+                    transform: translateY(10px) rotate(45deg);
+                }
+
+                .hub-nav-mobile-toggle[aria-expanded="true"] .hub-nav-hamburger:nth-child(2) {
+                    opacity: 0;
+                    transform: scale(0);
+                }
+
+                .hub-nav-mobile-toggle[aria-expanded="true"] .hub-nav-hamburger:nth-child(3) {
+                    transform: translateY(-10px) rotate(-45deg);
+                }
+
+                /* Full-screen mobile menu overlay with glassmorphism */
                 .hub-nav-mobile-menu {
                     position: fixed;
                     top: 0;
@@ -223,16 +249,18 @@ class HubSystem {
                     width: 100vw;
                     height: 100vh;
                     z-index: 1001;
-                    background: rgba(12, 12, 12, 0.96); /* darker, less transparent */
-                    backdrop-filter: blur(20px);
-                    -webkit-backdrop-filter: blur(20px);
+                    background: rgba(10, 10, 10, 0.98);
+                    backdrop-filter: blur(20px) saturate(180%);
+                    -webkit-backdrop-filter: blur(20px) saturate(180%);
                     opacity: 0;
                     visibility: hidden;
                     pointer-events: none;
-                    transition: opacity 0.25s ease, visibility 0.25s ease;
+                    transition: opacity 0.3s cubic-bezier(0.4, 0.0, 0.2, 1),
+                              visibility 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
                     display: flex;
                     align-items: center;
                     justify-content: center;
+                    padding-top: 85px; /* account for header height */
                 }
 
                 .hub-nav-mobile-menu.open {
@@ -241,62 +269,106 @@ class HubSystem {
                     pointer-events: auto;
                 }
 
-                /* UPDATED: Evenly distributed layout and doubled sizes */
+                /* Mobile menu content with improved layout */
                 .hub-nav-mobile-content {
                     width: 100%;
-                    height: 100%;
+                    height: calc(100% - 85px); /* account for header */
                     max-width: 720px;
                     margin: 0 auto;
                     padding: 2rem;
                     display: flex;
                     flex-direction: column;
-                    justify-content: space-evenly; /* evenly spaced items */
+                    justify-content: center;
                     align-items: center;
-                    gap: 0;
+                    gap: 1.5rem;
+                    animation: slideUp 0.4s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+                }
+
+                @keyframes slideUp {
+                    from {
+                        opacity: 0;
+                        transform: translateY(20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
                 }
 
                 .hub-nav-mobile-link {
                     display: flex;
                     align-items: center;
-                    gap: 1.25rem; /* slightly larger gap */
-                    padding: 2rem; /* doubled from 1rem */
+                    gap: 1.5rem;
+                    padding: 1.5rem;
                     color: white;
                     text-decoration: none;
-                    border-radius: 16px; /* larger radius for bigger cards */
-                    transition: all 0.25s ease;
-                    border: 1px solid rgba(255, 255, 255, 0.10);
+                    border-radius: 16px;
+                    background: rgba(255, 255, 255, 0.03);
+                    border: 1px solid rgba(255, 255, 255, 0.08);
                     width: min(90vw, 520px);
+                    transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
                     will-change: transform;
+                    position: relative;
+                    overflow: hidden;
+                }
+
+                .hub-nav-mobile-link::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: linear-gradient(135deg, rgba(249, 111, 110, 0.1) 0%, rgba(46, 211, 198, 0.1) 100%);
+                    opacity: 0;
+                    transition: opacity 0.3s ease;
                 }
 
                 .hub-nav-mobile-link:hover {
-                    background: rgba(255, 255, 255, 0.06);
-                    border-color: rgba(226, 93, 82, 0.35); /* brand coral accent */
+                    transform: translateY(-2px);
+                    border-color: #f96f6e;
+                    box-shadow: 0 8px 32px rgba(249, 111, 110, 0.15);
+                }
+
+                .hub-nav-mobile-link:hover::before {
+                    opacity: 1;
                 }
 
                 .hub-nav-mobile-contact {
-                    background: rgba(226, 93, 82, 0.12); /* match brand coral tone */
-                    border-color: #E25D52; /* brand coral */
+                    background: rgba(249, 111, 110, 0.1);
+                    border-color: #f96f6e;
                 }
 
                 .hub-nav-mobile-link img {
-                    width: 48px; /* doubled from 24px */
-                    height: 48px; /* doubled from 24px */
+                    width: 36px;
+                    height: 36px;
                     filter: brightness(0) invert(1);
-                    image-rendering: -webkit-optimize-contrast; /* improve crispness on WebKit */
-                    image-rendering: crisp-edges; /* hint sharper scaling */
+                    transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+                    position: relative;
+                    z-index: 1;
                 }
 
-                /* Preserve StrategyIQ prominence with doubled scale */
+                .hub-nav-mobile-link:hover img {
+                    transform: scale(1.1) rotate(5deg);
+                }
+
+                /* Special treatment for StrategyIQ icon */
                 .hub-nav-mobile-link img[alt="StrategyIQ"] {
-                    width: 60px; /* doubled from 30px */
-                    height: 60px; /* doubled from 30px */
+                    width: 48px;
+                    height: 48px;
                 }
 
                 .hub-nav-mobile-link span {
-                    font-weight: 600; /* slightly bolder for readability */
-                    font-size: 1.25rem; /* increase text size */
+                    font-weight: 600;
+                    font-size: 1.125rem;
                     line-height: 1.2;
+                    position: relative;
+                    z-index: 1;
+                    background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.8) 100%);
+                    -webkit-background-clip: text;
+                    background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    transition: all 0.3s ease;
                 }
 
                 /* Mobile/Tablet Styles */
@@ -458,73 +530,105 @@ class HubSystem {
         // Mobile menu toggle
         const toggle = document.getElementById('hubNavToggle');
         const mobileMenu = document.getElementById('hubNavMobileMenu');
+        const mobileContent = mobileMenu?.querySelector('.hub-nav-mobile-content');
         
         if (toggle && mobileMenu) {
-            toggle.addEventListener('click', () => {
-                this.isMenuOpen = !this.isMenuOpen;
-                mobileMenu.classList.toggle('open', this.isMenuOpen);
-                document.body.classList.toggle('hub-mobile-open', this.isMenuOpen);
+            // Initialize ARIA attributes
+            toggle.setAttribute('aria-expanded', 'false');
+            toggle.setAttribute('aria-controls', 'hubNavMobileMenu');
+            mobileMenu.setAttribute('aria-hidden', 'true');
+            
+            const toggleMenu = (open = !this.isMenuOpen) => {
+                this.isMenuOpen = open;
                 
-                // Animate hamburger
-                const hamburgers = toggle.querySelectorAll('.hub-nav-hamburger');
-                if (this.isMenuOpen) {
-                    hamburgers[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
-                    hamburgers[1].style.opacity = '0';
-                    hamburgers[2].style.transform = 'rotate(-45deg) translate(7px, -6px)';
-                } else {
-                    hamburgers[0].style.transform = 'none';
-                    hamburgers[1].style.opacity = '1';
-                    hamburgers[2].style.transform = 'none';
+                // Update menu state
+                mobileMenu.classList.toggle('open', open);
+                document.body.classList.toggle('hub-mobile-open', open);
+                
+                // Update ARIA attributes
+                toggle.setAttribute('aria-expanded', open.toString());
+                mobileMenu.setAttribute('aria-hidden', (!open).toString());
+                
+                // Animate mobile links
+                const links = mobileMenu.querySelectorAll('.hub-nav-mobile-link');
+                links.forEach((link, index) => {
+                    if (open) {
+                        link.style.opacity = '0';
+                        link.style.transform = 'translateY(20px)';
+                        setTimeout(() => {
+                            link.style.transition = 'all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1)';
+                            link.style.opacity = '1';
+                            link.style.transform = 'translateY(0)';
+                        }, 50 + (index * 50));
+                    }
+                });
+            };
+
+            // Toggle menu on button click
+            toggle.addEventListener('click', () => toggleMenu());
+
+            // Close menu when clicking outside
+            mobileMenu.addEventListener('click', (e) => {
+                if (e.target === mobileMenu && this.isMenuOpen) {
+                    toggleMenu(false);
                 }
             });
 
-            // NEW: Close drawer when clicking overlay outside content
-            mobileMenu.addEventListener('click', (e) => {
-                const content = mobileMenu.querySelector('.hub-nav-mobile-content');
-                if (e.target === mobileMenu && this.isMenuOpen) {
-                    toggle.click();
-                }
+            // Prevent clicks inside menu from bubbling to overlay
+            mobileContent?.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+
+            // Close menu when clicking links
+            const mobileLinks = mobileMenu.querySelectorAll('.hub-nav-mobile-link');
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (this.isMenuOpen) {
+                        toggleMenu(false);
+                    }
+                });
             });
         }
 
-        // Close mobile menu when clicking links
-        const mobileLinks = document.querySelectorAll('.hub-nav-mobile-link');
-        mobileLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                if (this.isMenuOpen) {
-                    toggle.click();
-                }
-            });
-        });
-
-        // Scroll effect for navigation
+        // Scroll effect for navigation with throttling
         let lastScrollY = window.scrollY;
+        let ticking = false;
         const nav = document.getElementById('hubNav');
         
         window.addEventListener('scroll', () => {
-            const currentScrollY = window.scrollY;
-            
-            if (currentScrollY > 50) {
-                nav.classList.add('scrolled');
-            } else {
-                nav.classList.remove('scrolled');
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    const currentScrollY = window.scrollY;
+                    
+                    if (currentScrollY > 50) {
+                        nav?.classList.add('scrolled');
+                    } else {
+                        nav?.classList.remove('scrolled');
+                    }
+                    
+                    lastScrollY = currentScrollY;
+                    ticking = false;
+                });
+                ticking = true;
             }
-            
-            lastScrollY = currentScrollY;
         });
 
-        // Close mobile menu on resize
+        // Close mobile menu on resize with debouncing
+        let resizeTimer;
         window.addEventListener('resize', () => {
-            this.isMobile = window.innerWidth <= 768;
-            if (!this.isMobile && this.isMenuOpen) {
-                toggle.click();
-            }
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                this.isMobile = window.innerWidth <= 768;
+                if (!this.isMobile && this.isMenuOpen) {
+                    toggleMenu(false);
+                }
+            }, 100);
         });
 
         // Close mobile menu on escape key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && this.isMenuOpen) {
-                toggle.click();
+                toggleMenu(false);
             }
         });
     }

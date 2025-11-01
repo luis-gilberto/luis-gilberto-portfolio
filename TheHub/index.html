@@ -73,8 +73,92 @@
         .nav-item.active { color: var(--text-primary); border-color: rgba(46,211,198,0.5); background: rgba(46,211,198,0.10); }
         .nav-icon { width: 24px; height: 24px; }
         .nav-label { font-weight: 600; font-size: 0.95rem; }
-        .mobile-toggle { display: none; /* Mobile styles needed */ }
-        @media (max-width: 1024px) { .header-nav { display: none; } .mobile-toggle { display: inline-flex; } /* etc. */ }
+        .mobile-toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            z-index: 1001;
+        }
+        
+        .mobile-toggle span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background-color: var(--text-primary);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: left center;
+        }
+        
+        .mobile-toggle.active span:nth-child(1) {
+            transform: rotate(45deg);
+            width: 28px;
+        }
+        
+        .mobile-toggle.active span:nth-child(2) {
+            opacity: 0;
+            transform: translateX(-10px);
+        }
+        
+        .mobile-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg);
+            width: 28px;
+        }
+        
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(8, 8, 10, 0.95);
+            backdrop-filter: blur(16px);
+            z-index: 1000;
+            padding: 80px 2rem 2rem;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .mobile-menu.active {
+            display: block;
+            opacity: 1;
+        }
+        
+        .mobile-menu .nav-item {
+            display: flex;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .mobile-menu.active .nav-item {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .mobile-menu .nav-item:nth-child(1) { transition-delay: 0.1s; }
+        .mobile-menu .nav-item:nth-child(2) { transition-delay: 0.15s; }
+        .mobile-menu .nav-item:nth-child(3) { transition-delay: 0.2s; }
+        .mobile-menu .nav-item:nth-child(4) { transition-delay: 0.25s; }
+        .mobile-menu .nav-item:nth-child(5) { transition-delay: 0.3s; }
+        
+        @media (max-width: 1024px) {
+            .header-nav {
+                display: none;
+            }
+            .mobile-toggle {
+                display: flex;
+            }
+        }
 
         /* ==========================================
            HERO SECTION & ORBITAL ANIMATION
@@ -864,7 +948,67 @@
             </nav>
             <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle mobile menu" aria-expanded="false"><span></span><span></span><span></span></button>
         </div>
+        <div class="mobile-menu" id="mobileMenu">
+            <nav class="mobile-nav">
+                <a href="/TheHub/index.html" class="nav-item active"><img src="./advisory/assets/Home_Simple_100x100.png" alt="Home" class="nav-icon"><span class="nav-label">Home</span></a>
+                <a href="./IMCServices/" class="nav-item"><img src="./advisory/assets/IMC_Services_Simple_100x100.png" alt="Services" class="nav-icon"><span class="nav-label">Services</span></a>
+                <a href="./advisory/" class="nav-item"><img src="./advisory/assets/Advisory_Simple_100x100.png" alt="Advisory" class="nav-icon"><span class="nav-label">Advisory</span></a>
+                <a href="./scopeiq/" class="nav-item"><img src="./advisory/assets/ScopeIQ_Clean_Telescope_100x100.png" alt="ScopeIQ" class="nav-icon"><span class="nav-label">ScopeIQ</span></a>
+                <a href="./strategyiq/" class="nav-item"><img src="./advisory/assets/StrategyIQ_Simple_100x100.png" alt="StrategyIQ" class="nav-icon"><span class="nav-label">StrategyIQ</span></a>
+            </nav>
+        </div>
     </header>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileToggle = document.getElementById('mobileToggle');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const body = document.body;
+
+            function toggleMenu() {
+                const isExpanded = mobileToggle.getAttribute('aria-expanded') === 'true';
+                mobileToggle.classList.toggle('active');
+                mobileMenu.classList.toggle('active');
+                mobileToggle.setAttribute('aria-expanded', !isExpanded);
+                body.style.overflow = isExpanded ? '' : 'hidden';
+            }
+
+            mobileToggle.addEventListener('click', toggleMenu);
+
+            // Close menu when clicking outside
+            document.addEventListener('click', function(e) {
+                if (mobileMenu.classList.contains('active') &&
+                    !mobileMenu.contains(e.target) &&
+                    !mobileToggle.contains(e.target)) {
+                    toggleMenu();
+                }
+            });
+
+            // Close menu when clicking a link
+            const mobileLinks = mobileMenu.querySelectorAll('a');
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', toggleMenu);
+            });
+
+            // Close menu on escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
+                    toggleMenu();
+                }
+            });
+
+            // Handle resize
+            let resizeTimer;
+            window.addEventListener('resize', function() {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function() {
+                    if (window.innerWidth > 1024 && mobileMenu.classList.contains('active')) {
+                        toggleMenu();
+                    }
+                }, 250);
+            });
+        });
+    </script>
 
         <main>
             <section class="hero" id="home">
@@ -995,7 +1139,7 @@
        <div class="footer-brand"> 
          <div class="footer-logo"> 
            <a href="index.html" aria-label="The Hub Home"> 
-             <img src="./advisory/assets/dual_logo-lockup_and_tagline.svg" alt="Luis Gilberto + The Hub" /> 
+             <img src="./advisory/assets/DUA.svg" alt="Luis Gilberto + The Hub" /> 
            </a> 
          </div> 
          <p class="footer-tagline"> 
