@@ -123,23 +123,12 @@
                 linear-gradient(180deg, #0B0B0B 0%, #0D0D0D 70%, #0B0B0B 100%);
         }
 
-        #services-hero.hero::before,
-        #services-hero.hero::after {
-            content: none !important;
-            display: none !important;
-        }
+        /* Remove previous overrides that disabled hero ::before/::after */
+        /* (Unified with advisory watermark approach) */
 
         /* ULTRA-SIMPLE FIX: Fixed atom placement with explicit pixels + override size/opacity/transform */
-        .hero-icon-wrapper {
-            position: fixed !important;
-            right: 100px !important; /* 100 pixels from RIGHT edge */
-            top: 50% !important;
-            margin-top: -300px !important; /* Centers it vertically */
-            width: 600px !important;        /* ADD THIS */
-            height: 600px !important;       /* ADD THIS */
-            opacity: 0.08 !important;       /* ADD THIS */
-            transform: none !important;     /* ADD THIS */
-        }
+        /* Hide legacy icon wrapper to avoid duplication; watermark uses ::before */
+        .hero-icon-wrapper { display: none !important; }
 
         .hero-icon {
             width: 100%;
@@ -180,6 +169,59 @@
         .hero h1,
         .hero .hero-title {
             text-shadow: 0 2px 20px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Advisory-style watermark treatment replicated exactly */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 20%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background-image: url('../advisory/assets/hero-compass.png'); /* same asset and tint as advisory */
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.08;
+            transform: rotate(15deg);
+            pointer-events: none;
+            z-index: 0;
+            animation: gentle-rotate 120s linear infinite;
+            mask-image: radial-gradient(
+                circle at center,
+                rgba(0,0,0,1) 0%,
+                rgba(0,0,0,0.8) 40%,
+                rgba(0,0,0,0.4) 70%,
+                rgba(0,0,0,0.1) 85%,
+                transparent 100%
+            );
+            -webkit-mask-image: radial-gradient(
+                circle at center,
+                rgba(0,0,0,1) 0%,
+                rgba(0,0,0,0.8) 40%,
+                rgba(0,0,0,0.4) 70%,
+                rgba(0,0,0,0.1) 85%,
+                transparent 100%
+            );
+        }
+        .hero > * { position: relative; z-index: 10; }
+
+        /* Responsive watermark sizing (identical to advisory) */
+        @media (max-width: 768px) {
+            .hero::before {
+                width: 400px;
+                height: 400px;
+                right: -20%;
+                opacity: 0.06;
+            }
+        }
+        @media (max-width: 480px) {
+            .hero::before {
+                width: 300px;
+                height: 300px;
+                opacity: 0.05;
+            }
         }
 
         /* Responsive */
@@ -2092,6 +2134,5 @@
 </script>
 </body>
 </html>
-
 
 

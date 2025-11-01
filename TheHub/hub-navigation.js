@@ -340,6 +340,11 @@ class HubSystem {
     }
 
     createFooter() {
+        // If a footer already exists on the page, don't inject another one
+        if (document.querySelector('.hub-footer')) {
+            return;
+        }
+
         // Compute base prefix to work under both /TheHub (root-served) and TheHub-only (folder-served) dev servers
         const basePrefix = window.location.pathname.startsWith('/TheHub/') ? '/TheHub/' : '/';
     
