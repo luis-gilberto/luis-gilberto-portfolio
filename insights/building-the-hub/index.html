@@ -1,1308 +1,597 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Building The Hub | Luis Gilberto Insights</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700&display=swap" rel="stylesheet">
-  <style>
-    /* ==================== BASE STYLES ==================== */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-      background: linear-gradient(135deg,#1a1a1a 0%,#2a2a2a 100%);
-      color: #f5f5f5; line-height: 1.7; min-height: 100vh; overflow-x: hidden;
-    }
-
-    /* ==================== BRAND HEADER ==================== */
-    .brand-header { 
-      position: fixed; top: 20px; left: 20px; z-index: 1000;
-      display: inline-flex; align-items: center; gap: 8px; padding: 8px; 
-      background: rgba(26,26,26,0.9); border: 1px solid rgba(249,111,110,0.2); 
-      border-radius: 12px; backdrop-filter: blur(10px); transition: all 0.3s ease; 
-    }
-    .brand-header:hover { 
-      background: rgba(26,26,26,0.95); border-color: rgba(249,111,110,0.4); 
-      transform: translateY(-2px); box-shadow: 0 8px 25px rgba(249,111,110,0.2); 
-    }
-    .brand-logo { width: 32px; height: 32px; display: block; transition: transform 0.3s ease; }
-    .brand-header:hover .brand-logo { transform: scale(1.1); }
-
-    /* ==================== PROGRESS BAR ==================== */
-    .progress-container { 
-      position: fixed; top: 0; left: 0; width: 100%; height: 4px; 
-      background: rgba(249,111,110,0.2); z-index: 999; 
-    }
-    .progress-bar { 
-      height: 100%; background: linear-gradient(90deg,#F96F6E,#ff8a89); 
-      width: 0%; transition: width 0.2s ease; 
-    }
-
-    /* ==================== LAYOUT STRUCTURE ==================== */
-    .article-container { 
-      max-width: 1400px; margin: 0 auto; padding: 72px 1.25rem 6rem; 
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Building The Hub | Luis Gilberto</title>
+    <meta name="description" content="From Microsoft strategist to systems architect - A journey of building The Hub">
+    <meta name="author" content="Luis Gilberto">
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="article:published_time" content="2024-11-01">
+    <meta name="article:author" content="Luis Gilberto">
+    <meta name="article:section" content="Insights">
+    <meta name="keywords" content="strategic transition, system design, entrepreneurship, Microsoft, brand strategy">
     
-    /* 3-COLUMN GRID: Left Margin (20%) | Content (60%) | Right Margin (20%) */
-    .page-grid {
-      display: grid;
-      grid-template-columns: 1fr 3fr 1fr;
-      gap: 2rem;
-      align-items: start;
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": "Building The Hub",
+        "description": "From Microsoft strategist to systems architect - A journey of building The Hub",
+        "author": {
+            "@type": "Person",
+            "name": "Luis Gilberto",
+            "url": "https://luis-gilberto.com"
+        },
+        "publisher": {
+            "@type": "Person",
+            "name": "Luis Gilberto",
+            "url": "https://luis-gilberto.com"
+        },
+        "datePublished": "2024-11-01",
+        "dateModified": "2024-11-01",
+        "url": "https://luis-gilberto.com/insights/building-the-hub/",
+        "image": "https://luis-gilberto.com/assets/Components/3.png",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https://luis-gilberto.com/insights/building-the-hub/"
+        },
+        "articleSection": "Insights",
+        "keywords": ["strategic transition", "system design", "entrepreneurship", "Microsoft", "brand strategy"]
     }
+    </script>
     
-    .left-margin { 
-      position: sticky; top: 100px; 
-      display: flex; flex-direction: column; gap: 1.5rem;
-    }
-    .content-area { 
-      /* Main content column */ 
-    }
-    .right-margin { 
-      position: sticky; top: 100px;
-      display: flex; flex-direction: column; gap: 1.5rem;
-    }
-
-    /* ==================== PAGE SYSTEM ==================== */
-    .page { 
-      display: none; position: relative; min-height: calc(100vh - 180px); 
-      animation: slideIn 420ms ease both; 
-    }
-    .page.active { display: block; }
-    @keyframes slideIn { 
-      from { opacity: 0; transform: translateY(18px); } 
-      to { opacity: 1; transform: translateY(0); } 
-    }
-
-    /* Progressive tightening for viewport fit */
-    .page.fit-1 h1 { font-size: 2.4rem; }
-    .page.fit-1 h2 { font-size: 1.9rem; }
-    .page.fit-1 .section { margin: 1.2rem 0; }
-    .page.fit-1 p { margin-bottom: 0.8rem; }
-
-    .page.fit-2 h1 { font-size: 2.2rem; }
-    .page.fit-2 h2 { font-size: 1.7rem; }
-    .page.fit-2 .section { margin: 0.9rem 0; }
-    .page.fit-2 p { margin-bottom: 0.7rem; }
-
-    /* ==================== TYPOGRAPHY ==================== */
-    h1 { 
-      font-family: 'Big Shoulders Display', cursive; font-size: 2.8rem; 
-      font-weight: 700; margin-bottom: 1rem;
-      background: linear-gradient(135deg,#F96F6E,#ffffff); 
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
-      background-clip: text; 
-    }
-    h2 { 
-      font-family: 'Big Shoulders Display', cursive; font-size: 2rem; 
-      font-weight: 600; color: #F96F6E; margin: 1.5rem 0 0.75rem; 
-    }
-    h3 {
-      font-family: 'Big Shoulders Display', cursive; font-size: 1.4rem;
-      font-weight: 600; color: #2ed3c6; margin: 1rem 0 0.5rem;
-    }
-    p { color: #e8e8e8; margin: 0 0 1rem; font-size: 1.05rem; }
-    .byline { 
-      margin-bottom: 1.5rem; padding-bottom: 0.75rem; 
-      border-bottom: 1px solid rgba(255,255,255,0.2); 
-      color: rgba(245,245,245,0.85); 
-    }
-    .opening { 
-      font-size: 1.15rem; color: rgba(245,245,245,0.85); 
-      font-style: italic; text-align: center; max-width: 65ch; 
-      margin: 1.5rem auto 2rem; line-height: 1.6;
-    }
-
-    /* Mobile and Tablet Styles for Opening Paragraph */
-    @media (max-width: 1024px) {
-      .opening {
-        max-width: 90%;
-        margin: 1.25rem auto 1.75rem;
-      }
-    }
-
-    @media (max-width: 767px) {
-      .opening {
-        font-size: 1.05rem;
-        max-width: 95%;
-        margin: 1rem auto 1.5rem;
-        line-height: 1.65;
-      }
-    }
-
-    /* ==================== CONTENT COMPONENTS ==================== */
-    .section { margin: 1.5rem 0; }
-    .coral { color: #F96F6E; }
-    .teal { color: #2ed3c6; }
-    .gradient { 
-      background: linear-gradient(90deg,#F96F6E,#2ed3c6); 
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
-      background-clip: text; 
-    }
-
-    /* Brand-aligned hyperlinks with better contrast */
-    a {
-      color: #F96F6E;
-      text-decoration: none;
-      border-bottom: 1px solid rgba(249, 111, 110, 0.3);
-      transition: all 0.2s ease;
-      padding-bottom: 1px;
-    }
-    a:hover {
-      color: #ff8a89;
-      border-bottom-color: #F96F6E;
-    }
-    a:focus-visible {
-      outline: 2px solid #F96F6E;
-      outline-offset: 2px;
-      border-radius: 2px;
-    }
-
-    /* Hero Icon (3D sophisticated icons) */
-    .hero-icon {
-      width: 120px; height: 120px; margin: 0 auto 2rem;
-      display: block; filter: drop-shadow(0 10px 30px rgba(249,111,110,0.3));
-    }
-
-    /* Margin Icons (flat simple icons) */
-    .margin-icon {
-      width: 48px; height: 48px; opacity: 0.9;
-      transition: all 0.3s ease;
-    }
-    .margin-icon:hover { opacity: 1; transform: scale(1.05); }
-
-    /* Timeline Component (Left Margin) */
-    .timeline {
-      background: rgba(42,42,42,0.4); border: 1px solid rgba(249,111,110,0.1);
-      border-radius: 12px; padding: 1.5rem 1rem;
-    }
-    .timeline-title {
-      font-family: 'Big Shoulders Display', cursive; font-size: 1rem;
-      color: #F96F6E; margin-bottom: 1rem; text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .timeline-item {
-      position: relative; padding-left: 1.5rem; margin-bottom: 1.5rem;
-    }
-    .timeline-item::before {
-      content: ''; position: absolute; left: 0; top: 6px;
-      width: 10px; height: 10px; border-radius: 50%;
-      background: #F96F6E; box-shadow: 0 0 10px rgba(249,111,110,0.5);
-    }
-    .timeline-item::after {
-      content: ''; position: absolute; left: 4px; top: 16px;
-      width: 2px; height: calc(100% + 10px);
-      background: linear-gradient(180deg, #F96F6E 0%, transparent 100%);
-    }
-    .timeline-item:last-child::after { display: none; }
-    .timeline-year {
-      font-weight: 700; color: #2ed3c6; font-size: 0.9rem;
-      display: block; margin-bottom: 0.25rem;
-    }
-    .timeline-event {
-      font-size: 0.85rem; color: rgba(245,245,245,0.8); line-height: 1.4;
-    }
-
-    /* ===== Timeline Option A: Minimal ===== */
-    .timeline.timeline--minimal {
-      background: rgba(42,42,42,0.25);            /* slightly lighter background */
-      border: 1px solid rgba(249,111,110,0.12);    /* softer border */
-    }
-    .timeline.timeline--minimal .timeline-title {
-      color: #F96F6E;
-      letter-spacing: 0.08em;
-    }
-    .timeline.timeline--minimal .timeline-item {
-      padding-left: 0;               /* remove dot indent */
-      margin: 0 0 1.1rem 0;
-    }
-    .timeline.timeline--minimal .timeline-item::before,
-    .timeline.timeline--minimal .timeline-item::after {
-      content: none !important;      /* remove coral dot + vertical glow line */
-    }
-    .timeline.timeline--minimal .timeline-year {
-      display: block;
-      font-weight: 700;
-      font-size: 0.92rem;
-      color: #eaeaea;                 /* neutral date */
-      margin-bottom: 0.15rem;
-    }
-    .timeline.timeline--minimal .timeline-event {
-      font-size: 0.86rem;
-      color: rgba(245,245,245,0.82);
-    }
-
-    /* Tighten on mobile to keep it elegant */
-    @media (max-width: 768px) {
-      .timeline.timeline--minimal .timeline-item { margin-bottom: 0.9rem; }
-      .timeline.timeline--minimal .timeline-year  { font-size: 0.9rem; }
-      .timeline.timeline--minimal .timeline-event { font-size: 0.84rem; }
-    }
-
-    /* Stat Callout (Right Margin) */
-    .stat-callout {
-      background: rgba(249,111,110,0.1); border: 1px solid rgba(249,111,110,0.3);
-      border-radius: 12px; padding: 1.25rem; text-align: center;
-    }
-    .stat-number {
-      font-family: 'Big Shoulders Display', cursive; font-size: 2rem;
-      color: #F96F6E; display: block; margin-bottom: 0.5rem;
-    }
-    .stat-label {
-      font-size: 0.85rem; color: rgba(245,245,245,0.7); line-height: 1.3;
-    }
-
-    /* Comparison Boxes (Left Margin) */
-    .comparison {
-      display: flex; flex-direction: column; gap: 1rem;
-    }
-    .comparison-box {
-      background: rgba(42,42,42,0.4); border: 1px solid rgba(249,111,110,0.1);
-      border-radius: 8px; padding: 1rem;
-    }
-    .comparison-box.corporate { border-color: rgba(249,111,110,0.3); }
-    .comparison-box.hub { border-color: rgba(46,211,198,0.3); }
-    .comparison-title {
-      font-family: 'Big Shoulders Display', cursive; font-size: 0.95rem;
-      margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px;
-    }
-    .comparison-box.corporate .comparison-title { color: #F96F6E; }
-    .comparison-box.hub .comparison-title { color: #2ed3c6; }
-    .comparison-list {
-      list-style: none; font-size: 0.8rem; color: rgba(245,245,245,0.75);
-    }
-    .comparison-list li {
-      padding-left: 1rem; position: relative; margin-bottom: 0.35rem;
-    }
-    .comparison-list li::before {
-      content: '—'; position: absolute; left: 0; color: #F96F6E;
-    }
-
-    /* Hub Cards */
-    .hub-card {
-      min-height: 220px;
-      min-width: 280px;
-      background: rgba(42,42,42,0.95);
-      border: 1px solid rgba(249,111,110,0.1);
-      border-radius: 12px;
-      padding: 2rem;
-      transition: all 0.3s ease;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      cursor: pointer;
-      position: relative;
-      touch-action: manipulation;
-      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-    }
-
-    .hub-card::before {
-      content: '';
-      position: absolute;
-      top: -10px;
-      left: -10px;
-      right: -10px;
-      bottom: -10px;
-      z-index: 1;
-    }
-    .hub-card:hover {
-      border-color: rgba(249,111,110,0.4);
-      transform: translateY(-4px);
-      box-shadow: 0 10px 30px rgba(249,111,110,0.2);
-    }
-    .hub-card:focus-visible {
-      outline: 3px solid #F96F6E;
-      outline-offset: 4px;
-      border-radius: 12px;
-    }
-    .hub-card:focus {
-      transform: translateY(-4px);
-      border-color: rgba(249,111,110,0.4);
-      box-shadow: 0 10px 30px rgba(249,111,110,0.3);
-    }
-    .hub-card-icon {
-      width: 64px;
-      height: 64px;
-      margin-bottom: 1.5rem;
-      position: relative;
-      z-index: 2;
-      loading: lazy;
-      decoding: async;
-    }
-    .hub-card h3 {
-      font-family: 'Big Shoulders Display', cursive;
-      font-size: clamp(1.25rem, 3vw, 1.5rem);
-      margin-bottom: 0.75rem;
-      color: rgba(255,255,255,0.95);
-      position: relative;
-      z-index: 2;
-    }
-    .hub-card p {
-      font-size: clamp(0.9rem, 2vw, 1rem);
-      color: rgba(245,245,245,0.95);
-      margin: 0;
-      position: relative;
-      z-index: 2;
-      line-height: 1.6;
-    }
-
-    @media (max-width: 480px) {
-      .hub-card {
-        padding: 1.75rem;
-        min-height: 200px;
-      }
-      
-      .hub-card-icon {
-        width: 56px;
-        height: 56px;
-        margin-bottom: 1.25rem;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .hub-card {
-        transition: none;
-      }
-      .hub-card:hover,
-      .hub-card:focus {
-        transform: none;
-        box-shadow: none;
-      }
-    }
-
-    /* Marginalia Note (Right Margin) */
-    .marginalia {
-      background: rgba(46,211,198,0.05); border-left: 3px solid #2ed3c6;
-      padding: 1rem; border-radius: 0 8px 8px 0; font-style: italic;
-      font-size: 0.9rem; color: rgba(245,245,245,0.8); line-height: 1.5;
-    }
-
-    /* Pull Quote */
-    .pull-quote { 
-      font-style: italic; text-align: center; 
-      background: rgba(249,111,110,0.1); border-left: 4px solid #F96F6E; 
-      padding: 1.5rem; margin: 2rem 0; border-radius: 0 8px 8px 0; 
-      font-size: 1.1rem; color: rgba(245,245,245,0.9);
-    }
-
-    /* Hub Arms Grid */
-    .hub-arms {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(280px, 1fr));
-      gap: 2rem;
-      margin: 3rem 0;
-      justify-content: center;
-    }
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://luisgilberto.com/insights/building-the-hub/">
+    <meta property="og:title" content="Building The Hub">
+    <meta property="og:description" content="From Microsoft strategist to systems architect - A journey of building The Hub">
+    <meta property="og:image" content="https://luis-gilberto.com/assets/Components/3.png">
     
-    @media (max-width: 1024px) {
-      .hub-arms {
-        gap: 1.75rem;
-        margin: 2.5rem 0;
-      }
-    }
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://luisgilberto.com/insights/building-the-hub/">
+    <meta property="twitter:title" content="Building The Hub">
+    <meta property="twitter:description" content="From Microsoft strategist to systems architect - A journey of building The Hub">
+    <meta property="twitter:image" content="https://luis-gilberto.com/assets/Components/3.png">
     
-    @media (max-width: 768px) {
-      .hub-arms {
-        grid-template-columns: minmax(280px, 1fr);
-        gap: 1.5rem;
-        margin: 2rem 0;
-        max-width: 400px;
-        margin-left: auto;
-        margin-right: auto;
-      }
-    }
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/insights/assets/icons/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/insights/assets/icons/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/insights/assets/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="/insights/assets/icons/favicon-64x64.png">
+    <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     
-    /* Hub Cards */
-    .hub-card {
-      min-height: 220px;
-      min-width: 280px;
-      background: rgba(42,42,42,0.95);
-      border: 1px solid rgba(249,111,110,0.1);
-      border-radius: 12px;
-      padding: 2rem;
-      transition: all 0.3s ease;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      cursor: pointer;
-      position: relative;
-      touch-action: manipulation;
-      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-    }
+    <!-- Theme Styles -->
+    <link rel="stylesheet" href="../assets/css/theme.css">
     
-    .hub-card::before {
-      content: '';
-      position: absolute;
-      top: -10px;
-      left: -10px;
-      right: -10px;
-      bottom: -10px;
-      z-index: 1;
-    }
-    .hub-card:hover {
-      border-color: rgba(249,111,110,0.4);
-      transform: translateY(-4px);
-      box-shadow: 0 10px 30px rgba(249,111,110,0.2);
-    }
-    .hub-card:focus-visible {
-      outline: 3px solid #F96F6E;
-      outline-offset: 4px;
-      border-radius: 12px;
-    }
-    .hub-card:focus {
-      transform: translateY(-4px);
-      border-color: rgba(249,111,110,0.4);
-      box-shadow: 0 10px 30px rgba(249,111,110,0.3);
-    }
-    .hub-card-icon {
-      width: 64px;
-      height: 64px;
-      margin-bottom: 1.5rem;
-      position: relative;
-      z-index: 2;
-      loading: lazy;
-      decoding: async;
-    }
-    .hub-card h3 {
-      font-family: 'Big Shoulders Display', cursive;
-      font-size: clamp(1.25rem, 3vw, 1.5rem);
-      margin-bottom: 0.75rem;
-      color: rgba(255,255,255,0.95);
-      position: relative;
-      z-index: 2;
-    }
-    .hub-card p {
-      font-size: clamp(0.9rem, 2vw, 1rem);
-      color: rgba(245,245,245,0.95);
-      margin: 0;
-      position: relative;
-      z-index: 2;
-      line-height: 1.6;
-    }
+    <!-- Article Styles -->
+    <link rel="stylesheet" href="../assets/css/article.css">
     
-    @media (max-width: 480px) {
-      .hub-card {
-        padding: 1.75rem;
-        min-height: 200px;
-      }
-      
-      .hub-card-icon {
-        width: 56px;
-        height: 56px;
-        margin-bottom: 1.25rem;
-      }
-    }
+    <style>
+        /* Core Styles */
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: #ffffff;
+            color: #1a1a1a;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
     
-    @media (prefers-reduced-motion: reduce) {
-      .hub-card {
-        transition: none;
-      }
-      .hub-card:hover,
-      .hub-card:focus {
-        transform: none;
-        box-shadow: none;
-      }
-    }
-
-    /* Lessons List */
-    .lessons h3 {
-      display: flex; align-items: center; gap: 0.75rem;
-      font-size: 1.2rem; margin-top: 1.5rem;
-    }
-
-    /* CTA */
-    .cta { text-align: center; margin-top: 2.5rem; }
-    .cta-text { 
-      color: #F96F6E; font-weight: 600; font-size: 1.1rem;
-      display: inline-block; padding: 1rem 2rem;
-      border: 2px solid #F96F6E; border-radius: 8px;
-      transition: all 0.3s ease; text-decoration: none;
-    }
-    .cta-text:hover {
-      background: rgba(249,111,110,0.1);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(249,111,110,0.3);
-    }
-
-    /* ==================== NAVIGATION ==================== */
-    /* Reserve space at the bottom of the article for the fixed nav to avoid overlap */
-    .article-container { padding-bottom: var(--nav-offset, 96px); }
-
-    .nav-container { 
-      position: fixed; left: 50%; transform: translateX(-50%);
-      bottom: 16px; z-index: 1000;
-      display: flex; justify-content: center; align-items: center; gap: 0.75rem; 
-      padding: 0.6rem 0.9rem; 
-      width: max-content; max-width: min(96%, 720px);
-      background: rgba(26,26,26,0.85); border-radius: 999px; 
-      border: 1px solid rgba(249,111,110,0.35); backdrop-filter: blur(8px);
-      box-shadow: 0 12px 30px rgba(0,0,0,0.35);
-    }
-    .nav-btn { 
-      background: linear-gradient(135deg,#F96F6E,#ff8a89); color: #0f0f0f; 
-      border: none; padding: 0.7rem 1.25rem; border-radius: 25px; 
-      font-weight: 600; cursor: pointer; transition: all 0.25s ease; 
-      font-size: 0.95rem; 
-    }
-    .nav-btn:hover { 
-      transform: translateY(-2px); 
-      box-shadow: 0 8px 25px rgba(249,111,110,0.3); 
-    }
-    .nav-btn:disabled { 
-      background: rgba(249,111,110,0.35); cursor: not-allowed; 
-      transform: none; box-shadow: none; 
-    }
-    .nav-btn:focus-visible {
-      outline: 3px solid #ffffff; outline-offset: 2px;
-    }
-
-    .page-indicators { display: flex; gap: 0.35rem; }
-    /* Accessible hit area for dots while keeping visual dot small */
-    .page-dot {
-      position: relative; display: inline-flex; align-items: center; justify-content: center;
-      width: var(--hit-size, 32px); height: var(--hit-size, 32px);
-      border-radius: 50%; cursor: pointer;
-    }
-    .page-dot::before {
-      content: ""; display: block; border-radius: 50%;
-      width: var(--dot-size, 12px); height: var(--dot-size, 12px);
-      background: rgba(249,111,110,0.35);
-      transition: transform 0.2s ease, background-color 0.2s ease;
-    }
-    .page-dot.active::before { 
-      background: #F96F6E; transform: scale(1.2); 
-    }
-    .page-dot:hover::before { background: #F96F6E; }
-    .page-dot:focus-visible { outline: 3px solid #ffffff; outline-offset: 2px; }
-
-    /* Screen-reader only */
-    .sr-only { 
-      position: absolute; width: 1px; height: 1px; padding: 0; 
-      margin: -1px; overflow: hidden; clip: rect(0,0,0,0); 
-      white-space: nowrap; border: 0; 
-    }
-
-    /* ==================== RESPONSIVE ==================== */
-    @media (max-width: 1200px) {
-      .page-grid {
-        grid-template-columns: 1fr 4fr 1fr;
-        gap: 1.5rem;
-      }
-      .hero-icon { width: 100px; height: 100px; }
-    }
-
-    @media (max-width: 1024px) {
-      .article-container { padding-top: 80px; }
-      .page-grid {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-      }
-      .left-margin, .right-margin {
-        position: static;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-      .timeline, .stat-callout, .comparison, .marginalia {
-        max-width: 400px;
-      }
-    }
-
-    @media (max-width: 768px) {
-      h1 { font-size: 2.2rem; }
-      h2 { font-size: 1.8rem; }
-    }
-
-    /* ===== Timeline Option A+ (Minimal + Peek) ===== */
-    .timeline { position: relative; }
-    .timeline .timeline-title { color:#F96F6E; letter-spacing:.08em; }
-
-    /* Compact head row */
-    .tl-head {
-      display:flex; justify-content:space-between; align-items:baseline;
-      gap:.75rem; margin-bottom:.15rem;
-    }
-    .tl-year {
-      font-weight:700; font-size:.92rem; color:#eaeaea;
-    }
-    .tl-title {
-      font-size:.9rem; color:rgba(245,245,245,.92);
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-      max-width: 60%;
-    }
-
-    /* Subtle left accent for each item (alternates) */
-    .timeline-item {
-      position:relative; padding:.4rem .25rem .6rem .75rem; border-left:2px solid rgba(255,255,255,.07);
-      transition: transform .18s ease, border-color .18s ease, background .18s ease;
-      border-radius: 4px;
-    }
-    .timeline-item:nth-child(odd) { border-left-color: rgba(249,111,110,.25); }   /* coral hint */
-    .timeline-item:nth-child(even){ border-left-color: rgba(46,211,198,.22); }     /* teal hint */
-    .timeline-item:hover { transform: translateX(2px); background: rgba(255,255,255,.03); }
-
-    /* Peek button (iconless, tiny) */
-    .tl-peek {
-      appearance:none; border:1px solid rgba(255,255,255,.18); background:transparent; color:#ccc;
-      font-size:.72rem; padding:.18rem .5rem; border-radius:999px; cursor:pointer;
-      transition: background .18s ease, color .18s ease, border-color .18s ease;
-    }
-
-    /* Floating peek card (hidden by default) */
-    .tl-more {
-      position:absolute; left:calc(100% + 10px); top:50%; transform:translateY(-50%);
-      min-width:180px; max-width:220px; padding:.6rem .7rem; font-size:.82rem; line-height:1.35;
-      background: rgba(26,26,26,.95); border:1px solid rgba(249,111,110,.25); border-radius:.5rem;
-      color:rgba(245,245,245,.88); box-shadow:0 10px 30px rgba(0,0,0,.35);
-      opacity:0; visibility:hidden; transition:opacity .18s ease, visibility .18s ease;
-      z-index:5;
-    }
-
-    /* Reveal on hover/focus (mouse + keyboard) */
-    .timeline-item:hover .tl-more,
-    .timeline-item:focus-within .tl-more,
-    .timeline-item .tl-peek[aria-expanded="true"] + .tl-more {
-      opacity:1; visibility:visible;
-    }
-
-    /* Mobile: stack cleanly */
-    @media (max-width:1024px){
-      .tl-more { position:static; transform:none; margin-top:.35rem; opacity:1; visibility:visible; }
-      .tl-peek { display:none; } /* auto-show details on tablet/mobile */
-      .tl-title { max-width:100%; }
-    }
-
-    /* Mobile responsive adjustments */
-    @media (max-width: 480px) {
-      .nav-container { bottom: 12px; max-width: 96%; padding: 0.5rem 0.75rem; gap: 0.5rem; }
-      .page-dot { --hit-size: 44px; --dot-size: 12px; }
-      .nav-btn { padding: 0.6rem 1rem; font-size: 0.95rem; }
-      .hero-icon { width: 80px; height: 80px; }
-      .hub-arms { grid-template-columns: 1fr; }
-    }
-
-    @media (min-width: 768px) and (max-width: 1023px) {
-      .nav-container { bottom: 16px; }
-      .page-dot { --hit-size: 36px; --dot-size: 12px; }
-    }
-
-    @media (min-width: 1024px) {
-      .nav-container { bottom: 24px; gap: 1rem; }
-      .page-dot { --hit-size: 32px; --dot-size: 12px; }
-      .nav-btn { padding: 0.75rem 1.25rem; font-size: 1rem; }
-    }
-  </style>
+        /* Hero Section */
+        .article-hero {
+            position: relative;
+            width: 100%;
+            height: 65vh;
+            min-height: 500px;
+            max-height: 700px;
+            overflow: hidden;
+            background-color: #1a1a1a;
+        }
+    
+        .hero-overlay {
+            background: linear-gradient(
+                to right,
+                rgba(0, 0, 0, 0.88) 0%,
+                rgba(0, 0, 0, 0.7) 100%
+            );
+        }
+    
+        /* Article Content */
+        .article-content h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 3rem 0 1.5rem;
+            color: #1a1a1a;
+            letter-spacing: -0.01em;
+        }
+    
+        .article-content p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+    
+        .article-section {
+            margin: 3rem 0;
+            padding: 2rem;
+            background-color: #f8f8f8;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+        }
+    
+        /* Theme Toggle Overrides */
+        [data-theme="dark"] {
+            background-color: #0a0a0a;
+            color: #ffffff;
+        }
+    
+        [data-theme="dark"] .article-content h2 {
+            color: #ffffff;
+        }
+    
+        [data-theme="dark"] .article-content p {
+            color: rgba(255, 255, 255, 0.85);
+        }
+    
+        [data-theme="dark"] .article-section {
+            background-color: #1a1a1a;
+            border-color: #2a2a2a;
+        }
+    </style>
 </head>
 <body>
-  <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
-  
-  <a href="/insights/" class="brand-header" id="brandHeader" aria-label="Back to Insights">
-    <img class="brand-logo" src="/assets/images/logo-mark_coral-white.png" alt="Luis Gilberto" width="32" height="32" />
-  </a>
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Switch theme">
+        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M12 3a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0V4a1 1 0 0 1 1-1zm0 15a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0v-1a1 1 0 0 1 1-1zm9-9a1 1 0 0 1-1 1h-1a1 1 0 1 1 0-2h1a1 1 0 0 1 1 1zM4 12a1 1 0 0 1-1 1H2a1 1 0 1 1 0-2h1a1 1 0 0 1 1 1zm15.7-7.3a1 1 0 0 1 0 1.4l-.7.7a1 1 0 1 1-1.4-1.4l.7-.7a1 1 0 0 1 1.4 0zM5.3 19.7a1 1 0 0 1 0-1.4l.7-.7a1 1 0 1 1 1.4 1.4l-.7.7a1 1 0 0 1-1.4 0zm14.4 0a1 1 0 0 1-1.4 0l-.7-.7a1 1 0 1 1 1.4-1.4l.7.7a1 1 0 0 1 0 1.4zM5.3 4.3a1 1 0 0 1 1.4 0l.7.7a1 1 0 1 1-1.4 1.4l-.7-.7a1 1 0 0 1 0-1.4zM12 6a6 6 0 1 0 0 12 6 6 0 0 0 0-12z"/>
+        </svg>
+        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446A9 9 0 1 1 12 2.992z"/>
+        </svg>
+        <span class="theme-label">Theme</span>
+    </button>
 
-  <main class="article-container">
-    <!-- ==================== PAGE 1: HERO + OPENING ==================== -->
-    <div class="page active" id="page1" role="region" aria-label="Page 1">
-      <div class="page-grid">
-        <!-- Left Margin: Timeline -->
-        <aside class="left-margin">
-          <div class="timeline">
-            <div class="timeline-title">The Journey</div>
+    <!-- Brand Header -->
+    <a href="/insights" class="brand-header">
+        <img src="../assets/icons/favicon-64x64.png" alt="Luis Gilberto Logo" class="brand-logo">
+    </a>
 
-<div class="timeline-item tl--peek">
-  <div class="tl-head">
-    <span class="tl-year">2003–2008</span>
-    <span class="tl-title">Startup foundations</span>
-  </div>
-  <button class="tl-peek" aria-expanded="false" aria-controls="tl-2003">Peek</button>
-  <div class="tl-more" id="tl-2003">Learned to build with little and dream big.</div>
-</div>
-
-<div class="timeline-item tl--peek">
-  <div class="tl-head">
-    <span class="tl-year">2008–2012</span>
-    <span class="tl-title">Entered the Microsoft Ecosystem</span>
-  </div>
-  <button class="tl-peek" aria-expanded="false" aria-controls="tl-2008">Peek</button>
-  <div class="tl-more" id="tl-2008">Entered the orbit; saw how global brands move.</div>
-</div>
-
-<div class="timeline-item tl--peek">
-  <div class="tl-head">
-    <span class="tl-year">2012–2014</span>
-    <span class="tl-title">Foundations</span>
-  </div>
-  <button class="tl-peek" aria-expanded="false" aria-controls="tl-2012">Peek</button>
-  <div class="tl-more" id="tl-2012">Supported Windows, Surface, and Office launches.</div>
-</div>
-
-<div class="timeline-item tl--peek">
-  <div class="tl-head">
-    <span class="tl-year">2014–2016</span>
-    <span class="tl-title">Ascent</span>
-  </div>
-  <button class="tl-peek" aria-expanded="false" aria-controls="tl-2014">Peek</button>
-  <div class="tl-more" id="tl-2014">Shifted into strategic narrative + GTM orchestration.</div>
-</div>
-
-<div class="timeline-item tl--peek">
-  <div class="tl-head">
-    <span class="tl-year">2016–2018</span>
-    <span class="tl-title">Rewrite</span>
-  </div>
-  <button class="tl-peek" aria-expanded="false" aria-controls="tl-2016">Peek</button>
-  <div class="tl-more" id="tl-2016">Led consumer storytelling across Office campaigns.</div>
-</div>
-
-<div class="timeline-item tl--peek">
-  <div class="tl-head">
-    <span class="tl-year">2019–2020</span>
-    <span class="tl-title">Pivot</span>
-  </div>
-  <button class="tl-peek" aria-expanded="false" aria-controls="tl-2019">Peek</button>
-  <div class="tl-more" id="tl-2019">Office 365 → Microsoft 365; Family Safety & Teams preview.</div>
-</div>
-
-<div class="timeline-item tl--peek">
-  <div class="tl-head">
-    <span class="tl-year">2020–2023</span>
-    <span class="tl-title">Rise</span>
-  </div>
-  <button class="tl-peek" aria-expanded="false" aria-controls="tl-2020">Peek</button>
-  <div class="tl-more" id="tl-2020">Emotionally resonant work during a deeply human era.</div>
-</div>
-
-<div class="timeline-item tl--peek">
-  <div class="tl-head">
-    <span class="tl-year">2023–2025</span>
-    <span class="tl-title">Reinvention</span>
-  </div>
-  <button class="tl-peek" aria-expanded="false" aria-controls="tl-2023">Peek</button>
-  <div class="tl-more" id="tl-2023">Edge + Copilot narrative; reclaimed my voice.</div>
-</div>
-
-<div class="timeline-item tl--peek">
-  <div class="tl-head">
-    <span class="tl-title">The Hub</span>
-  </div>
-  <button class="tl-peek" aria-expanded="false" aria-controls="tl-2025">Peek</button>
-  <div class="tl-more" id="tl-2025">A system for clarity, creativity, and scale.</div>
-</div>
-          </div>
-        </aside>
-
-        <!-- Center Content -->
-        <article class="content-area">
-          <!-- 3D Hero Icon -->
-          <img src="/assets/images/icons/vision.png" 
-               alt="Vision" class="hero-icon" />
-          
-          <h1>Building <span class="coral">The Hub</span></h1>
-          <div class="byline">By Luis Gilberto Sánchez • October 2025 • 6 min read</div>
-          <!-- Desktop Version -->
-          <div class="opening desktop-only">
-            Before <a href="https://luis-gilberto.com/TheHub/">The Hub</a> existed as an idea, it existed as a pattern. Across startups, Microsoft, campaigns, and career shifts, I kept seeing the same truth: great marketing isn't just about what you say—it's about how you structure the way you think.
-
-            I didn't wake up one day and decide to "build a consultancy." My career has been a series of expansions: from startup generalist, to strategic voice inside Microsoft, to someone who could finally articulate <em>my</em> way of working.
-
-            The timeline above isn't just a highlight reel. It's the architecture of how I learned, unlearned, and rebuilt. It's the scaffolding behind the systems I now share through The Hub.
-          </div>
-
-          <!-- Mobile/Tablet Version -->
-          <div class="opening mobile-tablet-only">
-            Before <a href="https://luis-gilberto.com/TheHub/">The Hub</a> existed as an idea, it existed as a pattern. Across startups, Microsoft, campaigns, and career shifts, I kept seeing the same truth: the most meaningful marketing isn't just about what you say. It's about how you structure the way you think.
-
-            I didn't wake up and decide to "build a consultancy." My career has been a series of expansions: from scrappy startup generalist, to strategic voice inside one of the world's most complex organizations, to someone who could finally articulate <em>my</em> way of working.
-
-            The timeline above isn't a highlight reel. It's the architecture of how I learned, unlearned, and rebuilt. It's the scaffolding behind the systems I now share through The Hub.
-          </div>
-
-          <style>
-            /* Desktop-only content (>1024px) */
-            .desktop-only {
-              display: block;
-            }
-            .mobile-tablet-only {
-              display: none;
-            }
-
-            /* Mobile and Tablet content (≤1024px) */
-            @media screen and (max-width: 1024px) {
-              .desktop-only {
-                display: none;
-              }
-              .mobile-tablet-only {
-                display: block;
-              }
-            }
-          </style>
-
-          <section class="section">
-            <h2>Reinvention After Microsoft: <span class="coral">Autonomy</span> as a Design Constraint</h2>
-            <p>After 15+ years helping tell stories at global scale, I faced a choice many senior marketers eventually confront: take another big role or redesign the game entirely.</p>
-            <p>I decided to do the latter. It wasn't because I was burned out or disenchanted with corporate life, but rather out of curiosity. What would happen if I treated my career as a startup? If I built the infrastructure first, then decided what to build on top of it?</p>
-            <p>The constraint was simple: I had to work alone, at least at first. No team, no budget, no safety net. Just frameworks, instincts, and a hypothesis that experience could be productized.</p>
-          </section>
-        </article>
-
-        <!-- Right Margin: Stats + Icon -->
-        <aside class="right-margin">
-          <img src="/assets/images/icons/connected-systems.png" 
-               alt="Connected systems" class="margin-icon" />
-          
-          <div class="stat-callout">
-            <span class="stat-number">15+</span>
-            <span class="stat-label">years at Microsoft → 1 autonomous system</span>
-          </div>
-
-          <div class="marginalia">
-            "Swipe or use arrows to explore the system →"
-          </div>
-        </aside>
-      </div>
-    </div>
-
-    <!-- ==================== PAGE 2: PHILOSOPHY + TRANSITION ==================== -->
-    <div class="page" id="page2" role="region" aria-label="Page 2">
-      <div class="page-grid">
-        <!-- Left Margin: Corporate vs Hub Comparison -->
-        <aside class="left-margin">
-          <div class="comparison">
-            <div class="comparison-box corporate">
-              <div class="comparison-title">Corporate Model</div>
-              <ul class="comparison-list">
-                <li>Hierarchy-driven</li>
-                <li>Budget dependency</li>
-                <li>Team scale required</li>
-                <li>Process-heavy</li>
-              </ul>
+    <!-- Hero Section -->
+    <section class="hero">
+        <img src="../assets/images/building-the-hub-hero-optimized.jpg" alt="Workspace with strategic planning tools" class="hero-image">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>Building The Hub</h1>
+                <p class="subtitle">From Microsoft strategist to systems architect</p>
             </div>
-            <div class="comparison-box hub">
-              <div class="comparison-title">The Hub Model</div>
-              <ul class="comparison-list">
-                <li>Modular design</li>
-                <li>Strategic clarity</li>
-                <li>Autonomous execution</li>
-                <li>Framework-first</li>
-              </ul>
+        </div>
+    </section>
+
+    <!-- Article Content -->
+    <article class="article-body">
+        <div class="article-meta">
+            <p class="article-date">November 2024</p>
+            <div class="article-tags">
+                <span class="tag coral">Strategic Transition</span>
+                <span class="tag">System Design</span>
+                <span class="tag">Entrepreneurship</span>
             </div>
-          </div>
-        </aside>
+        </div>
 
-        <!-- Center Content -->
-        <article class="content-area">
-          <!-- 3D Hero Icon -->
-          <img src="/assets/images/icons/strategy.png" 
-               alt="Strategy" class="hero-icon" />
+        <div class="article-content">
+            <p><strong>After nearly a decade at Microsoft</strong>, I found myself at a crossroads. The work was meaningful—launching AI-powered products, repositioning global brands, leading campaigns that reached millions. But something was missing.</p>
 
-          <section class="section">
-            <h2>From Campaigns to <span class="coral">Systems.</span> What I Kept, What I Left</h2>
-            <p>Over the last several years, I learned to build campaigns that moved audiences and markets. But I also learned something deeper: the best work isn't just creative: it's systematic. The campaigns that scaled weren't accidents. They had architecture.</p>
-            <p>So, <b>I kept</b> the rigor: frameworks, adaptability, editorial quality, strategic clarity. I kept the belief that storytelling needs infrastructure to travel beyond a single moment.</p>
-            <p>What <b>I left</b> behind: the assumption that great marketing requires massive teams and budgets. The Hub proved you can have strategic depth without the overhead ...if you design the system right.</p>
-            <p>I also left behind the idea that services need to look like traditional agencies. The Hub isn't a studio. It's a modular ecosystem where strategy, tools, and partnership work together on demand.</p>
-          </section>
+            <p>I wanted to build something that integrated everything I'd learned about:</p>
+            <ul>
+                <li>How global brands navigate transformation</li>
+                <li>What makes strategic thinking actually useful</li>
+                <li>Why some creative work resonates deeply while other work just looks nice</li>
+                <li>How to build systems that scale without losing soul</li>
+            </ul>
 
-          <div class="pull-quote">
-            "That constraint became the design principle. Autonomy forced clarity."
-          </div>
-        </article>
-
-        <!-- Right Margin: Compass Icon + Quote -->
-        <aside class="right-margin">
-          <img src="/assets/images/icons/navigation.png" 
-               alt="Navigation" class="margin-icon" />
-          
-          <div class="marginalia">
-            The constraint was simple: work alone. Every decision had to be intentional, scalable, and true to how I actually think.
-          </div>
-        </aside>
-      </div>
-    </div>
-
-    <!-- ==================== PAGE 3: THE TOOLS ==================== -->
-    <div class="page" id="page3" role="region" aria-label="Page 3">
-      <div class="page-grid">
-        <!-- Left Margin: Telescope Icon + Tool Stack -->
-        <aside class="left-margin">
-          <img src="/assets/images/icons/vision-tools.png" 
-               alt="Vision tools" class="margin-icon" />
-          
-          <div class="marginalia">
-            <strong>AI Stack:</strong><br>
-            ChatGPT, Claude, Midjourney, Cursor, Notion AI, Figma AI
-          </div>
-        </aside>
-
-        <!-- Center Content -->
-        <article class="content-area">
-          <!-- 3D Hero Icon -->
-          <img src="/assets/images/icons/tactical-execution.png" 
-               alt="Tactical execution" class="hero-icon" />
-
-          <section class="section">
-            <h2><span class="coral">The Tools:</span> Teaching Myself AI, Modern Workflows, and Automation</h2>
-            <p>Building The Hub meant becoming my own R&D department. I taught myself AI-assisted design, workflow automation, and modern web architecture... not because I wanted to become a developer, but because I wanted to control the experience.</p>
-            <p>AI became my creative bench. What used to require a designer, a writer, and a developer could now be prototyped in hours. But here's what surprised me: the tools didn't replace creativity. They amplified intentionality.</p>
-            <p>The real skill wasn't mastering the tech; it was learning to design the prompts, the systems, the flows. To think in frameworks that AI could execute but only I could architect.</p>
-            <p>This is where marketing is headed. The leaders who win won't be the ones with the biggest teams. They'll be the ones who know how to design systems that scale their thinking.</p>
-          </section>
-        </article>
-
-        <!-- Right Margin: Gears Icon + Stat -->
-        <aside class="right-margin">
-          <img src="/assets/images/icons/automation.png" 
-               alt="Automation" class="margin-icon" />
-          
-          <div class="stat-callout">
-            <span class="stat-number">6 weeks → 6 days</span>
-            <span class="stat-label">Campaign build time with AI-assisted workflows</span>
-          </div>
-        </aside>
-      </div>
-    </div>
-
-    <!-- ==================== PAGE 4: THE BUILD (HUB ARMS) ==================== -->
-    <div class="page" id="page4" role="region" aria-label="Page 4">
-      <div class="page-grid">
-        <!-- Left Margin: Workflow Note -->
-        <aside class="left-margin">
-          <div class="marginalia">
-            <strong>The Flow:</strong><br>
-            Diagnostic → Strategy → Blueprint → Execution
-          </div>
-        </aside>
-
-        <!-- Center Content -->
-        <article class="content-area">
-          <section class="section">
-            <h2><span class="coral">The Build</span> : ScopeIQ, StrategyIQ, Advisory, IMC Services</h2>
-            <p>The Hub isn't one product. It's four arms that work as a system:</p>
-            
-            <div class="hub-arms">
-              <!-- Primary Card: Advisory -->
-              <div class="hub-card">
-                <img src="/assets/images/icons/navigation.png" 
-                     alt="Advisory" class="hub-card-icon" />
-                <h3><span class="coral">Advisory</span></h3>
-                <p>The solo consulting model. Direct partnership with founders and marketing leaders who need clarity, narrative, and momentum without agency bloat.</p>
-              </div>
-              
-              <!-- Secondary Card: IMC Services -->
-              <div class="hub-card">
-                <img src="/assets/images/icons/tactical-execution.png" 
-                     alt="IMC Services" class="hub-card-icon" />
-                <h3><span class="coral">IMC Services</span></h3>
-                <p>The co-branded engine. When a brief needs scale, I partner with creative studios to deliver end-to-end integrated campaigns.</p>
-              </div>
-              
-              <!-- Tertiary Cards -->
-              <div class="hub-card">
-                <img src="/assets/images/icons/vision-tools.png" 
-                     alt="ScopeIQ" class="hub-card-icon" />
-                <h3><span class="teal">ScopeIQ</span></h3>
-                <p>The diagnostic tool that replaces vague discovery with structured clarity. It mirrors how I think, so alignment happens early.</p>
-              </div>
-              
-              <div class="hub-card">
-                <img src="/assets/images/icons/connected-systems.png" 
-                     alt="StrategyIQ" class="hub-card-icon" />
-                <h3><span class="teal">StrategyIQ</span></h3>
-                <p>The intelligence layer that turns insights into blueprints and blueprints into systems. This is where campaigns get coherent, measurable, adaptive.</p>
-              </div>
+            <div class="article-section">
+                <div class="article-section-inner">
+                    <h3>The Four Arms of The Hub</h3>
+                    <p>Building The Hub meant formalizing what had been intuitive:</p>
+                    <ul>
+                        <li><strong>Advisory:</strong> Strategic navigation for complex brand challenges</li>
+                        <li><strong>StrategyIQ:</strong> An intelligence layer that makes strategy accessible</li>
+                        <li><strong>Strategic Thinking:</strong> The frameworks and mental models behind decisions</li>
+                        <li><strong>ScopeIQ:</strong> Clear vision on what work actually requires</li>
+                    </ul>
+                </div>
             </div>
-            
-            <p>Each arm is distinct but connected. Together, they create a frictionless flow from understanding to impact. From proof to partnership.</p>
-          </section>
-        </article>
 
-        <!-- Right Margin: System Icon -->
-        <aside class="right-margin">
-          <img src="/assets/images/icons/tactical-execution.png" 
-               alt="Strategic chess piece" class="margin-icon" />
-          
-          <div class="marginalia">
-            Each arm operates independently but connects to the whole — modular by design, integrated by intention.
-          </div>
-        </aside>
-      </div>
-    </div>
+            <h2>From Corporate to Independent</h2>
 
-    <!-- ==================== PAGE 5: LESSONS ==================== -->
-    <div class="page" id="page5" role="region" aria-label="Page 5">
-      <div class="page-grid">
-        <!-- Left Margin: Lesson Icons -->
-        <aside class="left-margin">
-          <div class="timeline">
-            <div class="timeline-title">Key Learnings</div>
-            <div class="timeline-item">
-              <span class="timeline-year">01</span>
-              <span class="timeline-event">Clarity compounds</span>
+            <p>Leaving Microsoft wasn't about escaping something—it was about building toward something. The resources, scale, and impact at a company like Microsoft are unmatched. But <em>the freedom to architect systems exactly how they should work</em>? That's different.</p>
+
+            <p>I wanted to build a practice where:</p>
+
+            <ul>
+                <li>Strategy isn't just a deck you hand off—it's a living system</li>
+                <li>Creative isn't just "making it look good"—it's strategic expression</li>
+                <li>Execution isn't just delivery—it's where you learn what actually works</li>
+            </ul>
+
+            <h2>What This Means in Practice</h2>
+
+            <p>When a client comes to The Hub, they're not getting <strong>just strategy</strong> or <strong>just execution</strong>. They're getting:</p>
+
+            <ul>
+                <li>Strategic thinking that accounts for what's actually buildable</li>
+                <li>Creative work informed by deep strategic understanding</li>
+                <li>Execution that reveals new strategic opportunities</li>
+                <li>Systems that connect everything into a coherent whole</li>
+            </ul>
+
+            <p>It's not about doing more. It's about <em>integrating better</em>.</p>
+
+            <h2>Still Building</h2>
+
+            <p>The Hub isn't finished. It's not meant to be. The best systems evolve as you use them. They adapt to new challenges, incorporate new tools, respond to what the work teaches you.</p>
+
+            <p>That's what this monthly series is about—documenting the evolution. Sharing what I'm learning as The Hub grows from concept to practice. From intuition to system.</p>
+
+            <p><strong>Because if there's one thing I learned at Microsoft</strong>, it's that the most valuable insights come from actually building, not just planning.</p>
+
+            <div class="article-section">
+                <div class="article-section-inner">
+                    <h3>What's Next?</h3>
+                    <p>This is the first in a monthly series exploring how The Hub is taking shape. Coming up:</p>
+                    <ul>
+                        <li>How StrategyIQ democratizes strategic thinking</li>
+                        <li>The frameworks I use to navigate complex brand challenges</li>
+                        <li>Why scoping matters more than most people think</li>
+                        <li>Real client case studies as The Hub grows</li>
+                    </ul>
+                </div>
             </div>
-            <div class="timeline-item">
-              <span class="timeline-year">02</span>
-              <span class="timeline-event">Infrastructure enables storytelling</span>
-            </div>
-            <div class="timeline-item">
-              <span class="timeline-year">03</span>
-              <span class="timeline-event">Momentum loves focus</span>
-            </div>
-          </div>
-        </aside>
+        </div>
+    </article>
 
-        <!-- Center Content -->
-        <article class="content-area">
-          <section class="section lessons">
-            <h2>Three <span class="coral">Lessons</span></h2>
-            
-            <h3>Clarity compounds.</h3>
-            <p>Every hour spent clarifying your positioning, your frameworks, your language pays dividends forever. The Hub forced me to articulate what I do in ways I never had to as an employee.</p>
-            
-            <h3>Storytelling needs infrastructure.</h3>
-            <p>Great stories don't just happen. They need systems: content calendars, design systems, measurement frameworks. The Hub is proof that creativity scales when it has architecture.</p>
-            
-            <h3>Momentum loves focus.</h3>
-            <p>Building alone taught me to protect my attention like a finite resource. Every new feature, every partnership, every project had to justify itself against one question: Does this make the system clearer or more complex?</p>
-            <p>The answer shaped everything. When you can't delegate, you get ruthless about what matters.</p>
-          </section>
-        </article>
-
-        <!-- Right Margin: Post-it Note -->
-        <aside class="right-margin">
-          <div class="marginalia">
-            <strong>The Filter:</strong><br><br>
-            "Does this make the system clearer or more complex?"<br><br>
-            This question guided every decision.
-          </div>
-        </aside>
-      </div>
-    </div>
-
-    <!-- ==================== PAGE 6: WHAT'S NEXT + CTA ==================== -->
-    <div class="page" id="page6" role="region" aria-label="Page 6">
-      <div class="page-grid">
-        <!-- Left Margin: Hub Badge -->
-        <aside class="left-margin">
-          <img src="/assets/images/icons/vision.png" 
-               alt="The Hub vision" class="margin-icon" style="width: 80px; height: 80px;" />
-        </aside>
-
-        <!-- Center Content -->
-        <article class="content-area">
-          <section class="section">
-            <h2>What's <span class="gradient">Next</span> — Opening <span class="coral">The Hub</span> to Collaborators and Leaders Who Think Differently</h2>
-            <p>The Hub started as a startup-of-one. But it was always designed to scale beyond me.</p>
-            <p>I'm opening it to collaborators: strategists, creatives, founders who think differently about how marketing should work. People who want partnership over process, systems over services, clarity over complexity.</p>
-            <p>I'm also opening it to companies who are tired of agencies that don't listen and freelancers who can't scale. The Hub offers a third path: strategic architecture, modular creativity, and a methodology that adapts to how you work.</p>
-            <p>Because here's what I learned building this: the future of marketing isn't about bigger teams. It's about better systems. It's about leaders who can design frameworks that make great storytelling repeatable.</p>
-            <p>And it's about having the courage to treat your experience like a product: something living, repeatable, and built for what's next.</p>
-          </section>
-
-          <div class="pull-quote">
-            "What The Hub represents is the evolution of my craft... from individual campaigns to designing the frameworks that make great storytelling repeatable."
-          </div>
-          
-          <footer class="cta">
-            <a href="https://luis-gilberto.com/TheHub/" class="cta-text">Ready to explore The System? Visit The Hub →</a>
-          </footer>
-        </article>
-
-        <!-- Right Margin: Collaboration Note -->
-        <aside class="right-margin">
-          <div class="marginalia">
-            <strong>Open for Partnership</strong><br><br>
-            Seeking collaborators who value systems thinking, strategic clarity, and creative excellence.
-          </div>
-        </aside>
-      </div>
-    </div>
-
-    <!-- ==================== NAVIGATION ==================== -->
-    <div class="nav-container" role="navigation" aria-label="Article pagination">
-      <button class="nav-btn" id="prevBtn" onclick="changePage(-1)" aria-label="Go to previous page" disabled>← Previous</button>
-      <div class="page-indicators" role="radiogroup" aria-label="Pages" aria-activedescendant="page-dot-1">
-        <div id="page-dot-1" class="page-dot active" onclick="goToPage(1)" role="radio" aria-label="Go to page 1" aria-checked="true" aria-current="page" tabindex="0"></div>
-        <div id="page-dot-2" class="page-dot" onclick="goToPage(2)" role="radio" aria-label="Go to page 2" aria-checked="false" tabindex="0"></div>
-        <div id="page-dot-3" class="page-dot" onclick="goToPage(3)" role="radio" aria-label="Go to page 3" aria-checked="false" tabindex="0"></div>
-        <div id="page-dot-4" class="page-dot" onclick="goToPage(4)" role="radio" aria-label="Go to page 4" aria-checked="false" tabindex="0"></div>
-        <div id="page-dot-5" class="page-dot" onclick="goToPage(5)" role="radio" aria-label="Go to page 5" aria-checked="false" tabindex="0"></div>
-        <div id="page-dot-6" class="page-dot" onclick="goToPage(6)" role="radio" aria-label="Go to page 6" aria-checked="false" tabindex="0"></div>
-      </div>
-      <button class="nav-btn" id="nextBtn" onclick="changePage(1)" aria-label="Go to next page">Next →</button>
-      <div class="sr-only" id="pageStatus" aria-live="polite">Page 1 of 6</div>
-    </div>
-  </main>
-
-  <footer class="local-footer" style="text-align:center; padding: 2rem 1rem; color: rgba(245,245,245,0.55);">
-    <span id="yr"></span> Luis Gilberto • Built with intention.
-  </footer>
-
-  <script>
-    // Footer year
-    document.getElementById('yr').textContent = new Date().getFullYear();
-
-    // Multi-page navigation system
-    let currentPage = 1;
-    const totalPages = 6;
-
-    function setPageMinHeight() {
-      const nav = document.querySelector('.nav-container');
-      const navH = nav ? nav.offsetHeight : 0;
-      const buffer = 24;
-      const available = window.innerHeight - navH - 4 - buffer;
-      document.querySelectorAll('.page').forEach(page => {
-        page.style.minHeight = available + 'px';
-      });
-    }
-
-    function ensureFits() {
-      const page = document.getElementById(`page${currentPage}`);
-      if (!page) return;
-      page.classList.remove('fit-1','fit-2');
-      const nav = document.querySelector('.nav-container');
-      const navH = nav ? nav.offsetHeight : 0;
-      const buffer = 24;
-      const available = window.innerHeight - navH - 4 - buffer;
-      if (page.scrollHeight > available) {
-        page.classList.add('fit-1');
-      }
-      if (page.scrollHeight > available) {
-        page.classList.add('fit-2');
-      }
-    }
-
-    function updateProgressBar() {
-      const pct = (currentPage / totalPages) * 100;
-      const bar = document.getElementById('progressBar');
-      if (bar) bar.style.width = pct + '%';
-    }
-
-    // Keep content from overlapping the fixed nav
-    function updateNavOffset() {
-      const nav = document.querySelector('.nav-container');
-      if (!nav) return;
-      const offset = nav.offsetHeight + 24; // include breathing room
-      document.documentElement.style.setProperty('--nav-offset', offset + 'px');
-    }
-
-    function updatePage() {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      const active = document.getElementById(`page${currentPage}`);
-      if (active) active.classList.add('active');
-
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-
-      const prev = document.getElementById('prevBtn');
-      const next = document.getElementById('nextBtn');
-      if (prev) prev.disabled = currentPage === 1;
-      if (next) next.disabled = currentPage === totalPages;
-
-      const dots = document.querySelectorAll('.page-dot');
-      dots.forEach((dot, idx) => {
-        const isActive = (idx + 1) === currentPage;
-        dot.classList.toggle('active', isActive);
-        dot.setAttribute('aria-checked', String(isActive));
-        if (isActive) dot.setAttribute('aria-current', 'page'); 
-        else dot.removeAttribute('aria-current');
-      });
-
-      const indicators = document.querySelector('.page-indicators');
-      if (indicators) indicators.setAttribute('aria-activedescendant', `page-dot-${currentPage}`);
-
-      const status = document.getElementById('pageStatus');
-      if (status) status.textContent = `Page ${currentPage} of ${totalPages}`;
-
-      updateProgressBar();
-      updateNavOffset();
-      setPageMinHeight();
-      ensureFits();
-    }
-
-    function changePage(delta) {
-      const nextIdx = currentPage + delta;
-      if (nextIdx < 1 || nextIdx > totalPages) return;
-      currentPage = nextIdx;
-      updatePage();
-      // Keep focus visible on the active page dot for keyboard users
-      const activeDot = document.getElementById(`page-dot-${currentPage}`);
-      if (activeDot) activeDot.focus({ preventScroll: true });
-    }
-
-    function goToPage(n) {
-      if (n < 1 || n > totalPages) return;
-      currentPage = n;
-      updatePage();
-    }
-
-    // Keyboard navigation
-    document.addEventListener('keydown', function(e) {
-      const key = e.key;
-      if (['ArrowLeft','PageUp'].includes(key)) { 
-        e.preventDefault(); changePage(-1); 
-      }
-      else if (['ArrowRight','PageDown'].includes(key)) { 
-        e.preventDefault(); changePage(1); 
-      }
-      else if (key === 'Home') { 
-        e.preventDefault(); goToPage(1); 
-      }
-      else if (key === 'End') { 
-        e.preventDefault(); goToPage(totalPages); 
-      }
-    });
-
-    // Touch swipe navigation
-    let touchStartX = null;
-    let touchStartY = null;
-    const touchThreshold = 50;
-    const area = document.querySelector('.article-container');
-    if (area) {
-      area.addEventListener('touchstart', function(e) {
-        const t = e.changedTouches[0];
-        touchStartX = t.clientX; touchStartY = t.clientY;
-      }, { passive: true });
-      
-      area.addEventListener('touchend', function(e) {
-        const t = e.changedTouches[0];
-        const dx = t.clientX - (touchStartX ?? t.clientX);
-        const dy = t.clientY - (touchStartY ?? t.clientY);
-        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > touchThreshold) {
-          if (dx < 0) changePage(1); 
-          else changePage(-1);
-        }
-        touchStartX = null; touchStartY = null;
-      });
-    }
-
-    // Initialize
-    updatePage();
-    updateNavOffset();
-    
-    document.querySelectorAll('.page-dot').forEach((dot, idx) => {
-      dot.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') { 
-          e.preventDefault(); goToPage(idx + 1); 
-        }
-      });
-    });
-    
-    window.addEventListener('resize', function() { 
-      updateNavOffset(); setPageMinHeight(); ensureFits(); 
-    });
-  </script>
-
-  <script>
-    // Accessible toggle for the small "Peek" expand behavior
-    document.addEventListener('click', function(e){
-      const btn = e.target.closest('.tl-peek');
-      if(!btn) return;
-      const expanded = btn.getAttribute('aria-expanded') === 'true';
-      btn.setAttribute('aria-expanded', String(!expanded));
-    });
-  </script>
+    <!-- Theme Script -->
+    <script src="../assets/js/theme.js"></script>
 </body>
 </html>
+
+<style>
+    /* Core Layout */
+    .article-hero {
+        position: relative;
+        height: 70vh;
+        min-height: 500px;
+        overflow: hidden;
+    }
+
+    .hero-image {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            to right,
+            rgba(0, 0, 0, 0.88) 0%,
+            rgba(0, 0, 0, 0.7) 100%
+        );
+        display: flex;
+        align-items: center;
+    }
+
+    .hero-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        width: 100%;
+    }
+
+    .hero-text {
+        max-width: 800px;
+    }
+
+    .hero-text h1 {
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        color: #ffffff;
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+
+    .subtitle {
+        font-size: clamp(1.25rem, 2vw, 1.5rem);
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* Article Layout */
+    .article-body {
+        max-width: 800px;
+        margin: 4rem auto;
+        padding: 0 2rem;
+    }
+
+    .article-meta {
+        margin-bottom: 3rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .article-date {
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .article-tags {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .tag {
+        padding: 0.25rem 1rem;
+        border-radius: 100px;
+        font-size: 0.9rem;
+        background: rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .tag.coral {
+        background-color: rgba(249, 111, 110, 0.1);
+        border-color: #F96F6E;
+        color: #F96F6E;
+    }
+</style>
+    /* Typography */
+    .article-content {
+        font-size: 1.1rem;
+        line-height: 1.8;
+    }
+
+    .article-content h2 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin: 3rem 0 1.5rem;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+        background: linear-gradient(135deg, #F96F6E 0%, #2ED3C6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .article-content h3 {
+        font-size: 1.75rem;
+        font-weight: 600;
+        margin: 2rem 0 1rem;
+        color: #333;
+    }
+
+    .article-content p {
+        margin-bottom: 1.5rem;
+        color: #333;
+    }
+
+    .article-content strong {
+        font-weight: 600;
+        color: #1a1a1a;
+    }
+
+    .article-content em {
+        font-style: italic;
+        color: #F96F6E;
+    }
+
+    .article-content ul {
+        margin: 1.5rem 0;
+        padding-left: 1.5rem;
+    }
+
+    .article-content li {
+        margin-bottom: 0.75rem;
+        position: relative;
+    }
+
+    .article-content li::before {
+        content: "•";
+        color: #F96F6E;
+        position: absolute;
+        left: -1rem;
+    }
+
+    /* Article Sections */
+    .article-section {
+        margin: 3rem 0;
+        padding: 2rem;
+        background: rgba(46, 211, 198, 0.05);
+        border: 1px solid rgba(46, 211, 198, 0.2);
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .article-section-inner {
+        max-width: 650px;
+        margin: 0 auto;
+    }
+
+    .article-section h3 {
+        color: #2ED3C6;
+        margin-top: 0;
+    }
+
+    /* Dark Theme Overrides */
+    [data-theme="dark"] {
+        background: #0a0a0a;
+        color: #ffffff;
+    }
+
+    [data-theme="dark"] .article-content h2 {
+        background: linear-gradient(135deg, #F96F6E 0%, #2ED3C6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    [data-theme="dark"] .article-content h3 {
+        color: #ffffff;
+    }
+
+    [data-theme="dark"] .article-content p,
+    [data-theme="dark"] .article-content li {
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    [data-theme="dark"] .article-content strong {
+        color: #ffffff;
+    }
+
+    [data-theme="dark"] .article-section {
+        background: rgba(46, 211, 198, 0.1);
+        border-color: rgba(46, 211, 198, 0.2);
+    }
+
+    [data-theme="dark"] .article-date {
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    [data-theme="dark"] .tag {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.2);
+        color: rgba(255, 255, 255, 0.9);
+    }
+</style>
+</style>
+<style>
+    /* Base Styles */
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        margin: 0;
+        padding: 0;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background: #ffffff;
+        color: #1a1a1a;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* Navigation */
+    .back-nav {
+        position: fixed;
+        top: 2rem;
+        left: 2rem;
+        z-index: 100;
+    }
+
+    .back-link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #ffffff;
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(10px);
+        border-radius: 100px;
+        transition: all 0.3s ease;
+    }
+
+    .back-link:hover {
+        background: rgba(249, 111, 110, 0.9);
+        transform: translateY(-1px);
+    }
+
+    .back-link::before {
+        content: "←";
+        font-size: 1.2em;
+    }
+
+    /* Theme Toggle Refinements */
+    .theme-toggle {
+        position: fixed;
+        top: 2rem;
+        right: 2rem;
+        z-index: 100;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(10px);
+        border: none;
+        border-radius: 100px;
+        padding: 0.5rem 1rem;
+        color: #ffffff;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+        background: rgba(46, 211, 198, 0.9);
+        transform: translateY(-1px);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .hero-text h1 {
+            font-size: clamp(2rem, 4vw, 3rem);
+        }
+
+        .article-content h2 {
+            font-size: 2rem;
+        }
+
+        .article-content h3 {
+            font-size: 1.5rem;
+        }
+
+        .article-body {
+            padding: 0 1.5rem;
+        }
+
+        .article-section {
+            padding: 1.5rem;
+        }
+
+        .back-nav,
+        .theme-toggle {
+            top: 1rem;
+        }
+
+        .back-nav {
+            left: 1rem;
+        }
+
+        .theme-toggle {
+            right: 1rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .article-meta {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .article-tags {
+            width: 100%;
+        }
+
+        .hero-text h1 {
+            font-size: clamp(1.75rem, 3vw, 2.5rem);
+        }
+    }
+</style>
+</style>
