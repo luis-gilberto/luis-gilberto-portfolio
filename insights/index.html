@@ -6,11 +6,14 @@
     <title>Insights | Luis Gilberto</title>
     <meta name="description" content="Monthly insights on brand strategy, AI-powered launches, and creative leadership. Real thinking from the trenches.">
     <meta name="author" content="Luis Gilberto">
+    <link rel="icon" type="image/png" href="/insights/assets/icons/favicon-32x32.png">
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <!-- Swiper CSS for Stories Carousel -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     
     <style>
 /* ============================================
@@ -381,6 +384,9 @@ img {
     background: var(--bg-primary);
     border: 2px solid var(--border-gray);
     overflow: hidden;
+    outline: none;
+    border-radius: 12px;
+    position: relative;
     transition: all 0.3s ease;
 }
 
@@ -394,6 +400,35 @@ img {
     width: 100%;
     height: 250px;
     object-fit: cover;
+}
+
+/* Accessibility and focus state adjustments for story cards */
+.story-card:focus,
+.story-card:focus-within {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(249, 111, 110, 0.3);
+}
+
+/* Prefer focus-visible for keyboard navigation */
+.story-card:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(249, 111, 110, 0.3);
+}
+
+.story-card a {
+    outline: none;
+}
+
+.story-card a:focus {
+    outline: 2px solid var(--coral-accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+.story-card a:focus-visible {
+    outline: 2px solid var(--coral-accent);
+    outline-offset: 2px;
+    border-radius: 4px;
 }
 
 .story-content {
@@ -413,6 +448,45 @@ img {
     line-height: 1.6;
     color: var(--text-secondary);
     margin-bottom: 1.5rem;
+}
+
+/* ============================================
+   STORIES CAROUSEL (Swiper.js)
+   ============================================ */
+.stories-swiper {
+    width: 100%;
+    padding: 2rem 0;
+}
+.stories-swiper .swiper-wrapper {
+    align-items: stretch;
+}
+.stories-swiper .swiper-slide {
+    width: 360px; /* base width; adjusts with breakpoints */
+    display: flex;
+    height: auto;
+}
+.stories-swiper .story-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow-standard);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.stories-swiper .story-card:focus-visible {
+    outline: 2px solid var(--coral-accent);
+    outline-offset: 3px;
+}
+.stories-swiper .swiper-pagination-bullet {
+    background: var(--coral-accent);
+    opacity: 0.5;
+}
+.stories-swiper .swiper-pagination-bullet-active {
+    opacity: 1;
+}
+.stories-swiper .swiper-button-prev,
+.stories-swiper .swiper-button-next {
+    color: var(--text-primary);
 }
 
 .read-link {
@@ -913,6 +987,24 @@ footer {
     .container { padding: 0 0.75rem; }
 }
     </style>
+    <!-- Carousel responsive styles -->
+    <style>
+    @media (max-width: 968px) {
+        .stories-swiper { padding: 1.5rem 0; }
+        .stories-swiper .swiper-slide { width: 320px; }
+    }
+    @media (max-width: 768px) {
+        .stories-swiper .swiper-button-prev,
+        .stories-swiper .swiper-button-next { display: none; }
+        .stories-swiper .swiper-slide { width: 280px; }
+    }
+    @media (max-width: 480px) {
+        .stories-swiper { padding: 1rem 0; }
+        .stories-swiper .swiper-slide { width: 240px; }
+    }
+    </style>
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 </head>
 <body>
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
@@ -956,11 +1048,11 @@ footer {
     <section class="container">
         <div class="content-wrapper">
             <nav class="tab-navigation">
-                <button class="tab-button active" data-tab="numbers">Numbers</button>
-                <button class="tab-button" data-tab="stories">Stories</button>
+                <button class="tab-button active" data-tab="stories">Stories</button>
+                <button class="tab-button" data-tab="numbers">Numbers</button>
             </nav>
 
-            <div class="tab-content active" id="numbers-tab">
+            <div class="tab-content" id="numbers-tab">
                 <div class="numbers-grid">
                     <div class="number-card">
                         <div class="number-value">15+</div>
@@ -977,24 +1069,53 @@ footer {
                 </div>
             </div>
 
-            <div class="tab-content" id="stories-tab">
-                <div class="stories-grid">
-                    <div class="story-card">
-                        <img src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?w=800&q=80" alt="Building The Hub" class="story-image">
-                        <div class="story-content">
-                            <h3 class="story-title">Building The Hub</h3>
-                            <p class="story-description">A journey through the creative process of designing and developing a digital sanctuary for ideas and transformative experiences.</p>
-                            <a href="/insights/building-the-hub" class="read-link">Read Story →</a>
+            <div class="tab-content active" id="stories-tab">
+                <div class="swiper stories-swiper">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide">
+                            <div class="story-card">
+                                <img src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?w=800&q=80" alt="Building The Hub" class="story-image">
+                                <div class="story-content">
+                                    <h3 class="story-title">Building The Hub</h3>
+                                    <p class="story-description">A journey through the creative process of designing and developing a digital sanctuary for ideas and transformative experiences.</p>
+                                    <a href="/insights/building-the-hub" class="read-link">Read Story →</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="story-card">
+                                <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80" alt="Unlocking the Blank Page" class="story-image">
+                                <div class="story-content">
+                                    <h3 class="story-title">Unlocking the Blank Page</h3>
+                                    <p class="story-description">How I used AI to remember my own voice. A reflection on creative paralysis, momentum, and the tools that helped me begin again.</p>
+                                    <a href="/insights/unlocking-the-blank-page" class="read-link">Read Story →</a>
+                                </div>
                         </div>
                     </div>
-                    <div class="story-card">
-                        <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80" alt="Unlocking the Blank Page" class="story-image">
-                        <div class="story-content">
-                            <h3 class="story-title">Unlocking the Blank Page</h3>
-                            <p class="story-description">How I used AI to remember my own voice. A reflection on creative paralysis, momentum, and the tools that helped me begin again.</p>
-                            <a href="/insights/unlocking-the-blank-page" class="read-link">Read Story →</a>
+                    <div class="swiper-slide">
+                        <div class="story-card">
+                            <img src="/insights/assets/images/move-at-your-speed-hero.jpg" alt="Move at Your Speed" class="story-image">
+                            <div class="story-content">
+                                <h3 class="story-title">Move at the Speed of  What Matters</h3>
+                                <p class="story-description">Breaking free from productivity culture and finding a rhythm that feels like your own. A reflection on intention, curiosity, and building without  burnout.</p>
+                                <a href="/insights/move-at-your-speed" class="read-link">Read Story →</a>
+                            </div>
                         </div>
                     </div>
+                        <div class="swiper-slide">
+                            <div class="story-card">
+                                <img src="/insights/assets/images/proof-of-life-LP-hero.jpeg" alt="Proof of Life" class="story-image">
+                                <div class="story-content">
+                                    <h3 class="story-title">Proof of Life</h3>
+                                    <p class="story-description">A monthly reflection on staying alive to my own work. There was a time when I got really good at going quiet... not the peaceful kind, the faded kind. This is me finding the thread again.</p>
+                                    <a href="/insights/proof-of-life" class="read-link">Read Story →</a>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                <div class="swiper-pagination"></div>
+                    <div class="swiper-button-prev" aria-label="Previous story"></div>
+                    <div class="swiper-button-next" aria-label="Next story"></div>
                 </div>
             </div>
         </div>
@@ -1187,6 +1308,39 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // Initialize Swiper Carousel for Stories tab
+    const storiesSwiperContainer = document.querySelector('.stories-swiper');
+    if (storiesSwiperContainer && typeof Swiper !== 'undefined') {
+        const storiesSwiper = new Swiper('.stories-swiper', {
+            effect: 'coverflow',
+            grabCursor: true,
+            centeredSlides: true,
+            slidesPerView: 'auto',
+            loop: false,
+            coverflowEffect: {
+                rotate: 0,
+                stretch: 0,
+                depth: 110,
+                modifier: 1,
+                slideShadows: false,
+            },
+            pagination: {
+                el: '.stories-swiper .swiper-pagination',
+                clickable: true,
+            },
+            navigation: {
+                nextEl: '.stories-swiper .swiper-button-next',
+                prevEl: '.stories-swiper .swiper-button-prev',
+            },
+            keyboard: { enabled: true },
+            breakpoints: {
+                480: { slidesPerView: 1.1 },
+                768: { slidesPerView: 1.4 },
+                968: { slidesPerView: 2.2 },
+            }
+        });
+    }
 
     // Card Micro-interactions
     const cards = document.querySelectorAll('.find-card, .archive-card, .number-card, .story-card');
