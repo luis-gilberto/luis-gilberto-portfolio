@@ -2028,80 +2028,52 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-});
-</script>
-<script>
-// Insights thread animation - runs once on page load
-(function() {
-    'use strict';
 
-    const config = {
-        startDelay: 400,
-        pathDuration: 2500,
-        dotAppearDelay: 2500,
-        dotDuration: 500
-    };
+    // Thread animation - add at end of DOMContentLoaded
+    (function() {
+        'use strict';
+        const config = {
+            startDelay: 400,
+            pathDuration: 2500,
+            dotAppearDelay: 2500,
+            dotDuration: 500
+        };
 
-    function initThreadAnimation() {
-        const threadPath = document.querySelector('.thread-path');
-        const threadDot = document.querySelector('.thread-dot');
-        if (!threadPath || !threadDot) return;
+        function initThreadAnimation() {
+            const threadPath = document.querySelector('.thread-path');
+            const threadDot = document.querySelector('.thread-dot');
+            if (!threadPath || !threadDot) {
+                console.warn('Thread animation elements not found');
+                return;
+            }
 
-        // Respect reduced motion preferences
-        const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        if (prefersReduced) {
-            threadPath.style.opacity = '1';
-            threadPath.style.strokeDasharray = 'none';
+            const pathLength = threadPath.getTotalLength();
+            threadPath.style.strokeDasharray = pathLength;
+            threadPath.style.strokeDashoffset = pathLength;
+            threadPath.style.opacity = '0';
             threadDot.style.opacity = '0';
-            return;
-        }
-
-        const pathLength = threadPath.getTotalLength();
-        threadPath.style.strokeDasharray = pathLength;
-        threadPath.style.strokeDashoffset = pathLength;
-        threadPath.style.opacity = '0';
-        threadDot.style.opacity = '0';
-        threadDot.style.transform = 'scale(0)';
-
-        setTimeout(() => {
-            threadPath.style.transition = `
-                stroke-dashoffset ${config.pathDuration}ms cubic-bezier(0.65, 0, 0.35, 1),
-                opacity 200ms ease-out
-            `;
-            threadPath.style.strokeDashoffset = '0';
-            threadPath.style.opacity = '1';
+            threadDot.style.transform = 'scale(0)';
 
             setTimeout(() => {
-                threadDot.style.transition = `
-                    opacity ${config.dotDuration}ms ease-out,
-                    transform ${config.dotDuration}ms cubic-bezier(0.34, 1.56, 0.64, 1)
+                threadPath.style.transition = `
+                    stroke-dashoffset ${config.pathDuration}ms cubic-bezier(0.65, 0, 0.35, 1),
+                    opacity 200ms ease-out
                 `;
-                threadDot.style.opacity = '1';
-                threadDot.style.transform = 'scale(1)';
-            }, config.dotAppearDelay);
-        }, config.startDelay);
-    }
+                threadPath.style.strokeDashoffset = '0';
+                threadPath.style.opacity = '1';
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initThreadAnimation);
-    } else {
+                setTimeout(() => {
+                    threadDot.style.transition = `
+                        opacity ${config.dotDuration}ms ease-out,
+                        transform ${config.dotDuration}ms cubic-bezier(0.34, 1.56, 0.64, 1)
+                    `;
+                    threadDot.style.opacity = '1';
+                    threadDot.style.transform = 'scale(1)';
+                }, config.dotAppearDelay);
+            }, config.startDelay);
+        }
+
         initThreadAnimation();
-    }
-})();
+    })();
+});
 </script>
-/* Responsive overrides added for thread and label spacing */
-@media (max-width: 968px) {
-    .editorial-label { margin-bottom: 2rem; }
-    .thread-path { stroke-width: 2; }
-}
-
-@media (max-width: 768px) {
-    .editorial-label { margin-bottom: 1.5rem; }
-    .thread-path { stroke-width: 1.5; }
-    .thread-dot { r: 3; }
-}
-
-@media (max-width: 480px) {
-    .thread-path { stroke-width: 1.2; }
-    .thread-dot { r: 2.5; }
-}
