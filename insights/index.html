@@ -1910,13 +1910,17 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const savedTheme = localStorage.getItem('theme') || 'light';
     htmlElement.setAttribute('data-theme', savedTheme);
-    
-    themeToggle.addEventListener('click', () => {
-        const currentTheme = htmlElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        htmlElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-    });
+    // Guard the toggle in case the button isn't present
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            htmlElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+    } else {
+        console.warn('Theme toggle button (#themeToggle) not found on this page.');
+    }
 
     // Intersection Observer for fade-in animations
     const observerOptions = {
@@ -1987,7 +1991,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            // Respect reduced motion preferences by showing without animating
+            const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (prefersReducedMotion) {
+                threadPath.style.opacity = '1';
+                threadPath.style.strokeDasharray = 'none';
+                threadPath.style.strokeDashoffset = '0';
+                threadDot.style.opacity = '1';
+                threadDot.style.transform = 'scale(1)';
+                console.log('Thread animation: reduced motion enabled, showing static thread.');
+                return;
+            }
+
             const pathLength = threadPath.getTotalLength();
+            console.log('Thread animation: path length =', pathLength);
+            if (!isFinite(pathLength) || pathLength <= 0) {
+                console.warn('Thread animation: invalid path length, skipping animation.');
+                threadPath.style.opacity = '1';
+                threadDot.style.opacity = '1';
+                return;
+            }
             
             threadPath.style.strokeDasharray = pathLength;
             threadPath.style.strokeDashoffset = pathLength;
@@ -2065,6 +2088,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         });
+        console.log('Stories Swiper initialized:', !!storiesSwiper);
+        // Debug clicks on arrows
+        document.querySelector('.stories-swiper .swiper-button-next')?.addEventListener('click', () => {
+            console.log('Stories next arrow clicked');
+            try { storiesSwiper.slideNext(); } catch (e) { console.warn('Stories next click handler error:', e); }
+        });
+        document.querySelector('.stories-swiper .swiper-button-prev')?.addEventListener('click', () => {
+            console.log('Stories prev arrow clicked');
+            try { storiesSwiper.slidePrev(); } catch (e) { console.warn('Stories prev click handler error:', e); }
+        });
     }
 
     // ============================================
@@ -2114,6 +2147,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     spaceBetween: 40 
                 }
             }
+        });
+        console.log('Work Swiper initialized:', !!workSwiper);
+        // Debug clicks on arrows
+        document.querySelector('.work-swiper-next')?.addEventListener('click', () => {
+            console.log('Work next arrow clicked');
+            try { workSwiper.slideNext(); } catch (e) { console.warn('Work next click handler error:', e); }
+        });
+        document.querySelector('.work-swiper-prev')?.addEventListener('click', () => {
+            console.log('Work prev arrow clicked');
+            try { workSwiper.slidePrev(); } catch (e) { console.warn('Work prev click handler error:', e); }
         });
     }
 });
