@@ -1899,7 +1899,10 @@ footer {
         </div>
     </footer>
 
-    <script>
+<!-- PASTE THIS ENTIRE SCRIPT SECTION TO REPLACE YOUR BROKEN ONE -->
+<!-- Find <script> near the bottom of your HTML and replace EVERYTHING between <script> and </script> with this -->
+
+<script>
 document.addEventListener('DOMContentLoaded', () => {
     // Theme Toggle
     const themeToggle = document.getElementById('themeToggle');
@@ -1962,7 +1965,61 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Initialize Swiper Carousel for Stories tab
+    // ============================================
+    // THREAD ANIMATION
+    // ============================================
+    (function() {
+        'use strict';
+
+        const config = {
+            startDelay: 400,
+            pathDuration: 2500,
+            dotAppearDelay: 2500,
+            dotDuration: 500
+        };
+
+        function initThreadAnimation() {
+            const threadPath = document.querySelector('.thread-path');
+            const threadDot = document.querySelector('.thread-dot');
+            
+            if (!threadPath || !threadDot) {
+                console.warn('Thread animation elements not found');
+                return;
+            }
+
+            const pathLength = threadPath.getTotalLength();
+            
+            threadPath.style.strokeDasharray = pathLength;
+            threadPath.style.strokeDashoffset = pathLength;
+            threadPath.style.opacity = '0';
+            threadDot.style.opacity = '0';
+            threadDot.style.transform = 'scale(0)';
+
+            setTimeout(() => {
+                threadPath.style.transition = `
+                    stroke-dashoffset ${config.pathDuration}ms cubic-bezier(0.65, 0, 0.35, 1),
+                    opacity 200ms ease-out
+                `;
+                threadPath.style.strokeDashoffset = '0';
+                threadPath.style.opacity = '1';
+
+                setTimeout(() => {
+                    threadDot.style.transition = `
+                        opacity ${config.dotDuration}ms ease-out,
+                        transform ${config.dotDuration}ms cubic-bezier(0.34, 1.56, 0.64, 1)
+                    `;
+                    threadDot.style.opacity = '1';
+                    threadDot.style.transform = 'scale(1)';
+                }, config.dotAppearDelay);
+            }, config.startDelay);
+        }
+
+        initThreadAnimation();
+    })();
+
+    // ============================================
+    // STORIES CAROUSEL
+    // ============================================
     const storiesSwiperContainer = document.querySelector('.stories-swiper');
     if (storiesSwiperContainer && typeof Swiper !== 'undefined') {
         const storiesSwiper = new Swiper('.stories-swiper', {
@@ -1986,17 +2043,33 @@ document.addEventListener('DOMContentLoaded', () => {
                 nextEl: '.stories-swiper .swiper-button-next',
                 prevEl: '.stories-swiper .swiper-button-prev',
             },
-            keyboard: { enabled: true },
+            keyboard: { 
+                enabled: true 
+            },
             breakpoints: {
-                480: { slidesPerView: 1.1, spaceBetween: 20 },
-                768: { slidesPerView: 1.5, spaceBetween: 30 },
-                968: { slidesPerView: 2, spaceBetween: 30 },
-                1200: { slidesPerView: 2.5, spaceBetween: 40 }
+                480: { 
+                    slidesPerView: 1.1, 
+                    spaceBetween: 20 
+                },
+                768: { 
+                    slidesPerView: 1.5, 
+                    spaceBetween: 30 
+                },
+                968: { 
+                    slidesPerView: 2, 
+                    spaceBetween: 30 
+                },
+                1200: { 
+                    slidesPerView: 2.5, 
+                    spaceBetween: 40 
+                }
             }
         });
     }
 
-    // Initialize Swiper Carousel for Work That Mattered section
+    // ============================================
+    // WORK CAROUSEL
+    // ============================================
     if (document.querySelector('.work-swiper') && typeof Swiper !== 'undefined') {
         const workSwiper = new Swiper('.work-swiper', {
             effect: 'coverflow',
@@ -2020,81 +2093,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 nextEl: '.work-swiper-next',
                 prevEl: '.work-swiper-prev',
             },
-            keyboard: { enabled: true },
+            keyboard: { 
+                enabled: true 
+            },
             breakpoints: {
-                480: { slidesPerView: 1.1, spaceBetween: 20 },
-                768: { slidesPerView: 1.5, spaceBetween: 30 },
-                968: { slidesPerView: 2, spaceBetween: 30 },
-                1200: { slidesPerView: 2.5, spaceBetween: 40 }
+                480: { 
+                    slidesPerView: 1.1, 
+                    spaceBetween: 20 
+                },
+                768: { 
+                    slidesPerView: 1.5, 
+                    spaceBetween: 30 
+                },
+                968: { 
+                    slidesPerView: 2, 
+                    spaceBetween: 30 
+                },
+                1200: { 
+                    slidesPerView: 2.5, 
+                    spaceBetween: 40 
+                }
             }
         });
     }
-
-    // Thread animation - add at end of DOMContentLoaded
-    (function() {
-        'use strict';
-        const config = {
-            startDelay: 400,
-            pathDuration: 2500,
-            dotAppearDelay: 2500,
-            dotDuration: 500
-        };
-
-        function initThreadAnimation() {
-            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-            const threadPath = document.querySelector('.thread-path');
-            const threadDot = document.querySelector('.thread-dot');
-
-            if (!threadPath || !threadDot) {
-                console.warn('Thread animation: elements not found (.thread-path or .thread-dot)');
-                return;
-            }
-
-            // Ensure stroke color is set and path is visible
-            threadPath.style.stroke = threadPath.style.stroke || 'currentColor';
-            threadPath.style.fill = 'none';
-
-            const pathLength = typeof threadPath.getTotalLength === 'function' ? threadPath.getTotalLength() : 0;
-            if (!pathLength || isNaN(pathLength)) {
-                console.warn('Thread animation: getTotalLength returned invalid value', pathLength);
-            }
-
-            threadPath.style.strokeDasharray = String(pathLength);
-            threadPath.style.strokeDashoffset = String(pathLength);
-            threadPath.style.opacity = '0';
-            threadDot.style.opacity = '0';
-            threadDot.style.transform = 'scale(0)';
-
-            if (prefersReducedMotion) {
-                // Show static thread for reduced motion users
-                threadPath.style.transition = 'opacity 200ms ease-out';
-                threadPath.style.strokeDashoffset = '0';
-                threadPath.style.opacity = '1';
-                threadDot.style.opacity = '1';
-                threadDot.style.transform = 'scale(1)';
-                return;
-            }
-
-            setTimeout(() => {
-                threadPath.style.transition = `
-                    stroke-dashoffset ${config.pathDuration}ms cubic-bezier(0.65, 0, 0.35, 1),
-                    opacity 200ms ease-out
-                `;
-                threadPath.style.strokeDashoffset = '0';
-                threadPath.style.opacity = '1';
-
-                setTimeout(() => {
-                    threadDot.style.transition = `
-                        opacity ${config.dotDuration}ms ease-out,
-                        transform ${config.dotDuration}ms cubic-bezier(0.34, 1.56, 0.64, 1)
-                    `;
-                    threadDot.style.opacity = '1';
-                    threadDot.style.transform = 'scale(1)';
-                }, config.dotAppearDelay);
-            }, config.startDelay);
-        }
-
-        initThreadAnimation();
-    })();
 });
 </script>
