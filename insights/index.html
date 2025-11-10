@@ -244,6 +244,7 @@ img {
     pointer-events: none;
     overflow: visible;
     z-index: 5;
+    color: var(--text-primary);
 }
 
 .thread-path {
@@ -2040,19 +2041,39 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         function initThreadAnimation() {
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
             const threadPath = document.querySelector('.thread-path');
             const threadDot = document.querySelector('.thread-dot');
+
             if (!threadPath || !threadDot) {
-                console.warn('Thread animation elements not found');
+                console.warn('Thread animation: elements not found (.thread-path or .thread-dot)');
                 return;
             }
 
-            const pathLength = threadPath.getTotalLength();
-            threadPath.style.strokeDasharray = pathLength;
-            threadPath.style.strokeDashoffset = pathLength;
+            // Ensure stroke color is set and path is visible
+            threadPath.style.stroke = threadPath.style.stroke || 'currentColor';
+            threadPath.style.fill = 'none';
+
+            const pathLength = typeof threadPath.getTotalLength === 'function' ? threadPath.getTotalLength() : 0;
+            if (!pathLength || isNaN(pathLength)) {
+                console.warn('Thread animation: getTotalLength returned invalid value', pathLength);
+            }
+
+            threadPath.style.strokeDasharray = String(pathLength);
+            threadPath.style.strokeDashoffset = String(pathLength);
             threadPath.style.opacity = '0';
             threadDot.style.opacity = '0';
             threadDot.style.transform = 'scale(0)';
+
+            if (prefersReducedMotion) {
+                // Show static thread for reduced motion users
+                threadPath.style.transition = 'opacity 200ms ease-out';
+                threadPath.style.strokeDashoffset = '0';
+                threadPath.style.opacity = '1';
+                threadDot.style.opacity = '1';
+                threadDot.style.transform = 'scale(1)';
+                return;
+            }
 
             setTimeout(() => {
                 threadPath.style.transition = `
