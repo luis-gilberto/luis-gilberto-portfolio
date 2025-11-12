@@ -973,11 +973,56 @@
                 <!-- Aligns with opening paragraph -->
                 <div class="statement-card statement-card-primary">
                     <h2>The Question</h2>
-                    <p class="statement-text">What would happen if I treated my career as a startup? If I built the infrastructure first, then decided what to build on top of it?</p>
+                    <p class="statement-text">What if marketing worked the way great products do? Tested, modular, and built to evolve.</p>
                 </div>
 
                 <!-- Responsive spacer -->
                 <div class="column-spacer" style="height: 18rem;"></div>
+
+                <!-- The Pattern Before the Plan -->
+                <div class="statement-card">
+                    <h3>The Pattern Before the Plan</h3>
+                    <p class="statement-text">Autonomy came first. The constraint wasn't a limitation. It was the architecture that made everything work.</p>
+                </div>
+
+                <!-- Responsive spacer -->
+                <div class="column-spacer" style="height: 16rem;"></div>
+
+                <!-- Before The Hub existed as an idea -->
+                <div class="statement-card">
+                    <h3>Before The Hub existed as an idea</h3>
+                    <p class="statement-text">The best systems don't start with a grand plan. They start with a pattern you can't ignore.</p>
+                </div>
+
+                <!-- Responsive spacer -->
+                <div class="column-spacer" style="height: 16rem;"></div>
+
+                <!-- A Modular System -->
+                <div class="statement-card">
+                    <h3>A Modular System</h3>
+                    <p class="statement-text">Four connected parts. One foundation. Every arm of The Hub was designed to scale collaboration, not complexity.</p>
+                </div>
+
+                <!-- Responsive spacer -->
+                <div class="column-spacer" style="height: 16rem;"></div>
+
+                <!-- The Build -->
+                <div class="statement-card">
+                    <h3>The Build</h3>
+                    <p class="statement-text">Slow is smooth. Smooth becomes fast. The patience of good architecture pays off in momentum.</p>
+                </div>
+
+                <!-- Responsive spacer -->
+                <div class="column-spacer" style="height: 16rem;"></div>
+
+                <!-- What's Next -->
+                <div class="statement-card">
+                    <h3>What's Next</h3>
+                    <p class="statement-text">The system keeps learning. The more you use it, the smarter and more human it becomes.</p>
+                </div>
+
+                <!-- Responsive spacer -->
+                <div class="column-spacer" style="height: 16rem;"></div>
 
                 <!-- Aligns with "From Campaigns" section -->
                 <div class="statement-card">
@@ -1142,120 +1187,67 @@
             img.style.opacity = '0';
 
             if (targetPreloaded || !immediateIfPreloaded) {
-                // Swap after fade-out completes
-                const onEnd = () => {
-                    img.removeEventListener('transitionend', onEnd);
-                    performSwap();
-                };
-                img.addEventListener('transitionend', onEnd, { once: true });
+                // Wait for fade-out, then swap
+                setTimeout(performSwap, transitionMs);
             } else {
-                // Wait for preload then swap
+                // Target not preloaded: wait for it, then swap
                 preload(nextSrc).then(() => {
-                    meta.darkReady = true;
-                    const onEnd = () => {
-                        img.removeEventListener('transitionend', onEnd);
-                        performSwap();
-                    };
-                    img.addEventListener('transitionend', onEnd, { once: true });
+                    setTimeout(performSwap, transitionMs);
                 }).catch(() => {
-                    // If preload fails, gracefully revert
-                    img.style.opacity = '1';
+                    // Fallback: immediate swap if preload fails
+                    performSwap();
                 });
             }
         }
 
-        function applyTheme(theme) {
-            candidateImages.forEach(img => {
+        function updateImages() {
+            const theme = getTheme();
+            for (const img of candidateImages) {
                 const meta = registry.get(img);
-                if (!meta) return;
-                const wantDark = theme === 'dark' && meta.darkAvailable;
-                const targetSrc = wantDark ? meta.darkSrc : meta.lightSrc;
-                if ((wantDark && meta.current !== 'dark') || (!wantDark && meta.current !== 'light')) {
-                    fadeSwap(img, targetSrc);
+                if (!meta) continue;
+
+                const targetSrc = (theme === 'dark' && meta.darkReady) ? meta.darkSrc : meta.lightSrc;
+                if (img.src !== targetSrc) {
+                    fadeSwap(img, targetSrc, false);
                 }
-            });
-        }
-
-        // Debounce to prevent thrashing on rapid toggles
-        let applyTimer = null;
-        function scheduleApply(theme) {
-            if (applyTimer) {
-                clearTimeout(applyTimer);
             }
-            applyTimer = setTimeout(() => {
-                applyTheme(theme);
-            }, 75);
         }
 
-        // Initialize: mark images and preload dark variants
-        candidateImages.forEach(img => {
-            img.classList.add('theme-image-switchable');
-            const lightSrc = img.currentSrc || img.src;
+        // Initialize registry and preloads
+        for (const img of candidateImages) {
+            const lightSrc = img.src;
             const darkSrc = makeDarkSrc(lightSrc);
-            const meta = { lightSrc, darkSrc, darkAvailable: false, darkReady: false, current: 'light' };
-            registry.set(img, meta);
-            // Attempt to preload dark variant
-            preload(darkSrc).then(() => {
-                meta.darkAvailable = true;
-                meta.darkReady = true;
-                // If current theme is dark, switch immediately without double-fade
-                if (getTheme() === 'dark') {
-                    // Set src directly first to avoid initial flash, then ensure opacity is 1
-                    img.style.opacity = '0';
-                    const onEnd = () => {
-                        img.removeEventListener('transitionend', onEnd);
-                        img.src = darkSrc;
-                        void img.offsetWidth;
-                        img.style.opacity = '1';
-                        meta.current = 'dark';
-                    };
-                    img.addEventListener('transitionend', onEnd, { once: true });
-                    // If no prior transition, ensure we trigger one
-                    requestAnimationFrame(() => {
-                        img.style.opacity = '0';
-                        // Fallback: ensure immediate swap if transition is disabled
-                        setTimeout(() => {
-                            if (meta.current !== 'dark') {
-                                img.src = darkSrc;
-                                img.style.opacity = '1';
-                                meta.current = 'dark';
-                            }
-                        }, transitionMs);
-                    });
-                }
-            }).catch(() => {
-                // Dark variant not available; keep light
-                meta.darkAvailable = false;
-                meta.darkReady = false;
-            });
-        });
 
-        // Observe theme changes via data-theme attribute
-        const observer = new MutationObserver(mutations => {
-            for (const m of mutations) {
-                if (m.type === 'attributes' && m.attributeName === 'data-theme') {
-                    scheduleApply(getTheme());
-                }
+            const meta = {
+                lightSrc,
+                darkSrc,
+                current: getTheme(),
+                darkReady: false
+            };
+            registry.set(img, meta);
+
+            // Preload dark variant if needed
+            if (getTheme() === 'dark') {
+                preload(darkSrc).then(() => {
+                    meta.darkReady = true;
+                    // Apply immediately if still on dark theme
+                    if (getTheme() === 'dark') {
+                        fadeSwap(img, darkSrc, true);
+                    }
+                }).catch(() => {
+                    // Dark variant failed to load; ignore
+                });
             }
+        }
+
+        // Listen for theme changes
+        const observer = new MutationObserver(() => {
+            updateImages();
         });
         observer.observe(html, { attributes: true, attributeFilter: ['data-theme'] });
 
-        // Also adapt to OS scheme changes if no explicit local preference set
-        try {
-            const mq = window.matchMedia('(prefers-color-scheme: dark)');
-            mq.addEventListener('change', () => {
-                // Respect explicit user preference stored in localStorage
-                const stored = localStorage.getItem('theme');
-                if (!stored) {
-                    scheduleApply(mq.matches ? 'dark' : 'light');
-                }
-            });
-        } catch (e) {
-            // Older browsers: skip
-        }
-
-        // Apply current theme on ready
-        window.addEventListener('load', () => scheduleApply(getTheme()));
+        // Initial application
+        updateImages();
     })();
     </script>
 </body>
