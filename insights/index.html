@@ -1464,6 +1464,12 @@ footer {
 
     <!-- Custom JavaScript -->
     <script>
+        const hv = document.querySelector('.insights-video');
+        if (hv) {
+            const playNow = () => hv.play().catch(() => { hv.muted = true; hv.play().catch(() => {}); });
+            if (hv.readyState >= 2) { playNow(); } else { hv.addEventListener('canplay', playNow, { once: true }); }
+            document.addEventListener('visibilitychange', () => { if (document.hidden) { hv.pause(); } else { playNow(); } });
+        }
         // Theme Toggle
         const themeToggle = document.getElementById('themeToggle');
         const html = document.documentElement;
