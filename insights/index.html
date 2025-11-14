@@ -1120,11 +1120,15 @@ footer {
                         autoplay 
                         loop 
                         muted 
-                        playsinline preload="auto"
-                        poster="/insights/assets/videos/insights-poster-light.jpg?v=20251114"
+                        playsinline 
+                        preload="auto"
+                        poster="/insights/assets/videos/insights-poster-light.jpg"
                         class="insights-video"
+                        id="heroVideo"
                     >
-                        <source src="/insights/assets/videos/insights-video-light.webm?v=20251114" type="video/webm"><source src="/insights/assets/videos/insights-video-light.mp4?v=20251114" type="video/mp4">
+                        <source src="/insights/assets/videos/insights-video-light.webm" type="video/webm">
+                        <source src="/insights/assets/videos/insights-video-light.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
                     </video>
                 </div>
                 <p class="hero-subtitle">This is where I share what I'm learning: from brand strategy and AI-powered launches to the messy, human side of creative leadership.</p>
@@ -1447,10 +1451,10 @@ footer {
         </div>
     </section>
 
-        <!-- Footer -->
+    <!-- Footer -->
     <footer>
         <div class="container">
-            <p class="footer-text"> 2025 Luis Gilberto. All rights reserved.</p>
+            <p class="footer-text">© 2025 Luis Gilberto. All rights reserved.</p>
             <div class="footer-links">
                 <a href="https://luis-gilberto.com/" class="footer-link" target="_blank" rel="noopener noreferrer" aria-label="Home on luis-gilberto.com (opens in a new tab)">Home</a>
                 <a href="https://luis-gilberto.com/about" class="footer-link" target="_blank" rel="noopener noreferrer" aria-label="About on luis-gilberto.com (opens in a new tab)">About</a>
@@ -1464,28 +1468,71 @@ footer {
 
     <!-- Custom JavaScript -->
     <script>
-        const hv = document.querySelector('.insights-video');
-        if (hv) {
-            hv.muted = true;
-            hv.playsInline = true;
-            const pickSource = () => {
-                const probe = document.createElement('video');
-                const srcs = hv.querySelectorAll('source');
-                let chosen = null;
-                srcs.forEach(s => {
-                    const t = s.getAttribute('type') || '';
-                    const support = probe.canPlayType(t);
-                    if (!chosen && support) { chosen = s.getAttribute('src'); }
-                });
-                if (chosen) { hv.src = chosen; }
+        // ============================================
+        // HERO VIDEO AUTOPLAY (IMPROVED)
+        // ============================================
+        const heroVideo = document.getElementById('heroVideo');
+        
+        if (heroVideo) {
+            // Function to attempt playing the video
+            const attemptPlay = () => {
+                const playPromise = heroVideo.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise
+                        .then(() => {
+                            console.log('✅ Hero video playing successfully');
+                        })
+                        .catch(error => {
+                            console.log('⚠️ Autoplay prevented, attempting muted playback:', error);
+                            heroVideo.muted = true;
+                            heroVideo.play()
+                                .then(() => console.log('✅ Muted video now playing'))
+                                .catch(e => console.error('❌ Video playback failed:', e));
+                        });
+                }
             };
-            const playNow = () => hv.play().catch(() => { hv.muted = true; hv.play().catch(() => {}); });
-            pickSource();
-            hv.addEventListener('error', () => { pickSource(); hv.load(); playNow(); });
-            if (hv.readyState >= 2) { playNow(); } else { hv.addEventListener('canplay', playNow, { once: true }); }
-            document.addEventListener('visibilitychange', () => { if (document.hidden) { hv.pause(); } else { playNow(); } });
+
+            // Wait for video to be ready before attempting play
+            if (heroVideo.readyState >= 3) {
+                // HAVE_FUTURE_DATA or higher - video is ready
+                console.log('Video already loaded, attempting play');
+                attemptPlay();
+            } else {
+                // Wait for sufficient data to be loaded
+                heroVideo.addEventListener('loadeddata', () => {
+                    console.log('Video data loaded, attempting play');
+                    attemptPlay();
+                }, { once: true });
+            }
+
+            // Handle visibility changes (pause when tab is hidden)
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    console.log('Tab hidden, pausing video');
+                    heroVideo.pause();
+                } else {
+                    console.log('Tab visible, resuming video');
+                    attemptPlay();
+                }
+            });
+
+            // Error handling
+            heroVideo.addEventListener('error', (e) => {
+                console.error('❌ Video error:', e);
+                console.error('Video error details:', {
+                    error: heroVideo.error,
+                    networkState: heroVideo.networkState,
+                    readyState: heroVideo.readyState
+                });
+            });
+        } else {
+            console.error('❌ Hero video element not found');
         }
-        // Theme Toggle
+
+        // ============================================
+        // THEME TOGGLE
+        // ============================================
         const themeToggle = document.getElementById('themeToggle');
         const html = document.documentElement;
 
@@ -1499,7 +1546,9 @@ footer {
             localStorage.setItem('theme', theme);
         });
 
-        // Tab Switching
+        // ============================================
+        // TAB SWITCHING
+        // ============================================
         const tabButtons = document.querySelectorAll('.tab-button');
         const tabContents = document.querySelectorAll('.tab-content');
 
@@ -1517,7 +1566,9 @@ footer {
             });
         });
 
-        // Scroll Reveal Animation
+        // ============================================
+        // SCROLL REVEAL ANIMATION
+        // ============================================
         const observerOptions = {
             threshold: 0.15,
             rootMargin: '0px 0px -100px 0px'
@@ -1535,7 +1586,9 @@ footer {
             observer.observe(el);
         });
 
-        // Stories Carousel
+        // ============================================
+        // STORIES CAROUSEL
+        // ============================================
         if (document.querySelector('.stories-swiper') && typeof Swiper !== 'undefined') {
             const storiesSwiper = new Swiper('.stories-swiper', {
                 effect: 'coverflow',
@@ -1582,7 +1635,9 @@ footer {
             });
         }
 
-        // Work Carousel
+        // ============================================
+        // WORK CAROUSEL
+        // ============================================
         if (document.querySelector('.work-swiper') && typeof Swiper !== 'undefined') {
             const workSwiper = new Swiper('.work-swiper', {
                 effect: 'coverflow',
@@ -1630,7 +1685,9 @@ footer {
             });
         }
 
-        // Smooth Scroll for Anchor Links
+        // ============================================
+        // SMOOTH SCROLL FOR ANCHOR LINKS
+        // ============================================
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -1644,13 +1701,7 @@ footer {
             });
         });
 
-        console.log('Insights page JavaScript initialized successfully');
+        console.log('✅ Insights page JavaScript initialized successfully');
     </script>
 </body>
 </html>
-
-
-
-
-
-
