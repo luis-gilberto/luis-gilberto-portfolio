@@ -12,13 +12,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     
     <style>
-        /* Global Styles - Matching Unlocking the Blank Page */
+        /* Global Styles */
         :root {
             --bg-primary: #ffffff;
             --bg-secondary: #f5f5f5;
             --text-primary: #0a0a0a;
             --text-secondary: #666666;
             --coral-accent: #ff6b6b;
+            --teal-accent: #2ed3c6;
             --space-sm: 1rem;
             --space-md: 2rem;
             --space-lg: 4rem;
@@ -197,7 +198,6 @@
             opacity: 0.9;
         }
 
-        /* Dark Mode Illustration Treatment */
         [data-theme="dark"] .hero-illustration {
             background: rgba(255, 255, 255, 0.03);
             padding: 3rem 2rem;
@@ -305,6 +305,101 @@
             font-style: italic;
             color: var(--text-primary);
             margin: 0;
+        }
+
+        /* Interactive Timeline Card */
+        .timeline-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border: 2px solid var(--coral-accent);
+        }
+
+        [data-theme="dark"] .timeline-card {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .timeline-card-title {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--coral-accent);
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            padding: 0.75rem;
+            padding-left: 2rem;
+        }
+
+        .timeline-item:hover {
+            background: rgba(255, 107, 107, 0.05);
+            transform: translateX(4px);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0.5rem;
+            top: 1rem;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--coral-accent);
+            box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item:hover::before {
+            transform: scale(1.3);
+            box-shadow: 0 0 15px rgba(255, 107, 107, 0.8);
+        }
+
+        .timeline-item.active {
+            background: rgba(255, 107, 107, 0.1);
+        }
+
+        .timeline-item.active::before {
+            background: var(--teal-accent);
+            box-shadow: 0 0 15px rgba(46, 211, 198, 0.8);
+        }
+
+        .timeline-year {
+            font-weight: 700;
+            color: var(--teal-accent);
+            font-size: 0.9rem;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .timeline-event {
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            line-height: 1.4;
+            font-weight: 600;
+        }
+
+        .timeline-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, margin-top 0.3s ease;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .timeline-item.active .timeline-details {
+            max-height: 200px;
+            margin-top: 0.75rem;
         }
 
         /* CENTER COLUMN */
@@ -587,6 +682,18 @@
             color: var(--coral-accent);
         }
 
+        /* Decorative break video styling */
+        .decorative-break video {
+            width: 100%;
+            height: auto;
+            display: block;
+            opacity: 0.9;
+        }
+
+        .decorative-break.video-break {
+            max-width: 800px;
+        }
+
         /* Responsive Design */
         @media (max-width: 1200px) {
             .container-modular {
@@ -679,6 +786,7 @@
 
             .hero-card,
             .quote-card,
+            .timeline-card,
             .statement-card,
             .reading-content {
                 position: static !important;
@@ -758,6 +866,10 @@
                 padding: 2rem 1.5rem;
             }
 
+            .timeline-card {
+                padding: 1.5rem;
+            }
+
             .decorative-break {
                 max-width: 100%;
                 width: 90%;
@@ -767,30 +879,6 @@
             .hero-illustration {
                 margin: 1.5rem auto 0;
             }
-        }
-
-        /* Theme-responsive image switching */
-        .theme-image-switchable {
-            transition: opacity 180ms ease-in-out;
-            will-change: opacity;
-        }
-        /* Reduce motion for users who prefer it */
-        @media (prefers-reduced-motion: reduce) {
-            .theme-image-switchable {
-                transition: none;
-            }
-        }
-
-        /* Decorative break video styling */
-        .decorative-break video {
-            width: 100%;
-            height: auto;
-            display: block;
-            opacity: 0.9;
-        }
-        /* Increase max-width for the video break as requested */
-        .decorative-break.video-break {
-            max-width: 800px;
         }
     </style>
 </head>
@@ -844,7 +932,7 @@
             
             <!-- LEFT COLUMN -->
             <div class="column-left">
-                <!-- Aligns with opening section -->
+                <!-- Hero Card -->
                 <div class="hero-card">
                     <div class="hero-card-content">
                         <h2>The Pattern<br>Before the Plan</h2>
@@ -852,10 +940,87 @@
                     </div>
                 </div>
 
+                <!-- Interactive Timeline -->
+                <div class="timeline-card">
+                    <div class="timeline-card-title">The Journey</div>
+                    
+                    <div class="timeline-item" data-year="2003-2008">
+                        <span class="timeline-year">2003–2008</span>
+                        <span class="timeline-event">Startup foundations</span>
+                        <div class="timeline-details">
+                            Learned to build with little and dream big. Early career shaped by resourcefulness and agility.
+                        </div>
+                    </div>
+
+                    <div class="timeline-item" data-year="2008-2012">
+                        <span class="timeline-year">2008–2012</span>
+                        <span class="timeline-event">Entered the Microsoft Ecosystem</span>
+                        <div class="timeline-details">
+                            Entered the orbit; saw how global brands move. First exposure to enterprise-scale marketing.
+                        </div>
+                    </div>
+
+                    <div class="timeline-item" data-year="2012-2014">
+                        <span class="timeline-year">2012–2014</span>
+                        <span class="timeline-event">Foundations</span>
+                        <div class="timeline-details">
+                            Supported Windows, Surface, and Office launches. Building systems at scale.
+                        </div>
+                    </div>
+
+                    <div class="timeline-item" data-year="2014-2016">
+                        <span class="timeline-year">2014–2016</span>
+                        <span class="timeline-event">Ascent</span>
+                        <div class="timeline-details">
+                            Shifted into strategic narrative + GTM orchestration. Moving from execution to strategy.
+                        </div>
+                    </div>
+
+                    <div class="timeline-item" data-year="2016-2018">
+                        <span class="timeline-year">2016–2018</span>
+                        <span class="timeline-event">Rewrite</span>
+                        <div class="timeline-details">
+                            Led consumer storytelling across Office campaigns. Defining voice at scale.
+                        </div>
+                    </div>
+
+                    <div class="timeline-item" data-year="2019-2020">
+                        <span class="timeline-year">2019–2020</span>
+                        <span class="timeline-event">Pivot</span>
+                        <div class="timeline-details">
+                            Office 365 → Microsoft 365; Family Safety & Teams preview. Navigating major brand transitions.
+                        </div>
+                    </div>
+
+                    <div class="timeline-item" data-year="2020-2023">
+                        <span class="timeline-year">2020–2023</span>
+                        <span class="timeline-event">Rise</span>
+                        <div class="timeline-details">
+                            Emotionally resonant work during a deeply human era. Marketing that mattered.
+                        </div>
+                    </div>
+
+                    <div class="timeline-item" data-year="2023-2025">
+                        <span class="timeline-year">2023–2025</span>
+                        <span class="timeline-event">Reinvention</span>
+                        <div class="timeline-details">
+                            Edge + Copilot narrative; reclaimed my voice. Preparing for what's next.
+                        </div>
+                    </div>
+
+                    <div class="timeline-item" data-year="the-hub">
+                        <span class="timeline-year">2025</span>
+                        <span class="timeline-event">The Hub</span>
+                        <div class="timeline-details">
+                            A system for clarity, creativity, and scale. Experience productized.
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Responsive spacer -->
                 <div class="column-spacer" style="height: 18rem;"></div>
 
-                <!-- Aligns with reinvention section -->
+                <!-- Quote Card -->
                 <div class="quote-card">
                     <p class="large-quote">Autonomy forced clarity. The constraint became the design principle.</p>
                 </div>
@@ -892,7 +1057,7 @@
 
                     <h3>From Campaigns to Systems</h3>
 
-<p>Over the last several years, I learned to build campaigns that moved audiences and markets. But I also learned something deeper: the best work isn't just creative - it's systematic. The campaigns that scaled weren't accidents. They had architecture.</p>
+                    <p>Over the last several years, I learned to build campaigns that moved audiences and markets. But I also learned something deeper: the best work isn't just creative - it's systematic. The campaigns that scaled weren't accidents. They had architecture.</p>
 
                     <p>I kept the rigor. Frameworks, adaptability, editorial quality, strategic clarity. I kept the belief that storytelling needs infrastructure to travel beyond a single moment.</p>
 
@@ -911,7 +1076,7 @@
 
                     <h3>The Tools</h3>
 
-<p>Building The Hub meant becoming my own R&D department. I taught myself AI-assisted design, workflow automation, and modern web architecture - not because I wanted to become a developer, but because I wanted to control the experience.</p>
+                    <p>Building The Hub meant becoming my own R&D department. I taught myself AI-assisted design, workflow automation, and modern web architecture - not because I wanted to become a developer, but because I wanted to control the experience.</p>
 
                     <p>AI became my creative bench. What used to require a designer, a writer, and a developer could now be prototyped in hours. But here's what surprised me: the tools didn't replace creativity. They amplified intentionality.</p>
 
@@ -925,13 +1090,13 @@
 
                     <p>The Hub isn't one product. It's four arms that work as a system:</p>
 
-<p><strong>Advisory</strong> - The solo consulting model. Direct partnership with founders and marketing leaders who need clarity, narrative, and momentum without agency bloat.</p>
+                    <p><strong>Advisory</strong> - The solo consulting model. Direct partnership with founders and marketing leaders who need clarity, narrative, and momentum without agency bloat.</p>
 
-<p><strong>IMC Services</strong> - The co-branded engine. When a brief needs scale, I partner with creative studios to deliver end-to-end integrated campaigns.</p>
+                    <p><strong>IMC Services</strong> - The co-branded engine. When a brief needs scale, I partner with creative studios to deliver end-to-end integrated campaigns.</p>
 
-<p><strong>ScopeIQ</strong> - The diagnostic tool. Replaces vague discovery with structured clarity. It mirrors how I think, so alignment happens early.</p>
+                    <p><strong>ScopeIQ</strong> - The diagnostic tool. Replaces vague discovery with structured clarity. It mirrors how I think, so alignment happens early.</p>
 
-<p><strong>StrategyIQ</strong> - The intelligence layer. Turns insights into blueprints and blueprints into systems. This is where campaigns get coherent, measurable, adaptive.</p>
+                    <p><strong>StrategyIQ</strong> - The intelligence layer. Turns insights into blueprints and blueprints into systems. This is where campaigns get coherent, measurable, adaptive.</p>
 
                     <p>Each arm is distinct but connected. Together, they create a frictionless flow from understanding to impact. From proof to partnership.</p>
 
@@ -970,7 +1135,7 @@
             <!-- RIGHT COLUMN -->
             <div class="column-right">
                 
-                <!-- Aligns with opening paragraph -->
+                <!-- The Question -->
                 <div class="statement-card statement-card-primary">
                     <h2>The Question</h2>
                     <p class="statement-text">What if marketing worked the way great products do? Tested, modular, and built to evolve.</p>
@@ -1024,7 +1189,7 @@
                 <!-- Responsive spacer -->
                 <div class="column-spacer" style="height: 16rem;"></div>
 
-                <!-- Aligns with "From Campaigns" section -->
+                <!-- What I Kept -->
                 <div class="statement-card">
                     <h3 class="checklist-title">✓ What I Kept</h3>
                     <ul class="insight-list">
@@ -1037,7 +1202,7 @@
                 <!-- Responsive spacer -->
                 <div class="column-spacer" style="height: 22rem;"></div>
 
-                <!-- Aligns with tools section -->
+                <!-- What I Left Behind -->
                 <div class="statement-card">
                     <h3 class="checklist-title">× What I Left Behind</h3>
                     <ul class="insight-list">
@@ -1050,7 +1215,7 @@
                 <!-- Responsive spacer -->
                 <div class="column-spacer" style="height: 20rem;"></div>
 
-                <!-- Aligns with "The Build" section -->
+                <!-- The System -->
                 <div class="statement-card statement-card-emphasis">
                     <h2>The System</h2>
                     <p class="statement-text-large">Four arms.<br><strong>One flow.</strong></p>
@@ -1058,6 +1223,7 @@
                     <p class="statement-subtext">Advisory. IMC Services. ScopeIQ. StrategyIQ. Each distinct but connected.</p>
                 </div>
 
+                <!-- Final Statement -->
                 <div class="statement-card statement-card-final">
                     <p class="final-statement">Treat your experience like a product: living, repeatable, built for what's next.</p>
                 </div>
@@ -1087,6 +1253,7 @@
     </footer>
 
     <script>
+    // Theme Toggle
     (function() {
         const themeToggle = document.getElementById('themeToggle');
         const htmlElement = document.documentElement;
@@ -1116,138 +1283,30 @@
             }
         });
     })();
-    </script>
 
-    <!-- Theme-responsive image switching for this article -->
-    <script>
+    // Interactive Timeline
     (function() {
-        const html = document.documentElement;
-        const transitionMs = 180; // Must match CSS
-
-        // Target only article images under insights/assets/images
-        const candidateImages = Array.from(document.querySelectorAll('img'))
-            .filter(img => typeof img.src === 'string' && img.src.includes('/insights/assets/images/') && !img.src.includes('_dark'));
-
-        // Registry to track variants and preload status
-        const registry = new Map();
-
-        function makeDarkSrc(lightSrc) {
-            try {
-                const url = new URL(lightSrc, window.location.origin);
-                const parts = url.pathname.split('.');
-                const ext = parts.pop();
-                const base = parts.join('.');
-                url.pathname = base + '_dark.' + ext;
-                return url.toString();
-            } catch (e) {
-                // Fallback for relative paths
-                const lastDot = lightSrc.lastIndexOf('.');
-                if (lastDot > 0) {
-                    return lightSrc.slice(0, lastDot) + '_dark' + lightSrc.slice(lastDot);
+        const timelineItems = document.querySelectorAll('.timeline-item');
+        
+        timelineItems.forEach(item => {
+            item.addEventListener('click', function() {
+                // Toggle active state
+                const isActive = this.classList.contains('active');
+                
+                // Close all items
+                timelineItems.forEach(i => i.classList.remove('active'));
+                
+                // Open clicked item if it wasn't active
+                if (!isActive) {
+                    this.classList.add('active');
                 }
-                return lightSrc; // If no extension, return original
-            }
-        }
-
-        function preload(src) {
-            return new Promise((resolve, reject) => {
-                const img = new Image();
-                img.decoding = 'async';
-                img.loading = 'eager';
-                img.onload = () => resolve(true);
-                img.onerror = () => reject(false);
-                img.src = src;
             });
-        }
-
-        function getTheme() {
-            return html.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
-        }
-
-        function fadeSwap(img, nextSrc, immediateIfPreloaded = true) {
-            const meta = registry.get(img);
-            if (!meta) return;
-            if (img.src === nextSrc) {
-                meta.current = (nextSrc === meta.darkSrc) ? 'dark' : 'light';
-                return;
-            }
-
-            const performSwap = () => {
-                img.src = nextSrc;
-                // Force reflow for reliable transition start
-                void img.offsetWidth;
-                img.style.opacity = '1';
-                meta.current = (nextSrc === meta.darkSrc) ? 'dark' : 'light';
-            };
-
-            // If the image we are switching TO is not preloaded, avoid blank by waiting
-            const isDarkTarget = nextSrc === meta.darkSrc;
-            const targetPreloaded = isDarkTarget ? !!meta.darkReady : true; // light is the original
-
-            img.style.opacity = '0';
-
-            if (targetPreloaded || !immediateIfPreloaded) {
-                // Wait for fade-out, then swap
-                setTimeout(performSwap, transitionMs);
-            } else {
-                // Target not preloaded: wait for it, then swap
-                preload(nextSrc).then(() => {
-                    setTimeout(performSwap, transitionMs);
-                }).catch(() => {
-                    // Fallback: immediate swap if preload fails
-                    performSwap();
-                });
-            }
-        }
-
-        function updateImages() {
-            const theme = getTheme();
-            for (const img of candidateImages) {
-                const meta = registry.get(img);
-                if (!meta) continue;
-
-                const targetSrc = (theme === 'dark' && meta.darkReady) ? meta.darkSrc : meta.lightSrc;
-                if (img.src !== targetSrc) {
-                    fadeSwap(img, targetSrc, false);
-                }
-            }
-        }
-
-        // Initialize registry and preloads
-        for (const img of candidateImages) {
-            const lightSrc = img.src;
-            const darkSrc = makeDarkSrc(lightSrc);
-
-            const meta = {
-                lightSrc,
-                darkSrc,
-                current: getTheme(),
-                darkReady: false
-            };
-            registry.set(img, meta);
-
-            // Preload dark variant if needed
-            if (getTheme() === 'dark') {
-                preload(darkSrc).then(() => {
-                    meta.darkReady = true;
-                    // Apply immediately if still on dark theme
-                    if (getTheme() === 'dark') {
-                        fadeSwap(img, darkSrc, true);
-                    }
-                }).catch(() => {
-                    // Dark variant failed to load; ignore
-                });
-            }
-        }
-
-        // Listen for theme changes
-        const observer = new MutationObserver(() => {
-            updateImages();
         });
-        observer.observe(html, { attributes: true, attributeFilter: ['data-theme'] });
 
-        // Initial application
-        updateImages();
+        // Optional: Auto-expand first item on load
+        if (timelineItems.length > 0) {
+            timelineItems[0].classList.add('active');
+        }
     })();
     </script>
 </body>
