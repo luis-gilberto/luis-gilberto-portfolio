@@ -1121,10 +1121,10 @@ footer {
                         loop 
                         muted 
                         playsinline preload="auto"
-                        poster="/insights/assets/videos/insights-poster-light.jpg"
+                        poster="/insights/assets/videos/insights-poster-light.jpg?v=20251114"
                         class="insights-video"
                     >
-                        <source src="/insights/assets/videos/insights-video-light.webm" type="video/webm"><source src="/insights/assets/videos/insights-video-light.mp4" type="video/mp4">
+                        <source src="/insights/assets/videos/insights-video-light.webm?v=20251114" type="video/webm"><source src="/insights/assets/videos/insights-video-light.mp4?v=20251114" type="video/mp4">
                     </video>
                 </div>
                 <p class="hero-subtitle">This is where I share what I'm learning: from brand strategy and AI-powered launches to the messy, human side of creative leadership.</p>
@@ -1466,7 +1466,22 @@ footer {
     <script>
         const hv = document.querySelector('.insights-video');
         if (hv) {
+            hv.muted = true;
+            hv.playsInline = true;
+            const pickSource = () => {
+                const probe = document.createElement('video');
+                const srcs = hv.querySelectorAll('source');
+                let chosen = null;
+                srcs.forEach(s => {
+                    const t = s.getAttribute('type') || '';
+                    const support = probe.canPlayType(t);
+                    if (!chosen && support) { chosen = s.getAttribute('src'); }
+                });
+                if (chosen) { hv.src = chosen; }
+            };
             const playNow = () => hv.play().catch(() => { hv.muted = true; hv.play().catch(() => {}); });
+            pickSource();
+            hv.addEventListener('error', () => { pickSource(); hv.load(); playNow(); });
             if (hv.readyState >= 2) { playNow(); } else { hv.addEventListener('canplay', playNow, { once: true }); }
             document.addEventListener('visibilitychange', () => { if (document.hidden) { hv.pause(); } else { playNow(); } });
         }
