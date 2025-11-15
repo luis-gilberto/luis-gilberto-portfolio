@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Building The Hub | Luis Gilberto – Insights</title>
+    <meta name="description" content="From Microsoft strategist to systems architect. How autonomy became the design constraint that shaped The Hub.">
+    
+    <link rel="icon" type="image/png" href="/insights/assets/icons/favicon-32x32.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Global Styles - Matching Unlocking the Blank Page */
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f5f5;
+            --text-primary: #0a0a0a;
+            --text-secondary: #666666;
+            --coral-accent: #ff6b6b;
+            --space-sm: 1rem;
+            --space-md: 2rem;
+            --space-lg: 4rem;
+            --space-xl: 6rem;
+        }
+        
+        [data-theme="dark"] {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --text-primary: #f5f5f5;
+            --text-secondary: #a0a0a0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        h1, h2, h3 {
+            font-family: 'Big Shoulders Display', sans-serif;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+        }
+        
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: var(--bg-secondary);
+            border: 2px solid var(--text-primary);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            background: var(--coral-accent);
+            border-color: var(--coral-accent);
+        }
+        
+        .theme-toggle svg {
+            color: var(--text-primary);
+        }
+        
+        [data-theme="light"] .moon-icon,
+        [data-theme="dark"] .sun-icon {
+            display: none;
+        }
+        
+        /* Top Accent */
+        .top-accent {
+            height: 6px;
+            background: var(--coral-accent);
+        }
+        
+        /* Breadcrumb Navigation */
+        .nav-breadcrumb {
+            padding: 1.5rem 0;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--text-primary);
+            opacity: 0.8;
+        }
+        
+        .breadcrumb-link {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        
+        .breadcrumb-link:hover {
+            color: var(--coral-accent);
+        }
+        
+        .breadcrumb-separator {
+            margin: 0 0.75rem;
+            color: var(--text-secondary);
+        }
+        
+        .breadcrumb-current {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        /* Hero Section */
+        .article-hero-modular {
+            padding: var(--space-xl) 0 var(--space-lg) 0;
+            text-align: center;
+            border-bottom: 2px solid var(--text-primary);
+        }
+
+        .article-hero-modular .article-category {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--coral-accent);
+            margin-bottom: 1.5rem;
+        }
+
+        .article-hero-modular h1 {
+            font-size: clamp(3rem, 6vw, 5rem);
+            font-weight: 900;
+            line-height: 0.95;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .article-hero-modular .article-subtitle {
+            font-size: 1.5rem;
+            font-weight: 400;
+            line-height: 1.4;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .article-hero-modular .article-meta {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 600;
+        }
+
+        /* Hero Illustration */
+        .hero-illustration {
+            max-width: 800px;
+            margin: 3rem auto 0;
+            padding: 0 2rem;
+        }
+
+        .hero-illustration img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Decorative Break Illustrations */
+        .decorative-break {
+            margin: 4rem auto;
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .decorative-break img {
+            width: 100%;
+            height: auto;
+            display: block;
+            opacity: 0.9;
+        }
+
+        /* Dark Mode Illustration Treatment */
+        [data-theme="dark"] .hero-illustration {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 3rem 2rem;
+            border-radius: 12px;
+            transition: background 0.3s ease;
+        }
+
+        [data-theme="dark"] .decorative-break {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 2rem 1.5rem;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+
+        [data-theme="dark"] .hero-illustration img,
+        [data-theme="dark"] .decorative-break img {
+            opacity: 0.8;
+            filter: brightness(0.95) contrast(1.1);
+        }
+
+        /* Modular Grid System */
+        .article-modular {
+            padding: var(--space-xl) 0;
+            background: var(--bg-primary);
+        }
+
+        .container-modular {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+            display: grid;
+            grid-template-columns: 1fr 1.5fr 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+
+        /* LEFT COLUMN */
+        .column-left {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            position: sticky;
+            top: 2rem;
+        }
+
+        .hero-card {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 12px;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        [data-theme="dark"] .hero-card {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        .hero-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+            background: var(--coral-accent);
+        }
+
+        .hero-card-content h2 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .hero-card-content p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .quote-card {
+            background: var(--bg-secondary);
+            padding: 2.5rem 2rem;
+            border-radius: 12px;
+            border-left: 6px solid var(--coral-accent);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        [data-theme="dark"] .quote-card {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .large-quote {
+            font-size: 1.75rem;
+            font-weight: 700;
+            line-height: 1.3;
+            font-style: italic;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        /* CENTER COLUMN */
+        .column-center {
+            border-left: 6px solid var(--coral-accent);
+            padding-left: 2.5rem;
+        }
+
+        .reading-content {
+            max-width: 650px;
+        }
+
+        .reading-content .lead {
+            font-size: 1.5rem;
+            line-height: 1.5;
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+        }
+
+        .reading-content p {
+            font-size: 1.125rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .reading-content h3 {
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .reading-content strong {
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .reading-content em {
+            font-style: italic;
+            color: var(--text-primary);
+        }
+
+        .section-spacer {
+            height: 3rem;
+            border-bottom: 2px solid var(--text-primary);
+            opacity: 0.2;
+            margin: 3rem 0;
+        }
+
+        .closing-paragraph {
+            font-size: 1.25rem;
+            line-height: 1.7;
+            font-style: italic;
+            color: var(--text-secondary);
+            margin-top: 2.5rem;
+        }
+
+        /* RIGHT COLUMN */
+        .column-right {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            position: sticky;
+            top: 2rem;
+        }
+
+        .statement-card {
+            background: var(--bg-secondary);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        [data-theme="dark"] .statement-card {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .statement-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .statement-card h2 {
+            font-size: 1.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .statement-card h3 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .statement-text {
+            font-size: 1.125rem;
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+
+        .statement-text-large {
+            font-size: 1.75rem;
+            font-weight: 700;
+            line-height: 1.3;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .statement-text-large strong {
+            color: var(--coral-accent);
+        }
+
+        .statement-subtext {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-top: 1.5rem;
+            font-style: italic;
+        }
+
+        .statement-card-primary {
+            background: var(--coral-accent);
+            color: white;
+        }
+
+        .statement-card-primary h2,
+        .statement-card-primary .statement-text {
+            color: white;
+        }
+
+        .statement-card-emphasis {
+            border: 3px solid var(--coral-accent);
+        }
+
+        .statement-card-final {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+        }
+
+        [data-theme="dark"] .statement-card-final {
+            background: #f5f5f5;
+            color: #0a0a0a;
+        }
+
+        .final-statement {
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1.4;
+            text-align: center;
+            margin: 0;
+        }
+
+        .checklist-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .insight-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .insight-list li {
+            margin-bottom: 1.5rem;
+            padding-left: 0;
+        }
+
+        .insight-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        .insight-list strong {
+            display: block;
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            color: var(--text-primary);
+        }
+
+        /* Footer Sections */
+        .article-footer {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            padding: var(--space-xl) 0;
+            text-align: center;
+            position: relative;
+        }
+
+        [data-theme="dark"] .article-footer {
+            background: #f5f5f5;
+            color: #0a0a0a;
+        }
+
+        .article-footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: var(--coral-accent);
+        }
+
+        .article-footer h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+        }
+
+        .article-footer p {
+            font-size: 1.125rem;
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            opacity: 0.9;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: var(--coral-accent);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border: 2px solid var(--coral-accent);
+            padding: 1rem 2.5rem;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .back-link:hover {
+            background: var(--coral-accent);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+        }
+
+        footer {
+            padding: var(--space-lg) 0;
+            text-align: left;
+            border-top: 2px solid var(--text-primary);
+            background: var(--bg-secondary);
+        }
+
+        .footer-text {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: flex-start;
+            gap: 2.5rem;
+        }
+
+        .footer-link {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--coral-accent);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .container-modular {
+                grid-template-columns: 1fr 1.5fr;
+                gap: 2.5rem;
+            }
+
+            .column-left {
+                grid-column: 1 / -1;
+                position: static;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+            }
+
+            .column-right {
+                grid-column: 2 / 3;
+                grid-row: 2;
+            }
+
+            .column-center {
+                grid-column: 1 / 2;
+                grid-row: 2;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .container-modular {
+                display: block !important;
+                max-width: 100%;
+                padding: 0 var(--space-md);
+            }
+
+            .column-left {
+                display: block !important;
+                width: 100%;
+                position: static !important;
+                margin-bottom: 3rem;
+            }
+
+            .column-center {
+                display: block !important;
+                width: 100%;
+                position: static !important;
+                border-left: 4px solid var(--coral-accent);
+                padding-left: 2rem;
+                margin-bottom: 3rem;
+            }
+
+            .column-right {
+                display: block !important;
+                width: 100%;
+                position: static !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container-modular {
+                display: block !important;
+                max-width: 100%;
+                padding: 0 var(--space-sm);
+            }
+
+            .column-left,
+            .column-center,
+            .column-right {
+                display: block !important;
+                width: 100% !important;
+                position: static !important;
+                margin-bottom: 3rem;
+                float: none !important;
+                clear: both;
+            }
+
+            .column-left {
+                order: 1;
+            }
+
+            .column-center {
+                order: 2;
+                border-left: 4px solid var(--coral-accent);
+                padding-left: 1.5rem;
+                margin-top: 2rem;
+            }
+
+            .column-right {
+                order: 3;
+                margin-top: 2rem;
+            }
+
+            .hero-card,
+            .quote-card,
+            .statement-card,
+            .reading-content {
+                position: static !important;
+                float: none !important;
+            }
+
+            .column-spacer {
+                height: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                display: none !important;
+            }
+
+            .article-hero-modular h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-card-content h2 {
+                font-size: 2rem;
+            }
+
+            .statement-text-large {
+                font-size: 1.5rem;
+            }
+
+            .statement-card {
+                margin-bottom: 2rem;
+            }
+
+            .hero-illustration {
+                padding: 0 1rem;
+                margin: 2rem auto 0;
+                position: static !important;
+            }
+
+            .decorative-break {
+                margin: 3rem auto;
+                max-width: 500px;
+                width: 85%;
+                clear: both;
+                position: static !important;
+            }
+
+            [data-theme="dark"] .hero-illustration {
+                padding: 2rem 1rem;
+            }
+
+            [data-theme="dark"] .decorative-break {
+                padding: 1.5rem 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container-modular {
+                padding: 0 1rem;
+            }
+
+            .article-hero-modular h1 {
+                font-size: 2rem;
+            }
+
+            .column-center {
+                border-left: 3px solid var(--coral-accent);
+                padding-left: 1rem;
+            }
+
+            .reading-content p {
+                font-size: 1rem;
+            }
+
+            .hero-card {
+                padding: 2rem 1.5rem;
+                min-height: 250px;
+            }
+
+            .statement-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .decorative-break {
+                max-width: 100%;
+                width: 90%;
+                margin: 2rem auto;
+            }
+
+            .hero-illustration {
+                margin: 1.5rem auto 0;
+            }
+        }
+
+        /* Theme-responsive image switching */
+        .theme-image-switchable {
+            transition: opacity 180ms ease-in-out;
+            will-change: opacity;
+        }
+        /* Reduce motion for users who prefer it */
+        @media (prefers-reduced-motion: reduce) {
+            .theme-image-switchable {
+                transition: none;
+            }
+        }
+
+        /* Decorative break video styling */
+        .decorative-break video {
+            width: 100%;
+            height: auto;
+            display: block;
+            opacity: 0.9;
+        }
+        /* Increase max-width for the video break as requested */
+        .decorative-break.video-break {
+            max-width: 800px;
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+        <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+    </button>
+    <div class="top-accent"></div>
+
+    <nav class="nav-breadcrumb">
+        <div class="container">
+            <a href="/" class="breadcrumb-link">Home</a>
+            <span class="breadcrumb-separator">→</span>
+            <a href="/insights" class="breadcrumb-link">Insights</a>
+            <span class="breadcrumb-separator">→</span>
+            <span class="breadcrumb-current">Building The Hub</span>
+        </div>
+    </nav>
+
+    <header class="article-hero-modular">
+        <div class="container">
+            <span class="article-category">Building Series</span>
+            <h1>Building The Hub</h1>
+            <p class="article-subtitle">From Microsoft strategist to systems architect</p>
+            <div class="article-meta">
+                <span>November 2025</span>
+                <span>•</span>
+                <span>9 min read</span>
+            </div>
+            <div class="hero-illustration">
+                <img src="/insights/assets/images/building-the-hub-hero.jpg" alt="Abstract illustration representing building systems and infrastructure">
+            </div>
+        </div>
+    </header>
+
+    <article class="article-modular">
+        <div class="container-modular">
+            
+            <!-- LEFT COLUMN -->
+            <div class="column-left">
+                <!-- Aligns with opening section -->
+                <div class="hero-card">
+                    <div class="hero-card-content">
+                        <h2>The Pattern<br>Before the Plan</h2>
+                        <p>Before The Hub existed as an idea, it existed as a pattern. Across startups, Microsoft, campaigns, and career shifts.</p>
+                    </div>
+                </div>
+
+                <!-- Responsive spacer -->
+                <div class="column-spacer" style="height: 18rem;"></div>
+
+                <!-- Aligns with reinvention section -->
+                <div class="quote-card">
+                    <p class="large-quote">Autonomy forced clarity. The constraint became the design principle.</p>
+                </div>
+            </div>
+
+            <!-- CENTER COLUMN -->
+            <div class="column-center">
+                <div class="reading-content">
+                    <p class="lead"><strong>Before The Hub existed as an idea, it existed as a pattern.</strong></p>
+
+                    <p>Across startups, Microsoft, campaigns, and career shifts, I kept seeing the same truth: the most meaningful marketing isn't just about what you say. It's about how you structure the way you think.</p>
+
+                    <p>I didn't wake up and decide to "build a consultancy." My career has been a series of expansions: from scrappy startup generalist, to strategic voice inside one of the world's most complex organizations, to someone who could finally articulate <em>my</em> way of working.</p>
+
+                    <p>The timeline isn't a highlight reel. It's the architecture of how I learned, unlearned, and rebuilt. It's the scaffolding behind the systems I now share through The Hub.</p>
+
+                    <div class="section-spacer"></div>
+
+                    <h3>Reinvention After Microsoft</h3>
+
+                    <p>After 15+ years helping tell stories at global scale, I faced a choice many senior marketers eventually confront: take another big role or redesign the game entirely.</p>
+
+                    <p>I decided to do the latter. It wasn't because I was burned out or disenchanted with corporate life, but rather out of curiosity. What would happen if I treated my career as a startup? If I built the infrastructure first, then decided what to build on top of it?</p>
+
+                    <p>The constraint was simple: I had to work alone, at least at first. No team, no budget, no safety net. Just frameworks, instincts, and a hypothesis that experience could be productized.</p>
+
+                    <p><strong>That constraint became the design principle. Autonomy forced clarity.</strong></p>
+
+                    <div class="decorative-break">
+                        <img src="/insights/assets/images/building-the-hub-break-1.jpg" alt="Illustration representing systems and frameworks">
+                    </div>
+
+                    <div class="section-spacer"></div>
+
+                    <h3>From Campaigns to Systems</h3>
+
+<p>Over the last several years, I learned to build campaigns that moved audiences and markets. But I also learned something deeper: the best work isn't just creative - it's systematic. The campaigns that scaled weren't accidents. They had architecture.</p>
+
+                    <p>I kept the rigor. Frameworks, adaptability, editorial quality, strategic clarity. I kept the belief that storytelling needs infrastructure to travel beyond a single moment.</p>
+
+                    <p>But I left behind the assumption that great marketing requires massive teams and budgets. I left behind traditional agency overhead and complexity. I left behind services that look like everyone else's.</p>
+
+                    <p>The Hub isn't a studio. It's a modular ecosystem where strategy, tools, and partnership work together on demand.</p>
+
+                    <div class="decorative-break video-break">
+                        <video class="article-video" autoplay loop muted playsinline preload="auto" aria-label="Animated visualization of modular systems connecting">
+                            <source src="/insights/assets/videos/TheHub_animation.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+
+                    <div class="section-spacer"></div>
+
+                    <h3>The Tools</h3>
+
+<p>Building The Hub meant becoming my own R&D department. I taught myself AI-assisted design, workflow automation, and modern web architecture - not because I wanted to become a developer, but because I wanted to control the experience.</p>
+
+                    <p>AI became my creative bench. What used to require a designer, a writer, and a developer could now be prototyped in hours. But here's what surprised me: the tools didn't replace creativity. They amplified intentionality.</p>
+
+                    <p>The real skill wasn't mastering the tech; it was learning to design the prompts, the systems, the flows. To think in frameworks that AI could execute but only I could architect.</p>
+
+                    <p><strong>This is where marketing is headed.</strong> The leaders who win won't be the ones with the biggest teams. They'll be the ones who know how to design systems that scale their thinking.</p>
+
+                    <div class="section-spacer"></div>
+
+                    <h3>The Build</h3>
+
+                    <p>The Hub isn't one product. It's four arms that work as a system:</p>
+
+<p><strong>Advisory</strong> - The solo consulting model. Direct partnership with founders and marketing leaders who need clarity, narrative, and momentum without agency bloat.</p>
+
+<p><strong>IMC Services</strong> - The co-branded engine. When a brief needs scale, I partner with creative studios to deliver end-to-end integrated campaigns.</p>
+
+<p><strong>ScopeIQ</strong> - The diagnostic tool. Replaces vague discovery with structured clarity. It mirrors how I think, so alignment happens early.</p>
+
+<p><strong>StrategyIQ</strong> - The intelligence layer. Turns insights into blueprints and blueprints into systems. This is where campaigns get coherent, measurable, adaptive.</p>
+
+                    <p>Each arm is distinct but connected. Together, they create a frictionless flow from understanding to impact. From proof to partnership.</p>
+
+                    <div class="decorative-break">
+                        <img src="/insights/assets/images/building-the-hub-break-3.jpg" alt="Illustration showing interconnected systems">
+                    </div>
+
+                    <div class="section-spacer"></div>
+
+                    <h3>Three Lessons</h3>
+
+                    <p><strong>Clarity compounds.</strong> Every hour spent clarifying your positioning, your frameworks, your language pays dividends forever. The Hub forced me to articulate what I do in ways I never had to as an employee.</p>
+
+                    <p><strong>Storytelling needs infrastructure.</strong> Great stories don't just happen. They need systems: content calendars, design systems, measurement frameworks. The Hub is proof that creativity scales when it has architecture.</p>
+
+                    <p><strong>Momentum loves focus.</strong> Building alone taught me to protect my attention like a finite resource. Every new feature, every partnership, every project had to justify itself against one question: Does this make the system clearer or more complex?</p>
+
+                    <p>The answer shaped everything. When you can't delegate, you get ruthless about what matters.</p>
+
+                    <div class="section-spacer"></div>
+
+                    <h3>What's Next</h3>
+
+                    <p>The Hub started as a startup-of-one. But it was always designed to scale beyond me.</p>
+
+                    <p>I'm opening it to collaborators: strategists, creatives, founders who think differently about how marketing should work. People who want partnership over process, systems over services, clarity over complexity.</p>
+
+                    <p>I'm also opening it to companies who are tired of agencies that don't listen and freelancers who can't scale. The Hub offers a third path: strategic architecture, modular creativity, and a methodology that adapts to how you work.</p>
+
+                    <p class="closing-paragraph">Because here's what I learned building this: the future of marketing isn't about bigger teams. It's about better systems. It's about leaders who can design frameworks that make great storytelling repeatable.</p>
+
+                    <p class="closing-paragraph">And it's about having the courage to treat your experience like a product: something living, repeatable, and built for what's next.</p>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div class="column-right">
+                
+                <!-- Aligns with opening paragraph -->
+                <div class="statement-card statement-card-primary">
+                    <h2>The Question</h2>
+                    <p class="statement-text">What if marketing worked the way great products do? Tested, modular, and built to evolve.</p>
+                </div>
+
+                <!-- Responsive spacer -->
+                <div class="column-spacer" style="height: 18rem;"></div>
+
+                <!-- The Pattern Before the Plan -->
+                <div class="statement-card">
+                    <h3>The Pattern Before the Plan</h3>
+                    <p class="statement-text">Autonomy came first. The constraint wasn't a limitation. It was the architecture that made everything work.</p>
+                </div>
+
+                <!-- Responsive spacer -->
+                <div class="column-spacer" style="height: 16rem;"></div>
+
+                <!-- Before The Hub existed as an idea -->
+                <div class="statement-card">
+                    <h3>Before The Hub existed as an idea</h3>
+                    <p class="statement-text">The best systems don't start with a grand plan. They start with a pattern you can't ignore.</p>
+                </div>
+
+                <!-- Responsive spacer -->
+                <div class="column-spacer" style="height: 16rem;"></div>
+
+                <!-- A Modular System -->
+                <div class="statement-card">
+                    <h3>A Modular System</h3>
+                    <p class="statement-text">Four connected parts. One foundation. Every arm of The Hub was designed to scale collaboration, not complexity.</p>
+                </div>
+
+                <!-- Responsive spacer -->
+                <div class="column-spacer" style="height: 16rem;"></div>
+
+                <!-- The Build -->
+                <div class="statement-card">
+                    <h3>The Build</h3>
+                    <p class="statement-text">Slow is smooth. Smooth becomes fast. The patience of good architecture pays off in momentum.</p>
+                </div>
+
+                <!-- Responsive spacer -->
+                <div class="column-spacer" style="height: 16rem;"></div>
+
+                <!-- What's Next -->
+                <div class="statement-card">
+                    <h3>What's Next</h3>
+                    <p class="statement-text">The system keeps learning. The more you use it, the smarter and more human it becomes.</p>
+                </div>
+
+                <!-- Responsive spacer -->
+                <div class="column-spacer" style="height: 16rem;"></div>
+
+                <!-- Aligns with "From Campaigns" section -->
+                <div class="statement-card">
+                    <h3 class="checklist-title">✓ What I Kept</h3>
+                    <ul class="insight-list">
+                        <li><strong>The rigor</strong><br>Frameworks, adaptability, editorial quality, strategic clarity.</li>
+                        <li><strong>The belief</strong><br>Storytelling needs infrastructure to travel beyond a single moment.</li>
+                        <li><strong>The architecture</strong><br>The campaigns that scaled had systems behind them.</li>
+                    </ul>
+                </div>
+
+                <!-- Responsive spacer -->
+                <div class="column-spacer" style="height: 22rem;"></div>
+
+                <!-- Aligns with tools section -->
+                <div class="statement-card">
+                    <h3 class="checklist-title">× What I Left Behind</h3>
+                    <ul class="insight-list">
+                        <li><strong>The assumption</strong><br>Great marketing requires massive teams and budgets.</li>
+                        <li><strong>The bloat</strong><br>Traditional agency overhead and complexity.</li>
+                        <li><strong>The template</strong><br>Services that look like everyone else's.</li>
+                    </ul>
+                </div>
+
+                <!-- Responsive spacer -->
+                <div class="column-spacer" style="height: 20rem;"></div>
+
+                <!-- Aligns with "The Build" section -->
+                <div class="statement-card statement-card-emphasis">
+                    <h2>The System</h2>
+                    <p class="statement-text-large">Four arms.<br><strong>One flow.</strong></p>
+                    <p class="statement-text-large">From proof<br>to <strong>partnership.</strong></p>
+                    <p class="statement-subtext">Advisory. IMC Services. ScopeIQ. StrategyIQ. Each distinct but connected.</p>
+                </div>
+
+                <div class="statement-card statement-card-final">
+                    <p class="final-statement">Treat your experience like a product: living, repeatable, built for what's next.</p>
+                </div>
+
+            </div>
+
+        </div>
+    </article>
+
+    <section class="article-footer">
+        <div class="container">
+            <h2>Keep Reading</h2>
+            <p>Explore more insights on creative strategy, leadership, and building with intention.</p>
+            <a href="/insights" class="back-link">Back to Insights</a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p class="footer-text">© 2025 Luis Gilberto. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="/" class="footer-link">Home</a>
+                <a href="/about" class="footer-link">About</a>
+                <a href="/contact" class="footer-link">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    (function() {
+        const themeToggle = document.getElementById('themeToggle');
+        const htmlElement = document.documentElement;
+        
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        htmlElement.setAttribute('data-theme', currentTheme);
+        
+        function toggleTheme() {
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            htmlElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            document.body.style.transition = 'background-color 0.3s ease, color 0.3s ease';
+        }
+        
+        if (themeToggle) {
+            themeToggle.addEventListener('click', toggleTheme);
+        }
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'd' || e.key === 'D') {
+                if (!document.activeElement.matches('input, textarea')) {
+                    toggleTheme();
+                }
+            }
+        });
+    })();
+    </script>
+
+    <!-- Theme-responsive image switching for this article -->
+    <script>
+    (function() {
+        const html = document.documentElement;
+        const transitionMs = 180; // Must match CSS
+
+        // Target only article images under insights/assets/images
+        const candidateImages = Array.from(document.querySelectorAll('img'))
+            .filter(img => typeof img.src === 'string' && img.src.includes('/insights/assets/images/') && !img.src.includes('_dark'));
+
+        // Registry to track variants and preload status
+        const registry = new Map();
+
+        function makeDarkSrc(lightSrc) {
+            try {
+                const url = new URL(lightSrc, window.location.origin);
+                const parts = url.pathname.split('.');
+                const ext = parts.pop();
+                const base = parts.join('.');
+                url.pathname = base + '_dark.' + ext;
+                return url.toString();
+            } catch (e) {
+                // Fallback for relative paths
+                const lastDot = lightSrc.lastIndexOf('.');
+                if (lastDot > 0) {
+                    return lightSrc.slice(0, lastDot) + '_dark' + lightSrc.slice(lastDot);
+                }
+                return lightSrc; // If no extension, return original
+            }
+        }
+
+        function preload(src) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.decoding = 'async';
+                img.loading = 'eager';
+                img.onload = () => resolve(true);
+                img.onerror = () => reject(false);
+                img.src = src;
+            });
+        }
+
+        function getTheme() {
+            return html.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+        }
+
+        function fadeSwap(img, nextSrc, immediateIfPreloaded = true) {
+            const meta = registry.get(img);
+            if (!meta) return;
+            if (img.src === nextSrc) {
+                meta.current = (nextSrc === meta.darkSrc) ? 'dark' : 'light';
+                return;
+            }
+
+            const performSwap = () => {
+                img.src = nextSrc;
+                // Force reflow for reliable transition start
+                void img.offsetWidth;
+                img.style.opacity = '1';
+                meta.current = (nextSrc === meta.darkSrc) ? 'dark' : 'light';
+            };
+
+            // If the image we are switching TO is not preloaded, avoid blank by waiting
+            const isDarkTarget = nextSrc === meta.darkSrc;
+            const targetPreloaded = isDarkTarget ? !!meta.darkReady : true; // light is the original
+
+            img.style.opacity = '0';
+
+            if (targetPreloaded || !immediateIfPreloaded) {
+                // Wait for fade-out, then swap
+                setTimeout(performSwap, transitionMs);
+            } else {
+                // Target not preloaded: wait for it, then swap
+                preload(nextSrc).then(() => {
+                    setTimeout(performSwap, transitionMs);
+                }).catch(() => {
+                    // Fallback: immediate swap if preload fails
+                    performSwap();
+                });
+            }
+        }
+
+        function updateImages() {
+            const theme = getTheme();
+            for (const img of candidateImages) {
+                const meta = registry.get(img);
+                if (!meta) continue;
+
+                const targetSrc = (theme === 'dark' && meta.darkReady) ? meta.darkSrc : meta.lightSrc;
+                if (img.src !== targetSrc) {
+                    fadeSwap(img, targetSrc, false);
+                }
+            }
+        }
+
+        // Initialize registry and preloads
+        for (const img of candidateImages) {
+            const lightSrc = img.src;
+            const darkSrc = makeDarkSrc(lightSrc);
+
+            const meta = {
+                lightSrc,
+                darkSrc,
+                current: getTheme(),
+                darkReady: false
+            };
+            registry.set(img, meta);
+
+            // Preload dark variant if needed
+            if (getTheme() === 'dark') {
+                preload(darkSrc).then(() => {
+                    meta.darkReady = true;
+                    // Apply immediately if still on dark theme
+                    if (getTheme() === 'dark') {
+                        fadeSwap(img, darkSrc, true);
+                    }
+                }).catch(() => {
+                    // Dark variant failed to load; ignore
+                });
+            }
+        }
+
+        // Listen for theme changes
+        const observer = new MutationObserver(() => {
+            updateImages();
+        });
+        observer.observe(html, { attributes: true, attributeFilter: ['data-theme'] });
+
+        // Initial application
+        updateImages();
+    })();
+    </script>
+</body>
+</html>
