@@ -23,6 +23,26 @@
             --grey-light: #F5F5F5;
             --grey-mid: #666666;
             --text-dark: #1a1a1a;
+
+            /* Mobile drawer custom properties */
+            --drawer-bg: #111111;
+            --drawer-link-color: #FFFFFF;
+            --drawer-link-hover: #EDEDED;
+            --drawer-padding-left: 48px;
+            --drawer-gap: 28px;
+            --drawer-link-size: 32px;
+            --drawer-link-weight: 800;
+            --drawer-link-spacing: 0.02em;
+            --drawer-link-min-target: 48px;
+
+            /* Hamburger icon custom properties */
+            --hamburger-bg: rgba(18, 18, 18, 0.96);
+            --hamburger-color: rgba(255, 255, 255, 0.92);
+            --hamburger-line-thickness: 3px;
+            --hamburger-line-length: 24px;
+            --hamburger-top-1: 12px;
+            --hamburger-top-2: 22px;
+            --hamburger-top-3: 32px;
         }
 
         body {
@@ -319,7 +339,7 @@
             border-bottom: 1px solid rgba(0, 0, 0, 0.08);
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 300;
         }
 
         .lg-site-header-inner {
@@ -420,7 +440,7 @@
             }
 
             .lg-main-nav {
-                display: none; /* we will wire mobile nav later */
+                display: none;
             }
 
             .lg-logo-img {
@@ -430,10 +450,11 @@
 
         /* Mobile hamburger layout for unified nav - Proof of Life */
         @media (max-width: 768px) {
+          /* Header stays above the overlay so the logo remains visible */
           .lg-site-header {
             position: sticky;
             top: 0;
-            z-index: 110;
+            z-index: 300;
           }
 
           .lg-site-header-inner {
@@ -445,90 +466,101 @@
             justify-content: space-between;
           }
 
-          .lg-logo-text {
-            font-size: 16px;
-          }
-
+          /* Full-screen drawer overlay using custom properties */
           .lg-main-nav {
-            position: absolute;
-            left: 0;
-            right: 0;
-            top: 56px;
-            padding: 0.75rem 1.25rem 1rem;
-            background: var(--black);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            position: fixed;
+            inset: 0;
+            padding-top: 88px;
+            padding-left: var(--drawer-padding-left);
+            padding-right: 24px;
+            background: var(--drawer-bg);
             display: none;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: var(--drawer-gap);
+            z-index: 200;
+            opacity: 0;
+            transform: translateY(-2%);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            text-align: left;
           }
 
           .lg-site-header.is-open .lg-main-nav {
             display: flex;
+            opacity: 1;
+            transform: translateY(0);
           }
 
+          /* Large, left-aligned, high-contrast links with accessible tap targets */
           .lg-nav-link {
-            font-size: 13px;
-            letter-spacing: 0.08em;
+            color: var(--drawer-link-color);
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: var(--drawer-link-size);
+            font-weight: var(--drawer-link-weight);
+            letter-spacing: var(--drawer-link-spacing);
+            text-decoration: none;
+            min-height: var(--drawer-link-min-target);
+            line-height: 1.2;
+            padding: 4px 0;
+            transition: color 0.2s ease, transform 0.2s ease;
           }
 
+          .lg-nav-link:hover { color: var(--drawer-link-hover); }
+          .lg-nav-link:focus-visible {
+            outline: none;
+            text-decoration: underline;
+            text-underline-offset: 6px;
+          }
+
+          /* Hamburger button styled via custom properties */
           .lg-nav-toggle {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            background: transparent;
+            border: none;
+            background: var(--hamburger-bg);
+            position: relative;
           }
 
           .lg-nav-toggle-bar {
-            width: 18px;
-            height: 2px;
-            margin: 4px auto;
-            background: var(--white);
+            position: absolute;
+            left: 50%;
+            width: var(--hamburger-line-length);
+            height: var(--hamburger-line-thickness);
+            background: var(--hamburger-color);
+            border-radius: 999px;
+            transform: translateX(-50%);
+            transition: transform 0.25s ease, opacity 0.2s ease, background-color 0.2s ease;
+          }
+
+          /* Perfectly equidistant lines */
+          .lg-nav-toggle-bar:nth-child(1) { top: var(--hamburger-top-1); }
+          .lg-nav-toggle-bar:nth-child(2) { top: var(--hamburger-top-2); }
+          .lg-nav-toggle-bar:nth-child(3) { top: var(--hamburger-top-3); }
+
+          /* Transform to X on open */
+          .lg-site-header.is-open .lg-nav-toggle-bar:nth-child(1) {
+            transform: translateX(-50%) translateY(10px) rotate(45deg);
+          }
+          .lg-site-header.is-open .lg-nav-toggle-bar:nth-child(2) { opacity: 0; }
+          .lg-site-header.is-open .lg-nav-toggle-bar:nth-child(3) {
+            transform: translateX(-50%) translateY(-10px) rotate(-45deg);
           }
         }
 
         /* Mobile hamburger visibility tweak */
         @media (max-width: 768px) {
-          .lg-nav-toggle {
-            border-width: 2px;
-            border-color: rgba(255, 255, 255, 0.6);
-            background: rgba(0, 0, 0, 0.8);
-          }
-
-          .lg-nav-toggle-bar {
-            width: 18px;
-            height: 2px;
-            margin: 3px auto;
-            background: var(--white) !important;
-            border-radius: 999px;
-          }
+          .lg-nav-toggle { background: var(--hamburger-bg); }
+          .lg-nav-toggle-bar { background: var(--hamburger-color); }
         }
 
         /* Mobile nav drawer legibility */
         @media (max-width: 768px) {
-          .lg-site-header.is-open {
-            background: var(--black);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-          }
-
-          .lg-site-header.is-open .lg-logo-text {
-            color: var(--white);
-          }
-
-          .lg-site-header.is-open .lg-main-nav {
-            background: var(--black);
-          }
-
-          .lg-site-header.is-open .lg-nav-link {
-            color: var(--white);
-          }
-
-          .lg-site-header.is-open .lg-nav-link::after {
-            background: var(--coral);
-          }
+          .lg-site-header.is-open .lg-main-nav { background: var(--black); }
+          .lg-site-header.is-open .lg-nav-link { color: var(--white); }
+          .lg-site-header.is-open .lg-nav-link::after { background: var(--coral); }
         }
 
         /* Keep header white for logo contrast on mobile */
@@ -708,16 +740,16 @@
       <div class="lg-site-header-inner">
         <a href="/insights" class="lg-logo" aria-label="Insights">
           <picture class="theme-picture lg-logo-picture">
-            <source type="image/svg+xml" data-role="light" media="(prefers-color-scheme: light)" srcset="/insights/assets/images/insights_logo_light.svg">
+            <source type="image/webp" data-role="light" media="(prefers-color-scheme: light)" srcset="/insights/assets/images/insights-logo-light.webp">
             <source type="image/webp" data-role="dark" media="(prefers-color-scheme: dark)" srcset="/insights/assets/images/insights-logo-dark.webp">
             <img 
-              src="/insights/assets/images/insights_logo_light.svg" 
+              src="/insights/assets/images/insights-logo-light.png" 
               alt="Insights logo" 
               class="lg-logo-img"
               loading="eager"
               decoding="async"
-              data-light-src="/insights/assets/images/insights_logo_light.svg"
-              data-dark-src="/insights/assets/images/insights-logo-dark.webp"
+              data-light-src="/insights/assets/images/insights-logo-light.png"
+              data-dark-src="/insights/assets/images/insights-logo-dark.png"
             >
           </picture>
         </a>
@@ -734,6 +766,7 @@
           aria-expanded="false"
           aria-controls="lgMainNav"
         >
+          <span class="lg-nav-toggle-bar"></span>
           <span class="lg-nav-toggle-bar"></span>
           <span class="lg-nav-toggle-bar"></span>
         </button>
@@ -921,9 +954,12 @@
         window.addEventListener("scroll", updateHeaderShadow);
 
         if (toggle && nav) {
+          // Toggle drawer state: class, ARIA, and page scroll lock
           toggle.addEventListener("click", function () {
             const isOpen = header.classList.toggle("is-open");
             toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+            nav.setAttribute("aria-hidden", isOpen ? "false" : "true");
+            document.body.style.overflow = isOpen ? "hidden" : "auto";
           });
         }
       });
