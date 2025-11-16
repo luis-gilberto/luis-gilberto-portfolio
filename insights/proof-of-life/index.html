@@ -96,6 +96,7 @@
         .hero-image img {
             max-width: 100%;
             height: auto;
+            transition: opacity 0.25s ease;
         }
 
         .article-meta {
@@ -377,6 +378,8 @@
         function collectToggleImages() {
           const imgs = Array.from(document.querySelectorAll('.hero-image img, .decorative-break img'));
           imgs.forEach(img => {
+            if (!img.dataset.baseSrc) img.dataset.baseSrc = img.getAttribute('src') || img.currentSrc || img.src;
+            if (!img.dataset.baseSrcset) img.dataset.baseSrcset = img.getAttribute('srcset') || '';
             if (!img.dataset.lightSrc) img.dataset.lightSrc = img.currentSrc || img.src;
             if (!img.dataset.darkSrc) img.dataset.darkSrc = computeDarkSrc(img.dataset.lightSrc);
           });
@@ -386,39 +389,87 @@
         function getCurrentTheme() {
           const manual = document.documentElement.getAttribute('data-theme');
           if (manual) return manual;
-          return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+          return (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
         }
 
         const toggleImgs = collectToggleImages();
+        toggleImgs.forEach(img => { if (img.dataset.lightSrc) preload(img.dataset.lightSrc); if (img.dataset.darkSrc) preload(img.dataset.darkSrc); });
 
-        function applyThemeToImages(theme) {
-          toggleImgs.forEach(img => {
-            const target = theme === 'dark' ? img.dataset.darkSrc : img.dataset.lightSrc;
-            if (target && img.src !== target) {
-              img.src = target;
+        function preload(src) {
+          return new Promise(resolve => {
+            const i = new Image();
+            i.onload = () => resolve(true);
+            i.onerror = () => resolve(false);
+            i.src = src;
+          });
+        }
+
+        async function applyThemeToImages(theme) {
+          for (const img of toggleImgs) {
+            const baseAlt = img.dataset.altBase || img.alt || '';
+            const targetSrc = theme === 'dark' ? img.dataset.darkSrc : img.dataset.lightSrc;
+            const targetSrcset = theme === 'dark' ? (img.dataset.darkSrcset || '') : (img.dataset.lightSrcset || '');
+            const ok = targetSrc ? await preload(targetSrc) : false;
+            const finalSrc = ok ? targetSrc : (img.dataset.baseSrc || img.src);
+            const finalSrcset = ok ? targetSrcset : (img.dataset.baseSrcset || '');
+            if (finalSrcset) img.srcset = finalSrcset; else img.removeAttribute('srcset');
+            if (img.src !== finalSrc) {
+              img.style.opacity = '0';
+              img.src = finalSrc;
+              img.addEventListener('load', () => { img.style.opacity = '1'; }, { once: true });
+            }
+            img.alt = baseAlt + (theme === 'dark' ? ' (Dark)' : ' (Light)');
+            img.setAttribute('aria-label', img.alt);
+          }
+        }
+
+        function collectThemePictures() {
+          return Array.from(document.querySelectorAll('.hero-image picture.theme-picture'));
+        }
+
+        function applyThemeToPictures(theme) {
+          const manual = document.documentElement.getAttribute('data-theme');
+          const pics = collectThemePictures();
+          pics.forEach(p => {
+            const light = p.querySelector('source[data-role="light"]');
+            const dark = p.querySelector('source[data-role="dark"]');
+            if (manual) {
+              if (theme === 'light') {
+                if (light) light.setAttribute('media', 'all');
+                if (dark) dark.setAttribute('media', 'not all');
+              } else {
+                if (light) light.setAttribute('media', 'not all');
+                if (dark) dark.setAttribute('media', 'all');
+              }
+            } else {
+              if (light) light.setAttribute('media', '(prefers-color-scheme: light)');
+              if (dark) dark.setAttribute('media', '(prefers-color-scheme: dark)');
             }
           });
         }
 
         // Initial apply on page load
         applyThemeToImages(getCurrentTheme());
+        applyThemeToPictures(getCurrentTheme());
 
         // Watch for manual toggle changes
         const observer = new MutationObserver(mutations => {
           for (const m of mutations) {
             if (m.type === 'attributes' && m.attributeName === 'data-theme') {
               applyThemeToImages(getCurrentTheme());
+              applyThemeToPictures(getCurrentTheme());
             }
           }
         });
         observer.observe(document.documentElement, { attributes: true });
 
         // Watch for system preference changes when no manual theme set
-        const mq = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
+        const mq = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)');
         if (mq && mq.addEventListener) {
           mq.addEventListener('change', () => {
             if (!document.documentElement.getAttribute('data-theme')) {
               applyThemeToImages(getCurrentTheme());
+              applyThemeToPictures(getCurrentTheme());
             }
           });
         }
@@ -444,7 +495,26 @@
 <p class="hero-subtitle">Why the best work always carries fingerprints, and what happens when we forget to leave them.</p>
             </div>
             <div class="hero-image">
-                <img src="https://i.imgur.com/ld88HSo.png" alt="Identity Loading illustration">
+                <picture class="theme-picture">
+                    <source type="image/webp" data-role="dark" media="(prefers-color-scheme: dark)" srcset="/insights/assets/images/DigitalPrints_dark.webp 600w, /insights/assets/images/DigitalPrints_dark.webp 1200w">
+                    <source type="image/webp" data-role="light" media="(prefers-color-scheme: light)" srcset="/insights/assets/images/DigitalPrints_light.webp 600w, /insights/assets/images/DigitalPrints_light.webp 1200w">
+                    <img 
+                      src="/insights/assets/images/DigitalPrints.png" 
+                      alt="Proof of Life — Digital Prints" 
+                      class="hero-img"
+                      loading="lazy" 
+                      decoding="async" 
+                      fetchpriority="low"
+                      data-alt-base="Proof of Life — Digital Prints"
+                      data-light-src="/insights/assets/images/DigitalPrints_light.png"
+                      data-dark-src="/insights/assets/images/DigitalPrints_dark.png"
+                      data-light-srcset="/insights/assets/images/DigitalPrints_light.png 600w, /insights/assets/images/DigitalPrints_light.png 1200w"
+                      data-dark-srcset="/insights/assets/images/DigitalPrints_dark.png 600w, /insights/assets/images/DigitalPrints_dark.png 1200w"
+                      srcset="/insights/assets/images/DigitalPrints.png 600w, /insights/assets/images/DigitalPrints.png 1200w"
+                      sizes="(max-width: 768px) 90vw, 600px"
+                      aria-label="Proof of Life — Digital Prints"
+                    >
+                </picture>
             </div>
         </div>
     </section>

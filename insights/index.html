@@ -1244,7 +1244,11 @@ footer {
                     <div class="swiper-wrapper">
                         <div class="swiper-slide">
                             <div class="story-card">
-                                <img src="/insights/assets/images/ProofOfLife.png" alt="Proof of Life" class="story-image">
+                                <picture class="theme-picture">
+                                    <source type="image/webp" data-role="dark" media="(prefers-color-scheme: dark)" srcset="/insights/assets/images/DigitalPrints_dark.webp">
+                                    <source type="image/webp" data-role="light" media="(prefers-color-scheme: light)" srcset="/insights/assets/images/DigitalPrints_light.webp">
+                                    <img src="/insights/assets/images/DigitalPrints.png" alt="Proof of Life" class="story-image" loading="lazy" decoding="async" data-light-src="/insights/assets/images/DigitalPrints_light.png" data-dark-src="/insights/assets/images/DigitalPrints_dark.png">
+                                </picture>
                                 <div class="story-content">
                                     <div class="story-meta"><span class="story-date">November 2025</span></div>
                                     <h3 class="story-title">Proof of Life</h3>
@@ -1622,17 +1626,31 @@ footer {
         // THEME TOGGLE
         // ============================================
         const themeToggle = document.getElementById('themeToggle');
-        const html = document.documentElement;
+                const html = document.documentElement;
 
         // Check for saved theme preference or default to light mode
         const currentTheme = localStorage.getItem('theme') || 'light';
         html.setAttribute('data-theme', currentTheme);
 
-        themeToggle.addEventListener('click', () => {
-            const theme = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-            html.setAttribute('data-theme', theme);
-            localStorage.setItem('theme', theme);
-        });
+                themeToggle.addEventListener('click', () => {
+                    const theme = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+                    html.setAttribute('data-theme', theme);
+                    localStorage.setItem('theme', theme);
+                    (function(){
+                        const pics = Array.from(document.querySelectorAll('picture.theme-picture'));
+                        pics.forEach(p => {
+                            const light = p.querySelector('source[data-role="light"]');
+                            const dark = p.querySelector('source[data-role="dark"]');
+                            if (theme === 'light') {
+                                if (light) light.setAttribute('media','all');
+                                if (dark) dark.setAttribute('media','not all');
+                            } else {
+                                if (light) light.setAttribute('media','not all');
+                                if (dark) dark.setAttribute('media','all');
+                            }
+                        });
+                    })();
+                });
 
         // ============================================
         // TAB SWITCHING
