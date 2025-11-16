@@ -34,8 +34,20 @@
     <!-- Insights Header -->
     <header class="lg-site-header" role="banner">
         <div class="lg-site-header-inner">
-            <a href="/" class="lg-logo" aria-label="Home">
-                <span class="lg-logo-text">Luis Gilberto</span>
+            <a href="/insights" class="lg-logo" aria-label="Insights">
+                <picture class="theme-picture lg-logo-picture">
+                    <source type="image/svg+xml" data-role="light" media="(prefers-color-scheme: light)" srcset="/insights/assets/images/insights_logo_light.svg">
+                    <source type="image/webp" data-role="dark" media="(prefers-color-scheme: dark)" srcset="/insights/assets/images/insights-logo-dark.webp">
+                    <img 
+                      src="/insights/assets/images/insights_logo_light.svg" 
+                      alt="Insights logo" 
+                      class="lg-logo-img"
+                      loading="eager"
+                      decoding="async"
+                      data-light-src="/insights/assets/images/insights_logo_light.svg"
+                      data-dark-src="/insights/assets/images/insights-logo-dark.webp"
+                    >
+                </picture>
             </a>
             <nav class="lg-main-nav" aria-label="Main navigation">
                 <a href="/portfolio" class="lg-nav-link">Portfolio</a>
@@ -247,6 +259,42 @@
 
         updateHeaderShadow();
         window.addEventListener("scroll", updateHeaderShadow);
+    });
+</script>
+<script>
+    // Ensure <picture>.theme-picture respects manual theme toggle
+    document.addEventListener("DOMContentLoaded", function () {
+        function applyThemeToPictures() {
+            const theme = document.documentElement.getAttribute("data-theme");
+            const pics = document.querySelectorAll("picture.theme-picture");
+            pics.forEach(function(p){
+                const light = p.querySelector('source[data-role="light"]');
+                const dark = p.querySelector('source[data-role="dark"]');
+                if (!light && !dark) return;
+                if (theme) {
+                    if (theme === 'light') {
+                        if (light) light.setAttribute('media','all');
+                        if (dark) dark.setAttribute('media','not all');
+                    } else {
+                        if (light) light.setAttribute('media','not all');
+                        if (dark) dark.setAttribute('media','all');
+                    }
+                } else {
+                    if (light) light.setAttribute('media','(prefers-color-scheme: light)');
+                    if (dark) dark.setAttribute('media','(prefers-color-scheme: dark)');
+                }
+            });
+        }
+
+        applyThemeToPictures();
+        const obs = new MutationObserver(function(muts){
+            for (const m of muts) {
+                if (m.type === 'attributes' && m.attributeName === 'data-theme') {
+                    applyThemeToPictures();
+                }
+            }
+        });
+        obs.observe(document.documentElement, { attributes: true });
     });
 </script>
 </body>
