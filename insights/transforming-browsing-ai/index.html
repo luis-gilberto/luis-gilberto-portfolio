@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/insights/assets/css/insights-article.css">
     <style>
         :root {
             --bg-primary: #ffffff;
@@ -517,18 +518,32 @@
     </style>
 </head>
 <body>
-    <!-- Breadcrumb Navigation -->
-    <nav class="breadcrumb-nav" aria-label="Breadcrumb">
-        <div class="breadcrumb-container">
-            <a href="/" class="breadcrumb-link">Home</a>
-            <span class="breadcrumb-separator">/</span>
-            <a href="/insights" class="breadcrumb-link">Insights</a>
-            <span class="breadcrumb-separator">/</span>
-            <a href="/insights#work-that-mattered" class="breadcrumb-link">Work That Mattered</a>
-            <span class="breadcrumb-separator">/</span>
-            <span class="breadcrumb-current">Transforming Browsing with AI</span>
-        </div>
-    </nav>
+    <header class="lg-site-header" role="banner">
+      <div class="lg-site-header-inner">
+        <a href="/insights" class="lg-logo" aria-label="Insights">
+          <picture class="theme-picture lg-logo-picture">
+            <source type="image/svg+xml" data-role="light" media="(prefers-color-scheme: light)" srcset="/insights/assets/images/insights_logo_light.svg">
+            <source type="image/svg+xml" data-role="dark" media="(prefers-color-scheme: dark)" srcset="/insights/assets/images/insights_logo_light.svg">
+            <img src="/insights/assets/images/insights_logo_light.svg" alt="Insights logo" class="lg-logo-img" loading="eager" decoding="async">
+          </picture>
+        </a>
+        <nav class="lg-main-nav" id="lgMainNav" aria-label="Main navigation">
+          <button class="lg-nav-close" aria-label="Close menu" type="button"></button>
+          <a href="/portfolio" class="lg-nav-link">Portfolio</a>
+          <a href="/TheHub/" class="lg-nav-link">The Hub</a>
+          <a href="/insights" class="lg-nav-link is-active">Insights</a>
+          <a href="/about" class="lg-nav-link">About</a>
+          <a href="/contact" class="lg-nav-link">Contact</a>
+        </nav>
+        <div class="lg-nav-backdrop" aria-hidden="true" tabindex="-1"></div>
+        <button class="lg-nav-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="lgMainNav">
+          <span class="lg-nav-toggle-bar"></span>
+          <span class="lg-nav-toggle-bar"></span>
+          <span class="lg-nav-toggle-bar"></span>
+        </button>
+      </div>
+    </header>
+    
     <section class="hero-section">
         <div class="diagonal-slices">
             <div class="diagonal-slice"></div>
@@ -540,7 +555,7 @@
         <div class="hero-content">
             <div class="article-category">AI Innovation</div>
             <h1 class="hero-title">Transforming Browsing with AI</h1>
-            <p class="hero-subtitle">Positioning Edge as the AI-powered browser that transforms how people interact with the web - making advanced technology feel accessible and valuable</p>
+            <p class="hero-subtitle article-subheading">Positioning Edge as the AI-powered browser that transforms how people interact with the web - making advanced technology feel accessible and valuable</p>
         </div>
         <div class="hero-image-container">
 <img src="../assets/images/03_Browse_AI.jpg" alt="Transforming Browsing with AI" class="hero-image">
@@ -576,14 +591,14 @@
 
         <main class="article-content">
             <div class="content-section">
-                <h2 class="section-title">The Vision</h2>
+                <h2 class="section-title article-subheading">The Vision</h2>
                 <p class="section-text">As Microsoft ramped up early Copilot awareness in late 2023, the Edge team saw an opportunity to anchor its AI story in everyday browsing. This campaign launched just ahead of the holiday season, positioning Edge as the AI-powered browser that transforms how people interact with the web.</p>
                 
                 <p class="section-text">Part of a broader Go-To-Market strategy, we positioned Edge not merely as a tool, but as a trusted AI companion in your digital life. From in-app demos to social-first video, this creative library became Edge's springboard for bringing smarter browsing to life.</p>
             </div>
 
             <div class="content-section">
-                <h2 class="section-title">Strategic Approach</h2>
+                <h2 class="section-title article-subheading">Strategic Approach</h2>
                 <p class="section-text">As Integrated Marketing & Creative Strategy lead, I architected a narrative arc that connected Edge's AI evolution to real-world value: from first glance to first click. This wasn't just assets - it was a human-centered suite, crafted to spark curiosity and guide users toward smarter browsing habits.</p>
                 
                 <ul class="feature-list">
@@ -607,7 +622,7 @@
             </div>
 
             <div class="content-section">
-                <h2 class="section-title">Core AI Features</h2>
+                <h2 class="section-title article-subheading">Core AI Features</h2>
                 <p class="section-text">The campaign showcased four pillars of Edge's AI transformation:</p>
                 
                 <ul class="feature-list">
@@ -678,5 +693,53 @@
             </a>
         </div>
     </nav>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const header = document.querySelector(".lg-site-header");
+        const toggle = document.querySelector(".lg-nav-toggle");
+        const nav = document.querySelector(".lg-main-nav");
+        const backdrop = document.querySelector(".lg-nav-backdrop");
+        const closeBtn = document.querySelector(".lg-nav-close");
+        if (!header) return;
+        let previousFocus = null;
+        function getFocusable(container) {
+          return Array.from(container.querySelectorAll('a[href], button:not([disabled]), [tabindex="0"], input, select, textarea'));
+        }
+        function trapFocusKeydown(e) {
+          if (!header.classList.contains('is-open')) return;
+          if (e.key === 'Escape') { e.preventDefault(); closeNav(); return; }
+          if (e.key !== 'Tab') return;
+          const focusables = getFocusable(nav);
+          if (!focusables.length) return;
+          const first = focusables[0];
+          const last = focusables[focusables.length - 1];
+          const active = document.activeElement;
+          if (e.shiftKey) { if (active === first) { e.preventDefault(); last.focus(); } }
+          else { if (active === last) { e.preventDefault(); first.focus(); } }
+        }
+        function openNav() {
+          previousFocus = document.activeElement;
+          header.classList.add('is-open');
+          toggle.setAttribute('aria-expanded', 'true');
+          nav.setAttribute('aria-hidden', 'false');
+          document.body.style.overflow = 'hidden';
+          if (closeBtn) closeBtn.focus();
+          document.addEventListener('keydown', trapFocusKeydown);
+        }
+        function closeNav() {
+          header.classList.remove('is-open');
+          toggle.setAttribute('aria-expanded', 'false');
+          nav.setAttribute('aria-hidden', 'true');
+          document.body.style.overflow = 'auto';
+          document.removeEventListener('keydown', trapFocusKeydown);
+          if (previousFocus) previousFocus.focus();
+        }
+        if (toggle && nav) {
+          toggle.addEventListener('click', function () { if (header.classList.contains('is-open')) { closeNav(); } else { openNav(); } });
+        }
+        if (backdrop) { backdrop.addEventListener('click', function () { if (header.classList.contains('is-open')) closeNav(); }); }
+        if (closeBtn) { closeBtn.addEventListener('click', function () { closeNav(); }); }
+      });
+    </script>
 </body>
 </html>
