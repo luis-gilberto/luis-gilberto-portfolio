@@ -444,6 +444,22 @@ p {
     box-shadow: var(--shadow-coral);
 }
 
+.story-card.featured {
+    box-shadow: var(--shadow-coral);
+    border: 1px solid rgba(249, 111, 110, 0.2);
+}
+
+.story-card.featured .read-link {
+    background: var(--coral-accent);
+    color: #ffffff;
+    border-radius: 999px;
+    padding: 0.6rem 1.2rem;
+}
+
+.story-card.featured .read-link:hover {
+    filter: brightness(0.95);
+}
+
 .story-image {
     width: 100%;
     height: 240px;
@@ -1481,8 +1497,19 @@ footer {
 
             <!-- Stories Tab (Carousel) -->
             <div class="tab-content active" id="stories-tab">
-                <div class="swiper stories-swiper">
+                <div class="swiper stories-swiper" role="region" aria-roledescription="carousel" aria-label="Featured insights stories carousel">
                     <div class="swiper-wrapper">
+                        <div class="swiper-slide" data-story-id="building-insights" role="article" aria-label="Featured Story: Building Insights" tabindex="0">
+                            <div class="story-card featured">
+                                <img src="/insights/assets/images/BI_Hero.png" alt="Building Insights" class="story-image" loading="lazy" decoding="async" width="1200" height="630">
+                                <div class="story-content">
+                                    <div class="story-meta"><span class="story-date">Featured</span></div>
+                                    <h3 class="story-title">Building Insights: Thinking in Structures</h3>
+                                    <p class="story-description">A framework-driven look at turning ideas into systems that scale creative work. Practical patterns you can apply today.</p>
+                                    <a href="/insights/building-insights/" class="read-link featured-cta" aria-label="Read Building Insights article">Read More &rarr;</a>
+                                </div>
+                            </div>
+                        </div>
                         <div class="swiper-slide">
                             <div class="story-card">
                                 <picture class="theme-picture">
@@ -1987,6 +2014,45 @@ footer {
                     storiesSwiper.autoplay.stop();
                 } else {
                     storiesSwiper.autoplay.start();
+                }
+            });
+
+            const featuredSlide = document.querySelector('.stories-swiper .swiper-slide[data-story-id="building-insights"]');
+            const featuredCTA = featuredSlide ? featuredSlide.querySelector('.featured-cta') : null;
+            const metricsKey = 'featured_building_insights_metrics';
+            let metrics;
+            try { metrics = JSON.parse(localStorage.getItem(metricsKey) || '{}'); } catch { metrics = {}; }
+            metrics.impressions = metrics.impressions || 0;
+            metrics.clicks = metrics.clicks || 0;
+            metrics.timeMs = metrics.timeMs || 0;
+            let activeStart = null;
+            function saveMetrics() { try { localStorage.setItem(metricsKey, JSON.stringify(metrics)); } catch {} }
+            function trackVisibility() {
+                const activeEl = storiesSwiper.slides[storiesSwiper.activeIndex];
+                const isFeaturedActive = activeEl && activeEl.dataset && activeEl.dataset.storyId === 'building-insights';
+                if (isFeaturedActive) {
+                    metrics.impressions += 1;
+                    activeStart = performance.now();
+                    saveMetrics();
+                } else if (activeStart !== null) {
+                    metrics.timeMs += Math.max(0, performance.now() - activeStart);
+                    activeStart = null;
+                    saveMetrics();
+                }
+            }
+            storiesSwiper.on('slideChange', trackVisibility);
+            trackVisibility();
+            if (featuredCTA) {
+                featuredCTA.addEventListener('click', function() {
+                    metrics.clicks += 1;
+                    saveMetrics();
+                });
+            }
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden && activeStart !== null) {
+                    metrics.timeMs += Math.max(0, performance.now() - activeStart);
+                    activeStart = null;
+                    saveMetrics();
                 }
             });
         }

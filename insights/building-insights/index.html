@@ -12,9 +12,1082 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
 
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="/insights/assets/css/insights-global.css">
-    <link rel="stylesheet" href="/insights/assets/css/insights-article.css">
+    <style>
+        /* Global Styles */
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f5f5;
+            --text-primary: #0a0a0a;
+            --text-secondary: #666666;
+            --coral-accent: #ff6b6b;
+            --teal-accent: #2ed3c6;
+            --space-sm: 1rem;
+            --space-md: 2rem;
+            --space-lg: 4rem;
+            --space-xl: 6rem;
+        }
+        
+        [data-theme="dark"] {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --text-primary: #f5f5f5;
+            --text-secondary: #a0a0a0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        h1, h2, h3 {
+            font-family: 'Big Shoulders Display', sans-serif;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+        }
+        
+        /* Header & Navigation Styles */
+        .lg-site-header {
+            position: sticky;
+            top: 0;
+            background: #ffffff;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            z-index: 100;
+        }
+
+        .lg-site-header-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .lg-logo {
+            display: block;
+            text-decoration: none;
+            z-index: 102;
+        }
+
+        .lg-logo-picture {
+            display: block;
+            height: 32px;
+        }
+
+        .lg-logo-img {
+            height: 32px;
+            width: auto;
+            display: block;
+        }
+
+        .lg-main-nav {
+            display: flex;
+            align-items: center;
+            gap: 2.5rem;
+        }
+
+        .lg-nav-link {
+            color: #121212;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .lg-nav-link:hover {
+            color: var(--coral-accent);
+        }
+
+        .lg-nav-link.is-active {
+            color: var(--coral-accent);
+        }
+
+        .lg-nav-link.is-active::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--coral-accent);
+        }
+
+        .lg-nav-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            z-index: 102;
+        }
+
+        .lg-nav-toggle-bar {
+            width: 24px;
+            height: 2px;
+            background: #121212;
+            transition: all 0.3s ease;
+        }
+
+        .lg-nav-close {
+            display: none;
+        }
+
+        .lg-nav-backdrop {
+            display: none;
+        }
+
+        /* Mobile Navigation */
+        @media (max-width: 768px) {
+            .lg-nav-toggle {
+                display: flex;
+            }
+
+            .lg-main-nav {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 280px;
+                height: 100vh;
+                background: #000000;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0;
+                padding: 6rem 2rem 2rem;
+                transition: right 0.3s ease;
+                z-index: 101;
+                box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
+            }
+
+            .lg-site-header.is-open .lg-main-nav {
+                right: 0;
+            }
+
+            .lg-nav-link {
+                width: 100%;
+                padding: 1rem 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+                color: #ffffff;
+            }
+
+            .lg-nav-link.is-active::after {
+                display: none;
+            }
+
+            .lg-nav-close {
+                display: block;
+                position: absolute;
+                top: 1.5rem;
+                right: 1.5rem;
+                background: none;
+                border: none;
+                font-size: 2rem;
+                cursor: pointer;
+                color: #ffffff;
+                width: 40px;
+                height: 40px;
+            }
+
+            .lg-nav-close::before {
+                content: '×';
+            }
+
+            .lg-nav-backdrop {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 100;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+
+            .lg-site-header.is-open {
+                background: #ffffff;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            }
+        }
+
+        /* Accessibility: focus-visible for keyboard navigation */
+        .lg-nav-link:focus-visible,
+        .lg-nav-toggle:focus-visible,
+        .lg-nav-close:focus-visible {
+            outline: 2px solid #FF3B30;
+            outline-offset: 2px;
+        }
+
+            .lg-site-header.is-open .lg-nav-backdrop {
+                display: block;
+                opacity: 1;
+            }
+
+            .lg-site-header.is-open .lg-nav-toggle-bar:nth-child(1) {
+                transform: rotate(45deg) translate(5px, 5px);
+            }
+
+            .lg-site-header.is-open .lg-nav-toggle-bar:nth-child(2) {
+                opacity: 0;
+            }
+
+            .lg-site-header.is-open .lg-nav-toggle-bar:nth-child(3) {
+                transform: rotate(-45deg) translate(5px, -5px);
+            }
+        }
+        
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            background: var(--nav-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            background: var(--coral-accent);
+            border-color: var(--coral-accent);
+        }
+        
+        .theme-toggle svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--text-primary);
+        }
+        
+        [data-theme="light"] .moon-icon,
+        [data-theme="dark"] .sun-icon {
+            display: none;
+        }
+        
+        /* Top Accent */
+        .top-accent {
+            height: 6px;
+            background: var(--coral-accent);
+        }
+        
+        /* Breadcrumb Navigation */
+        .nav-breadcrumb {
+            padding: 1.5rem 0;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--text-primary);
+            opacity: 0.8;
+        }
+        
+        .breadcrumb-link {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        
+        .breadcrumb-link:hover {
+            color: var(--coral-accent);
+        }
+        
+        .breadcrumb-separator {
+            margin: 0 0.75rem;
+            color: var(--text-secondary);
+        }
+        
+        .breadcrumb-current {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        /* Hero Section */
+        .article-hero-modular {
+            padding: var(--space-xl) 0 var(--space-lg) 0;
+            text-align: center;
+            border-bottom: 2px solid var(--text-primary);
+        }
+
+        .article-hero-modular .article-category {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--coral-accent);
+            margin-bottom: 1.5rem;
+        }
+
+        .article-hero-modular h1 {
+            font-size: clamp(3rem, 6vw, 5rem);
+            font-weight: 900;
+            line-height: 0.95;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .article-hero-modular .article-subtitle {
+            font-size: 1.5rem;
+            font-weight: 400;
+            line-height: 1.4;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .article-hero-modular .series-badge {
+            display: inline-block;
+            background: var(--teal-accent);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+        }
+
+        .article-hero-modular .article-meta {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 600;
+        }
+
+        /* Hero Illustration */
+        .hero-illustration {
+            max-width: 900px;
+            margin: 3rem auto 0;
+            padding: 0 2rem;
+        }
+
+        .hero-illustration img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        [data-theme="dark"] .hero-illustration img {
+            opacity: 0.95;
+            filter: brightness(0.98);
+        }
+
+        /* Modular Grid System */
+        .article-modular {
+            padding: var(--space-xl) 0;
+            background: var(--bg-primary);
+        }
+
+        .container-modular {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+            display: grid;
+            grid-template-columns: 1fr 1.5fr 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+
+        /* LEFT COLUMN */
+        .column-left {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            position: sticky;
+            top: 2rem;
+        }
+
+        .hero-card {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 12px;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        [data-theme="dark"] .hero-card {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        .hero-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+            background: var(--coral-accent);
+        }
+
+        .hero-card-content h2 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .hero-card-content p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        /* Illustration Cards */
+        .illustration-card {
+            background: var(--bg-secondary);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        [data-theme="dark"] .illustration-card {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .illustration-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .illustration-card:hover img {
+            transform: scale(1.02);
+        }
+
+        [data-theme="dark"] .illustration-card img {
+            opacity: 0.95;
+        }
+
+        .quote-card {
+            background: var(--bg-secondary);
+            padding: 2.5rem 2rem;
+            border-radius: 12px;
+            border-left: 6px solid var(--coral-accent);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        [data-theme="dark"] .quote-card {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .large-quote {
+            font-size: 1.75rem;
+            font-weight: 700;
+            line-height: 1.3;
+            font-style: italic;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        /* Principles Card */
+        .principles-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border: 2px solid var(--teal-accent);
+        }
+
+        [data-theme="dark"] .principles-card {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .principles-card-title {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--teal-accent);
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .principle-item {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            padding: 0.75rem;
+            padding-left: 2rem;
+        }
+
+        .principle-item:hover {
+            background: rgba(46, 211, 198, 0.05);
+            transform: translateX(4px);
+        }
+
+        .principle-item::before {
+            content: '';
+            position: absolute;
+            left: 0.5rem;
+            top: 1rem;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--teal-accent);
+            box-shadow: 0 0 10px rgba(46, 211, 198, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .principle-item:hover::before {
+            transform: scale(1.3);
+            box-shadow: 0 0 15px rgba(46, 211, 198, 0.8);
+        }
+
+        .principle-item.active {
+            background: rgba(46, 211, 198, 0.1);
+        }
+
+        .principle-item.active::before {
+            background: var(--coral-accent);
+            box-shadow: 0 0 15px rgba(255, 107, 107, 0.8);
+        }
+
+        .principle-label {
+            font-weight: 700;
+            color: var(--teal-accent);
+            font-size: 0.9rem;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .principle-name {
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            line-height: 1.4;
+            font-weight: 600;
+        }
+
+        .principle-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, margin-top 0.3s ease;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .principle-item.active .principle-details {
+            max-height: 200px;
+            margin-top: 0.75rem;
+        }
+
+        /* CENTER COLUMN */
+        .column-center {
+            border-left: 6px solid var(--coral-accent);
+            padding-left: 2.5rem;
+        }
+
+        .reading-content {
+            max-width: 650px;
+        }
+
+        .reading-content .lead {
+            font-size: 1.5rem;
+            line-height: 1.5;
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+        }
+
+        .reading-content p {
+            font-size: 1.125rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .reading-content h3 {
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .reading-content strong {
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .reading-content em {
+            font-style: italic;
+            color: var(--text-primary);
+        }
+
+        /* Decorative Break Illustrations */
+        .decorative-break {
+            margin: 4rem auto;
+            text-align: center;
+            max-width: 700px;
+        }
+
+        .decorative-break img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        [data-theme="dark"] .decorative-break {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 2rem;
+            border-radius: 12px;
+        }
+
+        [data-theme="dark"] .decorative-break img {
+            opacity: 0.95;
+        }
+
+        .section-spacer {
+            height: 3rem;
+            border-bottom: 2px solid var(--text-primary);
+            opacity: 0.2;
+            margin: 3rem 0;
+        }
+
+        .closing-paragraph {
+            font-size: 1.25rem;
+            line-height: 1.7;
+            font-style: italic;
+            color: var(--text-secondary);
+            margin-top: 2.5rem;
+        }
+
+        /* RIGHT COLUMN */
+        .column-right {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            position: sticky;
+            top: 2rem;
+        }
+
+        .statement-card {
+            background: var(--bg-secondary);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        [data-theme="dark"] .statement-card {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .statement-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .statement-card h2 {
+            font-size: 1.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .statement-card h3 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .statement-text {
+            font-size: 1.125rem;
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+
+        .statement-text-large {
+            font-size: 1.75rem;
+            font-weight: 700;
+            line-height: 1.3;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .statement-text-large strong {
+            color: var(--coral-accent);
+        }
+
+        .statement-subtext {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-top: 1.5rem;
+            font-style: italic;
+        }
+
+        .statement-card-primary {
+            background: var(--coral-accent);
+            color: white;
+        }
+
+        .statement-card-primary h2,
+        .statement-card-primary .statement-text {
+            color: white;
+        }
+
+        .statement-card-emphasis {
+            border: 3px solid var(--coral-accent);
+        }
+
+        .statement-card-final {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+        }
+
+        [data-theme="dark"] .statement-card-final {
+            background: #f5f5f5;
+            color: #0a0a0a;
+        }
+
+        .final-statement {
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1.4;
+            text-align: center;
+            margin: 0;
+        }
+
+        .checklist-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .insight-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .insight-list li {
+            margin-bottom: 1.5rem;
+            padding-left: 0;
+        }
+
+        .insight-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        .insight-list strong {
+            display: block;
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            color: var(--text-primary);
+        }
+
+        /* Footer Sections */
+        .article-footer {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            padding: var(--space-xl) 0;
+            text-align: center;
+            position: relative;
+        }
+
+        [data-theme="dark"] .article-footer {
+            background: #f5f5f5;
+            color: #0a0a0a;
+        }
+
+        .article-footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: var(--coral-accent);
+        }
+
+        .article-footer h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+        }
+
+        .article-footer p {
+            font-size: 1.125rem;
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            opacity: 0.9;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: var(--coral-accent);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border: 2px solid var(--coral-accent);
+            padding: 1rem 2.5rem;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .back-link:hover {
+            background: var(--coral-accent);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+        }
+
+        footer {
+            padding: var(--space-lg) 0;
+            text-align: left;
+            border-top: 2px solid var(--text-primary);
+            background: var(--bg-secondary);
+        }
+
+        .footer-text {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: flex-start;
+            gap: 2.5rem;
+        }
+
+        .footer-link {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--coral-accent);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1100px) {
+            .container-modular {
+                grid-template-columns: 1fr 1.5fr;
+                gap: 2.5rem;
+            }
+
+            .column-left {
+                grid-column: 1 / -1;
+                position: static;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+            }
+
+            .column-right {
+                grid-column: 2 / 3;
+                grid-row: 2;
+            }
+
+            .column-center {
+                grid-column: 1 / 2;
+                grid-row: 2;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .container-modular {
+                display: block;
+                max-width: 100%;
+                padding: 0 var(--space-md);
+            }
+
+            .column-left {
+                display: block;
+                width: 100%;
+                position: static;
+                margin-bottom: 3rem;
+            }
+
+            .column-center {
+                display: block;
+                width: 100%;
+                position: static;
+                border-left: 4px solid var(--coral-accent);
+                padding-left: 2rem;
+                margin-bottom: 3rem;
+            }
+
+            .column-right {
+                display: block;
+                width: 100%;
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container-modular {
+                display: block;
+                max-width: 100%;
+                padding: 0 var(--space-sm);
+            }
+
+            .column-left,
+            .column-center,
+            .column-right {
+                display: block;
+                width: 100%;
+                position: static;
+                margin-bottom: 3rem;
+                float: none;
+                clear: both;
+            }
+
+            .column-left {
+                order: 1;
+            }
+
+            .column-center {
+                order: 2;
+                border-left: 4px solid var(--coral-accent);
+                padding-left: 1.5rem;
+                margin-top: 2rem;
+            }
+
+            .column-right {
+                order: 3;
+                margin-top: 2rem;
+            }
+
+            .hero-card,
+            .quote-card,
+            .principles-card,
+            .statement-card,
+            .reading-content,
+            .illustration-card {
+                position: static;
+                float: none;
+            }
+
+            .column-spacer {
+                height: 0;
+                margin: 0;
+                padding: 0;
+                display: none;
+            }
+
+            .article-hero-modular h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-card-content h2 {
+                font-size: 2rem;
+            }
+
+            .statement-text-large {
+                font-size: 1.5rem;
+            }
+
+            .statement-card {
+                margin-bottom: 2rem;
+            }
+
+            .hero-illustration {
+                padding: 0 1rem;
+            }
+
+            .decorative-break {
+                max-width: 100%;
+                margin: 3rem auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container-modular {
+                padding: 0 1rem;
+            }
+
+            .article-hero-modular h1 {
+                font-size: 2rem;
+            }
+
+            .column-center {
+                border-left: 3px solid var(--coral-accent);
+                padding-left: 1rem;
+            }
+
+            .reading-content p {
+                font-size: 1rem;
+            }
+
+            .hero-card {
+                padding: 2rem 1.5rem;
+                min-height: 250px;
+            }
+
+            .statement-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .principles-card {
+                padding: 1.5rem;
+            }
+
+            .illustration-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <header class="lg-site-header" role="banner">
@@ -70,7 +1143,7 @@
         </div>
     </nav>
 
-    <header class="article-hero">
+    <header class="article-hero-modular">
         <div class="container">
             <span class="article-category">Human x Tech</span>
             <h1>Building Insights</h1>
@@ -82,38 +1155,277 @@
                 <span>6 min read</span>
             </div>
         </div>
+        
+        <!-- HERO ILLUSTRATION: Writer protected from content chaos -->
+        <div class="hero-illustration">
+            <img src="/insights/assets/images/BI_Hero.png" alt="Editorial illustration showing a calm writer protected from a tornado of chaotic blog content" loading="eager">
+        </div>
     </header>
 
-    <article class="article-body">
-        <div class="container">
-            <p>I did not want a blog. I wanted a practice. A place where thinking shows up as something you can feel. Where I can talk about technology without losing the human weight of what it does to our lives. Insights is that practice. It is where I try to tell the truth, one clean page at a time.</p>
+    <article class="article-modular">
+        <div class="container-modular">
+            
+            <!-- LEFT COLUMN -->
+            <div class="column-left">
+                <!-- Hero Card -->
+                <div class="hero-card">
+                    <div class="hero-card-content">
+                        <h2>Not a Blog.<br>A Practice.</h2>
+                        <p>Where thinking shows up as something you can feel.</p>
+                    </div>
+                </div>
 
-            <div class="section-divider"></div>
+                <!-- Responsive spacer -->
+                <div class="column-spacer" style="height: 12rem;"></div>
 
-            <h2>Why an Editorial Platform, Not a Blog</h2>
-            <p>Blogs chase output. Editorial platforms protect voice. I do not want to publish for the sake of a schedule. I want a monthly ritual that respects clarity, craft, and presence. The promise I make to myself is simple. No fluff. No jargon. No performance. Only what is true and useful.</p>
+                <!-- ILLUSTRATION: Removing the Expertise Mask -->
+                <div class="illustration-card">
+                    <img src="/insights/assets/images/BI_PageBreak3.png" alt="Writer removing theatrical masks labeled 'expertise', revealing honest face underneath">
+                </div>
 
-            <h2>Voice System</h2>
-            <p>Warm, editorial, honest. If a sentence sounds like I am trying to impress you, it gets cut. Each piece starts with a single line of intent. If the draft wanders, I return to that line and edit back to the point. The goal is not to sound smart. The goal is to sound like someone who has done the work and is willing to share what it felt like.</p>
+                <!-- Responsive spacer -->
+                <div class="column-spacer" style="height: 8rem;"></div>
 
-            <h2>Format DNA</h2>
-            <p>Title. A quiet italic line that sets the mood. A pull quote that earns its highlight. Clean sections that move with intention. A closer that lands with breath. I designed a set of reusable blocks so the reader learns the rhythm. Familiar structure, new insight each time.</p>
+                <!-- Interactive Principles Card -->
+                <div class="principles-card">
+                    <div class="principles-card-title">Core Principles</div>
+                    
+                    <div class="principle-item" data-principle="voice">
+                        <span class="principle-label">01</span>
+                        <span class="principle-name">Voice System</span>
+                        <div class="principle-details">
+                            Warm, editorial, honest. If it sounds performative, it gets cut.
+                        </div>
+                    </div>
 
-            <div class="pull-quote">I am not writing to perform expertise. I am writing to stay honest.</div>
+                    <div class="principle-item" data-principle="format">
+                        <span class="principle-label">02</span>
+                        <span class="principle-name">Format DNA</span>
+                        <div class="principle-details">
+                            Reusable blocks so the reader learns the rhythm. Familiar structure, new insight each time.
+                        </div>
+                    </div>
 
-            <h2>Ethics and AI</h2>
-            <p>AI is a collaborator, not an author. I use it to sort fragments, to hear myself more clearly, to unlock the first paragraph when it will not arrive. I do not let it speak for me. The voice is mine. The responsibility is mine. The credit and the blame, mine too.</p>
+                    <div class="principle-item" data-principle="ethics">
+                        <span class="principle-label">03</span>
+                        <span class="principle-name">Ethics & AI</span>
+                        <div class="principle-details">
+                            AI is a collaborator, not an author. The voice is mine. The responsibility is mine.
+                        </div>
+                    </div>
 
-            <h2>Cadence and Accountability</h2>
-            <p>Monthly is a commitment to depth, not speed. Each piece includes a one line preview on the index and crosslinks to related work in The Hub when that supports the reader. The cadence keeps me awake to my own practice. The structure keeps me from drifting into noise.</p>
+                    <div class="principle-item" data-principle="cadence">
+                        <span class="principle-label">04</span>
+                        <span class="principle-name">Monthly Cadence</span>
+                        <div class="principle-details">
+                            A commitment to depth, not speed. Quality over quantity, every time.
+                        </div>
+                    </div>
 
-            <h2>The Bar for Publishing</h2>
-            <p>Three questions before a piece goes live. Is it true. Is it useful. Can I repeat the way I made it. If the answer is not three yeses, it waits. I would rather publish less and mean it than ship more and disappear inside it.</p>
+                    <div class="principle-item" data-principle="bar">
+                        <span class="principle-label">05</span>
+                        <span class="principle-name">Publishing Bar</span>
+                        <div class="principle-details">
+                            Is it true? Is it useful? Can I repeat it? Three yeses or it waits.
+                        </div>
+                    </div>
+                </div>
 
-            <div class="section-divider"></div>
+                <!-- Responsive spacer -->
+                <div class="column-spacer" style="height: 20rem;"></div>
 
-            <p class="closing-statement">Make the space. Keep the promise. Ship when it is true.</p>
-            <p class="closing-statement">This is how I build an editorial practice that thinks before it talks.</p>
+                <!-- Quote Card -->
+                <div class="quote-card">
+                    <p class="large-quote">I am not writing to perform expertise. I am writing to stay honest.</p>
+                </div>
+            </div>
+
+            <!-- CENTER COLUMN -->
+            <div class="column-center">
+                <div class="reading-content">
+                    <p class="lead">I did not want a blog. I wanted a practice.</p>
+
+                    <p>A place where thinking shows up as something you can feel. Where I can talk about technology without losing the human weight of what it does to our lives. Insights is that practice. It is where I try to tell the truth, one clean page at a time.</p>
+
+                    <div class="section-spacer"></div>
+
+                    <h3>Why an Editorial Platform, Not a Blog</h3>
+
+                    <p>Blogs chase output. Editorial platforms protect voice. I do not want to publish for the sake of a schedule. I want a monthly ritual that respects clarity, craft, and presence. The promise I make to myself is simple. No fluff. No jargon. No performance. Only what is true and useful.</p>
+
+                    <p>This distinction matters. A blog optimizes for frequency. An editorial platform optimizes for integrity. Every piece published here carries weight because it had to earn its place.</p>
+
+                    <h3>Voice System</h3>
+
+                    <p>Warm, editorial, honest. If a sentence sounds like I am trying to impress you, it gets cut. Each piece starts with a single line of intent. If the draft wanders, I return to that line and edit back to the point.</p>
+
+                    <p>The goal is not to sound smart. The goal is to sound like someone who has done the work and is willing to share what it felt like. This is harder than it sounds. Most of us are trained to perform expertise. I am training myself to share it instead.</p>
+
+                    <p>Voice is not tone. Tone can shift. Voice is the consistency beneath the shifts. It is the part of my writing you would recognize if you read it without attribution.</p>
+
+                    <div class="section-spacer"></div>
+
+                    <h3>Format DNA</h3>
+
+                    <p>Title. A quiet italic line that sets the mood. A pull quote that earns its highlight. Clean sections that move with intention. A closer that lands with breath. I designed a set of reusable blocks so the reader learns the rhythm. Familiar structure, new insight each time.</p>
+
+                    <p>Format is not decoration. Format is architecture. It tells the reader what to expect and how to move through the piece. It creates space for ideas to breathe. It makes complexity accessible without making it shallow.</p>
+
+                    <p>Every article follows the same skeleton. But the skeleton is invisible. What you see is the content it supports.</p>
+
+                    <!-- ILLUSTRATION: Format as Architecture -->
+                    <div class="decorative-break">
+                        <img src="/insights/assets/images/BI_PageBreak1.png" alt="Article structure shown as architectural blueprint with visible scaffolding">
+                    </div>
+
+                    <h3>Ethics and AI</h3>
+
+                    <p>AI is a collaborator, not an author. I use it to sort fragments, to hear myself more clearly, to unlock the first paragraph when it will not arrive. I do not let it speak for me. The voice is mine. The responsibility is mine. The credit and the blame, mine too.</p>
+
+                    <p>This is not a manifesto against AI. This is a commitment to transparency. When I use AI to think, I still do the thinking. When I use AI to write, I still do the writing. The tool amplifies. It does not replace.</p>
+
+                    <p>I publish with my name on it because I stand behind every word. That is the contract.</p>
+
+                    <!-- ILLUSTRATION: AI Dance Partners -->
+                    <div class="decorative-break">
+                        <img src="/insights/assets/images/BI_PageBreak2.png" alt="Human and robot dancing tango together, human leading">
+                    </div>
+
+                    <div class="section-spacer"></div>
+
+                    <h3>Cadence and Accountability</h3>
+
+                    <p>Monthly is a commitment to depth, not speed. Each piece includes a one line preview on the index and crosslinks to related work in The Hub when that supports the reader. The cadence keeps me awake to my own practice. The structure keeps me from drifting into noise.</p>
+
+                    <p>Accountability is not external. It is internal. I hold myself to the bar I set. If I miss a month, I do not scramble to catch up. I recommit to the next one. The practice is more important than the streak.</p>
+
+                    <p>Publishing monthly forces clarity. You cannot hide behind volume. Every piece has to justify the time it takes to read. That constraint makes the work better.</p>
+
+                    <h3>The Bar for Publishing</h3>
+
+                    <p>Three questions before a piece goes live. Is it true. Is it useful. Can I repeat the way I made it. If the answer is not three yeses, it waits. I would rather publish less and mean it than ship more and disappear inside it.</p>
+
+                    <p><strong>Is it true?</strong> Not just factually accurate. True in the deeper sense. Does it reflect something I have actually learned, or am I performing insight?</p>
+
+                    <p><strong>Is it useful?</strong> Not useful in the viral sense. Useful in the reader sense. Will someone finish this piece with a clearer way to think or act?</p>
+
+                    <p><strong>Can I repeat it?</strong> Did I make this in a way I can make the next one? Or did I burn myself out chasing perfection that is not sustainable?</p>
+
+                    <p>These questions are not gatekeepers. They are guides. They help me stay awake to what I am building.</p>
+
+                    <div class="section-spacer"></div>
+
+                    <p class="closing-paragraph">Make the space. Keep the promise. Ship when it is true.</p>
+                    <p class="closing-paragraph">This is how I build an editorial practice that thinks before it talks.</p>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div class="column-right">
+                
+                <!-- The Distinction -->
+                <div class="statement-card statement-card-primary">
+                    <h2>The Distinction</h2>
+                    <p class="statement-text">Blogs chase output. Editorial platforms protect voice.</p>
+                </div>
+
+                <!-- Responsive spacer -->
+                <div class="column-spacer" style="height: 10rem;"></div>
+
+                <!-- Voice Is Not Tone -->
+                <div class="statement-card">
+                    <h3>Voice Is Not Tone</h3>
+                    <p class="statement-text">Tone can shift. Voice is the consistency beneath the shifts.</p>
+                </div>
+
+                <!-- Responsive spacer -->
+                <div class="column-spacer" style="height: 12rem;"></div>
+
+                <!-- Format Is Architecture -->
+                <div class="statement-card">
+                    <h3>Format Is Architecture</h3>
+                    <p class="statement-text">It creates space for ideas to breathe. It makes complexity accessible without making it shallow.</p>
+                </div>
+
+                <!-- Responsive spacer -->
+                <div class="column-spacer" style="height: 14rem;"></div>
+
+                <!-- The AI Contract -->
+                <div class="statement-card">
+                    <h3>The AI Contract</h3>
+                    <p class="statement-text">When I use AI to think, I still do the thinking. The tool amplifies. It does not replace.</p>
+                </div>
+
+                <!-- Responsive spacer -->
+                <div class="column-spacer" style="height: 12rem;"></div>
+
+                <!-- ILLUSTRATION: Monthly Cadence -->
+                <div class="illustration-card">
+                    <img src="/insights/assets/images/BI_PageBreak4.png" alt="Monthly vs daily publishing cadence shown as pressure gauges">
+                </div>
+
+                <!-- Responsive spacer -->
+                <div class="column-spacer" style="height: 4rem;"></div>
+
+                <!-- Monthly Forces Clarity -->
+                <div class="statement-card">
+                    <h3>Monthly Forces Clarity</h3>
+                    <p class="statement-text">You cannot hide behind volume. Every piece has to justify the time it takes to read.</p>
+                </div>
+
+                <!-- Responsive spacer -->
+                <div class="column-spacer" style="height: 18rem;"></div>
+
+                <!-- ILLUSTRATION: Three Gates -->
+                <div class="illustration-card">
+                    <img src="/insights/assets/images/BI_PageBreak5.png" alt="Writer pushing cart through three gates labeled Is it True, Is it Useful, Can I Repeat It">
+                </div>
+
+                <!-- Responsive spacer -->
+                <div class="column-spacer" style="height: 4rem;"></div>
+
+                <!-- The Three Questions -->
+                <div class="statement-card statement-card-emphasis">
+                    <h2>The Bar</h2>
+                    <p class="statement-text-large">Is it <strong>true?</strong></p>
+                    <p class="statement-text-large">Is it <strong>useful?</strong></p>
+                    <p class="statement-text-large">Can I <strong>repeat</strong> it?</p>
+                    <p class="statement-subtext">Three yeses or it waits.</p>
+                </div>
+
+                <!-- Responsive spacer -->
+                <div class="column-spacer" style="height: 8rem;"></div>
+
+                <!-- What I Keep -->
+                <div class="statement-card">
+                    <h3 class="checklist-title">✓ What I Keep</h3>
+                    <ul class="insight-list">
+                        <li><strong>Clarity</strong><br>No fluff. No jargon. Only what is true and useful.</li>
+                        <li><strong>Voice</strong><br>Warm, editorial, honest. No performance.</li>
+                        <li><strong>Accountability</strong><br>I hold myself to the bar I set.</li>
+                    </ul>
+                </div>
+
+                <!-- Responsive spacer -->
+                <div class="column-spacer" style="height: 8rem;"></div>
+
+                <!-- What I Reject -->
+                <div class="statement-card">
+                    <h3 class="checklist-title">× What I Reject</h3>
+                    <ul class="insight-list">
+                        <li><strong>Volume</strong><br>Chasing frequency over integrity.</li>
+                        <li><strong>Performance</strong><br>Sounding smart instead of being useful.</li>
+                        <li><strong>Noise</strong><br>Publishing without purpose.</li>
+                    </ul>
+                </div>
+
+                <!-- Final Statement -->
+                <div class="statement-card statement-card-final">
+                    <p class="final-statement">An editorial practice that thinks before it talks.</p>
+                </div>
+
+            </div>
+
         </div>
     </article>
 
@@ -135,90 +1447,111 @@
             </div>
         </div>
     </footer>
-<script>
-// Dark Mode Toggle Functionality
-(function() {
-    const themeToggle = document.getElementById('themeToggle');
-    const htmlElement = document.documentElement;
-    
-    // Check for saved theme preference or default to 'light'
-    const currentTheme = localStorage.getItem('theme') || 'light';
-    htmlElement.setAttribute('data-theme', currentTheme);
-    
-    // Toggle theme function
-    function toggleTheme() {
-        const currentTheme = htmlElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+    <script>
+    // Theme Toggle
+    (function() {
+        const themeToggle = document.getElementById('themeToggle');
+        const htmlElement = document.documentElement;
         
-        htmlElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        htmlElement.setAttribute('data-theme', currentTheme);
         
-        // Add transition for smooth switching
-        document.body.style.transition = 'background-color 250ms ease, color 250ms ease';
-    }
-    
-    // Event listener for toggle button
-    if (themeToggle) {
-        themeToggle.addEventListener('click', toggleTheme);
-    }
-    
-    // Optional: Keyboard accessibility (press 'D' for dark mode)
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'd' || e.key === 'D') {
-            if (!document.activeElement.matches('input, textarea')) {
-                toggleTheme();
-            }
+        function toggleTheme() {
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            htmlElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            document.body.style.transition = 'background-color 0.3s ease, color 0.3s ease';
         }
-    });
-})();
-</script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  const header = document.querySelector(".lg-site-header");
-  const toggle = document.querySelector(".lg-nav-toggle");
-  const nav = document.querySelector(".lg-main-nav");
-  const backdrop = document.querySelector(".lg-nav-backdrop");
-  const closeBtn = document.querySelector(".lg-nav-close");
-  if (!header) return;
-  let previousFocus = null;
-  function getFocusable(container) {
-    return Array.from(container.querySelectorAll('a[href], button:not([disabled]), [tabindex="0"], input, select, textarea'));
-  }
-  function trapFocusKeydown(e) {
-    if (!header.classList.contains('is-open')) return;
-    if (e.key === 'Escape') { e.preventDefault(); closeNav(); return; }
-    if (e.key !== 'Tab') return;
-    const focusables = getFocusable(nav);
-    if (!focusables.length) return;
-    const first = focusables[0];
-    const last = focusables[focusables.length - 1];
-    const active = document.activeElement;
-    if (e.shiftKey) { if (active === first) { e.preventDefault(); last.focus(); } }
-    else { if (active === last) { e.preventDefault(); first.focus(); } }
-  }
-  function openNav() {
-    previousFocus = document.activeElement;
-    header.classList.add('is-open');
-    toggle.setAttribute('aria-expanded', 'true');
-    nav.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
-    if (closeBtn) closeBtn.focus();
-    document.addEventListener('keydown', trapFocusKeydown);
-  }
-  function closeNav() {
-    header.classList.remove('is-open');
-    toggle.setAttribute('aria-expanded', 'false');
-    nav.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = 'auto';
-    document.removeEventListener('keydown', trapFocusKeydown);
-    if (previousFocus) previousFocus.focus();
-  }
-  if (toggle && nav) {
-    toggle.addEventListener('click', function () { if (header.classList.contains('is-open')) { closeNav(); } else { openNav(); } });
-  }
-  if (backdrop) { backdrop.addEventListener('click', function () { if (header.classList.contains('is-open')) closeNav(); }); }
-  if (closeBtn) { closeBtn.addEventListener('click', function () { closeNav(); }); }
-});
-</script>
+        
+        if (themeToggle) {
+            themeToggle.addEventListener('click', toggleTheme);
+        }
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'd' || e.key === 'D') {
+                if (!document.activeElement.matches('input, textarea')) {
+                    toggleTheme();
+                }
+            }
+        });
+    })();
+
+    // Interactive Principles
+    (function() {
+        const principleItems = document.querySelectorAll('.principle-item');
+        
+        principleItems.forEach(item => {
+            item.addEventListener('click', function() {
+                // Toggle active state
+                const isActive = this.classList.contains('active');
+                
+                // Close all items
+                principleItems.forEach(i => i.classList.remove('active'));
+                
+                // Open clicked item if it wasn't active
+                if (!isActive) {
+                    this.classList.add('active');
+                }
+            });
+        });
+
+        // Auto-expand first item on load
+        if (principleItems.length > 0) {
+            principleItems[0].classList.add('active');
+        }
+    })();
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const header = document.querySelector(".lg-site-header");
+        const toggle = document.querySelector(".lg-nav-toggle");
+        const nav = document.querySelector(".lg-main-nav");
+        const backdrop = document.querySelector(".lg-nav-backdrop");
+        const closeBtn = document.querySelector(".lg-nav-close");
+        if (!header) return;
+        let previousFocus = null;
+        function getFocusable(container) {
+          return Array.from(container.querySelectorAll('a[href], button:not([disabled]), [tabindex="0"], input, select, textarea'));
+        }
+        function trapFocusKeydown(e) {
+          if (!header.classList.contains('is-open')) return;
+          if (e.key === 'Escape') { e.preventDefault(); closeNav(); return; }
+          if (e.key !== 'Tab') return;
+          const focusables = getFocusable(nav);
+          if (!focusables.length) return;
+          const first = focusables[0];
+          const last = focusables[focusables.length - 1];
+          const active = document.activeElement;
+          if (e.shiftKey) { if (active === first) { e.preventDefault(); last.focus(); } }
+          else { if (active === last) { e.preventDefault(); first.focus(); } }
+        }
+        function openNav() {
+          previousFocus = document.activeElement;
+          header.classList.add('is-open');
+          toggle.setAttribute('aria-expanded', 'true');
+          nav.setAttribute('aria-hidden', 'false');
+          document.body.style.overflow = 'hidden';
+          if (closeBtn) closeBtn.focus();
+          document.addEventListener('keydown', trapFocusKeydown);
+        }
+        function closeNav() {
+          header.classList.remove('is-open');
+          toggle.setAttribute('aria-expanded', 'false');
+          nav.setAttribute('aria-hidden', 'true');
+          document.body.style.overflow = 'auto';
+          document.removeEventListener('keydown', trapFocusKeydown);
+          if (previousFocus) previousFocus.focus();
+        }
+        if (toggle && nav) {
+          toggle.addEventListener('click', function () { if (header.classList.contains('is-open')) { closeNav(); } else { openNav(); } });
+        }
+        if (backdrop) { backdrop.addEventListener('click', function () { if (header.classList.contains('is-open')) closeNav(); }); }
+        if (closeBtn) { closeBtn.addEventListener('click', function () { closeNav(); }); }
+      });
+    </script>
 </body>
 </html>
