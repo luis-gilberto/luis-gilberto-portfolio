@@ -81,6 +81,10 @@ async function testPage(page, path) {
     await testPage(page, '/insights/index.html');
     console.log('✅ Insights landing page theme toggle passed');
 
+    // Building Insights article page
+    await testPage(page, '/insights/building-insights/index.html');
+    console.log('✅ Building Insights article theme toggle passed');
+
     // Home page
     await testPage(page, '/index.html');
     console.log('✅ Home page theme toggle passed');
