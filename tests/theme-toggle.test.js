@@ -14,7 +14,10 @@ async function open(page, path) {
 }
 
 async function getTheme(page) {
-  return page.evaluate(() => document.documentElement.getAttribute('data-theme'));
+  return page.evaluate(() => {
+    const attr = document.documentElement.getAttribute('data-theme');
+    return attr || 'light';
+  });
 }
 
 async function clearStoredTheme(page) {
