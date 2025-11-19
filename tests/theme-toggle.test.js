@@ -37,6 +37,39 @@ async function getStoredTheme(page) {
   return page.evaluate(() => localStorage.getItem('theme'));
 }
 
+async function getBreadcrumbLinks(page) {
+  const classLinks = await page.$$eval('a.breadcrumb-link', els => els.map(e => ({ text: e.textContent.trim(), href: e.getAttribute('href') })));
+  if (classLinks && classLinks.length) return classLinks;
+  const simpleLinks = await page.$$eval('nav.breadcrumbs a', els => els.map(e => ({ text: e.textContent.trim(), href: e.getAttribute('href') })));
+  return simpleLinks;
+}
+
+async function getBreadcrumbCurrent(page) {
+  const el1 = await page.$('.breadcrumb-current');
+  if (el1) return page.$eval('.breadcrumb-current', e => e.textContent.trim());
+  const el2 = await page.$('nav.breadcrumbs .current');
+  if (el2) return page.$eval('nav.breadcrumbs .current', e => e.textContent.trim());
+  return null;
+}
+
+async function testBreadcrumb(page, path, expectedCurrent, requireWork) {
+  await open(page, path);
+  const links = await getBreadcrumbLinks(page);
+  const hasHome = links.some(l => l.text.toLowerCase() === 'home');
+  assert.strictEqual(hasHome, false, `Expected no 'Home' link on ${path}`);
+  const insights = links.find(l => l.text.toLowerCase() === 'insights');
+  assert.ok(!!insights, `Expected 'Insights' link on ${path}`);
+  if (requireWork) {
+    const work = links.find(l => l.text.toLowerCase() === 'work that mattered');
+    assert.ok(!!work, `Expected 'Work That Mattered' link on ${path}`);
+    assert.strictEqual(work.href, '/insights#work-that-mattered', `Unexpected href for 'Work That Mattered' on ${path}: ${work.href}`);
+  }
+  const current = await getBreadcrumbCurrent(page);
+  assert.strictEqual(current, expectedCurrent, `Unexpected current breadcrumb on ${path}: ${current}`);
+  await page.goto(`${HOST}${insights.href}`, { waitUntil: 'load' });
+  assert.ok(page.url().includes('/insights'), `Expected navigation to Insights from ${path}, got ${page.url()}`);
+}
+
 async function testPage(page, path) {
   // Emulate system light preference for deterministic baseline
   await page.emulateMediaFeatures([{ name: 'prefers-color-scheme', value: 'light' }]);
@@ -109,6 +142,33 @@ async function testPage(page, path) {
     }
 
     console.log('🎉 All theme toggle tests passed');
+
+    await testBreadcrumb(page, '/insights/building-insights/index.html', 'Building Insights', false);
+    console.log('✅ Breadcrumbs passed: Building Insights');
+    await testBreadcrumb(page, '/insights/building-the-hub/index.html', 'Building The Hub', false);
+    console.log('✅ Breadcrumbs passed: Building The Hub');
+    await testBreadcrumb(page, '/insights/move-at-your-speed/index.html', 'Move at the Speed of What Matters', false);
+    console.log('✅ Breadcrumbs passed: Move at your Speed');
+    await testBreadcrumb(page, '/insights/unlocking-the-blank-page/index.html', 'Unlocking the Blank Page', false);
+    console.log('✅ Breadcrumbs passed: Unlocking the Blank Page');
+
+    await testBreadcrumb(page, '/insights/proof-of-life/index.html', 'Proof of Life', false);
+    console.log('✅ Breadcrumbs passed: Proof of Life');
+
+    await testBreadcrumb(page, '/insights/edge-mobile-rebrand/index.html', 'Edge Mobile App Store Refresh', true);
+    console.log('✅ Breadcrumbs passed: Edge Mobile Rebrand');
+    await testBreadcrumb(page, '/insights/teams-consumer-launch/index.html', 'Teams Consumer Launch', true);
+    console.log('✅ Breadcrumbs passed: Teams Consumer Launch');
+    await testBreadcrumb(page, '/insights/family-safety-launch/index.html', 'Family Safety App Launch', true);
+    console.log('✅ Breadcrumbs passed: Family Safety Launch');
+    await testBreadcrumb(page, '/insights/edge-ucational-series/index.html', 'Edge-ucational Series', true);
+    console.log('✅ Breadcrumbs passed: Edge-ucational Series');
+    await testBreadcrumb(page, '/insights/free-to-be-free/index.html', 'Free to Be Free', true);
+    console.log('✅ Breadcrumbs passed: Free to Be Free');
+    await testBreadcrumb(page, '/insights/transforming-browsing-ai/index.html', 'Transforming Browsing with AI', true);
+    console.log('✅ Breadcrumbs passed: Transforming Browsing with AI');
+
+    console.log('🎉 All breadcrumb tests passed');
   } catch (err) {
     console.error('❌ Theme toggle tests failed:', err);
     process.exitCode = 1;
