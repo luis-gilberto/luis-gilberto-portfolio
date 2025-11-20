@@ -80,6 +80,25 @@ async function testInsightsPicture(page) {
   assert.ok(imgSrc && imgSrc.endsWith('/insights/assets/images/Insights_still.jpg'), `Expected JPG fallback src to end with Insights_still.jpg, got '${imgSrc}'`);
 }
 
+async function testSignatureOverlay(page) {
+  await open(page, '/insights/index.html');
+  const exists = await page.$('#signatureOverlay');
+  assert.ok(!!exists, 'Expected #signatureOverlay to exist');
+  // Initially hidden
+  const initialOpacity = await page.$eval('#signatureOverlay', el => getComputedStyle(el).opacity);
+  assert.ok(parseFloat(initialOpacity) === 0, `Expected signature overlay to be hidden initially, got opacity ${initialOpacity}`);
+  // Simulate video ended to trigger animation sequence
+  await page.evaluate(() => {
+    const v = document.getElementById('heroVideo');
+    const handler = () => {};
+    v.dispatchEvent(new Event('ended'));
+  });
+  // Wait for 1.3s (still fade 300ms + signature delay 800ms + buffer)
+  await new Promise(resolve => setTimeout(resolve, 1300));
+  const hasVisibleClass = await page.$eval('#signatureOverlay', el => el.classList.contains('visible'));
+  assert.ok(hasVisibleClass, 'Expected signature overlay to have .visible after video ended');
+}
+
 async function testPage(page, path) {
   // Emulate system light preference for deterministic baseline
   await page.emulateMediaFeatures([{ name: 'prefers-color-scheme', value: 'light' }]);
@@ -182,6 +201,8 @@ async function testPage(page, path) {
 
     await testInsightsPicture(page);
     console.log('✅ Insights hero picture fallback verified');
+    await testSignatureOverlay(page);
+    console.log('✅ Signature overlay animates after video end');
   } catch (err) {
     console.error('❌ Theme toggle tests failed:', err);
     process.exitCode = 1;
