@@ -1468,24 +1468,24 @@ footer {
             <div class="content-wrapper fade-in">
                 <span class="editorial-label">From the Trenches</span>
                 <div class="insights-video-title">
-                    <picture class="insights-still" id="heroFallback">
-                        <source srcset="/insights/assets/images/Insights_still.webp" type="image/webp">
-                        <img src="/insights/assets/images/Insights_still.jpg" alt="Insights">
-                    </picture>
                     <video 
-                        autoplay 
-                        loop 
                         muted 
                         playsinline 
                         preload="auto"
-                        poster="/insights/assets/videos/insights-poster-light.jpg"
                         class="insights-video"
                         id="heroVideo"
-                        style="display: none;"
                     >
                         <source src="/insights/assets/videos/insights-video-light.webm" type="video/webm">
                         <source src="/insights/assets/videos/insights-video-light.mp4" type="video/mp4">
                     </video>
+                    <picture class="insights-still" id="heroStill">
+                        <source srcset="/insights/assets/images/Insights_still.webp" type="image/webp">
+                        <img 
+                            src="/insights/assets/images/Insights_still.jpg" 
+                            alt="Insights" 
+                            loading="lazy"
+                        >
+                    </picture>
                 </div>
                 <p class="hero-subtitle">This is where I share what I'm learning: from brand strategy and AI-powered launches to the messy, human side of creative leadership.</p>
                 <div class="publish-cadence">Published monthly</div>
@@ -1849,77 +1849,47 @@ footer {
     <!-- Custom JavaScript -->
     <script>
         // ============================================
-        // HERO VIDEO AUTOPLAY (WITH FALLBACK)
+        // HERO VIDEO - PLAY ONCE THEN SHOW STILL
         // ============================================
         const heroVideo = document.getElementById('heroVideo');
-        const heroFallback = document.getElementById('heroFallback');
-        
-        if (heroVideo && heroFallback) {
-            heroFallback.classList.add('visible');
-            // Function to attempt playing the video
-            const attemptPlay = () => {
+        const heroStill = document.getElementById('heroStill');
+
+        if (heroVideo && heroStill) {
+            const playVideo = () => {
                 const playPromise = heroVideo.play();
-                
                 if (playPromise !== undefined) {
                     playPromise
                         .then(() => {
-                            console.log('✅ Hero video playing successfully');
-                            heroFallback.style.display = 'none';
-                            heroFallback.classList.remove('visible');
-                            heroVideo.style.display = 'block';
+                            console.log('✅ Hero video playing');
                         })
                         .catch(error => {
-                            console.log('⚠️ Autoplay prevented, attempting muted playback:', error);
+                            console.log('⚠️ Autoplay prevented, starting muted:', error);
                             heroVideo.muted = true;
                             heroVideo.play()
-                                .then(() => {
-                                    console.log('✅ Muted video now playing');
-                                    heroFallback.style.display = 'none';
-                                    heroFallback.classList.remove('visible');
-                                    heroVideo.style.display = 'block';
-                                })
-                                .catch(e => {
-                                    console.error('❌ Video playback failed, showing fallback image:', e);
-                                    heroFallback.style.display = 'block';
-                                    heroFallback.classList.add('visible');
-                                    heroVideo.style.display = 'none';
-                                });
+                                .then(() => console.log('✅ Muted video now playing'))
+                                .catch(e => console.error('❌ Video playback failed:', e));
                         });
                 }
             };
 
-            // Check if video can actually load
+            heroVideo.addEventListener('ended', () => {
+                console.log('✨ Video ended, transitioning to still image');
+                setTimeout(() => {
+                    heroStill.classList.add('visible');
+                }, 300);
+            });
+
             heroVideo.addEventListener('loadeddata', () => {
-                console.log('Video data loaded, attempting play');
-                attemptPlay();
+                console.log('Video data loaded, starting playback');
+                playVideo();
             }, { once: true });
 
-            // Error handling - show fallback if video fails to load
-            heroVideo.addEventListener('error', (e) => {
-                console.error('❌ Video failed to load (404 or network error)');
-                console.log('📷 Showing fallback image instead');
-                heroFallback.style.display = 'block';
-                heroFallback.classList.add('visible');
-                heroVideo.style.display = 'none';
+            heroVideo.addEventListener('error', () => {
+                console.error('❌ Video failed to load');
+                heroStill.classList.add('visible');
             });
 
-            // Handle visibility changes (pause when tab is hidden)
-            document.addEventListener('visibilitychange', () => {
-                if (document.hidden) {
-                    console.log('Tab hidden, pausing video');
-                    heroVideo.pause();
-                } else {
-                    console.log('Tab visible, resuming video');
-                    if (heroVideo.style.display === 'block') {
-                        attemptPlay();
-                    }
-                }
-            });
-
-            // Try to load video
             heroVideo.load();
-        } else {
-            console.error('❌ Hero video or fallback element not found');
         }
 
         // ============================================

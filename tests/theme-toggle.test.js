@@ -72,8 +72,8 @@ async function testBreadcrumb(page, path, expectedCurrent, requireWork) {
 
 async function testInsightsPicture(page) {
   await open(page, '/insights/index.html');
-  const picture = await page.$('picture.insights-still#heroFallback');
-  assert.ok(!!picture, 'Expected picture.insights-still#heroFallback to exist');
+  const picture = await page.$('picture.insights-still#heroStill');
+  assert.ok(!!picture, 'Expected picture.insights-still#heroStill to exist');
   const webpSource = await page.$('picture.insights-still source[type="image/webp"]');
   assert.ok(!!webpSource, 'Expected a WebP source element in picture');
   const imgSrc = await page.$eval('picture.insights-still img', el => el.getAttribute('src'));
