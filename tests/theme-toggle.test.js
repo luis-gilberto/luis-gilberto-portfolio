@@ -88,6 +88,9 @@ async function testSignatureOverlay(page) {
   assert.ok(!!svgExists, 'Expected signature SVG to exist');
   const strokeColor = await page.$eval('#signatureOverlay .signature-path', el => getComputedStyle(el).stroke || el.getAttribute('stroke'));
   assert.ok(strokeColor && (strokeColor === 'rgb(0, 0, 0)' || strokeColor === '#000000'), `Expected stroke color black, got '${strokeColor}'`);
+  const byExists = await page.$('#signatureOverlay .signature-by');
+  const nameExists = await page.$('#signatureOverlay .signature-name');
+  assert.ok(!!byExists && !!nameExists, 'Expected two-line signature with .signature-by and .signature-name');
   // Initially hidden
   const initialOpacity = await page.$eval('#signatureOverlay', el => getComputedStyle(el).opacity);
   assert.ok(parseFloat(initialOpacity) === 0, `Expected signature overlay to be hidden initially, got opacity ${initialOpacity}`);
