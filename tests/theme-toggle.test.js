@@ -70,6 +70,16 @@ async function testBreadcrumb(page, path, expectedCurrent, requireWork) {
   assert.ok(page.url().includes('/insights'), `Expected navigation to Insights from ${path}, got ${page.url()}`);
 }
 
+async function testInsightsPicture(page) {
+  await open(page, '/insights/index.html');
+  const picture = await page.$('picture.insights-still#heroFallback');
+  assert.ok(!!picture, 'Expected picture.insights-still#heroFallback to exist');
+  const webpSource = await page.$('picture.insights-still source[type="image/webp"]');
+  assert.ok(!!webpSource, 'Expected a WebP source element in picture');
+  const imgSrc = await page.$eval('picture.insights-still img', el => el.getAttribute('src'));
+  assert.ok(imgSrc && imgSrc.endsWith('/insights/assets/images/Insights_still.jpg'), `Expected JPG fallback src to end with Insights_still.jpg, got '${imgSrc}'`);
+}
+
 async function testPage(page, path) {
   // Emulate system light preference for deterministic baseline
   await page.emulateMediaFeatures([{ name: 'prefers-color-scheme', value: 'light' }]);
@@ -169,6 +179,9 @@ async function testPage(page, path) {
     console.log('✅ Breadcrumbs passed: Transforming Browsing with AI');
 
     console.log('🎉 All breadcrumb tests passed');
+
+    await testInsightsPicture(page);
+    console.log('✅ Insights hero picture fallback verified');
   } catch (err) {
     console.error('❌ Theme toggle tests failed:', err);
     process.exitCode = 1;
