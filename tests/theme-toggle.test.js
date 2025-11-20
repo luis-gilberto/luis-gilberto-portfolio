@@ -84,6 +84,10 @@ async function testSignatureOverlay(page) {
   await open(page, '/insights/index.html');
   const exists = await page.$('#signatureOverlay');
   assert.ok(!!exists, 'Expected #signatureOverlay to exist');
+  const svgExists = await page.$('#signatureOverlay svg.signature-svg');
+  assert.ok(!!svgExists, 'Expected signature SVG to exist');
+  const strokeColor = await page.$eval('#signatureOverlay .signature-path', el => getComputedStyle(el).stroke || el.getAttribute('stroke'));
+  assert.ok(strokeColor && (strokeColor === 'rgb(0, 0, 0)' || strokeColor === '#000000'), `Expected stroke color black, got '${strokeColor}'`);
   // Initially hidden
   const initialOpacity = await page.$eval('#signatureOverlay', el => getComputedStyle(el).opacity);
   assert.ok(parseFloat(initialOpacity) === 0, `Expected signature overlay to be hidden initially, got opacity ${initialOpacity}`);
@@ -97,6 +101,23 @@ async function testSignatureOverlay(page) {
   await new Promise(resolve => setTimeout(resolve, 1300));
   const hasVisibleClass = await page.$eval('#signatureOverlay', el => el.classList.contains('visible'));
   assert.ok(hasVisibleClass, 'Expected signature overlay to have .visible after video ended');
+
+  // Mobile positioning safety: ensure overlay stays within hero container at 360px width
+  await page.setViewport({ width: 360, height: 800 });
+  await page.evaluate(() => {
+    const v = document.getElementById('heroVideo');
+    v.dispatchEvent(new Event('ended'));
+  });
+  await new Promise(resolve => setTimeout(resolve, 1300));
+  const boundsOk = await page.evaluate(() => {
+    const overlay = document.getElementById('signatureOverlay');
+    const container = document.querySelector('.insights-video-title');
+    const ob = overlay.getBoundingClientRect();
+    const cb = container.getBoundingClientRect();
+    const pad = 1;
+    return ob.left >= cb.left - pad && ob.top >= cb.top - pad && ob.right <= cb.right + pad && ob.bottom <= cb.bottom + pad;
+  });
+  assert.ok(boundsOk, 'Expected signature overlay to stay within hero container at mobile width');
 }
 
 async function testPage(page, path) {
