@@ -12,7 +12,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Allura&family=Dancing+Script:wght@400;700&family=Great+Vibes&display=swap" rel="stylesheet">
     
     <!-- Swiper CSS for Carousels -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
@@ -325,100 +324,6 @@ p {
         0 4px 12px rgba(0, 0, 0, 0.08),
         0 2px 4px rgba(0, 0, 0, 0.06),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
-}
-
-/* ============================================
-   SIGNATURE OVERLAY ANIMATION
-   ============================================ */
-
-.signature-overlay {
-    position: absolute;
-    bottom: 28px;
-    left: 50%;
-    --sig-scale: 1;
-    transform: translateX(-30%) scale(var(--sig-scale));
-    transform-origin: center bottom;
-    opacity: 0;
-    pointer-events: none;
-    z-index: 10;
-    transition: opacity 0.8s ease-in-out;
-    max-width: 95%;
-}
-
-.signature-overlay.visible {
-    opacity: 1;
-    animation: fadeInSignature 1.2s ease-in-out forwards;
-}
-
-/* SVG handwriting animation */
-.signature-svg { display: block; height: 72px; }
-.signature-path {
-    font-family: 'Allura', 'Great Vibes', 'Dancing Script', cursive;
-    fill: rgba(0, 0, 0, 1);
-    paint-order: stroke fill;
-    stroke: #000000;
-    stroke-width: 1.5;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-dasharray: 1200;
-    stroke-dashoffset: 1200;
-    fill-opacity: 0;
-}
-.signature-by { font-size: 72px; }
-.signature-name { font-size: 128px; }
-.signature-overlay.visible .signature-by { animation: signatureStroke 0.8s ease-out forwards; fill-opacity: 1; }
-.signature-overlay.visible .signature-name { animation: signatureStroke 1.6s ease-out 0.8s forwards; fill-opacity: 1; }
-@keyframes signatureStroke { to { stroke-dashoffset: 0; } }
-
-@keyframes fadeInSignature {
-    0% {
-        opacity: 0;
-    }
-    100% {
-        opacity: 1;
-    }
-}
-
-/* lock signature color to black across themes */
-[data-theme="dark"] .signature-path { stroke: #000000; fill: rgba(0,0,0,1); }
-
-@media (max-width: 768px) {
-    .signature-overlay {
-        bottom: 56px;
-        left: 50%;
-        transform: translateX(-40%);
-    }
-    .signature-svg { height: 120px; }
-    .signature-by { font-size: 64px; }
-    .signature-name { font-size: 112px; }
-    .signature-overlay { --sig-scale: 0.9; }
-}
-
-@media (max-width: 480px) {
-    .signature-overlay {
-        bottom: 64px;
-        left: 50%;
-        transform: translateX(-50%);
-    }
-    .signature-svg { height: 110px; }
-    .signature-by { font-size: 56px; }
-    .signature-name { font-size: 100px; }
-    .signature-overlay { --sig-scale: 0.85; }
-}
-
-@media (max-width: 360px) {
-    .signature-overlay { bottom: 70px; left: 50%; transform: translateX(-50%) scale(var(--sig-scale)); }
-    .signature-svg { height: 100px; }
-    .signature-by { font-size: 52px; }
-    .signature-name { font-size: 92px; }
-    .signature-overlay { --sig-scale: 0.8; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .signature-overlay.visible {
-        opacity: 1;
-    }
-    .signature-path { animation: none !important; stroke-dashoffset: 0; fill-opacity: 1; }
 }
 
 .insights-video::after {
@@ -1502,7 +1407,7 @@ footer {
 </head>
 <body>
     <!-- Theme Toggle -->
-    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" aria-pressed="false">
         <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="5"></circle>
             <line x1="12" y1="1" x2="12" y2="3"></line>
@@ -1581,12 +1486,6 @@ footer {
                             loading="lazy"
                         >
                     </picture>
-                    <div class="signature-overlay" id="signatureOverlay">
-                        <svg class="signature-svg" viewBox="0 0 600 160" preserveAspectRatio="xMinYMin meet" aria-hidden="true">
-                            <text x="0" y="60" class="signature-path signature-by">by</text>
-                            <text x="0" y="120" class="signature-path signature-name">Luis Gilberto</text>
-                        </svg>
-                    </div>
                 </div>
                 <p class="hero-subtitle">This is where I share what I'm learning: from brand strategy and AI-powered launches to the messy, human side of creative leadership.</p>
                 <div class="publish-cadence">Published monthly</div>
@@ -1975,18 +1874,9 @@ footer {
 
             heroVideo.addEventListener('ended', () => {
                 console.log('✨ Video ended, transitioning to still image');
-                const signatureOverlay = document.getElementById('signatureOverlay');
-
                 setTimeout(() => {
                     heroStill.classList.add('visible');
                 }, 300);
-
-                setTimeout(() => {
-                    if (signatureOverlay) {
-                        signatureOverlay.classList.add('visible');
-                        console.log('✍️ Signature overlay animated');
-                    }
-                }, 1100);
             });
 
             heroVideo.addEventListener('loadeddata', () => {
@@ -2011,11 +1901,13 @@ footer {
         // Check for saved theme preference or default to light mode
         const currentTheme = localStorage.getItem('theme') || 'light';
         html.setAttribute('data-theme', currentTheme);
+        if (themeToggle) { themeToggle.setAttribute('aria-pressed', currentTheme === 'dark' ? 'true' : 'false'); }
 
                 themeToggle.addEventListener('click', () => {
                     const theme = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
                     html.setAttribute('data-theme', theme);
                     localStorage.setItem('theme', theme);
+                    themeToggle.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
                     (function(){
                         const pics = Array.from(document.querySelectorAll('picture.theme-picture'));
                         pics.forEach(p => {

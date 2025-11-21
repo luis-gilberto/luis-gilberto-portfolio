@@ -80,48 +80,6 @@ async function testInsightsPicture(page) {
   assert.ok(imgSrc && imgSrc.endsWith('/insights/assets/images/Insights_still.jpg'), `Expected JPG fallback src to end with Insights_still.jpg, got '${imgSrc}'`);
 }
 
-async function testSignatureOverlay(page) {
-  await open(page, '/insights/index.html');
-  const exists = await page.$('#signatureOverlay');
-  assert.ok(!!exists, 'Expected #signatureOverlay to exist');
-  const svgExists = await page.$('#signatureOverlay svg.signature-svg');
-  assert.ok(!!svgExists, 'Expected signature SVG to exist');
-  const strokeColor = await page.$eval('#signatureOverlay .signature-path', el => getComputedStyle(el).stroke || el.getAttribute('stroke'));
-  assert.ok(strokeColor && (strokeColor === 'rgb(0, 0, 0)' || strokeColor === '#000000'), `Expected stroke color black, got '${strokeColor}'`);
-  const byExists = await page.$('#signatureOverlay .signature-by');
-  const nameExists = await page.$('#signatureOverlay .signature-name');
-  assert.ok(!!byExists && !!nameExists, 'Expected two-line signature with .signature-by and .signature-name');
-  // Initially hidden
-  const initialOpacity = await page.$eval('#signatureOverlay', el => getComputedStyle(el).opacity);
-  assert.ok(parseFloat(initialOpacity) === 0, `Expected signature overlay to be hidden initially, got opacity ${initialOpacity}`);
-  // Simulate video ended to trigger animation sequence
-  await page.evaluate(() => {
-    const v = document.getElementById('heroVideo');
-    const handler = () => {};
-    v.dispatchEvent(new Event('ended'));
-  });
-  // Wait for 1.3s (still fade 300ms + signature delay 800ms + buffer)
-  await new Promise(resolve => setTimeout(resolve, 1300));
-  const hasVisibleClass = await page.$eval('#signatureOverlay', el => el.classList.contains('visible'));
-  assert.ok(hasVisibleClass, 'Expected signature overlay to have .visible after video ended');
-
-  // Mobile positioning safety: ensure overlay stays within hero container at 360px width
-  await page.setViewport({ width: 360, height: 800 });
-  await page.evaluate(() => {
-    const v = document.getElementById('heroVideo');
-    v.dispatchEvent(new Event('ended'));
-  });
-  await new Promise(resolve => setTimeout(resolve, 1300));
-  const boundsOk = await page.evaluate(() => {
-    const overlay = document.getElementById('signatureOverlay');
-    const container = document.querySelector('.insights-video-title');
-    const ob = overlay.getBoundingClientRect();
-    const cb = container.getBoundingClientRect();
-    const pad = 1;
-    return ob.left >= cb.left - pad && ob.top >= cb.top - pad && ob.right <= cb.right + pad && ob.bottom <= cb.bottom + pad;
-  });
-  assert.ok(boundsOk, 'Expected signature overlay to stay within hero container at mobile width');
-}
 
 async function testPage(page, path) {
   // Emulate system light preference for deterministic baseline
@@ -225,8 +183,6 @@ async function testPage(page, path) {
 
     await testInsightsPicture(page);
     console.log('✅ Insights hero picture fallback verified');
-    await testSignatureOverlay(page);
-    console.log('✅ Signature overlay animates after video end');
   } catch (err) {
     console.error('❌ Theme toggle tests failed:', err);
     process.exitCode = 1;
