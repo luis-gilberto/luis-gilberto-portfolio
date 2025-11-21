@@ -52,6 +52,25 @@ async function getBreadcrumbCurrent(page) {
   return null;
 }
 
+async function getNavLinks(page) {
+  return page.$$eval('.lg-main-nav a.lg-nav-link', els => els.map(e => ({ text: e.textContent.trim(), href: e.getAttribute('href'), target: e.getAttribute('target') })));
+}
+
+async function testNavDestinations(page, path) {
+  await open(page, path);
+  const links = await getNavLinks(page);
+  const byText = Object.fromEntries(links.map(l => [l.text.toLowerCase(), l]));
+  assert.ok(byText['portfolio'], `Expected 'Portfolio' link on ${path}`);
+  assert.ok(byText['about'], `Expected 'About' link on ${path}`);
+  assert.ok(byText['contact'], `Expected 'Contact' link on ${path}`);
+  assert.strictEqual(byText['portfolio'].href, 'https://luis-gilberto.com', `Unexpected Portfolio href on ${path}: ${byText['portfolio'].href}`);
+  assert.strictEqual(byText['about'].href, 'https://luis-gilberto.com/about', `Unexpected About href on ${path}: ${byText['about'].href}`);
+  assert.strictEqual(byText['contact'].href, 'https://luis-gilberto.com/contact', `Unexpected Contact href on ${path}: ${byText['contact'].href}`);
+  assert.ok(!byText['portfolio'].target, `Expected Portfolio to open in same tab on ${path}`);
+  assert.ok(!byText['about'].target, `Expected About to open in same tab on ${path}`);
+  assert.ok(!byText['contact'].target, `Expected Contact to open in same tab on ${path}`);
+}
+
 async function testBreadcrumb(page, path, expectedCurrent, requireWork) {
   await open(page, path);
   const links = await getBreadcrumbLinks(page);
@@ -153,6 +172,21 @@ async function testPage(page, path) {
     }
 
     console.log('🎉 All theme toggle tests passed');
+
+    // Verify nav link destinations match Insights landing page across article pages
+    await testNavDestinations(page, '/insights/index.html');
+    await testNavDestinations(page, '/insights/building-insights/index.html');
+    await testNavDestinations(page, '/insights/building-the-hub/index.html');
+    await testNavDestinations(page, '/insights/move-at-your-speed/index.html');
+    await testNavDestinations(page, '/insights/proof-of-life/index.html');
+    await testNavDestinations(page, '/insights/edge-ucational-series/index.html');
+    await testNavDestinations(page, '/insights/edge-mobile-rebrand/index.html');
+    await testNavDestinations(page, '/insights/teams-consumer-launch/index.html');
+    await testNavDestinations(page, '/insights/family-safety-launch/index.html');
+    await testNavDestinations(page, '/insights/free-to-be-free/index.html');
+    await testNavDestinations(page, '/insights/transforming-browsing-ai/index.html');
+    await testNavDestinations(page, '/insights/unlocking-the-blank-page/index.html');
+    console.log('✅ Nav link destinations verified across pages');
 
     await testBreadcrumb(page, '/insights/building-insights/index.html', 'Building Insights', false);
     console.log('✅ Breadcrumbs passed: Building Insights');
