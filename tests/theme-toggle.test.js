@@ -99,6 +99,31 @@ async function testInsightsPicture(page) {
   assert.ok(imgSrc && imgSrc.endsWith('/insights/assets/images/Insights_still.jpg'), `Expected JPG fallback src to end with Insights_still.jpg, got '${imgSrc}'`);
 }
 
+async function testCardFlipOnMobile(page) {
+  await page.setViewport({ width: 375, height: 812, isMobile: true });
+  await open(page, '/index.html');
+  await page.waitForSelector('.tour-card');
+  await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 1500)));
+  const initialFlipped = await page.$$eval('.tour-card.flipped', els => els.length);
+  assert.strictEqual(initialFlipped, 0, 'Expected no cards flipped initially');
+  const firstCard = await page.$('.tour-card.position-1');
+  assert.ok(!!firstCard, 'Expected to find first tour card');
+  await page.evaluate(() => {
+    const el = document.querySelector('.tour-card.position-1');
+    el.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  });
+  await page.waitForFunction(() => document.querySelectorAll('.tour-card.flipped').length === 1, { timeout: 5000 });
+  const flippedAfterTap = await page.$$eval('.tour-card.flipped', els => els.length);
+  assert.strictEqual(flippedAfterTap, 1, 'Expected one card flipped after tap');
+  await page.evaluate(() => {
+    const el = document.querySelector('.tour-card.position-1');
+    el.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  });
+  await page.waitForFunction(() => document.querySelectorAll('.tour-card.flipped').length === 0, { timeout: 5000 });
+  const flippedAfterSecondTap = await page.$$eval('.tour-card.flipped', els => els.length);
+  assert.strictEqual(flippedAfterSecondTap, 0, 'Expected card to flip back after second tap');
+}
+
 
 async function testPage(page, path) {
   // Emulate system light preference for deterministic baseline
@@ -217,6 +242,8 @@ async function testPage(page, path) {
 
     await testInsightsPicture(page);
     console.log('✅ Insights hero picture fallback verified');
+    await testCardFlipOnMobile(page);
+    console.log('✅ Quick Tour card flip works on mobile tap');
   } catch (err) {
     console.error('❌ Theme toggle tests failed:', err);
     process.exitCode = 1;

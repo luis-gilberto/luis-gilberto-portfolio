@@ -392,6 +392,10 @@
             padding-top: 2rem;
             border-top: 1px solid var(--border-light);
         }
+        .mobile-subnav-section .mobile-pipe {
+            color: var(--text-muted);
+            margin: 0 8px;
+        }
 
         .mobile-subnav-title {
             font-size: 0.75rem;
@@ -962,6 +966,7 @@
             transition: transform 0.7s ease;
             cursor: pointer;
             border-radius: 16px;
+            will-change: transform;
         }
 
         .tour-card.flipped {
@@ -1496,6 +1501,37 @@
                           translate(var(--jitter-x, 0px), var(--jitter-y, 0px));
             }
 
+            .tour-card.position-1.flipped { 
+                transform: rotate(var(--base-rotation)) 
+                          rotate(var(--rotation-variation, 0deg)) 
+                          translate(var(--jitter-x, 0px), var(--jitter-y, 0px))
+                          rotateY(180deg);
+            }
+            .tour-card.position-2.flipped { 
+                transform: rotate(var(--base-rotation)) 
+                          rotate(var(--rotation-variation, 0deg)) 
+                          translate(var(--jitter-x, 0px), var(--jitter-y, 0px))
+                          rotateY(180deg);
+            }
+            .tour-card.position-3.flipped { 
+                transform: rotate(var(--base-rotation)) 
+                          rotate(var(--rotation-variation, 0deg)) 
+                          translate(var(--jitter-x, 0px), var(--jitter-y, 0px))
+                          rotateY(180deg);
+            }
+            .tour-card.position-4.flipped { 
+                transform: rotate(var(--base-rotation)) 
+                          rotate(var(--rotation-variation, 0deg)) 
+                          translate(var(--jitter-x, 0px), var(--jitter-y, 0px))
+                          rotateY(180deg);
+            }
+            .tour-card.position-5.flipped { 
+                transform: rotate(var(--base-rotation)) 
+                          rotate(var(--rotation-variation, 0deg)) 
+                          translate(var(--jitter-x, 0px), var(--jitter-y, 0px))
+                          rotateY(180deg);
+            }
+
             .whats-next h2 {
                 font-size: 2rem;
             }
@@ -1514,6 +1550,16 @@
                 flex-direction: column;
                 gap: 20px;
                 text-align: center;
+            }
+
+            .footer-social a {
+                width: 44px;
+                height: 44px;
+            }
+
+            .footer-column a {
+                padding: 12px 8px;
+                min-height: 44px;
             }
 
             .banner-line {
@@ -1569,7 +1615,6 @@
         <div class="portfolio-subnav-container">
             <a href="timeline.html" class="subnav-link">Timeline</a>
             <a href="cv.html" class="subnav-link">Resume</a>
-            <a href="myexperience.html" class="subnav-link">Experience</a>
             <a href="myexperience.html#featured-work-anchor" class="subnav-link">Featured Work</a>
         </div>
     </div>
@@ -1587,8 +1632,9 @@
                 <div class="mobile-subnav-section">
                     <div class="mobile-subnav-title">Portfolio</div>
                     <a href="timeline.html" class="subnav-link">Timeline</a>
+                    <span class="mobile-pipe" aria-hidden="true">|</span>
                     <a href="cv.html" class="subnav-link">Resume</a>
-                    <a href="myexperience.html" class="subnav-link">Experience</a>
+                    <span class="mobile-pipe" aria-hidden="true">|</span>
                     <a href="myexperience.html#featured-work-anchor" class="subnav-link">Featured Work</a>
                 </div>
             </div>
@@ -2002,11 +2048,20 @@
                 this.setupShuffleButton();
             }
 
-            setupCards() {
-                this.cards.forEach((card, index) => {
-                    card.addEventListener('click', (e) => this.flipCard(e, card));
+        setupCards() {
+                this.cards.forEach((card) => {
+                    card.addEventListener('click', (e) => {
+                        if (card.dataset.justTouched === 'true') return;
+                        this.flipCard(e, card);
+                    });
+                    card.addEventListener('touchend', (e) => {
+                        if (e.target.tagName === 'A' || e.target.closest('a')) return;
+                        card.dataset.justTouched = 'true';
+                        this.flipCard(e, card);
+                        setTimeout(() => { delete card.dataset.justTouched; }, 250);
+                    }, { passive: true });
                 });
-            }
+        }
 
             flipCard(e, card) {
                 if (e.target.tagName === 'A' || e.target.closest('a')) return;
