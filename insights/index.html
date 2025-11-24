@@ -1413,8 +1413,8 @@ footer {
         }
 
     .lg-site-header.is-open .lg-nav-overlay { display: block; opacity: 1; pointer-events: auto; }
-    .mobile-menu-overlay { position: fixed; inset: 0; background-color: var(--bg-primary); z-index: 11000; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; }
-    .mobile-menu-overlay.active { transform: translateX(0); }
+    .mobile-menu-overlay { position: fixed !important; inset: 0 !important; background-color: var(--bg-primary) !important; z-index: 11000 !important; transform: translateX(100%) !important; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important; display: flex !important; flex-direction: column !important; visibility: hidden; opacity: 0; }
+    .mobile-menu-overlay.active { transform: translateX(0) !important; visibility: visible !important; opacity: 1 !important; }
     .mobile-drawer-header { display: flex; justify-content: space-between; align-items: center; padding: 0 24px; height: 80px; border-bottom: 1px solid var(--border-medium); }
     .mobile-drawer-logo { height: 32px; width: auto; object-fit: contain; }
     [data-theme="light"] .mobile-drawer-logo { filter: invert(1); }
@@ -1422,7 +1422,8 @@ footer {
     .drawer-close-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.1); border-radius: 50%; color: var(--text-primary); cursor: pointer; transition: all 0.2s ease; }
     [data-theme="dark"] .drawer-close-btn { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); color: #fff; }
     .drawer-close-btn:hover { background: #F96F6E; color: white; border-color: #F96F6E; transform: rotate(90deg); }
-    .mobile-drawer-content { padding: 40px 32px; overflow-y: auto; display: flex; flex-direction: column; gap: 32px; }
+    .mobile-drawer-content { padding: 40px 32px; overflow-y: auto; display: flex; flex-direction: column; gap: 32px; opacity: 0; transition: opacity 0.3s ease 0.1s; }
+    .mobile-menu-overlay.active .mobile-drawer-content { opacity: 1; }
     .mobile-group-label { font-family: 'Inter', sans-serif; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 16px; opacity: 0.7; }
     .mobile-link { display: block; text-decoration: none; color: var(--text-primary); transition: color 0.2s; }
     .mobile-link.main { font-family: var(--font-display); font-size: 2.5rem; font-weight: 700; line-height: 1.1; margin-bottom: 8px; }
@@ -1432,8 +1433,36 @@ footer {
     .mobile-link.sub.active { color: #F96F6E; font-weight: 700; padding-left: 12px; border-left: 3px solid #F96F6E; }
     .mobile-divider { height: 1px; width: 100%; background: var(--border-medium); }
     }
+    /* CRITICAL: Hide mobile drawer at all sizes by default */
+    .mobile-menu-overlay { display: none !important; position: fixed !important; inset: 0 !important; z-index: -1 !important; visibility: hidden !important; opacity: 0 !important; }
+    @media (max-width: 768px) { .lg-main-nav { display: none !important; } .lg-site-header.is-open .lg-main-nav { display: flex !important; } }
+        .mobile-menu-overlay { position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; width: 100vw !important; height: 100vh !important; background-color: var(--bg-primary) !important; z-index: 11000 !important; transform: translateX(100%) !important; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important; display: none !important; flex-direction: column !important; overflow: hidden !important; }
+        .mobile-menu-overlay.active { display: flex !important; transform: translateX(0) !important; }
+        .mobile-drawer-header, .mobile-drawer-content, .mobile-link, .mobile-group-label, .mobile-divider { display: none !important; }
+        .mobile-menu-overlay.active .mobile-drawer-header, .mobile-menu-overlay.active .mobile-drawer-content { display: flex !important; }
+        .mobile-menu-overlay.active .mobile-link, .mobile-menu-overlay.active .mobile-group-label { display: block !important; }
+        .mobile-menu-overlay.active .mobile-divider { display: block !important; }
+        .mobile-drawer-header { justify-content: space-between; align-items: center; padding: 0 24px; height: 80px; border-bottom: 1px solid var(--border-medium); }
+        .mobile-drawer-content { padding: 40px 32px; overflow-y: auto; flex-direction: column; gap: 32px; }
+        .mobile-drawer-logo { height: 32px; width: auto; object-fit: contain; }
+        [data-theme="light"] .mobile-drawer-logo { filter: invert(1); }
+        .drawer-close-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.1); border-radius: 50%; color: var(--text-primary); cursor: pointer; transition: all 0.2s ease; }
+        .drawer-close-btn:hover { background: #F96F6E; color: white; border-color: #F96F6E; transform: rotate(90deg); }
+        .mobile-link.main { font-family: var(--font-display); font-size: 2.5rem; font-weight: 700; line-height: 1.1; margin-bottom: 8px; color: var(--text-primary); text-decoration: none; }
+        .mobile-link.sub { font-family: 'Inter', sans-serif; font-size: 1.1rem; font-weight: 500; margin-bottom: 12px; color: var(--text-secondary); }
+        .mobile-link:hover { color: #F96F6E; }
+    }
     </style>
     <link rel="stylesheet" href="/insights/assets/css/insights-mobile-fixes.css">
+    <style id="mobile-drawer-hard-hide">
+    @media (max-width: 768px) {
+        .mobile-menu-overlay { position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; width: 100vw !important; height: 100vh !important; background-color: var(--bg-primary) !important; z-index: 11000 !important; transform: translateX(100%) !important; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important; display: none !important; flex-direction: column !important; overflow: hidden !important; visibility: hidden !important; opacity: 0 !important; }
+        .mobile-menu-overlay.active { display: flex !important; transform: translateX(0) !important; visibility: visible !important; opacity: 1 !important; }
+        .mobile-drawer-header, .mobile-drawer-content, .mobile-link, .mobile-group-label, .mobile-divider { display: none !important; }
+        .mobile-menu-overlay.active .mobile-drawer-header, .mobile-menu-overlay.active .mobile-drawer-content { display: flex !important; }
+        .mobile-menu-overlay.active .mobile-link, .mobile-menu-overlay.active .mobile-group-label, .mobile-menu-overlay.active .mobile-divider { display: block !important; }
+    }
+    </style>
 </head>
 <body>
     <!-- Theme Toggle -->
@@ -1490,7 +1519,7 @@ footer {
             </button>
         </div>
     </header>
-    <div class="mobile-menu-overlay" id="mobileOverlay" aria-hidden="true">
+    <div class="mobile-menu-overlay" id="mobileOverlay" aria-hidden="true" hidden style="display:none;">
         <div class="mobile-drawer-header">
             <div class="mobile-brand">
                 <img src="/assets/images/3D_icon_Transparent.png" alt="Logo" class="mobile-drawer-logo">
@@ -2242,8 +2271,22 @@ footer {
                 if (nav) nav.setAttribute("aria-hidden", "true");
                 document.body.classList.remove("menu-open");
             }
-            function openDrawer() { if (mobileOverlay) { mobileOverlay.classList.add("active"); document.body.style.overflow = "hidden"; } }
-            function closeDrawer() { if (mobileOverlay) { mobileOverlay.classList.remove("active"); document.body.style.overflow = ""; } }
+            function openDrawer() {
+                if (mobileOverlay) {
+                    mobileOverlay.hidden = false;
+                    mobileOverlay.style.display = "flex";
+                    mobileOverlay.classList.add("active");
+                    document.body.style.overflow = "hidden";
+                }
+            }
+            function closeDrawer() {
+                if (mobileOverlay) {
+                    mobileOverlay.classList.remove("active");
+                    mobileOverlay.style.display = "none";
+                    mobileOverlay.hidden = true;
+                    document.body.style.overflow = "";
+                }
+            }
 
             if (toggle) {
                 if (mobileOverlay) {
