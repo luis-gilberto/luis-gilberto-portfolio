@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Big+Shoulders+Display:wght@600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous"></script>
+    <script src="assets/components/hub-animation/hub-loader.min.js"></script>
     <link rel="prefetch" href="/IMCServices/">
     <link rel="prefetch" href="/advisory/">
     <link rel="prefetch" href="/scopeiq/">
@@ -449,6 +450,48 @@
             margin-top: clamp(2rem, 5vh, 4rem);
         }
 
+        .orbital-system { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; opacity: 0; transition: opacity 1.5s ease-in; }
+        .shape-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transition: transform 0.2s ease-out; }
+        .orbit-path { position: absolute; top: 50%; left: 50%; width: 90vmin; height: 90vmin; max-width: 900px; max-height: 900px; transform: translate(-50%, -50%); animation: orbit-rotate 90s linear infinite; }
+        .shape-satellite { position: absolute; will-change: transform; animation: counter-rotate 90s linear infinite; }
+        .shape-satellite img { width: 100%; display: block; filter: drop-shadow(0 5px 25px rgba(0,0,0,0.5)); animation: individual-float 10s ease-in-out infinite alternate; }
+        .shape-satellite.coral img { filter: drop-shadow(0 0 35px rgba(249, 111, 110, 0.5)); }
+        .shape-satellite.teal img { filter: drop-shadow(0 0 35px rgba(46, 211, 198, 0.5)); }
+        .shape-compass { top: 10%; left: 50%; transform: translate(-50%, -50%); width: 90px; }
+        .shape-atom { top: 50%; right: 10%; transform: translate(50%, -50%); width: 100px; animation-delay: -2s; }
+        .shape-telescope { bottom: 10%; left: 50%; transform: translate(-50%, 50%); width: 110px; animation-delay: -3s; }
+        .shape-queen { top: 50%; left: 10%; transform: translate(-50%, -50%); width: 85px; animation-delay: -1s; }
+        @keyframes orbit-rotate { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+        @keyframes counter-rotate { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
+        @keyframes individual-float { from { transform: translateY(-8px) scale(1.05); } to { transform: translateY(8px) scale(0.95); } }
+
+        .hub-reveal-system { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; pointer-events: none; perspective: 800px; transition: opacity 0.5s ease-out; opacity: 0; }
+        .hub-reveal-system::before { content: ''; position: absolute; top: 50%; left: 50%; width: 60vw; height: 70vh; max-width: 800px; max-height: 700px; border: 2px solid var(--coral); border-radius: 12px; box-shadow: 0 0 30px rgba(249, 111, 110, 0.4), inset 0 0 30px rgba(249, 111, 110, 0.2); transform: translate(-50%, -50%) scale(0.5); opacity: 0; transition: transform 1s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.8s ease; }
+        .hub-reveal-system.is-revealing-frame::before { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        .hub-reveal-system.is-fading-out::before { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+        .service-image { position: absolute; width: 120px; height: 120px; top: 50%; left: 50%; opacity: 0; transform: translate(-50%, -50%) translateZ(-200px) scale(0); transition: transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.8s ease; }
+        .service-image img { width: 100%; height: 100%; object-fit: contain; }
+        .hub-reveal-system.is-revealing-shapes .service-image { opacity: 1; transform: translate(-50%, -50%) translateZ(200px) scale(1.5); }
+        .hub-reveal-system.is-revealing-shapes .service-advisory { top: 12%; left: 12%; transition-delay: 0s; }
+        .hub-reveal-system.is-revealing-shapes .service-imc { top: 12%; left: 88%; transition-delay: 0.15s; }
+        .hub-reveal-system.is-revealing-shapes .service-scope { top: 88%; left: 12%; transition-delay: 0.3s; }
+        .hub-reveal-system.is-revealing-shapes .service-strategy { top: 88%; left: 88%; transition-delay: 0.45s; }
+        .hub-reveal-system.is-fading-out .service-image { opacity: 0; }
+        .hub-reveal-system.is-fading-out { opacity: 0; transition: opacity 1s ease-out; }
+        .hub-loading-container.logo-fixed-visible .hub-logo,
+        .hub-loading-container.logo-fixed-visible .hub-logo-overlay,
+        .hub-loading-container.complete .hub-logo,
+        .hub-loading-container.transitioning .hub-logo,
+        .hub-loading-container.complete .hub-logo-overlay,
+        .hub-loading-container.transitioning .hub-logo-overlay { opacity: 1 !important; visibility: visible !important; }
+        @media (max-width: 768px) {
+            .orbit-path { width: 120vmin; height: 120vmin; }
+            .shape-compass { width: 60px; }
+            .shape-atom { width: 70px; }
+            .shape-telescope { width: 80px; }
+            .shape-queen { width: 65px; }
+        }
+
         /* ========================
            5. WHY THIS EXISTS
            ======================== */
@@ -722,6 +765,11 @@
             transform: translateY(-2px); 
             box-shadow: 0 12px 24px rgba(249,111,110,0.35); 
         }
+        .btn-accent:active { 
+            transform: translateY(0); 
+            box-shadow: 0 6px 12px rgba(249,111,110,0.28); 
+            background: color-mix(in srgb, var(--cta-accent-bg) 90%, #000 10%);
+        }
         
         .btn-accent:focus { 
             outline: 2px solid rgba(249,111,110,0.7); 
@@ -753,6 +801,14 @@
         .btn-outline:hover { 
             background: white; 
             border-color: rgba(0,0,0,0.2); 
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+        .btn-outline:active {
+            transform: translateY(0);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+            background: #f8f8f8;
+            border-color: rgba(0,0,0,0.25);
         }
 
         /* ========================
@@ -865,6 +921,10 @@
                 <img src="/TheHub/assets/images/3D_icon_Transparent.png" alt="Logo" class="mobile-drawer-logo">
             </div>
             <div class="mobile-controls">
+                <button class="theme-toggle" aria-pressed="false" aria-label="Toggle theme">
+                    <i class="fa-regular fa-sun sun-icon"></i>
+                    <i class="fa-regular fa-moon moon-icon"></i>
+                </button>
                 <button class="drawer-close-btn" id="drawerCloseBtn" aria-label="Close Menu">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
@@ -916,6 +976,24 @@
             </p>
             <span class="hero-eyebrow" style="margin-top: 20px;">BUILT FOR WHAT'S NEXT.</span>
             <div class="scroll-down">↓ Explore The System</div>
+        </div>
+        <div class="orbital-system" aria-hidden="true">
+            <div class="shape-layer" data-depth="0.3">
+                <div class="orbit-path">
+                    <div class="shape-satellite shape-compass coral">
+                        <img src="assets/icons/floating-shapes/compass_rose_coral.png" alt="">
+                    </div>
+                    <div class="shape-satellite shape-atom teal">
+                        <img src="assets/icons/floating-shapes/atom_model_teal.png" alt="">
+                    </div>
+                    <div class="shape-satellite shape-telescope coral">
+                        <img src="assets/icons/floating-shapes/telescope_coral.png" alt="">
+                    </div>
+                    <div class="shape-satellite shape-queen teal">
+                        <img src="assets/icons/floating-shapes/chess_queen_teal.png" alt="">
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -1053,8 +1131,8 @@
             <p style="font-size: var(--body-large); color: var(--text-body); margin-top: 16px;">Let's turn your experience into momentum.</p>
             
             <div class="cta-buttons">
-                <a href="/scopeiq/" class="btn-accent" aria-label="Start with Scope IQ">Start with Scope IQ</a>
-                <a href="https://luis-gilberto.com/" class="btn-outline" aria-label="Go to Portfolio">Go to Portfolio</a>
+                <a href="/TheHub/scopeiq/index.html" class="btn-accent" aria-label="Start with ScopeIQ" role="button" tabindex="0">Start with ScopeIQ</a>
+                <a href="https://www.luis-gilberto.com/index.html" class="btn-outline" aria-label="Go to Portfolio" role="button" tabindex="0">Go to Portfolio</a>
             </div>
         </div>
     </section>
@@ -1125,7 +1203,7 @@
         });
 
         // CTA analytics
-        const ctaScope = document.querySelector('.btn-accent[aria-label="Start with Scope IQ"]');
+        const ctaScope = document.querySelector('.btn-accent[aria-label="Start with ScopeIQ"]');
         const ctaPortfolio = document.querySelector('.btn-outline[aria-label="Go to Portfolio"]');
         function trackCta(name) {
             if (window.dataLayer && Array.isArray(window.dataLayer)) {
@@ -1138,6 +1216,91 @@
         }
         if (ctaScope) ctaScope.addEventListener('click', () => trackCta('scopeiq'));
         if (ctaPortfolio) ctaPortfolio.addEventListener('click', () => trackCta('portfolio'));
+    </script>
+    <div class="hub-reveal-system" id="hubRevealSystem">
+        <div class="service-image service-advisory"><img src="assets/icons/floating-shapes/compass_rose_coral.png" alt=""></div>
+        <div class="service-image service-imc"><img src="assets/icons/floating-shapes/atom_model_teal.png" alt=""></div>
+        <div class="service-image service-scope"><img src="assets/icons/floating-shapes/telescope_coral.png" alt=""></div>
+        <div class="service-image service-strategy"><img src="assets/icons/floating-shapes/chess_queen_teal.png" alt=""></div>
+    </div>
+    <script>
+      (function() {
+        if (window.HubLoader && HubLoader.prototype && typeof HubLoader.prototype.complete === 'function') {
+          const originalComplete = HubLoader.prototype.complete;
+          HubLoader.prototype.complete = function() {
+            if (this.isComplete) return;
+            this.isComplete = true;
+            if (this.video) { this.video.pause(); this.video.currentTime = 0; }
+            if (this.options.onComplete && typeof this.options.onComplete === 'function') { this.options.onComplete(); }
+            document.dispatchEvent(new CustomEvent('hubLoadingComplete', { detail: { loader: this } }));
+            if (this.container) { this.container.classList.add('complete', 'transitioning'); }
+            setTimeout(() => { this.hide(); }, 2000);
+          };
+        }
+      })();
+      document.addEventListener('DOMContentLoaded', function() {
+        const specialArticleUrl = 'https://luis-gilberto.com/insights/building-the-hub/';
+        const referrer = document.referrer || '';
+        const isStandardInternalNav = referrer.includes('luis-gilberto.com') && referrer !== specialArticleUrl;
+        const hasInternalNavigationFlag = sessionStorage.getItem('hubNavigated') === 'true';
+        const shouldShowAnimation = !isStandardInternalNav && !hasInternalNavigationFlag;
+        const mainContent = document.querySelector('main');
+        const revealSystem = document.getElementById('hubRevealSystem');
+        const heroShapes = document.querySelector('.orbital-system');
+        function showContentAndFinalShapes() { if (mainContent) mainContent.style.opacity = '1'; if (heroShapes) { setTimeout(() => { heroShapes.style.opacity = '1'; }, 100); } }
+        if (shouldShowAnimation) {
+          sessionStorage.removeItem('hubNavigated');
+          const loader = HubLoader.create({
+            videoUrl: 'assets/components/hub-animation/coral_laser_line.mp4',
+            duration: 12000,
+            autoStart: true,
+            showProgress: false,
+            skipOnClick: true,
+            onComplete: function() {
+              setTimeout(() => {
+                if (revealSystem) {
+                  revealSystem.style.opacity = '1';
+                  setTimeout(() => { revealSystem.classList.add('is-revealing-frame'); }, 0);
+                  setTimeout(() => { revealSystem.classList.add('is-revealing-shapes'); }, 200);
+                  setTimeout(() => { showContentAndFinalShapes(); }, 1500);
+                  setTimeout(() => { revealSystem.classList.add('is-fading-out'); }, 2000);
+                  setTimeout(() => { revealSystem.style.display = 'none'; }, 3000);
+                }
+              }, 2000);
+            }
+          });
+          setTimeout(() => {
+            const hubContainer = document.querySelector('.hub-loading-container');
+            if (!hubContainer) return;
+            const logoOverlay = hubContainer.querySelector('.hub-logo-overlay');
+            const logo = hubContainer.querySelector('.hub-logo');
+            const markVisible = () => hubContainer.classList.add('logo-fixed-visible');
+            if (logoOverlay) logoOverlay.addEventListener('animationend', markVisible, { once: true });
+            if (logo) logo.addEventListener('animationend', markVisible, { once: true });
+            setTimeout(() => { if (!hubContainer.classList.contains('logo-fixed-visible')) markVisible(); }, 2500);
+          }, 0);
+        } else {
+          if (revealSystem) revealSystem.style.display = 'none';
+          showContentAndFinalShapes();
+        }
+        sessionStorage.setItem('hubNavigated', 'true');
+      });
+    </script>
+    <script>
+      document.addEventListener('mousemove', function(e) {
+          const hero = document.querySelector('.hero');
+          if (!hero) return;
+          const rect = hero.getBoundingClientRect();
+          const x = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2);
+          const y = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2);
+          const layer = document.querySelector('.shape-layer');
+          if (layer) {
+              const depth = parseFloat(layer.getAttribute('data-depth') || '0.3');
+              const moveX = depth * (x * 40);
+              const moveY = depth * (y * 40);
+              layer.style.transform = `translate3d(${moveX}px, ${moveY}px, 0)`;
+          }
+      });
     </script>
 </body>
 </html>
