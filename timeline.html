@@ -75,6 +75,8 @@
             padding-top: 112px;
             transition: background-color 0.3s ease, color 0.3s ease;
         }
+        .particle-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; opacity: 0; }
+        [data-theme="dark"] .particle-container { opacity: 0.5; }
 
         /* ========================================
            THEME TOGGLE
@@ -182,7 +184,7 @@
         }
 
         .nav-logo img {
-            height: 40px;
+            height: 55px;
             width: auto;
         }
 
@@ -190,6 +192,9 @@
             display: flex;
             gap: 2rem;
             align-items: center;
+        }
+        @media (max-width: 768px) {
+            .nav-logo img { height: 40px; }
         }
 
         .nav-link {
@@ -998,6 +1003,7 @@
     </style>
 </head>
 <body>
+    <div class="particle-container"><canvas id="particleCanvas"></canvas></div>
     <!-- Theme Toggle Button -->
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
         <svg class="moon-icon" viewBox="0 0 24 24">
@@ -1045,7 +1051,7 @@
         <div class="portfolio-subnav-container">
             <a href="timeline.html" class="subnav-link active">Timeline</a>
             <a href="cv.html" class="subnav-link">Resume</a>
-            <a href="featured-work.html" class="subnav-link">Featured Work</a>
+            <a href="myexperience.html" class="subnav-link">Experience</a>
         </div>
     </nav>
 
@@ -1068,7 +1074,7 @@
             <nav class="mobile-subnav-links">
                 <a href="timeline.html" class="mobile-subnav-link active">Timeline</a>
                 <a href="cv.html" class="mobile-subnav-link">Resume</a>
-                <a href="featured-work.html" class="mobile-subnav-link">Featured Work</a>
+                <a href="myexperience.html" class="mobile-subnav-link">Experience</a>
             </nav>
         </div>
     </div>
@@ -1318,6 +1324,38 @@
             const newTheme = theme === 'light' ? 'dark' : 'light';
             htmlElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
+        });
+
+        // Dark-mode particles (match About)
+        let _particleRAF;
+        function initParticleCanvas() {
+            const canvas = document.getElementById('particleCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+            function createParticle() { return { x: Math.random() * canvas.width, y: Math.random() * canvas.height, vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5, size: Math.random() * 2 + 1, opacity: Math.random() * 0.5 + 0.1, hue: Math.random() * 60 + 200 }; }
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.x += p.vx; p.y += p.vy;
+                    if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                    if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                    ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `hsla(${p.hue}, 70%, 60%, ${p.opacity})`;
+                    ctx.fill();
+                });
+                _particleRAF = requestAnimationFrame(animate);
+            }
+            window.addEventListener('resize', resize); resize();
+            for (let i = 0; i < 50; i++) particles.push(createParticle());
+            animate();
+        }
+        function destroyParticles() { if (_particleRAF) cancelAnimationFrame(_particleRAF); }
+        if (htmlElement.getAttribute('data-theme') === 'dark') { initParticleCanvas(); }
+        themeToggle.addEventListener('click', () => {
+            const isDark = htmlElement.getAttribute('data-theme') === 'dark';
+            if (isDark) initParticleCanvas(); else destroyParticles();
         });
 
         // Mobile Menu Functionality

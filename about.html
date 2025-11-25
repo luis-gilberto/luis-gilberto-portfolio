@@ -213,10 +213,7 @@
             max-width: 1200px; margin: 0 auto; padding: 0 20px;
         }
 
-        .particle-container {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: -1; opacity: 0.2; /* Subtle in light mode */
-        }
+        .particle-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; opacity: 0; }
         [data-theme="dark"] .particle-container { opacity: 0.5; }
 
         /* Hero Editorial */
@@ -467,6 +464,11 @@
             .dossier-header { flex-direction: column; gap: 8px; align-items: flex-start; }
         }
         @media (min-width: 769px) { .mobile-nav-toggle { display: none; } }
+        /* Tablet breakpoint: show hamburger and hide standard links */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .mobile-nav-toggle { display: flex; }
+            .nav-links { display: none; }
+        }
     </style>
 </head>
 <body>
@@ -719,6 +721,7 @@
         });
 
         // Particle Canvas
+        let _particleRAF;
         function initParticleCanvas() {
             const canvas = document.getElementById('particleCanvas');
             const ctx = canvas.getContext('2d');
@@ -753,7 +756,7 @@
                     ctx.fillStyle = `hsla(${p.hue}, 70%, 60%, ${p.opacity})`;
                     ctx.fill();
                 });
-                requestAnimationFrame(animate);
+                _particleRAF = requestAnimationFrame(animate);
             }
             
             window.addEventListener('resize', resize);
@@ -761,13 +764,37 @@
             for (let i = 0; i < 50; i++) particles.push(createParticle());
             animate();
         }
-        initParticleCanvas();
+        function destroyParticles() { if (_particleRAF) cancelAnimationFrame(_particleRAF); }
+        if (document.documentElement.getAttribute('data-theme') === 'dark') { initParticleCanvas(); }
+        themeToggle.addEventListener('click', () => {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            if (isDark) { initParticleCanvas(); }
+            else { destroyParticles(); }
+        });
 
         const mobileToggle = document.getElementById('mobileToggle');
         const mobileOverlay = document.getElementById('mobileOverlay');
         const drawerCloseBtn = document.getElementById('drawerCloseBtn');
-        function openDrawer() { if (mobileOverlay) { mobileOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; } }
-        function closeDrawer() { if (mobileOverlay) { mobileOverlay.classList.remove('active'); document.body.style.overflow = ''; } }
+        function openDrawer() {
+            if (mobileOverlay) {
+                mobileOverlay.classList.add('active');
+                mobileOverlay.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+            }
+            const btn = document.getElementById('drawerCloseBtn');
+            if (btn) btn.focus();
+            const toggleBtn = document.getElementById('mobileToggle');
+            if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'true');
+        }
+        function closeDrawer() {
+            if (mobileOverlay) {
+                mobileOverlay.classList.remove('active');
+                mobileOverlay.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+            }
+            const toggleBtn = document.getElementById('mobileToggle');
+            if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'false');
+        }
         if (mobileToggle) mobileToggle.addEventListener('click', openDrawer);
         if (drawerCloseBtn) drawerCloseBtn.addEventListener('click', closeDrawer);
         document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDrawer(); });

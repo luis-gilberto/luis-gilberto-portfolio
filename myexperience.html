@@ -74,6 +74,26 @@
             flex-direction: column;
         }
 
+        /* Background Animation & Texture */
+        .particle-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0; /* Sits behind content */
+            pointer-events: none;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+
+        /* Adjust opacity based on theme */
+        [data-theme="light"] .particle-container { opacity: 0.4; }
+        [data-theme="dark"] .particle-container { opacity: 1; }
+
+        /* Ensure content sits above the particles */
+        .container, .hero-section, .section-alt, .footer { position: relative; z-index: 2; }
+
         /* ========================================
            NAVIGATION (Standard)
            ======================================== */
@@ -88,7 +108,7 @@
             max-width: 1400px; margin: 0 auto; padding: 0 2rem;
             height: 64px; display: flex; align-items: center; justify-content: space-between;
         }
-        .nav-logo img { height: 32px; width: auto; }
+        .nav-logo img { height: 55px; width: auto; }
         .nav-links { display: flex; gap: 2rem; align-items: center; }
         .nav-link {
             color: rgba(255, 255, 255, 0.7); text-decoration: none;
@@ -143,6 +163,7 @@
             .nav-links, .portfolio-subnav { display: none; }
             .mobile-menu-toggle { display: flex; }
             body { padding-top: 64px; }
+            .nav-logo img { height: 40px; }
         }
 
         /* ==========================================
@@ -529,13 +550,14 @@
 
     </style>
 </head>
-<body>
+    <body>
+    <div class="particle-container"><canvas id="particleCanvas"></canvas></div>
 
     <!-- 1. GLOBAL PRIMARY NAV -->
     <nav class="primary-nav">
         <div class="primary-nav-container">
             <a href="/index.html" class="nav-logo">
-               <img src="/assets/images/AUg_logo_White.png" alt="LG" style="height: 32px; width: auto;">
+               <img src="/assets/images/AUg_logo_White.png" alt="Luis Gilberto Logo">
             </a>
 
             <div class="nav-links">
@@ -1057,6 +1079,8 @@
                 const newTheme = currentTheme === 'light' ? 'dark' : 'light';
                 html.setAttribute('data-theme', newTheme);
                 localStorage.setItem('theme', newTheme);
+                const isDark = newTheme === 'dark';
+                if (isDark) initParticleCanvas(); else destroyParticles();
             });
         });
 
@@ -1091,6 +1115,65 @@
             });
         }
         window.addEventListener('scroll', () => requestAnimationFrame(updateImages));
+
+        // Particle Animation Logic
+        let _particleRAF;
+        function initParticleCanvas() {
+            const canvas = document.getElementById('particleCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+
+            // Set canvas size
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+
+            // Create particles (Coral & Teal colors)
+            function createParticle() {
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                return {
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5,
+                    size: Math.random() * 2 + 1,
+                    opacity: Math.random() * 0.5 + 0.2,
+                    // Switch colors based on theme if needed, defaulting to brand colors
+                    hue: Math.random() > 0.5 ? 350 : 170 // Approx Coral (350) or Teal (170)
+                };
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.x += p.vx; p.y += p.vy;
+
+                    // Bounce off edges
+                    if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                    if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    // Use HSLA for dynamic coloring
+                    ctx.fillStyle = `hsla(${p.hue}, 70%, 50%, ${p.opacity})`;
+                    ctx.fill();
+                });
+                _particleRAF = requestAnimationFrame(animate);
+            }
+
+            window.addEventListener('resize', resize);
+            resize();
+
+            // Initialize particles
+            particles = [];
+            for (let i = 0; i < 60; i++) particles.push(createParticle());
+            animate();
+        }
+
+        // Run on load regardless of theme (opacity handled by CSS)
+        initParticleCanvas();
 
         // Tabs Logic
         function switchToTab(tabName) {
