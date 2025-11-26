@@ -1,4 +1,124 @@
-# STRATEGYIQ: Update Public Content While Preserving Admin Engine
+        <div class="hero-content" style="position: relative; z-index: 100; text-align: center; max-width: 900px; margin: 0 auto;">
+            <div class="hero-eyebrow" style="color: var(--coral); font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem;">The Hub · Strategy</div>
+            <h1 class="hero-title" style="font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 700; margin-bottom: 1.5rem; line-height: 1.1;">Meet <span style="color: var(--coral);">StrategyIQ™</span></h1>
+            <p class="hero-subtitle" style="font-size: clamp(1.125rem, 2vw, 1.375rem); color: var(--ink-dim); line-height: 1.6; margin-bottom: 2.5rem; max-width: 700px; margin-left: auto; margin-right: auto;">Not another buzzword-heavy platform. This is your strategic engine – built to read the market, decode the noise, and deliver insights you can act on.</p>
+            <div class="cta-row" style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;">
+                <a href="#cta" style="padding: 1rem 2.5rem; background: linear-gradient(135deg, var(--coral), var(--teal)); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; transition: all 0.3s ease;">Activate StrategyIQ</a>
+                <a href="/TheHub/system/" style="padding: 1rem 2.5rem; color: var(--coral); text-decoration: none; border: 2px solid var(--coral); border-radius: 8px; font-weight: 600; transition: all 0.3s ease;">See how it fits in The Hub →</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Metrics Section -->
+<section class="container" style="padding: 6rem 0;">
+    <div class="section-intro" style="text-align: center; margin-bottom: 4rem;">
+        <h2 style="font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; margin-bottom: 1rem;">Real Results, <span style="color: var(--coral);">Real Fast</span></h2>
+    </div>
+    <div class="intelligence-metrics" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
+        <div class="metric-card" style="text-align: center; padding: 2.5rem 2rem; background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 1.5rem; transition: all 0.3s ease;">
+            <div class="metric-number" style="font-size: 3.5rem; font-weight: 700; color: var(--coral); margin-bottom: 0.5rem;">97%</div>
+            <div class="metric-label" style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">Accuracy</div>
+            <div class="metric-description" style="color: var(--ink-muted); font-size: 0.875rem;">Strategic calls that actually land.</div>
+        </div>
+        <div class="metric-card" style="text-align: center; padding: 2.5rem 2rem; background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 1.5rem; transition: all 0.3s ease;">
+            <div class="metric-number" style="font-size: 3.5rem; font-weight: 700; color: var(--coral); margin-bottom: 0.5rem;">2.3×</div>
+            <div class="metric-label" style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">ROI</div>
+            <div class="metric-description" style="color: var(--ink-muted); font-size: 0.875rem;">Average uplift our clients see.</div>
+        </div>
+        <div class="metric-card" style="text-align: center; padding: 2.5rem 2rem; background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 1.5rem; transition: all 0.3s ease;">
+            <div class="metric-number" style="font-size: 3.5rem; font-weight: 700; color: var(--coral); margin-bottom: 0.5rem;">48h</div>
+            <div class="metric-label" style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">Speed</div>
+            <div class="metric-description" style="color: var(--ink-muted); font-size: 0.875rem;">From data to direction in two days.</div>
+        </div>
+        <div class="metric-card" style="text-align: center; padding: 2.5rem 2rem; background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 1.5rem; transition: all 0.3s ease;">
+            <div class="metric-number" style="font-size: 3.5rem; font-weight: 700; color: var(--coral); margin-bottom: 0.5rem;">500+</div>
+            <div class="metric-label" style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">Sources</div>
+            <div class="metric-description" style="color: var(--ink-muted); font-size: 0.875rem;">Live data, all working together.</div>
+        </div>
+    </div>
+</section>
+
+<!-- Section Divider -->
+<div class="section-divider" style="display: flex; align-items: center; justify-content: center; margin: 4rem 0 3rem; gap: 2rem;">
+    <div class="divider-line" style="flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(249, 111, 110, 0.5), transparent);"></div>
+    <div class="divider-content" style="color: var(--ink-muted); font-weight: 500; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.15em; white-space: nowrap;">Strategic Methodology</div>
+    <div class="divider-line" style="flex: 1; height: 1px; background: linear-gradient(90deg, rgba(249, 111, 110, 0.5), transparent);"></div>
+</div>
+
+<!-- Methodology Section -->
+<section class="container" style="padding: 0 0 6rem;">
+    <div class="section-intro" style="text-align: center; margin-bottom: 4rem;">
+        <h2 style="font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; margin-bottom: 1rem;">How the Engine <span style="color: var(--coral);">Thinks</span></h2>
+        <p style="font-size: 1.125rem; color: var(--ink-muted); max-width: 600px        <div class="hero-content" style="position: relative; z-index: 100; text-align: center; max-width: 900px; margin: 0 auto;">
+            <div class="hero-eyebrow" style="color: var(--coral); font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem;">
+                The Hub · Strategy
+            </div>
+            <h1 class="hero-title" style="font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 700; margin-bottom: 1.5rem; line-height: 1.1;">
+                Meet <span style="color: var(--coral);">StrategyIQ™</span>
+            </h1>
+            <p class="hero-subtitle" style="font-size: clamp(1.125rem, 2vw, 1.375rem); color: var(--ink-dim); line-height: 1.6; margin-bottom: 2.5rem; max-width: 700px; margin-left: auto; margin-right: auto;">
+                Not another buzzword-heavy platform. This is your strategic engine – built to read the market, decode the noise, and deliver insights you can act on.
+            </p>
+            <div class="cta-row" style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;">
+                <a href="#cta" style="padding: 1rem 2.5rem; background: linear-gradient(135deg, var(--coral), var(--teal)); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; transition: all 0.3s ease;">
+                    Activate StrategyIQ
+                </a>
+                <a href="/TheHub/system/" style="padding: 1rem 2.5rem; color: var(--coral); text-decoration: none; border: 2px solid var(--coral); border-radius: 8px; font-weight: 600; transition: all 0.3s ease;">
+                    See how it fits in The Hub →
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Metrics Section -->
+<section class="container" style="padding: 6rem 0;">
+    <div class="section-intro" style="text-align: center; margin-bottom: 4rem;">
+        <h2 style="font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; margin-bottom: 1rem;">
+            Real Results, <span style="color: var(--coral);">Real Fast</span>
+        </h2>
+    </div>
+    <div class="intelligence-metrics" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
+        <div class="metric-card" style="text-align: center; padding: 2.5rem 2rem; background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 1.5rem; transition: all 0.3s ease;">
+            <div class="metric-number" style="font-size: 3.5rem; font-weight: 700; color: var(--coral); margin-bottom: 0.5rem;">97%</div>
+            <div class="metric-label" style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">Accuracy</div>
+            <div class="metric-description" style="color: var(--ink-muted); font-size: 0.875rem;">Strategic calls that actually land.</div>
+        </div>
+        <div class="metric-card" style="text-align: center; padding: 2.5rem 2rem; background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 1.5rem; transition: all 0.3s ease;">
+            <div class="metric-number" style="font-size: 3.5rem; font-weight: 700; color: var(--coral); margin-bottom: 0.5rem;">2.3×</div>
+            <div class="metric-label" style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">ROI</div>
+            <div class="metric-description" style="color: var(--ink-muted); font-size: 0.875rem;">Average uplift our clients see.</div>
+        </div>
+        <div class="metric-card" style="text-align: center; padding: 2.5rem 2rem; background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 1.5rem; transition: all 0.3s ease;">
+            <div class="metric-number" style="font-size: 3.5rem; font-weight: 700; color: var(--coral); margin-bottom: 0.5rem;">48h</div>
+            <div class="metric-label" style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">Speed</div>
+            <div class="metric-description" style="color: var(--ink-muted); font-size: 0.875rem;">From data to direction in two days.</div>
+        </div>
+        <div class="metric-card" style="text-align: center; padding: 2.5rem 2rem; background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 1.5rem; transition: all 0.3s ease;">
+            <div class="metric-number" style="font-size: 3.5rem; font-weight: 700; color: var(--coral); margin-bottom: 0.5rem;">500+</div>
+            <div class="metric-label" style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">Sources</div>
+            <div class="metric-description" style="color: var(--ink-muted); font-size: 0.875rem;">Live data, all working together.</div>
+        </div>
+    </div>
+</section>
+
+<!-- Section Divider -->
+<div class="section-divider" style="display: flex; align-items: center; justify-content: center; margin: 4rem 0 3rem; gap: 2rem;">
+    <div class="divider-line" style="flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(249, 111, 110, 0.5), transparent);"></div>
+    <div class="divider-content" style="color: var(--ink-muted); font-weight: 500; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.15em; white-space: nowrap;">Strategic Methodology</div>
+    <div class="divider-line" style="flex: 1; height: 1px; background: linear-gradient(90deg, rgba(249, 111, 110, 0.5), transparent);"></div>
+</div>
+
+<!-- Methodology Section -->
+<section class="container" style="padding: 0 0 6rem;">
+    <div class="section-intro" style="text-align: center; margin-bottom: 4rem;">
+        <h2 style="font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; margin-bottom: 1rem;">
+            How the Engine <span style="color: var(--coral);">Thinks</span>
+        </h2>
+        <p style="font-size: 1.125rem; color: var(--ink-muted); max-width: 600px; margin: 0 auto;">
+            We didn't slap "AI" on an old consulting model. We built a system that moves with you.
+        </p># STRATEGYIQ: Update Public Content While Preserving Admin Engine
 
 ## CRITICAL: DO NOT REPLACE THE ENTIRE FILE
 
