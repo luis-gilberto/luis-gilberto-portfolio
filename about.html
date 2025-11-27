@@ -100,7 +100,7 @@
             height: 64px; display: flex; align-items: center; justify-content: space-between;
         }
 
-        .nav-logo img { height: 40px; width: auto; }
+        .nav-logo img { height: 55px; width: auto; }
 
         .nav-links { display: flex; gap: 2rem; align-items: center; }
         .nav-link {
@@ -163,12 +163,20 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             background: rgba(255, 255, 255, 0.05);
             border-radius: 12px; cursor: pointer;
-            align-items: center; justify-content: center;
+            align-items: center; justify-content: center; position: relative;
+            transition: all 0.3s ease;
         }
+        .mobile-nav-toggle:focus-visible { outline: 3px solid var(--coral); outline-offset: 2px; }
         .nav-toggle-bar {
-            width: 20px; height: 2px; background: #fff;
-            border-radius: 2px; margin: 2px 0; display: block;
+            position: absolute; left: 50%; width: 20px; height: 2px; background: #fff;
+            border-radius: 2px; transform: translateX(-50%); transition: all 0.3s ease;
         }
+        .nav-toggle-bar:nth-child(1) { top: calc(50% - 6px); }
+        .nav-toggle-bar:nth-child(2) { top: calc(50% - 1px); }
+        .nav-toggle-bar:nth-child(3) { top: calc(50% + 4px); }
+        .mobile-nav-toggle.active .nav-toggle-bar:nth-child(1) { top: 50%; transform: translate(-50%, -50%) rotate(45deg); }
+        .mobile-nav-toggle.active .nav-toggle-bar:nth-child(2) { opacity: 0; }
+        .mobile-nav-toggle.active .nav-toggle-bar:nth-child(3) { top: 50%; transform: translate(-50%, -50%) rotate(-45deg); }
 
         .mobile-menu-overlay { position: fixed; inset: 0; background-color: var(--bg-primary); z-index: 11000; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; }
         .mobile-menu-overlay.active { transform: translateX(0); }
@@ -187,7 +195,8 @@
         .mobile-link.active-parent { color: #F96F6E; }
         .mobile-link.sub.active { color: #F96F6E; font-weight: 700; padding-left: 12px; border-left: 3px solid #F96F6E; }
         .mobile-divider { height: 1px; width: 100%; background: var(--border-light); }
-        @media (max-width: 1024px) { .nav-links, .portfolio-subnav { display: none; } body { padding-top: 64px; } }
+        @media (max-width: 1024px) { .nav-links, .portfolio-subnav { display: none; } body { padding-top: 64px; } .mobile-nav-toggle { display: flex; } }
+        @media (min-width: 768px) and (max-width: 1024px) { .mobile-nav-toggle { display: flex; } }
 
 
         /* Theme Toggle */
@@ -508,7 +517,7 @@
                 <a href="about.html" class="nav-link active">About</a>
                 <a href="contact.html" class="nav-link">Contact</a>
             </div>
-            <button class="mobile-nav-toggle" id="mobileToggle">
+            <button class="mobile-nav-toggle" id="mobileToggle" aria-label="Toggle menu" aria-controls="mobileOverlay" aria-expanded="false">
                 <span class="nav-toggle-bar"></span>
                 <span class="nav-toggle-bar"></span>
                 <span class="nav-toggle-bar"></span>
@@ -525,7 +534,7 @@
         </div>
     </div>
 
-    <div class="mobile-menu-overlay" id="mobileOverlay" aria-hidden="true">
+    <div class="mobile-menu-overlay" id="mobileOverlay" aria-hidden="true" role="dialog" aria-modal="true">
         <div class="mobile-drawer-header">
             <div class="mobile-brand">
                 <img src="/assets/images/Symbol_mobile.svg" alt="Logo" class="mobile-drawer-logo">
@@ -775,16 +784,25 @@
         const mobileToggle = document.getElementById('mobileToggle');
         const mobileOverlay = document.getElementById('mobileOverlay');
         const drawerCloseBtn = document.getElementById('drawerCloseBtn');
+        function focusTrap(container) {
+            const focusable = container.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])');
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            container.addEventListener('keydown', (e) => {
+                if (e.key !== 'Tab') return;
+                if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+                else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+            });
+        }
         function openDrawer() {
             if (mobileOverlay) {
                 mobileOverlay.classList.add('active');
                 mobileOverlay.setAttribute('aria-hidden', 'false');
                 document.body.style.overflow = 'hidden';
+                focusTrap(mobileOverlay);
             }
-            const btn = document.getElementById('drawerCloseBtn');
-            if (btn) btn.focus();
-            const toggleBtn = document.getElementById('mobileToggle');
-            if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'true');
+            if (drawerCloseBtn) drawerCloseBtn.focus();
+            if (mobileToggle) { mobileToggle.setAttribute('aria-expanded', 'true'); mobileToggle.classList.add('active'); }
         }
         function closeDrawer() {
             if (mobileOverlay) {
@@ -792,8 +810,7 @@
                 mobileOverlay.setAttribute('aria-hidden', 'true');
                 document.body.style.overflow = '';
             }
-            const toggleBtn = document.getElementById('mobileToggle');
-            if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'false');
+            if (mobileToggle) { mobileToggle.setAttribute('aria-expanded', 'false'); mobileToggle.classList.remove('active'); mobileToggle.focus(); }
         }
         if (mobileToggle) mobileToggle.addEventListener('click', openDrawer);
         if (drawerCloseBtn) drawerCloseBtn.addEventListener('click', closeDrawer);

@@ -36,7 +36,11 @@ class HubSystem {
         const navHTML = `
             <nav class="hub-nav" id="hubNav">
                 <div class="hub-nav-container">
-                    <div class="hub-nav-spacer"></div>
+                    <div class="hub-nav-global-links" aria-label="Global Navigation">
+                        <a href="${basePrefix}../index.html" class="hub-nav-link">Portfolio</a>
+                        <a href="${basePrefix}../insights/" class="hub-nav-link">Insights</a>
+                        <a href="${basePrefix}index.html" class="hub-nav-link hub-active">The Hub</a>
+                    </div>
                     
                     <div class="hub-nav-brand">
                         <a href="${basePrefix}index.html" class="hub-nav-logo">
@@ -60,6 +64,15 @@ class HubSystem {
                 
                 <div class="hub-nav-mobile-menu" id="hubNavMobileMenu">
                 <div class="hub-nav-mobile-content">
+                        <div class="hub-nav-mobile-group">
+                            <div class="hub-nav-mobile-label">Global</div>
+                            <a href="${basePrefix}../index.html" class="hub-nav-mobile-link"><img src="${basePrefix}advisory/assets/IMC_Services_Simple_100x100.png" alt="" aria-hidden="true"><span>Portfolio</span></a>
+                            <a href="${basePrefix}../insights/" class="hub-nav-mobile-link"><img src="${basePrefix}advisory/assets/StrategyIQ_Simple_100x100.png" alt="" aria-hidden="true"><span>Insights</span></a>
+                            <a href="${basePrefix}index.html" class="hub-nav-mobile-link"><img src="${basePrefix}advisory/assets/TheHub_Logo.png" alt="" aria-hidden="true"><span>The Hub</span></a>
+                        </div>
+                        <div class="hub-nav-mobile-divider"></div>
+                        <div class="hub-nav-mobile-group">
+                            <div class="hub-nav-mobile-label">Hub</div>
                         <a href="${basePrefix}IMCServices/" class="hub-nav-mobile-link">
                              <img src="${basePrefix}advisory/assets/IMC_Services_Simple_100x100.png" alt="Services">
                              <span>Services</span>
@@ -80,6 +93,7 @@ class HubSystem {
                              <img src="${basePrefix}advisory/assets/Contact_Simple_100x100.png" alt="Contact">
                              <span>Contact</span>
                          </a>
+                        </div>
                     </div>
                 </div>
             </nav>
@@ -166,6 +180,11 @@ class HubSystem {
                     gap: 1rem;
                 }
 
+                .hub-nav-global-links { display: flex; align-items: center; gap: 1.25rem; }
+                .hub-nav-link { color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.9rem; font-weight: 600; letter-spacing: 0.04em; transition: color 0.2s ease; }
+                .hub-nav-link:hover { color: #ffffff; }
+                .hub-nav-link.hub-active { color: #ffffff; }
+
                 .hub-nav-contact {
                     display: flex;
                     align-items: center;
@@ -198,7 +217,7 @@ class HubSystem {
                     flex-direction: column;
                     align-items: center;
                     justify-content: center;
-                    gap: 8px; /* increased separation for better visibility */
+                    gap: 6px;
                     background: none;
                     border: none;
                     padding: 0.75rem;
@@ -214,6 +233,7 @@ class HubSystem {
                 .hub-nav-mobile-toggle:hover {
                     background: rgba(255, 255, 255, 0.05);
                 }
+                .hub-nav-mobile-toggle:focus-visible { outline: 3px solid #f96f6e; outline-offset: 2px; }
 
                 .hub-nav-hamburger {
                     display: block;
@@ -229,7 +249,7 @@ class HubSystem {
 
                 /* Hamburger animation states */
                 .hub-nav-mobile-toggle[aria-expanded="true"] .hub-nav-hamburger:nth-child(1) {
-                    transform: translateY(10px) rotate(45deg);
+                    transform: translateY(7px) rotate(45deg);
                 }
 
                 .hub-nav-mobile-toggle[aria-expanded="true"] .hub-nav-hamburger:nth-child(2) {
@@ -238,7 +258,7 @@ class HubSystem {
                 }
 
                 .hub-nav-mobile-toggle[aria-expanded="true"] .hub-nav-hamburger:nth-child(3) {
-                    transform: translateY(-10px) rotate(-45deg);
+                    transform: translateY(-7px) rotate(-45deg);
                 }
 
                 /* Full-screen mobile menu overlay with glassmorphism */
@@ -376,6 +396,8 @@ class HubSystem {
                     .hub-nav-container {
                         padding: 0 1rem;
                     }
+
+                    .hub-nav-global-links { display: none; }
 
                     .hub-nav-contact {
                         display: none;
@@ -537,6 +559,8 @@ class HubSystem {
             toggle.setAttribute('aria-expanded', 'false');
             toggle.setAttribute('aria-controls', 'hubNavMobileMenu');
             mobileMenu.setAttribute('aria-hidden', 'true');
+            mobileMenu.setAttribute('role', 'dialog');
+            mobileMenu.setAttribute('aria-modal', 'true');
             
             const toggleMenu = (open = !this.isMenuOpen) => {
                 this.isMenuOpen = open;
@@ -549,6 +573,21 @@ class HubSystem {
                 toggle.setAttribute('aria-expanded', open.toString());
                 mobileMenu.setAttribute('aria-hidden', (!open).toString());
                 
+                // Focus management
+                if (open) {
+                    const firstLink = mobileMenu.querySelector('.hub-nav-mobile-link');
+                    firstLink?.focus();
+                    const focusable = mobileMenu.querySelectorAll('a.hub-nav-mobile-link, button');
+                    const first = focusable[0];
+                    const last = focusable[focusable.length - 1];
+                    const trap = (e) => {
+                        if (e.key !== 'Tab') return;
+                        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+                        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+                    };
+                    mobileMenu.addEventListener('keydown', trap);
+                } else { toggle.focus(); }
+
                 // Animate mobile links
                 const links = mobileMenu.querySelectorAll('.hub-nav-mobile-link');
                 links.forEach((link, index) => {
@@ -644,3 +683,6 @@ window.hubSystem = new HubSystem();
 
 
 
+                .hub-nav-mobile-group { width: 100%; display: flex; flex-direction: column; gap: 1rem; align-items: center; }
+                .hub-nav-mobile-label { font-family: 'Inter', sans-serif; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.6); }
+                .hub-nav-mobile-divider { height: 1px; width: 100%; max-width: 520px; background: rgba(255,255,255,0.08); margin: 0.5rem 0 1rem; }

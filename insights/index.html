@@ -1353,6 +1353,7 @@ footer {
             border-color: rgba(0, 0, 0, 0.12);
             transform: translateY(-1px);
         }
+        .lg-nav-toggle:focus-visible { outline: 3px solid var(--coral-accent); outline-offset: 2px; }
 
         .lg-nav-toggle-bar {
             position: absolute;
@@ -1502,24 +1503,22 @@ footer {
                 <a href="https://luis-gilberto.com" class="lg-nav-link">Portfolio</a>
                 <a href="/insights" class="lg-nav-link is-active">Insights</a>
                 <a href="/TheHub/" class="lg-nav-link">The Hub</a>
-                <a href="https://luis-gilberto.com/about" class="lg-nav-link">About</a>
-                <a href="https://luis-gilberto.com/contact" class="lg-nav-link">Contact</a>
             </nav>
             <div class="lg-nav-overlay" aria-hidden="true"></div>
             <button
-                class="lg-nav-toggle"
+                class="lg-nav-toggle mobile-nav-toggle"
                 id="mobileToggle"
                 aria-label="Toggle navigation"
                 aria-expanded="false"
-                aria-controls="lgMainNav"
+                aria-controls="mobileOverlay"
             >
-                <span class="lg-nav-toggle-bar"></span>
-                <span class="lg-nav-toggle-bar"></span>
-                <span class="lg-nav-toggle-bar"></span>
+                <span class="lg-nav-toggle-bar nav-toggle-bar"></span>
+                <span class="lg-nav-toggle-bar nav-toggle-bar"></span>
+                <span class="lg-nav-toggle-bar nav-toggle-bar"></span>
             </button>
         </div>
     </header>
-    <div class="mobile-menu-overlay" id="mobileOverlay" aria-hidden="true" hidden style="display:none;">
+    <div class="mobile-menu-overlay" id="mobileOverlay" aria-hidden="true" role="dialog" aria-modal="true" hidden style="display:none;">
         <div class="mobile-drawer-header">
             <div class="mobile-brand">
                 <img src="/assets/images/3D_icon_Transparent.png" alt="Logo" class="mobile-drawer-logo">
@@ -1536,8 +1535,6 @@ footer {
                 <a href="/index.html" class="mobile-link main">Portfolio</a>
                 <a href="/insights/index.html" class="mobile-link main active-parent">Insights</a>
                 <a href="/TheHub/index.html" class="mobile-link main">The Hub</a>
-                <a href="/about.html" class="mobile-link main">About</a>
-                <a href="/contact.html" class="mobile-link main">Contact</a>
             </nav>
             <div class="mobile-divider"></div>
             <nav class="mobile-nav-group">
@@ -2277,6 +2274,8 @@ footer {
                     mobileOverlay.style.display = "flex";
                     mobileOverlay.classList.add("active");
                     document.body.style.overflow = "hidden";
+                    focusTrap(mobileOverlay);
+                    if (toggle) { toggle.setAttribute("aria-expanded", "true"); toggle.classList.add("active"); }
                 }
             }
             function closeDrawer() {
@@ -2285,6 +2284,7 @@ footer {
                     mobileOverlay.style.display = "none";
                     mobileOverlay.hidden = true;
                     document.body.style.overflow = "";
+                    if (toggle) { toggle.setAttribute("aria-expanded", "false"); toggle.classList.remove("active"); toggle.focus(); }
                 }
             }
 
@@ -2310,3 +2310,13 @@ footer {
     </script>
 </body>
 </html>
+            function focusTrap(container) {
+                const focusable = container.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])');
+                const first = focusable[0];
+                const last = focusable[focusable.length - 1];
+                container.addEventListener('keydown', (e) => {
+                    if (e.key !== 'Tab') return;
+                    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+                    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+                });
+            }
