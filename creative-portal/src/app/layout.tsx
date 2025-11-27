@@ -1,42 +1,22 @@
 import type { Metadata } from "next"
-import { Inter, Dancing_Script, Poppins } from "next/font/google"
+import { Inter } from "next/font/google"
 import "./globals.css"
 import { AuthSessionProvider } from "@/components/providers/session-provider"
-import { NavigationWrapper } from "../components/ui/navigation-wrapper"
+import { Navigation } from "@/components/ui/navigation"
+import { Footer } from "@/components/ui/footer"
 
-// Brand Typography Setup
 const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-inter"
 })
-
-const bigShoulders = Inter({ // Note: Big Shoulders Display not available in next/font/google, using Inter as fallback
+const bigShoulders = Inter({
   subsets: ["latin"],
   variable: "--font-big-shoulders",
-  weight: ["400", "500", "600", "700", "800", "900"],
-})
-
-const generalSans = Inter({ // Note: General Sans not available in next/font/google, using Inter as fallback
-  subsets: ["latin"],
-  variable: "--font-general-sans",
-  weight: ["400", "500", "600", "700"],
-})
-
-const dancingScript = Dancing_Script({
-  subsets: ["latin"],
-  variable: "--font-dancing-script",
-  weight: ["400", "500", "600", "700"],
-})
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  variable: "--font-poppins",
-  weight: ["300", "400", "500", "600", "700"],
 })
 
 export const metadata: Metadata = {
-  title: "Creative Portal - Client Project Management",
-  description: "Professional client project management platform for creative agencies",
+  title: "The Portal | Luis Gilberto",
+  description: "Client Project Management Ecosystem",
 }
 
 export default function RootLayout({
@@ -46,10 +26,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${bigShoulders.variable} ${generalSans.variable} ${dancingScript.variable} ${poppins.variable} font-sans antialiased`}>
+      <body className={`${inter.variable} ${bigShoulders.variable} font-sans antialiased bg-[var(--bg-primary)] text-[var(--text-primary)] min-h-screen flex flex-col`}>
         <AuthSessionProvider>
-          <NavigationWrapper />
-          {children}
+          <Navigation />
+          <main className="flex-grow pt-[112px] flex flex-col relative z-10">
+            {children}
+          </main>
+          <Footer />
         </AuthSessionProvider>
       </body>
     </html>
