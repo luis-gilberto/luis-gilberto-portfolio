@@ -27,7 +27,7 @@ export function Navigation() {
           {/* Logo Area */}
           <div className="flex items-center gap-4">
             <Link href="/" className="flex items-center">
-               <img src="/assets/images/AUg_logo_White.png" alt="Luis Gilberto Logo" className="h-8 md:h-10 w-auto" />
+               <img src="http://localhost:8000/insights/assets/images/The_Portal_Logo.svg" alt="Luis Gilberto Logo" className="h-8 md:h-10 w-auto" decoding="async" loading="eager" />
             </Link>
           </div>
 

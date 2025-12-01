@@ -16,8 +16,6 @@ const handler = NextAuth({
         },
       },
       from: process.env.EMAIL_FROM,
-
-      // --- DEVELOPMENT MODE: LOG LINK TO TERMINAL ---
       sendVerificationRequest: ({ identifier: email, url }) => {
         if (process.env.NODE_ENV === 'development') {
           console.log(`\n\n--- AUTH LINK (DEV MODE) ---`)
@@ -25,34 +23,29 @@ const handler = NextAuth({
           console.log(`Login Link: ${url}`)
           console.log(`-----------------------------\n`)
         }
-        // You would typically send the email here in a real production environment
       },
-      // ----------------------------------------------------
     }),
   ],
   session: {
     strategy: "database",
     maxAge: 30 * 24 * 60 * 60,
   },
-  callbacks: {
-    async session({ session, user }) {
-      if (user) {
-        const dbUser = await prisma.user.findUnique({
-          where: { id: user.id },
-          select: { role: true, name: true, email: true },
-        })
-        if (dbUser) {
-          ;(session.user as any).role = dbUser.role as string
-          ;(session.user as any).id = user.id
-        }
-      }
-      return session
-    },
-  },
   pages: {
     signIn: '/auth/signin',
     verifyRequest: '/auth/verify-request',
     newUser: '/dashboard',
+  },
+  callbacks: {
+    async session({ session, user }) {
+      if (user) {
+        ;(session.user as any).role = 'CLIENT'
+        ;(session.user as any).id = user.id
+      }
+      return session
+    },
+    async redirect({ url, baseUrl }) {
+      return baseUrl + '/dashboard'
+    },
   },
   secret: process.env.NEXTAUTH_SECRET,
   debug: process.env.NODE_ENV === "development",

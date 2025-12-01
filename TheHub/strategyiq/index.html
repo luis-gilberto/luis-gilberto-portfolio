@@ -402,7 +402,7 @@
                 </p>
                 <div class="hero-actions" style="display:flex; gap:1.5rem; justify-content:center; margin-top: 1rem;">
                     <a href="#cta" class="btn btn-primary">Activate Engine</a>
-                    <a href="/system/" class="btn btn-link">How it fits in The Hub <i class="fa-solid fa-arrow-right"></i></a>
+                    <a href="#" class="btn-link" onclick="showSystemModal()">See how it fits in The Hub <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
             </div>
         </section>
@@ -516,47 +516,6 @@
 
     </div> <!-- End Public Mode -->
 
-    <!-- ADMIN TOGGLE -->
-    <button class="admin-toggle" onclick="showAdminModal()" title="Admin Access">
-        <i class="fa-solid fa-lock"></i>
-    </button>
-
-    <!-- ADMIN MODAL -->
-    <div id="adminModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index:10004; align-items:center; justify-content:center;">
-        <div style="background:var(--bg-primary); padding:3rem; border-radius:24px; max-width:400px; width:90%; text-align:center; border:1px solid var(--border-strong); box-shadow: var(--shadow-hover);">
-            <div style="width:60px; height:60px; background:var(--bg-alt); border-radius:50%; margin:0 auto 1.5rem; display:flex; align-items:center; justify-content:center; font-size:1.5rem; color:var(--text-secondary);">
-                <i class="fa-solid fa-fingerprint"></i>
-            </div>
-            <h3 style="margin-bottom:0.5rem; color:var(--text-primary);">Engine Access</h3>
-            <p style="color:var(--text-secondary); margin-bottom:1.5rem; font-size:0.9rem;">Enter your credentials to access the live engine.</p>
-            <input type="password" id="adminPassword" placeholder="Access Code" style="width:100%; padding:14px; margin-bottom:1rem; border-radius:12px; border:1px solid var(--border-strong); background:var(--bg-alt); color:var(--text-primary); font-size:1rem; text-align:center;">
-            <div style="display:flex; gap:10px; justify-content:center;">
-                <button class="btn btn-primary" style="width:100%;" onclick="checkAdminPassword()">Unlock Engine</button>
-            </div>
-            <button class="btn btn-link" onclick="closeAdminModal()" style="margin-top:1rem; font-size:0.9rem;">Cancel</button>
-        </div>
-    </div>
-
-    <!-- LIVE ENGINE (Admin Dashboard) -->
-    <div id="liveEngine" class="live-engine">
-        <div class="admin-dashboard-container" style="padding: 2rem;">
-            <div class="admin-header" style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border-strong); padding-bottom:1rem;">
-                <div style="display:flex; align-items:center; gap:1rem;">
-                    <div style="width:12px; height:12px; background:var(--coral); border-radius:50%; box-shadow: 0 0 10px var(--coral);"></div>
-                    <h2 style="margin:0; font-size:1.5rem; color:var(--text-primary);">StrategyIQ™ <span style="opacity:0.5;">/ Live</span></h2>
-                </div>
-                <button class="btn btn-link" onclick="toggleEngineMode()">
-                    <i class="fa-solid fa-power-off"></i> Exit
-                </button>
-            </div>
-            
-            <div style="display:flex; align-items:center; justify-content:center; height:80vh; color:var(--text-secondary); flex-direction: column; gap:1rem;">
-                <i class="fa-solid fa-layer-group" style="font-size: 3rem; opacity:0.3;"></i>
-                <p>Live Engine Dashboard Active</p>
-                <!-- The dynamic assessment logic would render here -->
-            </div>
-        </div>
-    </div>
 
     <footer class="footer">
         <div class="container">
@@ -574,17 +533,17 @@
 
     <!-- SCRIPTS -->
     <script>
-        // Theme Logic
-        const themeToggle = document.getElementById('themeToggle');
         const html = document.documentElement;
         const savedTheme = localStorage.getItem('theme') || 'light';
         html.setAttribute('data-theme', savedTheme);
 
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = html.getAttribute('data-theme');
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            html.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
+        document.querySelectorAll('.theme-toggle').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+            });
         });
 
         const mobileToggle = document.getElementById('mobileToggle');
@@ -598,43 +557,25 @@
         if(drawerCloseBtn) drawerCloseBtn.addEventListener('click', closeDrawer);
         document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDrawer(); });
 
-        // Admin Modal Logic
-        const adminModal = document.getElementById('adminModal');
-        const liveEngine = document.getElementById('liveEngine');
-        const publicMode = document.getElementById('publicMode');
-
-        function showAdminModal() {
-            adminModal.style.display = 'flex';
-            document.getElementById('adminPassword').focus();
+        function showSystemModal() {
+            document.getElementById('systemModal').style.display = 'flex';
+            document.body.classList.add('modal-open');
         }
-        function closeAdminModal() {
-            adminModal.style.display = 'none';
-            document.getElementById('adminPassword').value = '';
-        }
-        function checkAdminPassword() {
-            const pw = document.getElementById('adminPassword').value;
-            if(pw === 'LG100') {
-                closeAdminModal();
-                toggleEngineMode();
-            } else {
-                const input = document.getElementById('adminPassword');
-                input.style.borderColor = 'red';
-                setTimeout(() => input.style.borderColor = '', 500);
-            }
-        }
-        function toggleEngineMode() {
-            const isHidden = liveEngine.style.display === 'none' || liveEngine.style.display === '';
-            if(isHidden) {
-                liveEngine.style.display = 'block';
-                publicMode.style.display = 'none';
-                document.body.classList.add('admin-mode');
-            } else {
-                liveEngine.style.display = 'none';
-                publicMode.style.display = 'block';
-                document.body.classList.remove('admin-mode');
-            }
+        function closeSystemModal() {
+            document.getElementById('systemModal').style.display = 'none';
+            document.body.classList.remove('modal-open');
         }
     </script>
+    <!-- SYSTEM FIT MODAL -->
+    <div id="systemModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(8px); z-index:10006; align-items:center; justify-content:center;">
+        <div class="modal-content" style="background:var(--bg-primary); padding:2rem; border-radius:16px; max-width:550px; width:90%; border:1px solid var(--border-strong); box-shadow:var(--shadow-hover); position:relative;">
+            <button onclick="closeSystemModal()" style="position:absolute; top:10px; right:10px; background:none; border:none; font-size:1.5rem; color:var(--text-secondary); cursor:pointer;">&times;</button>
+            <h3 style="font-family:var(--font-display); font-size:1.8rem; margin-bottom:1rem; color:var(--text-primary);">StrategyIQ’s Role in The Hub</h3>
+            <p style="color:var(--text-secondary); margin-bottom:1.5rem;">StrategyIQ is the **Intelligence Engine** of The Hub. It refines and validates your initial ScopeIQ assessment by conducting a live, deeper strategic dive in four key areas (GTM, Brand, Campaigns, Creative).</p>
+            <p style="color:var(--text-secondary); margin-bottom:1.5rem;">It is used during our **Strategic Call** to fine-tune the plan, score your complexity, and generate the final, high-fidelity project roadmap.</p>
+            <p style="color:var(--coral); font-weight:600; font-size:0.95rem;">Access to the live consultant dashboard is secured within The Portal.</p>
+        </div>
+    </div>
 </body>
 
 </html>
