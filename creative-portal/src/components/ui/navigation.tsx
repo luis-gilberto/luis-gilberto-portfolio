@@ -78,29 +78,29 @@ export function Navigation() {
 
         {/* Mobile Drawer */}
         {isMobileOpen && (
-          <div className="fixed inset-0 bg-[#1a1a1a] z-40 pt-20 px-6 flex flex-col gap-6 md:hidden overflow-y-auto h-screen">
-            <div className="flex flex-col gap-4">
-              <div className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Global</div>
-              <a href="https://luis-gilberto.com" className="text-2xl font-bold text-white font-big-shoulders">Portfolio</a>
-              <a href="https://luis-gilberto.com/insights/" className="text-2xl font-bold text-white font-big-shoulders">Insights</a>
-              <a href="https://luis-gilberto.com/TheHub/" className="text-2xl font-bold text-white font-big-shoulders">The Hub</a>
-              <Link href="/" className="text-2xl font-bold text-[var(--coral)] font-big-shoulders">The Portal</Link>
-            </div>
-            
-            <div className="h-px bg-white/10 w-full"></div>
-            
-            <div className="flex flex-col gap-4">
-               <div className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Portal</div>
-               {session ? (
-                 <>
-                   <Link href="/dashboard" className="text-lg font-medium text-gray-300" onClick={() => setIsMobileOpen(false)}>Dashboard</Link>
-                   <Link href="/projects" className="text-lg font-medium text-gray-300" onClick={() => setIsMobileOpen(false)}>Projects</Link>
-                   <Link href="/documents" className="text-lg font-medium text-gray-300" onClick={() => setIsMobileOpen(false)}>Documents</Link>
-                   <button onClick={() => { handleSignOut(); setIsMobileOpen(false); }} className="text-left text-lg font-medium text-[var(--coral)] mt-4">Sign Out</button>
-                 </>
-               ) : (
-                 <Link href="/auth/signin" className="text-lg font-bold text-[var(--coral)]" onClick={() => setIsMobileOpen(false)}>Log In</Link>
-               )}
+          <div className="fixed inset-0 bg-[#1a1a1a] z-40 pt-20 px-6 md:hidden overflow-y-auto h-screen">
+            <div className="flex flex-col">
+              <div className="flex flex-col space-y-3">
+                <div className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">Global</div>
+                <a href="https://luis-gilberto.com" className="text-2xl font-bold text-white font-big-shoulders">Portfolio</a>
+                <a href="https://luis-gilberto.com/insights/" className="text-2xl font-bold text-white font-big-shoulders">Insights</a>
+                <a href="https://luis-gilberto.com/TheHub/" className="text-2xl font-bold text-white font-big-shoulders">The Hub</a>
+                <Link href="/" className="text-2xl font-bold text-[var(--coral)] font-big-shoulders">The Portal</Link>
+              </div>
+              <div className="h-px bg-white/10 w-full my-6"></div>
+              <div className="flex flex-col space-y-3">
+                <div className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">Portal</div>
+                {session ? (
+                  <>
+                    <Link href="/dashboard" className="text-lg font-medium text-gray-300" onClick={() => setIsMobileOpen(false)}>Dashboard</Link>
+                    <Link href="/projects" className="text-lg font-medium text-gray-300" onClick={() => setIsMobileOpen(false)}>Projects</Link>
+                    <Link href="/documents" className="text-lg font-medium text-gray-300" onClick={() => setIsMobileOpen(false)}>Documents</Link>
+                    <button onClick={() => { handleSignOut(); setIsMobileOpen(false); }} className="text-left text-lg font-medium text-[var(--coral)]">Sign Out</button>
+                  </>
+                ) : (
+                  <Link href="/auth/signin" className="text-lg font-bold text-[var(--coral)]" onClick={() => setIsMobileOpen(false)}>Log In</Link>
+                )}
+              </div>
             </div>
           </div>
         )}
