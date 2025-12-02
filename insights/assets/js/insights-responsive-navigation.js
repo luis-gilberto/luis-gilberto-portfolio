@@ -197,6 +197,7 @@
         const pictures = document.querySelectorAll('picture.theme-picture');
         
         pictures.forEach(picture => {
+            if (picture.classList && picture.classList.contains('lg-logo-picture')) return;
             const lightSource = picture.querySelector('source[data-role="light"]');
             const darkSource = picture.querySelector('source[data-role="dark"]');
             const img = picture.querySelector('img');
@@ -217,6 +218,17 @@
                 }
             }
         });
+
+        const hv = document.getElementById('heroVideo');
+        if (hv) {
+            const webm = theme === 'dark' ? hv.getAttribute('data-src-webm-dark') : hv.getAttribute('data-src-webm-light');
+            if (hv.canPlayType('video/webm')) {
+                try { hv.pause(); } catch(e) {}
+                hv.src = webm;
+                hv.load();
+                hv.play().catch(function(){});
+            }
+        }
     }
 
     // Initial image update
