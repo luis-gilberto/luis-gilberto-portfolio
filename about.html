@@ -1060,7 +1060,8 @@
             color: var(--coral);
         }
     </style>
-</head>
+    <link rel="stylesheet" href="assets/css/about-page-responsive-fixes.css">
+    </head>
 <body>
     <!-- Loading Screen -->
     <div class="loading">
@@ -1212,6 +1213,12 @@
                                 <source srcset="assets/images/hero-portrait-sm.webp" type="image/webp">
                                 <img src="assets/images/hero-portrait-sm@2x.jpg" alt="Luis Gilberto" class="portrait-image" loading="lazy" decoding="async">
                             </picture>
+                            <div class="portrait-guidelines" aria-hidden="true"></div>
+                        </div>
+                        <div class="portrait-controls" id="portraitControls" hidden>
+                            <label for="portraitX">Frame</label>
+                            <input type="range" id="portraitX" min="0" max="100" value="60" step="1">
+                            <button id="toggleGuidelines" type="button">Guides</button>
                         </div>
                         <div class="interactive-card">
                             <div class="card-icon">
@@ -1439,7 +1446,7 @@
                         <li><a href="/work">Portfolio</a></li>
                         <li><a href="/insights">Insights</a></li>
                         <li><a href="/brand-guidelines/index.html">Brand Guidelines</a></li>
-                        <li><a href="/typography-guide-ROBUST.html">Typography Guide</a></li>
+                        <li><a href="https://luis-gilberto.com/typography-guide">Typography Guide</a></li>
                         <li><a href="https://thehub.luis-gilberto.com">The Hub</a></li>
                         <li><a href="https://portal.luis-gilberto.com">Client Portal</a></li>
                     </ul>
@@ -1714,6 +1721,48 @@
                 header.classList.remove('scrolled');
             }
         });
+    </script>
+    <script>
+        (function(){
+            const img = document.querySelector('.portrait-image');
+            const controls = document.getElementById('portraitControls');
+            const range = document.getElementById('portraitX');
+            const guides = document.querySelector('.portrait-guidelines');
+            const toggleBtn = document.getElementById('toggleGuidelines');
+            function setX(p){
+                const clamped = Math.max(40, Math.min(80, p));
+                document.documentElement.style.setProperty('--portrait-x', clamped + '%');
+            }
+            function showEditorIfRequested(){
+                const params = new URLSearchParams(window.location.search);
+                if(params.get('edit') === '1'){ controls.hidden = false; }
+            }
+            if(range){
+                range.addEventListener('input', e=>{ setX(parseFloat(e.target.value)); });
+            }
+            if(toggleBtn && guides){
+                toggleBtn.addEventListener('click', ()=>{ guides.classList.toggle('active'); });
+            }
+            function autoFocus(){
+                if(!img) return;
+                if('FaceDetector' in window){
+                    try{
+                        const fd = new FaceDetector({ fastMode: true, maxDetectedFaces: 1 });
+                        img.decode().then(()=>fd.detect(img)).then(faces=>{
+                            if(faces && faces.length){
+                                const f = faces[0].boundingBox;
+                                const cx = (f.x + f.width/2) / img.clientWidth * 100;
+                                const p = Math.round(cx);
+                                setX(p);
+                                if(range) range.value = p;
+                            }
+                        }).catch(()=>{});
+                    }catch(e){}
+                }
+            }
+            showEditorIfRequested();
+            autoFocus();
+        })();
     </script>
     <script>
         const primaryNavToggle = document.getElementById('mobileToggle');

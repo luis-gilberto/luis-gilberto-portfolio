@@ -26,6 +26,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" />
+      </head>
       <body className={`${inter.variable} ${bigShoulders.variable} font-sans antialiased bg-[var(--bg-primary)] text-[var(--text-primary)] min-h-screen flex flex-col`}>
         <AuthSessionProvider>
           <Navigation />

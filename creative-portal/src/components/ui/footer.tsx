@@ -19,9 +19,6 @@ export function Footer() {
               alt="Luis Gilberto" 
               className="h-12 w-12 object-contain opacity-90" 
             />
-            <h3 className="font-big-shoulders text-2xl font-bold text-[var(--text-primary)]">
-              Luis Gilberto
-            </h3>
             <p className="text-sm leading-relaxed text-[var(--text-muted)] max-w-xs">
               Making technology feel human through clarity, beautiful execution, and systems that scale.
             </p>

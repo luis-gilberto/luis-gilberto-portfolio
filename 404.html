@@ -8,6 +8,8 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
     <link rel="preload" as="image" href="assets/images/AUg_logo_White.png">
     <link rel="preload" as="image" href="assets/images/Logomark_White_a.png">
+    <link rel="preload" as="image" href="assets/images/logo-lockup.png">
+    <link rel="preload" as="image" href="assets/images/icon-coral-white.png">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -125,6 +127,10 @@
         .footer-logo { width: 72px; height: 72px; object-fit: contain; transition: opacity 0.3s ease; }
         @media (max-width: 1023px) { .footer-logo { width: 56px; height: 56px; } }
         @media (max-width: 767px) { .footer-logo { width: 48px; height: 48px; } }
+        .footer-logo-mobile { width: 48px; height: 48px; object-fit: contain; }
+        .footer-logo-desktop { width: 180px; height: auto; object-fit: contain; }
+        @media (min-width: 768px) { .footer-logo-mobile { display: none; } .footer-logo-desktop { display: block; } }
+        @media (max-width: 767px) { .footer-logo-desktop { display: none; } .footer-logo-mobile { display: block; } }
         .footer-brand h3 { font-family: var(--font-display); font-size: 1.6rem; font-weight: 600; color: var(--text-primary); margin: 0; transition: color 0.3s ease; }
         .footer-brand p { font-size: 0.95rem; line-height: 1.6; color: var(--text-muted); margin: 0; max-width: 300px; transition: color 0.3s ease; }
         .footer-links { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
@@ -223,8 +229,8 @@
         <div class="footer-content">
             <div class="footer-main">
                 <div class="footer-brand">
-                    <img src="assets/images/Logomark_White_a.png" alt="Luis Gilberto Logo" class="footer-logo" width="72" height="72" loading="lazy" decoding="async">
-                    <h3>Luis Gilberto</h3>
+                    <img src="assets/images/Logomark_Black_a.png" alt="Luis Gilberto Logo" class="footer-logo-mobile" width="48" height="48" loading="lazy" decoding="async">
+                    <img src="assets/images/logo-lockup_black_alt.png" alt="Luis Gilberto Logo" class="footer-logo-desktop" width="180" height="48" loading="lazy" decoding="async">
                     <p>Making technology feel human through clarity, beautiful execution, and systems that scale.</p>
                 </div>
                 <div class="footer-links">
@@ -271,12 +277,15 @@
         const html = document.documentElement;
         const savedTheme = localStorage.getItem('theme') || 'light';
         html.setAttribute('data-theme', savedTheme);
-        function enforceFooterLogomark() {
-            const footerLogo = document.querySelector('.footer-logo');
-            if (!footerLogo) return;
-            footerLogo.src = 'assets/images/Logomark_White_a.png';
+        function setFooterLogo(theme) {
+            const mobile = document.querySelector('.footer-logo-mobile');
+            const desktop = document.querySelector('.footer-logo-desktop');
+            if (!mobile || !desktop) return;
+            const isLight = theme === 'light';
+            mobile.src = isLight ? 'assets/images/Logomark_Black_a.png' : 'assets/images/Logomark_White_a.png';
+            desktop.src = isLight ? 'assets/images/logo-lockup_black_alt.png' : 'assets/images/logo-lockup.png';
         }
-        enforceFooterLogomark();
+        setFooterLogo(savedTheme);
         themeToggle.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
