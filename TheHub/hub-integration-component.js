@@ -9,11 +9,11 @@ class HubNavigationIntegration {
         this.config = {
             // Hub Pages - Clean local paths only
             navigationItems: [
-                { id: 'home', label: 'Home', url: '/TheHub/', icon: 'home' },
-                { id: 'services', label: 'Services', url: '/IMCServices/', icon: 'star' },
-                { id: 'advisory', label: 'Advisory', url: '/TheHub/advisory/', icon: 'check-circle' },
-                { id: 'scopeiq', label: 'ScopeIQ', url: '/IMCServices/scopeiq-wizard/', icon: 'search' },
-                { id: 'strategyiq', label: 'StrategyIQ', url: '/TheHub/strategyiq/', icon: 'brain' }
+                { id: 'home', label: 'Home', url: 'https://luis-gilberto.com/TheHub/', icon: 'home' },
+                { id: 'services', label: 'Services', url: 'https://luis-gilberto.com/TheHub/IMCServices/', icon: 'star' },
+                { id: 'advisory', label: 'Advisory', url: 'https://luis-gilberto.com/TheHub/advisory/', icon: 'check-circle' },
+                { id: 'scopeiq', label: 'ScopeIQ', url: 'https://luis-gilberto.com/TheHub/scopeiq/', icon: 'search' },
+                { id: 'strategyiq', label: 'StrategyIQ', url: 'https://luis-gilberto.com/TheHub/strategyiq/', icon: 'brain' }
             ],
             
             // Current page detection
