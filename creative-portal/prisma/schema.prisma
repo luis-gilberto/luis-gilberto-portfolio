@@ -18,6 +18,10 @@ model User {
   projects      Project[]
   accounts      Account[]
   sessions      Session[]
+
+  assessments AssessmentSession[]
+
+  @@map("User")
 }
 
 model Project {
@@ -26,7 +30,7 @@ model Project {
   status      String     @default("Active")
   startDate   DateTime   @default(now())
   userId      String
-  user        User       @relation(fields: [userId], references: [id])
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   documents   Document[]
 }
 
@@ -38,7 +42,7 @@ model Document {
   size      String
   uploadedAt DateTime @default(now())
   projectId String
-  project   Project  @relation(fields: [projectId], references: [id])
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 // ===============================
@@ -79,4 +83,27 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model AssessmentSession {
+  id                     String    @id @default(cuid())
+  clientId               String?   @map("client_id") // The CLIENT being assessed (No FK here)
+  consultantId           String?   @map("consultant_id")
+  assessment_type        String?
+  strategic_area         String?
+  current_question       Int?      @default(0)
+  responses              Json?
+  intelligence_score     Decimal?
+  area_scores            Json?
+  complexity_indicators  Json?
+  status                 String?   @default("in_progress")
+  consultant_notes       String?
+  key_insights           String[]
+  startedAt              DateTime? @default(now())
+  completedAt            DateTime?
+  duration_minutes       Int?
+
+  client                 User?     @relation(fields: [consultantId], references: [id])
+
+  @@map("assessment_sessions")
 }

@@ -15,7 +15,6 @@ export function Navigation() {
     await signOut({ callbackUrl: "/" })
   }
 
-  // Helper for internal dashboard links
   const isActive = (path: string) => pathname === path
 
   return (
@@ -27,7 +26,7 @@ export function Navigation() {
           {/* Logo Area */}
           <div className="flex items-center gap-4">
             <Link href="/" className="flex items-center">
-               <img src="http://localhost:8000/insights/assets/images/The_Portal_Logo.svg" alt="Luis Gilberto Logo" className="h-8 md:h-10 w-auto" decoding="async" loading="eager" />
+              <img src="/assets/images/The_Portal_Logo.png" alt="Luis Gilberto Logo" className="h-8 md:h-10 w-auto" decoding="async" loading="eager" />
             </Link>
           </div>
 
@@ -116,7 +115,15 @@ export function Navigation() {
                 isActive("/dashboard") ? "text-[var(--coral)] font-bold" : "text-[var(--text-secondary)] hover:text-[var(--coral)]"
               }`}
             >
-              Dashboard
+              Overview
+            </Link>
+            <Link 
+              href="/strategyiq/" 
+              className={`text-sm font-medium whitespace-nowrap transition-colors ${
+                pathname.startsWith("/strategyiq/") ? "text-[var(--coral)] font-bold" : "text-[var(--text-secondary)] hover:text-[var(--coral)]"
+              }`}
+            >
+              Assessments
             </Link>
             <Link 
               href="/projects" 
@@ -132,7 +139,7 @@ export function Navigation() {
                 isActive("/documents") ? "text-[var(--coral)] font-bold" : "text-[var(--text-secondary)] hover:text-[var(--coral)]"
               }`}
             >
-              Documents
+              Client Assets
             </Link>
           </div>
         </div>

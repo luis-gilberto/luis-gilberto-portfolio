@@ -2,32 +2,26 @@ import NextAuth from "next-auth"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import EmailProvider from "next-auth/providers/email"
 import { prisma } from "@/lib/prisma"
+import fs from "fs"
+import path from "path"
+
+console.log("EmailProvider customized for dev magic link logging")
 
 const handler = NextAuth({
   adapter: PrismaAdapter(prisma),
   providers: [
     EmailProvider({
-      server: {
-        host: process.env.EMAIL_SERVER_HOST,
-        port: process.env.EMAIL_SERVER_PORT as any,
-        auth: {
-          user: process.env.EMAIL_SERVER_USER,
-          pass: process.env.EMAIL_SERVER_PASSWORD,
-        },
-      },
-      from: process.env.EMAIL_FROM,
-      sendVerificationRequest: ({ identifier: email, url }) => {
-        if (process.env.NODE_ENV === 'development') {
-          console.log(`\n\n--- AUTH LINK (DEV MODE) ---`)
-          console.log(`To: ${email}`)
-          console.log(`Login Link: ${url}`)
-          console.log(`-----------------------------\n`)
-        }
+      async sendVerificationRequest({ url }) {
+        console.log(`Login Link: ${url}`)
+        try {
+          const filePath = path.join(process.cwd(), ".magic-link.txt")
+          fs.appendFileSync(filePath, `${url}\n`)
+        } catch {}
       },
     }),
   ],
   session: {
-    strategy: "database",
+    strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60,
   },
   pages: {
@@ -36,10 +30,17 @@ const handler = NextAuth({
     newUser: '/dashboard',
   },
   callbacks: {
-    async session({ session, user }) {
+    async jwt({ token, user }) {
       if (user) {
-        ;(session.user as any).role = 'CLIENT'
-        ;(session.user as any).id = user.id
+        ;(token as any).role = (user as any).role || 'CLIENT'
+        ;(token as any).id = (user as any).id
+      }
+      return token
+    },
+    async session({ session, token }) {
+      if (token) {
+        ;(session.user as any).role = (token as any).role || 'CLIENT'
+        ;(session.user as any).id = (token as any).sub || (token as any).id
       }
       return session
     },
