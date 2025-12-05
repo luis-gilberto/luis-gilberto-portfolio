@@ -23,9 +23,9 @@
             --teal: #2ED3C6;
             
             /* Light Mode Palette */
-            --bg-primary: #FFFFFF;
-            --bg-alt: #F4F5F7; 
-            --bg-tertiary: #EAECEF;
+            --bg-primary: #F4F1ED;
+            --bg-alt: #EAE6E1; 
+            --bg-tertiary: #E0D9D1;
             
             --text-primary: #111111;
             --text-secondary: #555555;
@@ -44,7 +44,7 @@
             --font-serif: 'Playfair Display', serif;
             
             /* UI */
-            --card-bg: #FFFFFF;
+            --card-bg: #F4F1ED;
             --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.04);
             --shadow-hover: 0 12px 30px rgba(0, 0, 0, 0.08);
             --hero-headline-size: clamp(2.625rem, 5vw, 4.125rem);
@@ -98,8 +98,9 @@
         }
 
         .primary-nav-container {
-            max-width: 1400px; margin: 0 auto; padding: 0 2rem;
+            max-width: 1400px; margin: 0 auto; padding: 0 1rem;
             height: 64px; display: flex; align-items: center; justify-content: space-between;
+            position: relative;
         }
 
         .nav-logo { position: relative; display: block; }
@@ -165,11 +166,11 @@
         /* === UNIFIED MOBILE DRAWER === */
         .mobile-menu-toggle {
             display: none;
-            flex-direction: column; justify-content: center; gap: 6px;
-            background: none; border: none; padding: 8px; cursor: pointer; z-index: 10001;
+            flex-direction: column; justify-content: center; align-items: center; gap: 8px;
+            background-color: transparent; border: none; padding: 12px; cursor: pointer; z-index: 10001;
         }
         .mobile-menu-toggle span {
-            width: 24px; height: 2px; background: var(--text-primary, #111); border-radius: 2px; transition: 0.3s;
+            width: 24px; height: 2px; background: #FFFFFF; opacity: 1; border-radius: 2px; transition: 0.3s;
         }
 
         /* Drawer Container - Forces Theme Background */
@@ -189,8 +190,11 @@
             border-bottom: 1px solid var(--border-subtle, rgba(0,0,0,0.1));
         }
 
-        .mobile-drawer-logo { height: 32px; width: auto; object-fit: contain; }
-        [data-theme="light"] .mobile-drawer-logo { filter: invert(1); }
+        .mobile-drawer-logo { height: auto; width: 120px; max-width: 180px; object-fit: contain; }
+        @media (max-width: 480px) { .mobile-drawer-logo { width: 80px; } }
+        @media (min-width: 481px) and (max-width: 768px) { .mobile-drawer-logo { width: 100px; } }
+        @media (min-width: 769px) and (max-width: 1024px) { .mobile-drawer-logo { width: 120px; } }
+        [data-theme="light"] .mobile-drawer-logo { filter: none; }
 
         .mobile-controls { display: flex; align-items: center; gap: 16px; }
 
@@ -226,6 +230,9 @@
         .mobile-divider { height: 1px; width: 100%; background: var(--border-subtle, rgba(0,0,0,0.1)); }
 
         @media (max-width: 1024px) {
+            .primary-nav-container { padding: 0 1rem; }
+            .nav-logo { flex-shrink: 0; margin-right: auto; }
+            .mobile-menu-toggle { flex-shrink: 0; margin-left: auto; position: relative; right: 0; }
             .nav-links, .portfolio-subnav { display: none; }
             .mobile-menu-toggle { display: flex; }
             body { padding-top: 64px; }
@@ -326,7 +333,8 @@
     <nav class="primary-nav" id="primaryNav">
         <div class="primary-nav-container">
             <a href="/index.html" class="nav-logo" aria-label="The Hub">
-               <img src="../assets/images/TheHub_Logo.png" alt="The Hub" class="desktop-logo">
+               <img src="/TheHub/assets/images/TheHub_Logo.png" alt="The Hub" class="desktop-logo">
+               <img src="/TheHub/assets/images/3D_icon_Transparent.png" alt="The Hub" class="mobile-logo">
             </a>
 
             <div class="nav-links">
@@ -350,12 +358,32 @@
     <div class="mobile-menu-overlay" id="mobileOverlay" aria-hidden="true">
         <div class="mobile-drawer-header">
             <div class="mobile-brand">
-                <img src="/TheHub/assets/images/3D_icon_Transparent.png" alt="Logo" class="mobile-drawer-logo">
+                <img
+                  src="/TheHub/assets/images/3D_icon_Transparent.png"
+                  alt="Logo"
+                  class="mobile-drawer-logo"
+                  loading="lazy"
+                  decoding="async"
+                  srcset="/TheHub/assets/images/3D_icon_Transparent.png 80w, /TheHub/assets/images/3D_icon_Transparent.png 100w, /TheHub/assets/images/3D_icon_Transparent.png 120w, /TheHub/assets/images/3D_icon_Transparent.png 180w"
+                  sizes="(max-width: 480px) 80px, (max-width: 768px) 100px, (max-width: 1024px) 120px, 180px"
+                >
             </div>
             <div class="mobile-controls">
-                <button class="theme-toggle" aria-label="Toggle Dark Mode">
-                    <i class="fa-regular fa-sun sun-icon"></i>
-                    <i class="fa-regular fa-moon moon-icon"></i>
+                <button class="theme-toggle" aria-pressed="false" aria-label="Toggle theme">
+                    <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
                 </button>
                 <button class="drawer-close-btn" id="drawerCloseBtn" aria-label="Close Menu">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
