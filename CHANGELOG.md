@@ -1,3 +1,10 @@
+## 2025-12-05
+
+- Updated "Work That Mattered" insights articles:
+  - Modified hero title color to white (#FFFFFF) for Microsoft case study pages to improve visibility and contrast (WCAG AA compliant).
+  - Affected pages: `family-safety-launch`, `free-to-be-free`, `teams-consumer-launch`, `transforming-browsing-ai`, `edge-ucational-series`, `edge-mobile-rebrand`.
+  - Verified changes locally and updated `TheHub/STYLE_GUIDE.md` with new specific guidelines.
+
 ## 2025-12-03
 
 - Hub Architecture: corrected dead links on main pages to
