@@ -1,41 +1,39 @@
-// ========================================
-// THEME TOGGLE
-// ========================================
-const themeToggle = document.getElementById('themeToggle');
 const html = document.documentElement;
-
 const currentTheme = localStorage.getItem('theme') || 'light';
 html.setAttribute('data-theme', currentTheme);
-themeToggle.setAttribute('aria-pressed', currentTheme === 'dark' ? 'true' : 'false');
 
-themeToggle.addEventListener('click', () => {
-    const theme = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+function setPressedForAll(isDark) {
+    document.querySelectorAll('.theme-toggle').forEach(btn => {
+        btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+    });
+}
+
+function updateFooterLogo(isDark) {
+    const footerLogo = document.querySelector('.footer-logo');
+    if (footerLogo) {
+        footerLogo.src = isDark ? 'assets/images/Logomark_White_a.png' : 'assets/images/Logomark_Black_a.png';
+    }
+}
+
+function applyTheme(theme) {
+    const isDark = theme === 'dark';
     html.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
-    themeToggle.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
-    
-    const footerLogo = document.querySelector('.footer-logo');
-    if (footerLogo) {
-        footerLogo.src = theme === 'dark' 
-            ? 'assets/images/Logomark_White_a.png' 
-            : 'assets/images/Logomark_Black_a.png';
-    }
-    const isDark = theme === 'dark';
-    if (isDark) initParticleCanvas(); else destroyParticles();
+    setPressedForAll(isDark);
+    updateFooterLogo(isDark);
+    if (isDark) { initParticleCanvas(); } else { destroyParticles(); }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    setPressedForAll(currentTheme === 'dark');
+    updateFooterLogo(currentTheme === 'dark');
+    document.querySelectorAll('.theme-toggle').forEach(btn => {
+        const handler = (e) => { e.preventDefault(); const theme = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; applyTheme(theme); };
+        btn.addEventListener('click', handler, { passive: true });
+        btn.addEventListener('touchend', handler, { passive: true });
+    });
 });
 
-window.addEventListener('DOMContentLoaded', () => {
-    const footerLogo = document.querySelector('.footer-logo');
-    if (footerLogo) {
-        footerLogo.src = currentTheme === 'dark'
-            ? 'assets/images/Logomark_White_a.png'
-            : 'assets/images/Logomark_Black_a.png';
-    }
-});
-
-// ========================================
-// SET CURRENT YEAR
-// ========================================
 document.getElementById('currentYear').textContent = new Date().getFullYear();
 
 // ========================================
