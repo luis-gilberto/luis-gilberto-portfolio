@@ -984,13 +984,27 @@
             <h2 class="section-title align-center">Hero Content & Storytelling</h2>
             <p class="lead-text align-center">Our hero content strategy centered on authentic moments of connection, showing how Teams could enhance the relationships that matter most. The main campaign video became the emotional anchor for the entire launch.</p>
             
-            <div class="media-container">
-                <video controls poster="assets/images/Teams/Preview_Frame_Teams_for_life_video.png">
-                    <source src="assets/images/Teams/MS_TEAMS_The_Power_of_We.mp4" type="video/mp4">
+            <div class="video-container" id="teamsThumbnail">
+                <video 
+                    poster="assets/images/Teams/Teams_video_poster.jpg"
+                    preload="metadata"
+                    playsinline
+                    class="video-thumbnail"
+                >
+                    <source src="assets/videos/ThePowerOfWe.mp4" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
-                <div class="caption">"The Power of We" - Main campaign video showcasing Teams for Life</div>
+                <div class="video-play-overlay">
+                    <div class="play-button">
+                        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <polygon points="5,3 19,12 5,21" fill="#000000"/>
+                        </svg>
+                    </div>
+                </div>
             </div>
+            <p style="text-align: center; margin-top: 1.5rem; color: #B0B0B0; max-width: 700px; margin-left: auto; margin-right: auto;">
+                "The Power of We" - Our 35-second hero film captures authentic moments of connection, demonstrating how Teams enriches the relationships that matter most in our everyday lives.
+            </p>
             
             <div class="media-container">
                 <img src="assets/images/Teams/Get-together_hero_imagery.png" alt="Get-together Hero Imagery">
@@ -2078,6 +2092,64 @@
     <script src="/assets/js/mobile-menu-loader.js"></script>
 
 
+
+    <!-- Video Modal -->
+    <div class="video-modal" id="teamsVideoModal" role="dialog" aria-label="Video player modal" aria-modal="true">
+        <div class="video-modal-content">
+            <button class="video-modal-close" id="closeTeamsModal" aria-label="Close video">&times;</button>
+            <video id="teamsModalVideo" controls playsinline>
+                <source src="assets/videos/ThePowerOfWe.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
+
+    <script>
+    // Video Modal Functionality
+    (function() {
+        const thumbnail = document.getElementById('teamsThumbnail');
+        const modal = document.getElementById('teamsVideoModal');
+        const closeBtn = document.getElementById('closeTeamsModal');
+        const modalVideo = document.getElementById('teamsModalVideo');
+        
+        if (thumbnail) {
+            thumbnail.addEventListener('click', function() {
+                modal.classList.add('active');
+                modalVideo.play();
+                document.body.style.overflow = 'hidden';
+            });
+        }
+        
+        function closeModal() {
+            modal.classList.remove('active');
+            modalVideo.pause();
+            modalVideo.currentTime = 0;
+            document.body.style.overflow = '';
+        }
+        
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closeModal);
+        }
+        
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modal.classList.contains('active')) {
+                closeModal();
+            }
+        });
+        
+        modal.addEventListener('transitionend', function() {
+            if (!modal.classList.contains('active')) {
+                modalVideo.pause();
+            }
+        });
+    })();
+    </script>
 
 </body>
 </html>

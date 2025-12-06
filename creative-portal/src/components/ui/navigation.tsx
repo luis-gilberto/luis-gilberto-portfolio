@@ -26,7 +26,7 @@ export function Navigation() {
           {/* Logo Area */}
           <div className="flex items-center gap-4">
             <a href="https://luis-gilberto.com" className="flex items-center">
-              <img src="/assets/images/The_Portal_Logo.png" alt="LG Portal" className="h-8 w-auto" decoding="async" loading="eager" />
+              <img src="/public/assets/images/The_Portal_Logo.png" alt="LG Portal" className="h-8 w-auto" decoding="async" loading="eager" />
             </a>
           </div>
 
