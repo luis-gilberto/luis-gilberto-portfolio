@@ -15,3 +15,10 @@
 - Verified all target pages return HTTP 200 responses.
 - Confirmed all updated links use HTTPS to avoid mixed content warnings.
 - Previewed locally at `http://localhost:5520/TheHub/index.html` for sanity checks.
+
+## 2025-12-06
+- Promote Cloud Dancer to homepage (index.html) and keep index-legacy.html
+- Universal theme toggle across breakpoints
+- About Craftsman image preview page (about-preview.html)
+- Cloudflare redirects and headers verified
+
