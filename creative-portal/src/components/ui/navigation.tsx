@@ -25,9 +25,9 @@ export function Navigation() {
           
           {/* Logo Area */}
           <div className="flex items-center gap-4">
-            <Link href="/" className="flex items-center">
-              <img src="/assets/images/The_Portal_Logo.png" alt="Luis Gilberto Logo" className="h-8 md:h-10 w-auto" decoding="async" loading="eager" />
-            </Link>
+            <a href="https://luis-gilberto.com" className="flex items-center">
+              <img src="/assets/images/The_Portal_Logo.png" alt="LG Portal" className="h-8 w-auto" decoding="async" loading="eager" />
+            </a>
           </div>
 
           {/* Desktop Links (Global Ecosystem) */}
