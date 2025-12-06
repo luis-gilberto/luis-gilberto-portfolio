@@ -40,26 +40,32 @@ export default function Dashboard() {
   return (
     <div className="max-w-7xl mx-auto px-6 py-12">
       <div className="mb-12 text-center md:text-left">
-        <span className="text-xs font-bold tracking-widest text-[var(--coral)] uppercase mb-2 block">
-          The Portal
-        </span>
+        <span className="text-xs font-bold tracking-widest text-[var(--coral)] uppercase mb-2 block">The Portal</span>
         <h1 className="text-4xl md:text-5xl font-bold text-[var(--text-primary)] font-big-shoulders">
-          Welcome back, {session?.user?.name || 'Partner'}.
+          Welcome back, {session?.user?.name?.split(' ')[0] || 'Partner'}.
         </h1>
-        <p className="text-[var(--text-secondary)] mt-2 max-w-2xl">
-          Manage your active projects, review assets, and track milestones in one place.
-        </p>
+        <p className="text-[var(--text-secondary)] mt-2 max-w-2xl">Manage your projects, review assets, and track milestones in one place.</p>
       </div>
 
       <div className="mb-12 p-6 rounded-2xl bg-[var(--bg-alt)] border border-[var(--border-strong)] shadow-[var(--shadow-soft)]">
-        <h2 className="text-xl font-bold font-big-shoulders mb-4 text-[var(--coral)]">Client Context (ScopeIQ Data)</h2>
+        <h2 className="text-xl font-bold font-big-shoulders mb-4 text-[var(--coral)]">Your Plan Summary</h2>
         <div className="grid md:grid-cols-4 gap-4">
-          {Object.entries(clientContext).map(([key, value]) => (
-            <div key={key} className="p-3 rounded-lg border border-[var(--border-subtle)] bg-[var(--card-bg)]">
-              <div className="text-xs text-[var(--text-secondary)] mb-1 uppercase opacity-80">{key.replace(/([A-Z])/g, ' $1').trim()}</div>
-              <div className="font-semibold text-[var(--text-primary)] text-sm">{value as string}</div>
-            </div>
-          ))}
+          <div className="p-3 rounded-lg border border-[var(--border-subtle)] bg-[var(--card-bg)]">
+            <div className="text-xs text-[var(--text-muted)] mb-1 uppercase opacity-80">Primary Focus</div>
+            <div className="font-semibold text-[var(--text-primary)] text-sm">{clientContext.projectType}</div>
+          </div>
+          <div className="p-3 rounded-lg border border-[var(--border-subtle)] bg-[var(--card-bg)]">
+            <div className="text-xs text-[var(--text-muted)] mb-1 uppercase opacity-80">Investment</div>
+            <div className="font-semibold text-[var(--text-primary)] text-sm">{clientContext.budgetRange}</div>
+          </div>
+          <div className="p-3 rounded-lg border border-[var(--border-subtle)] bg-[var(--card-bg)]">
+            <div className="text-xs text-[var(--text-muted)] mb-1 uppercase opacity-80">Timeline</div>
+            <div className="font-semibold text-[var(--text-primary)] text-sm">{clientContext.timeline}</div>
+          </div>
+          <div className="p-3 rounded-lg border border-[var(--border-subtle)] bg-[var(--card-bg)]">
+            <div className="text-xs text-[var(--text-muted)] mb-1 uppercase opacity-80">Organization Size</div>
+            <div className="font-semibold text-[var(--text-primary)] text-sm">{clientContext.companySize}</div>
+          </div>
         </div>
       </div>
 
@@ -69,10 +75,8 @@ export default function Dashboard() {
             <div className="w-12 h-12 rounded-full bg-[var(--bg-alt)] border border-[var(--border-strong)] flex items-center justify-center mb-6 group-hover:bg-[var(--bg-primary)] transition-colors">
               <span className="text-2xl text-[var(--coral)]">📂</span>
             </div>
-            <h3 className="text-2xl font-bold text-[var(--text-primary)] font-big-shoulders mb-2">Active Projects</h3>
-            <p className="text-[var(--text-secondary)] text-sm">
-              View timelines, deliverables, and status updates for ongoing work.
-            </p>
+            <h3 className="text-2xl font-bold text-[var(--text-primary)] font-big-shoulders mb-2">Projects</h3>
+            <p className="text-[var(--text-secondary)] text-sm">View timelines, deliverables, and status updates.</p>
           </div>
         </Link>
 
@@ -82,9 +86,7 @@ export default function Dashboard() {
               <span className="text-2xl text-[var(--teal)]">💬</span>
             </div>
             <h3 className="text-2xl font-bold text-[var(--text-primary)] font-big-shoulders mb-2">Messages</h3>
-            <p className="text-[var(--text-secondary)] text-sm">
-              Direct line for quick feedback, questions, and strategic alignment.
-            </p>
+            <p className="text-[var(--text-secondary)] text-sm">Direct line for quick feedback and strategic alignment.</p>
           </div>
         </Link>
 
@@ -94,9 +96,7 @@ export default function Dashboard() {
               <span className="text-2xl text-[var(--text-primary)]">📄</span>
             </div>
             <h3 className="text-2xl font-bold text-[var(--text-primary)] font-big-shoulders mb-2">Assets & Docs</h3>
-            <p className="text-[var(--text-secondary)] text-sm">
-              Access contracts, invoices, and final creative assets.
-            </p>
+            <p className="text-[var(--text-secondary)] text-sm">Access contracts, invoices, and final creative assets.</p>
           </div>
         </Link>
       </div>

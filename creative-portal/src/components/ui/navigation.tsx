@@ -37,6 +37,7 @@ export function Navigation() {
             <a href="https://luis-gilberto.com/TheHub/" className="text-sm font-medium text-gray-300 hover:text-white uppercase tracking-wider transition-colors">The Hub</a>
             {/* Active Portal Link (Internal) */}
             <Link href="/" className="text-sm font-bold text-[var(--coral)] uppercase tracking-wider">The Portal</Link>
+            <Link href="/changelog" className="text-sm font-medium text-gray-300 hover:text-white uppercase tracking-wider transition-colors">Changelog</Link>
           </div>
 
           {/* User / Auth Controls */}
@@ -88,16 +89,20 @@ export function Navigation() {
               </div>
               <div className="h-px bg-white/10 w-full my-6"></div>
               <div className="flex flex-col space-y-3">
-                <div className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">Portal</div>
+              <div className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">Portal</div>
                 {session ? (
                   <>
                     <Link href="/dashboard" className="text-lg font-medium text-gray-300" onClick={() => setIsMobileOpen(false)}>Dashboard</Link>
                     <Link href="/projects" className="text-lg font-medium text-gray-300" onClick={() => setIsMobileOpen(false)}>Projects</Link>
                     <Link href="/documents" className="text-lg font-medium text-gray-300" onClick={() => setIsMobileOpen(false)}>Documents</Link>
+                    <Link href="/changelog" className="text-lg font-medium text-gray-300" onClick={() => setIsMobileOpen(false)}>Changelog</Link>
                     <button onClick={() => { handleSignOut(); setIsMobileOpen(false); }} className="text-left text-lg font-medium text-[var(--coral)]">Sign Out</button>
                   </>
                 ) : (
-                  <Link href="/auth/signin" className="text-lg font-bold text-[var(--coral)]" onClick={() => setIsMobileOpen(false)}>Log In</Link>
+                  <>
+                    <Link href="/auth/signin" className="text-lg font-bold text-[var(--coral)]" onClick={() => setIsMobileOpen(false)}>Log In</Link>
+                    <Link href="/changelog" className="text-lg font-medium text-gray-300" onClick={() => setIsMobileOpen(false)}>Changelog</Link>
+                  </>
                 )}
               </div>
             </div>

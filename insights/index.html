@@ -2097,6 +2097,24 @@ footer {
         </div>
     </section>
     <link rel="stylesheet" href="/insights/assets/css/insights-navigation.css">
+    <script src="/assets/js/version.js"></script>
+    <script>
+      (function(){
+        var origFetch = window.fetch;
+        window.fetch = function(url, opts){
+          try {
+            var u = url;
+            if (typeof url === 'string' && url.indexOf('/insights/data/articles-metadata.json') === 0) {
+              var v = (window.__DEPLOY_VERSION__ || Date.now());
+              u = url + (url.indexOf('?') === -1 ? ('?v='+v) : ('&v='+v));
+            }
+            return origFetch.call(this, u, opts);
+          } catch(e) {
+            return origFetch.call(this, url, opts);
+          }
+        };
+      })();
+    </script>
     <script src="/insights/assets/js/insights-navigation.js"></script>
 
     <!-- What You'll Find Here -->
