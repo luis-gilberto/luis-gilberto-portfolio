@@ -1,5 +1,6 @@
 from pathlib import Path
 import shutil
+import re
 
 root = Path(__file__).resolve().parent
 deploy = root / "deploy"
@@ -64,9 +65,9 @@ index_html = """<!doctype html>
 body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
 .container{max-width:1100px;margin:0 auto;padding:40px 24px}
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px}
-.title{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:700;letter-spacing:.3px}
-.title-text{white-space:nowrap;font-family:'Big Shoulders Display',system-ui,sans-serif;font-size:16px}
-.logo-img{height:26px;width:auto;max-width:240px;object-fit:contain}
+.title{display:flex;flex-direction:column;align-items:flex-start;gap:2em;font-size:22px;font-weight:700;letter-spacing:.3px}
+.title-text{white-space:nowrap;text-transform:uppercase;font-family:'Big Shoulders Display',system-ui,sans-serif;font-size:calc(16px + 4pt);color:#FF6B6B}
+.logo-img{height:39px;width:auto;max-width:360px;object-fit:contain}
 .badge{padding:6px 10px;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:12px;background:#0f0f0f}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
 .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
@@ -143,7 +144,13 @@ for p in pdfs:
     })
 
 doc_index = """<!doctype html>
-<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Asset Library / Documents</title>\n<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">\n<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>\n<link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap\" rel=\"stylesheet\">\n<style>\n:root{--bg:#0a0a0a;--card:#151515;--text:#e5e5e5;--muted:#9ca3af;--accent:#64ffda;--border:#262626}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}.wrap{max-width:1100px;margin:0 auto;padding:40px 24px}.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}.title{font-size:28px;font-weight:800;letter-spacing:.3px}.subtitle{color:var(--muted)}.upload{padding:10px 14px;border-radius:999px;background:#0f0f0f;border:1px solid var(--border);color:var(--text);text-decoration:none;font-weight:600}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}.card:hover{transform:translateY(-2px);border-color:#333;box-shadow:0 12px 30px rgba(0,0,0,.35)}.label{display:inline-block;margin-bottom:12px;padding:6px 10px;border:1px solid var(--border);border-radius:999px;color:#9ca3af;font-size:12px;background:#0f0f0f}.name{font-weight:700;margin-bottom:8px}.meta{color:var(--muted);font-size:12px}.request{border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;min-height:140px;color:#9ca3af}a.card{text-decoration:none;color:inherit}\n</style>\n</head>\n<body>\n<div class=\"wrap\">\n<div class=\"head\"><div><div class=\"title\">DOCUMENTS</div><div class=\"subtitle\">Securely access your contracts, invoices, and deliverables.</div></div><a class=\"upload\" href=\"#upload-instructions\">UPLOAD NEW FILE</a></div>\n<div class=\"grid\">\n"""
+<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Asset Library / Documents</title>\n<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">\n<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>\n<link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap\" rel=\"stylesheet\">\n<link href=\"https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@400;600;700&display=swap\" rel=\"stylesheet\">\n<style>\n :root{--bg:#0a0a0a;--card:#151515;--text:#e5e5e5;--muted:#9ca3af;--accent:#64ffda;--border:#262626}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}.wrap{max-width:1100px;margin:0 auto;padding:40px 24px}.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}.title{font-size:calc(16px + 4pt);font-family:'Big Shoulders Display',system-ui,sans-serif;font-weight:700;letter-spacing:.3px;color:#FF6B6B}.subtitle{color:var(--muted)}.upload{padding:6px 10px;border-radius:8px;background:#0f0f0f;border:1px solid var(--border);color:var(--muted);text-decoration:none;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-weight:400;font-size:12px;letter-spacing:normal}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}.card:hover{transform:translateY(-2px);border-color:#333;box-shadow:0 12px 30px rgba(0,0,0,.35)}.label{display:inline-block;margin-bottom:12px;padding:6px 10px;border:1px solid var(--border);border-radius:999px;color:#9ca3af;font-size:12px;background:#0f0f0f}.name{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-weight:400;font-size:calc(16px - 2pt);margin-bottom:8px}.meta{color:var(--muted);font-size:12px}.request{border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;min-height:140px;color:#9ca3af}a.card{text-decoration:none;color:inherit}.logo-img{height:39px;width:auto;max-width:360px;object-fit:contain}.title-text{text-transform:uppercase}\n</style>\n</head>\n<body>\n<div class=\"wrap\">\n<div class=\"head\"><div class=\"title\"><img class=\"logo-img\" src=\"../assets/images/logo-lockup.png\" alt=\"Luis Gilberto logo\"><span class=\"title-text\">/ DOCUMENTS</span></div><a class=\"upload\" href=\"#\">UPLOAD NEW FILE</a></div>\n<div class=\"grid\">\n"""
+doc_index = doc_index.replace('<img class=\\"logo-img\\" src=\\"../assets/images/logo-lockup.png\\" alt=\\"Luis Gilberto logo\\">', '')
+doc_index = doc_index.replace('.name{', '.name{text-transform:none;')
+doc_index = doc_index.replace('<div class=\\"head\\"><div class=\\"title\\">', '<div class=\\"head\\"><div class=\\"title\\">')
+
+doc_index = re.sub(r"<img[^>]*>", "", doc_index)
+doc_index = doc_index.replace('.name{', '.name{text-transform:none;')
 
 for c in cards:
     doc_index += f"<a class=\"card\" href=\"./{c['name']}\"><div class=\"label\">{c['label']}</div><div class=\"name\">{c['name']}</div><div class=\"meta\">{c['date']} • {c['size']}</div></a>\n"
@@ -151,6 +158,6 @@ for c in cards:
 if not cards:
     doc_index += "<div class=\"card request\">No documents yet — add your PDF to assets/docs and rebuild.</div>\n"
 
-doc_index += "</div><div id=\"upload-instructions\" style=\"margin-top:24px;color:#9ca3af;font-size:12px\">Place PDFs in <code>assets/docs</code> and run <code>python build_deploy.py</code>. They will appear here.</div></div></body></html>"
+doc_index += "</div><div class=\"footer\" style=\"margin-top:48px;color:#9ca3af;font-size:12px;text-align:center\">© 2025 Luis Gilberto</div></div></body></html>"
 
 (deploy / "documents" / "index.html").write_text(doc_index, encoding="utf-8")
