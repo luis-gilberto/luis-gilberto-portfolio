@@ -4,11 +4,16 @@ import { useSession } from 'next-auth/react'
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { createClient } from '@supabase/supabase-js'
 
 const mockMessages = [
   { id: 1, user: 'System', content: 'Welcome to the project communication channel. All key updates and quick questions can be posted here.', time: '10:00 AM', isClient: false },
   { id: 2, user: 'Client Partner', content: 'Thanks! Just confirming the kickoff call for tomorrow.', time: '10:05 AM', isClient: true },
 ]
+
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
 export default function MessagesPage() {
   const { data: session } = useSession()
@@ -16,9 +21,34 @@ export default function MessagesPage() {
   const [newMessage, setNewMessage] = useState('')
 
   useEffect(() => {
-  }, [])
+    const fetchMessages = async () => {
+      try {
+        const email = session?.user?.email
+        if (!email) return
+        const { data, error } = await supabase
+          .from('messages')
+          .select('id, user_name, content, created_at, is_client')
+          .eq('user_email', email)
+          .order('created_at', { ascending: true })
 
-  const handleSend = (e: React.FormEvent) => {
+        if (error || !data) {
+          // fall back silently to mock
+          return
+        }
+        const mapped = data.map((m: any) => ({
+          id: m.id,
+          user: m.user_name || 'Partner',
+          content: m.content,
+          time: new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          isClient: !!m.is_client,
+        }))
+        setMessages([...mockMessages, ...mapped])
+      } catch {}
+    }
+    fetchMessages()
+  }, [session])
+
+  const handleSend = async (e: React.FormEvent) => {
     e.preventDefault()
     if (newMessage.trim() === '') return
     const messageToSend = {
@@ -30,6 +60,16 @@ export default function MessagesPage() {
     }
     setMessages(prev => [...prev, messageToSend])
     setNewMessage('')
+    // attempt Supabase insert (RLS must allow user)
+    try {
+      const email = session?.user?.email
+      await supabase.from('messages').insert({
+        user_email: email,
+        user_name: session?.user?.name || 'Consultant',
+        content: messageToSend.content,
+        is_client: false,
+      })
+    } catch {}
   }
 
   return (
@@ -81,4 +121,3 @@ export default function MessagesPage() {
     </div>
   )
 }
-
