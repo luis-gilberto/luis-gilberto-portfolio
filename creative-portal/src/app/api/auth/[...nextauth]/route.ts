@@ -8,7 +8,23 @@ import path from "path"
 console.log("EmailProvider customized for dev magic link logging")
 
 const handler = NextAuth({
-  adapter: PrismaAdapter(prisma),
+  adapter: {
+    ...PrismaAdapter(prisma),
+    // CRITICAL OVERRIDE: Update the user's name upon first sign-in
+    // Note: For EmailProvider, 'createUser' is called when a new user is verified.
+    createUser: async (data) => {
+      // Hardcoded fallback as requested. 
+      // In a production app, we would use cookies to pass the name from client to server.
+      const user = await prisma.user.create({
+        data: {
+          ...data,
+          name: 'New Client Partner', 
+          role: 'CLIENT'
+        }
+      })
+      return user
+    }
+  },
   providers: [
     EmailProvider({
       async sendVerificationRequest({ url }) {
@@ -32,15 +48,19 @@ const handler = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        ;(token as any).role = (user as any).role || 'CLIENT'
-        ;(token as any).id = (user as any).id
+        (token as any).role = (user as any).role || 'CLIENT';
+        (token as any).id = (user as any).id;
+        (token as any).name = (user as any).name;
       }
       return token
     },
     async session({ session, token }) {
       if (token) {
-        ;(session.user as any).role = (token as any).role || 'CLIENT'
-        ;(session.user as any).id = (token as any).sub || (token as any).id
+        (session.user as any).role = (token as any).role || 'CLIENT';
+        (session.user as any).id = (token as any).sub || (token as any).id;
+        if ((token as any).name) {
+            (session.user as any).name = (token as any).name;
+        }
       }
       return session
     },
