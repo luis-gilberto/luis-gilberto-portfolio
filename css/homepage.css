@@ -365,24 +365,26 @@ body {
 .hero-tiles {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-md);
+  gap: 1.5rem;
   margin-bottom: var(--space-2xl);
   perspective: 1000px;
+  max-width: 1200px;
+  width: 100%;
 }
 
 .hero-tile {
   aspect-ratio: 1;
   border-radius: 12px;
-  overflow: hidden;
+  overflow: visible;
   border: 1px solid var(--border-color);
   animation: tileAppear 0.8s ease-out forwards;
   animation-delay: var(--delay);
   opacity: 0;
-  transform: scale(0.8) rotate(0deg);
   cursor: grab;
   position: relative;
   transform-style: preserve-3d;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transform: rotate(var(--rotation, 0deg)) translate(var(--offset-x, 0), var(--offset-y, 0));
 }
 
 .hero-tile:active {
@@ -393,6 +395,26 @@ body {
   transform: scale(1.05) rotate(var(--rotation));
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
   z-index: 10;
+}
+
+/* 🪄 Hero tiles - subtle alive glow without affecting transform */
+.hero-tile.alive {
+  animation: tileGlow 2.6s ease-in-out 1;
+}
+
+@keyframes tileGlow {
+  0%, 100% {
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+    filter: brightness(1);
+  }
+  40% {
+    box-shadow: 0 24px 55px rgba(0, 0, 0, 0.5);
+    filter: brightness(1.05);
+  }
+  60% {
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.42);
+    filter: brightness(1.02);
+  }
 }
 
 @keyframes tileAppear {
@@ -408,6 +430,7 @@ body {
   position: relative;
   transform-style: preserve-3d;
   transition: transform 0.1s ease-out;
+  min-height: 280px;
 }
 
 .tile-image {
@@ -421,11 +444,13 @@ body {
   transition: opacity 0.5s ease, transform 0.5s ease;
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
+  z-index: 0;
 }
 
 .tile-image.active {
   opacity: 1;
   transform: scale(1);
+  z-index: 1;
 }
 
 .tile-overlay {
@@ -448,10 +473,22 @@ body {
 }
 
 .tile-hint {
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  font-weight: 500;
-  margin-bottom: var(--space-sm);
+  position: absolute;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  letter-spacing: 0.02em;
+}
+
+.hero-tile:hover .tile-hint {
+  opacity: 0.7;
 }
 
 .tile-cta {
@@ -483,13 +520,7 @@ body {
   }
 }
 
-.tile-image:not(.active) ~ .tile-overlay .tile-cta {
-  display: inline-flex;
-}
-
-.tile-image:not(.active) ~ .tile-overlay .tile-hint {
-  display: none;
-}
+/* CTA is controlled via JS and only appears when tile is revealed */
 
 .tile-cta:hover {
   background: #e55a59;
@@ -520,21 +551,27 @@ body {
   margin-bottom: var(--space-lg);
 }
 
+/* 💓 Hero "human" word - cursive Playfair + heartbeat */
 .breathing-text {
-  color: var(--color-coral);
-  font-style: normal; /* Removed italic to match uppercase accent style if needed, or keep italic if intended */
-  /* User requested specific accent usage, usually implies color or font change. Keeping color, assuming font inheritance from h1 */
-  animation: breathe 2.5s ease-in-out infinite;
+  font-family: "Playfair Display", "Times New Roman", serif;
+  font-style: italic;
+  color: #F96F6E;
+  display: inline-block;
+  animation: humanPulse 2.2s ease-in-out infinite;
+  transform-origin: 50% 70%;
+  text-transform: none;
 }
 
-@keyframes breathe {
+/* Subtle heartbeat pulse */
+@keyframes humanPulse {
   0%, 100% {
     transform: scale(1);
-    opacity: 1;
   }
-  50% {
-    transform: scale(1.05);
-    opacity: 0.9;
+  40% {
+    transform: scale(1.02);
+  }
+  60% {
+    transform: scale(0.995);
   }
 }
 
@@ -548,10 +585,13 @@ body {
   justify-content: center;
   gap: var(--space-sm);
   font-family: var(--font-sans);
-  font-size: 1.1rem;
+  font-size: 1.0625rem; /* ~17px */
+  font-weight: 500; /* Inter Medium */
+  letter-spacing: 0.02em;
   color: #d1d5db; /* Light gray */
   margin-bottom: var(--space-xl);
 }
+.dark .hero-subhead { letter-spacing: 0.03em; }
 
 .hero-button {
   display: inline-flex;
@@ -561,7 +601,10 @@ body {
   background: var(--color-coral);
   color: white;
   border-radius: 8px;
-  font-weight: 600;
+  font-family: var(--font-sans);
+  font-weight: 500; /* Inter Medium */
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   transition: all var(--transition-fast);
 }
 
@@ -573,11 +616,17 @@ body {
 @media (max-width: 768px) {
   .hero-tiles {
     grid-template-columns: repeat(2, 1fr);
+    max-width: 600px;
+    gap: 1rem;
   }
   
   .hero-text h1 {
     font-size: clamp(2.5rem, 10vw, 3.5rem);
   }
+}
+
+@media (max-width: 480px) {
+  .hero-tiles { grid-template-columns: 1fr; gap: 1rem; }
 }
 
 /* ===================================
@@ -607,7 +656,7 @@ body {
 .banner-rotator .banner-text {
   color: #262626;           /* dark charcoal for readability */
   position: absolute;
-  font-size: clamp(2rem, 5vw, 4rem);
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
   font-weight: 700;
   opacity: 0;
   transition: opacity 0.6s ease-in-out;
@@ -627,16 +676,21 @@ body {
 
 .banner-text[data-font="sans"] {
   font-family: var(--font-sans);
+  font-weight: 600;
+  letter-spacing: 0.01em;
 }
 
 .banner-text[data-font="serif"] {
   font-family: var(--font-serif);
+  font-weight: 600;
   font-style: italic;
 }
 
 .banner-text[data-font="accent"] {
   font-family: var(--font-accent);
+  font-weight: 800;
   text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
 
@@ -653,19 +707,24 @@ body {
 }
 
 .section-header h2 {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: 2.5rem;
-  font-weight: 600;
+  font-family: var(--font-accent);
+  font-style: normal;
+  font-size: clamp(2.375rem, 5vw, 3.875rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
   color: #e0e0e0;
   margin-bottom: var(--space-lg);
 }
 
 .section-header p {
-  font-size: 1.1rem;
+  font-family: var(--font-sans);
+  font-size: 1.35rem;
   color: var(--text-secondary);
   max-width: 600px;
-  margin: 0 auto;
+  margin: var(--space-md) auto 0;
+  line-height: 1.5;
 }
 
 .cards-group {
@@ -673,8 +732,12 @@ body {
 }
 
 .cards-group h3 {
-  font-size: 1.5rem;
-  text-align: center;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  text-align: left;
   margin-bottom: var(--space-xl);
 }
 
@@ -774,7 +837,7 @@ body {
   font-family: var(--font-accent);
   text-transform: uppercase;
   font-size: 1.5rem;
-  letter-spacing: 1px;
+  letter-spacing: 0.03em;
   color: var(--text-primary);
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   font-weight: 700;
@@ -811,16 +874,10 @@ body {
 
 .card-back p {
   font-family: var(--font-sans);
-  font-size: 0.95rem;
-  color: #f0f0f0; /* Lightened for better contrast on colored backgrounds, user asked for #b0b0b0 but that might be too dark on colored cards. Sticking to white-ish or #b0b0b0 if on white bg. Wait, cards have colored backgrounds. */
-  /* User instruction: "Update card descriptions to use Inter, 0.95rem, #b0b0b0". 
-     However, the cards have backgrounds: Coral, Teal, Deep Blue. #b0b0b0 (gray) on Coral/Teal will look bad. 
-     I will respect the user's font choice but keep the color readable (white/light) or use #b0b0b0 if they insisted on a specific look, but readability is key.
-     Actually, looking at the previous code, it was `color: white;`.
-     I will set it to `color: rgba(255, 255, 255, 0.9);` to be close to their intent of "lighter/greyer" but still readable on color.
-     Or if the user means "light gray" (#b0b0b0 is light gray), I will use that. */
+  font-size: 1rem;
   color: rgba(255, 255, 255, 0.9); 
   line-height: 1.8;
+  max-width: 65ch;
   flex: 1;
 }
 
@@ -832,8 +889,8 @@ body {
   font-family: var(--font-sans);
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+  font-size: 0.95rem;
   text-align: center;
   transition: all var(--transition-fast);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
@@ -923,15 +980,16 @@ body {
 .whats-next-section h2 {
   font-family: var(--font-serif);
   font-style: italic;
-  font-size: 2.5rem;
-  font-weight: 600;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 700;
+  line-height: 1.2;
   color: #e0e0e0;
   margin-bottom: var(--space-lg);
 }
 
 .whats-next-section p {
-  font-family: var(--font-serif);
-  font-size: 1.5rem;
+  font-family: var(--font-sans);
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
   color: #d0d0d0;
   max-width: 600px;
   margin: 0 auto var(--space-xl);
@@ -940,7 +998,11 @@ body {
 
 .text-accent {
   color: var(--color-coral);
-  font-style: italic;
+  font-family: var(--font-accent);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-style: normal;
 }
 
 .cta-button {
@@ -951,7 +1013,10 @@ body {
   background: var(--color-coral);
   color: white;
   border-radius: 50px;
-  font-weight: 600;
+  font-family: var(--font-sans);
+  font-weight: 500; /* Inter Medium */
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   transition: all var(--transition-fast);
 }
 
@@ -977,6 +1042,10 @@ body {
 }
 
 .footer-brand h3 {
+  font-family: var(--font-accent);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
   font-size: 1.5rem;
   margin-bottom: var(--space-md);
 }
@@ -984,7 +1053,7 @@ body {
 .footer-brand p {
   font-family: var(--font-sans);
   color: #666;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   line-height: 1.8;
   max-width: 400px;
 }
@@ -996,19 +1065,20 @@ body {
 }
 
 .footer-links h4 {
-  font-family: var(--font-sans);
+  font-family: var(--font-accent);
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-coral);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.03em;
   margin-bottom: var(--space-sm);
 }
 
 .footer-links a {
   font-family: var(--font-sans);
   color: #666;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  line-height: 1.8;
   transition: color var(--transition-fast);
 }
 
@@ -1052,7 +1122,8 @@ body {
 .footer-bottom p {
   font-family: var(--font-sans);
   color: #666;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  line-height: 1.8;
 }
 
 @media (max-width: 768px) {
@@ -1128,4 +1199,194 @@ body {
   .hero-subhead {
     margin-bottom: 1.7rem;
   }
+}
+
+/* ============================================
+   HERO TILES - Levitating Animation
+   ============================================ */
+
+.hero-tile {
+  cursor: grab;
+  transition: transform 0.3s ease;
+  position: relative;
+}
+
+.hero-tile:active {
+  cursor: grabbing;
+}
+
+/* Levitating animation - activated after drag */
+/* Removed post-interaction movement for top cards; hover-only behaviors preserved */
+
+/* Tile structure */
+.hero-tile .tile-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.hero-tile .tile-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.4s ease;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hero-tile .tile-image.active {
+  opacity: 1;
+}
+
+.hero-tile .tile-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.7) 100%
+  );
+  padding: 2rem;
+  pointer-events: none;
+}
+
+.hero-tile .tile-hint {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+}
+
+.hero-tile .tile-cta {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  background: white;
+  color: var(--text-primary, #1a1a1a);
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  text-decoration: none;
+  pointer-events: auto;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+}
+
+.hero-tile .tile-cta:hover {
+  background: var(--coral, #F96F6E);
+  color: white;
+  transform: translateX(-50%) translateY(0) scale(1.05);
+}
+
+.hero-tile .tile-cta svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.3s ease;
+}
+
+.hero-tile .tile-cta:hover svg {
+  transform: translateX(4px);
+}
+
+/* Prevent text selection during drag */
+.hero-tile * {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.hero-tile .tile-cta * {
+  user-select: auto;
+  -webkit-user-select: auto;
+}
+
+/* Mobile responsive */
+.hero-tile.tile-levitating {
+  cursor: default;
+  animation: tileLevitate 4s ease-in-out infinite;
+}
+
+@keyframes tileLevitate {
+  0%, 100% {
+    transform: translateY(0) rotate(var(--rotation, 0deg)) translate(var(--offset-x, 0), var(--offset-y, 0));
+  }
+  50% {
+    transform: translateY(-12px) rotate(calc(var(--rotation, 0deg) + 1.5deg)) translate(var(--offset-x, 0), var(--offset-y, 0));
+  }
+}
+
+.hero-tile.tile-levitating::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  background: linear-gradient(135deg, rgba(249, 111, 110, 0.2) 0%, rgba(46, 211, 198, 0.2) 100%);
+  border-radius: 16px;
+  opacity: 0;
+  animation: tileGlowPulse 4s ease-in-out infinite;
+  pointer-events: none;
+  z-index: -1;
+  filter: blur(8px);
+}
+
+@keyframes tileGlowPulse {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+}
+
+.hero-tile.tile-levitating:hover {
+  animation: tileLevitateHover 2s ease-in-out infinite;
+}
+
+@keyframes tileLevitateHover {
+  0%, 100% {
+    transform: translateY(-6px) rotate(var(--rotation, 0deg)) translate(var(--offset-x, 0), var(--offset-y, 0)) scale(1.03);
+  }
+  50% {
+    transform: translateY(-16px) rotate(calc(var(--rotation, 0deg) + 2deg)) translate(var(--offset-x, 0), var(--offset-y, 0)) scale(1.03);
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-tile.tile-levitating {
+    animation: tileLevitate 3s ease-in-out infinite;
+  }
+}
+.start-here-helper, .card-discovery-helper {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  opacity: 0.7;
+  text-align: center;
 }

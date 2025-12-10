@@ -71,180 +71,153 @@ function initParticles() {
   }
 }
 
-// ===================================
-// INTERACTIVE 3D TILES
-// ===================================
-function initInteractiveTiles() {
-  const tilesContainer = document.getElementById('heroTiles');
+// ═══════════════════════════════════════════════════════
+// HERO TILES - Drag Any Direction + Levitation (Provided Block)
+// ═══════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', function() {
   const tiles = document.querySelectorAll('.hero-tile');
   
-  let mouseX = 0;
-  let mouseY = 0;
-  let targetRotateX = 0;
-  let targetRotateY = 0;
-  let currentRotateX = 0;
-  let currentRotateY = 0;
-
-  // Global mouse tracking for container rotation
-  document.addEventListener('mousemove', (e) => {
-    if (!tilesContainer) return;
+  if (!tiles.length) { 
+    console.warn('No hero tiles found'); 
+    return; 
+  } 
+  
+  tiles.forEach(tile => { 
+    const img1 = tile.querySelector('.tile-image-1') || tile.querySelector('.tile-image:nth-child(1)'); 
+    const img2 = tile.querySelector('.tile-image-2') || tile.querySelector('.tile-image:nth-child(2)'); 
+    const hint = tile.querySelector('.tile-hint'); 
+    const cta = tile.querySelector('.tile-cta'); 
     
-    const rect = tilesContainer.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
+    if (!img1 || !img2) { 
+      console.warn('Tile missing images:', tile); 
+      return; 
+    } 
     
-    mouseX = (e.clientX - centerX) / rect.width;
-    mouseY = (e.clientY - centerY) / rect.height;
+    let isDragging = false; 
+    let startX = 0; 
+    let startY = 0; 
+    let currentX = 0; 
+    let currentY = 0; 
+    let totalDistance = 0; 
+    let isRevealed = false; 
     
-    targetRotateX = mouseY * -10;
-    targetRotateY = mouseX * 10;
-  });
-
-  // Smooth animation loop for container
-  function animateContainer() {
-    currentRotateX += (targetRotateX - currentRotateX) * 0.1;
-    currentRotateY += (targetRotateY - currentRotateY) * 0.1;
+    img1.style.opacity = '1'; 
+    img2.style.opacity = '0'; 
     
-    if (tilesContainer) {
-      tilesContainer.style.transform = `rotateX(${currentRotateX}deg) rotateY(${currentRotateY}deg)`;
-    }
+    const calculateDistance = () => { 
+      const deltaX = currentX - startX; 
+      const deltaY = currentY - startY; 
+      return Math.sqrt(deltaX * deltaX + deltaY * deltaY); 
+    }; 
     
-    requestAnimationFrame(animateContainer);
-  }
-  animateContainer();
-
-  // Individual tile drag interactions
-  tiles.forEach((tile) => {
-    const inner = tile.querySelector('.tile-inner');
-    const images = tile.querySelectorAll('.tile-image');
-    const overlay = tile.querySelector('.tile-overlay');
-    const hint = overlay?.querySelector('.tile-hint');
-    const cta = overlay?.querySelector('.tile-cta');
-    let currentImageIndex = 0;
+    const handleStart = (e) => { 
+      if (isRevealed) return; 
+      
+      isDragging = true; 
+      
+      if (e.type.includes('mouse')) { 
+        startX = e.clientX; 
+        startY = e.clientY; 
+      } else { 
+        startX = e.touches[0].clientX; 
+        startY = e.touches[0].clientY; 
+      } 
+      
+      tile.style.cursor = 'grabbing'; 
+      e.preventDefault(); 
+    }; 
     
-    // Update CTA visibility based on current image
-    function updateOverlay() {
-      if (!hint || !cta) return;
+    const handleMove = (e) => { 
+      if (!isDragging || isRevealed) return; 
       
-      const link = tile.getAttribute(`data-link-${currentImageIndex}`);
-      const label = tile.getAttribute(`data-label-${currentImageIndex}`);
+      e.preventDefault(); 
       
-      if (link && label) {
-        hint.style.display = 'none';
-        cta.style.display = 'inline-flex';
-        cta.href = link;
-        cta.querySelector('span').textContent = label;
-      } else {
-        hint.style.display = 'block';
-        cta.style.display = 'none';
-      }
-    }
+      if (e.type.includes('mouse')) { 
+        currentX = e.clientX; 
+        currentY = e.clientY; 
+      } else { 
+        currentX = e.touches[0].clientX; 
+        currentY = e.touches[0].clientY; 
+      } 
+      
+      totalDistance = calculateDistance(); 
+      
+      const dragProgress = Math.min(totalDistance / 80, 1); 
+      
+      img1.style.opacity = 1 - dragProgress; 
+      img2.style.opacity = dragProgress; 
+      
+      if (hint) { 
+        hint.style.opacity = (1 - dragProgress) * 0.7; 
+      } 
+    }; 
     
-    updateOverlay();
+    const handleEnd = () => { 
+      if (!isDragging || isRevealed) return; 
+      
+      isDragging = false; 
+      tile.style.cursor = 'grab'; 
+      
+      if (totalDistance > 80) { 
+        reveal(); 
+      } else { 
+        img1.style.opacity = '1'; 
+        img2.style.opacity = '0'; 
+        if (hint) hint.style.opacity = '0'; 
+      } 
+      
+      totalDistance = 0; 
+    }; 
     
-    let isDragging = false;
-    let startX = 0;
-    let startY = 0;
-    let currentX = 0;
-    let currentY = 0;
-    let tileRotateX = 0;
-    let tileRotateY = 0;
-
-    tile.addEventListener('mousedown', (e) => {
-      isDragging = true;
-      startX = e.clientX;
-      startY = e.clientY;
-      tile.style.transition = 'none';
-    });
-
-    document.addEventListener('mousemove', (e) => {
-      if (!isDragging) return;
+    const reveal = () => { 
+      isRevealed = true; 
       
-      const deltaX = e.clientX - startX;
-      const deltaY = e.clientY - startY;
+      img1.style.opacity = '0'; 
+      img2.style.opacity = '1'; 
       
-      currentX = deltaX;
-      currentY = deltaY;
+      if (hint) hint.style.display = 'none'; 
       
-      tileRotateX = (deltaY / 10) * -1;
-      tileRotateY = deltaX / 10;
+      setTimeout(() => { 
+        tile.classList.add('tile-levitating'); 
+      }, 100); 
       
-      if (inner) {
-        inner.style.transform = `translate(${currentX}px, ${currentY}px) rotateX(${tileRotateX}deg) rotateY(${tileRotateY}deg)`;
-      }
-    });
-
-    document.addEventListener('mouseup', () => {
-      if (!isDragging) return;
+      if (cta) { 
+        cta.style.display = 'flex'; 
+        setTimeout(() => { 
+          cta.style.opacity = '0'; 
+        }, 200); 
+      } 
       
-      isDragging = false;
-      tile.style.transition = 'transform 0.3s ease';
+      tile.style.cursor = 'default'; 
       
-      if (inner) {
-        inner.style.transform = '';
-      }
-      
-      // Cycle image if dragged significantly
-      if (Math.abs(currentX) > 30 || Math.abs(currentY) > 30) {
-        images[currentImageIndex].classList.remove('active');
-        currentImageIndex = (currentImageIndex + 1) % images.length;
-        images[currentImageIndex].classList.add('active');
-        updateOverlay();
-      }
-      
-      currentX = 0;
-      currentY = 0;
-    });
-
-    // Touch support
-    tile.addEventListener('touchstart', (e) => {
-      isDragging = true;
-      const touch = e.touches[0];
-      startX = touch.clientX;
-      startY = touch.clientY;
-      tile.style.transition = 'none';
-    });
-
-    document.addEventListener('touchmove', (e) => {
-      if (!isDragging) return;
-      
-      const touch = e.touches[0];
-      const deltaX = touch.clientX - startX;
-      const deltaY = touch.clientY - startY;
-      
-      currentX = deltaX;
-      currentY = deltaY;
-      
-      tileRotateX = (deltaY / 10) * -1;
-      tileRotateY = deltaX / 10;
-      
-      if (inner) {
-        inner.style.transform = `translate(${currentX}px, ${currentY}px) rotateX(${tileRotateX}deg) rotateY(${tileRotateY}deg)`;
-      }
-    });
-
-    document.addEventListener('touchend', () => {
-      if (!isDragging) return;
-      
-      isDragging = false;
-      tile.style.transition = 'transform 0.3s ease';
-      
-      if (inner) {
-        inner.style.transform = '';
-      }
-      
-      if (Math.abs(currentX) > 30 || Math.abs(currentY) > 30) {
-        images[currentImageIndex].classList.remove('active');
-        currentImageIndex = (currentImageIndex + 1) % images.length;
-        images[currentImageIndex].classList.add('active');
-        updateOverlay();
-      }
-      
-      currentX = 0;
-      currentY = 0;
-    });
-  });
-}
+      console.log('🎉 Tile revealed and levitating!'); 
+    }; 
+    
+    tile.addEventListener('mousedown', handleStart); 
+    document.addEventListener('mousemove', handleMove); 
+    document.addEventListener('mouseup', handleEnd); 
+    
+    tile.addEventListener('touchstart', handleStart, { passive: false }); 
+    document.addEventListener('touchmove', handleMove, { passive: false }); 
+    document.addEventListener('touchend', handleEnd); 
+    
+    tile.addEventListener('mouseenter', () => { 
+      if (isRevealed && cta) { 
+        cta.style.opacity = '1'; 
+        cta.style.transform = 'translateX(-50%) translateY(-5px)'; 
+      } 
+    }); 
+    
+    tile.addEventListener('mouseleave', () => { 
+      if (isRevealed && cta) { 
+        cta.style.opacity = '0'; 
+        cta.style.transform = 'translateX(-50%) translateY(20px)'; 
+      } 
+    }); 
+  }); 
+  
+  console.log('✅ Hero tiles initialized:', tiles.length); 
+});
 
 // ===================================
 // BANNER ROTATOR
@@ -297,6 +270,7 @@ function initCardFlip() {
 function initShuffle() {
   const button = document.getElementById('shuffleButton');
   const cardsContainer = document.querySelector('.quick-tour-section');
+  if (!button) return;
   
   button.addEventListener('click', () => {
     const allCards = Array.from(document.querySelectorAll('.tour-card'));
@@ -420,7 +394,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initNavScroll();
   initMobileMenu();
   initParticles();
-  initInteractiveTiles();
   initBannerRotator();
   initCardFlip();
   initShuffle();
