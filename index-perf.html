@@ -641,6 +641,31 @@
     .banner-text .period {
       color: var(--coral);
     }
+
+    /* ═══════════════════════════════════════════════════════
+       STRATEGY STRIP (band between hero and next section)
+       ═══════════════════════════════════════════════════════ */
+    .strategy-strip {
+      background-color: #ffffff;
+      color: #111111;
+      text-align: center;
+      padding: 32px 16px;
+      width: 100%;
+    }
+    body.dark-mode .strategy-strip { background-color: #1b1b1b; color: #f5f5f5; }
+    [data-theme="dark"] .strategy-strip { background-color: #1b1b1b; color: #f5f5f5; }
+    .strategy-strip-link { text-decoration: none; color: inherit; }
+    .strategy-strip-link:hover { color: var(--coral); }
+    .strategy-strip-link:focus { outline: 2px solid var(--coral); outline-offset: 4px; }
+    .strategy-strip-question {
+      font-family: "Playfair Display", serif;
+      font-style: italic;
+      font-size: 1.5rem;
+      line-height: 1.4;
+      transition: opacity 0.25s ease;
+      cursor: pointer;
+    }
+    .strategy-strip-question.strategy-strip-fade-out { opacity: 0; }
     
     /* ═══════════════════════════════════════════════════════
        QUICK TOUR SECTION WITH ANIMATED CARDS
@@ -700,6 +725,14 @@
       gap: 2rem;
     }
     
+    /* Responsive 2x2 grid for "Know the human & professional" */
+    .cards-grid-2x2 {
+      grid-template-columns: repeat(2, 300px);
+      gap: 24px;
+      justify-content: center;
+      align-items: start;
+    }
+    
     .cards-grid-4 {
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     }
@@ -711,11 +744,13 @@
     /* Card with Flip Animation & Hover Effects */
 .tour-card {
   perspective: 1000px;
+  width: 300px;
   height: 400px;
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   position: relative;
   z-index: 1;
+  margin: 0 auto;
 }
     
 .tour-card:hover {
@@ -750,6 +785,7 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   top: 0;
   left: 0;
+  border: 1px solid var(--border-color);
 }
     
     [data-theme="dark"] .card-front,
@@ -1129,9 +1165,12 @@
       }
       
       .cards-grid-4,
-      .cards-grid-3 {
+      .cards-grid-3,
+      .cards-grid-2x2 {
         grid-template-columns: 1fr;
+        justify-items: center;
       }
+      .tour-card { width: 100%; max-width: 300px; height: 400px; }
       
       .tour-card {
         height: 350px;
@@ -1153,6 +1192,7 @@
   .tile-inner {
     height: 160px;
   }
+  .cards-grid-2x2 { grid-template-columns: 1fr; gap: 20px; }
 }
   </style>
 </head>
@@ -1356,15 +1396,15 @@
       </div>
     </section>
 
-    <!-- Banner Rotator - CLOUD DANCER BACKGROUND -->
+    <!-- Strategy Strip inside Banner Rotator (outer wrapper retained) -->
     <section class="banner-rotator">
-      <div class="banner-content">
-        <span class="banner-text active" data-font="sans">Make it clear<span class="period">.</span></span>
-        <span class="banner-text" data-font="serif">Ship beautifully<span class="period">.</span></span>
-        <span class="banner-text" data-font="accent">Scale smart<span class="period">.</span></span>
-        <span class="banner-text" data-font="serif">Design with purpose<span class="period">.</span></span>
-        <span class="banner-text" data-font="sans">Build for impact<span class="period">.</span></span>
-      </div>
+      <section class="strategy-strip">
+        <a href="/timeline.html" class="strategy-strip-link" id="strategy-strip-link">
+          <span class="strategy-strip-question" id="strategy-strip-question">
+            Curious how my work actually comes together?
+          </span>
+        </a>
+      </section>
     </section>
 
     <!-- Quick Tour Section -->
@@ -1376,7 +1416,7 @@
         <div class="cards-group">
           <h3>Know the human & professional</h3>
           <p class="start-here-helper" style="opacity:0.7; font-size:0.95rem; margin-top:8px; text-align:center;">Not sure where to begin? Start with the Timeline.</p>
-          <div class="cards-grid cards-grid-4">
+          <div class="cards-grid cards-grid-2x2" aria-label="Know the human & professional cards">
             <div class="tour-card" data-category="past-present">
               <div class="card-inner">
                 <div class="card-front">
@@ -1399,7 +1439,7 @@
               </div>
             </div>
 
-            <div class="tour-card" data-category="past-present">
+            <div class="tour-card" data-category="past-present" role="article" aria-label="About Me card">
               <div class="card-inner">
                 <div class="card-front">
                   <img src="assets/hp/AboutMe.webp" alt="About Me - Professional portrait">
@@ -1421,7 +1461,7 @@
               </div>
             </div>
 
-            <div class="tour-card" data-category="past-present">
+            <div class="tour-card" data-category="past-present" role="article" aria-label="Resume card">
               <div class="card-inner">
                 <div class="card-front">
                   <img src="assets/hp/Resume.webp" alt="Resume - Professional workspace">
@@ -1446,7 +1486,7 @@
               </div>
             </div>
 
-            <div class="tour-card" data-category="past-present">
+            <div class="tour-card" data-category="past-present" role="article" aria-label="Brand Guidelines card">
               <div class="card-inner">
                 <div class="card-front">
                   <img src="assets/hp/BrandGuidelines.webp" alt="Brand Guidelines - Coral logo embossed">
@@ -1902,18 +1942,91 @@
     // BANNER TEXT ROTATION
     // ═══════════════════════════════════════════════════════
     
-    const bannerTexts = document.querySelectorAll('.banner-text');
-    let currentBannerIndex = 0;
-    
-    function rotateBanner() {
-      if (bannerTexts.length) {
-        bannerTexts[currentBannerIndex].classList.remove('active');
-        currentBannerIndex = (currentBannerIndex + 1) % bannerTexts.length;
-        bannerTexts[currentBannerIndex].classList.add('active');
+    // Strategy strip rotation
+    const strategyItems = [
+      { text: "Curious how my work actually comes together?", href: "http://localhost:8000/timeline.html" },
+      { text: "What if your brand could actually feel human?", href: "http://localhost:8000/about.html" },
+      { text: "Got a marketing or creative challenge you can’t untangle?", href: "https://luis-gilberto.com/TheHub/" },
+      { text: "Ever wonder what happens when you slow down and actually hear yourself think?", href: "https://luis-gilberto.com/insights/proof-of-life/" },
+      { text: "What if building a portfolio was really about rebuilding yourself?", href: "https://luis-gilberto.com/insights/building-the-portfolio/" }
+    ];
+
+    const strategyQuestionEl = document.getElementById("strategy-strip-question");
+    const strategyLinkEl = document.getElementById("strategy-strip-link");
+
+    if (strategyQuestionEl && strategyLinkEl && strategyItems.length > 0) {
+      let currentIndex = 0;
+      strategyQuestionEl.textContent = strategyItems[0].text;
+      strategyLinkEl.href = strategyItems[0].href;
+      // open external links in new tab
+      function setLinkTarget(href) {
+        try {
+          const url = new URL(href, window.location.origin);
+          if (url.origin !== window.location.origin) {
+            strategyLinkEl.target = "_blank";
+            strategyLinkEl.rel = "noopener";
+          } else {
+            strategyLinkEl.removeAttribute("target");
+            strategyLinkEl.removeAttribute("rel");
+          }
+        } catch(e) {
+          strategyLinkEl.removeAttribute("target");
+          strategyLinkEl.removeAttribute("rel");
+        }
       }
+      setLinkTarget(strategyItems[0].href);
+
+      function rotateStrategyStrip() {
+        currentIndex = (currentIndex + 1) % strategyItems.length;
+        const item = strategyItems[currentIndex];
+        strategyQuestionEl.classList.add("strategy-strip-fade-out");
+        setTimeout(() => {
+          strategyQuestionEl.textContent = item.text;
+          strategyLinkEl.href = item.href;
+          setLinkTarget(item.href);
+          strategyQuestionEl.classList.remove("strategy-strip-fade-out");
+        }, 250);
+      }
+
+      setInterval(rotateStrategyStrip, 6000);
+      
+      // Automated link checking (best-effort)
+      async function checkLink(href) {
+        try {
+          const url = new URL(href, window.location.origin);
+          if (url.origin === window.location.origin) {
+            const res = await fetch(url.pathname, { method: 'HEAD' });
+            return res.ok;
+          } else {
+            // External link: attempt CORS fetch; if blocked, assume available
+            const res = await fetch(url.href, { method: 'HEAD', mode: 'cors' });
+            return res.ok;
+          }
+        } catch (e) {
+          console.warn('Link check failed:', href, e.message);
+          return false;
+        }
+      }
+      
+      async function validateLinks() {
+        const results = await Promise.all(strategyItems.map(s => checkLink(s.href)));
+        // If any link is broken, log and skip it in rotation by filtering
+        const accessible = strategyItems.filter((_, i) => results[i]);
+        if (accessible.length) {
+          // replace list with accessible ones only
+          strategyItems.splice(0, strategyItems.length, ...accessible);
+          currentIndex = 0;
+          strategyQuestionEl.textContent = strategyItems[0].text;
+          strategyLinkEl.href = strategyItems[0].href;
+          setLinkTarget(strategyItems[0].href);
+        } else {
+          console.warn('No accessible strategy links found. Retaining original list.');
+        }
+      }
+      validateLinks();
+      // re-validate every 2 minutes
+      setInterval(validateLinks, 120000);
     }
-    
-    setInterval(rotateBanner, 3000);
     
     // ═══════════════════════════════════════════════════════
     // CARD FLIP ON CLICK
