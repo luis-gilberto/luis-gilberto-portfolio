@@ -6,9 +6,9 @@ import Link from 'next/link'
 import { createClient } from '@supabase/supabase-js'
 
 // --- SUPABASE CLIENT ---
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabase = SUPABASE_URL && SUPABASE_ANON_KEY ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
 export default function Dashboard() {
   const { data: session } = useSession()
@@ -19,7 +19,10 @@ export default function Dashboard() {
   useEffect(() => {
     async function checkClientStatus() {
       if (session?.user?.email) {
-        // 1. Get User ID
+        if (!supabase) {
+          setIsLoading(false)
+          return
+        }
         const { data: user } = await supabase.from('User').select('id').eq('email', session.user.email).single();
         
         if (user) {

@@ -6,9 +6,9 @@ import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { createClient } from '@supabase/supabase-js'
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+const supabase = SUPABASE_URL && SUPABASE_ANON_KEY ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null
 
 type Deliverable = { name: string; status: string; date?: string; endDate?: string; type: string }
 type ProjectData = { id: string; title: string; status: string; risk: string; endDate: string; progress: number; deliverables: Deliverable[]; tier: string; client: string; startDate: string; totalValue: string }
@@ -30,6 +30,7 @@ export default function ProjectDetailPage() {
 
   useEffect(() => {
     const fetchProject = async (id: string) => {
+      if (!supabase) { setProject(prev => ({ ...prev, title: 'Project Not Found', status: 'Error' })); return }
       const { data: p1, error: e1 } = await supabase.from('projects').select('*').eq('id', id).single()
       let d: any = p1
       if (e1 || !p1) {
