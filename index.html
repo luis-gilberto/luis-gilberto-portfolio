@@ -131,14 +131,11 @@
     }
     
 .nav-logo img {
-  height: 32px;
+  height: 40px;
   filter: brightness(1.2);
   width: auto;
 }
-@media (min-width: 1024px) {
-  .nav-logo img { height: 40px; }
-}
-@media (max-width: 1023px) {
+@media (max-width: 768px) {
   .nav-logo img { height: 32px; }
 }
 .nav-logo { display: inline-flex; align-items: center; justify-content: center; min-width: 48px; min-height: 48px; }
@@ -808,6 +805,11 @@
   position: relative;
   z-index: 1;
   margin: 0 auto;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
     
 .tour-card:hover {
@@ -821,6 +823,7 @@
       height: 100%;
       transition: transform 0.6s;
       transform-style: preserve-3d;
+      -webkit-transform-style: preserve-3d;
     }
     
 .tour-card.flipped .card-inner {
@@ -837,6 +840,7 @@
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
@@ -1087,6 +1091,34 @@
     .tour-card-video:hover .card-hover-video {
       transform: scale(1.05);
       transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+    }
+
+    /* Mobile: Disable hover effects, only use tap */
+    @media (hover: none) and (pointer: coarse) {
+      /* Remove hover video animation on mobile */
+      .tour-card-video:hover .card-hover-video {
+        opacity: 0;
+        transform: none;
+      }
+      
+      .tour-card-video:hover .card-static-img {
+        opacity: 1;
+      }
+      
+      /* Show video only when card has 'playing' class */
+      .tour-card-video.playing .card-hover-video {
+        opacity: 1;
+        z-index: 2;
+      }
+      
+      .tour-card-video.playing .card-static-img {
+        opacity: 0;
+      }
+      
+      /* Prevent hover scale on mobile */
+      .tour-card-video:hover .card-hover-video {
+        transform: scale(1);
+      }
     }
     
     .shuffle-container {
@@ -2281,15 +2313,126 @@
     }
     
     // ═══════════════════════════════════════════════════════
-    // CARD FLIP ON CLICK
+    // MOBILE-AWARE CARD LOGIC (VIDEO + FLIP)
     // ═══════════════════════════════════════════════════════
-    
-    document.querySelectorAll('.tour-card').forEach(card => {
-      card.addEventListener('click', function(e) {
-        // Don't flip if clicking on a link
-        if (!e.target.closest('.card-cta, .card-cta-coral, .card-cta-teal, .card-cta-deep-blue')) {
-          this.classList.toggle('flipped');
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const videoCards = document.querySelectorAll('.tour-card-video');
+      const allCards = document.querySelectorAll('.tour-card');
+      
+      // Check if device is mobile/touch
+      const isMobile = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+      
+      videoCards.forEach(card => {
+        const video = card.querySelector('.card-hover-video');
+        
+        if (!video) return;
+        
+        // Pause video initially
+        video.pause();
+        
+        if (isMobile) {
+          // ===== MOBILE: Touch-based video control =====
+          let touchStartTime = 0;
+          let longPressTimer = null;
+          const longPressDuration = 500; // 500ms = half second
+          
+          // Start tracking touch
+          card.addEventListener('touchstart', (e) => {
+            touchStartTime = Date.now();
+            
+            // Start long press timer
+            longPressTimer = setTimeout(() => {
+              // Long press detected - play video
+              if (!card.classList.contains('flipped')) {
+                card.classList.add('playing');
+                video.play().catch(err => console.log('Video play failed:', err));
+              }
+            }, longPressDuration);
+          });
+          
+          // Cancel long press if finger moves
+          card.addEventListener('touchmove', () => {
+            clearTimeout(longPressTimer);
+          });
+          
+          // Handle touch end
+          card.addEventListener('touchend', (e) => {
+            const touchDuration = Date.now() - touchStartTime;
+            clearTimeout(longPressTimer);
+            
+            // If it was a quick tap (not long press)
+            if (touchDuration < longPressDuration) {
+              // Stop video if playing
+              if (card.classList.contains('playing')) {
+                card.classList.remove('playing');
+                video.pause();
+                video.currentTime = 0;
+              }
+              // Quick tap = flip card
+              // (Let the existing flip logic handle it)
+            } else {
+              // Long press ended - stop video
+              card.classList.remove('playing');
+              video.pause();
+              video.currentTime = 0;
+            }
+          });
+          
+          // Cancel long press if touch is cancelled
+          card.addEventListener('touchcancel', () => {
+            clearTimeout(longPressTimer);
+            card.classList.remove('playing');
+            video.pause();
+            video.currentTime = 0;
+          });
+          
+        } else {
+          // ===== DESKTOP: Hover-based video control =====
+          card.addEventListener('mouseenter', () => {
+            if (!card.classList.contains('flipped')) {
+              video.play().catch(err => console.log('Video play failed:', err));
+            }
+          });
+          
+          card.addEventListener('mouseleave', () => {
+            video.pause();
+            video.currentTime = 0;
+          });
         }
+        
+        // Pause video when card is flipped (both mobile and desktop)
+        card.addEventListener('click', () => {
+          if (card.classList.contains('flipped')) {
+            video.pause();
+            card.classList.remove('playing');
+          }
+        });
+      });
+      
+      // ===== CARD FLIP LOGIC (for all cards) =====
+      allCards.forEach(card => {
+        card.addEventListener('click', function(e) {
+          // Don't flip if clicking on a link
+          if (e.target.closest('.card-cta, .card-cta-coral, .card-cta-teal, .card-cta-deep-blue')) {
+            return;
+          }
+
+          // Prevent flip during long press on mobile
+          if (isMobile && card.classList.contains('playing')) {
+            return;
+          }
+          
+          // Toggle flip
+          this.classList.toggle('flipped');
+          
+          // Close other flipped cards
+          allCards.forEach(otherCard => {
+            if (otherCard !== this && otherCard.classList.contains('flipped')) {
+              otherCard.classList.remove('flipped');
+            }
+          });
+        });
       });
     });
 
@@ -2384,35 +2527,6 @@
     
     console.log('✅ All JavaScript initialized successfully!');
   </script>
-  <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const videoCards = document.querySelectorAll('.tour-card-video');
-    
-    videoCards.forEach(card => {
-      const video = card.querySelector('.card-hover-video');
-      
-      if (video) {
-        video.pause();
-        
-        card.addEventListener('mouseenter', () => {
-          video.play().catch(err => {
-            console.log('Video play failed:', err);
-          });
-        });
-        
-        card.addEventListener('mouseleave', () => {
-          video.pause();
-          video.currentTime = 0;
-        });
-        
-        card.addEventListener('click', () => {
-          if (card.classList.contains('flipped')) {
-            video.pause();
-          }
-        });
-      }
-    });
-  });
-  </script>
+
 </body>
 </html>
