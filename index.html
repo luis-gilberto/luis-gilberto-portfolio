@@ -1043,36 +1043,40 @@
       opacity: 1;
     }
 
-    /* ═══════════════════════════════════════════════════════
-       HOVER VIDEO ANIMATIONS FOR ALL CARDS
-       ═══════════════════════════════════════════════════════ */
-
-    /* Video hover animation */
-    .card-hover-video {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 0;
-      transition: opacity 0.4s ease;
-      z-index: 1;
-      pointer-events: none;
-    }
-
-    .card-static-img {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 1;
-      transition: opacity 0.4s ease;
-      z-index: 2;
-    }
-
+    /* ═══════════════════════════════════════════════════════ 
+       HOVER VIDEO - JS CONTROLLED (no CSS :hover rules) 
+       ═══════════════════════════════════════════════════════ */ 
+ 
+ 
+    /* Video element - hidden by default, shown via JS */ 
+    .card-hover-video { 
+      position: absolute; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%; 
+      object-fit: cover; 
+      opacity: 0; 
+      transition: opacity 0.4s ease; 
+      z-index: 1; 
+      pointer-events: none; 
+    } 
+ 
+ 
+    /* Static image - visible by default */ 
+    .card-static-img { 
+      position: absolute; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%; 
+      object-fit: cover; 
+      opacity: 1; 
+      transition: opacity 0.4s ease, transform 0.5s ease; 
+      z-index: 2; 
+    } 
+ 
+    /* Keep these z-index fixes to ensure content is visible */
     .card-overlay {
       z-index: 4;
     }
@@ -1084,25 +1088,20 @@
     .card-front h3 {
       z-index: 5;
     }
-
-    /* Desktop hover */
-    @media (hover: hover) and (pointer: fine) {
-      .tour-card-video:hover .card-hover-video {
-        opacity: 1;
-        z-index: 3;
-      }
-      
-      .tour-card-video:hover .card-static-img {
-        opacity: 0;
-      }
+ 
+    /* Subtle scale on hover for static image */ 
+    .tour-card:hover .card-static-img { 
+      transform: scale(1.05); 
+    } 
+ 
+ 
+    /* Mobile: video enabled for tap interaction 
+    @media (hover: none) and (pointer: coarse) { 
+      .card-hover-video { 
+        display: none !important; 
+      } 
     }
-
-    /* Mobile: no hover, video stays hidden */
-    @media (hover: none) and (pointer: coarse) {
-      .card-hover-video {
-        display: none;
-      }
-    }
+    */
     
     .shuffle-container {
       text-align: center;
@@ -1618,7 +1617,7 @@
                   <img src="assets/hp/Timeline.webp" alt="Timeline" class="card-static-img">
                   
                   <!-- Hover video -->
-                  <video autoplay loop muted playsinline class="card-hover-video">
+                  <video loop muted playsinline class="card-hover-video">
                     <source src="assets/hp/timeline_hover.webm" type="video/webm">
                     <source src="assets/hp/timeline_hover.mp4" type="video/mp4">
                   </video>
@@ -1650,7 +1649,7 @@
                   <img src="assets/hp/AboutMe.webp" alt="About Me - Professional portrait" class="card-static-img">
                   
                   <!-- Hover video (hidden by default) -->
-                  <video autoplay loop muted playsinline class="card-hover-video">
+                  <video loop muted playsinline class="card-hover-video">
                     <source src="assets/hp/luis_hover.webm" type="video/webm">
                     <source src="assets/hp/luis_hover.mp4" type="video/mp4">
                   </video>
@@ -1680,7 +1679,7 @@
                   <img src="assets/hp/Resume.webp" alt="Resume" class="card-static-img">
                   
                   <!-- Hover video -->
-                  <video autoplay loop muted playsinline class="card-hover-video">
+                  <video loop muted playsinline class="card-hover-video">
                     <source src="assets/hp/cv_hover.webm" type="video/webm">
                     <source src="assets/hp/cv_hover.mp4" type="video/mp4">
                   </video>
@@ -1715,7 +1714,7 @@
                   <img src="assets/hp/BrandGuidelines.webp" alt="Brand Guidelines" class="card-static-img">
                   
                   <!-- Hover video -->
-                  <video autoplay loop muted playsinline class="card-hover-video">
+                  <video loop muted playsinline class="card-hover-video">
                     <source src="assets/hp/brand_hover.webm" type="video/webm">
                     <source src="assets/hp/brand_hover.mp4" type="video/mp4">
                   </video>
@@ -2391,55 +2390,157 @@
     console.log('✅ All JavaScript initialized successfully!');
   </script>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const videoCards = document.querySelectorAll('.tour-card-video');
-      const allCards = document.querySelectorAll('.tour-card');
-      
-      videoCards.forEach(card => {
-        const video = card.querySelector('.card-hover-video');
-        if (!video) return;
-        
-        // Pause initially
-        video.pause();
-        video.currentTime = 0;
-        
-        // DESKTOP: Hover to play
-        card.addEventListener('mouseenter', () => {
-          if (!card.classList.contains('flipped')) {
-            video.currentTime = 0;
-            video.play().catch(e => console.log('Play failed:', e));
-          }
-        });
-        
-        card.addEventListener('mouseleave', () => {
-          video.pause();
-          video.currentTime = 0;
-        });
-      });
-      
-      // CARD FLIP (all cards)
-      allCards.forEach(card => {
-        card.addEventListener('click', function() {
-          this.classList.toggle('flipped');
-          
-          // Pause video if flipping
-          const video = this.querySelector('.card-hover-video');
-          if (video) {
-            video.pause();
-            video.currentTime = 0;
-          }
-          
-          // Close other cards
-          allCards.forEach(otherCard => {
-            if (otherCard !== this) {
-              otherCard.classList.remove('flipped');
-            }
-          });
-        });
-      });
-    });
-  </script>
+<script> 
+ document.addEventListener('DOMContentLoaded', function() { 
+   const videoCards = document.querySelectorAll('.tour-card-video'); 
+   const allCards = document.querySelectorAll('.tour-card'); 
+   
+   const hasFinPointer = window.matchMedia('(pointer: fine)').matches; 
+   
+   videoCards.forEach(card => { 
+     const video = card.querySelector('.card-hover-video'); 
+     const staticImg = card.querySelector('.card-static-img'); 
+     
+     if (!video) return; 
+     
+     video.pause(); 
+     video.currentTime = 0; 
+     video.style.opacity = '0'; 
+     
+     // Track if video is currently showing (for mobile tap toggle) 
+     let videoShowing = false; 
+     
+     if (hasFinPointer) { 
+       // DESKTOP: Mouse hover plays video 
+       card.addEventListener('mouseenter', function() { 
+         if (card.classList.contains('flipped')) return; 
+         
+         video.style.zIndex = '3'; 
+         video.style.opacity = '1'; 
+         if (staticImg) staticImg.style.opacity = '0'; 
+         
+         video.currentTime = 0; 
+         video.play().catch(e => console.log('Video play blocked:', e)); 
+       }); 
+       
+       card.addEventListener('mouseleave', function() { 
+         video.style.opacity = '0'; 
+         video.style.zIndex = '1'; 
+         video.pause(); 
+         video.currentTime = 0; 
+         if (staticImg) staticImg.style.opacity = '1'; 
+       }); 
+     } else { 
+       // MOBILE/TABLET: Tap to show video, tap again to flip 
+       card.addEventListener('click', function(e) { 
+         if (e.target.closest('a')) return; 
+         
+         if (card.classList.contains('flipped')) { 
+           // If already flipped, unflip 
+           card.classList.remove('flipped'); 
+           return; 
+         } 
+         
+         if (!videoShowing) { 
+           // First tap: show video 
+           video.style.zIndex = '3'; 
+           video.style.opacity = '1'; 
+           if (staticImg) staticImg.style.opacity = '0'; 
+           
+           video.currentTime = 0; 
+           video.play().catch(e => console.log('Video play blocked:', e)); 
+           videoShowing = true; 
+           
+           // Prevent the general card click handler from firing 
+           e.stopPropagation(); 
+         } else { 
+           // Second tap: hide video and flip card 
+           video.style.opacity = '0'; 
+           video.style.zIndex = '1'; 
+           video.pause(); 
+           video.currentTime = 0; 
+           if (staticImg) staticImg.style.opacity = '1'; 
+           videoShowing = false; 
+           
+           card.classList.add('flipped'); 
+           
+           // Close other flipped cards 
+           allCards.forEach(otherCard => { 
+             if (otherCard !== card && otherCard.classList.contains('flipped')) { 
+               otherCard.classList.remove('flipped'); 
+             } 
+           }); 
+           
+           e.stopPropagation(); 
+         } 
+       }); 
+     } 
+   }); 
+ 
+   // DESKTOP: Card flip logic for all cards (including non-video cards) 
+   if (hasFinPointer) { 
+     allCards.forEach(card => { 
+       card.addEventListener('click', function(e) { 
+         if (e.target.closest('a')) return; 
+         
+         this.classList.toggle('flipped'); 
+         
+         const video = this.querySelector('.card-hover-video'); 
+         const staticImg = this.querySelector('.card-static-img'); 
+         if (video) { 
+           video.pause(); 
+           video.currentTime = 0; 
+           video.style.opacity = '0'; 
+           video.style.zIndex = '1'; 
+         } 
+         if (staticImg) staticImg.style.opacity = '1'; 
+         
+         allCards.forEach(otherCard => { 
+           if (otherCard !== this && otherCard.classList.contains('flipped')) { 
+             otherCard.classList.remove('flipped'); 
+           } 
+         }); 
+       }); 
+     }); 
+   } else { 
+     // MOBILE: Handle non-video cards (they just flip on tap) 
+     allCards.forEach(card => { 
+       if (!card.classList.contains('tour-card-video')) { 
+         card.addEventListener('click', function(e) { 
+           if (e.target.closest('a')) return; 
+           
+           this.classList.toggle('flipped'); 
+           
+           allCards.forEach(otherCard => { 
+             if (otherCard !== this && otherCard.classList.contains('flipped')) { 
+               otherCard.classList.remove('flipped'); 
+             } 
+           }); 
+         }); 
+       } 
+     }); 
+   } 
+   
+   // Click outside to close flipped cards and reset videos 
+   document.addEventListener('click', function(e) { 
+     if (!e.target.closest('.tour-card')) { 
+       allCards.forEach(card => { 
+         card.classList.remove('flipped'); 
+         
+         const video = card.querySelector('.card-hover-video'); 
+         const staticImg = card.querySelector('.card-static-img'); 
+         if (video) { 
+           video.pause(); 
+           video.currentTime = 0; 
+           video.style.opacity = '0'; 
+           video.style.zIndex = '1'; 
+         } 
+         if (staticImg) staticImg.style.opacity = '1'; 
+       }); 
+     } 
+   }); 
+ }); 
+ </script>
 
 </body>
 </html>
