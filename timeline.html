@@ -18,10 +18,11 @@
             --coral-light: rgba(249, 111, 110, 0.1);
             --coral-medium: rgba(249, 111, 110, 0.3);
             --teal: #2ED3C6;
+            --cloud-dancer: #F7F5F2;
             
             /* Light Mode Backgrounds */
-            --bg-primary: #FFFFFF;
-            --bg-secondary: #F8F8F8;
+            --bg-primary: #F7F5F2;
+            --bg-secondary: #FFFFFF;
             --bg-tertiary: #F0F0F0;
             --card-bg: #FFFFFF;
             
@@ -126,20 +127,15 @@
         }
 
         .moon-icon {
-            display: block;
+            display: none;
         }
 
         .sun-icon {
-            display: none;
-        }
-
-        [data-theme="dark"] .sun-icon {
             display: block;
         }
 
-        [data-theme="dark"] .moon-icon {
-            display: none;
-        }
+        [data-theme="dark"] .sun-icon { display: none; }
+        [data-theme="dark"] .moon-icon { display: block; }
 
         /* ========================================
            TWO-TIER NAVIGATION SYSTEM
@@ -281,8 +277,8 @@
         }
 
         /* Mobile Menu Overlay */
-        .mobile-menu-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 2000; opacity: 0; transition: opacity 0.3s ease; pointer-events: none; }
-        .mobile-menu-overlay.active { opacity: 1; pointer-events: auto; }
+        .mobile-menu-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 2000; opacity: 0; transition: opacity 0.3s ease; pointer-events: none; visibility: hidden; }
+        .mobile-menu-overlay.active { opacity: 1; pointer-events: auto; visibility: visible; }
 
         .mobile-drawer { position: absolute; top: 0; right: 0; height: 100vh; width: 85vw; max-width: 400px; background: #000000; box-shadow: -12px 0 30px rgba(0,0,0,0.4); transform: translateX(100%); transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); overflow-y: auto; }
         .mobile-menu-overlay.active .mobile-drawer { transform: translateX(0); }
@@ -1647,21 +1643,9 @@
 </footer>
 
     <script>
-        document.getElementById('currentYearTimeline').textContent = new Date().getFullYear();
+        const _cy = document.getElementById('currentYearTimeline'); if (_cy) { _cy.textContent = new Date().getFullYear(); }
         
-        // Theme Toggle
-        const themeToggle = document.getElementById('themeToggle');
         const htmlElement = document.documentElement;
-        
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        htmlElement.setAttribute('data-theme', currentTheme);
-        
-        themeToggle.addEventListener('click', () => {
-            const theme = htmlElement.getAttribute('data-theme');
-            const newTheme = theme === 'light' ? 'dark' : 'light';
-            htmlElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-        });
 
         // Dark-mode particles
         let _particleRAF;
@@ -1689,71 +1673,82 @@
             animate();
         }
         function destroyParticles() { if (_particleRAF) cancelAnimationFrame(_particleRAF); }
-        if (htmlElement.getAttribute('data-theme') === 'dark') { initParticleCanvas(); }
-        themeToggle.addEventListener('click', () => {
+        function applyParticlesForTheme() {
             const isDark = htmlElement.getAttribute('data-theme') === 'dark';
-            if (isDark) initParticleCanvas(); else destroyParticles();
-        });
-
-        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-        const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
-        const mobileMenuClose = document.getElementById('mobileMenuClose');
-
-        if (mobileMenuToggle && mobileMenuOverlay) {
-            mobileMenuToggle.addEventListener('click', () => {
-                mobileMenuOverlay.classList.add('active');
-                mobileMenuOverlay.setAttribute('aria-hidden','false');
-                document.body.style.overflow = 'hidden';
-                if (mobileMenuClose) mobileMenuClose.focus();
-                setMobileNavActive();
-            });
-
-            function closeDrawer() {
-                mobileMenuOverlay.classList.remove('active');
-                mobileMenuOverlay.setAttribute('aria-hidden','true');
-                document.body.style.overflow = '';
-                mobileMenuToggle.focus();
-            }
-
-            if (mobileMenuClose) {
-                mobileMenuClose.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    closeDrawer();
-                });
-            }
-
-            mobileMenuOverlay.addEventListener('click', (e) => {
-                if (e.target === mobileMenuOverlay) {
-                    closeDrawer();
-                }
-            });
-
-            const menuContent = mobileMenuOverlay.querySelector('.mobile-menu-content');
-            if (menuContent) {
-                menuContent.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                });
-                const mobileLinks = mobileMenuOverlay.querySelectorAll('.mobile-nav-link-primary, .mobile-nav-link-secondary');
-                mobileLinks.forEach(link => {
-                    link.addEventListener('click', () => closeDrawer());
-                });
-            }
-
-            document.addEventListener('keydown', (e) => {
-                if (!mobileMenuOverlay.classList.contains('active')) return;
-                if (e.key === 'Escape') closeDrawer();
-            });
+            if (isDark) { initParticleCanvas(); } else { destroyParticles(); }
         }
 
-        const mobileThemeToggle = document.getElementById('mobileThemeToggle');
-        if (mobileThemeToggle) {
-            mobileThemeToggle.addEventListener('click', () => {
-                const html = document.documentElement;
-                const currentTheme = html.getAttribute('data-theme');
-                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-                html.setAttribute('data-theme', newTheme);
+        function initMobileMenu() {
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+            const mobileMenuClose = document.getElementById('mobileMenuClose');
+
+            if (mobileMenuToggle && mobileMenuOverlay) {
+                mobileMenuToggle.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    mobileMenuOverlay.classList.add('active');
+                    mobileMenuOverlay.setAttribute('aria-hidden','false');
+                    document.body.style.overflow = 'hidden';
+                    if (mobileMenuClose) mobileMenuClose.focus();
+                    setMobileNavActive();
+                });
+
+                function closeDrawer() {
+                    mobileMenuOverlay.classList.remove('active');
+                    mobileMenuOverlay.setAttribute('aria-hidden','true');
+                    document.body.style.overflow = '';
+                    mobileMenuToggle.focus();
+                }
+
+                if (mobileMenuClose) {
+                    mobileMenuClose.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        closeDrawer();
+                    });
+                }
+
+                mobileMenuOverlay.addEventListener('click', (e) => {
+                    if (e.target === mobileMenuOverlay) {
+                        closeDrawer();
+                    }
+                });
+
+                const menuContent = mobileMenuOverlay.querySelector('.mobile-menu-content');
+                if (menuContent) {
+                    menuContent.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                    });
+                    const mobileLinks = mobileMenuOverlay.querySelectorAll('.mobile-nav-link-primary, .mobile-nav-link-secondary');
+                    mobileLinks.forEach(link => {
+                        link.addEventListener('click', () => closeDrawer());
+                    });
+                }
+
+                document.addEventListener('keydown', (e) => {
+                    if (!mobileMenuOverlay.classList.contains('active')) return;
+                    if (e.key === 'Escape') closeDrawer();
+                });
+            }
+        }
+
+        function initThemeToggle() {
+            const themeToggle = document.getElementById('themeToggle');
+            const mobileThemeToggle = document.getElementById('mobileThemeToggle');
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            htmlElement.setAttribute('data-theme', currentTheme);
+
+            function toggleTheme() {
+                const theme = htmlElement.getAttribute('data-theme');
+                const newTheme = theme === 'light' ? 'dark' : 'light';
+                htmlElement.setAttribute('data-theme', newTheme);
                 localStorage.setItem('theme', newTheme);
-            });
+                applyParticlesForTheme();
+            }
+
+            if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
+            if (mobileThemeToggle) mobileThemeToggle.addEventListener('click', toggleTheme);
+
+            applyParticlesForTheme();
         }
 
         function setMobileNavActive() {
@@ -1787,7 +1782,12 @@
           }
         }
 
-        document.addEventListener('DOMContentLoaded', setMobileNavActive);
+        function _safe(fn) { try { fn(); } catch (e) { console.error('Initialization error:', e); } }
+        document.addEventListener('DOMContentLoaded', () => {
+            _safe(initThemeToggle);
+            _safe(initMobileMenu);
+            _safe(setMobileNavActive);
+        });
 
         // Timeline data
         const timelineData = {
@@ -1993,32 +1993,25 @@
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
 
-        function updateFilmstrip() {
-            const translateX = -(currentIndex * (320 + 16));
-            cardsContainer.style.transform = `translateX(${translateX}px)`;
-            
-            const progressPercent = ((currentIndex + 1) / totalCards) * 100;
-            progressBar.style.width = `${progressPercent}%`;
-            
-            prevBtn.disabled = currentIndex === 0;
-            nextBtn.disabled = currentIndex === totalCards - 1;
+        if (cardsContainer && progressBar && prevBtn && nextBtn) {
+            function updateFilmstrip() {
+                const translateX = -(currentIndex * (320 + 16));
+                cardsContainer.style.transform = `translateX(${translateX}px)`;
+                const progressPercent = ((currentIndex + 1) / totalCards) * 100;
+                progressBar.style.width = `${progressPercent}%`;
+                prevBtn.disabled = currentIndex === 0;
+                nextBtn.disabled = currentIndex === totalCards - 1;
+            }
+            prevBtn.addEventListener('click', () => {
+                if (currentIndex > 0) { currentIndex--; updateFilmstrip(); }
+            });
+            nextBtn.addEventListener('click', () => {
+                if (currentIndex < totalCards - 1) { currentIndex++; updateFilmstrip(); }
+            });
+            updateFilmstrip();
+        } else {
+            console.warn('Filmstrip elements missing; carousel initialization skipped.');
         }
-
-        prevBtn.addEventListener('click', () => {
-            if (currentIndex > 0) {
-                currentIndex--;
-                updateFilmstrip();
-            }
-        });
-
-        nextBtn.addEventListener('click', () => {
-            if (currentIndex < totalCards - 1) {
-                currentIndex++;
-                updateFilmstrip();
-            }
-        });
-
-        updateFilmstrip();
 
         // Modal
         const modal = document.getElementById('timeline-modal');
