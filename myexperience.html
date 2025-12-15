@@ -74,6 +74,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            cursor: none;
         }
 
         /* Background Animation & Texture */
@@ -517,6 +518,14 @@
             .top-metrics-grid, .detail-metrics-grid { grid-template-columns: 1fr; }
         }
 
+        #cursor-lens { position: fixed; pointer-events: none; z-index: 9999; width: 40px; height: 40px; transform: translate(-50%, -50%); transition: all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .lens-outer { position: absolute; top: 50%; left: 50%; width: 40px; height: 40px; border: 2px solid var(--coral); border-radius: 50%; transform: translate(-50%, -50%); opacity: 0.4; transition: all 0.2s ease; }
+        .lens-middle { position: absolute; top: 50%; left: 50%; width: 24px; height: 24px; border: 1.5px solid rgba(255, 255, 255, 0.3); border-radius: 50%; transform: translate(-50%, -50%); opacity: 0.3; transition: all 0.2s ease; }
+        .lens-center { position: absolute; top: 50%; left: 50%; width: 6px; height: 6px; background: var(--teal); border-radius: 50%; transform: translate(-50%, -50%); opacity: 0.8; transition: all 0.2s ease; }
+        body.cursor-hover #cursor-lens .lens-outer { width: 60px; height: 60px; opacity: 0.6; border-color: var(--teal); }
+        body.cursor-hover #cursor-lens .lens-middle { width: 36px; height: 36px; opacity: 0.5; }
+        body.cursor-hover #cursor-lens .lens-center { width: 10px; height: 10px; opacity: 1; background: var(--coral); }
+        @media (pointer: coarse) { #cursor-lens { display: none !important; } body { cursor: auto !important; } }
     </style>
     <style>
         /* Sub-Navigation Styles (Unified with About page) */
@@ -631,7 +640,8 @@
         }
     </style>
 </head>
-    <body>
+<body>
+    <div id="cursor-lens"><div class="lens-outer"></div><div class="lens-middle"></div><div class="lens-center"></div></div>
     <div class="particle-container"><canvas id="particleCanvas"></canvas></div>
 
     <header class="primary-nav" id="primaryNav">
@@ -701,7 +711,7 @@
         <a href="/timeline.html" class="subnav-link">Timeline</a>
         <a href="/myexperience.html" class="subnav-link active">Experience</a>
         <a href="/about.html" class="subnav-link">About</a>
-        <a href="/brand-guidelines/" class="subnav-link">Brand</a>
+        <a href="/brand-guidelines.html" class="subnav-link">Brand</a>
       </div>
     </nav>
 
@@ -731,7 +741,7 @@
             <a href="/timeline.html" class="mobile-nav-link-secondary">Timeline</a>
             <a href="/myexperience.html" class="mobile-nav-link-secondary active">Experience</a>
             <a href="/about.html" class="mobile-nav-link-secondary">About</a>
-            <a href="/brand-guidelines/" class="mobile-nav-link-secondary">Brand</a>
+            <a href="/brand-guidelines.html" class="mobile-nav-link-secondary">Brand</a>
           </div>
         </div>
       </div>
@@ -1241,7 +1251,7 @@
                     <li><a href="/timeline.html" style="font-size: 0.875rem; font-weight: 500; color: rgba(255,255,255,0.75); text-decoration: none;">Timeline</a></li>
                     <li><a href="/myexperience.html" style="font-size: 0.875rem; font-weight: 500; color: rgba(255,255,255,0.75); text-decoration: none;">Experience</a></li>
                     <li><a href="/about.html" style="font-size: 0.875rem; font-weight: 500; color: rgba(255,255,255,0.75); text-decoration: none;">About</a></li>
-                    <li><a href="/brand-guidelines/" style="font-size: 0.875rem; font-weight: 500; color: rgba(255,255,255,0.75); text-decoration: none;">Brand Guidelines</a></li>
+                    <li><a href="/brand-guidelines.html" style="font-size: 0.875rem; font-weight: 500; color: rgba(255,255,255,0.75); text-decoration: none;">Brand Guidelines</a></li>
                 </ul>
             </nav>
 
@@ -1559,6 +1569,23 @@
     </script>
     <script>
       document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
+    <script>
+        (function(){
+            const cursor = document.getElementById('cursor-lens');
+            const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
+            if (!isCoarsePointer && cursor) {
+                document.addEventListener('mousemove', (e) => {
+                    cursor.style.left = e.clientX + 'px';
+                    cursor.style.top = e.clientY + 'px';
+                });
+                const interactiveSelectors = 'a, button, .card, .interactive-card, .mobile-menu-close, .mobile-nav-link-primary, .mobile-nav-link-secondary, .subnav-link';
+                document.querySelectorAll(interactiveSelectors).forEach(el => {
+                    el.addEventListener('mouseenter', () => { document.body.classList.add('cursor-hover'); });
+                    el.addEventListener('mouseleave', () => { document.body.classList.remove('cursor-hover'); });
+                });
+            }
+        })();
     </script>
 </body>
 </html>
