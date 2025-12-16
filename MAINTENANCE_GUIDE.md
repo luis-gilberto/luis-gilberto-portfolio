@@ -112,6 +112,7 @@ validateNavigation();
 - `myexperience.html` - Experience page
 - `timeline.html` - Timeline page
 - `cv.html` - Resume page
+- `brand/index.html` - Brand Page
 
 #### Avoid Editing:
 - Backup files (`*_backup.html`)

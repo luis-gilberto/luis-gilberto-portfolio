@@ -463,7 +463,7 @@ class HubSystem {
                     <img src="${basePrefix}assets/icons/system.png" class="footer-icon" alt="" width="24" height="24" aria-hidden="true" />
                     <span>The System</span>
                   </a>
-                  <a href="${basePrefix}brand-guidelines/" class="footer-link">
+                  <a href="${basePrefix}brand/" class="footer-link">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <rect x="3" y="3" width="8" height="8" rx="2" stroke="currentColor" stroke-width="2" />
                       <rect x="3" y="13" width="8" height="8" rx="2" stroke="currentColor" stroke-width="2" />
