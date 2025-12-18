@@ -82,6 +82,12 @@ body {
     padding-top: 112px;
 }
 
+@media (max-width: 768px) {
+    body {
+        padding-top: 64px;
+    }
+}
+
 /* ===== AMBIENT BACKGROUND ===== */
 .ambient-background {
     position: fixed;
@@ -402,69 +408,183 @@ body {
 .mobile-menu-overlay {
     position: fixed;
     inset: 0;
-    background: var(--bg-body);
-    z-index: 999;
-    display: none;
-    padding: 6rem 2rem 2rem;
-    overflow-y: auto;
+    background: rgba(0,0,0,0.35);
+    z-index: 2000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
 }
 
 .mobile-menu-overlay.active {
-    display: block;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.mobile-drawer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 85vw;
+    max-width: 400px;
+    background: #000000;
+    box-shadow: -12px 0 30px rgba(0,0,0,0.4);
+    transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow-y: auto;
+}
+
+.mobile-menu-overlay.active .mobile-drawer {
+    transform: translateX(0);
+}
+
+.mobile-menu-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #ffffff;
+    font-size: 32px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    z-index: 10;
+}
+
+.mobile-menu-close:hover {
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .mobile-menu-content {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 0;
+    padding: 1.5rem 1.5rem 2rem;
+}
+
+.mobile-drawer-header {
+    padding: 2rem 0 2rem 0.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 2rem;
+}
+
+.mobile-drawer-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.mobile-drawer-name {
+    font-family: var(--font-narrative);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+}
+
+.mobile-drawer-role {
+    font-family: var(--font-system);
+    font-size: 0.8125rem;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 0.02em;
 }
 
 .mobile-nav-section {
-    border-bottom: 1px solid var(--glass-border);
-    padding-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 2.5rem;
+}
+
+.mobile-nav-section:last-child {
+    margin-bottom: 1rem;
 }
 
 .mobile-nav-label {
-    font-family: var(--font-architect);
-    font-size: 0.75rem;
-    letter-spacing: 0.15em;
+    font-family: var(--font-system);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--text-secondary);
-    margin-bottom: 1rem;
+    color: rgba(255, 255, 255, 0.4);
+    margin-bottom: 1.25rem;
+    padding-left: 0.25rem;
 }
 
 .mobile-nav-link-primary {
     display: block;
     font-family: var(--font-narrative);
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--text-primary);
+    font-size: 1.75rem;
+    font-weight: 500;
+    line-height: 1.3;
+    color: rgba(255, 255, 255, 0.85);
+    padding: 0.5rem 0.25rem;
+    transition: all 0.2s ease;
     text-decoration: none;
-    margin-bottom: 1rem;
-    transition: color 0.2s ease;
+    letter-spacing: -0.01em;
+    position: relative;
+}
+
+.mobile-nav-link-primary:hover {
+    color: #ffffff;
+    transform: translateX(4px);
 }
 
 .mobile-nav-link-primary.active {
     color: var(--coral);
+    font-weight: 600;
+}
+
+.mobile-nav-link-primary.active::before {
+    content: '';
+    position: absolute;
+    left: -0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 24px;
+    background: var(--coral);
+    border-radius: 2px;
 }
 
 .mobile-nav-link-secondary {
     display: block;
     font-family: var(--font-system);
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: var(--text-secondary);
-    text-decoration: none;
-    margin-bottom: 0.75rem;
-    padding-left: 0;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.65);
+    padding: 0.625rem 0.25rem;
     transition: all 0.2s ease;
+    text-decoration: none;
+    position: relative;
+}
+
+.mobile-nav-link-secondary:hover {
+    color: rgba(255, 255, 255, 0.9);
+    transform: translateX(4px);
 }
 
 .mobile-nav-link-secondary.active {
     color: var(--coral);
-    font-weight: 700;
-    padding-left: 12px;
-    border-left: 3px solid var(--coral);
+    font-weight: 600;
+}
+
+.mobile-nav-link-secondary.active::before {
+    content: '';
+    position: absolute;
+    left: -0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2px;
+    height: 16px;
+    background: var(--coral);
+    border-radius: 2px;
 }
 
 /* ===== HERO SECTION ===== */
@@ -479,7 +599,7 @@ body {
 .hero-eyebrow {
     font-family: var(--font-architect);
     font-size: 0.875rem;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.2em;
     color: var(--coral);
     margin-bottom: var(--space-sm);
     text-transform: uppercase;
@@ -583,7 +703,7 @@ body {
 .section-label {
     font-family: var(--font-architect);
     font-size: 0.875rem;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--coral);
     margin-bottom: var(--space-sm);
@@ -607,6 +727,13 @@ body {
     margin-bottom: var(--space-lg);
 }
 
+@media (max-width: 768px) {
+    .section-description {
+        font-size: 1rem;
+        line-height: 1.7;
+    }
+}
+
 /* ===== SCROLL ANIMATIONS ===== */
 [data-animate] {
     opacity: 0;
@@ -618,6 +745,9 @@ body {
     opacity: 1;
     transform: translateY(0);
 }
+
+/* Prevent flash of unstyled content */
+.hero-eyebrow, .hero-title, .hero-subtitle, .hero-description { will-change: transform, opacity; }
 
 [data-animate][data-delay="0"] { transition-delay: 0s; }
 [data-animate][data-delay="100"] { transition-delay: 0.1s; }
@@ -648,6 +778,13 @@ body {
     margin-bottom: var(--space-lg);
 }
 
+@media (max-width: 768px) {
+    .trinity-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+}
+
 .trinity-card {
     background: var(--bg-card);
     padding: var(--space-md);
@@ -660,7 +797,7 @@ body {
     border-radius: 12px;
     box-shadow: 0 4px 16px rgba(0,0,0,0.1);
     overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .trinity-card:hover {
@@ -754,7 +891,7 @@ body {
     font-family: var(--font-architect);
     text-transform: uppercase;
     font-size: 0.75rem;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.15em;
     color: var(--text-secondary);
     display: block;
     margin-bottom: 0.25rem;
@@ -802,6 +939,13 @@ body {
     margin-bottom: 2rem;
 }
 
+@media (max-width: 600px) {
+    .logo-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+}
+
 .logo-display {
     padding: 3rem;
     border-radius: 12px;
@@ -809,7 +953,7 @@ body {
     text-align: center;
     position: relative;
     overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .logo-display:hover {
@@ -894,6 +1038,26 @@ body {
     grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
     margin-bottom: 2rem;
+}
+
+@media (max-width: 600px) { 
+    .logomark-grid { 
+        grid-template-columns: 1fr; 
+        gap: 1.25rem; 
+    } 
+    
+    .logomark-display img { 
+        max-width: 100px; 
+    } 
+    
+    .arc-grid { 
+        grid-template-columns: 1fr; 
+        gap: 1.5rem; 
+    } 
+    
+    .arc-showcase img { 
+        max-width: 120px; 
+    } 
 }
 
 .logomark-display {
@@ -1201,7 +1365,7 @@ body {
     font-family: var(--font-architect);
     font-size: 0.75rem;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.15em;
     display: block;
     margin-bottom: 0.5rem;
 }
@@ -1360,6 +1524,15 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 2rem;
+}
+
+@media (max-width: 768px) {
+    .color-grid {
+        grid-template-columns: 1fr;
+        max-width: 400px;
+        margin: 0 auto;
+        gap: 1.5rem;
+    }
 }
 
 .color-card {
@@ -1566,7 +1739,7 @@ body {
     font-size: 1.125rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
     text-decoration: none;
     transition: all 0.3s ease;
     position: relative;
@@ -1647,7 +1820,7 @@ body {
     }
     
     .hero-title {
-        font-size: clamp(2.5rem, 12vw, 4rem);
+        font-size: 2.5rem;
     }
     
     .trinity-grid {
@@ -1661,10 +1834,676 @@ body {
     .color-grid {
         grid-template-columns: 1fr;
     }
+
+    .section-title {
+        font-size: 2rem;
+    }
+    
+    .trinity-quote {
+        font-size: 1.25rem;
+        padding: 1.5rem 1rem;
+    }
+    
+    .usage-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .voice-example {
+        padding: 1.5rem;
+    }
+
+    .section { 
+        padding: 4rem 0; 
+    } 
+    
+    .trinity-section { 
+        padding: 4rem 0; 
+    } 
+    
+    .cta-section { 
+        padding: 4rem 0; 
+    } 
+    
+    .hero-description { 
+        font-size: 1rem; 
+        line-height: 1.6; 
+    } 
+    
+    .action-item { 
+        padding-left: 3rem; 
+    } 
+    
+    .action-number { 
+        left: -1rem; 
+        width: 2rem; 
+        height: 2rem; 
+        font-size: 1rem; 
+    } 
+    
+    .type-specimen { 
+        padding: 2rem 0; 
+        gap: 2rem; 
+    }
+
+    /* Ensure minimum touch targets */ 
+    .theme-toggle, 
+    .mobile-nav-toggle { 
+        min-width: 44px; 
+        min-height: 44px; 
+    } 
+    
+    .nav-link { 
+        padding: 0.5rem 0; 
+        min-height: 44px; 
+        display: inline-flex; 
+        align-items: center; 
+    } 
+    
+    .subnav-link { 
+        padding: 0.75rem 0; 
+        min-height: 44px; 
+        display: inline-flex; 
+        align-items: center; 
+    } 
+    
+    .color-swatch { 
+        min-height: 128px; 
+        touch-action: manipulation; 
+    } 
+    
+    .btn-primary { 
+        min-height: 48px; 
+        padding: 1rem 1.5rem; 
+    } 
+    
+    .mobile-menu-close { 
+        min-width: 48px; 
+        min-height: 48px; 
+    } 
+    
+    /* Improve tap feedback */ 
+    .trinity-card, 
+    .logo-display, 
+    .logomark-display, 
+    .usage-box, 
+    .color-card { 
+        touch-action: manipulation; 
+    }
+
+    /* Responsive Typography Scale */ 
+    .hero-eyebrow { 
+        font-size: 0.75rem; 
+    } 
+    
+    .hero-subtitle { 
+        font-size: 1.25rem; 
+    } 
+    
+    .section-label { 
+        font-size: 0.75rem; 
+    } 
+    
+    .subsection-title { 
+        font-size: 1.25rem; 
+        margin-top: 3rem; 
+    } 
+    
+    .role-title { 
+        font-size: 2rem; 
+    } 
+    
+    .role-subtitle { 
+        font-size: 1.125rem; 
+    } 
+    
+    .voice-number { 
+        font-size: 2rem; 
+    } 
+    
+    .voice-item h3 { 
+        font-size: 1.125rem; 
+    } 
+    
+    .specimen-large { 
+        font-size: 2rem; 
+    } 
+    
+    .specimen-system { 
+        font-size: 1rem; 
+    } 
+    
+    .color-name { 
+        font-size: 1rem; 
+    } 
+    
+    .action-title { 
+        font-size: 1.25rem; 
+    } 
+    
+    .cta-text { 
+        font-size: 1.75rem; 
+    } 
+
+    /* Final mobile refinements */
+    .note-box { padding: 1.25rem; padding-left: 3rem; }
+    .note-icon { left: 1rem; font-size: 1.25rem; }
+    .logomark-caption, .logo-caption { font-size: 0.8125rem; }
 }
+
+/* ===== CUSTOM CURSOR LENS ===== */
+#cursor-lens {
+    position: fixed;
+    pointer-events: none;
+    z-index: 2147483647;
+    width: 40px;
+    height: 40px;
+    transform: translate(-50%, -50%);
+    transition: all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.lens-outer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--coral);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.4;
+    transition: all 0.2s ease;
+}
+
+.lens-middle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 24px;
+    height: 24px;
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.3;
+    transition: all 0.2s ease;
+}
+
+.lens-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    background: var(--teal);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.8;
+    transition: all 0.2s ease;
+}
+
+/* Hover state */
+body.cursor-hover #cursor-lens .lens-outer {
+    width: 60px;
+    height: 60px;
+    opacity: 0.6;
+    border-color: var(--teal);
+}
+
+body.cursor-hover #cursor-lens .lens-middle {
+    width: 36px;
+    height: 36px;
+    opacity: 0.5;
+}
+
+body.cursor-hover #cursor-lens .lens-center {
+    width: 10px;
+    height: 10px;
+    opacity: 1;
+    background: var(--coral);
+}
+
+/* ============================================
+   STANDARDIZED PORTFOLIO FOOTER
+   ============================================ */
+
+:root {
+    --ink: var(--text-primary);
+    --ink-dim: rgba(255,255,255,.85);
+    --ink-muted: rgba(255,255,255,.5);
+    --surface-dark: var(--bg-body);
+    --surface-elevated: rgba(255,255,255,.05);
+}
+
+.site-footer {
+    background: var(--surface-dark);
+    border-top: 1px solid var(--glass-border);
+    padding: 0;
+    margin-top: 5rem;
+}
+
+/* Footer Main Content */
+.footer-main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 4rem 2rem 3rem;
+}
+
+/* 4-Column Grid */
+.footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1.5fr;
+    gap: 3rem;
+}
+
+/* Column Styling */
+.footer-col {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Brand Column */
+.footer-brand {
+    max-width: 320px;
+}
+
+.footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    text-decoration: none;
+}
+
+.footer-logo img {
+    height: 32px;
+    width: auto;
+}
+
+.footer-logo-text {
+    font-family: var(--font-architect);
+    font-size: 1.25rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+}
+
+.footer-tagline {
+    font-family: var(--font-narrative);
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--ink-dim);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.footer-tagline .accent {
+    color: var(--coral);
+    font-weight: 700;
+}
+
+.footer-social {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.footer-social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    background: var(--surface-elevated);
+    color: var(--ink-muted);
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.footer-social-link:hover {
+    border-color: var(--coral);
+    color: var(--coral);
+    background: rgba(249, 111, 110, 0.08);
+    transform: translateY(-2px);
+}
+
+.footer-social-link:focus-visible {
+    outline: 2px solid var(--coral);
+    outline-offset: 2px;
+}
+
+.footer-social-link svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* Navigation Columns */
+.footer-nav-title {
+    font-family: var(--font-architect);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-muted);
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.footer-nav-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+}
+
+.footer-nav-link {
+    font-family: var(--font-system);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--ink-dim);
+    text-decoration: none;
+    transition: color 0.15s ease;
+    display: inline-block;
+    padding: 0.125rem 0;
+}
+
+.footer-nav-link:hover {
+    color: var(--coral);
+}
+
+.footer-nav-link:focus-visible {
+    outline: 2px solid var(--coral);
+    outline-offset: 2px;
+}
+
+/* Contact Column */
+.footer-contact-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.footer-contact-item:last-child {
+    margin-bottom: 0;
+}
+
+.footer-contact-icon {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    color: var(--coral);
+    margin-top: 0.125rem;
+}
+
+.footer-contact-text {
+    font-size: 0.875rem;
+    color: var(--ink-dim);
+    line-height: 1.5;
+}
+
+.footer-contact-text a {
+    color: var(--ink-dim);
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.footer-contact-text a:hover {
+    color: var(--coral);
+}
+
+.footer-cta {
+    margin-top: 1.5rem;
+}
+
+.footer-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-system);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--coral);
+    text-decoration: none;
+    padding: 0.625rem 1rem;
+    border: 1px solid var(--coral);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.footer-cta-btn:hover {
+    background: var(--coral);
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+.footer-cta-btn:focus-visible {
+    outline: 2px solid var(--coral);
+    outline-offset: 2px;
+}
+
+.footer-cta-btn svg {
+    width: 14px;
+    height: 14px;
+}
+
+/* Footer Bottom Bar */
+.footer-bottom {
+    border-top: 1px solid var(--glass-border);
+    background: rgba(0,0,0,0.2);
+}
+
+[data-theme="light"] .footer-bottom {
+    background: rgba(0,0,0,0.02);
+}
+
+.footer-bottom-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1.25rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+}
+
+.footer-copyright {
+    font-size: 0.75rem;
+    color: var(--ink-muted);
+    letter-spacing: 0.01em;
+}
+
+.footer-legal {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.footer-legal-link {
+    font-size: 0.75rem;
+    color: var(--ink-muted);
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.footer-legal-link:hover {
+    color: var(--coral);
+}
+
+.footer-legal-link:focus-visible {
+    outline: 2px solid var(--coral);
+    outline-offset: 2px;
+}
+
+.footer-signature {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.6875rem;
+    color: var(--ink-muted);
+    letter-spacing: 0.02em;
+}
+
+.footer-signature .narrative {
+    font-family: var(--font-narrative);
+    font-style: italic;
+    color: var(--coral);
+}
+
+.footer-signature .architect {
+    font-family: var(--font-architect);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--teal);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 1024px) {
+    .footer-grid {
+        grid-template-columns: 1.5fr 1fr 1fr;
+        gap: 2.5rem;
+    }
+
+    .footer-col:nth-child(4) {
+        grid-column: 1 / -1;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--glass-border);
+        margin-top: 0.5rem;
+    }
+
+    .footer-col:nth-child(4) .footer-nav-title {
+        width: 100%;
+        margin-bottom: 1rem;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+
+    .footer-contact-item {
+        margin-bottom: 0;
+    }
+
+    .footer-cta {
+        margin-top: 0;
+        margin-left: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .footer-main {
+        padding: 3rem 1.5rem 2rem;
+    }
+
+    .footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+
+    .footer-brand {
+        grid-column: 1 / -1;
+        max-width: none;
+        text-align: center;
+        align-items: center;
+    }
+
+    .footer-logo {
+        justify-content: center;
+    }
+
+    .footer-tagline {
+        max-width: 400px;
+    }
+
+    .footer-social {
+        justify-content: center;
+    }
+
+    .footer-col:nth-child(4) {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .footer-cta {
+        margin-left: 0;
+        margin-top: 1rem;
+    }
+
+    .footer-bottom-inner {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+        padding: 1.5rem;
+    }
+
+    .footer-legal {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-main {
+        padding: 2.5rem 1rem 1.5rem;
+    }
+
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .footer-col:nth-child(2),
+    .footer-col:nth-child(3) {
+        text-align: center;
+        align-items: center;
+    }
+
+    .footer-nav-list {
+        align-items: center;
+    }
+
+    .footer-col:nth-child(4) {
+        align-items: center;
+        text-align: center;
+    }
+
+    .footer-contact-item {
+        justify-content: center;
+    }
+
+    .footer-signature {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+
+/* Hide on touch devices - TEMPORARILY DISABLED FOR DEBUGGING */
+/* 
+@media (pointer: coarse) {
+    #cursor-lens {
+        display: none !important;
+    }
+    body {
+        cursor: auto !important;
+    }
+}
+*/
     </style>
 </head>
 <body data-theme="dark">
+    <div id="cursor-lens">
+        <div class="lens-outer"></div>
+        <div class="lens-middle"></div>
+        <div class="lens-center"></div>
+    </div>
     <!-- Animated Background Elements -->
     <div class="ambient-background">
         <div class="ambient-orb orb-1"></div>
@@ -1745,23 +2584,33 @@ body {
     </nav>
 
     <!-- Mobile Menu Overlay -->
-    <div class="mobile-menu-overlay" id="mobileMenuOverlay">
-        <div class="mobile-menu-content">
-            <div class="mobile-nav-section">
-                <div class="mobile-nav-label">GLOBAL</div>
-                <a href="/index.html" class="mobile-nav-link-primary active">Portfolio</a>
-                <a href="/insights/" class="mobile-nav-link-primary">Insights</a>
-                <a href="/TheHub/" class="mobile-nav-link-primary">The Hub</a>
-                <a href="https://portal.luis-gilberto.com" class="mobile-nav-link-primary">The Portal</a>
-            </div>
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay" aria-hidden="true">
+        <div class="mobile-drawer" role="dialog" aria-modal="true" aria-label="Mobile menu">
+            <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">&times;</button>
+            <div class="mobile-menu-content">
+                <div class="mobile-drawer-header">
+                    <div class="mobile-drawer-brand">
+                        <span class="mobile-drawer-name">Luis Gilberto</span>
+                        <span class="mobile-drawer-role">Creative Strategy</span>
+                    </div>
+                </div>
 
-            <div class="mobile-nav-section">
-                <div class="mobile-nav-label">PORTFOLIO</div>
-                <a href="/index.html" class="mobile-nav-link-secondary">Home</a>
-                <a href="/timeline.html" class="mobile-nav-link-secondary">Timeline</a>
-                <a href="/myexperience.html" class="mobile-nav-link-secondary">Experience</a>
-                <a href="/about.html" class="mobile-nav-link-secondary">About</a>
-                <a href="/brand.html" class="mobile-nav-link-secondary active">Brand</a>
+                <div class="mobile-nav-section">
+                    <div class="mobile-nav-label">GLOBAL</div>
+                    <a href="/index.html" class="mobile-nav-link-primary active">Portfolio</a>
+                    <a href="/insights/" class="mobile-nav-link-primary">Insights</a>
+                    <a href="/TheHub/" class="mobile-nav-link-primary">The Hub</a>
+                    <a href="https://portal.luis-gilberto.com" class="mobile-nav-link-primary">The Portal</a>
+                </div>
+
+                <div class="mobile-nav-section">
+                    <div class="mobile-nav-label">PORTFOLIO</div>
+                    <a href="/index.html" class="mobile-nav-link-secondary">Home</a>
+                    <a href="/timeline.html" class="mobile-nav-link-secondary">Timeline</a>
+                    <a href="/myexperience.html" class="mobile-nav-link-secondary">Experience</a>
+                    <a href="/about.html" class="mobile-nav-link-secondary">About</a>
+                    <a href="/brand.html" class="mobile-nav-link-secondary active">Brand</a>
+                </div>
             </div>
         </div>
     </div>
@@ -2181,98 +3030,30 @@ body {
     </section>
 
     <!-- FOOTER -->
-    <footer style="
-        background: #0A0A0A;
-        border-top: 1px solid rgba(255,255,255,0.1);
-        padding: 0;
-        margin-top: auto;
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-        color: #ffffff;
-    " role="contentinfo" aria-label="Site footer">
-        
-        <div style="
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 4rem 2rem 3rem;
-        ">
-            <div style="
-                display: grid;
-                grid-template-columns: 2fr 1fr 1fr 1.5fr;
-                gap: 3rem;
-            " class="footer-grid-layout">
-                
-                <div style="max-width: 320px;">
-                    <a href="/index.html" style="
-                        display: flex;
-                        align-items: center;
-                        gap: 0.75rem;
-                        margin-bottom: 1.25rem;
-                        text-decoration: none;
-                    ">
-                        <div style="
-                            width: 40px;
-                            height: 40px;
-                            background: white;
-                            border-radius: 8px;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            font-weight: 700;
-                            color: #0A0A0A;
-                        ">LG</div>
-                        <span style="
-                            font-family: 'Big Shoulders Display', sans-serif;
-                            font-size: 1.25rem;
-                            font-weight: 800;
-                            text-transform: uppercase;
-                            letter-spacing: 0.02em;
-                            color: #ffffff;
-                        ">Luis Gilberto</span>
+    <!-- STANDARDIZED PORTFOLIO FOOTER -->
+    <footer class="site-footer" role="contentinfo" aria-label="Site footer">
+        <!-- Main Footer Content -->
+        <div class="footer-main">
+            <div class="footer-grid">
+                <!-- Column 1: Brand -->
+                <div class="footer-col footer-brand">
+                    <a href="/index.html" class="footer-logo">
+                        <img src="/assets/images/Logomark_White_a.png" alt="Luis Gilberto" />
+                        <span class="footer-logo-text">Luis Gilberto</span>
                     </a>
-                    <p style="
-                        font-family: 'Playfair Display', serif;
-                        font-size: 1rem;
-                        font-style: italic;
-                        color: rgba(255,255,255,0.75);
-                        line-height: 1.6;
-                        margin-bottom: 1.5rem;
-                    ">
-                        Where <span style="color: #F96F6E; font-weight: 700;">creativity</span> meets ROI; transforming artistic vision into measurable business impact.
+                    <p class="footer-tagline">
+                        Where <span class="accent">creativity</span> meets ROI; transforming artistic vision into measurable business impact.
                     </p>
-                    <div style="display: flex; gap: 0.75rem;">
-                        <a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" rel="noopener" aria-label="LinkedIn" style="
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            width: 40px;
-                            height: 40px;
-                            border: 1px solid rgba(255,255,255,0.1);
-                            border-radius: 10px;
-                            background: rgba(255,255,255,0.05);
-                            color: rgba(255,255,255,0.5);
-                            text-decoration: none;
-                            transition: all 0.2s ease;
-                        ">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <div class="footer-social">
+                        <a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" rel="noopener" class="footer-social-link" aria-label="LinkedIn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
                                 <rect x="2" y="9" width="4" height="12"></rect>
                                 <circle cx="4" cy="4" r="2"></circle>
                             </svg>
                         </a>
-                        <a href="mailto:hello@luis-gilberto.com" aria-label="Email" style="
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            width: 40px;
-                            height: 40px;
-                            border: 1px solid rgba(255,255,255,0.1);
-                            border-radius: 10px;
-                            background: rgba(255,255,255,0.05);
-                            color: rgba(255,255,255,0.5);
-                            text-decoration: none;
-                            transition: all 0.2s ease;
-                        ">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <a href="mailto:hello@luis-gilberto.com" class="footer-social-link" aria-label="Email">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <rect x="2" y="4" width="20" height="16" rx="2"></rect>
                                 <path d="M22 6L12 13 2 6"></path>
                             </svg>
@@ -2280,138 +3061,75 @@ body {
                     </div>
                 </div>
 
-                <nav aria-label="Portfolio">
-                    <h3 style="
-                        font-family: 'Big Shoulders Display', sans-serif;
-                        font-size: 0.75rem;
-                        font-weight: 700;
-                        text-transform: uppercase;
-                        letter-spacing: 0.12em;
-                        color: rgba(255,255,255,0.5);
-                        margin-bottom: 1.25rem;
-                        padding-bottom: 0.75rem;
-                        border-bottom: 1px solid rgba(255,255,255,0.1);
-                    ">Portfolio</h3>
-                    <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.625rem;">
-                        <li><a href="/index.html" style="font-size: 0.875rem; font-weight: 500; color: rgba(255,255,255,0.75); text-decoration: none; transition: color 0.2s ease;">Home</a></li>
-                        <li><a href="/timeline.html" style="font-size: 0.875rem; font-weight: 500; color: rgba(255,255,255,0.75); text-decoration: none; transition: color 0.2s ease;">Timeline</a></li>
-                        <li><a href="/myexperience.html" style="font-size: 0.875rem; font-weight: 500; color: rgba(255,255,255,0.75); text-decoration: none; transition: color 0.2s ease;">Experience</a></li>
-                        <li><a href="/about.html" style="font-size: 0.875rem; font-weight: 500; color: rgba(255,255,255,0.75); text-decoration: none; transition: color 0.2s ease;">About</a></li>
-                        <li><a href="/brand.html" style="font-size: 0.875rem; font-weight: 500; color: rgba(255,255,255,0.75); text-decoration: none; transition: color 0.2s ease;">Brand</a></li>
+                <!-- Column 2: Portfolio -->
+                <div class="footer-col">
+                    <h3 class="footer-nav-title">Portfolio</h3>
+                    <ul class="footer-nav-list">
+                        <li><a href="/index.html" class="footer-nav-link">Home</a></li>
+                        <li><a href="/timeline.html" class="footer-nav-link">Timeline</a></li>
+                        <li><a href="/myexperience.html" class="footer-nav-link">Experience</a></li>
+                        <li><a href="/about.html" class="footer-nav-link">About</a></li>
+                        <li><a href="/brand.html" class="footer-nav-link">Brand</a></li>
                     </ul>
-                </nav>
+                </div>
 
-                <nav aria-label="Ecosystem">
-                    <h3 style="
-                        font-family: 'Big Shoulders Display', sans-serif;
-                        font-size: 0.75rem;
-                        font-weight: 700;
-                        text-transform: uppercase;
-                        letter-spacing: 0.12em;
-                        color: rgba(255,255,255,0.5);
-                        margin-bottom: 1.25rem;
-                        padding-bottom: 0.75rem;
-                        border-bottom: 1px solid rgba(255,255,255,0.1);
-                    ">Ecosystem</h3>
-                    <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.625rem;">
-                        <li><a href="/index.html" style="font-size: 0.875rem; font-weight: 500; color: rgba(255,255,255,0.75); text-decoration: none; transition: color 0.2s ease;">Portfolio</a></li>
-                        <li><a href="/TheHub/" style="font-size: 0.875rem; font-weight: 500; color: rgba(255,255,255,0.75); text-decoration: none; transition: color 0.2s ease;">The Hub</a></li>
-                        <li><a href="/insights/" style="font-size: 0.875rem; font-weight: 500; color: rgba(255,255,255,0.75); text-decoration: none; transition: color 0.2s ease;">Insights</a></li>
-                        <li><a href="https://portal.luis-gilberto.com" target="_blank" style="font-size: 0.875rem; font-weight: 500; color: rgba(255,255,255,0.75); text-decoration: none; transition: color 0.2s ease;">The Portal</a></li>
+                <!-- Column 3: Ecosystem -->
+                <div class="footer-col">
+                    <h3 class="footer-nav-title">Ecosystem</h3>
+                    <ul class="footer-nav-list">
+                        <li><a href="/index.html" class="footer-nav-link">Portfolio</a></li>
+                        <li><a href="/TheHub/" class="footer-nav-link">The Hub</a></li>
+                        <li><a href="/insights/" class="footer-nav-link">Insights</a></li>
+                        <li><a href="https://portal.luis-gilberto.com" target="_blank" class="footer-nav-link">The Portal</a></li>
                     </ul>
-                </nav>
+                </div>
 
-                <div>
-                    <h3 style="
-                        font-family: 'Big Shoulders Display', sans-serif;
-                        font-size: 0.75rem;
-                        font-weight: 700;
-                        text-transform: uppercase;
-                        letter-spacing: 0.12em;
-                        color: rgba(255,255,255,0.5);
-                        margin-bottom: 1.25rem;
-                        padding-bottom: 0.75rem;
-                        border-bottom: 1px solid rgba(255,255,255,0.1);
-                    ">Connect</h3>
-                    
-                    <div style="display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 1rem;">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F96F6E" stroke-width="2" style="flex-shrink: 0; margin-top: 2px;">
+                <!-- Column 4: Contact -->
+                <div class="footer-col">
+                    <h3 class="footer-nav-title">Connect</h3>
+                    <div class="footer-contact-item">
+                        <svg class="footer-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                             <circle cx="12" cy="10" r="3"></circle>
                         </svg>
-                        <span style="font-size: 0.875rem; color: rgba(255,255,255,0.75); line-height: 1.5;">Seattle, Washington</span>
+                        <span class="footer-contact-text">Seattle, Washington</span>
                     </div>
-                    
-                    <div style="display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 1.5rem;">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F96F6E" stroke-width="2" style="flex-shrink: 0; margin-top: 2px;">
+                    <div class="footer-contact-item">
+                        <svg class="footer-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="2" y="4" width="20" height="16" rx="2"></rect>
                             <path d="M22 6L12 13 2 6"></path>
                         </svg>
-                        <a href="mailto:hello@luis-gilberto.com" style="font-size: 0.875rem; color: rgba(255,255,255,0.75); text-decoration: none; line-height: 1.5; transition: color 0.2s ease;">hello@luis-gilberto.com</a>
+                        <span class="footer-contact-text">
+                            <a href="mailto:hello@luis-gilberto.com">hello@luis-gilberto.com</a>
+                        </span>
                     </div>
-                    
-                    <a href="/contact.html" style="
-                        display: inline-flex;
-                        align-items: center;
-                        gap: 0.5rem;
-                        font-size: 0.8125rem;
-                        font-weight: 600;
-                        letter-spacing: 0.02em;
-                        color: #F96F6E;
-                        text-decoration: none;
-                        padding: 0.625rem 1rem;
-                        border: 1px solid #F96F6E;
-                        border-radius: 8px;
-                        transition: all 0.2s ease;
-                    ">
-                        Let's Talk
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                            <polyline points="12 5 19 12 12 19"></polyline>
-                        </svg>
-                    </a>
+                    <div class="footer-cta">
+                        <a href="/contact.html" class="footer-cta-btn">
+                            Let's Talk
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div style="
-            border-top: 1px solid rgba(255,255,255,0.1);
-            background: rgba(0,0,0,0.3);
-        ">
-            <div style="
-                max-width: 1400px;
-                margin: 0 auto;
-                padding: 1.25rem 2rem;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 1.5rem;
-                flex-wrap: wrap;
-            ">
-                <p style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin: 0;">© 2025 Luis Gilberto. All rights reserved.</p>
+        <!-- Footer Bottom Bar -->
+        <div class="footer-bottom">
+            <div class="footer-bottom-inner">
+                <p class="footer-copyright">© 2025 Luis Gilberto. All rights reserved.</p>
                 
-                <nav style="display: flex; align-items: center; gap: 1.5rem;" aria-label="Legal">
-                    <a href="/legal/privacy.html" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); text-decoration: none; transition: color 0.2s ease;">Privacy Policy</a>
-                    <a href="/legal/terms.html" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); text-decoration: none; transition: color 0.2s ease;">Terms of Use</a>
-                    <a href="/legal/accessibility.html" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); text-decoration: none; transition: color 0.2s ease;">Accessibility</a>
-                    <span style="color: rgba(255,255,255,0.2);">·</span>
-                    <a href="/system.html" style="
-                        font-size: 0.75rem; 
-                        color: rgba(255,255,255,0.5); 
-                        text-decoration: none;
-                        font-style: italic;
-                        transition: color 0.2s ease;
-                    ">How it all connects</a>
-                </nav>
+                <div class="footer-legal">
+                    <a href="/legal/privacy.html" class="footer-legal-link">Privacy Policy</a>
+                    <a href="/legal/terms.html" class="footer-legal-link">Terms of Use</a>
+                    <a href="/legal/accessibility.html" class="footer-legal-link">Accessibility</a>
+                </div>
 
-                <p style="
-                    font-size: 0.6875rem;
-                    color: rgba(255,255,255,0.5);
-                    letter-spacing: 0.02em;
-                    margin: 0;
-                ">
-                    Where <span style="font-family: 'Playfair Display', serif; font-style: italic; color: #F96F6E;">emotion</span> and <span style="font-family: 'Big Shoulders Display', sans-serif; text-transform: uppercase; letter-spacing: 0.05em; color: #2ED3C6;">structure</span> converge
-                </p>
+                <div class="footer-signature">
+                    Where <span class="narrative">emotion</span> and <span class="architect">structure</span> converge
+                </div>
             </div>
         </div>
     </footer>
@@ -2448,20 +3166,70 @@ if (mobileThemeToggle) {
 const mobileMenuToggle = document.getElementById('mobileMenuToggle');
 const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
 
-if (mobileMenuToggle) {
+if (mobileMenuToggle && mobileMenuOverlay) {
     mobileMenuToggle.addEventListener('click', () => {
-        mobileMenuToggle.classList.toggle('active');
-        mobileMenuOverlay.classList.toggle('active');
+        mobileMenuOverlay.classList.add('active');
+        mobileMenuOverlay.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        const closeBtn = document.getElementById('mobileMenuClose');
+        if (closeBtn) closeBtn.focus();
+    });
+    
+    const mobileMenuClose = document.getElementById('mobileMenuClose');
+
+    function closeDrawer() {
+        mobileMenuOverlay.classList.remove('active');
+        mobileMenuOverlay.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        mobileMenuToggle.focus();
+    }
+
+    if (mobileMenuClose) {
+        mobileMenuClose.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeDrawer();
+        });
+    }
+
+    mobileMenuOverlay.addEventListener('click', (e) => {
+        if (e.target === mobileMenuOverlay) {
+            closeDrawer();
+        }
+    });
+
+    // Prevent overlay-closing when clicking inside the drawer
+    const menuContent = mobileMenuOverlay.querySelector('.mobile-menu-content');
+    if (menuContent) {
+        menuContent.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+        const mobileLinks = mobileMenuOverlay.querySelectorAll('.mobile-nav-link-primary, .mobile-nav-link-secondary');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => closeDrawer());
+        });
+    }
+
+    // Keyboard support: Escape to close, focus trap
+    document.addEventListener('keydown', (e) => {
+        if (!mobileMenuOverlay.classList.contains('active')) return;
+        if (e.key === 'Escape') {
+            closeDrawer();
+        }
+        if (e.key === 'Tab') {
+            const focusables = mobileMenuOverlay.querySelectorAll('button, a, [tabindex="0"]');
+            if (!focusables.length) return;
+            const first = focusables[0];
+            const last = focusables[focusables.length - 1];
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+            }
+        }
     });
 }
-
-// Close mobile menu when clicking links
-document.querySelectorAll('.mobile-nav-link-primary, .mobile-nav-link-secondary').forEach(link => {
-    link.addEventListener('click', () => {
-        mobileMenuToggle.classList.remove('active');
-        mobileMenuOverlay.classList.remove('active');
-    });
-});
 
 // ===================================
 // SCROLL ANIMATIONS
@@ -2586,5 +3354,50 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 100);
 });
     </script>
+  <script>
+    // ===== CUSTOM CURSOR LENS =====
+    (function(){
+      const cursor = document.getElementById('cursor-lens');
+      if (!cursor) {
+        console.error('Cursor element not found');
+        return;
+      }
+      
+      // Initialize cursor visibility
+      cursor.style.opacity = '1';
+      
+      // Hide default cursor
+      document.body.style.cursor = 'none';
+      
+      // Track mouse movement
+      document.addEventListener('mousemove', (e) => {
+        cursor.style.left = e.clientX + 'px';
+        cursor.style.top = e.clientY + 'px';
+      });
+      
+      // Define interactive elements that trigger hover state
+      const interactiveSelectors = 'a, button, .btn-primary, .card-cta, .color-swatch, .logo-display, .logomark-display, .usage-box, .trinity-card, .nav-link, .subnav-link, .theme-toggle, .mobile-nav-toggle, .mobile-nav-link-primary, .mobile-nav-link-secondary';
+      
+      // Add hover listeners to all interactive elements
+      document.querySelectorAll(interactiveSelectors).forEach(el => {
+        el.addEventListener('mouseenter', () => {
+          document.body.classList.add('cursor-hover');
+        });
+        el.addEventListener('mouseleave', () => {
+          document.body.classList.remove('cursor-hover');
+        });
+      });
+      
+      // Hide cursor when leaving viewport
+      document.addEventListener('mouseleave', () => {
+        cursor.style.opacity = '0';
+      });
+      
+      // Show cursor when entering viewport
+      document.addEventListener('mouseenter', () => {
+        cursor.style.opacity = '1';
+      });
+    })();
+  </script>
 </body>
 </html>
