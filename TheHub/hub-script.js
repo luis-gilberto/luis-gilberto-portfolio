@@ -79,4 +79,33 @@ document.addEventListener('DOMContentLoaded', () => {
     animatedElements.forEach(el => {
         observer.observe(el);
     });
+
+    // Active State Logic for Mobile Menu
+    const currentPath = window.location.pathname;
+    const mobileLinks = document.querySelectorAll('.mobile-link');
+
+    mobileLinks.forEach(link => {
+        // Get the raw href
+        const linkHref = link.getAttribute('href');
+        if (!linkHref) return;
+
+        // Resolve relative paths to absolute for comparison if needed, 
+        // but simple string matching usually works if hrefs are root-relative (start with /)
+        
+        // Check for exact match
+        if (currentPath === linkHref) {
+            link.classList.add('active');
+        } 
+        // Handle /index.html vs /
+        else if (linkHref.endsWith('/index.html') && currentPath === linkHref.replace('/index.html', '/')) {
+            link.classList.add('active');
+        }
+        else if (currentPath.endsWith('/index.html') && linkHref === currentPath.replace('/index.html', '/')) {
+            link.classList.add('active');
+        }
+        // Handle specific case for root
+        else if (currentPath === '/' && linkHref === '/index.html') {
+            link.classList.add('active');
+        }
+    });
 });

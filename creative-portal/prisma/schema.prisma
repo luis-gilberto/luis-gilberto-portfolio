@@ -3,8 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model User {
@@ -53,12 +53,12 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -96,10 +96,20 @@ model AssessmentSession {
   complexity_indicators Json?
   status                String?   @default("in_progress")
   consultant_notes      String?
-  key_insights          String[]
+  key_insights          String? // Stored as JSON string in SQLite
   startedAt             DateTime? @map("started_at") @default(now())
   completedAt           DateTime? @map("completed_at")
   duration_minutes      Int?
 
   @@map("assessment_sessions")
+}
+
+model AccessRequest {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  company   String?
+  reason    String?
+  status    String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdAt DateTime @default(now())
 }

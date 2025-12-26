@@ -403,18 +403,32 @@
     @media (prefers-contrast: high) { .footer-link, .footer-social a { border: 1px solid currentColor; } .footer-accent-line { opacity: 1; } }
 
     </style>
+    <style>
+        @media (max-width: 1024px) {
+            .desktop-links { display: none !important; }
+            .mobile-menu-toggle { display: block !important; }
+            nav { padding: 0 1.5rem !important; }
+        }
+        /* Theme Toggle Logic */
+        body.dark .sun-icon { display: block !important; }
+        body.dark .moon-icon { display: none !important; }
+        body:not(.dark) .sun-icon { display: none !important; }
+        body:not(.dark) .moon-icon { display: block !important; }
+    </style>
+
 </head>
 <body>
 
 <!-- GOLDEN MASTER HEADER -->
-<nav style="position: fixed; top: 0; left: 0; width: 100%; height: 72px; background-color: #050505; border-bottom: 1px solid rgba(255,255,255,0.1); z-index: 50; display: flex; align-items: center; justify-content: space-between; padding: 0 24px;">
-    <!-- LEFT: Logo Lockup -->
-    <a href="/TheHub/index.html" style="display: flex; align-items: center; gap: 16px; text-decoration: none; opacity: 1; transition: opacity 0.3s;">
-        <img src="/assets/images/Logomark_White_a.png" alt="Luis Gilberto" style="height: 32px; width: auto; opacity: 0.9;">
-        <div style="width: 1px; height: 24px; background-color: rgba(255,255,255,0.2);"></div>
-        <span style="font-family: 'Big Shoulders Display', sans-serif; font-size: 24px; font-weight: 700; color: #FFFFFF; letter-spacing: 0.05em; text-transform: uppercase;">The Hub.</span>
+<nav style="position: fixed; top: 0; left: 0; width: 100%; height: 72px; background: #050505; border-bottom: 1px solid rgba(255,255,255,0.1); z-index: 10000; display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; box-sizing: border-box;">
+     
+    <!-- LEFT: BRAND LOCKUP -->
+    <a href="/index.html" style="display: flex; align-items: center; gap: 16px; text-decoration: none;">
+        <img src="/assets/images/Logomark_White_a.png" alt="LG" style="height: 32px; width: auto; display: block;">
+        <div style="width: 1px; height: 24px; background: rgba(255,255,255,0.3);"></div>
+        <span style="font-family: 'Big Shoulders Display', sans-serif; font-size: 24px; font-weight: 700; color: white; letter-spacing: 0.5px; line-height: 1;">The Hub.</span>
     </a>
-
+ 
     <!-- RIGHT: GLOBAL LINKS & CONTROLS -->
     <div style="display: flex; align-items: center; gap: 24px;">
         <!-- Desktop Links (Hidden on Tablet/Mobile) -->
@@ -424,7 +438,7 @@
             <a href="/TheHub/index.html" style="color: #fff; text-decoration: none;">The Hub</a>
             <a href="https://portal.luis-gilberto.com" style="color: #888; text-decoration: none; transition: 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#888'">Portal</a>
         </div>
-
+ 
         <!-- Controls Group -->
         <div style="display: flex; align-items: center; gap: 12px;">
             <!-- Theme Toggle -->
@@ -432,7 +446,7 @@
                 <i class="fas fa-sun sun-icon" style="display: none;"></i>
                 <i class="fas fa-moon moon-icon"></i>
             </button>
-
+             
             <!-- Mobile Toggle (Visible on Tablet/Mobile) -->
             <button class="mobile-menu-toggle" id="mobileToggle" style="display: none; background: none; border: none; color: white; font-size: 24px; cursor: pointer;">
                 <i class="fas fa-bars"></i>
@@ -718,7 +732,8 @@
             });
         });
 
-        // Mobile Menu Logic
+        // Mobile Menu Logic - Handled by Golden Master Script
+        /*
         const mobileToggle = document.getElementById('mobileToggle');
         const mobileOverlay = document.getElementById('mobileOverlay');
         const drawerCloseBtn = document.getElementById('drawerCloseBtn');
@@ -756,6 +771,7 @@
                 }
             });
         }
+        */
 
         // Password Reveal Logic
         const revealBtn = document.getElementById('revealPriceBtn');
@@ -831,74 +847,64 @@
         </div>
     </div>
 
-    <script>
-      // Mobile Menu Logic
-      document.addEventListener('DOMContentLoaded', () => {
-          const mobileToggle = document.getElementById('mobileToggle');
-          const mobileOverlay = document.getElementById('mobileOverlay');
-          const drawerCloseBtn = document.getElementById('drawerCloseBtn');
-          
-          if(mobileToggle && mobileOverlay) {
-              const updateAria = () => {
-                  const expanded = mobileOverlay.classList.contains('active');
-                  mobileToggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-              };
-              
-              const newToggle = mobileToggle.cloneNode(true);
-              mobileToggle.parentNode.replaceChild(newToggle, mobileToggle);
-              
-              newToggle.addEventListener('click', () => {
-                  mobileOverlay.classList.toggle('active');
-                  newToggle.classList.toggle('open');
-                  updateAria();
-              });
-              
-              mobileOverlay.addEventListener('click', (e) => {
-                  if(e.target === mobileOverlay) {
-                      mobileOverlay.classList.remove('active');
-                      newToggle.classList.remove('open');
-                      updateAria();
-                  }
-              });
-              
-              if (drawerCloseBtn) {
-                  drawerCloseBtn.addEventListener('click', () => {
-                      mobileOverlay.classList.remove('active');
-                      newToggle.classList.remove('open');
-                      updateAria();
-                  });
-              }
-              
-              document.addEventListener('keydown', (e) => {
-                  if(e.key === 'Escape' && mobileOverlay.classList.contains('active')) {
-                      mobileOverlay.classList.remove('active');
-                      newToggle.classList.remove('open');
-                      updateAria();
-                  }
-              });
-          }
-          
-          // Theme Logic
-          const themeToggle = document.getElementById('themeToggle');
-          const html = document.documentElement;
-          
-          if (themeToggle) {
-              themeToggle.addEventListener('click', (e) => {
-                  e.preventDefault();
-                  const currentTheme = html.getAttribute('data-theme') || 'dark';
-                  const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-                  
-                  html.setAttribute('data-theme', newTheme);
-                  localStorage.setItem('theme', newTheme);
-                  
-                  if (newTheme === 'dark') {
-                      document.body.classList.add('dark');
-                  } else {
-                      document.body.classList.remove('dark');
-                  }
-              });
-          }
-      });
-    </script>
+
+<script>
+    // Golden Master Nav Logic
+    document.addEventListener('DOMContentLoaded', () => {
+        const themeToggle = document.getElementById('themeToggle');
+        const mobileToggle = document.getElementById('mobileToggle');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+        const body = document.body;
+
+        // Theme Toggle
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                body.classList.toggle('dark');
+                const isDark = body.classList.contains('dark');
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            });
+
+            // Init theme from storage
+            if (localStorage.getItem('theme') === 'dark') {
+                body.classList.add('dark');
+            }
+        }
+
+        // Mobile Menu Toggle
+        if (mobileToggle && mobileOverlay) {
+            mobileToggle.addEventListener('click', () => {
+                mobileToggle.classList.toggle('open');
+                mobileOverlay.classList.toggle('active');
+                
+                // Toggle icon
+                const icon = mobileToggle.querySelector('i');
+                if (icon) {
+                    if (mobileToggle.classList.contains('open')) {
+                        icon.classList.remove('fa-bars');
+                        icon.classList.add('fa-times');
+                    } else {
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                }
+            });
+            
+            // Close button inside overlay (if exists)
+            const closeBtn = mobileOverlay.querySelector('.drawer-close-btn');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => {
+                    mobileToggle.classList.remove('open');
+                    mobileOverlay.classList.remove('active');
+                    const icon = mobileToggle.querySelector('i');
+                    if (icon) {
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                });
+            }
+        }
+    });
+</script>
+    <script src="../hub-script.js"></script>
 </body>
 </html>
