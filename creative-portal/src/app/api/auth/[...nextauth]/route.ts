@@ -1,6 +1,7 @@
 import NextAuth from "next-auth"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import EmailProvider from "next-auth/providers/email"
+import CredentialsProvider from "next-auth/providers/credentials"
 import { prisma } from "@/lib/prisma"
 import fs from "fs"
 import path from "path"
@@ -13,13 +14,19 @@ const handler = NextAuth({
     // CRITICAL OVERRIDE: Update the user's name upon first sign-in
     // Note: For EmailProvider, 'createUser' is called when a new user is verified.
     createUser: async (data) => {
-      // Hardcoded fallback as requested. 
-      // In a production app, we would use cookies to pass the name from client to server.
+      // Determine role based on email pattern
+      let role = 'CLIENT';
+      if (data.email.includes("admin")) {
+          role = "ADMIN";
+      } else if (data.email.includes("consultant")) {
+          role = "CONSULTANT";
+      }
+
       const user = await prisma.user.create({
         data: {
           ...data,
-          name: 'New Client Partner', 
-          role: 'CLIENT'
+          name: data.name || 'New Client Partner', 
+          role: role as any
         }
       })
       return user
@@ -35,6 +42,38 @@ const handler = NextAuth({
         } catch {}
       },
     }),
+    CredentialsProvider({
+      name: "Dev Credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" }
+      },
+      async authorize(credentials) {
+        if (!credentials?.email) return null;
+
+        let role = 'CLIENT';
+        if (credentials.email.includes("admin")) {
+            role = "ADMIN";
+        } else if (credentials.email.includes("consultant")) {
+            role = "CONSULTANT";
+        } else {
+            role = "CLIENT";
+        }
+
+        // Upsert user to ensure they exist in DB with correct role
+        const user = await prisma.user.upsert({
+          where: { email: credentials.email },
+          update: { role: role as any },
+          create: {
+            email: credentials.email,
+            name: credentials.email.split('@')[0],
+            role: role as any
+          }
+        });
+        
+        return user;
+      }
+    })
   ],
   session: {
     strategy: "jwt",

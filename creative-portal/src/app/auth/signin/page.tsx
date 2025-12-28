@@ -35,8 +35,30 @@ export default function SignIn() {
 
   const isFormValid = name.trim().length > 1 && email.includes('@') && email.includes('.');
 
+  const handleDevLogin = async (email: string, roleName: string) => {
+    setLoading(true);
+    try {
+      const result = await signIn('credentials', { 
+        email, 
+        password: 'dev-password', // Password doesn't matter for our dev provider logic
+        redirect: false 
+      });
+      
+      if (result?.error) {
+        alert(`Dev login failed: ${result.error}`);
+      } else {
+        router.push('/dashboard');
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Login error occurred');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4">
+    <div className="min-h-[80vh] flex flex-col items-center justify-center px-4">
       {/* Glass Card Container */}
       <div className="w-full max-w-md p-8 rounded-2xl border border-[var(--border-strong)] bg-[var(--card-bg)] shadow-[var(--shadow-hover)] backdrop-blur-md">
         
@@ -103,6 +125,35 @@ export default function SignIn() {
           </p> 
         </div> 
       </div> 
+
+      {/* Dev Shortcuts Panel - Only visible in Development */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="w-full max-w-md mt-6 p-4 rounded-xl border border-dashed border-gray-400/50 bg-gray-50/50 dark:bg-gray-900/50 backdrop-blur-sm">
+          <div className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 text-center">
+            🚧 Dev Shortcuts 🚧
+          </div>
+          <div className="flex flex-wrap gap-2 justify-center">
+            <button
+              onClick={() => handleDevLogin('admin@example.com', 'Admin')}
+              className="px-3 py-1.5 text-xs font-bold text-white bg-red-500 hover:bg-red-600 rounded-full transition-colors shadow-sm"
+            >
+              Login as Admin
+            </button>
+            <button
+              onClick={() => handleDevLogin('consultant@example.com', 'Consultant')}
+              className="px-3 py-1.5 text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 rounded-full transition-colors shadow-sm"
+            >
+              Login as Consultant
+            </button>
+            <button
+              onClick={() => handleDevLogin('client@example.com', 'Client')}
+              className="px-3 py-1.5 text-xs font-bold text-white bg-green-600 hover:bg-green-700 rounded-full transition-colors shadow-sm"
+            >
+              Login as Client
+            </button>
+          </div>
+        </div>
+      )}
     </div> 
   ) 
 } 
