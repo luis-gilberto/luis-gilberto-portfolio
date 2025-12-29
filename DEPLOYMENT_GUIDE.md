@@ -95,6 +95,38 @@ git push -u origin main
 - Consider: Namecheap, Google Domains, or Cloudflare Registrar
 - Recommended: `luis-gilberto.com` or `luisgilberto.dev`
 
+## 🛡️ Mixed-Stack Deployment Strategy (Hybrid Model)
+
+**CRITICAL: This project contains both a Vanilla HTML static site and a Next.js React Portal.**
+The deployment pipeline is configured to **ONLY** deploy the Vanilla HTML site to the root domain.
+
+### 1. Structure Separation
+- **Root Directory (`/`)**: Contains the Vanilla HTML static site (marketing, brand, portfolio).
+- **`/creative-portal`**: Contains the Next.js React application (client portal).
+
+### 2. Cloudflare Exclusion Rules
+To prevent the heavy React application from being bundled with the lightweight static site, we utilize `.cfignore`.
+
+**Configuration (`.cfignore`):**
+```gitignore
+# EXPLICITLY EXCLUDE REACT PORTAL
+creative-portal/
+node_modules/
+.git/
+```
+
+### 3. Deployment Workflow
+1.  **Development**: You can work on both HTML and React locally.
+2.  **Staging**: When ready to deploy the public site, ensure you are committing changes to the HTML files.
+3.  **Push**: When you push to `main`, Cloudflare Pages will:
+    - Read the `.cfignore` file.
+    - **Ignore** the entire `creative-portal/` directory.
+    - Deploy only the static HTML/CSS/JS assets from the root.
+
+### 4. Safeguards
+- **Git Separation**: We recommend committing Portal changes separately from HTML changes to maintain clean history.
+- **Build Guard**: The build command is set to `exit 0` (Static), meaning it will not attempt to build the Next.js app, preventing build failures.
+
 ## 📁 File Structure (Already Optimized)
 
 ```
