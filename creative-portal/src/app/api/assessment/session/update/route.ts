@@ -7,20 +7,16 @@ export async function POST(req: Request) {
     const { id, responses, intelligence_score, current_question, status } = body
     if (!id) return NextResponse.json({ error: 'Missing id' }, { status: 400 })
 
-    await prisma.$executeRawUnsafe(
-      `UPDATE assessment_sessions
-       SET responses = COALESCE($2::jsonb, responses),
-           intelligence_score = COALESCE($3::int, intelligence_score),
-           current_question = COALESCE($4::int, current_question),
-           status = COALESCE($5::text, status),
-           updated_at = now()
-       WHERE id = $1`,
-      id,
-      responses ? JSON.stringify(responses) : null,
-      intelligence_score ?? null,
-      current_question ?? null,
-      status ?? null
-    )
+    const dataToUpdate: any = {}
+    if (responses) dataToUpdate.responses = JSON.stringify(responses)
+    if (intelligence_score !== undefined) dataToUpdate.intelligenceScore = intelligence_score
+    if (current_question !== undefined) dataToUpdate.currentQuestion = current_question
+    if (status) dataToUpdate.status = status
+
+    await prisma.assessmentSession.update({
+      where: { id },
+      data: dataToUpdate
+    })
 
     return NextResponse.json({ ok: true })
   } catch (e) {

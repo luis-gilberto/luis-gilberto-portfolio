@@ -22,6 +22,23 @@ model User {
   @@map("User")
 }
 
+model Client {
+  id          String   @id @default(cuid())
+  name        String
+  company     String?
+  email       String?   @unique
+  status      String    @default("Active") // Active, Pending, Inactive
+  contact     String?   // Name of the contact person
+  phone       String?
+  projectType String?   // For StrategyIQ context
+  budgetRange String?
+  timeline    String?
+  companySize String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  assessmentSessions AssessmentSession[]
+}
+
 model Project {
   id          String     @id @default(cuid())
   title       String
@@ -41,6 +58,22 @@ model Document {
   uploadedAt DateTime @default(now())
   projectId String
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model AssessmentSession {
+  id                String   @id @default(cuid())
+  clientId          String   @map("client_id")
+  client            Client   @relation(fields: [clientId], references: [id])
+  consultantId      String   @map("consultant_id")
+  assessmentType    String   @map("assessment_type")
+  status            String   @default("in_progress")
+  responses         String?  // Stored as JSON string
+  intelligenceScore Int?     @map("intelligence_score")
+  currentQuestion   Int?     @map("current_question")
+  startedAt         DateTime @default(now()) @map("started_at")
+  updatedAt         DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("assessment_sessions")
 }
 
 // ===============================
@@ -81,35 +114,4 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
-}
-
-model AssessmentSession {
-  id                    String    @id @default(cuid())
-  client_id             String    @map("client_id")
-  consultant_id         String?   @map("consultant_id")
-  assessment_type       String?
-  strategic_area        String?
-  current_question      Int?      @default(0)
-  responses             Json?
-  intelligence_score    Decimal?
-  area_scores           Json?
-  complexity_indicators Json?
-  status                String?   @default("in_progress")
-  consultant_notes      String?
-  key_insights          String? // Stored as JSON string in SQLite
-  startedAt             DateTime? @map("started_at") @default(now())
-  completedAt           DateTime? @map("completed_at")
-  duration_minutes      Int?
-
-  @@map("assessment_sessions")
-}
-
-model AccessRequest {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  company   String?
-  reason    String?
-  status    String   @default("PENDING") // PENDING, APPROVED, REJECTED
-  createdAt DateTime @default(now())
 }

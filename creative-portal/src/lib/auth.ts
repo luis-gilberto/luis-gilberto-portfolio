@@ -1,140 +1,112 @@
-import { NextAuthOptions } from "next-auth"
+import { AuthOptions } from "next-auth"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
+import EmailProvider from "next-auth/providers/email"
 import CredentialsProvider from "next-auth/providers/credentials"
-import bcrypt from "bcryptjs"
 import { prisma } from "@/lib/prisma"
-import { UserRole } from "@prisma/client"
+import fs from "fs"
+import path from "path"
 
-export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
-  session: {
-    strategy: "jwt",
-  },
-  pages: {
-    signIn: "/auth/signin",
-    signUp: "/auth/signup",
+console.log("EmailProvider customized for dev magic link logging")
+
+export const authOptions: AuthOptions = {
+  adapter: {
+    ...PrismaAdapter(prisma),
+    // CRITICAL OVERRIDE: Update the user's name upon first sign-in
+    // Note: For EmailProvider, 'createUser' is called when a new user is verified.
+    createUser: async (data) => {
+      // Determine role based on email pattern
+      let role = 'CLIENT';
+      if (data.email.includes("admin")) {
+          role = "ADMIN";
+      } else if (data.email.includes("consultant")) {
+          role = "CONSULTANT";
+      }
+
+      const user = await prisma.user.create({
+        data: {
+          ...data,
+          name: data.name || 'New Client Partner', 
+          role: role as any
+        }
+      })
+      return user
+    }
   },
   providers: [
-    CredentialsProvider({
-      name: "credentials",
-      credentials: {
-        email: {
-          label: "Email",
-          type: "email",
-          placeholder: "john@example.com",
-        },
-        password: {
-          label: "Password",
-          type: "password",
-        },
-      },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          return null
-        }
-
-        const user = await prisma.user.findUnique({
-          where: {
-            email: credentials.email,
-          },
-          include: {
-            company: true,
-          },
-        })
-
-        if (!user || !user.passwordHash) {
-          return null
-        }
-
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password,
-          user.passwordHash
-        )
-
-        if (!isPasswordValid) {
-          return null
-        }
-
-        if (!user.isActive) {
-          return null
-        }
-
-        // Update last login
-        await prisma.user.update({
-          where: { id: user.id },
-          data: { lastLogin: new Date() },
-        })
-
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.firstName && user.lastName 
-            ? `${user.firstName} ${user.lastName}` 
-            : user.firstName || user.email,
-          role: user.role,
-          image: user.avatarUrl,
-          companyId: user.companyId,
-          companyName: user.company?.name,
-        }
+    EmailProvider({
+      async sendVerificationRequest({ url }) {
+        console.log(`Login Link: ${url}`)
+        try {
+          const filePath = path.join(process.cwd(), ".magic-link.txt")
+          fs.appendFileSync(filePath, `${url}\n`)
+        } catch {}
       },
     }),
+    CredentialsProvider({
+      name: "Dev Credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        code: { label: "Code", type: "text" }
+      },
+      async authorize(credentials) {
+        if (!credentials?.email) return null;
+
+        let role = 'CLIENT';
+        if (credentials.email.includes("admin")) {
+            role = "ADMIN";
+        } else if (credentials.email.includes("consultant")) {
+            role = "CONSULTANT";
+        } else {
+            role = "CLIENT";
+        }
+
+        // Upsert user to ensure they exist in DB with correct role
+        const user = await prisma.user.upsert({
+          where: { email: credentials.email },
+          update: { role: role as any },
+          create: {
+            email: credentials.email,
+            name: credentials.email.split('@')[0],
+            role: role as any
+          }
+        });
+        
+        return user;
+      }
+    })
   ],
+  session: {
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60,
+  },
+  pages: {
+    signIn: '/auth/signin',
+    verifyRequest: '/auth/verify-request',
+    newUser: '/dashboard',
+  },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.role = user.role
-        token.companyId = user.companyId
-        token.companyName = user.companyName
+        (token as any).role = (user as any).role || 'CLIENT';
+        (token as any).id = (user as any).id;
+        (token as any).name = (user as any).name;
       }
       return token
     },
     async session({ session, token }) {
       if (token) {
-        session.user.id = token.sub!
-        session.user.role = token.role as UserRole
-        session.user.companyId = token.companyId as string | null
-        session.user.companyName = token.companyName as string | null
+        (session.user as any).role = (token as any).role || 'CLIENT';
+        (session.user as any).id = (token as any).sub || (token as any).id;
+        if ((token as any).name) {
+            (session.user as any).name = (token as any).name;
+        }
       }
       return session
     },
+    async redirect({ url, baseUrl }) {
+      return baseUrl + '/dashboard'
+    },
   },
-}
-
-// Helper functions for role-based access control
-export const hasRole = (userRole: UserRole, requiredRoles: UserRole[]): boolean => {
-  return requiredRoles.includes(userRole)
-}
-
-export const isAdmin = (userRole: UserRole): boolean => {
-  return userRole === UserRole.ADMIN
-}
-
-export const isTeamMember = (userRole: UserRole): boolean => {
-  return userRole === UserRole.TEAM_MEMBER || userRole === UserRole.ADMIN
-}
-
-export const isClient = (userRole: UserRole): boolean => {
-  return userRole === UserRole.CLIENT
-}
-
-export const canAccessProject = (
-  userRole: UserRole,
-  userId: string,
-  project: { clientId: string | null; companyId: string | null },
-  userCompanyId: string | null
-): boolean => {
-  // Admins and team members can access all projects
-  if (isTeamMember(userRole)) {
-    return true
-  }
-
-  // Clients can only access their own projects or company projects
-  if (isClient(userRole)) {
-    return (
-      project.clientId === userId ||
-      (userCompanyId && project.companyId === userCompanyId)
-    )
-  }
-
-  return false
+  secret: process.env.NEXTAUTH_SECRET,
+  debug: process.env.NODE_ENV === "development",
 }

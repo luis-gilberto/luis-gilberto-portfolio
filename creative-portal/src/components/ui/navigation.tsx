@@ -20,7 +20,7 @@ export function Navigation() {
   return (
     <>
       {/* 1. GLOBAL TOP NAV (Dark) */}
-      <nav className="fixed top-0 left-0 right-0 h-16 bg-[#1a1a1a]/95 backdrop-blur-md border-b border-white/10 z-50">
+      <nav className="fixed top-0 left-0 right-0 h-16 bg-[#1a1a1a]/95 backdrop-blur-md border-b border-white/10 border-t border-warm-gold/30 z-50">
         <div className="max-w-7xl mx-auto px-4 h-full flex items-center justify-between">
           
           {/* Logo Area */}
@@ -37,7 +37,6 @@ export function Navigation() {
             <a href="https://luis-gilberto.com/TheHub/" className="text-sm font-medium text-gray-300 hover:text-white uppercase tracking-wider transition-colors">The Hub</a>
             {/* Active Portal Link (Internal) */}
             <Link href="/" className="text-sm font-bold text-[var(--coral)] uppercase tracking-wider">The Portal</Link>
-            <Link href="/changelog" className="text-sm font-medium text-gray-300 hover:text-white uppercase tracking-wider transition-colors">Changelog</Link>
           </div>
 
           {/* User / Auth Controls */}
@@ -57,11 +56,13 @@ export function Navigation() {
                 </Button>
               </div>
             ) : (
-              <div className="hidden md:block">
-                <Button asChild size="sm" className="bg-[var(--coral)] hover:bg-[#e55a5a] text-white h-8 text-xs font-bold uppercase">
-                  <Link href="/auth/signin">Portal Login</Link>
-                </Button>
-              </div>
+              pathname !== '/auth/signin' && (
+                <div className="hidden md:block">
+                  <Button asChild size="sm" className="bg-[var(--coral)] hover:bg-[#e55a5a] text-white h-8 text-xs font-bold uppercase">
+                    <Link href="/auth/signin">Portal Login</Link>
+                  </Button>
+                </div>
+              )
             )}
 
             {/* Mobile Toggle */}
@@ -85,7 +86,7 @@ export function Navigation() {
                 <a href="https://luis-gilberto.com" className="text-2xl font-bold text-white font-big-shoulders">Portfolio</a>
                 <a href="https://luis-gilberto.com/insights/" className="text-2xl font-bold text-white font-big-shoulders">Insights</a>
                 <a href="https://luis-gilberto.com/TheHub/" className="text-2xl font-bold text-white font-big-shoulders">The Hub</a>
-                <Link href="/" className="text-2xl font-bold text-[var(--coral)] font-big-shoulders">The Portal</Link>
+                <Link href="/" className="text-2xl font-bold text-[var(--coral)] font-serif">The Portal</Link>
               </div>
               <div className="h-px bg-white/10 w-full my-6"></div>
               <div className="flex flex-col space-y-3">
@@ -95,13 +96,11 @@ export function Navigation() {
                     <Link href="/dashboard" className="text-lg font-medium text-gray-300" onClick={() => setIsMobileOpen(false)}>Dashboard</Link>
                     <Link href="/projects" className="text-lg font-medium text-gray-300" onClick={() => setIsMobileOpen(false)}>Projects</Link>
                     <Link href="/documents" className="text-lg font-medium text-gray-300" onClick={() => setIsMobileOpen(false)}>Documents</Link>
-                    <Link href="/changelog" className="text-lg font-medium text-gray-300" onClick={() => setIsMobileOpen(false)}>Changelog</Link>
                     <button onClick={() => { handleSignOut(); setIsMobileOpen(false); }} className="text-left text-lg font-medium text-[var(--coral)]">Sign Out</button>
                   </>
                 ) : (
                   <>
                     <Link href="/auth/signin" className="text-lg font-bold text-[var(--coral)]" onClick={() => setIsMobileOpen(false)}>Log In</Link>
-                    <Link href="/changelog" className="text-lg font-medium text-gray-300" onClick={() => setIsMobileOpen(false)}>Changelog</Link>
                   </>
                 )}
               </div>

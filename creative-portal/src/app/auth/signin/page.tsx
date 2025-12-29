@@ -5,22 +5,21 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 
 export default function SignIn() {
   const router = useRouter()
   const [email, setEmail] = useState('')
-  const [name, setName] = useState('') // NEW STATE FOR NAME
+  const [name, setName] = useState('')
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     
-    // Step 1: Temporarily save name/email to local storage 
-    // This ensures the custom next-auth logic can access the name during database insert 
+    // Save name for profile creation
     localStorage.setItem('auth_temp_name', name.trim());
 
-    // Step 2: Initiate Magic Link flow
     const result = await signIn('email', { email, redirect: false })
     setLoading(false)
     
@@ -28,19 +27,18 @@ export default function SignIn() {
       alert(`Sign-in error: ${result.error}. Please check your email format.`);
       console.error('Sign-in error:', result.error)
     } else if (result?.url) {
-      // Redirect to verify-request page
       router.push('/auth/verify-request')
     }
   }
 
   const isFormValid = name.trim().length > 1 && email.includes('@') && email.includes('.');
 
-  const handleDevLogin = async (email: string, roleName: string) => {
+  const handleDevLogin = async (email: string) => {
     setLoading(true);
     try {
       const result = await signIn('credentials', { 
         email, 
-        password: 'dev-password', // Password doesn't matter for our dev provider logic
+        code: '123456', 
         redirect: false 
       });
       
@@ -58,102 +56,106 @@ export default function SignIn() {
   };
 
   return (
-    <div className="min-h-[80vh] flex flex-col items-center justify-center px-4">
-      {/* Glass Card Container */}
-      <div className="w-full max-w-md p-8 rounded-2xl border border-[var(--border-strong)] bg-[var(--card-bg)] shadow-[var(--shadow-hover)] backdrop-blur-md">
-        
-        <div className="text-center mb-8">
-          <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-[var(--coral)] bg-white shadow-lg dark:bg-[#211e2f] dark:shadow-xl">
-            {/* External Link SVG */}
-            <svg 
-              width="28" 
-              height="28" 
-              viewBox="0 0 24 24" 
-              fill="none" 
-              stroke="var(--coral)" 
-              strokeWidth="2.5" 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-            > 
-              <path d="M15 3h6v6"></path><path d="M10 14L21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path> 
-            </svg> 
-          </div> 
-          <h1 className="text-3xl font-bold text-[var(--text-primary)] font-big-shoulders mb-2"> 
-            Client Portal Sign Up 
-          </h1> 
-          <p className="text-[var(--text-secondary)] text-sm"> 
-            Create your account to access your project dashboard. 
-          </p> 
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-[#121212]">
+      
+      {/* 1. Brand Seal */}
+      <div className="flex flex-col items-center mb-8"> 
+        {/* 1. The Circle Container */} 
+        <div className="w-20 h-20 rounded-full bg-black/50 border border-white/10 flex items-center justify-center shadow-[0_0_30px_rgba(249,111,110,0.2)] mb-4 backdrop-blur-md"> 
+          {/* 2. The Logomark ONLY */} 
+          <img src="/assets/images/Coral_LG-3D.png" alt="Logomark" className="w-16 h-auto opacity-90" /> 
         </div> 
+        {/* 3. The Text Stack */} 
+        <div className="text-center tracking-[0.2em] leading-tight"> 
+          <div className="text-xs font-bold text-white mb-1">LUIS GILBERTO</div> 
+          <div className="text-sm font-bold text-[#F96F6E]">ECOSYSTEM</div> 
+        </div> 
+      </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4"> 
-          {/* Name Input */} 
-          <div> 
+      {/* Glass Card Container */}
+      <div className="w-full max-w-md p-8 rounded-2xl border border-white/10 bg-black/30 backdrop-blur-xl shadow-2xl relative overflow-hidden group">
+        
+        {/* Subtle Gradient Glow */}
+        <div className="absolute -top-24 -right-24 w-48 h-48 bg-[var(--coral)]/20 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
+        
+        <div className="text-center mb-8 relative z-10">
+          <h1 className="font-serif text-3xl text-white mb-2">
+            Welcome to The Portal
+          </h1>
+          <p className="font-sans text-sm text-gray-400">
+            Your Strategic Access Point to the LG Ecosystem
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
+           {/* Name Input */}
+          <div className="space-y-1.5">
             <Input 
               type="text" 
               placeholder="Your Full Name" 
               value={name} 
               onChange={(e) => setName(e.target.value)} 
               required 
-              className="h-12 bg-[var(--bg-alt)] border-[var(--border-subtle)] text-[var(--text-primary)] focus:border-[var(--coral)] rounded-lg" 
-            /> 
-          </div> 
-          {/* Email Input */} 
-          <div> 
+              className="h-12 bg-black/50 border-white/10 text-white placeholder:text-gray-500 focus:border-[var(--coral)] focus:ring-1 focus:ring-[var(--coral)] rounded-lg transition-all"
+            />
+          </div>
+
+          {/* Email Input */}
+          <div className="space-y-1.5">
             <Input 
               type="email" 
               placeholder="name@company.com" 
               value={email} 
               onChange={(e) => setEmail(e.target.value)} 
               required 
-              className="h-12 bg-[var(--bg-alt)] border-[var(--border-subtle)] text-[var(--text-primary)] focus:border-[var(--coral)] rounded-lg" 
-            /> 
-          </div> 
+              className="h-12 bg-black/50 border-gray-700 text-white placeholder:text-gray-500 focus:border-[var(--coral)] focus:ring-1 focus:ring-[var(--coral)] rounded-lg transition-all"
+            />
+          </div>
           
           <Button 
             type="submit" 
             disabled={loading || !isFormValid} 
-            className="w-full h-12 bg-[var(--coral)] hover:bg-[#e55a5a] text-white font-bold uppercase tracking-wider rounded-lg transition-all hover:-translate-y-0.5 hover:shadow-lg" 
-          > 
-            {loading ? 'Sending Link...' : 'Create Account & Sign In'} 
-          </Button> 
-        </form> 
+            className="w-full h-12 bg-gradient-to-r from-[var(--coral)] to-[#e55a5a] hover:from-[#e55a5a] hover:to-[var(--coral)] text-white font-bold uppercase tracking-widest rounded-lg shadow-lg shadow-red-900/20 transition-all hover:-translate-y-0.5"
+          >
+            {loading ? 'Accessing Vault...' : 'Enter Portal'}
+          </Button>
+        </form>
 
-        <div className="mt-6 text-center"> 
-          <p className="text-xs text-[var(--text-muted)]"> 
-            Secured by Luis Gilberto Ecosystem 
-          </p> 
-        </div> 
-      </div> 
+        <div className="mt-8 text-center relative z-10">
+          <p className="text-[10px] text-gray-600 uppercase tracking-widest">
+            Restricted Access Environment
+          </p>
+        </div>
+      </div>
 
-      {/* Dev Shortcuts Panel - Only visible in Development */}
+      {/* Dev Shortcuts Panel */}
       {process.env.NODE_ENV === 'development' && (
-        <div className="w-full max-w-md mt-6 p-4 rounded-xl border border-dashed border-gray-400/50 bg-gray-50/50 dark:bg-gray-900/50 backdrop-blur-sm">
-          <div className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 text-center">
-            🚧 Dev Shortcuts 🚧
+        <div className="w-full max-w-md mt-8 p-6 rounded-xl border border-dashed border-white/10 bg-white/5 backdrop-blur-sm">
+          <div className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 text-center">
+            Development Access Keys
           </div>
-          <div className="flex flex-wrap gap-2 justify-center">
+          <div className="grid grid-cols-3 gap-3">
             <button
-              onClick={() => handleDevLogin('admin@example.com', 'Admin')}
-              className="px-3 py-1.5 text-xs font-bold text-white bg-red-500 hover:bg-red-600 rounded-full transition-colors shadow-sm"
+              onClick={() => handleDevLogin('admin@example.com')}
+              className="px-2 py-2 text-[10px] font-bold text-white bg-red-500/80 hover:bg-red-500 rounded border border-white/10 transition-colors uppercase tracking-wider"
             >
-              Login as Admin
+              Admin
             </button>
             <button
-              onClick={() => handleDevLogin('consultant@example.com', 'Consultant')}
-              className="px-3 py-1.5 text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 rounded-full transition-colors shadow-sm"
+              onClick={() => handleDevLogin('client@example.com')}
+              className="px-2 py-2 text-[10px] font-bold text-white bg-emerald-600/80 hover:bg-emerald-600 rounded border border-white/10 transition-colors uppercase tracking-wider"
             >
-              Login as Consultant
+              Client
             </button>
             <button
-              onClick={() => handleDevLogin('client@example.com', 'Client')}
-              className="px-3 py-1.5 text-xs font-bold text-white bg-green-600 hover:bg-green-700 rounded-full transition-colors shadow-sm"
+              onClick={() => handleDevLogin('consultant@example.com')}
+              className="px-2 py-2 text-[10px] font-bold text-white bg-purple-600/80 hover:bg-purple-600 rounded border border-white/10 transition-colors uppercase tracking-wider"
             >
-              Login as Client
+              Consultant
             </button>
           </div>
         </div>
       )}
     </div> 
   ) 
-} 
+}

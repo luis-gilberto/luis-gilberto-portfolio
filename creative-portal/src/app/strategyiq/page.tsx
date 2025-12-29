@@ -6,6 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { useSession } from 'next-auth/react';
 import { createClient } from '@supabase/supabase-js';
 import KnowledgeBaseModal from '@/components/ui/knowledge-base-modal';
+import { ConsultantCopilot } from '@/components/strategy/consultant-copilot';
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -25,12 +26,189 @@ const serviceTiers = {
 
 const assessmentQuestions = {
     gtm: [
-        { id: 'm1', question: 'How ready is your market entry strategy?', options: [{ label: 'Ready', score: 5 }, { label: 'In Concept', score: 2 }], insight: 'Market readiness dictates resource intensity.' },
-        { id: 'm2', question: 'How do you differentiate from competitors?', options: [{ label: 'Unclear', score: 3 }, { label: 'Clear Value Prop', score: 5 }], insight: 'Differentiation clarity scopes positioning work.' },
-        { id: 'm3', question: 'How well-defined is your target market?', options: [{ label: 'Broad market approach', score: 1 }, { label: 'Defined buyer personas', score: 4 }], insight: 'Audience definition impacts campaign complexity.' },
-        { id: 'm4', question: 'What\'s your preferred launch timeline?', options: [{ label: 'Urgent - within 6 weeks', score: 3 }, { label: 'Strategic - 4-6 months', score: 4 }], insight: 'Timeline urgency affects engagement model.' },
-        { id: 'm5', question: 'What go-to-market resources do you have?', options: [{ label: 'Budget allocated', score: 2 }, { label: 'No marketing team', score: 1 }], insight: 'Resource assessment determines support level.' }
+        {
+            id: 'market_readiness',
+            question: 'How ready is your market entry strategy?',
+            type: 'single',
+            consultantContext: {
+                script: "Let's look at your GTM readiness. Are we talking pure concept right now, or is the plane on the runway waiting for clearance?",
+                listeningCues: ["Red Flag: 'We build it and they will come'", "Green Flag: 'We have beta users'"],
+                insight: "This reveals their strategic maturity and readiness for systematic GTM approach."
+            },
+            options: [
+                { value: 'concept', label: 'Still in concept phase', score: 2 },
+                { value: 'research', label: 'Market research underway', score: 3 },
+                { value: 'planning', label: 'Planning phase, need execution', score: 4 },
+                { value: 'launch_ready', label: 'Ready to launch, need optimization', score: 5 }
+            ]
+        },
+        {
+            id: 'competitive_position',
+            question: 'How do you differentiate from competitors?',
+            type: 'single',
+            consultantContext: {
+                script: "When a customer asks 'Why you vs the other guys?', do you have a killer answer, or does it get a bit fuzzy?",
+                listeningCues: ["Red Flag: 'We have no competitors'", "Green Flag: 'We own this specific niche'"],
+                insight: "Understanding their differentiation clarity helps scope positioning work needed."
+            },
+            options: [
+                { value: 'unclear', label: 'Differentiation unclear', score: 3 },
+                { value: 'feature_based', label: 'Feature-based differences', score: 2 },
+                { value: 'value_based', label: 'Clear value proposition', score: 4 },
+                { value: 'strategic', label: 'Strategic positioning advantage', score: 5 }
+            ]
+        },
+        {
+            id: 'target_clarity',
+            question: 'How well-defined is your target market?',
+            type: 'single',
+            consultantContext: {
+                script: "Who exactly is this for? Do we have specific personas defined, or are we casting a wide net?",
+                listeningCues: ["Red Flag: 'Everyone is our customer'", "Green Flag: 'Our ICP is X'"],
+                insight: "Audience definition directly impacts campaign complexity and resource allocation."
+            },
+            options: [
+                { value: 'broad', label: 'Broad market approach', score: 1 },
+                { value: 'segments', label: 'General market segments', score: 2 },
+                { value: 'personas', label: 'Defined buyer personas', score: 3 },
+                { value: 'validated', label: 'Validated target segments', score: 4 }
+            ]
+        },
+        {
+            id: 'launch_timeline',
+            question: "What is your preferred launch timeline?",
+            type: 'single',
+            consultantContext: {
+                script: "Realistically, when do we need to be live? Is this a fire drill or a strategic rollout?",
+                listeningCues: ["Red Flag: 'Yesterday'", "Upsell: 'We have budget to speed this up'"],
+                insight: "Timeline urgency affects engagement model and resource intensity."
+            },
+            options: [
+                { value: 'urgent', label: 'Urgent - within 6 weeks', score: 3 },
+                { value: 'standard', label: 'Standard - 2-3 months', score: 4 },
+                { value: 'strategic', label: 'Strategic - 4-6 months', score: 2 },
+                { value: 'flexible', label: 'Flexible timeline', score: 1 }
+            ]
+        }
     ],
+    brand: [
+        {
+            id: 'brand_maturity',
+            question: "What is your current brand development stage?",
+            type: 'single',
+            consultantContext: {
+                script: "Where does the brand sit today? Are we building from scratch, or polishing something that's already working?",
+                listeningCues: ["Red Flag: 'We just have a logo'", "Green Flag: 'We need to evolve'"],
+                insight: "Brand stage determines foundation work vs. refinement approach needed."
+            },
+            options: [
+                { value: 'startup', label: 'Early-stage brand development', score: 2 },
+                { value: 'established', label: 'Established but needs refinement', score: 4 },
+                { value: 'mature', label: 'Mature brand, need repositioning', score: 5 },
+                { value: 'refresh', label: 'Brand refresh required', score: 3 }
+            ]
+        },
+        {
+            id: 'brand_challenges',
+            question: "What is your primary brand challenge?",
+            type: 'single',
+            consultantContext: {
+                script: "If you could wave a wand and fix one thing about how people perceive you, what would it be?",
+                listeningCues: ["Red Flag: 'People don't know who we are'", "Green Flag: 'We want to go upmarket'"],
+                insight: "Primary challenge focus helps prioritize strategic intervention points."
+            },
+            options: [
+                { value: 'awareness', label: 'Low brand awareness', score: 3 },
+                { value: 'differentiation', label: 'Lack of differentiation', score: 4 },
+                { value: 'consistency', label: 'Inconsistent messaging', score: 2 },
+                { value: 'perception', label: 'Negative brand perception', score: 5 }
+            ]
+        },
+        {
+            id: 'audience_understanding',
+            question: 'How well do you understand your audience?',
+            type: 'single',
+            consultantContext: {
+                script: "How much data do we have on the customer? Is it mostly gut feel, or do we have research?",
+                listeningCues: ["Red Flag: 'We assume they like X'", "Green Flag: 'Our data shows...'"],
+                insight: "Audience insights depth affects research vs. application approach."
+            },
+            options: [
+                { value: 'assumptions', label: 'Based on assumptions', score: 1 },
+                { value: 'basic_data', label: 'Basic demographic data', score: 2 },
+                { value: 'research', label: 'Market research insights', score: 3 },
+                { value: 'deep_insights', label: 'Deep behavioral insights', score: 4 }
+            ]
+        }
+    ],
+    campaign: [
+        {
+            id: 'campaign_objective',
+            question: "What is your primary campaign objective?",
+            type: 'single',
+            consultantContext: {
+                script: "At the end of this campaign, what does success look like? Leads? Sales? Or just getting the name out there?",
+                listeningCues: ["Red Flag: 'We want everything'", "Green Flag: 'Revenue is the metric'"],
+                insight: "Campaign focus determines strategy complexity and success metrics framework."
+            },
+            options: [
+                { value: 'awareness', label: 'Brand awareness and reach', score: 3 },
+                { value: 'leads', label: 'Lead generation', score: 4 },
+                { value: 'sales', label: 'Direct sales conversion', score: 5 },
+                { value: 'engagement', label: 'Audience engagement', score: 2 }
+            ]
+        },
+        {
+            id: 'campaign_budget',
+            question: "What is your campaign budget range?",
+            type: 'single',
+            consultantContext: {
+                script: "What kind of fuel are we putting in the tank? What's the realistic media spend range?",
+                listeningCues: ["Red Flag: 'Zero budget, organic only'", "Green Flag: 'We have $10k/mo allocated'"],
+                insight: "Budget level indicates scale possibilities and resource allocation approach."
+            },
+            options: [
+                { value: 'under_50k', label: 'Under $50k', score: 2 },
+                { value: '50k_100k', label: '$50k - $100k', score: 3 },
+                { value: '100k_250k', label: '$100k - $250k', score: 4 },
+                { value: 'over_250k', label: 'Over $250k', score: 5 }
+            ]
+        }
+    ],
+    creative: [
+        {
+            id: 'creative_maturity',
+            question: "What is your current creative capability?",
+            type: 'single',
+            consultantContext: {
+                script: "Do you have an in-house design team, or is it pretty ad-hoc right now?",
+                listeningCues: ["Red Flag: 'My nephew uses Canva'", "Green Flag: 'We have a creative director'"],
+                insight: "Creative capability assessment determines build vs. optimize approach needed."
+            },
+            options: [
+                { value: 'none', label: 'No formal creative process', score: 3 },
+                { value: 'basic', label: 'Basic creative assets', score: 2 },
+                { value: 'structured', label: 'Structured creative approach', score: 4 },
+                { value: 'advanced', label: 'Advanced creative operations', score: 1 }
+            ]
+        },
+        {
+            id: 'content_volume',
+            question: "What are your content production needs?",
+            type: 'single',
+            consultantContext: {
+                script: "Are we talking a few posts a week, or do you need a full-blown content factory?",
+                listeningCues: ["Red Flag: 'We need 10 videos a day with no budget'", "Green Flag: 'Regular cadence'"],
+                insight: "Production needs indicate scale and systematic approach requirements."
+            },
+            options: [
+                { value: 'occasional', label: 'Occasional content needs', score: 1 },
+                { value: 'regular', label: 'Regular content production', score: 2 },
+                { value: 'high_volume', label: 'High-volume production', score: 3 },
+                { value: 'enterprise', label: 'Enterprise-level needs', score: 4 }
+            ]
+        }
+    ]
 };
 
 const initialClientContext = {
@@ -57,7 +235,7 @@ export default function StrategyIQDashboard() {
       score: 0,
       sessionId: ''
     });
-    const [clientDropdownData, setClientDropdownData] = useState<{ id: string, name: string, company: string }[]>([]);
+    const [clientDropdownData, setClientDropdownData] = useState<any[]>([]);
     const [selectedClientId, setSelectedClientId] = useState('');
     const [clientDisplayName, setClientDisplayName] = useState('Client Assessment');
     const [kbOpen, setKbOpen] = useState(false);
@@ -73,11 +251,10 @@ export default function StrategyIQDashboard() {
 
     const fetchClientDropdownData = async () => {
         try {
-            const { data: clients, error } = await supabase
-                .from('clients')
-                .select('id, name, company, email');
-            if (error) throw error;
-            setClientDropdownData(clients as { id: string, name: string, company: string }[]);
+            const res = await fetch('/api/admin/clients');
+            if (!res.ok) throw new Error('Failed to fetch clients');
+            const clients = await res.json();
+            setClientDropdownData(clients);
         } catch (e) {
             console.error('Error loading client list:', e);
         }
@@ -85,17 +262,15 @@ export default function StrategyIQDashboard() {
 
     const loadClientContext = async (clientId: string) => {
         try {
-            const { data: client, error } = await supabase
-                .from('clients')
-                .select('*')
-                .eq('id', clientId)
-                .single();
-            if (error || !client) throw new Error('Client context not found.');
+            const client = clientDropdownData.find(c => c.id === clientId);
+            
+            if (!client) throw new Error('Client context not found.');
+            
             const loadedData = {
-                projectType: client.project_type || 'Brand/GTM (Auto)',
-                budgetRange: client.budget_range || 'N/A',
+                projectType: client.projectType || 'Brand/GTM (Auto)',
+                budgetRange: client.budgetRange || 'N/A',
                 timeline: client.timeline || 'N/A',
-                companySize: client.company_size || 'N/A',
+                companySize: client.companySize || 'N/A',
             };
             setClientContext(loadedData);
             setClientDisplayName(`${client.name} - ${client.company || 'Private'}`);
@@ -370,6 +545,14 @@ export default function StrategyIQDashboard() {
                         </section>
                     </div>
                     <div className="lg:col-span-1">
+                        {((session?.user as any)?.role === 'ADMIN' || (session?.user as any)?.role === 'CONSULTANT') && (
+                            <div className="mb-6">
+                                <ConsultantCopilot 
+                                    assessmentType={assessmentState.type}
+                                    currentQuestion={assessmentQuestions[assessmentState.type as keyof typeof assessmentQuestions]?.[assessmentState.index]}
+                                />
+                            </div>
+                        )}
                         <div className="live-scoring space-y-6">
                             <div className="p-6 rounded-2xl bg-[var(--card-bg)] border border-[var(--border-strong)] shadow-[var(--shadow-soft)]">
                                 <h3 className="font-big-shoulders text-lg font-semibold mb-4 text-[var(--coral)]">

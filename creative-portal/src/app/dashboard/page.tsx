@@ -62,10 +62,10 @@ export default function Dashboard() {
       
       {/* Header */}
       <div className="mb-12 text-center md:text-left">
-        <span className="text-xs font-bold tracking-widest text-[var(--coral)] uppercase mb-2 block">
+        <span className="text-xs font-bold tracking-widest text-[var(--coral)] uppercase mb-2 block font-serif">
           The Portal
         </span>
-        <h1 className="text-4xl md:text-5xl font-bold text-[var(--text-primary)] font-big-shoulders">
+        <h1 className="text-4xl md:text-5xl font-bold text-[var(--text-primary)] font-serif">
           Welcome, {session?.user?.name?.split(' ')[0] || 'Partner'}.
         </h1>
         <p className="text-[var(--text-secondary)] mt-2 max-w-2xl">
