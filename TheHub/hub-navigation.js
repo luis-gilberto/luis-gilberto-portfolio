@@ -40,6 +40,7 @@ class HubSystem {
                         <a href="${basePrefix}../index.html" class="hub-nav-link">Portfolio</a>
                         <a href="${basePrefix}../insights/" class="hub-nav-link">Insights</a>
                         <a href="${basePrefix}index.html" class="hub-nav-link hub-active">The Hub</a>
+                        <a href="https://portal.luis-gilberto.com" class="hub-nav-link" target="_blank" rel="noopener noreferrer" aria-label="The Portal (opens in a new tab)">Portal</a>
                     </div>
                     
                     <div class="hub-nav-brand">
@@ -69,6 +70,7 @@ class HubSystem {
                             <a href="${basePrefix}../index.html" class="hub-nav-mobile-link"><img src="${basePrefix}advisory/assets/IMC_Services_Simple_100x100.png" alt="" aria-hidden="true"><span>Portfolio</span></a>
                             <a href="${basePrefix}../insights/" class="hub-nav-mobile-link"><img src="${basePrefix}advisory/assets/StrategyIQ_Simple_100x100.png" alt="" aria-hidden="true"><span>Insights</span></a>
                             <a href="${basePrefix}index.html" class="hub-nav-mobile-link"><img src="${basePrefix}advisory/assets/TheHub_Logo.png" alt="" aria-hidden="true"><span>The Hub</span></a>
+                            <a href="https://portal.luis-gilberto.com" class="hub-nav-mobile-link" target="_blank" rel="noopener noreferrer" aria-label="The Portal (opens in a new tab)"><img src="${basePrefix}advisory/assets/Advisory_Simple_100x100.png" alt="" aria-hidden="true"><span>Portal</span></a>
                         </div>
                         <div class="hub-nav-mobile-divider"></div>
                         <div class="hub-nav-mobile-group">
