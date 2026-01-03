@@ -6,6 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { useSession } from 'next-auth/react';
 import { createClient } from '@supabase/supabase-js';
 import KnowledgeBaseModal from '@/components/ui/knowledge-base-modal';
+import { ProposalPreviewModal } from '@/components/strategy/proposal-preview-modal';
 import { ConsultantCopilot } from '@/components/strategy/consultant-copilot';
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -239,6 +240,7 @@ export default function StrategyIQDashboard() {
     const [selectedClientId, setSelectedClientId] = useState('');
     const [clientDisplayName, setClientDisplayName] = useState('Client Assessment');
     const [kbOpen, setKbOpen] = useState(false);
+    const [showProposalModal, setShowProposalModal] = useState(false);
 
     const currentRecommendation = mapScoreToTier(assessmentState.score, assessmentState.type);
     const recommendedTier = serviceTiers[currentRecommendation as keyof typeof serviceTiers];
@@ -531,12 +533,22 @@ export default function StrategyIQDashboard() {
                               </div>
                           </div>
                         </section>
-                        <section id="resultsSection" className={`${assessmentState.active === false && assessmentState.index > 0 ? '' : 'hidden'}`}>
+                        <section id="resultsSection" className={`${assessmentState.score > 0 ? '' : 'hidden'}`}>
                             <div className="p-8 rounded-2xl bg-[var(--card-bg)] border border-[var(--border-strong)] shadow-[var(--shadow-soft)]">
-                                <h2 className="font-big-shoulders text-2xl font-semibold mb-3">
-                                    Strategic <span className="text-[var(--teal)]">Recommendation</span>
-                                </h2>
-                                <p className="text-[var(--text-secondary)] mb-6">Intelligence-driven engagement recommendation based on systematic assessment.</p>
+                                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                                    <div>
+                                        <h2 className="font-big-shoulders text-2xl font-semibold mb-2">
+                                            Strategic <span className="text-[var(--teal)]">Recommendation</span>
+                                        </h2>
+                                        <p className="text-[var(--text-secondary)]">Intelligence-driven engagement recommendation based on systematic assessment.</p>
+                                    </div>
+                                    <Button 
+                                        onClick={() => setShowProposalModal(true)}
+                                        className="bg-[var(--coral)] text-white hover:bg-[#e55a5a] font-medium whitespace-nowrap"
+                                    >
+                                        <i className="fas fa-file-alt mr-2"></i> Generate Proposal
+                                    </Button>
+                                </div>
                                 <div className="bg-[var(--bg-alt)] p-6 rounded-xl">
                                     <p className="text-[var(--text-primary)] font-semibold">Assessment Score: {assessmentState.score}</p>
                                     <p className="text-[var(--text-primary)] font-semibold mt-4">Recommended Tier: {recommendedTier.name}</p>
@@ -600,6 +612,13 @@ export default function StrategyIQDashboard() {
                                     <i className="fas fa-bolt mr-2"></i>Quick Actions
                                 </h3>
                                 <div className="space-y-3">
+                                    <Button 
+                                        className="w-full bg-[var(--coral)] text-white py-2 px-4 rounded-lg text-sm font-medium hover:bg-[#e55a5a] transition-colors shadow-sm" 
+                                        onClick={() => setShowProposalModal(true)}
+                                        disabled={assessmentState.score === 0}
+                                    >
+                                        <i className="fas fa-magic mr-2"></i>Generate Proposal
+                                    </Button>
                                     <Button className="w-full bg-[var(--bg-alt)] text-[var(--text-primary)] py-2 px-4 rounded-lg text-sm font-medium hover:bg-[var(--border-strong)] transition-colors" onClick={resetAssessment}>
                                         <i className="fas fa-redo mr-2"></i>Reset Assessment
                                     </Button>
@@ -616,6 +635,15 @@ export default function StrategyIQDashboard() {
                 </div>
             </div>
             <KnowledgeBaseModal open={kbOpen} onClose={() => setKbOpen(false)} />
+            <ProposalPreviewModal 
+                open={showProposalModal} 
+                onOpenChange={setShowProposalModal}
+                data={{
+                    score: assessmentState.score,
+                    tier: recommendedTier,
+                    clientName: clientDisplayName
+                }}
+            />
         </div>
     );
 }
