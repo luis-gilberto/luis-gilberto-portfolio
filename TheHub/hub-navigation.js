@@ -87,7 +87,7 @@ class HubSystem {
                              <img src="${basePrefix}advisory/assets/ScopeIQ_Clean_Telescope_100x100.png" alt="ScopeIQ">
                              <span>ScopeIQ</span>
                          </a>
-                         <a href="${basePrefix}strategyiq/" class="hub-nav-mobile-link">
+                         <a href="https://www.luis-gilberto.com/TheHub/strategy-iq" class="hub-nav-mobile-link">
                              <img src="${basePrefix}advisory/assets/StrategyIQ_Simple_100x100.png" alt="StrategyIQ">
                              <span>StrategyIQ</span>
                          </a>

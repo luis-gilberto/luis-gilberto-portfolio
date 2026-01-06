@@ -35,6 +35,13 @@
         }
     </script>
     <style>
+        .theme-btn {
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+        .theme-btn:hover {
+            opacity: 1;
+        }
         @media (max-width: 1024px) {
             .desktop-links { display: none !important; }
             .mobile-menu-toggle { display: block !important; }
@@ -71,7 +78,7 @@
         <!-- Controls Group -->
         <div style="display: flex; align-items: center; gap: 12px;">
             <!-- Theme Toggle -->
-            <button class="theme-toggle" id="themeToggle" style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white;">
+            <button class="theme-btn" id="themeToggle" style="position: relative; z-index: 10001; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white;">
                 <i class="fas fa-sun sun-icon" style="display: none;"></i>
                 <i class="fas fa-moon moon-icon"></i>
             </button>
@@ -102,7 +109,7 @@
         <!-- Hero Section -->
         <section class="hub-hero">
             <div class="hero-bg">
-                <img src="https://c.animaapp.com/miw6zgdna5SIGT/img/strategyiq_assessments_hero_2.jpeg" alt="Intelligence Score Dashboard" class="hero-bg-img">
+                <img src="/TheHub/strategy-iq/assets/images/dashboard-dark.png" alt="Intelligence Score Dashboard" class="hero-bg-img">
                 <div class="hero-overlay"></div>
                 <div class="hero-gradient"></div>
                 <div class="hero-vignette"></div>
@@ -328,6 +335,94 @@
     </footer>
 
     <style>
+/* ===== THEME SYSTEM ===== */
+:root {
+    --bg-primary: #FAF9F6;  /* Cloud Dancer - warm off-white */
+    --bg-secondary: #F5F3EE;
+    --bg-card: #FFFFFF;
+    --text-primary: #0E0E0F;
+    --text-secondary: #666666;
+    --text-tertiary: #999999;
+    --border-color: rgba(0, 0, 0, 0.1);
+    --overlay-dark: rgba(0, 0, 0, 0.7);
+    --modal-bg: #FAF9F6;
+}
+
+[data-theme="dark"] {
+    --bg-primary: #050505;
+    --bg-secondary: #0A0A0A;
+    --bg-card: #0E0E0F;
+    --text-primary: #ffffff;
+    --text-secondary: #cccccc;
+    --text-tertiary: #888888;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --overlay-dark: rgba(5, 5, 5, 0.7);
+    --modal-bg: #050505;
+}
+
+/* ===== LIGHT MODE OVERRIDES ===== */
+[data-theme="light"] .hero-title,
+[data-theme="light"] .gradient-text,
+[data-theme="light"] .roadmap-content h2,
+[data-theme="light"] .roadmap-content h2 .highlight,
+[data-theme="light"] .expertise-card h3,
+[data-theme="light"] .roadmap-list li,
+[data-theme="light"] .scroll-indicator span {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="light"] .gradient-text {
+    background: linear-gradient(135deg, #0E0E0F 0%, #F96F6E 50%, #2ED3C6 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+[data-theme="light"] .highlight {
+    color: #0E0E0F !important;
+}
+
+[data-theme="light"] .btn-outline {
+    color: var(--text-primary) !important;
+    border-color: var(--text-primary) !important;
+}
+
+[data-theme="light"] .btn-outline:hover {
+    background: rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-theme="light"] .scroll-line {
+    background: linear-gradient(to bottom, var(--text-primary) 0%, transparent 100%) !important;
+}
+
+[data-theme="light"] .hero-bg-img {
+    opacity: 0.3 !important;
+}
+
+[data-theme="light"] .hero-overlay {
+    background: rgba(255, 255, 255, 0.8) !important;
+}
+
+[data-theme="light"] .card-overlay {
+    background: linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.95) 100%) !important;
+}
+
+[data-theme="light"] .expertise-card h3 {
+    color: #0E0E0F !important;
+}
+
+[data-theme="light"] .expertise-card p {
+    color: #666 !important;
+}
+
+[data-theme="light"] .modal-close {
+    background: rgba(0,0,0,0.1) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="light"] .modal-close:hover {
+    background: rgba(0,0,0,0.2) !important;
+}
+
         .hub-hero {
             position: relative;
             min-height: 90vh;
@@ -336,6 +431,7 @@
             justify-content: center;
             overflow: hidden;
             padding-top: 80px;
+            background: var(--bg-primary);
         }
 
         .hero-bg {
@@ -352,6 +448,19 @@
             height: 100%;
             object-fit: cover;
             opacity: 0.6;
+            transition: opacity 0.3s ease, content 0.3s ease;
+        }
+
+        /* Light mode hero image */
+        [data-theme="light"] .hero-bg-img {
+            content: url('/TheHub/strategy-iq/assets/images/dashboard-light.png');
+            opacity: 0.3;
+        }
+
+        /* Dark mode hero image */
+        [data-theme="dark"] .hero-bg-img {
+            content: url('/TheHub/strategy-iq/assets/images/dashboard-dark.png');
+            opacity: 0.6;
         }
 
         .hero-overlay {
@@ -360,7 +469,12 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(5, 5, 5, 0.7);
+            background: var(--overlay-dark);
+            transition: background 0.3s ease;
+        }
+
+        [data-theme="light"] .hero-overlay {
+            background: rgba(250, 249, 246, 0.7); /* Cloud Dancer with transparency */
         }
 
         .hero-gradient {
@@ -369,7 +483,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at center, transparent 0%, #050505 100%);
+            background: radial-gradient(circle at center, transparent 0%, var(--bg-primary) 100%);
         }
 
         .hero-vignette {
@@ -378,7 +492,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(to bottom, #050505 0%, transparent 20%, transparent 80%, #050505 100%);
+            background: linear-gradient(to bottom, var(--bg-primary) 0%, transparent 20%, transparent 80%, var(--bg-primary) 100%);
         }
 
         .hero-content {
@@ -394,7 +508,7 @@
             font-size: 5rem;
             line-height: 0.9;
             font-weight: 800;
-            color: white;
+            color: var(--text-primary);
             margin-bottom: 24px;
             opacity: 0;
             transform: translateY(30px);
@@ -412,7 +526,7 @@
             font-family: 'Inter', sans-serif;
             font-size: 1.25rem;
             line-height: 1.6;
-            color: #ccc;
+            color: var(--text-secondary);
             margin-bottom: 40px;
             opacity: 0;
             transform: translateY(30px);
@@ -516,7 +630,7 @@
         /* Expertise Section */
         .hub-expertise {
             padding: 100px 0;
-            background: #050505;
+            background: var(--bg-primary);
         }
 
         .expertise-grid {
@@ -621,7 +735,7 @@
         /* Roadmap Section */
         .hub-roadmap {
             padding: 120px 0;
-            background: #050505;
+            background: var(--bg-primary);
             position: relative;
             overflow: hidden;
         }
@@ -656,7 +770,7 @@
             font-family: 'Inter', sans-serif;
             font-size: 18px;
             line-height: 1.6;
-            color: #ccc;
+            color: var(--text-secondary);
             margin-bottom: 40px;
             max-width: 500px;
         }
@@ -772,8 +886,8 @@
             position: relative;
             max-width: 1000px;
             width: 100%;
-            background: #050505;
-            border: 1px solid rgba(255,255,255,0.1);
+            background: var(--modal-bg);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             overflow: hidden;
             transform: scale(0.95);
@@ -824,8 +938,8 @@
             width: 100%;
             display: flex;
             justify-content: center;
-            background: #0A0A0A;
-            border-top: 1px solid rgba(255,255,255,0.05);
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
         }
 
         /* Animations */
@@ -902,6 +1016,40 @@
                 closeDeliverableModal();
             }
         });
+    </script>
+    <script>
+        // Theme System - Must run immediately
+        (function() {
+            const themeToggle = document.getElementById('themeToggle');
+            const html = document.documentElement;
+            const body = document.body;
+            
+            // Initialize theme from localStorage or default to dark
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            html.setAttribute('data-theme', savedTheme);
+            if (savedTheme === 'dark') {
+                body.classList.add('dark');
+            } else {
+                body.classList.remove('dark');
+            }
+            
+            // Theme toggle click handler
+            if (themeToggle) {
+                themeToggle.addEventListener('click', function() {
+                    const currentTheme = html.getAttribute('data-theme');
+                    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                    
+                    html.setAttribute('data-theme', newTheme);
+                    localStorage.setItem('theme', newTheme);
+                    
+                    if (newTheme === 'dark') {
+                        body.classList.add('dark');
+                    } else {
+                        body.classList.remove('dark');
+                    }
+                });
+            }
+        })();
     </script>
 </body>
 </html>

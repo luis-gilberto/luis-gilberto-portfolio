@@ -13,7 +13,7 @@ class HubNavigationIntegration {
                 { id: 'services', label: 'Services', url: 'https://luis-gilberto.com/TheHub/IMCServices/', icon: 'star' },
                 { id: 'advisory', label: 'Advisory', url: 'https://luis-gilberto.com/TheHub/advisory/', icon: 'check-circle' },
                 { id: 'scopeiq', label: 'ScopeIQ', url: 'https://luis-gilberto.com/TheHub/scopeiq/', icon: 'search' },
-                { id: 'strategyiq', label: 'StrategyIQ', url: 'https://luis-gilberto.com/TheHub/strategyiq/', icon: 'brain' }
+                { id: 'strategyiq', label: 'StrategyIQ', url: 'https://www.luis-gilberto.com/TheHub/strategy-iq', icon: 'brain' }
             ],
             
             // Current page detection
