@@ -671,6 +671,125 @@
             font-weight: 500;
         }
 
+        /* ===== LIGHT MODE THEME OPTIMIZATION ===== */
+
+        /* Light mode color scheme */
+        [data-theme="light"] {
+            --bg-primary: #FAF9F6;  /* Cloud Dancer */
+            --bg-primary-rgb: 250, 249, 246;
+            --bg-secondary: #FFFFFF;
+            --text-primary: #0E0E0F;
+            --text-secondary: #4A4A4A;
+            --border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        /* Light mode ambient orbs */
+        [data-theme="light"] .orb-teal {
+            background: radial-gradient(circle, rgba(45, 212, 191, 0.08) 0%, transparent 70%);
+        }
+
+        [data-theme="light"] .orb-coral {
+            background: radial-gradient(circle, rgba(249, 111, 110, 0.06) 0%, transparent 70%);
+        }
+
+        /* Light mode cube and plate */
+        [data-theme="light"] .circular-plate {
+            background: radial-gradient(circle at center, rgba(0,0,0,0.02) 0%, transparent 70%);
+            border: 1px solid rgba(0,0,0,0.1);
+            box-shadow: 0 0 120px -30px rgba(45,212,191,0.1);
+        }
+
+        [data-theme="light"] .ring-outer {
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        [data-theme="light"] .ring-inner {
+            border: 1px dashed rgba(45, 212, 191, 0.4);
+        }
+
+        [data-theme="light"] .cube.phase-wireframe .face {
+            border-color: rgba(45, 212, 191, 0.4);
+        }
+
+        [data-theme="light"] .face {
+            border: 2px solid rgba(0,0,0,0.1);
+        }
+
+        /* Light mode hero text */
+        [data-theme="light"] .hero-title {
+            color: #0E0E0F;
+        }
+
+        [data-theme="light"] .gradient-text {
+            background: linear-gradient(to right, var(--color-teal), #0E0E0F, var(--color-coral));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        [data-theme="light"] .hero-description {
+            color: #4A4A4A;
+        }
+
+        /* Light mode cards */
+        [data-theme="light"] .cap-card {
+            background: #FFFFFF;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        [data-theme="light"] .cap-card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        [data-theme="light"] .cap-icon {
+            background: #F5F3EE;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="light"] .cap-card h3 {
+            color: #0E0E0F;
+        }
+
+        [data-theme="light"] .cap-card p {
+            color: #4A4A4A;
+        }
+
+        /* Light mode dual track section */
+        [data-theme="light"] .studio-dual-track {
+            background: #F5F3EE;
+        }
+
+        [data-theme="light"] .section-header h2 {
+            color: #0E0E0F;
+        }
+
+        [data-theme="light"] .track-card {
+            background: #FFFFFF;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        [data-theme="light"] .track-card h3 {
+            color: #0E0E0F;
+        }
+
+        [data-theme="light"] .track-card p {
+            color: #4A4A4A;
+        }
+
+        /* Light mode CTA section */
+        [data-theme="light"] .cta-card {
+            background: linear-gradient(180deg, rgba(0,0,0,0.02) 0%, var(--bg-primary) 100%);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="light"] .cta-card h2 {
+            color: #0E0E0F;
+        }
+
+        [data-theme="light"] .cta-card p {
+            color: #4A4A4A;
+        }
     </style>
 
 </head>
@@ -698,7 +817,7 @@
         <!-- Controls Group --> 
         <div style="display: flex; align-items: center; gap: 12px;"> 
             <!-- Theme Toggle --> 
-            <button class="theme-toggle" id="themeToggle" style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white;"> 
+            <button id="themeToggle" style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white;"> 
                 <i class="fas fa-sun sun-icon" style="display: none;"></i> 
                 <i class="fas fa-moon moon-icon"></i> 
             </button> 
@@ -1033,6 +1152,15 @@
         // Theme Logic
         const themeToggle = document.getElementById('themeToggle');
         const html = document.documentElement;
+        
+        // Initialize from localStorage
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        html.setAttribute('data-theme', savedTheme);
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark');
+        } else {
+            document.body.classList.remove('dark');
+        }
         
         if (themeToggle) {
             themeToggle.addEventListener('click', (e) => {
