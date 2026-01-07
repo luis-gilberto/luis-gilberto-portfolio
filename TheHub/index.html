@@ -35,73 +35,44 @@
             }
         }
     </script>
-    <style>
-        body { padding-top: 0 !important; }
-    </style>
-    
+
     <style>
         /* ==========================================
-           ECOSYSTEM VARIABLES (Unified System)
+           CORE VARIABLES & RESET
            ========================================== */
-        /* Utility Classes for New Header */
-        .hidden { display: none !important; }
-        @media (min-width: 768px) {
-            .md\:flex { display: flex !important; }
-            .md\:hidden { display: none !important; }
-        }
-        .sub-link { color: #888; text-decoration: none; transition: color 0.2s; }
-        .sub-link:hover { color: #fff; }
-        .sub-link.active { color: #fff; font-weight: 700; }
-        
         :root {
-            /* Core Brand */
             --coral: #F96F6E;
             --teal: #2ED3C6;
             
-            /* Light Mode Palette (Default) */
+            /* Light Mode */
             --bg-primary: #F4F1ED;
-            --bg-alt: #EAE6E1; 
+            --bg-alt: #EAE6E1;
             --bg-tertiary: #E0D9D1;
-            
             --text-primary: #111111;
             --text-secondary: #555555;
             --text-muted: rgba(0, 0, 0, 0.5);
-            
             --border-subtle: rgba(0, 0, 0, 0.06);
             --border-strong: rgba(0, 0, 0, 0.12);
-            
-            /* UI Elements */
             --card-bg: #FFFFFF;
-            --nav-bg: rgba(255, 255, 255, 0.9);
+            --nav-bg: rgba(255, 255, 255, 0.95);
             --thread-line: rgba(0, 0, 0, 0.06);
-            
-            /* Effects */
             --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.04);
             --shadow-hover: 0 12px 30px rgba(0, 0, 0, 0.08);
-            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-            /* Typography */
-            --font-sans: 'Inter', sans-serif;
-            --font-display: 'Big Shoulders Display', sans-serif;
         }
 
-        /* Dark Mode Palette */
+        /* Dark Mode */
         [data-theme="dark"] {
             --bg-primary: #0A0A0A;
             --bg-alt: #111111;
             --bg-tertiary: #1A1A1A;
-            
             --text-primary: #F5F5F5;
             --text-secondary: #A0A0A0;
             --text-muted: rgba(255, 255, 255, 0.4);
-            
             --border-subtle: rgba(255, 255, 255, 0.08);
             --border-strong: rgba(255, 255, 255, 0.15);
-            
             --card-bg: rgba(255, 255, 255, 0.03);
-            --nav-bg: rgba(10, 10, 10, 0.9);
+            --nav-bg: rgba(5, 5, 5, 0.95);
             --thread-line: rgba(255, 255, 255, 0.08);
-            
             --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.4);
             --shadow-hover: 0 12px 30px rgba(0, 0, 0, 0.5);
         }
@@ -110,585 +81,451 @@
         html { scroll-behavior: smooth; }
         
         body {
-            font-family: var(--font-sans);
+            font-family: 'Inter', sans-serif;
             background-color: var(--bg-primary);
             color: var(--text-primary);
-            /* Ecosystem Texture */
             background-image: radial-gradient(var(--border-subtle) 1px, transparent 1px);
             background-size: 24px 24px;
             line-height: 1.6;
             overflow-x: hidden;
-            position: relative;
-            padding-top: 112px;
+            padding-top: 120px; /* Space for fixed headers */
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        #main-content { display: block !important; }
-        main { position: relative; z-index: 10; }
-        
-        .text-gradient { background: linear-gradient(135deg, var(--coral), var(--teal)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .text-color-hub { color: var(--coral); } /* Fallback/Specific override */
+        .text-color-hub { color: var(--coral); }
 
         /* ==========================================
-           THREAD LINE SYSTEM
+           HEADER & NAVIGATION
            ========================================== */
-        .spine-container { position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-        .central-spine { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: var(--thread-line); transform: translateX(-50%); }
-        .spine-node { width: 8px; height: 8px; background: var(--bg-primary); border: 1px solid var(--coral); border-radius: 50%; position: absolute; left: 50%; transform: translateX(-50%); z-index: 1; transition: background 0.3s ease; }
-        
-        /* ==========================================
-           AMBIENT BACKGROUND
-           ========================================== */
-        .ambient-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; opacity: 0.5; }
-        .gradient-orb { position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.15; animation: ambient-float 20s ease-in-out infinite; }
-        .orb-1 { width: 600px; height: 600px; background: radial-gradient(circle, var(--coral), transparent 70%); top: -200px; left: -200px; animation-delay: 0s; }
-        .orb-2 { width: 500px; height: 500px; background: radial-gradient(circle, var(--teal), transparent 70%); top: 50%; right: -150px; animation-delay: 5s; }
-        .orb-3 { width: 550px; height: 550px; background: radial-gradient(circle, var(--coral), transparent 70%); bottom: -200px; left: 30%; animation-delay: 10s; }
-        @keyframes ambient-float { 0%, 100% { transform: translate(0, 0) scale(1); } 33% { transform: translate(30px, -30px) scale(1.1); } 66% { transform: translate(-20px, 20px) scale(0.9); } }
-
-        /* ==========================================
-           HEADER & NAVIGATION (Legacy & New Mappings)
-           ========================================== */
-        /* GLOBAL PRIMARY NAVIGATION (Level 1) */
+        /* --- FIXED DARK HEADER (Does not change with Theme) --- */
         .primary-nav {
-            position: fixed; top: 0; left: 0; width: 100%; height: 64px;
-            background: transparent;
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: fixed; top: 0; left: 0; width: 100%; height: 72px;
+            background: #050505 !important; /* Force Black */
+            border-bottom: 1px solid rgba(255,255,255,0.1);
             z-index: 10000;
         }
 
-        .nav-container {
-            max-width: 1400px; margin: 0 auto; padding: 0 1rem;
-            height: 64px; display: flex; align-items: center; justify-content: space-between;
-            position: relative;
+        .nav-inner {
+            display: flex; align-items: center; justify-content: space-between;
+            height: 100%;
         }
 
-        /* Logo styles moved to assets/css/logo-system.css */
+        /* Brand */
+        .nav-brand { display: flex; align-items: center; gap: 16px; text-decoration: none; }
+        .nav-logo-img { height: 32px; width: auto; display: block; filter: none !important; } /* Ensure white logo */
+        .nav-logo-text { 
+            font-family: 'Big Shoulders Display', sans-serif; font-size: 24px; 
+            font-weight: 700; color: #FFFFFF !important; letter-spacing: 0.5px; 
+        }
 
-        .nav-links { display: flex; gap: 24px; align-items: center; justify-content: flex-end; margin-left: auto; }
-        @media (max-width: 768px) { .nav-links { gap: 16px; } }
+        /* Right Group Alignment */
+        .nav-right-group { display: flex; align-items: center; gap: 32px; }
+        .nav-controls { display: flex; align-items: center; gap: 12px; }
 
+        /* Links (Always Light/Grey) */
+        .desktop-links { display: flex; gap: 24px; }
         .nav-link {
-            color: rgba(255, 255, 255, 0.7);  /* ALWAYS LIGHT TEXT */
-            text-decoration: none;
-            font-size: 13px; font-weight: 600; text-transform: uppercase;
-            letter-spacing: 0.08em; position: relative; transition: color 0.2s ease;
+            font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600;
+            letter-spacing: 1px; text-transform: uppercase;
+            color: #888888 !important; /* Fixed Grey */
+            text-decoration: none; transition: color 0.2s;
         }
+        .nav-link:hover, .nav-link.active { color: #FFFFFF !important; } /* Hover White */
 
-        .nav-link:hover, .nav-link.active { 
-            color: #ffffff;  /* ALWAYS WHITE ON HOVER */ 
+        /* Subnav (Fixed Dark + Center) */
+        .hub-subnav {
+            position: fixed; top: 72px; left: 0; width: 100%; height: 48px;
+            background: rgba(5,5,5,0.95) !important; /* Force Dark */
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            z-index: 9999;
+            display: flex; align-items: center; justify-content: center; /* CENTERED */
+            gap: 2rem;
         }
-
-        .nav-link.active::after {
-            content: ''; position: absolute; bottom: -23px; left: 0; right: 0;
-            height: 3px; background: var(--coral);
+        .subnav-link { 
+            color: #888888 !important; 
+            text-decoration: none; font-size: 13px; font-weight: 500;
         }
+        .subnav-link:hover { color: var(--coral) !important; }
+        .subnav-link.active { color: #FFFFFF !important; font-weight: 700; }
 
-        /* HUB SUB-NAVIGATION (Level 2) */
-        .portfolio-subnav {
-            position: fixed; top: 64px; left: 0; width: 100%;
-            background: var(--bg-primary);
-            border-bottom: 1px solid var(--border-subtle);
-            z-index: 9999; transition: background 0.3s ease;
-        }
+        /* Mobile Toggles (Force White) */
+        .nav-toggle-bar { background-color: #FFFFFF !important; }
+        .theme-toggle { color: #FFFFFF !important; border-color: rgba(255,255,255,0.2) !important; }
 
-        .portfolio-subnav-container {
-            max-width: 1400px; margin: 0 auto; padding: 0 2rem;
-            height: 48px; display: flex; align-items: center; gap: 2rem;
-        }
-
-        .subnav-link {
-            color: var(--text-secondary); text-decoration: none;
-            font-size: 14px; font-weight: 500; transition: color 0.2s ease;
-            padding: 0.5rem 0; position: relative;
-        }
-        .subnav-link:hover { color: var(--coral); }
-        .subnav-link.active { color: var(--text-primary); font-weight: 700; }
-
-        @media (max-width: 1023px) {
-            .desktop-links { display: none !important; }
-            .mobile-menu-toggle { display: block !important; }
-            nav { padding: 0 1.5rem !important; }
-        }
-
-        /* Theme Toggle */
+        /* Controls */
         .theme-toggle {
-            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 50%; width: 36px; height: 36px;
+            width: 40px; height: 40px; border-radius: 50%;
+            background: rgba(125,125,125,0.1); border: 1px solid var(--border-strong);
             display: flex; align-items: center; justify-content: center;
-            cursor: pointer; margin-left: 1.5rem; color: #ffffff;
+            cursor: pointer; color: var(--text-primary);
             transition: all 0.3s ease;
         }
-        .theme-toggle:hover { background: var(--coral); border-color: var(--coral); }
+        .theme-toggle:hover { background: var(--coral); border-color: var(--coral); color: white; }
         
-        /* Theme Toggle Logic */
-        [data-theme="dark"] .sun-icon, body.dark .sun-icon { display: block !important; }
-        [data-theme="dark"] .moon-icon, body.dark .moon-icon { display: none !important; }
-        :not([data-theme="dark"]):not(.dark) .sun-icon, body:not(.dark) .sun-icon { display: none !important; }
-        :not([data-theme="dark"]):not(.dark) .moon-icon, body:not(.dark) .moon-icon { display: block !important; }
+        /* Hide/Show Icons based on Theme */
+        [data-theme="dark"] .sun-icon { display: block; }
+        [data-theme="dark"] .moon-icon { display: none; }
+        [data-theme="light"] .sun-icon { display: none; }
+        [data-theme="light"] .moon-icon { display: block; }
 
-        /* Mobile Menu */
-        .mobile-menu-toggle { display: none; flex-direction: column; justify-content:center; align-items:center; gap: 8px; background-color: transparent; border: none; padding: 12px; z-index: 10001; cursor: pointer; }
-        .mobile-menu-toggle span { width: 24px; height: 2px; background: #FFFFFF; opacity: 1; display: block; transition: transform 0.3s ease, opacity 0.3s ease; }
-        .mobile-menu-toggle.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
-        .mobile-menu-toggle.open span:nth-child(2) { opacity: 0; }
-        .mobile-menu-toggle.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
-        .nav-actions { display: flex; align-items: center; gap: 12px; }
+        /* Mobile Toggle Button */
+        .mobile-nav-toggle {
+            display: none; width: 40px; height: 40px;
+            background: transparent; border: none;
+            flex-direction: column; justify-content: center; align-items: center;
+            gap: 6px; cursor: pointer; z-index: 10002;
+        }
+        .nav-toggle-bar {
+            width: 24px; height: 2px; background-color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        .mobile-nav-toggle.open .nav-toggle-bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+        .mobile-nav-toggle.open .nav-toggle-bar:nth-child(2) { opacity: 0; }
+        .mobile-nav-toggle.open .nav-toggle-bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
 
+        /* ==========================================
+           MOBILE DRAWER
+           ========================================== */
         .mobile-menu-overlay {
             position: fixed; inset: 0; background: var(--bg-primary);
-            z-index: 9998; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            padding: 8rem 2rem; display: flex; flex-direction: column; gap: 2rem; overflow-y: auto;
+            z-index: 10001;
+            padding: 8rem 2rem 2rem;
+            display: flex; flex-direction: column; gap: 2rem;
+            transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow-y: auto;
         }
         .mobile-menu-overlay.active { transform: translateX(0); }
-        .mobile-drawer-header { 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 0 24px; height: 80px; 
-            border-bottom: 1px solid var(--border-subtle); 
-            position: absolute; top: 0; left: 0; right: 0; 
-            background: var(--bg-primary); /* Adapts to theme */
-        }
-        /* Mobile drawer logo styles moved to assets/css/logo-system.css */
 
-        .mobile-drawer-content { padding: 40px 0; overflow-y: auto; display: flex; flex-direction: column; gap: 32px; }
-        .mobile-link-group { display: flex; flex-direction: column; gap: 1rem; }
-        .mobile-label { font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.1em; margin-bottom: 0.5rem; }
-        .mobile-link { display: block; text-decoration: none; color: var(--text-primary); transition: color 0.2s; }
-        .mobile-link.main { font-family: 'Big Shoulders Display', sans-serif; font-size: 2.5rem; font-weight: 700; line-height: 1.1; margin-bottom: 8px; }
-        .mobile-link.sub { font-family: 'Inter', sans-serif; font-size: 1.1rem; font-weight: 500; margin-bottom: 12px; color: var(--text-secondary); padding-left: 0; transition: all 0.2s; }
-        .mobile-link:hover { color: #F96F6E; }
-        .mobile-link.active-parent { color: #F96F6E; }
-        .mobile-link.sub.active { color: #F96F6E; font-weight: 700; padding-left: 12px; border-left: 3px solid #F96F6E; }
-        .mobile-controls { display: flex; align-items: center; gap: 16px; }
-        .drawer-close-btn { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; color: var(--text-primary); cursor: pointer; transition: all 0.2s ease; }
-        .drawer-close-btn:hover { background: #F96F6E; color: #fff; border-color: #F96F6E; transform: rotate(90deg); }
-
-        @media (max-width: 1023px) {
-            .primary-nav-container { padding: 0 1rem; }
-            .nav-logo { flex-shrink: 0; margin-right: auto; }
-            .mobile-menu-toggle { flex-shrink: 0; margin-left: auto; position: relative; right: 0; }
-            .nav-links, .portfolio-subnav { display: none; }
-            .mobile-menu-toggle { display: flex; }
-            .nav-actions { display: flex; }
-            body { padding-top: 64px; }
-        }
-        
-        /* ==========================================
-           HERO SECTION & ORBITAL ANIMATION
-           ========================================== */
-        .hero { 
-            position: relative; 
-            margin-top: 80px; 
-            padding: 25vh 1.5rem 15vh; 
-            text-align: center; 
-            overflow: hidden; 
-            perspective: 1000px;
-            opacity: 1 !important;
-            visibility: visible !important;
-            display: block !important;
-        }
-        .container { max-width: 1200px; margin: 0 auto; position: relative; z-index: 2; }
-        .hero-eyebrow { display: block; font-size: 0.85rem; letter-spacing: 0.2em; color: var(--teal); margin-bottom: 1rem; font-weight: 600; text-transform: uppercase; }
-        .hero h1 { font-family: 'Big Shoulders Display', sans-serif; font-size: clamp(3rem, 6vw, 5rem); line-height: 1; font-weight: 700; margin-bottom: 1.5rem; }
-        .hero-desc { font-size: 1.25rem; color: var(--text-secondary); margin-bottom: 2.5rem; line-height: 1.6; max-width: 700px; margin-left: auto; margin-right: auto; opacity: 0.9; }
-        .cta-buttons { display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap; }
-        .btn-accent { background: var(--coral); color: white; padding: 1rem 2rem; border-radius: 50px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(249, 111, 110, 0.3); }
-        .btn-accent:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(249, 111, 110, 0.4); }
-        .btn-outline { border: 1px solid var(--border-strong); color: var(--text-primary); padding: 1rem 2rem; border-radius: 50px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; transition: all 0.2s; }
-        .btn-outline:hover { border-color: var(--text-primary); background: var(--bg-alt); }
-        .scroll-down { margin-top: 4rem; font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); font-family: var(--font-display); font-weight: 600; opacity: 0.7; animation: pulse-fade 3s infinite; }
-        @keyframes pulse-fade { 0%, 100% { opacity: 0.4; transform: translateY(0); } 50% { opacity: 1; transform: translateY(5px); } }
-
-        .orbital-system { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; opacity: 0; transition: opacity 1.5s ease-in; }
-        .shape-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transition: transform 0.2s ease-out; }
-        .orbit-path { position: absolute; top: 50%; left: 50%; width: 90vmin; height: 90vmin; max-width: 900px; max-height: 900px; transform: translate(-50%, -50%); animation: orbit-rotate 90s linear infinite; }
-        .shape-satellite { position: absolute; will-change: transform; animation: counter-rotate 90s linear infinite; }
-        .shape-satellite img { width: 100%; display: block; filter: drop-shadow(0 5px 25px rgba(0,0,0,0.5)); animation: individual-float 10s ease-in-out infinite alternate; }
-        .shape-satellite.coral img { filter: drop-shadow(0 0 35px rgba(249, 111, 110, 0.5)); }
-        .shape-satellite.teal img { filter: drop-shadow(0 0 35px rgba(46, 211, 198, 0.5)); }
-        /* Orbital Positions */ 
-        .shape-compass { top: 10%; left: 50%; transform: translate(-50%, -50%); width: 90px ; } 
-        .shape-atom { top: 50%; right: 10%; transform: translate(50%, -50%); width: 100px; animation-delay: -2s ; } 
-        .shape-telescope { bottom: 10%; left: 50%; transform: translate(-50%, 50%); width: 110px; animation-delay: -3s ; } 
-        .shape-queen { top: 50%; left: 10%; transform: translate(-50%, -50%); width: 85px; animation-delay: -1s ; } 
-        @keyframes orbit-rotate { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
-        @keyframes counter-rotate { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
-        @keyframes individual-float { from { transform: translateY(-8px) scale(1.05); } to { transform: translateY(8px) scale(0.95); } }
+        .mobile-link-group { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; }
+        .mobile-label { font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.15em; margin-bottom: 0.5rem; }
+        .mobile-link.main { font-family: 'Big Shoulders Display', sans-serif; font-size: 2.5rem; font-weight: 700; line-height: 1.1; color: var(--text-primary); text-decoration: none; }
+        .mobile-link.sub { font-family: 'Inter', sans-serif; font-size: 1.1rem; font-weight: 500; color: var(--text-secondary); text-decoration: none; padding-left: 1rem; border-left: 2px solid transparent; }
+        .mobile-link:hover, .mobile-link.active { color: var(--coral); }
+        .mobile-link.sub.active { border-left-color: var(--coral); font-weight: 700; }
 
         /* ==========================================
-           INTRO ANIMATION SYSTEM
-           ========================================== */
-        .hub-reveal-system { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 20000; pointer-events: none; perspective: 800px; transition: opacity 0.5s ease-out; opacity: 0 !important; }
-        
-        /* Skip Intro Button - Styled to match Go Deeper CTA */
-        .hub-skip-button {
-            /* Position Override */
-            bottom: 15% !important;
-            left: 50% !important;
-            right: auto !important;
-            transform: translateX(-50%) !important;
-            
-            /* Visual Style */
-            padding: 1rem 2.5rem !important;
-            color: white !important;
-            font-family: var(--font-display, 'Big Shoulders Display', sans-serif) !important;
-            font-size: 1.25rem !important;
-            font-weight: 600 !important;
-            letter-spacing: 0.15em !important;
-            text-transform: uppercase !important;
-            background: rgba(255, 255, 255, 0.05) !important;
-            border: 1px solid rgba(255, 255, 255, 0.2) !important;
-            backdrop-filter: blur(10px) !important;
-            border-radius: 50px !important;
-            
-            /* Layout */
-            display: flex !important;
-            align-items: center !important;
-            gap: 12px !important;
-            
-            /* Transition */
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
-            
-            /* Ensure visibility */
-            opacity: 0; /* JS handles fade in */
-            z-index: 20002 !important;
-        }
-
-        .hub-skip-button:hover {
-            background: rgba(255, 255, 255, 0.1) !important;
-            border-color: var(--coral) !important;
-            transform: translateX(-50%) translateY(-2px) !important;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.4) !important;
-            color: white !important;
-        }
-
-        .hub-skip-button svg {
-            transition: transform 0.3s ease !important;
-            width: 20px !important;
-            height: 20px !important;
-        }
-
-        .hub-skip-button:hover svg {
-            transform: translateX(4px) !important;
-        }
-
-        .hub-skip-text {
-            /* Ensure text is visible and styled */
-            display: inline-block !important;
-        }
-        .hub-reveal-system::before { content: ''; position: absolute; top: 50%; left: 50%; width: 60vw; height: 70vh; max-width: 800px; max-height: 700px; border: 2px solid var(--coral); border-radius: 12px; box-shadow: 0 0 30px rgba(249, 111, 110, 0.4), inset 0 0 30px rgba(249, 111, 110, 0.2); transform: translate(-50%, -50%) scale(0.5); opacity: 0; transition: transform 1s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.8s ease; }
-        .hub-reveal-system.is-revealing-frame::before { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-        .hub-reveal-system.is-fading-out::before { transform: translate(-50%, -50%) scale(2); opacity: 0; }
-        .service-image { position: absolute; width: 120px; height: 120px; top: 50%; left: 50%; opacity: 0; transform: translate(-50%, -50%) translateZ(-200px) scale(0); transition: transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.8s ease; }
-        .service-image img { width: 100%; height: 100%; object-fit: contain; }
-        .hub-reveal-system.is-revealing-shapes .service-image { opacity: 1; transform: translate(-50%, -50%) translateZ(200px) scale(1.5); }
-        .hub-reveal-system.is-revealing-shapes .service-advisory { top: 12%; left: 12%; transition-delay: 0s; }
-        .hub-reveal-system.is-revealing-shapes .service-imc { top: 12%; left: 88%; transition-delay: 0.15s; }
-        .hub-reveal-system.is-revealing-shapes .service-scope { top: 88%; left: 12%; transition-delay: 0.3s; }
-        .hub-reveal-system.is-revealing-shapes .service-strategy { top: 88%; left: 88%; transition-delay: 0.45s; }
-        .hub-reveal-system.is-fading-out .service-image { opacity: 0; }
-        .hub-reveal-system.is-fading-out { opacity: 0 !important; transition: opacity 1s ease-out; }
-        
-        .hub-loading-container.logo-fixed-visible .hub-logo, .hub-loading-container.logo-fixed-visible .hub-logo-overlay { opacity: 1 !important; visibility: visible !important; }
-        .hub-loading-container.complete .hub-logo, .hub-loading-container.transitioning .hub-logo { opacity: 1 !important; visibility: visible !important; }
-        .hub-loading-container.complete .hub-logo-overlay, .hub-loading-container.transitioning .hub-logo-overlay { opacity: 1 !important; visibility: visible !important; }
-        
-        /* ==========================================
-           NEW SECTIONS (Architecture & Flow)
+           HERO & SECTIONS
            ========================================== */
         .scroll-section { padding: 6rem 0; position: relative; z-index: 2; }
-        .section-white { background: var(--bg-primary); color: var(--text-primary); }
-        .section-header-center { text-align: center; margin-bottom: 4rem; }
-        .section-heading { font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
-        .section-header-center p { color: var(--text-secondary); font-size: 1.1rem; }
+        .hero { 
+            text-align: center; min-height: 80vh; display: flex; flex-direction: column; justify-content: center;
+            padding-top: 4rem; /* Offset for header */
+        }
+        .hero-eyebrow { display: block; font-size: 0.85rem; letter-spacing: 0.2em; color: var(--teal); margin-bottom: 1rem; font-weight: 600; text-transform: uppercase; }
+        .hero h1 { font-family: 'Big Shoulders Display', sans-serif; font-size: clamp(3rem, 8vw, 6rem); line-height: 0.95; font-weight: 700; margin-bottom: 1.5rem; color: var(--text-primary); }
+        .hero-desc { font-size: 1.25rem; color: var(--text-secondary); margin-bottom: 2.5rem; line-height: 1.6; max-width: 700px; margin-left: auto; margin-right: auto; }
         
-        .architecture-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 2rem; margin-top: 3rem; }
-        .arch-card { background: var(--card-bg); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 2.5rem 2rem; text-decoration: none; color: var(--text-primary); display: flex; flex-direction: column; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); height: 100%; box-shadow: var(--shadow-soft); position: relative; overflow: hidden; }
-        .arch-card:hover { transform: translateY(-8px); background: var(--card-bg); box-shadow: var(--shadow-hover); border-color: var(--border-strong); }
-        .arch-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: transparent; transition: background 0.3s ease; }
-        .arch-card:hover::before { background: var(--coral); }
+        .cta-buttons { display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+        .btn-accent { background: var(--coral); color: white; padding: 1rem 2.5rem; border-radius: 50px; text-decoration: none; font-weight: 600; transition: transform 0.2s; }
+        .btn-outline { border: 1px solid var(--border-strong); color: var(--text-primary); padding: 1rem 2.5rem; border-radius: 50px; text-decoration: none; font-weight: 600; transition: all 0.2s; }
         
-        .card-num { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.5rem; display: block; font-family: var(--font-display); font-weight: 700; letter-spacing: 0.1em; }
+        /* Architecture Grid */
+        .architecture-grid { 
+            display: grid; 
+            gap: 1.5rem; 
+            /* Default Mobile/Tablet: Auto-fit (keeps it responsive) */ 
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); 
+            margin-top: 3rem; 
+        } 
+        
+        /* Desktop Override: Force 4 Columns */ 
+        @media (min-width: 1200px) { 
+            .architecture-grid { 
+                grid-template-columns: repeat(4, 1fr) !important; 
+            } 
+        }
+        
+        /* Architecture Card Interactions */
+        .arch-card { 
+            background: var(--card-bg); border: 1px solid var(--border-subtle); border-radius: 16px; 
+            padding: 2.5rem 2rem; text-decoration: none; color: var(--text-primary);
+            display: flex; flex-direction: column; height: 100%; 
+            position: relative; overflow: hidden;
+            transform: translateY(0); 
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); /* Smooth spring-like easing */
+        }
+        
+        .arch-card:hover { 
+            transform: translateY(-8px); 
+            background: linear-gradient(180deg, var(--card-bg) 0%, rgba(255,255,255,0.05) 100%); /* Subtle gradient shift */
+            border-color: var(--coral); 
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Icon Circle Animation */
         .icon-circle { 
-            width: 80px; 
-            height: 80px; 
-            background: transparent; 
-            border: 1px solid var(--border-subtle); 
-            border-radius: 50%; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            margin-bottom: 2rem; 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-            overflow: hidden;
-            position: relative;
-            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1); /* Inner ring */
+            width: 80px; height: 80px; border: 1px solid var(--border-subtle); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; margin-bottom: 2rem;
+            transition: all 0.4s ease; 
+            transform: scale(1); 
+            box-shadow: 0 0 0 0 rgba(255,255,255,0);
         }
+
         .arch-card:hover .icon-circle { 
-            transform: scale(1.05); 
-            border-color: transparent;
+            transform: scale(1.1); 
+            background: rgba(255,255,255,0.05); 
         }
-        /* Specific Glow Colors based on Card Index */
-        .arch-card:nth-child(1):hover .icon-circle { box-shadow: 0 0 25px var(--coral), inset 0 0 10px rgba(249, 111, 110, 0.5); }
-        .arch-card:nth-child(2):hover .icon-circle { box-shadow: 0 0 25px var(--teal), inset 0 0 10px rgba(46, 211, 198, 0.5); }
-        .arch-card:nth-child(3):hover .icon-circle { box-shadow: 0 0 25px var(--teal), inset 0 0 10px rgba(46, 211, 198, 0.5); }
-        .arch-card:nth-child(4):hover .icon-circle { box-shadow: 0 0 25px var(--coral), inset 0 0 10px rgba(249, 111, 110, 0.5); }
 
+        /* Specific Glows based on card role */
+        .arch-card:hover .role-teal ~ .icon-circle, /* Fallback selector logic */
+        .arch-card:has(.role-teal):hover .icon-circle { 
+            border-color: var(--teal); 
+            box-shadow: 0 0 20px rgba(46, 211, 198, 0.2); 
+        }
+
+        .arch-card:hover .role-coral ~ .icon-circle, 
+        .arch-card:has(.role-coral):hover .icon-circle { 
+            border-color: var(--coral); 
+            box-shadow: 0 0 20px rgba(249, 111, 110, 0.2); 
+        }
+
+        /* Image Zoom */
         .icon-circle img { 
+            width: 100%; height: 100%; object-fit: cover; border-radius: 50%; 
+            transition: transform 0.5s ease;
+        }
+        
+        .arch-card:hover .icon-circle img { 
+            transform: scale(1.15) rotate(2deg); /* Subtle twist */ 
+        }
+
+        .arch-title { font-family: 'Big Shoulders Display'; font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .arch-role { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; color: var(--teal); margin-bottom: 1rem; display: block; }
+        .arch-desc { font-size: 1rem; color: var(--text-secondary); line-height: 1.5; }
+
+        /* Flow Section */
+        .section-flow { background: var(--bg-alt); padding: 4rem 0; }
+        .flow-container { 
+            display: flex; align-items: center; justify-content: center; 
+            gap: 0; margin-top: 4rem; max-width: 1000px; margin-left: auto; margin-right: auto; 
+        }
+        .flow-node { 
+            background: var(--card-bg); border: 1px solid var(--border-subtle); border-radius: 16px; 
+            padding: 2rem 1.5rem; text-align: center; width: 220px; position: relative; z-index: 2; 
+        }
+        
+        /* Flow Connector Animation */
+        @keyframes flowLine { 
+            0% { width: 0%; opacity: 0; } 
+            100% { width: 100%; opacity: 1; } 
+        } 
+        
+        .flow-connector { 
+            flex-grow: 1; height: 1px; background: var(--border-strong); position: relative; min-width: 30px; margin: 0 15px; 
+        }
+        
+        .flow-connector::after { 
+            content: ''; 
+            position: absolute; 
+            top: 0; left: 0; bottom: 0; 
+            background: var(--teal); 
+            width: 0%; /* Start empty */ 
+            transition: width 0.5s ease; 
+        } 
+        
+        /* On hover of container, fill the lines */ 
+        .flow-container:hover .flow-connector::after { 
             width: 100%; 
-            height: 100%; 
-            object-fit: cover; 
-            border-radius: 50%; 
-            transition: transform 0.5s ease; 
         }
-        .arch-card:hover .icon-circle img {
-            transform: scale(1.1);
+        .flow-sub { font-size: 0.7rem; letter-spacing: 0.15em; color: var(--text-secondary); text-transform: uppercase; display: block; margin-bottom: 0.5rem; }
+        .flow-title { font-family: 'Big Shoulders Display'; font-size: 1.25rem; font-weight: 700; }
+
+        /* Footer Styles (Standardized) */
+        .site-footer {
+            width: 100%;
+            background: #0A0A0A; border-top: 1px solid rgba(255,255,255,0.1);
+            padding: 0; margin-top: auto; font-family: 'Inter', sans-serif; color: #ffffff;
         }
-        
-        .arch-title { font-size: 1.75rem; margin-bottom: 0.75rem; font-family: var(--font-display); letter-spacing: 0.02em; font-weight: 700; color: var(--text-primary); }
-        .arch-role { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 1rem; display: block; font-weight: 700; }
-        .role-teal { color: var(--teal); }
-        .role-coral { color: var(--coral); }
-        .arch-desc { font-size: 1rem; opacity: 0.9; line-height: 1.6; color: var(--text-secondary); }
-
-        .section-flow { background: var(--bg-alt); color: var(--text-primary); position: relative; }
-        .flow-container { display: flex; align-items: center; justify-content: center; gap: 0; margin-top: 4rem; flex-wrap: nowrap; position: relative; max-width: 1000px; margin-left: auto; margin-right: auto; }
-        
-        .flow-node { background: var(--card-bg); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 2rem 1.5rem; text-align: center; width: 220px; position: relative; z-index: 2; transition: all 0.3s ease; box-shadow: var(--shadow-soft); }
-        .flow-node:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); border-color: var(--border-strong); }
-        
-        .flow-connector { flex-grow: 1; height: 1px; background: var(--border-strong); position: relative; min-width: 30px; margin: 0 15px; }
-        .flow-connector::after { content: ''; position: absolute; right: 0; top: 50%; transform: translateY(-50%); width: 6px; height: 6px; border-top: 1px solid var(--border-strong); border-right: 1px solid var(--border-strong); transform: translateY(-50%) rotate(45deg); }
-        
-        .flow-sub { display: block; font-size: 0.7rem; letter-spacing: 0.15em; color: var(--text-muted); margin-bottom: 0.75rem; text-transform: uppercase; font-weight: 600; }
-        .flow-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.25rem; font-family: var(--font-display); letter-spacing: 0.02em; }
-        
-        /* Portal Node Special Styling */
-        .flow-node.portal-node { border-color: var(--teal); box-shadow: 0 0 20px rgba(46, 211, 198, 0.1); }
-        .flow-node.portal-node:hover { box-shadow: 0 0 30px rgba(46, 211, 198, 0.2); transform: translateY(-5px); }
-        .flow-node.portal-node .flow-sub { color: var(--teal); }
-        
-        .section-cta { background: var(--bg-tertiary); color: var(--text-primary); }
-
-        /* Footer Styles removed (moved to bottom) */
-        
-        /* Responsive adjustments */
-        @media (max-width: 1024px) {
-            .architecture-grid { grid-template-columns: repeat(2, 1fr); }
-            .flow-container { flex-direction: column; gap: 2rem; }
-            .flow-connector { width: 1px; height: 40px; min-width: 0; margin: 0; flex-grow: 0; }
-            .flow-connector::after { top: auto; bottom: 0; right: 50%; transform: translateX(50%) rotate(-45deg); border-top: none; border-right: none; border-bottom: 1px solid var(--border-strong); border-left: 1px solid var(--border-strong); width: 6px; height: 6px; }
-            
-            .footer-main { grid-template-columns: 1fr; text-align: center; }
-            .footer-brand, .footer-nav-links, .footer-social { align-items: center; }
-            .nav-links { display: none; }
+        .hub-container {
+            width: 100%;
+            max-width: 1200px;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            padding-left: 2rem;
+            padding-right: 2rem;
         }
         @media (max-width: 768px) {
-            .architecture-grid { grid-template-columns: 1fr; }
-            .hero { padding: 15vh 1rem; }
-            .hero h1 { font-size: 3rem; }
-            
-            /* Mobile Touch Targets */
-            .nav-link, .subnav-link, .mobile-link, .btn, .drawer-close-btn, .theme-toggle { min-height: 44px; min-width: 44px; }
-            
-            /* Mobile Stacking */
-            .cta-buttons { flex-direction: column; width: 100%; gap: 1rem; }
-            .btn-accent, .btn-outline { width: 100%; justify-content: center; }
-            
-            /* Orbital Animation Pause & Simplify */
-            .orbital-system { animation-play-state: paused; opacity: 0.6; transform: scale(0.85); }
-            .shape-satellite { animation-play-state: paused; }
-            .orbit-path { animation-play-state: paused; }
-            
-            /* Ensure Scroll Indicator is visible */
-            .scroll-down { margin-top: 2rem; margin-bottom: 2rem; }
+            .hub-container {
+                padding-left: 1.5rem;
+                padding-right: 1.5rem;
+            }
         }
+        .footer-container { 
+            width: 100%;
+            max-width: 1400px; 
+            margin-left: auto !important; 
+            margin-right: auto !important; 
+            padding: 4rem 2rem 3rem; 
+        }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 3rem; }
+        .footer-brand h3 { font-family: 'Big Shoulders Display'; font-size: 1.5rem; text-transform: uppercase; margin-bottom: 1rem; color: white; }
+        .footer-tagline { color: rgba(255,255,255,0.5); font-size: 0.9rem; margin-bottom: 2rem; max-width: 300px; }
+        .footer-social { display: flex; gap: 1rem; }
+        .social-icon { 
+            width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); 
+            display: flex; align-items: center; justify-content: center; color: white; text-decoration: none;
+            transition: background 0.2s;
+        }
+        .social-icon:hover { background: var(--coral); }
+        .footer-heading { font-family: 'Big Shoulders Display'; font-size: 1rem; letter-spacing: 0.1em; color: rgba(255,255,255,0.4); text-transform: uppercase; margin-bottom: 1.5rem; }
+        .footer-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+        .footer-link { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+        .footer-link:hover { color: white; }
+        .footer-status { background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
 
-        @media (max-width: 1024px) { 
-             .desktop-links { display: none !important; } 
-             .mobile-menu-toggle { display: block !important; } 
-             nav { padding: 0 1.5rem !important; } 
-        } 
-        /* Theme Toggle Logic */ 
-        [data-theme="dark"] .sun-icon, body.dark .sun-icon { display: block !important; } 
-        [data-theme="dark"] .moon-icon, body.dark .moon-icon { display: none !important; } 
-        :not([data-theme="dark"]):not(.dark) .sun-icon, body:not(.dark) .sun-icon { display: none !important; } 
-        :not([data-theme="dark"]):not(.dark) .moon-icon, body:not(.dark) .moon-icon { display: block !important; } 
-    </style>
-    <style>
+        /* Responsive Hide */
         @media (max-width: 1024px) {
-            .desktop-links { display: none !important; }
-            .mobile-menu-toggle { display: block !important; }
-            nav { padding: 0 1.5rem !important; }
+            .desktop-links { display: none; }
+            .mobile-nav-toggle { display: flex; }
+            .primary-nav { padding: 0 1.5rem; }
+            
+            /* Stack Flow Vertically */
+            .flow-container { flex-direction: column; gap: 0; }
+            .flow-node { width: 100%; max-width: 300px; margin: 0 auto; }
+            .flow-connector { 
+                width: 1px; height: 40px; min-width: 0; margin: 0 auto; 
+                background: var(--border-strong);
+            }
+            
+            .footer-grid { grid-template-columns: 1fr; text-align: center; gap: 2rem; }
+            .footer-brand, .footer-social { align-items: center; justify-content: center; }
         }
-        /* Theme Toggle Logic */
-        body.dark .sun-icon { display: block !important; }
-        body.dark .moon-icon { display: none !important; }
-        body:not(.dark) .sun-icon { display: none !important; }
-        body:not(.dark) .moon-icon { display: block !important; }
-    </style>
 
+        @media (max-width: 768px) {
+            .hero { padding-top: 2rem; min-height: auto; padding-bottom: 4rem; }
+            .hero h1 { font-size: 3.5rem; }
+            .hub-subnav { display: none; } /* Hide subnav on mobile, use drawer */
+            body { padding-top: 72px; }
+            
+            .cta-buttons { flex-direction: column; width: 100%; }
+            .btn-accent, .btn-outline { width: 100%; text-align: center; justify-content: center; }
+        }
+    </style>
 </head>
 <body>
 
-    <!-- THREAD LINE SYSTEM -->
-    <div class="spine-container">
-        <div class="central-spine"></div>
-    </div>
+    <!-- HEADER -->
+    <nav class="primary-nav">
+        <div class="hub-container nav-inner">
+            <!-- LEFT: Brand -->
+            <a href="/index.html" class="nav-brand">
+                <img src="/assets/images/Logomark_White_a.png" alt="LG" class="nav-logo-img">
+                <span class="nav-logo-text">The Hub.</span>
+            </a>
 
-    <div class="ambient-bg">
-        <div class="gradient-orb orb-1"></div>
-        <div class="gradient-orb orb-2"></div>
-        <div class="gradient-orb orb-3"></div>
-    </div>
+            <!-- RIGHT: Links + Controls Group -->
+            <div class="nav-right-group">
+                <!-- Desktop Links -->
+                <div class="desktop-links">
+                    <a href="/index.html" class="nav-link">Portfolio</a>
+                    <a href="/insights/index.html" class="nav-link">Insights</a>
+                    <a href="/TheHub/index.html" class="nav-link active">The Hub</a>
+                    <a href="https://portal.luis-gilberto.com" class="nav-link" target="_blank">Portal</a>
+                </div>
 
-<!-- GOLDEN MASTER HEADER -->
-<nav style="position: fixed; top: 0; left: 0; width: 100%; height: 72px; background: #050505; border-bottom: 1px solid rgba(255,255,255,0.1); z-index: 10000; display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; box-sizing: border-box;">
-     
-    <!-- LEFT: BRAND LOCKUP -->
-    <a href="/index.html" style="display: flex; align-items: center; gap: 16px; text-decoration: none;">
-        <img src="/assets/images/Logomark_White_a.png" alt="LG" style="height: 32px; width: auto; display: block;">
-        <div style="width: 1px; height: 24px; background: rgba(255,255,255,0.3);"></div>
-        <span style="font-family: 'Big Shoulders Display', sans-serif; font-size: 24px; font-weight: 700; color: white; letter-spacing: 0.5px; line-height: 1;">The Hub.</span>
-    </a>
- 
-    <!-- RIGHT: GLOBAL LINKS & CONTROLS -->
-    <div style="display: flex; align-items: center; gap: 24px;">
-        <!-- Desktop Links (Hidden on Tablet/Mobile) -->
-        <div class="desktop-links" style="display: flex; gap: 24px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">
-            <a href="/index.html" style="color: #888; text-decoration: none; transition: 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#888'">Portfolio</a>
-            <a href="/insights/index.html" style="color: #888; text-decoration: none; transition: 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#888'">Insights</a>
-            <a href="/TheHub/index.html" style="color: #fff; text-decoration: none;">The Hub</a>
-            <a href="https://portal.luis-gilberto.com" style="color: #888; text-decoration: none; transition: 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#888'" target="_blank" rel="noopener noreferrer" aria-label="Access The Portal (opens in new tab)">Portal</a>
-        </div>
- 
-        <!-- Controls Group -->
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <!-- Theme Toggle -->
-            <button class="theme-toggle" id="themeToggle" style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white;">
-                <i class="fas fa-sun sun-icon" style="display: none;"></i>
-                <i class="fas fa-moon moon-icon"></i>
-            </button>
-             
-            <!-- Mobile Toggle (Visible on Tablet/Mobile) -->
-            <button class="mobile-menu-toggle" id="mobileToggle" style="display: none; background: none; border: none; color: white; font-size: 24px; cursor: pointer;">
-                <i class="fas fa-bars"></i>
-            </button>
-        </div>
-    </div>
-</nav>
-
-<!-- SUB-NAVIGATION (Fixed below header) -->
-<div style="position: fixed; top: 72px; left: 0; width: 100%; height: 48px; background-color: rgba(5,5,5,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.05); z-index: 40; display: flex; align-items: center; justify-content: center;">
-    <div style="display: flex; gap: 32px;">
-        <a href="/TheHub/index.html" style="font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; color: #F96F6E; text-decoration: none; opacity: 1; transition: all 0.3s;">Home</a>
-        <a href="https://www.luis-gilberto.com/TheHub/strategy-iq" style="font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: #FFFFFF; text-decoration: none; opacity: 0.6; transition: all 0.3s;">StrategyIQ</a>
-        <a href="/TheHub/advisory/index.html" style="font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: #FFFFFF; text-decoration: none; opacity: 0.6; transition: all 0.3s;">Advisory</a>
-        <a href="/TheHub/studio.html" style="font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: #FFFFFF; text-decoration: none; opacity: 0.6; transition: all 0.3s;">The Studio</a>
-    </div>
-</div>
-<!-- END GOLDEN MASTER HEADER -->
-
-
-
-    <!-- HERO SECTION -->
-    <section class="hero scroll-section" id="hero">
-        <div class="container">
-            <span class="hero-eyebrow">THE ECOSYSTEM</span>
-            <h1>From Chaos<br>To <span class="text-color-hub">Architecture</span></h1>
-            <p class="hero-desc">
-                Most agencies deliver files. We deliver a system. <br>
-                A unified ecosystem connecting strategic intelligence, creative execution, and real-time management.
-            </p>
-            <div class="cta-buttons" style="margin-top: 40px; justify-content: center;">
-                <a href="strategy-iq.html" class="btn-accent">Explore StrategyIQ</a>
-            </div>
-            <div class="scroll-down">↓ Enter The System</div>
-        </div>
-        <!-- Keep your existing .orbital-system div here -->
-        <div class="orbital-system" aria-hidden="true">
-            <div class="shape-layer" data-depth="0.3">
-                <div class="orbit-path">
-                    <div class="shape-satellite shape-compass coral"><img src="assets/icons/arms/advisory/compass_rose_coral.png" alt=""></div>
-                    <div class="shape-satellite shape-atom teal"><img src="assets/icons/arms/studio/atom_model_teal.png" alt=""></div>
-                    <div class="shape-satellite shape-telescope coral"><img src="assets/icons/arms/strategyiq/telescope_coral.png" alt=""></div>
-                    <div class="shape-satellite shape-queen teal"><img src="assets/icons/arms/portal/chess_queen_teal.png" alt=""></div>
+                <!-- Controls -->
+                <div class="nav-controls">
+                    <button class="theme-toggle" id="themeToggle" aria-label="Toggle Theme">
+                        <i class="fas fa-sun sun-icon"></i>
+                        <i class="fas fa-moon moon-icon"></i>
+                    </button>
+                    <button class="mobile-nav-toggle" id="mobileToggle" aria-label="Menu">
+                        <span class="nav-toggle-bar"></span>
+                        <span class="nav-toggle-bar"></span>
+                        <span class="nav-toggle-bar"></span>
+                    </button>
                 </div>
             </div>
         </div>
+    </nav>
+
+    <!-- SUBNAV (Desktop Only) -->
+    <div class="hub-subnav">
+        <a href="/TheHub/index.html" class="subnav-link active">Home</a>
+        <a href="/TheHub/strategy-iq.html" class="subnav-link">StrategyIQ</a>
+        <a href="/TheHub/advisory/index.html" class="subnav-link">Advisory</a>
+        <a href="/TheHub/studio.html" class="subnav-link">The Studio</a>
+    </div>
+
+    <!-- MOBILE DRAWER -->
+    <div class="mobile-menu-overlay" id="mobileOverlay">
+        <div class="mobile-link-group">
+            <span class="mobile-label">Ecosystem</span>
+            <a href="/index.html" class="mobile-link main">Portfolio</a>
+            <a href="/insights/index.html" class="mobile-link main">Insights</a>
+            <a href="/TheHub/index.html" class="mobile-link main active-parent">The Hub</a>
+        </div>
+        <div class="mobile-link-group">
+            <span class="mobile-label">Hub Sections</span>
+            <a href="/TheHub/strategy-iq.html" class="mobile-link sub">StrategyIQ</a>
+            <a href="/TheHub/advisory/index.html" class="mobile-link sub">Advisory</a>
+            <a href="/TheHub/studio.html" class="mobile-link sub">The Studio</a>
+            <a href="https://portal.luis-gilberto.com" class="mobile-link sub" target="_blank">Client Portal</a>
+        </div>
+    </div>
+
+    <!-- HERO -->
+    <section class="hero hub-container">
+        <span class="hero-eyebrow">THE ECOSYSTEM</span>
+        <h1>From Chaos<br>To <span class="text-color-hub">Architecture</span></h1>
+        <p class="hero-desc">Most agencies deliver files. We deliver a system. A unified ecosystem connecting strategic intelligence, creative execution, and real-time management.</p>
+        
+        <div class="cta-buttons">
+            <a href="strategy-iq.html" class="btn-accent">Explore StrategyIQ</a>
+            <a href="https://portal.luis-gilberto.com" class="btn-outline">Enter The Portal</a>
+        </div>
     </section>
 
-    <!-- THE ARCHITECTURE (The New Menu) -->
-    <section class="section-white scroll-section" id="architecture">
-        <div class="container">
-            <div class="section-header-center">
-                <h2 class="section-heading">The Architecture</h2>
-                <p>Four distinct arms. One integrated system.</p>
+    <!-- ARCHITECTURE CARDS -->
+    <section class="scroll-section">
+        <div class="hub-container">
+            <div style="text-align: center; margin-bottom: 3rem;">
+                <h2 style="font-family:'Big Shoulders Display'; font-size:3rem; margin-bottom:0.5rem;">The Architecture</h2>
+                <p style="color:var(--text-secondary);">Four distinct arms. One integrated system.</p>
             </div>
 
             <div class="architecture-grid">
-                
-                <!-- CARD 01: StrategyIQ (The Brain) -->
-                <a class="arch-card" href="/TheHub/strategy-iq.html">
-                    <span class="card-num">01</span>
-                    <div class="icon-circle">
-                        <!-- Use Neural Core Image -->
-                        <img src="../assets/images/icons/strategyiq-icon-3d.png" alt="The Neural Core">
-                    </div>
+                <!-- StrategyIQ -->
+                <a href="/TheHub/strategy-iq.html" class="arch-card">
+                    <div class="icon-circle"><img src="../assets/images/icons/strategyiq-icon-3d.png" alt="StrategyIQ"></div>
                     <h3 class="arch-title">StrategyIQ</h3>
                     <span class="arch-role role-teal">Strategic Intelligence</span>
                     <p class="arch-desc">The diagnostic engine. We benchmark your maturity and define the roadmap before building a single asset.</p>
                 </a>
-
-                <!-- CARD 02: Advisory (The Soul) -->
-                <a class="arch-card" href="advisory/">
-                    <span class="card-num">02</span>
-                    <div class="icon-circle">
-                        <!-- Use Advisory Compass Image -->
-                        <img src="../assets/images/icons/advisory-compass.png" alt="Advisory Compass">
-                    </div>
+                <!-- Advisory -->
+                <a href="advisory/" class="arch-card">
+                    <div class="icon-circle"><img src="assets/images/Luis_portrait_circle.png" alt="Luis Gilberto"></div>
                     <h3 class="arch-title">Advisory</h3>
-                    <span class="arch-role role-coral">Partnership</span>
+                    <span class="arch-role role-coral" style="color:var(--coral);">Partnership</span>
                     <p class="arch-desc">Direct access to Luis Gilberto for leadership alignment, narrative architecture, and decision support.</p>
                 </a>
-
-                <!-- CARD 03: The Studio (The Hands) -->
-                <a class="arch-card" href="studio.html">
-                    <span class="card-num">03</span>
-                    <div class="icon-circle">
-                        <!-- Use 3D Logo -->
-                        <img src="../assets/images/Teal_LG-3D.png" alt="The Studio">
-                    </div>
+                <!-- Studio -->
+                <a href="studio.html" class="arch-card">
+                    <div class="icon-circle"><img src="../assets/images/Teal_LG-3D.png" alt="Studio"></div>
                     <h3 class="arch-title">The Studio</h3>
                     <span class="arch-role role-teal">Creative Production</span>
                     <p class="arch-desc">High-fidelity execution. From brand identity to full-stack web development and campaign assets.</p>
                 </a>
-
-                <!-- CARD 04: The Portal (The Body) -->
-                <a class="arch-card" href="https://portal.luis-gilberto.com" target="_blank" rel="noopener noreferrer" aria-label="Access The Portal (opens in new tab)">
-                    <span class="card-num">04</span>
-                    <div class="icon-circle">
-                        <!-- Use Dossier Image -->
-                        <img src="assets/images/branded-lg-dossier.png" alt="The Portal">
-                    </div>
+                <!-- Portal -->
+                <a href="https://portal.luis-gilberto.com" class="arch-card">
+                    <div class="icon-circle"><img src="assets/images/branded-lg-dossier.png" alt="Portal"></div>
                     <h3 class="arch-title">The Portal</h3>
-                    <span class="arch-role role-coral">Command Center</span>
+                    <span class="arch-role role-coral" style="color:var(--coral);">Command Center</span>
                     <p class="arch-desc">Your secure environment for project management, asset approvals, and timeline tracking.</p>
                 </a>
-
             </div>
         </div>
     </section>
 
-    <!-- HOW THEY WORK TOGETHER (Simplified Flow) -->
-    <section class="section-flow scroll-section" id="flow">
-        <div class="container">
-            <div class="section-header-center">
-                <h2 class="section-heading">The Flow</h2>
-                <p>From diagnosis to delivery.</p>
+    <!-- FLOW SECTION -->
+    <section class="section-flow">
+        <div class="hub-container">
+            <div style="text-align: center; margin-bottom: 3rem;">
+                <h2 style="font-family:'Big Shoulders Display'; font-size:3rem; margin-bottom:0.5rem;">The Flow</h2>
+                <p style="color:var(--text-secondary);">From diagnosis to delivery.</p>
             </div>
-
+            
             <div class="flow-container">
                 <div class="flow-node">
                     <span class="flow-sub">STEP 1</span>
@@ -708,8 +545,8 @@
                     <span class="flow-sub">Execution</span>
                 </div>
                 <div class="flow-connector"></div>
-                <div class="flow-node portal-node">
-                    <span class="flow-sub">LIVING IN</span>
+                <div class="flow-node" style="border-color:var(--teal);">
+                    <span class="flow-sub" style="color:var(--teal);">LIVING IN</span>
                     <h3 class="flow-title">The Portal</h3>
                     <span class="flow-sub">Management</span>
                 </div>
@@ -717,360 +554,114 @@
         </div>
     </section>
 
-    <!-- CTA -->
-    <section class="section-cta scroll-section">
-        <div class="container">
-            <h2 class="section-heading">Ready to Activate?</h2>
-            <div class="cta-buttons">
-                <a href="/TheHub/strategyiq/index.html" class="btn-accent">Start Assessment</a>
-                <a href="https://portal.luis-gilberto.com" class="btn-outline" target="_blank" rel="noopener noreferrer" aria-label="Client Login (opens in a new tab)">Client Login</a>
+    <!-- CTA SECTION -->
+    <section class="section-cta scroll-section" style="background: var(--bg-tertiary);">
+        <div class="hub-container">
+            <div style="text-align: center; padding: 2rem 0;">
+                <h2 class="section-heading" style="font-family: 'Big Shoulders Display', sans-serif; font-size: 3rem; margin-bottom: 1rem;">Ready to Activate?</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 2.5rem; font-size: 1.1rem;">
+                    Stop guessing. Start building.
+                </p>
+                <div class="cta-buttons">
+                    <a href="/TheHub/strategy-iq.html" class="btn-accent" style="box-shadow: 0 4px 20px rgba(249, 111, 110, 0.4);">
+                        Start StrategyIQ Assessment
+                    </a>
+                    <a href="https://portal.luis-gilberto.com" class="btn-outline" target="_blank" rel="noopener noreferrer">
+                        Client Login
+                    </a>
+                </div>
             </div>
         </div>
     </section>
 
-<!-- Footer --> 
-<footer style="background: #050505; border-top: 1px solid rgba(255,255,255,0.1); padding: 4rem 2rem; margin-top: auto; color: white; font-family: 'Inter', sans-serif;"> 
-    <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.5fr; gap: 3rem; align-items: start;"> 
-        <div> 
-            <a href="/index.html" style="display: flex; align-items: center; gap: 12px; text-decoration: none; margin-bottom: 1.5rem;"> 
-                <img src="/assets/images/Logomark_White_a.png" alt="Luis Gilberto" style="height: 32px; width: auto; opacity: 0.9;"> 
-                <span style="font-family: 'Big Shoulders Display', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: white;">LUIS GILBERTO</span> 
-            </a> 
-            <p style="color: #888; font-size: 14px; line-height: 1.6; max-width: 280px;">Making technology feel human through clarity, beautiful execution, and systems that scale.</p> 
-            <div style="margin-top: 1.5rem; color: #555; font-size: 12px;">&copy; <span id="year">2025</span> Luis Gilberto Ecosystem.</div> 
-        </div> 
-        <div> 
-            <h4 style="font-family: 'Big Shoulders Display'; font-size: 14px; color: #555; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 1.5rem;">Ecosystem</h4> 
-            <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px;"> 
-                <li><a href="/TheHub/index.html" style="color: #ccc; text-decoration: none; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#ccc'">The Hub</a></li> 
-                <li><a href="/TheHub/strategyiq/index.html" style="color: #ccc; text-decoration: none; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#ccc'">StrategyIQ</a></li> 
-                <li><a href="/TheHub/studio.html" style="color: #ccc; text-decoration: none; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#ccc'">The Studio</a></li> 
-                <li><a href="https://portal.luis-gilberto.com" style="color: #F96F6E; text-decoration: none; font-size: 14px; font-weight: 600;" target="_blank" rel="noopener noreferrer" aria-label="Access The Portal (opens in new tab)">The Portal &rarr;</a></li> 
-            </ul> 
-        </div> 
-        <div> 
-            <h4 style="font-family: 'Big Shoulders Display'; font-size: 14px; color: #555; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 1.5rem;">Connect</h4> 
-            <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px;"> 
-                <li><a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" style="color: #ccc; text-decoration: none; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#ccc'">LinkedIn</a></li> 
-                <li><a href="/contact.html" style="color: #ccc; text-decoration: none; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#ccc'">Contact</a></li> 
-                <li><a href="/about.html" style="color: #ccc; text-decoration: none; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#ccc'">About Me</a></li> 
-            </ul> 
-        </div> 
-        <div> 
-            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 1.25rem;"> 
-                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;"> 
-                    <div style="width: 8px; height: 8px; background: #2ED3C6; border-radius: 50%; box-shadow: 0 0 8px rgba(46, 211, 198, 0.5);"></div> 
-                    <span style="font-size: 12px; font-weight: 700; color: white; letter-spacing: 0.5px; text-transform: uppercase;">Accepting Projects</span> 
-                </div> 
-                <p style="color: #888; font-size: 13px; line-height: 1.4; margin: 0;">Currently available for strategic consulting and creative direction.</p> 
-            </div> 
-        </div> 
-    </div> 
-    <script>try{document.getElementById('year').textContent=new Date().getFullYear();}catch(e){}</script> 
-</footer>
-
-    <script>
-        // Enhanced Intersection Observer for fade-in animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, observerOptions);
-
-        // Observe all fade-in elements
-        document.addEventListener('DOMContentLoaded', () => {
-            const fadeElements = document.querySelectorAll('.fade-in');
-            fadeElements.forEach(el => observer.observe(el));
-        });
-    </script> 
-
-    <div class="hub-reveal-system" id="hubRevealSystem">
-        <div class="service-image service-advisory"><img src="./assets/icons/arms/advisory/compass_rose_coral.png" alt=""></div>
-        <div class="service-image service-imc"><img src="./assets/icons/arms/studio/atom_model_teal.png" alt=""></div>
-        <div class="service-image service-scope"><img src="./assets/icons/arms/strategyiq/telescope_coral.png" alt=""></div>
-        <div class="service-image service-strategy"><img src="./assets/icons/arms/portal/chess_queen_teal.png" alt=""></div>
-    </div>
-
-    <script>
-      // Runtime override: hold the loader for 2s after completion to keep the logo visible
-      (function() {
-        if (window.HubLoader && HubLoader.prototype && typeof HubLoader.prototype.complete === 'function') {
-          const originalComplete = HubLoader.prototype.complete;
-          HubLoader.prototype.complete = function() {
-            if (this.isComplete) return;
-            this.isComplete = true;
-            if (this.video) { this.video.pause(); this.video.currentTime = 0; }
-            if (this.options.onComplete && typeof this.options.onComplete === 'function') {
-              this.options.onComplete();
-            }
-            document.dispatchEvent(new CustomEvent('hubLoadingComplete', { detail: { loader: this } }));
-            if (this.container) {
-              this.container.classList.add('complete', 'transitioning');
-            }
-            // Hold 2 seconds before fading out the container
-            setTimeout(() => { this.hide(); }, 2000);
-          };
-        }
-      })();
-
-      document.addEventListener('DOMContentLoaded', function() {
-        const specialArticleUrl = 'https://luis-gilberto.com/insights/building-the-hub/';
-        const referrer = document.referrer;
-        const isStandardInternalNav = referrer.includes('luis-gilberto.com') && referrer !== specialArticleUrl;
-        const hasInternalNavigationFlag = sessionStorage.getItem('hubNavigated') === 'true';
-        const shouldShowAnimation = !isStandardInternalNav && !hasInternalNavigationFlag;
-
-        const mainContent = document.getElementById('hero'); // Changed to hero section since there is no #main-content
-        const revealSystem = document.getElementById('hubRevealSystem');
-        const heroShapes = document.querySelector('.orbital-system');
-
-        function showContentAndFinalShapes() {
-            if (mainContent) mainContent.style.display = 'block';
-            if (heroShapes) {
-                setTimeout(() => { heroShapes.style.opacity = '1'; }, 100);
-            }
-        }
-
-        if (shouldShowAnimation) {
-          sessionStorage.removeItem('hubNavigated');
-          const loader = HubLoader.create({
-            videoUrl: './assets/components/hub-animation/coral_laser_line.mp4',
-            duration: 12000,
-            autoStart: true,
-            showProgress: false,
-            skipOnClick: true,
-            onComplete: function() {
-              // This is the new 2-second hold on the Hub logo.
-              setTimeout(() => {
-                
-                // This is the CORRECT fly-through-the-frame logic that was accidentally deleted.
-                revealSystem.style.opacity = '1';
-
-                setTimeout(() => {
-                  revealSystem.classList.add('is-revealing-frame');
-                }, 0);
-
-                setTimeout(() => {
-                  revealSystem.classList.add('is-revealing-shapes');
-                }, 200);
-                
-                setTimeout(() => {
-                  showContentAndFinalShapes();
-                }, 1500);
-                
-                setTimeout(() => {
-                  revealSystem.classList.add('is-fading-out');
-                }, 2000);
-
-                setTimeout(() => {
-                  revealSystem.style.display = 'none';
-                }, 3000);
-
-              }, 2000); // 2000 milliseconds = 2 second delay before the handoff starts
-            }
-          });
-
-          // After the logo fade-in animation completes, mark the container so CSS keeps it visible.
-          // This ensures we don't show the logo earlier than intended.
-          setTimeout(() => {
-            const hubContainer = document.querySelector('.hub-loading-container');
-            if (!hubContainer) return;
-            const logoOverlay = hubContainer.querySelector('.hub-logo-overlay');
-            const logo = hubContainer.querySelector('.hub-logo');
-            const markVisible = () => hubContainer.classList.add('logo-fixed-visible');
-            if (logoOverlay) {
-              logoOverlay.addEventListener('animationend', markVisible, { once: true });
-            }
-            if (logo) {
-              logo.addEventListener('animationend', markVisible, { once: true });
-            }
-            // Fallback: if animationend doesn't fire (browser quirk), mark visible shortly after the initial hold
-            setTimeout(() => {
-              if (!hubContainer.classList.contains('logo-fixed-visible')) {
-                markVisible();
-              }
-            }, 2500);
-          }, 0);
-
-          // START: Add "Go Deeper" CTA logic REMOVED
-          // END: Add "Go Deeper" CTA logic
-
-        } else {
-          revealSystem.style.display = 'none';
-          showContentAndFinalShapes();
-        }
-        
-        sessionStorage.setItem('hubNavigated', 'true');
-      });
-    </script>
-
-    <script>
-      // Parallax mouse move script
-      document.addEventListener('mousemove', function(e) {
-          const hero = document.querySelector('.hero');
-          if (!hero) return;
-          const rect = hero.getBoundingClientRect();
-          const x = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2);
-          const y = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2);
-          
-          const layer = document.querySelector('.shape-layer');
-          if (layer) {
-              const depth = layer.getAttribute('data-depth');
-              const moveX = depth * (x * 40);
-              const moveY = depth * (y * 40);
-              layer.style.transform = `translate3d(${moveX}px, ${moveY}px, 0)`;
-          }
-      });
-    </script>
-
-    <script>
-      // Theme Logic
-      const themeToggle = document.querySelectorAll('.theme-toggle');
-      const html = document.documentElement;
-      const savedTheme = localStorage.getItem('theme') || 'dark';
-      html.setAttribute('data-theme', savedTheme);
-
-      themeToggle.forEach(btn => {
-          btn.addEventListener('click', (e) => {
-              e.preventDefault();
-              const currentTheme = html.getAttribute('data-theme');
-              const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-              html.setAttribute('data-theme', newTheme);
-              localStorage.setItem('theme', newTheme);
-          });
-      });
-
-      // Mobile Menu Logic - Handled by Golden Master Script
-      /*
-      const mobileToggle = document.getElementById('mobileToggle');
-      const mobileOverlay = document.getElementById('mobileOverlay');
-      const drawerCloseBtn = document.getElementById('drawerCloseBtn');
-      
-      if(mobileToggle) {
-          const updateAria = () => {
-              const expanded = mobileOverlay.classList.contains('active');
-              mobileToggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-          };
-          mobileToggle.addEventListener('click', () => {
-              mobileOverlay.classList.toggle('active');
-              mobileToggle.classList.toggle('open');
-              updateAria();
-          });
-          
-          mobileOverlay.addEventListener('click', (e) => {
-              if(e.target === mobileOverlay) {
-                  mobileOverlay.classList.remove('active');
-                  mobileToggle.classList.remove('open');
-                  updateAria();
-              }
-          });
-          if (drawerCloseBtn) {
-              drawerCloseBtn.addEventListener('click', () => {
-                  mobileOverlay.classList.remove('active');
-                  mobileToggle.classList.remove('open');
-                  updateAria();
-              });
-          }
-          document.addEventListener('keydown', (e) => {
-              if(e.key === 'Escape' && mobileOverlay.classList.contains('active')) {
-                  mobileOverlay.classList.remove('active');
-                  mobileToggle.classList.remove('open');
-                  updateAria();
-              }
-          });
-      }
-      */
-    </script>
-    <!-- Mobile Menu Overlay -->
-    <div class="mobile-menu-overlay" id="mobileOverlay">
-        <div class="mobile-drawer-header">
-            <div class="nav-logo">
-                <img src="/assets/images/Logomark_White_a.png" alt="Luis Gilberto" style="height: 32px; width: auto; opacity: 0.9;">
-            </div>
-            <button class="drawer-close-btn" id="drawerCloseBtn">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="mobile-drawer-content">
-            <div class="mobile-link-group">
-                <span class="mobile-label">Ecosystem</span>
-                <a href="/index.html" class="mobile-link main">Portfolio</a>
-                <a href="/insights/index.html" class="mobile-link main">Insights</a>
-                <a href="/TheHub/index.html" class="mobile-link main">The Hub</a>
-            </div>
-            <div class="mobile-link-group">
-                <span class="mobile-label">Hub Access</span>
-                <a href="/TheHub/strategyiq/index.html" class="mobile-link sub">StrategyIQ</a>
-                <a href="/TheHub/advisory/index.html" class="mobile-link sub">Advisory</a>
-                <a href="/TheHub/studio.html" class="mobile-link sub">The Studio</a>
-                <a href="https://portal.luis-gilberto.com" class="mobile-link sub" target="_blank" rel="noopener noreferrer" aria-label="Access The Portal (opens in new tab)">Client Portal</a>
+    <!-- FOOTER -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="/index.html" style="display:flex; align-items:center; gap:12px; text-decoration:none; margin-bottom:1rem;">
+                        <img src="/assets/images/Logomark_White_a.png" alt="LG" style="height:32px; width:auto; opacity:0.9;">
+                        <span style="font-family:'Big Shoulders Display'; font-size:24px; font-weight:700; color:white; text-transform:uppercase;">Luis Gilberto</span>
+                    </a>
+                    <p class="footer-tagline">Making technology feel human through clarity, beautiful execution, and systems that scale.</p>
+                    <div class="footer-social">
+                        <a href="https://linkedin.com/in/luisgilberto00" target="_blank" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="mailto:hello@luis-gilberto.com" class="social-icon"><i class="far fa-envelope"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="footer-heading">Ecosystem</h4>
+                    <ul class="footer-list">
+                        <li><a href="/index.html" class="footer-link">Portfolio</a></li>
+                        <li><a href="/TheHub/index.html" class="footer-link">The Hub</a></li>
+                        <li><a href="/insights/index.html" class="footer-link">Insights</a></li>
+                        <li><a href="https://portal.luis-gilberto.com" class="footer-link" style="color:var(--coral);">The Portal &rarr;</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-heading">Connect</h4>
+                    <ul class="footer-list">
+                        <li><a href="/contact.html" class="footer-link">Contact</a></li>
+                        <li><a href="/about.html" class="footer-link">About Me</a></li>
+                        <li><a href="https://linkedin.com/in/luisgilberto00" class="footer-link">LinkedIn</a></li>
+                    </ul>
+                </div>
+                <div class="footer-status">
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                        <span style="width:8px; height:8px; background:var(--teal); border-radius:50%;"></span>
+                        <span style="font-weight:700; font-size:0.9rem; text-transform:uppercase;">Accepting Projects</span>
+                    </div>
+                    <p style="font-size:0.85rem; color:rgba(255,255,255,0.6);">Currently available for strategic consulting and creative direction.</p>
+                </div>
             </div>
         </div>
-    </div>
-    <script src="hub-script.js"></script>
-<script>
-    // Golden Master Nav Logic
-    document.addEventListener('DOMContentLoaded', () => {
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script>
+        // Theme Logic
         const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        html.setAttribute('data-theme', savedTheme);
+
+        if(themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                const current = html.getAttribute('data-theme');
+                const next = current === 'light' ? 'dark' : 'light';
+                html.setAttribute('data-theme', next);
+                localStorage.setItem('theme', next);
+                // Fix Logo Color on Light Mode
+                const logo = document.querySelector('.primary-nav img');
+                if(next === 'light') { logo.style.filter = 'invert(1)'; } 
+                else { logo.style.filter = 'none'; }
+            });
+            // Init Logo State
+            const logo = document.querySelector('.primary-nav img');
+            if(savedTheme === 'light') { logo.style.filter = 'invert(1)'; }
+        }
+
+        // Mobile Menu Logic
         const mobileToggle = document.getElementById('mobileToggle');
         const mobileOverlay = document.getElementById('mobileOverlay');
-        const body = document.body;
 
-        // Theme Toggle
-        if (themeToggle) {
-            themeToggle.addEventListener('click', () => {
-                body.classList.toggle('dark');
-                const isDark = body.classList.contains('dark');
-                localStorage.setItem('theme', isDark ? 'dark' : 'light');
-            });
-
-            // Init theme from storage
-            if (localStorage.getItem('theme') === 'dark') {
-                body.classList.add('dark');
-            }
-        }
-
-        // Mobile Menu Toggle
-        if (mobileToggle && mobileOverlay) {
+        if(mobileToggle && mobileOverlay) {
             mobileToggle.addEventListener('click', () => {
                 mobileToggle.classList.toggle('open');
                 mobileOverlay.classList.toggle('active');
-                
-                // Toggle icon
-                const icon = mobileToggle.querySelector('i');
-                if (icon) {
-                    if (mobileToggle.classList.contains('open')) {
-                        icon.classList.remove('fa-bars');
-                        icon.classList.add('fa-times');
-                    } else {
-                        icon.classList.remove('fa-times');
-                        icon.classList.add('fa-bars');
-                    }
-                }
+                document.body.style.overflow = mobileOverlay.classList.contains('active') ? 'hidden' : '';
             });
-            
-            // Close button inside overlay (if exists)
-            const closeBtn = mobileOverlay.querySelector('.drawer-close-btn');
-            if (closeBtn) {
-                closeBtn.addEventListener('click', () => {
-                    mobileToggle.classList.remove('open');
-                    mobileOverlay.classList.remove('active');
-                    const icon = mobileToggle.querySelector('i');
-                    if (icon) {
-                        icon.classList.remove('fa-times');
-                        icon.classList.add('fa-bars');
-                    }
-                });
-            }
         }
-    });
-</script>
+
+        // Hub Reveal Animation Loader (Existing logic support)
+        document.addEventListener('DOMContentLoaded', () => {
+            const hubLoader = window.HubLoader;
+            if(hubLoader && sessionStorage.getItem('hubNavigated') !== 'true') {
+                // Init animation if needed (Script source included in head)
+                hubLoader.create({ videoUrl: './assets/components/hub-animation/coral_laser_line.mp4', autoStart: true });
+                sessionStorage.setItem('hubNavigated', 'true');
+            }
+        });
+    </script>
 </body>
 </html>
