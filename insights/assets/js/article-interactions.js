@@ -4,12 +4,35 @@
         const htmlElement = document.documentElement;
         const currentTheme = localStorage.getItem('theme') || 'light';
         htmlElement.setAttribute('data-theme', currentTheme);
+
+        // Helper to update video source
+        function updateVideoSource(theme) {
+            const videoSource = document.getElementById('heroVideoSource');
+            const videoElement = document.getElementById('heroVideo');
+            
+            if (videoSource && videoElement) {
+                const newSrc = theme === 'dark' 
+                    ? '/insights/assets/videos/insights-video-dark-perfect.webm' 
+                    : '/insights/assets/videos/insights-video-light.webm';
+                
+                // Only reload if source actually changes
+                if (videoSource.getAttribute('src') !== newSrc) {
+                    videoSource.src = newSrc;
+                    videoElement.load();
+                    videoElement.play().catch(e => console.log('Autoplay prevented:', e));
+                }
+            }
+        }
+
+        // Initialize video
+        updateVideoSource(currentTheme);
         
         if (themeToggle) {
             themeToggle.addEventListener('click', () => {
                 const newTheme = htmlElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
                 htmlElement.setAttribute('data-theme', newTheme);
                 localStorage.setItem('theme', newTheme);
+                updateVideoSource(newTheme);
             });
         }
 
