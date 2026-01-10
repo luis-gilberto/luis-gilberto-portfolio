@@ -3,14 +3,15 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
   id            String    @id @default(cuid())
   name          String?
   email         String?   @unique
+  password      String?
   image         String?
   emailVerified DateTime?
   role          String    @default("CLIENT") // ADMIN or CLIENT
@@ -36,6 +37,8 @@ model Client {
   companySize String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  
+  projects           Project[]
   assessmentSessions AssessmentSession[]
 }
 
@@ -44,9 +47,17 @@ model Project {
   title       String
   status      String     @default("Active")
   startDate   DateTime   @default(now())
+  
   userId      String
   user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  documents   Document[]
+  
+  clientId    String?
+  client      Client?    @relation(fields: [clientId], references: [id])
+
+  documents      Document[]
+  milestones     Milestone[]
+  deliverables   Deliverable[]
+  timelineEvents TimelineEvent[]
 }
 
 model Document {
@@ -58,6 +69,35 @@ model Document {
   uploadedAt DateTime @default(now())
   projectId String
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Milestone {
+  id        String   @id @default(cuid())
+  title     String
+  date      DateTime
+  status    String   @default("Pending")
+  order     Int      @default(0)
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Deliverable {
+  id        String   @id @default(cuid())
+  title     String
+  fileUrl   String?
+  type      String
+  status    String   @default("Draft")
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model TimelineEvent {
+  id          String   @id @default(cuid())
+  date        DateTime
+  description String
+  type        String
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model AssessmentSession {
