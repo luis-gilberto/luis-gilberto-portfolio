@@ -82,7 +82,7 @@ const downloadPageHTML = `<!DOCTYPE html>
         <h1>Download Luis Gilberto's CV</h1>
         
         <a href="cv-onepager.html" class="download-btn" target="_blank">View CV Online</a>
-        <a href="assets/Luis_Gilberto_CV_OnePager.pdf" class="download-btn" download>Download Original PDF</a>
+        <a href="assets/LG-uis_Gilberto_CV_OnePager.PDF" class="download-btn" download>Download Original PDF</a>
         
         <div class="instructions">
             <h3>Generate Updated PDF:</h3>
