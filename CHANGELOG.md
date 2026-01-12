@@ -1,3 +1,12 @@
+## 2026-01-12
+
+- **Insights Landing Page Update (ULTIMO Version)**
+  - Replaced `insights/index.html` with improved ULTIMO version.
+  - **Mobile Fixes**: Solved menu "ghosting" issue and header transparency collisions on mobile devices.
+  - **Accessibility**: Implemented semantic anchor tags for story cards.
+  - **UX**: Enhanced Swiper.js navigation and responsive breakpoints.
+  - **Deployment**: Deployed to Cloudflare with clean build process.
+
 ## 2025-12-05
 
 - Updated "Work That Mattered" insights articles:
