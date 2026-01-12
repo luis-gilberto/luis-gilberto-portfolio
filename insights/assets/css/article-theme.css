@@ -1036,3 +1036,45 @@ a.work-card {
         /* Or pure white if you prefer: background: #ffffff !important; */ 
     } 
 }
+
+/* ============================================ 
+   MOBILE GHOSTING FIX (CRITICAL) 
+   ============================================ */ 
+
+/* 1. Force Header Background Solid on Mobile */ 
+@media (max-width: 1024px) { 
+    .lg-site-header { 
+        background-color: #ffffff !important; /* Force Solid White */ 
+        backdrop-filter: none !important;     /* Remove glass effect to stop bleed */ 
+    } 
+    [data-theme="dark"] .lg-site-header { 
+        background-color: #0a0a0a !important; /* Force Solid Black */ 
+    } 
+} 
+
+/* 2. Hard-Hide the Mobile Drawer when Closed */ 
+/* This prevents "ghost" text from rendering when the menu is off-screen */ 
+.mobile-menu-overlay, 
+.lg-nav-overlay { 
+    visibility: hidden !important; /* Browser ignores it completely */ 
+    opacity: 0; 
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, visibility 0s linear 0.4s; 
+} 
+
+/* 3. Only Show when Active */ 
+.mobile-menu-overlay.active, 
+.mobile-menu-overlay.is-open, 
+.lg-nav-overlay.active, 
+.lg-nav-overlay.is-open { 
+    visibility: visible !important; 
+    opacity: 1; 
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, visibility 0s linear 0s; /* No delay on show */ 
+} 
+
+/* 4. Fix potential Z-Index Fighting */ 
+.lg-site-header { 
+    z-index: 1000 !important; /* Ensure Header is high */ 
+} 
+.mobile-menu-overlay { 
+    z-index: 2000 !important; /* Ensure Menu is higher than header when open */ 
+}
