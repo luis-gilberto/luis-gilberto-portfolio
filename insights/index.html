@@ -76,7 +76,8 @@
             z-index: 90;
         }
 
-        /* Mobile Menu Drawer Fix - INJECTED FROM PREVIOUS VERSION */ 
+        /* Mobile Menu Drawer Fix - NUCLEAR OPTION */ 
+        #mobileMenuOverlay,
         .mobile-menu-overlay { 
             position: fixed; 
             top: 0; 
@@ -86,24 +87,31 @@
             background-color: var(--bg-primary); 
             z-index: 9999; 
             
-            /* CRITICAL: Force hidden state by default */
-            transform: translateX(100%) !important; 
-            visibility: hidden !important; 
-            opacity: 0 !important; 
+            /* CRITICAL: Remove from render tree completely to prevent obstruction */
+            display: none !important; 
+            visibility: hidden !important;
+            opacity: 0 !important;
             
-            display: flex;
             flex-direction: column; 
             padding: 1.5rem; 
             overflow-y: auto; 
-            transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
         } 
-        /* Support for common toggle states if JS toggles class instead of display */ 
+        
+        /* Support for common toggle states */ 
+        #mobileMenuOverlay.active,
+        #mobileMenuOverlay.is-open,
         .mobile-menu-overlay.active, 
         .mobile-menu-overlay.is-open, 
         .mobile-menu-overlay.show { 
-            transform: translateX(0) !important; 
-            visibility: visible !important; 
-            opacity: 1 !important; 
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            animation: fadeInDrawer 0.3s ease forwards;
+        }
+
+        @keyframes fadeInDrawer {
+            from { opacity: 0; transform: translateX(100%); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
         .subnav-link {
