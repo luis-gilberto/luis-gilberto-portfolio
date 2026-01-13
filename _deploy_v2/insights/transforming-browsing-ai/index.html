@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transforming Browsing with AI - Luis Gilberto</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/insights/assets/css/insights-article.css">
+    <link rel="stylesheet" href="/insights/assets/css/insights-navigation.css">
+    <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-tertiary: #ffffff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #4a4a4a;
+            --text-tertiary: #6a6a6a;
+            --accent-color: #2A8CCA;
+            --border-color: #e0e0e0;
+            --statement-bg: rgba(42, 140, 202, 0.08);
+            --accent-coral: #ff6b6b; /* used by breadcrumb & nav */
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111111;
+            --bg-tertiary: #1a1a1a;
+            --text-primary: #e8e8e8;
+            --text-secondary: #b8b8b8;
+            --text-tertiary: #888888;
+            --accent-color: #2A8CCA;
+            --border-color: #2a2a2a;
+            --statement-bg: rgba(42, 140, 202, 0.15);
+            --accent-coral: #ff6b6b; /* used by breadcrumb & nav */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .hero-section {
+            position: relative;
+            width: 100%;
+            min-height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            overflow: hidden;
+            margin-bottom: 0;
+            background: #2a3f4f;
+        }
+
+        .diagonal-slices {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .diagonal-slice {
+            position: absolute;
+            width: 60%;
+            height: 120%;
+            transform: skewY(-8deg);
+        }
+
+        .diagonal-slice:nth-child(1) {
+            background: linear-gradient(135deg, #A4C639 0%, rgba(164, 198, 57, 0.8) 100%);
+            top: -10%;
+            left: -5%;
+        }
+
+        .diagonal-slice:nth-child(2) {
+            background: linear-gradient(135deg, #2A8CCA 0%, rgba(42, 140, 202, 0.8) 100%);
+            top: 5%;
+            left: 15%;
+        }
+
+        .diagonal-slice:nth-child(3) {
+            background: linear-gradient(135deg, #D6E685 0%, rgba(214, 230, 133, 0.8) 100%);
+            top: -5%;
+            left: 35%;
+        }
+
+        .diagonal-slice:nth-child(4) {
+            background: linear-gradient(135deg, #F78E7F 0%, rgba(247, 142, 127, 0.8) 100%);
+            top: 10%;
+            left: 50%;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.65);
+            z-index: 2;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 3;
+            color: white;
+            padding: 4rem 3rem;
+            max-width: 800px;
+        }
+
+        .article-category {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-title {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+            color: #FFFFFF;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1rem, 2vw, 1.3rem);
+            font-weight: 300;
+            line-height: 1.6;
+            max-width: 650px;
+            opacity: 0.95;
+        }
+
+        .hero-image-container {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            width: 350px;
+            height: 350px;
+            z-index: 3;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            /* Consistent rounded corners across devices */
+            border-radius: 8px;
+            -webkit-border-radius: 8px; /* vendor prefix for legacy WebKit */
+            -moz-border-radius: 8px;    /* vendor prefix for legacy Firefox */
+            overflow: hidden;
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* Ensure image corners match container radius */
+            border-radius: 8px;
+            -webkit-border-radius: 8px;
+            -moz-border-radius: 8px;
+        }
+
+        .color-break {
+            width: 100%;
+            height: 10px;
+            display: flex;
+            margin-bottom: 4rem;
+        }
+
+        .color-break-segment {
+            flex: 1;
+            height: 100%;
+        }
+
+        .color-break-segment:nth-child(1) { background: #A4C639; }
+        .color-break-segment:nth-child(2) { background: #2A8CCA; }
+        .color-break-segment:nth-child(3) { background: #D6E685; }
+        .color-break-segment:nth-child(4) { background: #F78E7F; }
+
+        .article-layout {
+            display: grid;
+            grid-template-columns: 250px 1fr 300px;
+            gap: 4rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem 6rem 2rem;
+        }
+
+        .article-sidebar {
+            position: sticky;
+            top: 2rem;
+            height: fit-content;
+        }
+
+        .metadata-item {
+            margin-bottom: 2rem;
+        }
+
+        .metadata-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-tertiary);
+            margin-bottom: 0.5rem;
+        }
+
+        .metadata-value {
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .article-content {
+            max-width: 700px;
+        }
+
+        .content-section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.01em;
+            color: var(--text-primary);
+        }
+
+        .section-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin: 2rem 0;
+        }
+
+        .feature-item {
+            padding: 1.5rem;
+            background: var(--bg-secondary);
+            border-left: 3px solid var(--accent-color);
+            margin-bottom: 1rem;
+            transition: transform 0.2s ease;
+        }
+
+        .feature-item:hover {
+            transform: translateX(5px);
+        }
+
+        .feature-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .feature-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .statement-sidebar {
+            position: sticky;
+            top: 2rem;
+            height: fit-content;
+        }
+
+        .statement-card {
+            background: var(--statement-bg);
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .statement-number {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--accent-color);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .statement-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .reflection-card {
+            background: var(--bg-tertiary);
+            padding: 2rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-color);
+            font-style: italic;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        @media (max-width: 1200px) {
+            .article-layout {
+                grid-template-columns: 200px 1fr 250px;
+                gap: 3rem;
+            }
+            .hero-image-container {
+                width: 300px;
+                height: 300px;
+                bottom: 7px;
+                right: 7px;
+            }
+        }
+
+        @media (max-width: 968px) {
+            .article-layout {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+            .article-sidebar, .statement-sidebar {
+                position: static;
+            }
+            .hero-section {
+                min-height: 60vh;
+            }
+            .hero-content {
+                text-align: center;
+                padding: 3rem 2rem 20rem 2rem;
+                max-width: 100%;
+            }
+            .hero-subtitle {
+                max-width: 100%;
+            }
+            /* Update 2025-11: Tablet spacing to ensure first heading clears overlapping tile */
+            .article-content {
+                margin-top: 3.5rem;
+            }
+            .hero-image-container {
+                width: 280px;
+                height: 280px;
+                bottom: 6px;
+                right: 50%;
+                transform: translateX(50%);
+                box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+            }
+            .diagonal-slice {
+                width: 40%;
+                transform: skewY(-6deg);
+            }
+            .diagonal-slice:nth-child(1) { left: 0%; }
+            .diagonal-slice:nth-child(2) { left: 20%; }
+            .diagonal-slice:nth-child(3) { left: 40%; }
+            .diagonal-slice:nth-child(4) { left: 60%; }
+            .color-break {
+                height: 8px;
+                margin-bottom: 3rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .article-layout {
+                padding: 0 1rem 3rem 1rem;
+            }
+            .hero-content {
+                padding: 2rem 1.5rem 18rem 1.5rem;
+            }
+            .diagonal-slice {
+                width: 35%;
+            }
+            .hero-image-container {
+                width: 240px;
+                height: 240px;
+            }
+        }
+
+        /* ==================== NAVIGATION SYSTEM ==================== */
+
+        /* Breadcrumb Navigation */
+        .breadcrumb-nav {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        [data-theme="dark"] .breadcrumb-nav {
+            background: rgba(10, 10, 10, 0.95);
+        }
+
+        .breadcrumb-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .breadcrumb-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .breadcrumb-link:hover {
+            color: var(--accent-coral);
+        }
+
+        .breadcrumb-separator {
+            color: var(--text-tertiary);
+            user-select: none;
+        }
+
+        .breadcrumb-current {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        /* ================================
+           CASE STUDY NAVIGATION (CLEAN)
+           ================================ */
+        .case-study-navigation {
+            background: var(--accent-color); /* Per-page brand background */
+            border-top: 1px solid var(--border-color);
+            padding: 3rem 0;
+            margin-top: 4rem;
+            width: 100%;
+            max-width: none;
+        }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            max-width: 1400px;
+            width: 100%; /* Ensure full-width grid that stays centered */
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .nav-card {
+            background: rgba(255, 255, 255, 0.1); /* Glassmorphism on accent background */
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 2rem;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            min-height: 120px;
+            justify-content: center;
+        }
+
+        .nav-card:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-card.nav-prev { text-align: left; }
+        .nav-card.nav-next { text-align: right; }
+
+        .nav-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+        .nav-title {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.3;
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .nav-grid { grid-template-columns: 1fr; gap: 1.5rem; padding: 0 1.5rem; }
+            .nav-card.nav-next { text-align: left; }
+            .nav-card { min-height: 100px; padding: 1.5rem; }
+            .nav-title { font-size: 1.1rem; }
+        }
+
+        [data-theme="dark"] .nav-card { background: rgba(255, 255, 255, 0.1); }
+        [data-theme="dark"] .nav-card:hover { background: rgba(255, 255, 255, 0.15); }
+    </style>
+    <link rel="stylesheet" href="/insights/assets/css/insights-mobile-fixes.css">
+</head>
+<body>
+    <header class="lg-site-header" role="banner">
+      <div class="lg-site-header-inner">
+        <a href="/insights" class="lg-logo" aria-label="Insights">
+          <picture class="theme-picture lg-logo-picture">
+            <source type="image/svg+xml" data-role="light" media="(prefers-color-scheme: light)" srcset="/insights/assets/images/insights_logo_light.svg">
+            <source type="image/svg+xml" data-role="dark" media="(prefers-color-scheme: dark)" srcset="/insights/assets/images/insights_logo_light.svg">
+            <img src="/insights/assets/images/insights_logo_light.svg" alt="Insights logo" class="lg-logo-img" loading="eager" decoding="async">
+          </picture>
+        </a>
+        <nav class="lg-main-nav" id="lgMainNav" aria-label="Main navigation">
+          <button class="lg-nav-close" aria-label="Close menu" type="button"></button>
+          <a href="https://luis-gilberto.com" class="lg-nav-link">Portfolio</a>
+          <a href="/TheHub/" class="lg-nav-link">The Hub</a>
+          <a href="/insights" class="lg-nav-link is-active">Insights</a>
+          <a href="https://luis-gilberto.com/about" class="lg-nav-link">About</a>
+          <a href="https://luis-gilberto.com/contact" class="lg-nav-link">Contact</a>
+        </nav>
+        <div class="lg-nav-backdrop" aria-hidden="true" tabindex="-1"></div>
+        <button class="lg-nav-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="lgMainNav">
+          <span class="lg-nav-toggle-bar"></span>
+          <span class="lg-nav-toggle-bar"></span>
+          <span class="lg-nav-toggle-bar"></span>
+        </button>
+      </div>
+    </header>
+    <div id="drawerOverlay" class="drawer-overlay" hidden></div>
+    <aside id="insightsDrawer" class="insights-drawer" aria-hidden="true" role="dialog" aria-modal="true">
+      <div class="drawer-header">
+        <div class="drawer-brand">Insights</div>
+        <button id="drawerClose" class="drawer-close" aria-label="Close">✕</button>
+      </div>
+      <div class="drawer-content">
+        <nav class="drawer-section">
+          <div class="section-label">Global</div>
+          <a class="nav-link" href="/">Portfolio</a>
+          <a class="nav-link" href="/insights/">Insights</a>
+          <a class="nav-link" href="/TheHub/">The Hub</a>
+        </nav>
+        <nav class="drawer-section">
+          <div class="section-label">Latest</div>
+          <div id="nav-latest-content"></div>
+        </nav>
+        <nav class="drawer-section">
+          <div class="section-label">Series</div>
+          <div id="nav-series-content"></div>
+        </nav>
+        <nav class="drawer-section">
+          <div class="section-label">Topics</div>
+          <div id="nav-topics-content"></div>
+        </nav>
+      </div>
+    </aside>
+    <!-- Breadcrumb Navigation -->
+    <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+        <div class="breadcrumb-container">
+            <a href="/insights" class="breadcrumb-link">Insights</a>
+            <span class="breadcrumb-separator">/</span>
+            <a href="/insights#work-that-mattered" class="breadcrumb-link">Work That Mattered</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current">Transforming Browsing with AI</span>
+        </div>
+    </nav>
+    <section class="hero-section">
+        <div class="diagonal-slices">
+            <div class="diagonal-slice"></div>
+            <div class="diagonal-slice"></div>
+            <div class="diagonal-slice"></div>
+            <div class="diagonal-slice"></div>
+        </div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <div class="article-category">AI Innovation</div>
+            <h1 class="hero-title">Transforming Browsing with AI</h1>
+            <p class="hero-subtitle article-subheading">Positioning Edge as the AI-powered browser that transforms how people interact with the web - making advanced technology feel accessible and valuable</p>
+        </div>
+        <div class="hero-image-container">
+<img src="../assets/images/03_Browse_AI.jpg" alt="Transforming Browsing with AI" class="hero-image">
+        </div>
+    </section>
+
+    <div class="color-break">
+        <div class="color-break-segment"></div>
+        <div class="color-break-segment"></div>
+        <div class="color-break-segment"></div>
+        <div class="color-break-segment"></div>
+    </div>
+
+    <div class="article-layout">
+        <aside class="article-sidebar">
+            <div class="metadata-item">
+                <div class="metadata-label">Timeline</div>
+                <div class="metadata-value">Late 2023 - Early 2024</div>
+            </div>
+            <div class="metadata-item">
+                <div class="metadata-label">Role</div>
+                <div class="metadata-value">Integrated Marketing & Creative Strategy Lead</div>
+            </div>
+            <div class="metadata-item">
+                <div class="metadata-label">Disciplines</div>
+                <div class="metadata-value">Narrative Architecture, Multi-Platform Approach, Human-Centered Design</div>
+            </div>
+            <div class="metadata-item">
+                <div class="metadata-label">Agency Partner</div>
+                <div class="metadata-value">Not Real</div>
+            </div>
+        </aside>
+
+        <main class="article-content">
+            <div class="content-section">
+                <h2 class="section-title article-subheading">The Vision</h2>
+                <p class="section-text">As Microsoft ramped up early Copilot awareness in late 2023, the Edge team saw an opportunity to anchor its AI story in everyday browsing. This campaign launched just ahead of the holiday season, positioning Edge as the AI-powered browser that transforms how people interact with the web.</p>
+                
+                <p class="section-text">Part of a broader Go-To-Market strategy, we positioned Edge not merely as a tool, but as a trusted AI companion in your digital life. From in-app demos to social-first video, this creative library became Edge's springboard for bringing smarter browsing to life.</p>
+            </div>
+
+            <div class="content-section">
+                <h2 class="section-title article-subheading">Strategic Approach</h2>
+                <p class="section-text">As Integrated Marketing & Creative Strategy lead, I architected a narrative arc that connected Edge's AI evolution to real-world value: from first glance to first click. This wasn't just assets - it was a human-centered suite, crafted to spark curiosity and guide users toward smarter browsing habits.</p>
+                
+                <ul class="feature-list">
+                    <li class="feature-item">
+                        <div class="feature-title">Narrative Architecture</div>
+                        <div class="feature-description">Developed a cohesive story that positioned Edge's AI features as natural extensions of everyday browsing, making advanced technology feel accessible and valuable</div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-title">Human-Centered Design</div>
+                        <div class="feature-description">Every storyboard, animation, and headline was engineered to reinforce Edge's strategic shift toward being a trusted AI companion rather than just a browser</div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-title">Multi-Platform Approach</div>
+                        <div class="feature-description">Created a scalable creative system that worked across in-app experiences, social media, and traditional marketing channels - ensuring consistent AI messaging at every touchpoint</div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-title">Creative Partnership</div>
+                        <div class="feature-description">Collaborated with Not Real agency to amplify storytelling through animation and motion design expertise, creating visually compelling content that made complex AI concepts accessible and engaging</div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="content-section">
+                <h2 class="section-title article-subheading">Core AI Features</h2>
+                <p class="section-text">The campaign showcased four pillars of Edge's AI transformation:</p>
+                
+                <ul class="feature-list">
+                    <li class="feature-item">
+                        <div class="feature-title">Copilot Integration</div>
+                        <div class="feature-description">Seamless AI assistance built directly into the browsing experience, providing contextual help and insights</div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-title">Smart Search</div>
+                        <div class="feature-description">AI-powered search capabilities that understand context and provide more relevant, personalized results</div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-title">Intelligent Productivity</div>
+                        <div class="feature-description">AI features that help users work smarter, from summarizing content to generating insights from web data</div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-title">Personalized Experience</div>
+                        <div class="feature-description">Machine learning that adapts to user behavior, creating a more intuitive and efficient browsing experience</div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="content-section">
+                <h2 class="section-title">Campaign Impact</h2>
+                <p class="section-text">This content debuted in late 2023, launching just ahead of the holiday campaign and as Microsoft was ramping up early Copilot awareness. The strategic timing positioned Edge at the forefront of the AI browser revolution.</p>
+                
+                <p class="section-text">Early in 2024, as AI tools surged in popularity, this creative library became Edge's springboard for continued AI messaging and user education, providing a foundation for ongoing campaigns that successfully transformed complex AI features into compelling reasons for users to choose Edge as their primary browser.</p>
+            </div>
+
+            <div class="content-section">
+                <h2 class="section-title">Key Learnings</h2>
+                <p class="section-text">This campaign marked a pivotal moment in Microsoft Edge's evolution, successfully positioning the browser as an AI-first platform rather than just another web browser. By focusing on real-world value and human-centered storytelling, we demonstrated the power of strategic narrative architecture in technology marketing - making complex AI capabilities feel both innovative and approachable.</p>
+            </div>
+        </main>
+
+        <aside class="statement-sidebar">
+            <div class="statement-card">
+                <div class="statement-number">15M+</div>
+                <div class="statement-label">AI feature activations</div>
+            </div>
+
+            <div class="statement-card">
+                <div class="statement-number">90%</div>
+                <div class="statement-label">User satisfaction score</div>
+            </div>
+
+            <div class="statement-card">
+                <div class="statement-number">Multi-Platform</div>
+                <div class="statement-label">Scalable distribution across in-app, social & traditional channels</div>
+            </div>
+
+            <div class="reflection-card">
+                "This campaign marked a pivotal moment in Microsoft Edge's evolution, successfully positioning the browser as an AI-first platform. By focusing on real-world value and human-centered storytelling, we transformed complex AI features into compelling reasons for users to choose Edge."
+            </div>
+        </aside>
+
+    </div>
+    <!-- Case Study Navigation -->
+    <nav class="case-study-navigation" aria-label="Case study navigation">
+        <div class="nav-grid">
+            <a href="/insights/free-to-be-free" class="nav-card nav-prev">
+                <span class="nav-label">← Previous Case Study</span>
+                <span class="nav-title">Free to Be Free</span>
+            </a>
+            <a href="/insights/edge-mobile-rebrand" class="nav-card nav-next">
+                <span class="nav-label">Next Case Study →</span>
+                <span class="nav-title">Edge Mobile App Store Refresh</span>
+            </a>
+        </div>
+    </nav>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const header = document.querySelector(".lg-site-header");
+        const toggle = document.querySelector(".lg-nav-toggle");
+        const nav = document.querySelector(".lg-main-nav");
+        const backdrop = document.querySelector(".lg-nav-backdrop");
+        const closeBtn = document.querySelector(".lg-nav-close");
+        if (!header) return;
+        let previousFocus = null;
+        function getFocusable(container) {
+          return Array.from(container.querySelectorAll('a[href], button:not([disabled]), [tabindex="0"], input, select, textarea'));
+        }
+        function trapFocusKeydown(e) {
+          if (!header.classList.contains('is-open')) return;
+          if (e.key === 'Escape') { e.preventDefault(); closeNav(); return; }
+          if (e.key !== 'Tab') return;
+          const focusables = getFocusable(nav);
+          if (!focusables.length) return;
+          const first = focusables[0];
+          const last = focusables[focusables.length - 1];
+          const active = document.activeElement;
+          if (e.shiftKey) { if (active === first) { e.preventDefault(); last.focus(); } }
+          else { if (active === last) { e.preventDefault(); first.focus(); } }
+        }
+        function openNav() {
+          previousFocus = document.activeElement;
+          header.classList.add('is-open');
+          toggle.setAttribute('aria-expanded', 'true');
+          nav.setAttribute('aria-hidden', 'false');
+          document.body.classList.add('menu-open');
+          if (closeBtn) closeBtn.focus();
+          document.addEventListener('keydown', trapFocusKeydown);
+        }
+        function closeNav() {
+          header.classList.remove('is-open');
+          toggle.setAttribute('aria-expanded', 'false');
+          nav.setAttribute('aria-hidden', 'true');
+          document.body.classList.remove('menu-open');
+          document.removeEventListener('keydown', trapFocusKeydown);
+          if (previousFocus) previousFocus.focus();
+        }
+        if (toggle && nav) {
+          toggle.addEventListener('click', function () { if (header.classList.contains('is-open')) { closeNav(); } else { openNav(); } });
+        }
+        if (backdrop) { backdrop.addEventListener('click', function () { if (header.classList.contains('is-open')) closeNav(); }); }
+        if (closeBtn) { closeBtn.addEventListener('click', function () { closeNav(); }); }
+      });
+    </script>
+    <script src="/assets/js/mobile-menu-loader.js"></script>
+</body>
+<script src="/insights/assets/js/insights-navigation.js"></script>
+</html>

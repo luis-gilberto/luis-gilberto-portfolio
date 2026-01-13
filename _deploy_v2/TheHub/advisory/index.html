@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advisory | Strategic Clarity & Direction</title>
+    
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
+    
+    <!-- Ecosystem Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Big+Shoulders+Display:wght@600;700;800&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="../assets/css/logo-system.css">
+
+    <style>
+        /* ==========================================
+           ECOSYSTEM VARIABLES
+           ========================================== */
+        :root {
+            --coral: #F96F6E;
+            --teal: #2ED3C6;
+            
+            /* Light Mode Palette - UPDATED */
+            --bg-primary: #FAF9F6;  /* Cloud Dancer */
+            --bg-alt: #F5F3EE;      /* Slightly darker for contrast */
+            --bg-tertiary: #EBE8E3;
+            
+            --text-primary: #0E0E0F;
+            --text-secondary: #4A4A4A;  /* Darker for better readability */
+            --text-muted: rgba(0, 0, 0, 0.6);  /* Increased opacity */
+            
+            --border-subtle: rgba(0, 0, 0, 0.08);
+            --border-strong: rgba(0, 0, 0, 0.15);
+            
+            /* The "Thread" Color */
+            --thread-line: rgba(0, 0, 0, 0.08);
+            
+            /* Fonts */
+            --font-sans: 'Inter', sans-serif;
+            --font-display: 'Big Shoulders Display', sans-serif;
+            --font-serif: 'Playfair Display', serif;
+            
+            /* UI */
+            --card-bg: #FFFFFF;  /* Pure white cards on Cloud Dancer background */
+            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 12px 30px rgba(0, 0, 0, 0.12);
+            --hero-headline-size: clamp(2.625rem, 5vw, 4.125rem);
+        }
+
+        /* Dark Mode Palette */
+        [data-theme="dark"] {
+            --bg-primary: #0E0E0F;
+            --bg-alt: #161617;
+            --bg-tertiary: #222224;
+            
+            --text-primary: #F5F5F5;
+            --text-secondary: #A0A0A0;
+            --text-muted: rgba(255, 255, 255, 0.4);
+            
+            --border-subtle: rgba(255, 255, 255, 0.05);
+            --border-strong: rgba(255, 255, 255, 0.15);
+            
+            --thread-line: rgba(255, 255, 255, 0.08);
+            
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.4);
+            --shadow-hover: 0 12px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            /* Ecosystem Texture */
+            background-image: radial-gradient(var(--border-subtle) 1px, transparent 1px);
+            background-size: 24px 24px;
+            line-height: 1.6;
+            padding-top: 112px; 
+            transition: background-color 0.3s ease, color 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        /* ========================================
+           GLOBAL PRIMARY NAVIGATION (Level 1)
+           ======================================== */
+        .primary-nav {
+            position: fixed; top: 0; left: 0; width: 100%; height: 64px;
+            background: transparent;
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10000;
+        }
+
+        .nav-container {
+            max-width: 1400px; margin: 0 auto; padding: 0 1rem;
+            height: 64px; display: flex; align-items: center; justify-content: space-between;
+            position: relative;
+        }
+
+        .nav-logo img { height: 64px; width: auto; }
+        .nav-logo .desktop-logo { display: block; }
+        .nav-logo .mobile-logo { display: none; }
+        @media (max-width: 1024px) {
+            .nav-logo .desktop-logo { display: none; }
+            .nav-logo .mobile-logo { display: block; }
+        }
+
+        .nav-links { display: flex; gap: 24px; align-items: center; justify-content: flex-end; margin-left: auto; }
+        @media (max-width: 768px) { .nav-links { gap: 16px; } }
+        
+        .nav-link {
+            color: rgba(255, 255, 255, 0.7); text-decoration: none;
+            font-size: 13px; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.08em; position: relative; transition: color 0.2s ease;
+        }
+        
+        .nav-link:hover, .nav-link.active { color: #ffffff; }
+        
+        .nav-link.active::after {
+            content: ''; position: absolute; bottom: -23px; left: 0; right: 0;
+            height: 3px; background: var(--coral);
+        }
+
+        /* ========================================
+           HUB SUB-NAVIGATION (Level 2)
+           ======================================== */
+        .portfolio-subnav {
+            position: fixed; top: 64px; left: 0; width: 100%;
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-subtle);
+            z-index: 9999; transition: background 0.3s ease;
+        }
+
+        .portfolio-subnav-container {
+            max-width: 1400px; margin: 0 auto; padding: 0 2rem;
+            height: 48px; display: flex; align-items: center; gap: 2rem;
+        }
+
+        .subnav-link {
+            color: var(--text-secondary); text-decoration: none;
+            font-size: 14px; font-weight: 500; transition: color 0.2s ease;
+            padding: 0.5rem 0; position: relative;
+        }
+        .subnav-link:hover { color: var(--coral); }
+        .subnav-link.active { color: var(--text-primary); font-weight: 700; }
+        
+        @media (max-width: 1024px) {
+            .desktop-links { display: none !important; }
+            .mobile-menu-toggle { display: block !important; }
+            nav { padding: 0 1.5rem !important; }
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50%; width: 36px; height: 36px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; margin-left: 1.5rem; color: #ffffff;
+            transition: all 0.3s ease;
+        }
+        .theme-toggle:hover { background: var(--coral); border-color: var(--coral); }
+        
+        /* Theme Toggle Logic */
+        [data-theme="dark"] .sun-icon, body.dark .sun-icon { display: block !important; }
+        [data-theme="dark"] .moon-icon, body.dark .moon-icon { display: none !important; }
+        :not([data-theme="dark"]):not(.dark) .sun-icon, body:not(.dark) .sun-icon { display: none !important; }
+        :not([data-theme="dark"]):not(.dark) .moon-icon, body:not(.dark) .moon-icon { display: block !important; }
+
+        /* Mobile Menu */
+        .mobile-menu-toggle { display: none; flex-direction: column; justify-content:center; align-items:center; gap: 8px; background-color: transparent; border: none; padding: 12px; z-index: 10001; cursor: pointer; }
+        .mobile-menu-toggle span { width: 24px; height: 2px; background: #FFFFFF; opacity: 1; display: block; transition: transform 0.3s ease, opacity 0.3s ease; }
+        .mobile-menu-toggle.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+        .mobile-menu-toggle.open span:nth-child(2) { opacity: 0; }
+        .mobile-menu-toggle.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+        .nav-actions { display: flex; align-items: center; gap: 12px; }
+        
+        .mobile-menu-overlay {
+            position: fixed; inset: 0; background: var(--bg-primary);
+            z-index: 9998; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 8rem 2rem; display: flex; flex-direction: column; gap: 2rem; overflow-y: auto;
+        }
+        .mobile-menu-overlay.active { transform: translateX(0); }
+        .mobile-drawer-header { display: flex; justify-content: space-between; align-items: center; padding: 0 24px; height: 80px; border-bottom: 1px solid var(--border-subtle); }
+        .mobile-drawer-logo { height: auto; width: 120px; max-width: 180px; object-fit: contain; }
+        @media (max-width: 480px) { .mobile-drawer-logo { width: 80px; } }
+        @media (min-width: 481px) and (max-width: 768px) { .mobile-drawer-logo { width: 100px; } }
+        @media (min-width: 769px) and (max-width: 1024px) { .mobile-drawer-logo { width: 120px; } }
+        .mobile-drawer-content { padding: 40px 32px; overflow-y: auto; display: flex; flex-direction: column; gap: 32px; }
+        .mobile-link-group { display: flex; flex-direction: column; gap: 1rem; }
+        .mobile-label { font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+        .mobile-link { display: block; text-decoration: none; color: var(--text-primary); transition: color 0.2s; }
+        .mobile-link.main { font-family: var(--font-display); font-size: 2.5rem; font-weight: 700; line-height: 1.1; margin-bottom: 8px; }
+        .mobile-link.sub { font-family: var(--font-sans); font-size: 1.1rem; font-weight: 500; margin-bottom: 12px; color: var(--text-secondary); padding-left: 0; transition: all 0.2s; }
+        .mobile-link:hover { color: #F96F6E; }
+        .mobile-link.active-parent { color: #F96F6E; }
+        .mobile-link.sub.active { color: #F96F6E; font-weight: 700; padding-left: 12px; border-left: 3px solid #F96F6E; }
+        .mobile-divider { height: 1px; width: 100%; background: var(--border-subtle); }
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+        .mobile-controls { display: flex; align-items: center; gap: 16px; }
+        .drawer-close-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.1); border-radius: 50%; color: var(--text-primary); cursor: pointer; transition: all 0.2s ease; }
+        [data-theme="dark"] .drawer-close-btn { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); color: #fff; }
+        .drawer-close-btn:hover { background: #F96F6E; color: #fff; border-color: #F96F6E; transform: rotate(90deg); }
+
+        @media (max-width: 1024px) {
+            .primary-nav-container { padding: 0 1rem; }
+            .nav-logo { flex-shrink: 0; margin-right: auto; }
+            .mobile-menu-toggle { flex-shrink: 0; margin-left: auto; position: relative; right: 0; }
+            .nav-links, .portfolio-subnav { display: none; }
+            .mobile-menu-toggle { display: flex; }
+            .nav-actions { display: flex; }
+            body { padding-top: 64px; }
+        }
+
+        /* ==========================================
+           LAYOUT & TYPOGRAPHY
+           ========================================== */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 1; }
+        .center-axis { text-align: center; display: flex; flex-direction: column; align-items: center; max-width: 800px; margin: 0 auto; }
+        h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.01em; line-height: 1.1; }
+        
+        .section-title {
+            font-size: var(--hero-headline-size); margin-bottom: 1.5rem; color: var(--text-primary);
+            background: var(--bg-primary); display: inline-block; padding: 0 1rem;
+        }
+        .section-alt { background-color: var(--bg-alt); border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); }
+        .section-alt .section-title { background: var(--bg-alt); }
+
+        /* Light mode section backgrounds for better contrast */
+        [data-theme="light"] .section-alt {
+            background-color: #F5F3EE;
+        }
+        
+        [data-theme="light"] .section-alt .section-title {
+            background: #F5F3EE;
+        }
+        
+        .text-gradient { background: linear-gradient(135deg, var(--coral), var(--teal)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .text-coral { color: var(--coral); }
+
+        /* The Spine */
+        .spine-container { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+        .central-spine { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: var(--thread-line); transform: translateX(-50%); }
+        .spine-node { width: 8px; height: 8px; background: var(--bg-primary); border: 1px solid var(--coral); border-radius: 50%; position: absolute; left: 50%; transform: translateX(-50%); z-index: 1; }
+
+        /* Buttons */
+        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 14px 36px; border-radius: 99px; font-weight: 600; font-size: 16px; text-decoration: none; transition: all 0.3s; border: none; cursor: pointer; }
+        .btn-primary { background: var(--text-primary); color: var(--bg-primary); }
+        .btn-primary:hover { background: var(--coral); color: white; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(249,111,110,0.3); }
+        .btn-ghost { background: transparent; border: 1px solid var(--border-strong); color: var(--text-primary); }
+        .btn-ghost:hover { border-color: var(--coral); color: var(--coral); transform: translateY(-2px); }
+
+        /* Light mode button improvements */
+        [data-theme="light"] .btn-primary {
+            background: #0E0E0F;
+            color: #FAF9F6;
+        }
+        
+        [data-theme="light"] .btn-primary:hover {
+            background: var(--coral);
+        }
+        
+        [data-theme="light"] .btn-ghost {
+            border: 2px solid rgba(0, 0, 0, 0.2);
+            color: #0E0E0F;
+        }
+        
+        [data-theme="light"] .btn-ghost:hover {
+            border-color: var(--coral);
+            background: rgba(249, 111, 110, 0.05);
+        }
+
+        /* ==========================================
+           ADVISORY SPECIFIC SECTIONS
+           ========================================== */
+        
+        /* Hero */
+        .hero-section { padding: 8rem 0 6rem; position: relative; text-align: center; }
+        .hero-icon-wrapper { width: 150px; height: 150px; margin: 0 auto 2rem; background: var(--bg-alt); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-strong); position: relative; z-index: 2; box-shadow: var(--shadow-soft); }
+        .hero-icon { width: 150px; height: 150px; object-fit: cover; border-radius: 50%; }
+        
+        .eyebrow { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.15em; color: var(--coral); text-transform: uppercase; margin-bottom: 1.5rem; background: var(--bg-primary); display: inline-block; padding: 0 10px; }
+        
+        .hero-description { font-size: 1.25rem; color: var(--text-secondary); max-width: 640px; margin: 0 auto 2.5rem; }
+        .hero-note { font-size: 0.9rem; color: var(--text-muted); font-style: italic; margin-top: 1.5rem; }
+        .bench-link { color: var(--text-primary); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--coral); }
+
+        /* Light mode text improvements */
+        [data-theme="light"] .hero-description,
+        [data-theme="light"] .roadmap-desc,
+        [data-theme="light"] .cap-list li,
+        [data-theme="light"] .process-item p {
+            color: #4A4A4A;
+        }
+        
+        [data-theme="light"] .eyebrow {
+            color: var(--coral);
+            font-weight: 700;
+        }
+        
+        [data-theme="light"] .process-num {
+            color: rgba(0, 0, 0, 0.15);
+        }
+
+        /* Capability Cards */
+        .capabilities-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 4rem; }
+        .capability-card { background: var(--card-bg); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 2.5rem; transition: transform 0.3s ease, box-shadow 0.3s ease; box-shadow: var(--shadow-soft); position: relative; overflow: hidden; }
+        .capability-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-hover); border-color: var(--border-strong); }
+
+        /* Light mode card improvements */
+        [data-theme="light"] .capability-card,
+        [data-theme="light"] .tier-card {
+            background: #FFFFFF;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        }
+        
+        [data-theme="light"] .capability-card:hover,
+        [data-theme="light"] .tier-card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            border-color: rgba(0, 0, 0, 0.15);
+        }
+        
+        [data-theme="light"] .cap-icon {
+            background: #F5F3EE;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .cap-icon { width: 60px; height: 60px; background: var(--bg-alt); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; color: var(--coral); border: 1px solid var(--border-strong); }
+        .cap-icon svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2; }
+        
+        .cap-title { font-family: var(--font-display); font-size: 1.75rem; margin-bottom: 1rem; color: var(--text-primary); }
+        .cap-list { list-style: none; margin: 1.5rem 0; padding: 0; }
+        .cap-list li { padding: 0.5rem 0; color: var(--text-secondary); display: flex; align-items: center; gap: 10px; font-size: 0.95rem; }
+        .cap-list li::before { content: ''; width: 6px; height: 6px; background: var(--teal); border-radius: 50%; }
+        
+        .case-link { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--coral); text-decoration: none; font-weight: 600; font-size: 0.9rem; margin-top: 1rem; }
+        .case-link:hover { text-decoration: underline; }
+
+        /* Process Steps */
+        .process-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 4rem; }
+        .process-item { text-align: center; padding: 2rem; }
+        .process-num { font-family: var(--font-display); font-size: 4rem; color: var(--border-strong); line-height: 1; margin-bottom: 1rem; opacity: 0.5; }
+        
+        /* Pricing Lock */
+        .price-lock { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 1rem; background: var(--card-bg); border: 1px solid var(--border-strong); border-radius: 12px; padding: 1rem; margin: 2rem auto; max-width: 600px; }
+        .price-input { padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border-strong); background: var(--bg-alt); color: var(--text-primary); outline: none; }
+
+        /* Light mode price lock */
+        [data-theme="light"] .price-lock {
+            background: #FFFFFF;
+            border: 2px solid rgba(0, 0, 0, 0.15);
+        }
+        
+        [data-theme="light"] .price-input {
+            background: #F5F3EE;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            color: #0E0E0F;
+        }
+        .tier-price { filter: blur(8px); transition: filter 0.3s ease; user-select: none; font-size: 1.75rem; font-weight: 700; color: var(--coral); margin: 1rem 0; }
+        .tier-price.revealed { filter: blur(0); }
+        
+        .investment-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem; }
+        .tier-card { background: var(--card-bg); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 2.5rem; text-align: center; transition: transform 0.3s; position: relative; }
+        .tier-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-soft); }
+        .tier-featured { border: 2px solid var(--coral); }
+        .tier-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--coral); color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+
+        /* Legacy Logo Rotator */
+        .logo-display { height: 80px; display: flex; align-items: center; justify-content: center; background: var(--card-bg); border: 1px solid var(--border-strong); border-radius: 12px; margin-bottom: 1rem; position: relative; overflow: hidden; }
+        .logo-item { display: none; width: 100%; height: 100%; align-items: center; justify-content: center; padding: 1rem; }
+        .logo-item.active { display: flex; animation: fadeIn 0.5s ease; }
+        .logo-item img { max-height: 100%; max-width: 100%; object-fit: contain; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .legacy-stats { display: flex; justify-content: center; gap: 2rem; margin-top: 2rem; }
+        .stat-box { text-align: center; }
+        .stat-val { font-family: var(--font-display); font-size: 2.5rem; font-weight: 700; color: var(--text-primary); line-height: 1; }
+        .stat-lbl { font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); }
+
+        /* Footer styles - FIXED: Always Dark Mode */
+    .hub-footer {
+      background: #050505; /* Hardcoded dark background */
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding: clamp(3rem, 8vw, 5rem) clamp(1.5rem, 5vw, 3rem) clamp(2rem, 4vw, 3rem);
+      margin-top: clamp(4rem, 10vw, 8rem);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      color: #FFFFFF;
+    }
+
+    .hub-footer .footer-container { max-width: 1400px; margin: 0 auto; width: 100%; display: block; }
+
+    .footer-main {
+      display: grid;
+      grid-template-columns: minmax(280px, 1fr) minmax(200px, 1fr) minmax(250px, 1fr);
+      gap: clamp(2rem, 5vw, 4rem);
+      padding-bottom: clamp(2rem, 4vw, 3rem);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      align-items: start;
+    }
+
+    .footer-brand { display: flex; flex-direction: column; gap: clamp(1rem, 2.5vw, 1.5rem); }
+    .footer-logo { margin-bottom: 0.5rem; }
+    .footer-logo a { display: inline-block; transition: opacity 0.3s ease, transform 0.3s ease; }
+    .footer-logo a:hover { opacity: 0.8; transform: translateY(-2px); }
+    .footer-logo img { height: auto; max-height: clamp(56px, 8vw, 72px); opacity: 0.95; object-fit: contain; }
+
+    .footer-tagline { color: rgba(255, 255, 255, 0.6); font-size: clamp(0.875rem, 1.8vw, 1rem); line-height: 1.6; font-weight: 400; margin: 0; max-width: 320px; }
+
+    .footer-nav, .footer-connect { display: flex; flex-direction: column; gap: clamp(1rem, 2vw, 1.5rem); }
+    .footer-nav-title { font-size: clamp(0.7rem, 1.4vw, 0.75rem); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255, 255, 255, 0.35); margin: 0 0 clamp(1rem, 2vw, 1.25rem) 0; }
+    .footer-nav-links { display: flex; flex-direction: column; gap: clamp(0.625rem, 1.5vw, 0.875rem); }
+
+    .footer-link, .footer-social a {
+      display: flex; align-items: center; gap: clamp(0.625rem, 1.5vw, 0.875rem);
+      padding: clamp(0.75rem, 1.8vw, 1rem) clamp(0.875rem, 2vw, 1.25rem);
+      text-decoration: none; color: #FFFFFF; font-size: clamp(0.875rem, 1.6vw, 0.95rem);
+      font-weight: 500; transition: all 0.3s ease; position: relative; border-radius: 8px; background: transparent;
+    }
+
+    .footer-link svg, .footer-social a svg { width: clamp(18px, 3vw, 20px); height: clamp(18px, 3vw, 20px); color: rgba(255, 255, 255, 0.6); transition: all 0.3s ease; flex-shrink: 0; }
+
+    .footer-link::before, .footer-social a::before {
+      content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+      width: 0; height: 2px; background: linear-gradient(90deg, var(--coral), var(--teal)); transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 2px;
+    }
+
+    .footer-link:hover, .footer-social a:hover { color: var(--coral); background: rgba(255, 255, 255, 0.05); padding-left: clamp(1.25rem, 2.5vw, 1.5rem); }
+    .footer-link:hover::before, .footer-social a:hover::before { width: 4px; }
+    .footer-link:hover svg, .footer-social a:hover svg { color: var(--coral); transform: scale(1.1); }
+
+    .footer-link:focus-visible, .footer-social a:focus-visible { outline: 2px solid var(--coral); outline-offset: 2px; }
+
+    .footer-bottom { padding-top: clamp(1.5rem, 3vw, 2rem); }
+    .footer-bottom-content { display: flex; align-items: center; justify-content: center; gap: clamp(1rem, 3vw, 2rem); flex-wrap: wrap; }
+    .footer-copyright { color: rgba(255, 255, 255, 0.35); font-size: clamp(0.8rem, 1.5vw, 0.85rem); font-weight: 400; margin: 0; }
+    .footer-accent-line { width: 1px; height: 16px; background: linear-gradient(180deg, var(--coral), var(--teal)); opacity: 0.4; }
+    .footer-tagline-mini { color: rgba(255, 255, 255, 0.35); font-size: clamp(0.8rem, 1.5vw, 0.85rem); font-weight: 400; font-style: italic; margin: 0; }
+
+    @media (max-width: 1024px) { .footer-main { grid-template-columns: 1fr; gap: clamp(2.5rem, 5vw, 3rem); } .footer-tagline { max-width: 100%; } }
+
+    @media (max-width: 768px) {
+      .hub-footer { padding: clamp(2.5rem, 6vw, 3rem) clamp(1rem, 5vw, 2rem) clamp(1.5rem, 4vw, 2rem); }
+      .footer-main { gap: clamp(2rem, 6vw, 2.5rem); }
+      .footer-bottom-content { flex-direction: column; gap: 1rem; }
+      .footer-accent-line { width: 64px; height: 1px; }
+      .hub-footer .footer-logo img { width: 100%; max-width: 240px; height: auto; max-height: 56px; }
+      .footer-tagline { font-size: 0.875rem; }
+      .footer-link, .footer-social a { padding: 0.75rem 0.875rem; font-size: 0.875rem; }
+    }
+
+    @media (max-width: 480px) {
+      .footer-social a { padding: 0.75rem 0.875rem; font-size: 0.875rem; }
+      .footer-link svg, .footer-social a svg { width: 18px; height: 18px; }
+      .footer-nav-title { font-size: 0.7rem; }
+      .footer-copyright, .footer-tagline-mini { font-size: 0.75rem; }
+      .footer-link:hover, .footer-social a:hover { padding-left: 1rem; }
+    }
+
+    @media (max-width: 320px) { .hub-footer { padding: 2rem 1rem 1.5rem; } .hub-footer .footer-logo img { max-width: 200px; height: auto; max-height: 48px; } .footer-link, .footer-social a { padding: 0.625rem 0.75rem; font-size: 0.8125rem; } }
+
+    @media print { .hub-footer { border-top: 1px solid #000; padding: 2rem 1rem; color: #000; } .footer-link:hover, .footer-social a:hover { background: none; color: inherit; } .footer-accent-line { background: #000; } }
+
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; } }
+    @media (prefers-contrast: high) { .footer-link, .footer-social a { border: 1px solid currentColor; } .footer-accent-line { opacity: 1; } }
+
+    /* Mobile Menu Optimization - Always Dark */
+    .mobile-menu-overlay {
+        background-color: #050505 !important;
+        color: #FFFFFF !important;
+    }
+    .mobile-link {
+        color: #CCCCCC !important;
+    }
+    .mobile-link.active, .mobile-link:hover {
+        color: #FFFFFF !important;
+    }
+    .drawer-close-btn {
+        color: #FFFFFF !important;
+    }
+
+    /* ===== COMPREHENSIVE LIGHT MODE TEXT FIXES ===== */ 
+ 
+ /* All headings should be dark in light mode */ 
+ [data-theme="light"] h1, 
+ [data-theme="light"] h2, 
+ [data-theme="light"] h3, 
+ [data-theme="light"] .section-title, 
+ [data-theme="light"] .cap-title, 
+ [data-theme="light"] .stat-val, 
+ [data-theme="light"] .process-item h3 { 
+     color: #0E0E0F !important; 
+ } 
+ 
+ /* Section titles that have white backgrounds */ 
+ [data-theme="light"] .section-title { 
+     background: transparent !important; 
+ } 
+ 
+ [data-theme="light"] .section-alt .section-title { 
+     background: transparent !important; 
+ } 
+ 
+ /* Body text improvements */ 
+ [data-theme="light"] p, 
+ [data-theme="light"] .hero-description, 
+ [data-theme="light"] .hero-note, 
+ [data-theme="light"] .capability-card p, 
+ [data-theme="light"] .process-item p, 
+ [data-theme="light"] .tier-card p { 
+     color: #4A4A4A !important; 
+ } 
+ 
+ /* List items */ 
+ [data-theme="light"] .cap-list li { 
+     color: #4A4A4A !important; 
+ } 
+ 
+ /* Stats and labels */ 
+ [data-theme="light"] .stat-lbl { 
+     color: #666666 !important; 
+ } 
+ 
+ /* Process numbers */ 
+ [data-theme="light"] .process-num { 
+     color: rgba(0, 0, 0, 0.12) !important; 
+ } 
+ 
+ /* Links */ 
+ [data-theme="light"] .bench-link, 
+ [data-theme="light"] .case-link { 
+     color: var(--coral) !important; 
+     text-decoration-color: var(--coral) !important; 
+ } 
+ 
+ /* Methodology section white text fix */ 
+ [data-theme="light"] .section-alt h2, 
+ [data-theme="light"] .section-alt h3, 
+ [data-theme="light"] .section-alt p { 
+     color: #0E0E0F !important; 
+ } 
+ 
+ [data-theme="light"] .section-alt .process-item p { 
+     color: #4A4A4A !important; 
+ } 
+ 
+ /* Investment section fixes */ 
+ [data-theme="light"] .tier-card h3 { 
+     color: #0E0E0F !important; 
+ } 
+ 
+ [data-theme="light"] .tier-price { 
+     color: var(--coral) !important; 
+ } 
+ 
+ [data-theme="light"] .tier-badge { 
+     background: var(--coral) !important; 
+     color: white !important; 
+ } 
+ 
+ /* Legacy section text */ 
+ [data-theme="light"] .logo-display { 
+     background: #FFFFFF !important; 
+     border: 1px solid rgba(0, 0, 0, 0.1) !important; 
+ }
+
+    /* ===== MOBILE OPTIMIZATION ===== */
+
+    /* Tablets and below */
+    @media (max-width: 1024px) {
+        body {
+            padding-top: 120px;
+        }
+        
+        .hero-section {
+            padding: 4rem 0 3rem;
+        }
+        
+        .section-title {
+            font-size: clamp(2rem, 6vw, 3rem);
+        }
+        
+        .capabilities-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        
+        .process-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        
+        .investment-grid {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        
+        .hero-icon-wrapper {
+            width: 120px;
+            height: 120px;
+        }
+        
+        .hero-icon {
+            width: 120px;
+            height: 120px;
+        }
+    }
+
+    /* Mobile phones */
+    @media (max-width: 768px) {
+        .container {
+            padding: 0 1.5rem;
+        }
+        
+        .hero-section {
+            padding: 3rem 0 2rem;
+        }
+        
+        .section-title {
+            font-size: clamp(1.75rem, 5vw, 2.5rem);
+            margin-bottom: 1rem;
+        }
+        
+        .hero-description {
+            font-size: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .hero-actions {
+            flex-direction: column;
+            width: 100%;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 12px 24px;
+            font-size: 14px;
+        }
+        
+        .capability-card,
+        .tier-card {
+            padding: 2rem 1.5rem;
+        }
+        
+        .cap-title {
+            font-size: 1.5rem;
+        }
+        
+        .process-num {
+            font-size: 3rem;
+        }
+        
+        .process-item h3 {
+            font-size: 1.25rem;
+        }
+        
+        .legacy-stats {
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .stat-val {
+            font-size: 2rem;
+        }
+        
+        .price-lock {
+            flex-direction: column;
+            padding: 1.5rem;
+        }
+        
+        .price-input {
+            width: 100%;
+        }
+        
+        .hero-icon-wrapper {
+            width: 100px;
+            height: 100px;
+        }
+        
+        .hero-icon {
+            width: 100px;
+            height: 100px;
+        }
+        
+        section {
+            padding: 4rem 0 !important;
+        }
+    }
+
+    /* Small mobile */
+    @media (max-width: 480px) {
+        body {
+            padding-top: 100px;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+        }
+        
+        .hero-description {
+            font-size: 0.95rem;
+        }
+        
+        .eyebrow {
+            font-size: 0.7rem;
+        }
+        
+        .capability-card,
+        .tier-card {
+            padding: 1.5rem;
+        }
+        
+        .cap-icon {
+            width: 48px;
+            height: 48px;
+        }
+        
+        .cap-icon i {
+            font-size: 20px;
+        }
+        
+        .btn {
+            font-size: 13px;
+            padding: 10px 20px;
+        }
+    }
+
+    /* ===== SPECIFIC SECTION FIXES ===== */
+
+    /* Methodology section in light mode */
+    [data-theme="light"] .section-alt {
+        background-color: #F5F3EE;
+    }
+
+    [data-theme="light"] .section-alt * {
+        color: inherit;
+    }
+
+    [data-theme="light"] .section-alt h2 {
+        color: #0E0E0F !important;
+    }
+
+    [data-theme="light"] .section-alt .process-num {
+        color: rgba(0, 0, 0, 0.15) !important;
+    }
+
+    /* Hero section gradient text */
+    [data-theme="light"] .text-gradient {
+        background: linear-gradient(135deg, var(--coral), var(--teal));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* Ensure eyebrow is visible */
+    [data-theme="light"] .eyebrow {
+        color: var(--coral) !important;
+        background: transparent !important;
+    }
+
+    </style>
+    <style>
+        @media (max-width: 1024px) {
+            .desktop-links { display: none !important; }
+            .mobile-menu-toggle { display: block !important; }
+            nav { padding: 0 1.5rem !important; }
+        }
+        /* Theme Toggle Logic */
+        body.dark .sun-icon { display: block !important; }
+        body.dark .moon-icon { display: none !important; }
+        body:not(.dark) .sun-icon { display: none !important; }
+        body:not(.dark) .moon-icon { display: block !important; }
+
+        /* ===== FOOTER MOBILE OPTIMIZATION ===== */ 
+ .footer-grid { 
+     display: grid; 
+     grid-template-columns: 1.5fr 1fr 1fr 1.5fr; 
+     gap: 3rem; 
+     align-items: start; 
+ } 
+ 
+ @media (max-width: 768px) { 
+     .footer-grid { 
+         display: flex !important; 
+         flex-direction: column !important; 
+         align-items: center !important; 
+         text-align: center !important; 
+         gap: 3rem !important; 
+     } 
+ } 
+ 
+ /* Desktop footer - stays as grid */ 
+ @media (min-width: 769px) { 
+     footer > div { 
+         display: grid !important; 
+         grid-template-columns: 1.5fr 1fr 1fr 1.5fr !important; 
+         gap: 3rem !important; 
+         align-items: start !important; 
+     } 
+ } 
+ 
+ /* Tablet and Mobile footer - stacks vertically */ 
+ @media (max-width: 768px) { 
+     footer { 
+         padding: 3rem 1.5rem 2rem !important; 
+     } 
+     
+     footer > div { 
+         display: flex !important; 
+         flex-direction: column !important; 
+         gap: 3rem !important; 
+         align-items: center !important; 
+         text-align: center !important; 
+     } 
+     
+     /* Brand section */ 
+     footer > div > div:first-child { 
+         display: flex; 
+         flex-direction: column; 
+         align-items: center; 
+         text-align: center; 
+     } 
+     
+     footer > div > div:first-child a { 
+         justify-content: center; 
+     } 
+     
+     footer > div > div:first-child p { 
+         max-width: 100% !important; 
+         text-align: center; 
+     } 
+     
+     /* Ecosystem section */ 
+     footer > div > div:nth-child(2) { 
+         width: 100%; 
+     } 
+     
+     footer > div > div:nth-child(2) h4 { 
+         text-align: center; 
+         margin-bottom: 1rem !important; 
+     } 
+     
+     footer > div > div:nth-child(2) ul { 
+         align-items: center; 
+     } 
+     
+     /* Connect section */ 
+     footer > div > div:nth-child(3) { 
+         width: 100%; 
+     } 
+     
+     footer > div > div:nth-child(3) h4 { 
+         text-align: center; 
+         margin-bottom: 1rem !important; 
+     } 
+     
+     footer > div > div:nth-child(3) ul { 
+         align-items: center; 
+     } 
+     
+     /* Status box */ 
+     footer > div > div:nth-child(4) { 
+         width: 100%; 
+         max-width: 400px; 
+     } 
+     
+     footer > div > div:nth-child(4) > div { 
+         width: 100%; 
+     } 
+ } 
+ 
+ /* Small mobile adjustments */ 
+ @media (max-width: 480px) { 
+     footer { 
+         padding: 2rem 1rem 1.5rem !important; 
+     } 
+     
+     footer > div { 
+         gap: 2.5rem !important; 
+     } 
+     
+     footer > div > div:first-child a img { 
+         height: 24px !important; 
+     } 
+     
+     footer > div > div:first-child a span { 
+         font-size: 16px !important; 
+     } 
+     
+     footer ul { 
+         gap: 8px !important; 
+     } 
+     
+     footer ul li a { 
+         font-size: 13px !important; 
+     } 
+     
+     footer h4 { 
+         font-size: 12px !important; 
+     } 
+ }
+    </style>
+
+</head>
+<body>
+
+<!-- GOLDEN MASTER HEADER -->
+<nav style="position: fixed; top: 0; left: 0; width: 100%; height: 72px; background: #050505; border-bottom: 1px solid rgba(255,255,255,0.1); z-index: 10000; display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; box-sizing: border-box;">
+     
+    <!-- LEFT: BRAND LOCKUP -->
+    <a href="/index.html" style="display: flex; align-items: center; gap: 16px; text-decoration: none;">
+        <img src="/assets/images/Logomark_White_a.png" alt="LG" style="height: 32px; width: auto; display: block;">
+        <div style="width: 1px; height: 24px; background: rgba(255,255,255,0.3);"></div>
+        <span style="font-family: 'Big Shoulders Display', sans-serif; font-size: 24px; font-weight: 700; color: white; letter-spacing: 0.5px; line-height: 1;">The Hub.</span>
+    </a>
+ 
+    <!-- RIGHT: GLOBAL LINKS & CONTROLS -->
+    <div style="display: flex; align-items: center; gap: 24px;">
+        <!-- Desktop Links (Hidden on Tablet/Mobile) -->
+        <div class="desktop-links" style="display: flex; gap: 24px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">
+            <a href="/index.html" style="color: #888; text-decoration: none; transition: 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#888'">Portfolio</a>
+            <a href="/insights/index.html" style="color: #888; text-decoration: none; transition: 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#888'">Insights</a>
+            <a href="/TheHub/index.html" style="color: #fff; text-decoration: none;">The Hub</a>
+            <a href="https://portal.luis-gilberto.com" style="color: #888; text-decoration: none; transition: 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#888'">Portal</a>
+        </div>
+ 
+        <!-- Controls Group -->
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <!-- Theme Toggle -->
+            <button class="theme-toggle" id="themeToggle" style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white;">
+                <i class="fas fa-sun sun-icon" style="display: none;"></i>
+                <i class="fas fa-moon moon-icon"></i>
+            </button>
+             
+            <!-- Mobile Toggle (Visible on Tablet/Mobile) -->
+            <button class="mobile-menu-toggle" id="mobileToggle" style="display: none; background: none; border: none; color: white; font-size: 24px; cursor: pointer;">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- SUB-NAVIGATION (Fixed below header) -->
+<div style="position: fixed; top: 72px; left: 0; width: 100%; height: 48px; background-color: rgba(5,5,5,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.05); z-index: 40; display: flex; align-items: center; justify-content: center;">
+    <div style="display: flex; gap: 32px;">
+        <a href="/TheHub/index.html" style="font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: #FFFFFF; text-decoration: none; opacity: 0.6; transition: all 0.3s;">Home</a>
+        <a href="/TheHub/strategy-iq.html" style="font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: #FFFFFF; text-decoration: none; opacity: 0.6; transition: all 0.3s;">StrategyIQ</a>
+        <a href="/TheHub/advisory/index.html" style="font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; color: #F96F6E; text-decoration: none; opacity: 1; transition: all 0.3s;">Advisory</a>
+        <a href="/TheHub/studio.html" style="font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: #FFFFFF; text-decoration: none; opacity: 0.6; transition: all 0.3s;">The Studio</a>
+    </div>
+</div>
+<!-- END GOLDEN MASTER HEADER --> 
+     
+    <!-- SPACER (Prevents content from hiding behind fixed headers) --> 
+    <div class="h-[128px]"></div>
+
+    
+
+    <!-- THE SPINE -->
+    <div class="spine-container">
+        <div class="central-spine"></div>
+        <div class="spine-node" style="top: 15%;"></div>
+        <div class="spine-node" style="top: 50%;"></div>
+        <div class="spine-node" style="top: 85%;"></div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="publicMode">
+        
+        <!-- HERO -->
+        <section class="hero-section">
+            <div class="container center-axis">
+                <div class="hero-icon-wrapper">
+                    <img src="/TheHub/assets/images/Luis_portrait_circle.png" alt="Luis Gilberto" class="hero-icon" onerror="this.onerror=null; this.src='/TheHub/assets/images/Luis_portrait_circle.png';">
+                </div>
+                <div class="eyebrow">ADVISORY</div>
+                <h1 class="section-title" style="background:transparent;">Clarity You Need.<br><span class="text-gradient">Strategy You Deserve.</span></h1>
+                <p class="hero-description">
+                    Forget generic frameworks. I look at where you are and what you've got… then chart the strategy you actually deserve.
+                </p>
+                <div class="hero-actions" style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+                    <a href="/contact.html?from=advisory" class="btn btn-primary">Start Strategy Discussion</a>
+                    <a href="#capabilities" class="btn btn-ghost">Explore Services</a>
+                </div>
+                <p class="hero-note">
+                    <a href="#investment" class="bench-link">Creative bench strength available</a> for full-spectrum execution
+                </p>
+            </div>
+        </section>
+
+        <!-- CAPABILITIES -->
+        <section style="padding: 6rem 0;" id="capabilities">
+            <div class="container">
+                <div class="center-axis">
+                    <div class="eyebrow">CORE CAPABILITIES</div>
+                    <h2 class="section-title">Strategic Services.</h2>
+                </div>
+                
+                <div class="capabilities-grid">
+                    <!-- Strategy Card -->
+                    <div class="capability-card">
+                        <div class="cap-icon"><i class="fa-solid fa-bullseye"></i></div>
+                        <h3 class="cap-title">Strategic Leadership</h3>
+                        <p style="color:var(--text-secondary);">Microsoft-proven strategy that transforms brands. From AI launches to global rebrands.</p>
+                        <ul class="cap-list">
+                            <li>Go-to-market strategy</li>
+                            <li>Brand transformation</li>
+                            <li>Campaign architecture</li>
+                        </ul>
+                        <a href="/case-study-teams-final-dm.html" class="case-link">See Teams Case Study <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+
+                    <!-- Creative Card -->
+                    <div class="capability-card">
+                        <div class="cap-icon" style="color:var(--teal);"><i class="fa-solid fa-pen-nib"></i></div>
+                        <h3 class="cap-title">Creative Amplification</h3>
+                        <p style="color:var(--text-secondary);">World-class creative partners on demand. No compromise on creativity, no gaps in strategy.</p>
+                        <ul class="cap-list">
+                            <li>Visual systems</li>
+                            <li>Campaign creative</li>
+                            <li>Digital experience</li>
+                        </ul>
+                        <a href="/case-study-fsa.html" class="case-link">View FSA Launch <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+
+                    <!-- Execution Card -->
+                    <div class="capability-card">
+                        <div class="cap-icon" style="color:var(--text-primary);"><i class="fa-solid fa-layer-group"></i></div>
+                        <h3 class="cap-title">End-to-End Execution</h3>
+                        <p style="color:var(--text-secondary);">Strategic insight meets creative brilliance with seamless delivery. I orchestrate the full spectrum.</p>
+                        <ul class="cap-list">
+                            <li>Integrated management</li>
+                            <li>Cross-channel coordination</li>
+                            <li>Real-time optimization</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROCESS (Alt Background) -->
+        <section class="section-alt" style="padding: 6rem 0;">
+            <div class="container">
+                <div class="center-axis">
+                    <h2 class="section-title">The Methodology.</h2>
+                </div>
+                
+                <div class="process-grid">
+                    <div class="process-item">
+                        <div class="process-num">01</div>
+                        <h3 style="font-size:1.5rem; margin-bottom:0.5rem;">Discover</h3>
+                        <p style="color:var(--text-secondary);">Deep strategic discovery meets creative exploration.</p>
+                    </div>
+                    <div class="process-item">
+                        <div class="process-num">02</div>
+                        <h3 style="font-size:1.5rem; margin-bottom:0.5rem;">Design</h3>
+                        <p style="color:var(--text-secondary);">Strategic architecture meets creative ideation.</p>
+                    </div>
+                    <div class="process-item">
+                        <div class="process-num">03</div>
+                        <h3 style="font-size:1.5rem; margin-bottom:0.5rem;">Deliver</h3>
+                        <p style="color:var(--text-secondary);">Strategy and creative work as one execution.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- LEGACY (New Section for this page) -->
+        <section style="padding: 6rem 0;">
+            <div class="container center-axis">
+                <div class="eyebrow">LEGACY</div>
+                <h2 class="section-title">15+ Years in Motion</h2>
+                <p class="hero-description">From Windows to Copilot, shaping brands and products across Microsoft.</p>
+                
+                <!-- Logo Rotator Area -->
+                <div style="width: 100%; max-width: 500px; margin: 2rem 0;">
+                    <div class="logo-display">
+                        <!-- Logos inserted by JS -->
+                    </div>
+                    <div class="legacy-stats">
+                        <div class="stat-box">
+                            <div class="stat-val text-coral">10+</div>
+                            <div class="stat-lbl">Global Products</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-val text-teal">50M+</div>
+                            <div class="stat-lbl">Users Reached</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- INVESTMENT LEVELS -->
+        <section class="section-alt" style="padding: 6rem 0;" id="investment">
+            <div class="container">
+                <div class="center-axis">
+                    <h2 class="section-title">Investment Levels</h2>
+                    
+                    <!-- Price Lock UI -->
+                    <div class="price-lock" id="priceLock">
+                        <span style="font-weight:600; color:var(--text-secondary);"><i class="fa-solid fa-lock"></i> Pricing Locked</span>
+                        <input type="password" class="price-input" id="pricePassword" placeholder="Enter password (LG100)">
+                        <button class="btn btn-ghost" id="revealPriceBtn" style="padding: 8px 16px; font-size: 14px;">Reveal</button>
+                        <div id="priceStatus" style="font-size:0.85rem; color:var(--coral);"></div>
+                    </div>
+                </div>
+
+                <div class="investment-grid">
+                    <div class="tier-card">
+                        <h3 style="font-size:1.5rem; margin-bottom:0.5rem;">Quick-Start Sprint</h3>
+                        <div class="tier-price">$3K–$8K</div>
+                        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1.5rem;">2-4 week engagement</p>
+                        <ul class="cap-list" style="text-align:left;">
+                            <li>Rapid assessment</li>
+                            <li>Priority roadmap</li>
+                            <li>Tactical recommendations</li>
+                        </ul>
+                        <a href="/contact.html?from=advisory" class="btn btn-ghost" style="width:100%;">Get Started</a>
+                    </div>
+
+                    <div class="tier-card tier-featured">
+                        <div class="tier-badge">Most Popular</div>
+                        <h3 style="font-size:1.5rem; margin-bottom:0.5rem;">Strategic Planning</h3>
+                        <div class="tier-price">$8K–$18K</div>
+                        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1.5rem;">6-10 week engagement</p>
+                        <ul class="cap-list" style="text-align:left;">
+                            <li>Comprehensive strategy</li>
+                            <li>Implementation roadmap</li>
+                            <li>Performance framework</li>
+                        </ul>
+                        <a href="/contact.html?from=advisory" class="btn btn-primary" style="width:100%;">Get Started</a>
+                    </div>
+
+                    <div class="tier-card">
+                        <h3 style="font-size:1.5rem; margin-bottom:0.5rem;">Strategic Intelligence</h3>
+                        <div class="tier-price">$15K–$30K</div>
+                        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1.5rem;">4-8 week audit</p>
+                        <ul class="cap-list" style="text-align:left;">
+                            <li>Ecosystem & asset audit</li>
+                            <li>Channel intelligence</li>
+                            <li>Optimization playbooks</li>
+                        </ul>
+                        <a href="/contact.html?from=advisory" class="btn btn-ghost" style="width:100%;">Contact Us</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER CTA -->
+        <section style="padding: 6rem 0; text-align: center;">
+            <div class="container center-axis">
+                <h2 class="section-title">Ready to Transform?</h2>
+                <p class="hero-description">Let's discuss how strategic clarity can accelerate your growth.</p>
+                <a href="/contact.html?from=advisory" class="btn btn-primary" style="font-size:1.2rem; padding:1rem 3rem;">Schedule Strategy Session</a>
+            </div>
+        </section>
+
+    </div>
+
+<!-- Footer --> 
+<footer style="background: #050505; border-top: 1px solid rgba(255,255,255,0.1); padding: 4rem 2rem; margin-top: auto; color: white; font-family: 'Inter', sans-serif;"> 
+    <div class="footer-grid" style="max-width: 1200px; margin: 0 auto;"> 
+        <div> 
+            <a href="/index.html" style="display: flex; align-items: center; gap: 12px; text-decoration: none; margin-bottom: 1.5rem;"> 
+                <img src="/assets/images/Logomark_White_a.png" alt="Luis Gilberto" style="height: 32px; width: auto; opacity: 0.9;"> 
+                <span style="font-family: 'Big Shoulders Display', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: white;">LUIS GILBERTO</span> 
+            </a> 
+            <p style="color: #888; font-size: 14px; line-height: 1.6; max-width: 280px;">Making technology feel human through clarity, beautiful execution, and systems that scale.</p> 
+            <div style="margin-top: 1.5rem; color: #555; font-size: 12px;">&copy; <span id="year">2025</span> Luis Gilberto Ecosystem.</div> 
+        </div> 
+        <div> 
+            <h4 style="font-family: 'Big Shoulders Display'; font-size: 14px; color: #555; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 1.5rem;">Ecosystem</h4> 
+            <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px;"> 
+                <li><a href="/TheHub/index.html" style="color: #ccc; text-decoration: none; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#ccc'">The Hub</a></li> 
+                <li><a href="/TheHub/strategy-iq.html" style="color: #ccc; text-decoration: none; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#ccc'">StrategyIQ</a></li> 
+                <li><a href="/TheHub/studio.html" style="color: #ccc; text-decoration: none; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#ccc'">The Studio</a></li> 
+                <li><a href="https://portal.luis-gilberto.com" style="color: #F96F6E; text-decoration: none; font-size: 14px; font-weight: 600;">The Portal &rarr;</a></li> 
+            </ul> 
+        </div> 
+        <div> 
+            <h4 style="font-family: 'Big Shoulders Display'; font-size: 14px; color: #555; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 1.5rem;">Connect</h4> 
+            <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px;"> 
+                <li><a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" style="color: #ccc; text-decoration: none; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#ccc'">LinkedIn</a></li> 
+                <li><a href="/contact.html" style="color: #ccc; text-decoration: none; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#ccc'">Contact</a></li> 
+                <li><a href="/about.html" style="color: #ccc; text-decoration: none; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#ccc'">About Me</a></li> 
+            </ul> 
+        </div> 
+        <div> 
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 1.25rem;"> 
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;"> 
+                    <div style="width: 8px; height: 8px; background: #2ED3C6; border-radius: 50%; box-shadow: 0 0 8px rgba(46, 211, 198, 0.5);"></div> 
+                    <span style="font-size: 12px; font-weight: 700; color: white; letter-spacing: 0.5px; text-transform: uppercase;">Accepting Projects</span> 
+                </div> 
+                <p style="color: #888; font-size: 13px; line-height: 1.4; margin: 0;">Currently available for strategic consulting and creative direction.</p> 
+            </div> 
+        </div> 
+    </div> 
+    <script>try{document.getElementById('year').textContent=new Date().getFullYear();}catch(e){}</script> 
+</footer>
+
+    <!-- SCRIPTS -->
+    <script>
+        // Theme Logic
+        const themeToggle = document.querySelectorAll('.theme-toggle');
+        const html = document.documentElement;
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        html.setAttribute('data-theme', savedTheme);
+
+        themeToggle.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+            });
+        });
+
+        // Mobile Menu Logic - Handled by Golden Master Script
+        /*
+        const mobileToggle = document.getElementById('mobileToggle');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+        const drawerCloseBtn = document.getElementById('drawerCloseBtn');
+        
+        if(mobileToggle) {
+            const updateAria = () => {
+                const expanded = mobileOverlay.classList.contains('active');
+                mobileToggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+            };
+            mobileToggle.addEventListener('click', () => {
+                mobileOverlay.classList.toggle('active');
+                mobileToggle.classList.toggle('open');
+                updateAria();
+            });
+            
+            mobileOverlay.addEventListener('click', (e) => {
+                if(e.target === mobileOverlay) {
+                    mobileOverlay.classList.remove('active');
+                    mobileToggle.classList.remove('open');
+                    updateAria();
+                }
+            });
+            if (drawerCloseBtn) {
+                drawerCloseBtn.addEventListener('click', () => {
+                    mobileOverlay.classList.remove('active');
+                    mobileToggle.classList.remove('open');
+                    updateAria();
+                });
+            }
+            document.addEventListener('keydown', (e) => {
+                if(e.key === 'Escape' && mobileOverlay.classList.contains('active')) {
+                    mobileOverlay.classList.remove('active');
+                    mobileToggle.classList.remove('open');
+                    updateAria();
+                }
+            });
+        }
+        */
+
+        // Password Reveal Logic
+        const revealBtn = document.getElementById('revealPriceBtn');
+        const passwordInput = document.getElementById('pricePassword');
+        const statusDiv = document.getElementById('priceStatus');
+        const prices = document.querySelectorAll('.tier-price');
+
+        if(revealBtn) {
+            revealBtn.addEventListener('click', () => {
+                if(passwordInput.value === 'LG100') {
+                    prices.forEach(p => p.classList.add('revealed'));
+                    statusDiv.textContent = 'Pricing Revealed';
+                    statusDiv.style.color = 'var(--teal)';
+                } else {
+                    statusDiv.textContent = 'Incorrect Password';
+                    statusDiv.style.color = 'var(--coral)';
+                }
+            });
+        }
+
+        // Legacy Logo Rotator
+        const logos = [
+            { name: 'Copilot in Edge', path: '/TheHub/assets/images/Copilot_in_Edge.png' },
+            { name: 'Microsoft Copilot', path: '/TheHub/assets/images/Copilot.png' },
+            { name: 'Microsoft Edge', path: '/TheHub/assets/images/Edge.png' },
+            { name: 'Teams', path: '/TheHub/assets/images/Teams.png' }
+        ];
+        const logoContainer = document.querySelector('.logo-display');
+        
+        if(logoContainer) {
+            let currentIdx = 0;
+            
+            // Init logos
+            logos.forEach((logo, index) => {
+                const img = document.createElement('div');
+                img.className = `logo-item ${index === 0 ? 'active' : ''}`;
+                img.innerHTML = `<img src="${logo.path}" alt="${logo.name}">`;
+                logoContainer.appendChild(img);
+            });
+
+            setInterval(() => {
+                const items = document.querySelectorAll('.logo-item');
+                items[currentIdx].classList.remove('active');
+                currentIdx = (currentIdx + 1) % items.length;
+                items[currentIdx].classList.add('active');
+            }, 3000);
+        }
+    </script>
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" id="mobileOverlay">
+        <div class="mobile-drawer-header">
+            <div class="nav-logo">
+                <img src="/assets/images/Logomark_White_a.png" alt="Luis Gilberto" style="height: 32px; width: auto; opacity: 0.9;">
+            </div>
+            <button class="drawer-close-btn" id="drawerCloseBtn">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="mobile-drawer-content">
+            <div class="mobile-link-group">
+            <span class="mobile-label">Ecosystem</span>
+            <a href="/index.html" class="mobile-link main">Portfolio</a>
+            <a href="/insights/index.html" class="mobile-link main">Insights</a>
+            <a href="/TheHub/index.html" class="mobile-link main">The Hub</a>
+            <a href="https://portal.luis-gilberto.com" class="mobile-link main" target="_blank" rel="noopener noreferrer" aria-label="The Portal (opens in a new tab)">Portal</a>
+        </div>
+            <div class="mobile-link-group">
+                <span class="mobile-label">Hub Access</span>
+                <a href="/TheHub/strategy-iq.html" class="mobile-link sub">StrategyIQ</a>
+                <a href="/TheHub/advisory/index.html" class="mobile-link sub">Advisory</a>
+                <a href="/TheHub/studio.html" class="mobile-link sub">The Studio</a>
+                <a href="https://portal.luis-gilberto.com" class="mobile-link sub">Client Portal</a>
+            </div>
+        </div>
+    </div>
+
+
+<script>
+    // Golden Master Nav Logic
+    document.addEventListener('DOMContentLoaded', () => {
+        const themeToggle = document.getElementById('themeToggle');
+        const mobileToggle = document.getElementById('mobileToggle');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+        const body = document.body;
+
+        // Theme Toggle
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                body.classList.toggle('dark');
+                const isDark = body.classList.contains('dark');
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            });
+
+            // Init theme from storage
+            if (localStorage.getItem('theme') === 'dark') {
+                body.classList.add('dark');
+            }
+        }
+
+        // Mobile Menu Toggle
+        if (mobileToggle && mobileOverlay) {
+            mobileToggle.addEventListener('click', () => {
+                mobileToggle.classList.toggle('open');
+                mobileOverlay.classList.toggle('active');
+                
+                // Toggle icon
+                const icon = mobileToggle.querySelector('i');
+                if (icon) {
+                    if (mobileToggle.classList.contains('open')) {
+                        icon.classList.remove('fa-bars');
+                        icon.classList.add('fa-times');
+                    } else {
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                }
+            });
+            
+            // Close button inside overlay (if exists)
+            const closeBtn = mobileOverlay.querySelector('.drawer-close-btn');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => {
+                    mobileToggle.classList.remove('open');
+                    mobileOverlay.classList.remove('active');
+                    const icon = mobileToggle.querySelector('i');
+                    if (icon) {
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                });
+            }
+        }
+    });
+</script>
+    <script src="../hub-script.js"></script>
+</body>
+</html>

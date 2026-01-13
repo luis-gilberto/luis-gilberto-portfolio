@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luis Gilberto — Immersive Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Recoleta:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css">
+    <style>
+        :root {
+            --coral: #F96F6E;
+            --charcoal: #0E0E0E;
+            --warm-white: #FDFCFB;
+            --glass-bg: rgba(255,255,255,.04);
+            --glass-border: rgba(255,255,255,.12);
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #3b82f6;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --background: #ffffff;
+            --surface: #f8fafc;
+            --border: #e5e7eb;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --gradient-primary: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-display: 'Playfair Display', Georgia, serif;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --border-radius: 12px;
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 3rem;
+            --spacing-2xl: 4rem;
+        }
+
+        /* Campaign Story Hero Styles */
+        #campaignStoryHero {
+            position: relative;
+            height: 100vh;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .narrative-container {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .campaign-image {
+             position: absolute;
+             top: 0;
+             left: 0;
+             width: 100%;
+             height: 100%;
+             object-fit: cover;
+             opacity: 0;
+             transform: scale(1.05);
+             transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+             z-index: 1;
+         }
+
+         .campaign-image.active {
+             opacity: 1;
+             transform: scale(1);
+         }
+
+         .campaign-image.zoom-out {
+             transform: scale(0.98);
+             opacity: 0.5;
+         }
+
+         .campaign-text {
+             position: absolute;
+             top: 50%;
+             left: 50%;
+             transform: translate(-50%, -50%) translateY(20px);
+             text-align: center;
+             color: white;
+             z-index: 10;
+             opacity: 0;
+             transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+             pointer-events: none;
+         }
+
+         .campaign-text.active {
+             opacity: 1;
+             transform: translate(-50%, -50%) translateY(0);
+         }
+
+        .campaign-title {
+            font-family: var(--font-display);
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+
+        .campaign-subtitle {
+            font-family: var(--font-primary);
+            font-size: 1.5rem;
+            font-weight: 300;
+            opacity: 0.9;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+        }
+
+        .scroll-spacer {
+                height: 200vh;
+            }
+
+        .final-reveal {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            z-index: 20;
+        }
+
+        .final-reveal.active {
+            opacity: 1;
+        }
+
+        .luis-portrait {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 3rem;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .final-text {
+            max-width: 500px;
+            color: white;
+        }
+
+        .final-title {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+
+        .final-subtitle {
+            font-family: var(--font-primary);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #3b82f6;
+        }
+
+        .final-description {
+            font-family: var(--font-primary);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .progress-indicator {
+            position: fixed;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            z-index: 100;
+        }
+
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .progress-dot.active {
+            background: #3b82f6;
+            transform: scale(1.2);
+        }
+
+        .progress-dot.final {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .progress-dot.final.active {
+            background: #10b981;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .campaign-title {
+                font-size: 2.5rem;
+            }
+
+            .campaign-subtitle {
+                font-size: 1.2rem;
+            }
+
+            .luis-portrait {
+                width: 200px;
+                height: 200px;
+                margin-right: 0;
+                margin-bottom: 2rem;
+            }
+
+            .final-reveal {
+                flex-direction: column;
+                text-align: center;
+                padding: 2rem;
+            }
+
+            .final-title {
+                font-size: 2rem;
+            }
+
+            .final-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .final-description {
+                font-size: 1rem;
+            }
+
+            .progress-indicator {
+                right: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Immersive Campaign Story Hero -->
+    <section id="campaignStoryHero">
+        <div class="narrative-container">
+            <!-- Campaign 1: AI Innovation -->
+            <img src="assets/images/ai_browsing_campaign.jpg" alt="AI Browsing Campaign" class="campaign-image" data-campaign="0">
+            <div class="campaign-text" data-campaign="0">
+                <div class="campaign-title">AI Innovation</div>
+                <div class="campaign-subtitle">Transforming how people discover and browse</div>
+            </div>
+
+            <!-- Campaign 2: Collaboration -->
+            <img src="assets/images/teams_get_together_campaign.jpg" alt="Teams Get Together" class="campaign-image" data-campaign="1">
+            <div class="campaign-text" data-campaign="1">
+                <div class="campaign-title">Collaboration</div>
+                <div class="campaign-subtitle">Bringing people together across the globe</div>
+            </div>
+
+            <!-- Campaign 3: Protection -->
+            <img src="assets/images/family_safety_campaign.jpg" alt="Family Safety Campaign" class="campaign-image" data-campaign="2">
+            <div class="campaign-text" data-campaign="2">
+                <div class="campaign-title">Protection</div>
+                <div class="campaign-subtitle">Keeping families safe in the digital world</div>
+            </div>
+
+            <!-- Campaign 4: Empowerment -->
+            <img src="assets/images/free_to_be_free_campaign.jpg" alt="Free to Be Free Campaign" class="campaign-image" data-campaign="3">
+            <div class="campaign-text" data-campaign="3">
+                <div class="campaign-title">Empowerment</div>
+                <div class="campaign-subtitle">Celebrating authentic self-expression</div>
+            </div>
+
+            <!-- Campaign 5: Education -->
+            <img src="assets/images/edge_ucational_series.jpg" alt="Edge-ucational Series" class="campaign-image" data-campaign="4">
+            <div class="campaign-text" data-campaign="4">
+                <div class="campaign-title">Education</div>
+                <div class="campaign-subtitle">Making learning accessible and engaging</div>
+            </div>
+
+            <!-- Campaign 6: Productivity -->
+            <img src="assets/images/copilot_m365_announcement.jpg" alt="Copilot M365" class="campaign-image" data-campaign="5">
+            <div class="campaign-text" data-campaign="5">
+                <div class="campaign-title">Productivity</div>
+                <div class="campaign-subtitle">Redefining work with AI assistance</div>
+            </div>
+
+            <!-- Campaign 7: Ecosystem -->
+            <img src="assets/images/edge_app_store_redesign.jpg" alt="Edge App Store" class="campaign-image" data-campaign="6">
+            <div class="campaign-text" data-campaign="6">
+                <div class="campaign-title">Ecosystem</div>
+                <div class="campaign-subtitle">Building bridges between platforms</div>
+            </div>
+
+            <!-- Campaign 8: Intelligence -->
+            <img src="assets/images/insights_portal_hub.jpg" alt="Insights Portal" class="campaign-image" data-campaign="7">
+            <div class="campaign-text" data-campaign="7">
+                <div class="campaign-title">Intelligence</div>
+                <div class="campaign-subtitle">Turning data into actionable insights</div>
+            </div>
+        </div>
+
+        <!-- Progress Indicator -->
+        <div class="progress-indicator">
+            <div class="progress-dot" data-campaign="0"></div>
+            <div class="progress-dot" data-campaign="1"></div>
+            <div class="progress-dot" data-campaign="2"></div>
+            <div class="progress-dot" data-campaign="3"></div>
+            <div class="progress-dot" data-campaign="4"></div>
+            <div class="progress-dot" data-campaign="5"></div>
+            <div class="progress-dot" data-campaign="6"></div>
+            <div class="progress-dot" data-campaign="7"></div>
+            <div class="progress-dot final"></div>
+        </div>
+
+        <!-- Final Reveal -->
+        <div class="final-reveal">
+            <img src="assets/images/luis_portrait.jpg" alt="Luis Portrait" class="luis-portrait">
+            <div class="final-text">
+                <div class="final-title">Luis</div>
+                <div class="final-subtitle">The Strategic Mind Behind the Impact</div>
+                <div class="final-description">
+                    Every transformative campaign starts with human insight. 
+                    As an integrated marketing leader, I bring together creativity, strategy, and technology 
+                    to create experiences that don't just capture attention—they change how people think, feel, and act.
+                </div>
+            </div>
+        </div>
+
+        <!-- Scroll Spacer for Animation -->
+        <div class="scroll-spacer"></div>
+    </section>
+
+    <!-- Mood Selector -->
+    <section class="selector" id="trackSelector">
+        <div class="selector__inner">
+            <h2>Choose Your Journey</h2>
+            <p>Select the perspective that best matches your interest, and I'll tailor the content experience just for you.</p>
+            
+            <div class="selector__grid">
+                <button class="selector__card" data-track="recruiter">
+                    <div class="selector__icon">💼</div>
+                    <h3>Professional Impact</h3>
+                    <p>Crystal-clear wins. Leadership, scope, outcomes.</p>
+                </button>
+                
+                <button class="selector__card" data-track="partner">
+                    <div class="selector__icon">🤝</div>
+                    <h3>Collaboration & Ideas</h3>
+                    <p>Co-create the moment. Strategy, creative, execution.</p>
+                </button>
+                
+                <button class="selector__card" data-track="inspiration">
+                    <div class="selector__icon">✨</div>
+                    <h3>Play & Inspiration</h3>
+                    <p>Start with visuals. Stories, process, fun bits.</p>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Adaptive Content Sections -->
+    <main id="pageContent">
+        <!-- Projects Section -->
+        <section data-section="projects">
+            <h2>Featured Projects</h2>
+            <div class="project-grid">
+                <div class="project-card">
+                    <img src="assets/images/ai_browsing_campaign.jpg" alt="AI Browsing Campaign" />
+                    <h3>AI Browsing Campaign</h3>
+                    <p>Transforming how users interact with AI-powered browsing experiences.</p>
+                </div>
+                <div class="project-card">
+                    <img src="assets/images/edge_app_store_redesign.jpg" alt="Edge App Store" />
+                    <h3>Edge App Store Redesign</h3>
+                    <p>Reimagining the app discovery and installation experience.</p>
+                </div>
+                <div class="project-card">
+                    <img src="assets/images/teams_get_together_campaign.jpg" alt="Teams Campaign" />
+                    <h3>Teams Get Together Campaign</h3>
+                    <p>Bringing people together through thoughtful design and messaging.</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Timeline Section -->
+        <section data-section="timeline">
+            <h2>Professional Timeline</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-year">2024</div>
+                    <div class="timeline-content">
+                        <h3>Senior Design Lead</h3>
+                        <p>Leading immersive experiences and AI-driven design solutions.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2023</div>
+                    <div class="timeline-content">
+                        <h3>Creative Director</h3>
+                        <p>Spearheading brand campaigns and digital transformations.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2022</div>
+                    <div class="timeline-content">
+                        <h3>Design Systems Architect</h3>
+                        <p>Building scalable design frameworks for enterprise products.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- How I Work Section -->
+        <section data-section="how">
+            <h2>How I Work</h2>
+            <div class="work-philosophy">
+                <div class="philosophy-item">
+                    <h3>🎯 Strategic Thinking</h3>
+                    <p>Every design decision is rooted in user needs and business objectives.</p>
+                </div>
+                <div class="philosophy-item">
+                    <h3>🚀 Rapid Prototyping</h3>
+                    <p>Quick iterations and testing to validate concepts early and often.</p>
+                </div>
+                <div class="philosophy-item">
+                    <h3>🤝 Collaborative Approach</h3>
+                    <p>Working closely with cross-functional teams to achieve shared goals.</p>
+                </div>
+                <div class="philosophy-item">
+                    <h3>📊 Data-Driven Design</h3>
+                    <p>Using analytics and user feedback to inform design decisions.</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Essays Section -->
+        <section data-section="essays">
+            <h2>Essays & Insights</h2>
+            <div class="essays-list">
+                <article class="essay-item">
+                    <h3>The Future of AI in Design</h3>
+                    <p>Exploring how artificial intelligence is reshaping the creative process and what it means for designers.</p>
+                    <span class="essay-date">December 2024</span>
+                </article>
+                <article class="essay-item">
+                    <h3>Building Inclusive Digital Experiences</h3>
+                    <p>Why accessibility and inclusive design are not just good practice, but essential for innovation.</p>
+                    <span class="essay-date">November 2024</span>
+                </article>
+                <article class="essay-item">
+                    <h3>The Art of Minimalist Interface Design</h3>
+                    <p>How reducing visual noise can amplify user engagement and create more meaningful interactions.</p>
+                    <span class="essay-date">October 2024</span>
+                </article>
+            </div>
+        </section>
+        
+        <!-- Contact Section -->
+        <section data-section="contact">
+            <h2>Let's Connect</h2>
+            <div class="contact-content">
+                <p class="contact-intro">Ready to collaborate on something amazing? I'm always excited to work on projects that push creative boundaries and solve real problems.</p>
+                <div class="contact-methods">
+                    <a href="mailto:luis@luis-gilberto.com" class="contact-method">
+                        <span class="contact-icon">📧</span>
+                        <span class="contact-text">luis@luis-gilberto.com</span>
+                    </a>
+                    <a href="https://linkedin.com/in/luisgilberto" class="contact-method">
+                        <span class="contact-icon">💼</span>
+                        <span class="contact-text">LinkedIn</span>
+                    </a>
+                    <a href="https://twitter.com/luisgilberto" class="contact-method">
+                        <span class="contact-icon">🐦</span>
+                        <span class="contact-text">Twitter</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Campaign Story Animation Logic
+        let currentCampaign = 0;
+        const totalCampaigns = 8;
+        let isAnimating = false;
+        let scrollProgress = 0;
+
+        // Preload images
+        function preloadImages() {
+            const images = [
+                'assets/images/ai_browsing_campaign.jpg',
+                'assets/images/teams_get_together_campaign.jpg',
+                'assets/images/family_safety_campaign.jpg',
+                'assets/images/free_to_be_free_campaign.jpg',
+                'assets/images/edge_ucational_series.jpg',
+                'assets/images/copilot_m365_announcement.jpg',
+                'assets/images/edge_app_store_redesign.jpg',
+                'assets/images/insights_portal_hub.jpg',
+                'assets/images/luis_portrait.jpg'
+            ];
+
+            images.forEach(src => {
+                const img = new Image();
+                img.src = src;
+            });
+        }
+
+        // Update progress indicator
+        function updateProgress(campaignIndex, isFinal = false) {
+            const dots = document.querySelectorAll('.progress-dot');
+            dots.forEach((dot, index) => {
+                dot.classList.remove('active');
+                if (index === campaignIndex || (isFinal && dot.classList.contains('final'))) {
+                    dot.classList.add('active');
+                }
+            });
+        }
+
+        // Show specific campaign
+        function showCampaign(index) {
+            if (isAnimating) return;
+            isAnimating = true;
+
+            const images = document.querySelectorAll('.campaign-image');
+            const texts = document.querySelectorAll('.campaign-text');
+            const finalReveal = document.querySelector('.final-reveal');
+
+            // Hide all elements first
+            images.forEach(img => {
+                img.classList.remove('active', 'zoom-out');
+            });
+            texts.forEach(text => {
+                text.classList.remove('active');
+            });
+            finalReveal.classList.remove('active');
+
+            if (index >= totalCampaigns) {
+                // Show final reveal
+                setTimeout(() => {
+                    finalReveal.classList.add('active');
+                    updateProgress(0, true);
+                    isAnimating = false;
+                }, 200);
+            } else {
+                // Show specific campaign
+                setTimeout(() => {
+                    const targetImage = document.querySelector(`[data-campaign="${index}"].campaign-image`);
+                    const targetText = document.querySelector(`[data-campaign="${index}"].campaign-text`);
+                    
+                    if (targetImage && targetText) {
+                        targetImage.classList.add('active');
+                        targetText.classList.add('active');
+                    }
+                    
+                    updateProgress(index);
+                    currentCampaign = index;
+                    isAnimating = false;
+                }, 200);
+            }
+        }
+
+        // Auto-advance campaigns for demo/preview
+        function startCampaignDemo() {
+            let demoIndex = 0;
+            const demoInterval = setInterval(() => {
+                if (demoIndex < totalCampaigns) {
+                    showCampaign(demoIndex);
+                    demoIndex++;
+                } else {
+                    showCampaign(totalCampaigns); // Final reveal
+                    clearInterval(demoInterval);
+                }
+            }, 2000); // 2 seconds per campaign
+
+            // Clear demo on user scroll
+            const clearDemo = () => {
+                clearInterval(demoInterval);
+                window.removeEventListener('scroll', clearDemo);
+                window.removeEventListener('wheel', clearDemo);
+                window.removeEventListener('touchstart', clearDemo);
+            };
+            
+            window.addEventListener('scroll', clearDemo, { once: true });
+            window.addEventListener('wheel', clearDemo, { once: true });
+            window.addEventListener('touchstart', clearDemo, { once: true });
+        }
+
+        // Handle scroll events
+        function handleScroll() {
+            const heroSection = document.getElementById('campaignStoryHero');
+            if (!heroSection) return;
+
+            const scrollTop = window.pageYOffset;
+            const heroHeight = heroSection.offsetHeight;
+            const scrollSpacer = document.querySelector('.scroll-spacer');
+            const spacerHeight = scrollSpacer ? scrollSpacer.offsetHeight : heroHeight * 2;
+            
+            // Calculate scroll progress - make it more responsive (2-3 viewport heights total)
+            const totalScrollDistance = heroHeight + (spacerHeight * 0.3); // Reduced from 8x to 0.3x
+            const heroProgress = Math.min(scrollTop / totalScrollDistance, 1);
+            scrollProgress = heroProgress;
+
+            // Determine which campaign to show based on scroll progress
+            // Use smoother progression through campaigns
+            let campaignIndex;
+            if (heroProgress < 0.85) {
+                // Show campaigns 0-7 in first 85% of scroll
+                campaignIndex = Math.floor(heroProgress * totalCampaigns / 0.85);
+            } else {
+                // Show final reveal in last 15% of scroll
+                campaignIndex = totalCampaigns;
+            }
+            
+            if (campaignIndex !== currentCampaign || (campaignIndex >= totalCampaigns && !document.querySelector('.final-reveal.active'))) {
+                showCampaign(campaignIndex);
+            }
+        }
+
+        // Throttled scroll handler
+        let ticking = false;
+        function onScroll() {
+            if (!ticking) {
+                requestAnimationFrame(() => {
+                    handleScroll();
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        }
+
+        // Progress dot click handlers
+        function setupProgressDots() {
+            const dots = document.querySelectorAll('.progress-dot');
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    if (dot.classList.contains('final')) {
+                        showCampaign(totalCampaigns);
+                    } else {
+                        showCampaign(index);
+                        // Scroll to appropriate position
+                         const heroHeight = document.getElementById('campaignStoryHero').offsetHeight;
+                         const spacerHeight = document.querySelector('.scroll-spacer').offsetHeight;
+                         const totalScrollDistance = heroHeight + (spacerHeight * 0.3);
+                         const targetScroll = (index / totalCampaigns) * totalScrollDistance * 0.85;
+                        window.scrollTo({ top: targetScroll, behavior: 'smooth' });
+                    }
+                });
+            });
+        }
+
+        // Initialize
+         document.addEventListener('DOMContentLoaded', () => {
+             preloadImages();
+             setupProgressDots();
+             showCampaign(0); // Start with first campaign
+             
+             // Start auto-demo after a brief delay
+             setTimeout(() => {
+                 startCampaignDemo();
+             }, 1000);
+             
+             // Add scroll listener
+             window.addEventListener('scroll', onScroll, { passive: true });
+             
+             // Handle resize
+             window.addEventListener('resize', () => {
+                 handleScroll();
+             });
+         });
+
+         // Add keyboard navigation
+         document.addEventListener('keydown', (e) => {
+             if (e.key === 'ArrowRight' && currentCampaign < totalCampaigns) {
+                 showCampaign(currentCampaign + 1);
+             } else if (e.key === 'ArrowLeft' && currentCampaign > 0) {
+                 showCampaign(currentCampaign - 1);
+             }
+         });
+    </script>
+    <script src="scripts/immersive.js"></script>
+</body>
+</html>

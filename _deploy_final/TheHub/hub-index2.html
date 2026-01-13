@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Hub | Strategic Ecosystem</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Big+Shoulders+Display:wght@600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous"></script>
+
+    <style>
+        :root {
+            /* Ecosystem Colors */
+            --coral: #F96F6E;
+            --teal: #2ED3C6;
+            --black: #111111;
+            --white: #FFFFFF;
+            --gray-bg: #F4F5F7;
+            --text-body: #555555;
+            
+            /* Gradients */
+            --hub-gradient: linear-gradient(135deg, var(--coral), var(--teal));
+            --hub-text-gradient: -webkit-linear-gradient(0deg, var(--coral), var(--teal));
+
+            /* Spacing & Layout */
+            --max-width: 1200px;
+            --section-spacing: 120px;
+            
+            /* Cards */
+            --card-shadow: 0 4px 20px rgba(0,0,0,0.04);
+            --card-hover: 0 12px 30px rgba(0,0,0,0.08);
+        }
+
+        [data-theme="dark"] {
+            --white: #0E0E0F;
+            --gray-bg: #161617;
+            --black: #F5F5F5;
+            --text-body: #A0A0A0;
+            --card-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #F4F1ED;
+            color: var(--black);
+            line-height: 1.6;
+            padding-top: 112px; /* Space for Double Nav */
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* ========================
+           1. GLOBAL NAV (Dark)
+           ======================== */
+        .primary-nav {
+            position: fixed; top: 0; left: 0; width: 100%; height: 64px;
+            background: #0F0F10; z-index: 1000; display: flex; align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .nav-container {
+            width: 100%; max-width: var(--max-width); margin: 0 auto; padding: 0 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        /* Responsive Logo */
+        .nav-logo .desktop-logo { display: block; height: 32px; width: auto; }
+        .nav-logo .mobile-logo { display: none; }
+        
+        .nav-links { display: flex; gap: 32px; align-items: center; }
+        .nav-link {
+            color: rgba(255,255,255,0.7); text-decoration: none; font-size: 13px; 
+            font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
+            transition: color 0.2s;
+        }
+        .nav-link:hover, .nav-link.active { color: white; }
+        .nav-link.active { position:relative; }
+        .nav-link.active::after {
+            content: ''; position: absolute; bottom: -23px; left: 0; right: 0;
+            height: 3px; background: var(--coral);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50%; width: 36px; height: 36px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: #ffffff; transition: all 0.3s;
+        }
+        .theme-toggle:hover { background: var(--coral); border-color: var(--coral); }
+
+        /* ========================
+           2. HUB SUB-NAV (Light)
+           ======================== */
+        .sub-nav {
+            position: fixed; top: 64px; left: 0; width: 100%; height: 48px;
+            background: var(--white); border-bottom: 1px solid rgba(0,0,0,0.06);
+            z-index: 999; display: flex; align-items: center;
+            backdrop-filter: blur(10px); transition: background 0.3s;
+        }
+        .sub-nav-container {
+            width: 100%; max-width: var(--max-width); margin: 0 auto; padding: 0 24px;
+            display: flex; gap: 30px;
+        }
+        .sub-link {
+            text-decoration: none; color: var(--text-body); font-size: 13px; font-weight: 500;
+            transition: color 0.2s;
+        }
+        .sub-link:hover { color: var(--coral); }
+        .sub-link.active { color: var(--black); font-weight: 700; }
+
+        /* ========================
+           HERO SECTION
+           ======================== */
+        .hero {
+            text-align: center; padding: 100px 0 80px;
+            position: relative; overflow: hidden;
+        }
+        /* Ambient Glow */
+        .hero::before {
+            content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(249,111,110,0.08) 0%, rgba(46,211,198,0.08) 60%, transparent 80%);
+            filter: blur(80px); z-index: -1; pointer-events: none;
+        }
+
+        .eyebrow {
+            color: var(--text-body); font-size: 12px; letter-spacing: 2px; 
+            text-transform: uppercase; font-weight: 600; display: block; margin-bottom: 20px;
+        }
+
+        h1 {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: clamp(60px, 8vw, 100px); font-weight: 800; line-height: 0.9;
+            margin-bottom: 24px; letter-spacing: -1px; text-transform: uppercase;
+            color: var(--black);
+        }
+        
+        .gradient-text {
+            background: var(--hub-text-gradient);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .hero-desc {
+            font-size: 18px; color: var(--text-body); max-width: 600px; margin: 0 auto 48px;
+        }
+
+        .scroll-indicator {
+            font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+            color: var(--text-body); opacity: 0.7; margin-top: 40px;
+        }
+
+        /* ========================
+           THE SYSTEM GRID (Cards)
+           ======================== */
+        .section-gray {
+            background: var(--gray-bg); padding: var(--section-spacing) 0;
+        }
+        .container { max-width: var(--max-width); margin: 0 auto; padding: 0 24px; }
+
+        .section-header { text-align: center; margin-bottom: 80px; }
+        .section-header h2 {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 56px; line-height: 1; margin-bottom: 16px;
+        }
+
+        .system-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 32px;
+        }
+
+        /* THE CARD DESIGN - Matching StrategyIQ Aesthetic */
+        .system-card {
+            background: var(--white); border-radius: 16px; padding: 48px 32px;
+            text-decoration: none; transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: var(--card-shadow); display: flex; flex-direction: column;
+            align-items: flex-start; border: 1px solid transparent;
+        }
+
+        .system-card:hover {
+            transform: translateY(-8px); box-shadow: var(--card-hover);
+            border-color: rgba(0,0,0,0.05);
+        }
+
+        /* The Circular Icon Wrapper (StrategyIQ Style) */
+        .card-icon-circle {
+            width: 80px; height: 80px; margin-bottom: 32px;
+            background: var(--gray-bg); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+        
+        /* Sizing the icon inside perfectly (not too big) */
+        .card-icon-circle img, .card-icon-circle i {
+            width: 36px; height: 36px; object-fit: contain;
+            font-size: 32px; color: var(--black); /* For FA icons */
+        }
+
+        .system-card:hover .card-icon-circle {
+            transform: scale(1.1); background: #FFF;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .card-num {
+            font-family: monospace; font-size: 12px; color: var(--text-body);
+            margin-bottom: 12px; display: block;
+        }
+
+        .card-title {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 32px; font-weight: 700; color: var(--black);
+            margin-bottom: 8px;
+        }
+
+        .card-role {
+            font-size: 12px; text-transform: uppercase; letter-spacing: 1px;
+            font-weight: 700; margin-bottom: 16px; display: block;
+        }
+        
+        .role-coral { color: var(--coral); }
+        .role-teal { color: var(--teal); }
+        .role-grad { background: var(--hub-text-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .card-desc { font-size: 15px; color: var(--text-body); line-height: 1.5; }
+
+        /* ========================
+           MANIFESTO
+           ======================== */
+        .section-white { background: #EAE6E1; padding: var(--section-spacing) 0; }
+        
+        .manifesto-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+        }
+        .manifesto-text p { font-size: 18px; color: var(--text-body); margin-bottom: 24px; }
+        .quote-box {
+            border-left: 4px solid var(--coral); padding-left: 24px;
+            font-style: italic; font-size: 20px; color: var(--black); margin-top: 40px;
+        }
+
+        /* ========================
+           FOOTER
+           ======================== */
+        .footer {
+            background: #0F0F10; padding: 80px 0 40px; text-align: center; color: #888;
+        }
+        .footer-logo img { height: 32px; opacity: 0.8; margin-bottom: 32px; }
+        .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 32px; }
+        .footer-links a { color: #888; text-decoration: none; font-size: 14px; }
+        .footer-links a:hover { color: white; }
+
+        /* Mobile Responsive */
+        @media (max-width: 1023px) {
+            .nav-logo .desktop-logo { display: none; }
+            .nav-logo .mobile-logo { display: block; height: 32px; width: auto; }
+            .nav-links, .sub-nav { display: none; } /* Simplified for this demo, typically would have mobile drawer */
+            body { padding-top: 64px; }
+            
+            .manifesto-grid { grid-template-columns: 1fr; gap: 40px; }
+            h1 { font-size: 60px; }
+            .system-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. Primary Nav (Dark) -->
+    <nav class="primary-nav">
+        <div class="nav-container">
+            <a href="/index.html" class="nav-logo">
+                <img src="assets/images/AUg_logo_White.png" alt="Luis Gilberto" class="desktop-logo">
+                <img src="assets/images/Logomark_White_a.png" alt="Logo" class="mobile-logo">
+            </a>
+            
+            <div class="nav-links">
+                <a href="/index.html" class="nav-link">Portfolio</a>
+                <a href="/insights" class="nav-link">Insights</a>
+                <a href="/TheHub/" class="nav-link active">The Hub</a>
+            <a href="https://portal.luis-gilberto.com" class="nav-link" target="_blank" rel="noopener noreferrer" aria-label="Access The Portal (opens in new tab)">Portal</a>
+                <a href="/about.html" class="nav-link">About</a>
+                <a href="/contact.html" class="nav-link">Contact</a>
+                
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fa-regular fa-sun"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 2. Sub Nav (Light/Contextual) -->
+    <div class="sub-nav">
+        <div class="sub-nav-container">
+            <a href="/TheHub/index.html" class="sub-link active">Home</a>
+            <a href="/IMCServices/" class="sub-link">Services</a>
+            <a href="/advisory/" class="sub-link">Advisory</a>
+            <a href="/scopeiq/" class="sub-link">ScopeIQ</a>
+            <a href="/strategyiq/" class="sub-link">StrategyIQ</a>
+        </div>
+    </div>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <span class="eyebrow">Luis Gilberto • Ecosystem</span>
+            <h1>From Experience<br>to <span class="gradient-text">Ecosystem</span></h1>
+            <p class="hero-desc">
+                Not a "services page," but a system. A place where strategy, storytelling, 
+                and systems thinking live under one roof.
+            </p>
+            <p class="gradient-text" style="font-weight:700; letter-spacing:1px; text-transform:uppercase;">Built for what's next.</p>
+            <div class="scroll-indicator">↓ Explore the System</div>
+        </div>
+    </section>
+
+    <!-- The System Grid -->
+    <section class="section-gray">
+        <div class="container">
+            <div class="section-header">
+                <h2>The Architecture</h2>
+                <p style="color:var(--text-body);">Four distinct arms. One integrated ecosystem.</p>
+            </div>
+
+            <div class="system-grid">
+                
+                <!-- 1. IMC Services -->
+                <a href="https://luis-gilberto.com/TheHub/IMCServices/" class="system-card">
+                    <span class="card-num">01</span>
+                    <div class="card-icon-circle">
+                        <!-- Placeholder: Replace with assets/images/icons/imc-atom.png -->
+                        <img src="assets/images/icons/imc-atom.png" alt="IMC" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <i class="fa-solid fa-atom" style="display:none; color:var(--coral);"></i>
+                    </div>
+                    <h3 class="card-title">IMC Services</h3>
+                    <span class="card-role role-coral">Collaborative Engine</span>
+                    <p class="card-desc">Co-branded partnership model integrating my strategic architecture with studio-scale execution.</p>
+                </a>
+
+                <!-- 2. Advisory -->
+                <a href="https://luis-gilberto.com/TheHub/advisory/" class="system-card">
+                    <span class="card-num">02</span>
+                    <div class="card-icon-circle">
+                        <img src="assets/images/icons/advisory-compass.png" alt="Advisory" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <i class="fa-regular fa-compass" style="display:none; color:var(--black);"></i>
+                    </div>
+                    <h3 class="card-title">Advisory</h3>
+                    <span class="card-role role-grad">Independent Practice</span>
+                    <p class="card-desc">Direct strategic partnership for leaders who need clarity, narrative alignment, and decision support.</p>
+                </a>
+
+                <!-- 3. ScopeIQ -->
+                <a href="https://luis-gilberto.com/TheHub/scopeiq/" class="system-card">
+                    <span class="card-num">03</span>
+                    <div class="card-icon-circle">
+                        <img src="assets/images/icons/vision.png" alt="ScopeIQ" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <i class="fa-solid fa-crosshairs" style="display:none; color:var(--teal);"></i>
+                    </div>
+                    <h3 class="card-title">ScopeIQ</h3>
+                    <span class="card-role role-teal">Diagnostic Tool</span>
+                    <p class="card-desc">Structured entry point. An interactive assessment to determine exactly what kind of help you need.</p>
+                </a>
+
+                <!-- 4. StrategyIQ -->
+                <a href="https://www.luis-gilberto.com/TheHub/strategy-iq" class="system-card">
+                    <span class="card-num">04</span>
+                    <div class="card-icon-circle">
+                        <!-- Matches the Chess Piece vibe -->
+                        <img src="assets/images/icons/strategy.png" alt="StrategyIQ" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <i class="fa-solid fa-chess-queen" style="display:none; color:var(--teal);"></i>
+                    </div>
+                    <h3 class="card-title">StrategyIQ</h3>
+                    <span class="card-role role-teal">Intelligence Engine</span>
+                    <p class="card-desc">The think tank. Where data meets intuition to create blueprints for measurable, adaptive systems.</p>
+                </a>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Manifesto -->
+    <section class="section-white">
+        <div class="container">
+            <div class="manifesto-grid">
+                <div class="manifesto-head">
+                    <h2>Why This Exists</h2>
+                </div>
+                <div class="manifesto-text">
+                    <p>I've spent my career helping big brands tell their stories. Somewhere along the way, I realized I wasn't fully telling mine.</p>
+                    <p>The Hub began as a quiet experiment; a way to translate years of experience and intuition into something living, repeatable, and scalable.</p>
+                    <div class="quote-box">
+                        "I didn't want to simply freelance. I wanted to productize how I think."
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <img src="/advisory/assets/TheHub_Logo.png" alt="The Hub" style="height:32px; opacity:0.8; margin-bottom:32px;">
+        <div class="footer-links">
+            <a href="https://luis-gilberto.com">Home</a>
+            <a href="https://luis-gilberto.com/TheHub">The System</a>
+            <a href="https://portal.luis-gilberto.com" target="_blank" rel="noopener noreferrer" aria-label="Access The Portal (opens in new tab)">Portal</a>
+            <a href="https://luis-gilberto.com/contact">Contact</a>
+        </div>
+        <div style="font-size:12px; opacity:0.5;">© 2025 Luis Gilberto. Built for what's next.</div>
+    </footer>
+
+    <script>
+        const toggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+        const icon = toggle.querySelector('i');
+
+        toggle.addEventListener('click', () => {
+            const current = html.getAttribute('data-theme');
+            if (current === 'light') {
+                html.setAttribute('data-theme', 'dark');
+                icon.classList.replace('fa-sun', 'fa-moon');
+            } else {
+                html.setAttribute('data-theme', 'light');
+                icon.classList.replace('fa-moon', 'fa-sun');
+            }
+        });
+    </script>
+</body>
+</html>

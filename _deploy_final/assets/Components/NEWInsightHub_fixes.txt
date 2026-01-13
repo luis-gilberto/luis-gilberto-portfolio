@@ -1,0 +1,146 @@
+Issue #1: Orphaned Tab Navigation CSS
+PROBLEM: Around line 430, you have CSS sitting outside any <style> tags.
+
+FIND THIS (around line 430):
+
+Copy    </script>
+
+    /* Tab Navigation Styles */
+    .tab-navigation {
+FIX: This entire CSS block needs to be moved inside your main <style> tag (before the closing </style> around line 427).
+
+ACTION:
+
+Cut everything from /* Tab Navigation Styles */ down to the second </style> tag (around line 600)
+Paste it before the first </style> closing tag (around line 427)
+Delete the orphaned </style> tag that's now leftover
+Issue #2: Duplicate </head> and <body> Tags
+PROBLEM: You have TWO </head> tags and TWO opening <body> tags.
+
+FIND THIS (around line 602-608):
+
+Copy    </style>
+</head>
+<body>
+    <!-- Top Accent Bar -->
+    <div class="top-accent"></div>
+FIX: Delete these 7 lines entirely. You already have a proper </head> and <body> earlier in the file.
+
+Issue #3: Duplicate Content Sections
+PROBLEM: After line 608, your entire page content repeats (Hero → Find → Latest → Archive → Connect → Footer).
+
+FIND THIS (the second occurrence, around line 608):
+
+Copy    <!-- Top Accent Bar -->
+    <div class="top-accent"></div>
+
+    <!-- Navigation Breadcrumb -->
+    <nav class="nav-breadcrumb">
+FIX: Delete everything from this second <div class="top-accent"> down to the second </body></html> closing tags.
+
+Keep only the first complete page structure (the one that starts around line 437).
+
+Issue #4: Missing Tab Navigation HTML
+PROBLEM: Your CSS references .tab-navigation, .tab-button, .tab-content but the HTML is missing.
+
+WHERE TO ADD: Right after your Hero Section closing </header> tag (around line 455).
+
+ADD THIS HTML:
+
+Copy    </header>
+
+    <!-- Tab Navigation -->
+    <section class="container">
+        <div class="content-wrapper">
+            <nav class="tab-navigation">
+                <button class="tab-button active" data-tab="numbers">Numbers</button>
+                <button class="tab-button" data-tab="stories">Stories</button>
+            </nav>
+
+            <!-- Numbers Tab Content -->
+            <div class="tab-content active" id="numbers-tab">
+                <div class="numbers-grid">
+                    <div class="number-card">
+                        <div class="number-value">15+</div>
+                        <div class="number-label">Years of Strategic Marketing Experience</div>
+                    </div>
+                    <div class="number-card">
+                        <div class="number-value">50M+</div>
+                        <div class="number-label">Campaign Impressions Generated</div>
+                    </div>
+                    <div class="number-card">
+                        <div class="number-value">12</div>
+                        <div class="number-label">Monthly Deep Dives Published</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stories Tab Content -->
+            <div class="tab-content" id="stories-tab">
+                <div class="stories-grid">
+                    <div class="story-card">
+                        <img src="./assets/images/building-the-hub.jpg" alt="Building The Hub" class="story-image">
+                        <div class="story-content">
+                            <h3 class="story-title">Building The Hub</h3>
+                            <p class="story-description">A journey through the creative process of designing and developing a digital sanctuary for ideas and transformative experiences.</p>
+                            <a href="./building-the-hub/" class="read-link">Read Story →</a>
+                        </div>
+                    </div>
+                    <div class="story-card">
+                        <img src="./assets/images/ai-with-soul.jpg" alt="AI With Soul" class="story-image">
+                        <div class="story-content">
+                            <h3 class="story-title">AI With Soul</h3>
+                            <p class="story-description">Exploring the intersection of artificial intelligence and human creativity, and how we can imbue our AI interactions with meaning.</p>
+                            <a href="./ai-with-soul/" class="read-link">Read Story →</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- What You'll Find Here Section -->
+Issue #5: Tab Switching JavaScript
+PROBLEM: Your JavaScript at the bottom needs the tab switching logic.
+
+FIND THIS (around line 710):
+
+Copy        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.fade-in').forEach(el => {
+                observer.observe(el);
+            });
+        });
+    </script>
+REPLACE WITH:
+
+Copy        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.fade-in').forEach(el => {
+                observer.observe(el);
+            });
+
+            // Tab Switching Functionality
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Remove active class from all
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+
+                    // Add active class to clicked button and corresponding content
+                    button.classList.add('active');
+                    const tabId = button.getAttribute('data-tab');
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                });
+            });
+        });
+    </script>
+Summary of Fixes:
+✂️ Move orphaned CSS into main <style> block
+🗑️ Delete duplicate </head> and second <body> opening
+🗑️ Delete entire duplicate content section (line ~608 to end)
+➕ Add Tab Navigation HTML after Hero
+🔧 Update JavaScript to handle tab switching

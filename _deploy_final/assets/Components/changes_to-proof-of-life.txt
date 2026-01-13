@@ -1,0 +1,217 @@
+I want to add the unified site navigation to the LIVE style version of the Proof of Life article, without changing the article’s layout.
+
+Use the HTML file that currently contains this in the <head>:
+
+    <title>Proof of Life - Luis Gilberto</title>
+
+and has a large <style> block that defines :root, body, .hero, .article-body, etc, plus breadcrumbs markup that starts like this inside <body>:
+
+    <!-- Breadcrumbs -->
+    <nav class="breadcrumbs">
+
+That is our canonical "live" version.
+
+You are allowed to edit exactly ONE file: that Proof of Life HTML file.
+
+Guardrails:
+
+- Before changing anything, create a backup of this file in the same folder with "_backup_unifiednav" added before the extension.
+  For example, if the file is index.html, create index_backup_unifiednav.html.
+- Do NOT touch any other files.
+- Do NOT remove or change any existing <style> rules. Only append new ones at the end of the existing <style> block.
+- Do NOT change any of the hero, decorative-break images, article body content, or footer CTA.
+- Do NOT remove or modify the theme toggle script or any image theme swap scripts.
+
+Steps:
+
+1) Create the backup
+
+- In the same folder as this Proof of Life HTML file, create a copy with "_backup_unifiednav" before the extension.
+- Example:
+  - Original: index.html
+  - Backup:  index_backup_unifiednav.html
+
+Confirm the exact original filename and the backup filename before continuing.
+
+2) Insert the unified site header
+
+- In the main Proof of Life HTML file, inside <body>, find the first occurrence of:
+
+    <!-- Breadcrumbs -->
+    <nav class="breadcrumbs">
+
+- Immediately BEFORE that comment, insert this header markup:
+
+    <header class="lg-site-header" role="banner">
+      <div class="lg-site-header-inner">
+        <a href="/" class="lg-logo" aria-label="Home">
+          <span class="lg-logo-text">Luis Gilberto</span>
+        </a>
+        <nav class="lg-main-nav" aria-label="Main navigation">
+          <a href="/portfolio" class="lg-nav-link">Portfolio</a>
+          <a href="/TheHub/" class="lg-nav-link">The Hub</a>
+          <a href="/insights" class="lg-nav-link is-active">Insights</a>
+          <a href="/about" class="lg-nav-link">About</a>
+          <a href="/contact" class="lg-nav-link">Contact</a>
+        </nav>
+        <button class="lg-nav-toggle" aria-label="Toggle navigation">
+          <span class="lg-nav-toggle-bar"></span>
+          <span class="lg-nav-toggle-bar"></span>
+        </button>
+      </div>
+    </header>
+
+- Do not wrap this in any extra containers. It should sit directly above the breadcrumbs and below <body>.
+
+3) Append the nav CSS to the existing <style> block in the <head>
+
+- In the same HTML file, go to the large <style> block in the <head> where :root, body, .hero, .article-body, etc are defined.
+- Scroll to the VERY END of that <style> block.
+- Append this CSS without deleting or changing any existing rules:
+
+    /* Unified site header for Proof of Life (live layout) */
+    .lg-site-header {
+        height: 64px;
+        background: var(--white);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+
+    .lg-site-header-inner {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 64px;
+    }
+
+    .lg-logo {
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+        color: var(--black);
+    }
+
+    .lg-logo-text {
+        font-size: 17px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+    }
+
+    .lg-main-nav {
+        display: inline-flex;
+        align-items: center;
+        gap: 32px;
+    }
+
+    .lg-nav-link {
+        color: var(--black);
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        position: relative;
+        transition: color 0.2s ease;
+    }
+
+    .lg-nav-link:hover {
+        color: var(--coral);
+    }
+
+    .lg-nav-link::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -6px;
+        height: 2px;
+        border-radius: 999px;
+        background: var(--coral);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.2s ease;
+    }
+
+    .lg-nav-link:hover::after,
+    .lg-nav-link.is-active::after {
+        transform: scaleX(1);
+    }
+
+    .lg-nav-toggle {
+        display: none; /* desktop only for now */
+        width: 40px;
+        height: 40px;
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        border-radius: 8px;
+        background: var(--white);
+        cursor: pointer;
+    }
+
+    .lg-nav-toggle-bar {
+        display: block;
+        width: 18px;
+        height: 2px;
+        margin: 6px auto;
+        background: var(--black);
+        border-radius: 1px;
+    }
+
+    .lg-site-header.is-scrolled {
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+    }
+
+    @media (max-width: 768px) {
+        .lg-site-header-inner {
+            padding: 0 1.5rem;
+        }
+
+        .lg-main-nav {
+            display: none; /* we will wire mobile nav later */
+        }
+    }
+
+This uses the existing CSS variables (--white, --black, --coral), so dark mode and theme helpers will continue to work correctly.
+
+4) Add a very small scroll-shadow script before </body>
+
+- In the same HTML file, scroll to just before the closing </body> tag.
+- Before the existing theme toggle script import, insert this script block:
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const header = document.querySelector(".lg-site-header");
+        if (!header) return;
+
+        function updateHeaderShadow() {
+          if (window.scrollY > 4) {
+            header.classList.add("is-scrolled");
+          } else {
+            header.classList.remove("is-scrolled");
+          }
+        }
+
+        updateHeaderShadow();
+        window.addEventListener("scroll", updateHeaderShadow);
+      });
+    </script>
+
+- Do NOT modify the existing line:
+
+    <script src="/assets/js/theme-toggle.js" defer></script>
+
+or any other scripts. Only insert the new script right above them.
+
+5) Final report
+
+When you are done, tell me:
+
+- The exact path and name of the original file and the backup file you created.
+- Confirm that only this one Proof of Life HTML file was modified.
+- Paste the <header class="lg-site-header"...> block as it exists now in the file.
+- Confirm that the hero, decorative breaks, article content, and footer CTA are unchanged.
+- Confirm that dark mode and theme-toggle behavior still work.
