@@ -6,6 +6,7 @@
   - **Navigation**: Restored Sticky Table of Contents with active state tracking (ScrollSpy) and smooth scrolling.
   - **Visuals**: Updated logo to `AUg_logo_White.png` (48px, no filters) and enhanced Hero readability with deeper gradients.
   - **Cleanup**: Removed obsolete `insights/edge-ucational-series/index-1.html` and redundant CSS.
+  - **Homepage**: Updated Teams Consumer Launch tile link to point to `/insights/teams-consumer-launch/`.
 
 ## 2026-01-12
 
