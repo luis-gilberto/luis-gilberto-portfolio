@@ -1,3 +1,12 @@
+## 2026-01-13
+
+- **Edge-ucational Case Study Refactor (Cinematic Dark Mode)**
+  - **Standardization**: Updated `case-study-edge-ucational.html` to match the global portfolio shell (Header, Subnav, Footer).
+  - **Dark Mode Enforced**: Locked header and navigation to black (#050505) regardless of user theme preference, creating an immersive cinematic environment.
+  - **Navigation**: Restored Sticky Table of Contents with active state tracking (ScrollSpy) and smooth scrolling.
+  - **Visuals**: Updated logo to `AUg_logo_White.png` (48px, no filters) and enhanced Hero readability with deeper gradients.
+  - **Cleanup**: Removed obsolete `insights/edge-ucational-series/index-1.html` and redundant CSS.
+
 ## 2026-01-12
 
 - **Insights Landing Page Update (ULTIMO Version)**
