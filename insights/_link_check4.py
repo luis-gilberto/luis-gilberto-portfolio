@@ -21,7 +21,10 @@ resp = requests.get(urljoin(BASE, PAGE), timeout=15)
 resp.raise_for_status()
 html_live = resp.text
 html_src = open(INDEX_PATH, "r", encoding="utf-8", errors="ignore").read()
-html_prev = open(INDEX2_PATH, "r", encoding="utf-8", errors="ignore").read()
+if os.path.exists(INDEX2_PATH):
+    html_prev = open(INDEX2_PATH, "r", encoding="utf-8", errors="ignore").read()
+else:
+    html_prev = ""
 
 soup_live = BeautifulSoup(html_live, "html.parser")
 soup_src = BeautifulSoup(html_src, "html.parser")
