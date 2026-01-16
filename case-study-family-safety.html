@@ -34,7 +34,8 @@
             display: flex; justify-content: space-between; align-items: center;
             padding: 2rem 3rem; pointer-events: auto;
         }
-        .brand-logo img { height: 72px; width: auto; }
+        /* Logo Sizing */
+        .logo-img { height: 40px; width: auto; display: block; }
         .global-menu { display: flex; gap: 2rem; align-items: center; }
         .global-link {
             font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600;
@@ -145,8 +146,15 @@
 
         /* Mobile */
         @media (max-width: 968px) {
-            .global-menu, .sub-nav-bar { display: none; }
-            .mobile-toggle { display: block; color: white; font-size: 1.5rem; background: none; border: none; pointer-events: auto; }
+            .logo-img { height: 32px; } /* Smaller on mobile */
+            .global-nav-bar { padding: 1rem 1.5rem; } /* Tighter mobile padding */
+            .mobile-toggle { display: block; }
+            .sub-nav-bar, .global-menu { display: none !important; }
+            
+            /* Ensure drawer behaves */
+            .mobile-drawer.is-open { display: flex !important; }
+
+            .mobile-toggle { color: white; font-size: 1.5rem; background: none; border: none; pointer-events: auto; }
             .case-grid { grid-template-columns: 1fr; padding: 2rem 1.5rem; }
             .sidebar { display: none; }
             .hero-title { font-size: 3.5rem !important; }
@@ -161,16 +169,29 @@
     <header class="site-header">
         <div class="global-nav-bar">
             <a href="index.html" class="brand-logo">
-                <img src="/assets/images/AUg_logo_White.png" alt="Luis Gilberto">
+                <picture>
+                    <!-- Mobile: Logomark -->
+                    <source media="(max-width: 968px)" srcset="assets/images/Logomark_White_a.png">
+                    <!-- Desktop: Full Logo -->
+                    <img src="assets/images/DOTCOMLOGOTYPE_white_coral.png" alt="Luis Gilberto" class="logo-img">
+                </picture>
             </a>
+            
+            <!-- Desktop Nav -->
             <nav class="global-menu">
                 <a href="myexperience.html" class="global-link active">Portfolio</a>
                 <a href="insights/index.html" class="global-link">Insights</a>
                 <a href="/TheHub/" class="global-link">The Hub</a>
                 <a href="/about.html" class="global-link">Portal</a>
             </nav>
-            <button class="mobile-toggle" aria-label="Menu">☰</button>
+
+            <!-- Mobile Toggle -->
+            <button class="mobile-toggle" id="mobileMenuBtn" aria-label="Open Menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
         </div>
+
+        <!-- Desktop Subnav -->
         <nav class="sub-nav-bar">
             <a href="index.html" class="sub-link">Home</a>
             <a href="timeline.html" class="sub-link">Timeline</a>
@@ -178,6 +199,37 @@
             <a href="about.html" class="sub-link">About</a>
         </nav>
     </header>
+
+    <!-- MOBILE DRAWER -->
+    <div class="mobile-drawer" id="mobileDrawer" style="display:none; position:fixed; inset:0; background:#050505; z-index:2000; padding:2rem; flex-direction:column;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:3rem; align-items:center;">
+            <img src="assets/images/Logomark_White_a.png" style="height:32px; width:auto;">
+            <button id="drawerClose" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;">✕</button>
+        </div>
+        
+        <div class="drawer-content" style="overflow-y:auto;">
+            <div style="margin-bottom:3rem;">
+                <h3 style="font-family:'Playfair Display', serif; font-size:1.8rem; margin:0 0 0.5rem 0; color:white;">Luis Gilberto</h3>
+                <p style="color:#666; margin:0; font-size:0.9rem;">Creative Strategy</p>
+            </div>
+            
+            <div style="margin-bottom:3rem;">
+                <span style="display:block; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.15em; color:#666; margin-bottom:1rem; font-weight:700;">Global</span>
+                <a href="/" style="display:block; font-family:'Big Shoulders Display'; font-size:2.2rem; color:#FF6B6B; text-decoration:none; margin-bottom:0.5rem;">Portfolio</a>
+                <a href="/insights" style="display:block; font-family:'Big Shoulders Display'; font-size:2.2rem; color:white; text-decoration:none; margin-bottom:0.5rem;">Insights</a>
+                <a href="/TheHub/" style="display:block; font-family:'Big Shoulders Display'; font-size:2.2rem; color:white; text-decoration:none; margin-bottom:0.5rem;">The Hub</a>
+                <a href="/about.html" style="display:block; font-family:'Big Shoulders Display'; font-size:2.2rem; color:white; text-decoration:none; margin-bottom:0.5rem;">Portal</a>
+            </div>
+
+            <div>
+                <span style="display:block; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.15em; color:#666; margin-bottom:1rem; font-weight:700;">Portfolio</span>
+                <a href="index.html" style="display:block; font-size:1.1rem; color:#888; text-decoration:none; margin-bottom:1rem;">Home</a>
+                <a href="timeline.html" style="display:block; font-size:1.1rem; color:#888; text-decoration:none; margin-bottom:1rem;">Timeline</a>
+                <a href="myexperience.html" style="display:block; font-size:1.1rem; color:white; text-decoration:none; margin-bottom:1rem; border-left:2px solid #FF6B6B; padding-left:10px;">Experience</a>
+                <a href="about.html" style="display:block; font-size:1.1rem; color:#888; text-decoration:none; margin-bottom:1rem;">About</a>
+            </div>
+        </div>
+    </div>
 
     <!-- 2. HERO -->
     <section class="case-hero">
@@ -408,6 +460,23 @@
 
     <!-- SCRIPTS -->
     <script>
+        const menuBtn = document.getElementById('mobileMenuBtn'); 
+        const drawer = document.getElementById('mobileDrawer'); 
+        const closeDrawer = document.getElementById('drawerClose'); 
+    
+        function toggleMenu() { 
+            if (drawer.style.display === 'none') { 
+                drawer.style.display = 'flex'; 
+                document.body.style.overflow = 'hidden'; // Lock scroll 
+            } else { 
+                drawer.style.display = 'none'; 
+                document.body.style.overflow = ''; // Unlock scroll 
+            } 
+        } 
+    
+        if(menuBtn) menuBtn.addEventListener('click', toggleMenu); 
+        if(closeDrawer) closeDrawer.addEventListener('click', toggleMenu);
+
         function openLightbox(element) {
             const img = element.querySelector('img');
             const lightbox = document.getElementById('lightbox');
