@@ -225,12 +225,14 @@
             padding: 2rem;
             display: flex;
             flex-direction: column;
-            transform: translateX(100%);
+            transform: translateX(100%); /* Hidden by default */
             transition: transform 0.3s ease-in-out;
+            visibility: hidden; /* Hide from screen readers when closed */
         }
 
         .mobile-drawer.is-open {
-            transform: translateX(0);
+            transform: translateX(0); /* Slide in */
+            visibility: visible;
         }
 
         .drawer-link {
@@ -335,7 +337,7 @@
     </header>
 
     <!-- MOBILE DRAWER (Hidden by default) -->
-    <div class="mobile-drawer" id="mobileDrawer" style="display:none;">
+    <div class="mobile-drawer" id="mobileDrawer">
         <div class="drawer-header">
             <img src="/assets/images/Logomark_White_a.png" style="height:32px;">
             <button id="drawerClose" style="background:none; border:none; color:white; font-size:1.5rem;">✕</button>
@@ -578,24 +580,16 @@
     </script>
 
     <script>
-        // Mobile Menu Toggle Logic
         const menuBtn = document.getElementById('mobileMenuBtn');
         const drawer = document.getElementById('mobileDrawer');
         const closeDrawer = document.getElementById('drawerClose');
 
         function toggleMenu() {
-            if (drawer.style.display === 'none') {
-                drawer.style.display = 'flex';
-                // Slight delay to allow display:flex to apply before adding class for transition
-                setTimeout(() => {
-                    drawer.classList.add('is-open');
-                }, 10);
+            drawer.classList.toggle('is-open');
+            
+            if (drawer.classList.contains('is-open')) {
                 document.body.style.overflow = 'hidden'; // Lock scroll
             } else {
-                drawer.classList.remove('is-open');
-                setTimeout(() => {
-                    drawer.style.display = 'none';
-                }, 300); // Wait for animation
                 document.body.style.overflow = ''; // Unlock scroll
             }
         }
