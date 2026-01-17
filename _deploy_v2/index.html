@@ -427,6 +427,66 @@
       max-width: 1200px;
       width: 100%;
     }
+
+    /* --- MOBILE INTERACTION HINT --- */
+    .interaction-hint {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 20;
+      pointer-events: none;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      animation: hintPulse 3s ease-in-out forwards;
+    }
+
+    .hint-icon {
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(8px);
+      padding: 12px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .hint-text {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    @keyframes hintPulse {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -40%);
+      }
+      20% {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+      }
+      80% {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+      }
+    }
+
+    @media (pointer: coarse) {
+      .interaction-hint {
+        display: flex;
+      }
+    }
     
     .hero-tile {
       position: relative;
@@ -579,6 +639,34 @@
     .tile-cta:hover svg {
       transform: translateX(4px);
     }
+    /* VISIBLE CTA STATE */
+    .hero-tile.is-revealed .tile-cta {
+      display: flex !important;
+      opacity: 1 !important;
+      transform: translateX(-50%) translateY(0) !important;
+      animation: ctaPulse 2s infinite ease-in-out;
+      pointer-events: auto;
+    }
+
+    /* HIDE HINT WHEN REVEALED */
+    .hero-tile.is-revealed .tile-hint {
+      opacity: 0 !important;
+    }
+
+    @keyframes ctaPulse {
+      0% {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        transform: translateX(-50%) translateY(0) scale(1);
+      }
+      50% {
+        box-shadow: 0 12px 30px rgba(249, 111, 110, 0.5);
+        transform: translateX(-50%) translateY(0) scale(1.05);
+      }
+      100% {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        transform: translateX(-50%) translateY(0) scale(1);
+      }
+    }
     
     /* Prevent text selection during drag */
     .hero-tile * {
@@ -598,11 +686,14 @@
     }
     
     .hero-text h1 {
-      font-size: clamp(2.25rem, 6vw, 3.75rem);
+      font-family: 'Big Shoulders Display', sans-serif;
+      font-size: clamp(4rem, 11vw, 9rem);
+      font-weight: 800;
+      line-height: 0.9;
       margin-bottom: 1.5rem;
-      line-height: 1.1;
-      font-weight: 600;
-      letter-spacing: -0.03em;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      color: #ffffff;
     }
     
     .hero-text em {
@@ -620,7 +711,29 @@
     .hero-text .period {
       color: var(--coral);
     }
-    
+
+    .hero-highlight {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-style: italic;
+      color: #F96F6E;
+      display: block;
+      text-align: right;
+      font-size: 1.3em;
+      line-height: 0.8;
+      margin-right: 15%;
+      transform: rotate(-2deg);
+      text-transform: none;
+    }
+
+    @media (max-width: 768px) {
+      .hero-highlight {
+        text-align: center;
+        margin-right: 0;
+        font-size: 1.1em;
+      }
+    }
+
     .hero-subhead {
       font-size: 1.25rem;
       color: var(--text-secondary);
@@ -1796,6 +1909,24 @@
     <section id="portfolio" class="hero-section">
       <div class="hero-content">
                 <div class="hero-tiles" id="heroTiles">
+          <!-- MOBILE DISCOVERY HINT -->
+          <div id="interactionHint" class="interaction-hint">
+            <div class="hint-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                <path d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"></path>
+                <path d="M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"></path>
+                <line x1="12" y1="2" x2="12" y2="4"></line>
+                <line x1="12" y1="20" x2="12" y2="22"></line>
+                <line x1="4.93" y1="4.93" x2="6.34" y2="6.34"></line>
+                <line x1="17.66" y1="17.66" x2="19.07" y2="19.07"></line>
+                <line x1="2" y1="12" x2="4" y2="12"></line>
+                <line x1="20" y1="12" x2="22" y2="12"></line>
+                <line x1="4.93" y1="19.07" x2="6.34" y2="17.66"></line>
+                <line x1="17.66" y1="6.34" x2="19.07" y2="4.93"></line>
+              </svg>
+            </div>
+            <span class="hint-text">Tap &amp; Drag</span>
+          </div>
           <!-- Tile 1: Identity -->
           <div class="hero-tile" style="--delay: 0s; --rotation: -2deg; --offset-x: -3px; --offset-y: 2px;" data-link-0="" data-link-1="/brand/" data-label-0="" data-label-1="Identity">
             <div class="tile-inner">
@@ -1872,7 +2003,8 @@
         <!-- Hero Text -->
         <div class="hero-text">
           <h1>
-            I make tech feel <em>human</em><span class="period">.</span>
+            I MAKE TECH FEEL<br>
+            <span class="hero-highlight">human</span>
           </h1>
           <p class="hero-subhead">
             <span>Creative strategy</span>
@@ -2498,34 +2630,28 @@
           totalDistance = 0;
         };
         
-        // REVEAL AND ACTIVATE LEVITATION
+        // REVEAL LOGIC
         const reveal = () => {
           isRevealed = true;
-          
-          // Finalize images
+          tile.classList.add('is-revealed');
+
+          // 1. Crossfade Images
           img1.style.opacity = '0';
           img2.style.opacity = '1';
-          
-          // Hide hint
-          if (hint) hint.style.display = 'none';
-          
-          // ✨ ACTIVATE LEVITATION ✨
+
+          // 2. Hide "Drag to Explore" Hint
+          if (hint) hint.style.opacity = '0';
+
+          // 3. Activate Levitation Effect
           setTimeout(() => {
             tile.classList.add('tile-levitating');
           }, 100);
-          
-          // Prepare CTA
-          if (cta) {
-            cta.style.display = 'flex';
-            setTimeout(() => {
-              cta.style.opacity = '0';
-            }, 200);
-          }
-          
-          // Change cursor
-          tile.style.cursor = 'default';
-          
-          console.log('🎉 Tile revealed and levitating!');
+
+          // 4. Reset Cursor
+          tile.style.cursor = 'pointer';
+
+          // 5. Success Haptic (Mobile only)
+          if (navigator.vibrate) navigator.vibrate(50);
         };
         
         // Mouse events
@@ -2538,6 +2664,14 @@
         document.addEventListener('touchmove', handleMove, { passive: false });
         document.addEventListener('touchend', handleEnd);
         
+        // CLICK LOGIC
+        tile.addEventListener('click', (e) => {
+          if (isRevealed && cta) {
+            const link = cta.getAttribute('href');
+            if (link) window.location.href = link;
+          }
+        });
+
         // CTA hover
         tile.addEventListener('mouseenter', () => {
           if (isRevealed && cta) {
@@ -2555,6 +2689,12 @@
       });
       
       console.log('✅ Hero tiles initialized:', tiles.length);
+
+      // Hide hint on first touch
+      document.addEventListener('touchstart', function() {
+        const hint = document.getElementById('interactionHint');
+        if (hint) hint.style.display = 'none';
+      }, { once: true });
     });
     
     // ═══════════════════════════════════════════════════════
