@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,328 +8,422 @@
     
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
     
-    <!-- Ecosystem Fonts -->
+    <!-- FONTS -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Big+Shoulders+Display:wght@600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
     
-    <!-- Font Awesome -->
+    <!-- ICONS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
         /* =========================================
-           1. ECOSYSTEM VARIABLES
+           1. CORE VARIABLES (v2.1)
            ========================================= */
         :root {
-            --bg-light: #F4F1ED;   
-            --bg-dark: #0A0A0A;    
-            --bg-primary: #F4F1ED; 
-            
-            /* Text - Light Mode */
-            --text-primary: #18181B;      /* Main text in light mode */
-            --text-secondary: #52525B;    /* Muted text in light mode */
-            
-            /* Accents */
+            /* Brand Colors */
             --coral: #F96F6E;
             --teal: #2ED3C6;
+            --ink: #0A0A0A;
+            --cloud: #F4F1ED;
             
-            /* Fonts */
+            /* Surfaces */
+            --bg-body: #0A0A0A; /* Always dark base for v2.1 feel */
+            --surface-dark: #111216;
+            --surface-dark-2: #141414;
+            --surface-light: #FFFFFF;
+            
+            /* UI Tokens */
+            --radius: 16px;
+            --border-light: 1px solid rgba(255,255,255,0.08);
+            --border-hover: 1px solid rgba(255,255,255,0.2);
+            --shadow-soft: 0 12px 35px rgba(0,0,0,0.2);
+            --shadow-glow: 0 0 30px rgba(249, 111, 110, 0.15);
+            
+            /* Typography */
             --font-display: 'Big Shoulders Display', sans-serif;
             --font-body: 'Inter', sans-serif;
             --font-serif: 'Playfair Display', serif;
-
             --header-height: 80px;
-            --container-width: 1400px;
         }
 
-        [data-theme="dark"] {
-            --bg-primary: #0A0A0A;
-            --text-primary: #F5F5F5;      /* Light text in dark mode */
-            --text-secondary: #A1A1AA;    /* Muted text in dark mode */
-        }
-
+        /* RESET */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         html { scroll-behavior: smooth; }
-
         body {
-            background-color: var(--bg-primary);
-            color: var(--text-primary);  /* Now switches properly! */
+            background-color: var(--bg-body);
+            color: #EDEDED;
             font-family: var(--font-body);
             line-height: 1.6;
-            transition: background-color 0.3s ease, color 0.3s ease;
             -webkit-font-smoothing: antialiased;
             overflow-x: hidden;
+            cursor: none; /* Custom cursor */
         }
 
-        h1, h2, h3, h4 { font-family: var(--font-display); text-transform: uppercase; line-height: 0.95; }
-        p { font-weight: 300; margin-bottom: 1rem; }
+        h1, h2, h3, h4 { font-family: var(--font-display); text-transform: uppercase; line-height: 0.95; color: #FFF; }
+        p { font-weight: 300; margin-bottom: 1rem; color: rgba(255,255,255,0.7); }
         a { text-decoration: none; color: inherit; transition: all 0.2s ease; }
-        img { display: block; max-width: 100%; height: auto; }
+        a:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; border-radius: 4px; }
+        img { display: block; max-width: 100%; height: auto; border-radius: var(--radius); }
 
-        .container {
-            max-width: var(--container-width);
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        .section {
-            padding: 6rem 0;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            background-color: var(--bg-primary);
-        }
-        [data-theme="dark"] .section { border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 2rem; }
+        .section { padding: 8rem 0; border-bottom: var(--border-light); position: relative; }
 
         /* =========================================
-           2. NAVIGATION (Standard Portfolio)
+           2. NAVIGATION (Dark & Sticky)
            ========================================= */
         .primary-nav {
-            position: fixed;
-            top: 0; left: 0; width: 100%;
-            height: var(--header-height);
-            background: #0A0A0A; /* Always Dark */
-            color: #EDEDED;
-            z-index: 1000;
+            position: fixed; top: 0; left: 0; width: 100%; height: var(--header-height);
+            background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(20px);
+            border-bottom: var(--border-light); z-index: 1000;
             display: flex; align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
-
         .nav-inner { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-        .nav-logo img { height: 48px; width: auto; } /* 1.5x size */
+        .nav-logo img { height: 40px; width: auto; }
 
         .nav-right { display: flex; align-items: center; gap: 3rem; }
         .nav-links { display: flex; gap: 2.5rem; }
-        
         .nav-link {
             font-family: var(--font-body); font-size: 0.85rem; font-weight: 600;
-            text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.7);
+            text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.6);
             position: relative; padding: 0.5rem 0;
         }
-        .nav-link:hover, .nav-link.active { color: #FFF; }
+        .nav-link:hover { color: #FFF; }
+        .nav-link.active { color: #FFF; }
         .nav-link.active::after {
-            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background: var(--coral);
+            content: ''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px; background: var(--coral);
         }
 
-        .theme-btn, .mobile-toggle {
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 8px; width: 44px; height: 44px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; color: #FFF; transition: all 0.2s ease;
-        }
-        .theme-btn:hover { border-color: var(--coral); color: var(--coral); }
-        .mobile-toggle { display: none; }
+        .mobile-toggle { display: none; background: none; border: none; color: #FFF; font-size: 1.5rem; cursor: pointer; }
 
-        /* Subnav (Sticky Left) */
+        /* SUBNAV */
         .subnav {
-            margin-top: var(--header-height);
-            padding: 1rem 0;
-            background: #141414; color: #EDEDED;
+            margin-top: var(--header-height); padding: 1rem 0;
+            background: #141414; border-bottom: var(--border-light);
             position: sticky; top: var(--header-height); z-index: 900;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
         .subnav-links { display: flex; gap: 2.5rem; justify-content: flex-start; }
         .subnav a {
-            font-family: var(--font-body); font-size: 0.95rem; font-weight: 500;
-            opacity: 0.6; transition: all 0.2s;
+            font-size: 0.9rem; font-weight: 500; opacity: 0.6; transition: all 0.2s;
         }
-        .subnav a:hover { opacity: 1; color: white; }
+        .subnav a:hover { opacity: 1; color: #FFF; }
         .subnav a.active { opacity: 1; color: var(--coral); font-weight: 600; }
-        .subnav a.active::before { content: '- '; margin-right: 4px; }
+        .subnav a.active::before { content: '- '; margin-right: 4px; color: var(--coral); }
+
+        /* MOBILE DRAWER */
+        .mobile-drawer {
+            position: fixed; inset: 0; background: #000; z-index: 2000; padding: 2rem;
+            transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column; overflow-y: auto;
+        }
+        .mobile-drawer.active { transform: translateX(0); }
+        .drawer-header { display: flex; justify-content: space-between; margin-bottom: 3rem; align-items: center; }
+        .drawer-link { display: block; font-family: var(--font-display); font-size: 2.2rem; color: rgba(255,255,255,0.5); margin-bottom: 0.5rem; }
+        .drawer-link.active { color: var(--coral); padding-left: 10px; border-left: 2px solid var(--coral); }
+        .drawer-section { margin-bottom: 3rem; }
+        .drawer-label { font-size: 0.75rem; text-transform: uppercase; color: #666; margin-bottom: 1rem; letter-spacing: 0.1em; font-weight: 700; }
 
         /* =========================================
-           3. HERO & PATHWAYS
+           3. HERO (Stage Lighting)
            ========================================= */
-        .hero { 
-            padding: 8rem 0 4rem; text-align: center; position: relative;
-            background-color: var(--bg-primary);
+        .hero {
+            padding: 8rem 0 6rem; text-align: center; position: relative;
+            background-color: var(--bg-body);
+            background-image:
+                radial-gradient(900px 540px at 20% 0%, rgba(46,211,198,0.15), transparent 60%),
+                radial-gradient(900px 540px at 80% 0%, rgba(249,111,110,0.12), transparent 60%),
+                linear-gradient(180deg, rgba(0,0,0,0), rgba(10,10,10,1));
         }
-        .hero h1 { font-size: clamp(3.5rem, 8vw, 6rem); margin-bottom: 1.5rem; line-height: 0.9; }
+        .hero h1 { font-size: clamp(3.5rem, 9vw, 6.5rem); margin-bottom: 1.5rem; line-height: 0.9; text-shadow: 0 4px 30px rgba(0,0,0,0.5); }
+        .hero-highlight { color: var(--teal); }
+        
         .hero-desc {
             font-family: var(--font-serif); font-style: italic; font-size: 1.5rem;
-            max-width: 800px; margin: 0 auto 4rem; color: var(--text-muted-light);
+            max-width: 800px; margin: 0 auto 5rem; color: rgba(255,255,255,0.7);
         }
-        [data-theme="dark"] .hero-desc { color: var(--text-muted-light); }
 
-        /* Path Selectors (Cards) */
-        .path-grid {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 3rem;
-        }
-        
+        /* PATH CARDS (Dark Premium) */
+        .path-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
         .path-card {
-            background: #FFF; padding: 3rem 2rem; border-radius: 12px;
-            border: 1px solid rgba(0,0,0,0.08); text-align: center;
-            transition: transform 0.3s, box-shadow 0.3s; cursor: pointer;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: rgba(20,20,20,0.6); padding: 3rem 2rem; border-radius: var(--radius);
+            border: var(--border-light); text-align: center; cursor: pointer;
+            transition: transform 0.3s, border-color 0.3s;
+            backdrop-filter: blur(10px);
         }
-        [data-theme="dark"] .path-card { background: #141414; border-color: rgba(255,255,255,0.1); }
-        
-        .path-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); border-color: var(--coral); }
-        
-        .path-icon { font-size: 2rem; margin-bottom: 1rem; color: var(--coral); }
+        .path-card:hover { transform: translateY(-5px); border-color: var(--teal); box-shadow: var(--shadow-soft); }
+        .path-icon { font-size: 2rem; margin-bottom: 1rem; color: var(--teal); transition: color 0.3s; }
+        .path-card:hover .path-icon { color: var(--coral); }
         .path-title { font-size: 1.5rem; margin-bottom: 0.5rem; }
-        .path-meta { font-size: 0.9rem; opacity: 0.6; font-family: var(--font-body); }
+        .path-meta { font-size: 0.9rem; color: #888; font-family: var(--font-body); }
 
         /* =========================================
-           4. SECTION: THE NUMBERS
+           4. NUMBERS (Elevated Container)
            ========================================= */
-        .stat-grid-main {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-bottom: 2rem;
+        .stats-wrap {
+            background: #F9F9F9; /* Light surface for contrast */
+            border-radius: var(--radius);
+            padding: 4rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-soft);
+            color: #1a1a1a; /* Dark text on light bg */
         }
-        .stat-card-main {
-            background: #0A0A0A; color: #FFF; padding: 4rem 2rem; text-align: center;
-            border-radius: 8px; position: relative; overflow: hidden;
+        .stats-wrap::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(circle at 0% 0%, rgba(46,211,198,0.1), transparent 50%),
+                        radial-gradient(circle at 100% 0%, rgba(249,111,110,0.1), transparent 50%);
+            pointer-events: none;
         }
-        .stat-val-main { font-family: var(--font-display); font-size: 5rem; font-weight: 800; line-height: 1; }
-        .stat-lbl-main { font-family: var(--font-serif); font-style: italic; opacity: 0.7; margin-top: 1rem; }
 
-        .stat-grid-sec {
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem;
+        .stat-grid-main { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3rem; text-align: center; position: relative; z-index: 1; margin-bottom: 3rem; }
+        .stat-val-main { font-family: var(--font-display); font-size: 5rem; font-weight: 800; line-height: 1; color: #1a1a1a; }
+        .stat-lbl-main { font-family: var(--font-serif); font-style: italic; color: #666; margin-top: 0.5rem; font-size: 1.1rem; }
+        
+        .stat-accent-coral { color: var(--coral) !important; }
+        .stat-accent-teal { color: var(--teal) !important; }
+
+        .stat-grid-sec { 
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; 
+            border-top: 1px solid rgba(0,0,0,0.1); padding-top: 3rem;
         }
-        .stat-card-sec {
-            border: 1px solid rgba(0,0,0,0.1); padding: 2rem; text-align: center; border-radius: 8px;
-        }
-        [data-theme="dark"] .stat-card-sec { border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); }
-        .stat-val-sec { font-size: 2.5rem; font-weight: 700; color: var(--teal); line-height: 1; margin-bottom: 0.5rem; }
-        .stat-lbl-sec { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.6; }
+        .stat-val-sec { font-size: 2.5rem; font-weight: 700; color: #1a1a1a; line-height: 1; margin-bottom: 0.25rem; }
+        .stat-lbl-sec { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: #888; font-weight: 600; }
 
         /* =========================================
-           5. SECTION: THE STORIES
+           5. STORIES (Grid & Cards)
            ========================================= */
-        .story-grid {
-            display: grid; grid-template-columns: repeat(2, 1fr); gap: 3rem; margin-top: 3rem;
+        .story-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 3rem; margin-top: 4rem; }
+        .story-card { cursor: pointer; group; }
+        .story-img-wrap { 
+            height: 420px; overflow: hidden; border-radius: var(--radius); position: relative; 
+            border: var(--border-light);
         }
+        .story-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; opacity: 0.9; }
+        .story-card:hover .story-img { transform: scale(1.05); opacity: 1; }
         
-        .story-card {
-            border-radius: 12px; overflow: hidden; position: relative; group; cursor: pointer;
-            transition: transform 0.3s;
-        }
-        .story-card:hover { transform: translateY(-5px); }
-        
-        .story-img-wrap { height: 400px; overflow: hidden; position: relative; }
-        .story-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
-        .story-card:hover .story-img { transform: scale(1.05); }
-        
-        .story-content { padding: 2rem 0; }
-        .story-tags { display: flex; gap: 1rem; margin-bottom: 1rem; }
+        .story-content { padding: 1.5rem 0; }
+        .story-tags { display: flex; gap: 0.8rem; margin-bottom: 1rem; }
         .tag { 
-            font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; 
-            padding: 4px 12px; border: 1px solid currentColor; border-radius: 20px; opacity: 0.6; 
+            font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;
+            padding: 4px 10px; border: 1px solid var(--teal); color: var(--teal); border-radius: 20px; 
+            background: rgba(46,211,198,0.05);
         }
-        .story-title { font-size: 2rem; margin-bottom: 0.5rem; }
-        .story-link { color: var(--coral); font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem; }
+        .tag.featured { border-color: var(--coral); color: var(--coral); background: rgba(249,111,110,0.05); }
+        
+        .story-title { font-size: 2rem; margin-bottom: 0.5rem; color: #FFF; transition: color 0.2s; }
+        .story-card:hover .story-title { color: var(--coral); }
+        
+        .story-link { color: var(--teal); font-weight: 600; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 0.5rem; transition: gap 0.2s; }
+        .story-card:hover .story-link { gap: 0.8rem; color: #FFF; }
+
+        .bento-container { display: flex; flex-direction: column; gap: 2.5rem; margin-top: 4rem; }
+        .bento-row { display: grid; grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.5fr); gap: 1.75rem; align-items: stretch; }
+        .bento-row.alt { grid-template-columns: minmax(0, 1.5fr) minmax(0, 2.2fr); }
+
+        .bento-card {
+            position: relative;
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: var(--border-light);
+            background:
+                radial-gradient(circle at 0 0, rgba(46,211,198,0.08), transparent 55%),
+                radial-gradient(circle at 100% 100%, rgba(249,111,110,0.12), transparent 55%),
+                #111216;
+            min-height: 320px;
+            cursor: pointer;
+            box-shadow: var(--shadow-soft);
+            transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.3s ease;
+        }
+
+        .bento-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 18px 45px rgba(0,0,0,0.65);
+            border-color: rgba(255,255,255,0.24);
+        }
+
+        .bento-bg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.85;
+            transform: scale(1.02);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .bento-card:hover .bento-bg {
+            opacity: 1;
+            transform: scale(1.06);
+        }
+
+        .bento-content {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            padding: 1.75rem 1.75rem 1.9rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            justify-content: flex-end;
+            background: linear-gradient(
+                to bottom,
+                rgba(0,0,0,0) 0%,
+                rgba(0,0,0,0.35) 50%,
+                rgba(0,0,0,1) 100%
+            );
+        }
+
+        .bento-label {
+            align-self: flex-start;
+            font-size: 0.7rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            padding: 0.3rem 0.85rem;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.14);
+            backdrop-filter: blur(12px);
+        }
+
+        .label-blueprint {
+            border-color: rgba(249,111,110,0.75);
+            color: var(--coral);
+            background: radial-gradient(circle at 0 0, rgba(249,111,110,0.35), rgba(0,0,0,0.85));
+        }
+
+        .label-insight {
+            border-color: rgba(46,211,198,0.75);
+            color: var(--teal);
+            background: radial-gradient(circle at 0 0, rgba(46,211,198,0.28), rgba(0,0,0,0.85));
+        }
+
+        .bento-title {
+            font-size: 1.6rem;
+            line-height: 1.1;
+            color: #FFFFFF;
+        }
+
+        .bento-link {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255,255,255,0.75);
+        }
+
+        .bento-card:hover .bento-link {
+            color: #FFFFFF;
+            gap: 0.75rem;
+        }
 
         /* =========================================
-           6. SECTION: THE RESUME (Preview)
+           6. RESUME (Dark Panel)
            ========================================= */
         .resume-preview {
             display: grid; grid-template-columns: 1fr 2fr; gap: 4rem;
-            background: var(--bg-light); border: 1px solid rgba(0,0,0,0.05);
-            padding: 4rem; border-radius: 12px;
+            background: var(--surface-dark); border: var(--border-light);
+            padding: 4rem; border-radius: var(--radius);
+            box-shadow: var(--shadow-soft);
         }
-        [data-theme="dark"] .resume-preview { background: #141414; border-color: rgba(255,255,255,0.1); }
 
-        .resume-cta-col { text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; border-right: 1px solid rgba(0,0,0,0.1); padding-right: 4rem; }
-        [data-theme="dark"] .resume-cta-col { border-right-color: rgba(255,255,255,0.1); }
-
+        .resume-cta-col { 
+            text-align: center; border-right: var(--border-light); 
+            padding-right: 4rem; display: flex; flex-direction: column; justify-content: center; 
+        }
+        .resume-cta-col h3 { font-size: 2.5rem; margin-bottom: 1rem; }
+        .resume-cta-col p { color: #888; font-size: 1rem; }
+        
         .resume-btn {
             background: var(--coral); color: #FFF; padding: 1rem 2rem;
             font-family: var(--font-display); font-size: 1.2rem; text-transform: uppercase;
-            border-radius: 4px; display: inline-block; margin-top: 1.5rem;
+            border-radius: 8px; display: inline-block; margin-top: 1.5rem;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
-        .resume-btn:hover { background: #FFF; color: var(--coral); box-shadow: 0 0 0 1px var(--coral); }
+        .resume-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(249,111,110,0.4); }
 
-        .role-row {
-            display: grid; grid-template-columns: 100px 1fr; gap: 2rem; margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 1px dashed rgba(0,0,0,0.1);
+        .role-row { 
+            display: grid; grid-template-columns: 100px 1fr; gap: 2rem; margin-bottom: 2rem; 
+            padding-bottom: 2rem; border-bottom: 1px dashed rgba(255,255,255,0.1); 
         }
-        [data-theme="dark"] .role-row { border-bottom-color: rgba(255,255,255,0.1); }
-        .role-date { font-weight: 700; opacity: 0.5; font-size: 0.9rem; color: var(--text-primary); }
-        .role-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.25rem; color: var(--text-primary); }
-        .role-company { color: var(--teal); font-family: var(--font-serif); font-style: italic; }
+        .role-row:last-child { border: none; padding-bottom: 0; margin-bottom: 0; }
+        .role-date { font-weight: 700; color: var(--teal); font-size: 0.9rem; }
+        .role-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.25rem; color: #FFF; }
+        .role-company { color: #888; font-family: var(--font-serif); font-style: italic; }
 
         /* =========================================
-           7. FOOTER (Standardized)
+           7. FOOTER
            ========================================= */
-        .site-footer {
-            background: #0A0A0A; border-top: 1px solid rgba(255,255,255,0.1); color: #EDEDED;
-            padding: 5rem 0 2rem; margin-top: 6rem;
-        }
-        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 3rem; margin-bottom: 4rem; }
-        .footer-logo { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem; }
-        .footer-logo img { height: 32px; width: auto; }
-        .footer-logo-text { font-family: var(--font-display); font-size: 1.25rem; font-weight: 800; text-transform: uppercase; color: #FFF; }
-        .footer-tagline { font-family: var(--font-body); font-size: 1rem; color: #A1A1AA; line-height: 1.6; margin-bottom: 1.5rem; max-width: 320px; }
-        .footer-social { display: flex; gap: 0.75rem; }
-        .footer-social-link { width: 40px; height: 40px; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #A1A1AA; transition: all 0.2s; }
-        .footer-social-link:hover { border-color: var(--coral); color: var(--coral); }
-        .footer-title { font-family: var(--font-display); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #737373; margin-bottom: 1.5rem; }
-        .footer-links a { display:block; margin-bottom:0.75rem; font-size: 0.95rem; color: #D4D4D4; transition: color 0.2s; }
-        .footer-links a:hover { color: #FFF; }
-        .status-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 1.5rem; }
-        .status-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; font-family: var(--font-display); font-weight: 700; text-transform: uppercase; font-size: 0.9rem; }
-        .status-dot { width: 8px; height: 8px; background: var(--teal); border-radius: 50%; box-shadow: 0 0 8px var(--teal); }
-        .status-text { font-size: 0.85rem; color: #A1A1AA; line-height: 1.5; margin-bottom: 1.25rem; }
-        .status-link { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: #FFF; font-weight: 500; }
-        .status-link:hover { color: var(--coral); }
-        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #737373; }
-        .footer-legal { display: flex; gap: 1.5rem; }
+        .portfolio-footer { background-color: #080808; padding: 4rem 0; border-top: var(--border-light); margin-top: 6rem; }
+        .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 3rem; }
+        
+        .pf-brand img { height: 32px; width: auto; margin-bottom: 1rem; }
+        .pf-tagline { color: #666; font-size: 0.9rem; line-height: 1.6; max-width: 280px; }
+        
+        .pf-col h4 { font-size: 0.75rem; text-transform: uppercase; color: #444; margin-bottom: 1.5rem; letter-spacing: 0.1em; }
+        .pf-link { display: block; color: #888; text-decoration: none; margin-bottom: 0.8rem; font-size: 0.9rem; transition: color 0.2s; }
+        .pf-link:hover { color: var(--teal); }
+        .pf-link.accent { color: var(--coral); }
+        
+        .pf-status { background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 8px; border: var(--border-light); }
+        .status-dot { width: 8px; height: 8px; background: var(--teal); border-radius: 50%; display: inline-block; margin-right: 8px; }
+        .pf-copyright { text-align: center; margin-top: 4rem; color: #444; font-size: 0.85rem; border-top: var(--border-light); padding-top: 2rem; }
 
-        /* Responsive */
+        /* RESPONSIVE */
         @media (max-width: 1023px) {
-            .nav-right, .nav-links { display: none; }
-            .mobile-toggle { display: flex; }
-            .subnav { overflow-x: auto; }
-            .subnav-links { width: max-content; padding: 0 1rem; }
-            .path-grid, .stat-grid-main, .stat-grid-sec, .story-grid { grid-template-columns: 1fr; }
+            .nav-links, .subnav { display: none; }
+            .mobile-toggle { display: block; background: none; border: none; color: #FFF; font-size: 1.5rem; cursor: pointer; }
+            .path-grid { grid-template-columns: 1fr; }
+            .stat-grid-main { grid-template-columns: 1fr; gap: 1rem; }
+            .stat-grid-sec { grid-template-columns: repeat(2, 1fr); }
+            .story-grid { grid-template-columns: 1fr; }
+            .bento-row { grid-template-columns: 1fr; }
+            .bento-container { gap: 2rem; }
             .resume-preview { grid-template-columns: 1fr; padding: 2rem; }
-            .resume-cta-col { border-right: none; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 2rem; padding-right: 0; margin-bottom: 2rem; }
+            .resume-cta-col { border-right: none; border-bottom: var(--border-light); padding-right: 0; padding-bottom: 2rem; margin-bottom: 2rem; }
             .footer-grid { grid-template-columns: 1fr; text-align: center; }
-            .footer-col { align-items: center; }
-            .footer-social { justify-content: center; }
-            .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
+            .pf-brand { align-items: center; display: flex; flex-direction: column; }
+            
+            .hero h1 { font-size: 3.5rem; }
+            .hero { padding: 160px 0 4rem; }
         }
 
-        /* Mobile Drawer */
-        .mobile-drawer {
-            position: fixed; top: 0; right: 0; width: 85%; height: 100vh;
-            background: #0A0A0A; color: white; z-index: 2000; padding: 2rem;
-            transform: translateX(100%); transition: transform 0.3s ease;
-            display: flex; flex-direction: column; gap: 2rem;
-        }
-        .mobile-drawer.active { transform: translateX(0); }
+        /* CUSTOM CURSOR */
+        #cursor-lens { position: fixed; top: 0; left: 0; width: 40px; height: 40px; pointer-events: none; z-index: 99999; transform: translate(-50%, -50%); transition: width 0.2s, height 0.2s; }
+        .lens-outer { position: absolute; inset: 0; border: 1px solid rgba(255,255,255,0.3); border-radius: 50%; }
+        .lens-center { position: absolute; top: 50%; left: 50%; width: 6px; height: 6px; background: var(--coral); border-radius: 50%; transform: translate(-50%, -50%); }
+        body.cursor-hover .lens-outer { width: 60px; height: 60px; border-color: var(--teal); background: rgba(46,211,198,0.1); }
+        @media (pointer: coarse) { #cursor-lens { display: none; } body { cursor: auto; } }
     </style>
 </head>
 <body>
 
-    <!-- NAV -->
+    <!-- CURSOR -->
+    <div id="cursor-lens">
+        <div class="lens-outer"></div>
+        <div class="lens-center"></div>
+    </div>
+
+    <!-- HEADER -->
     <header class="primary-nav">
         <div class="container nav-inner">
             <a href="/index.html" class="nav-logo">
-                <img src="/assets/images/AUg_logo_White.png" alt="Luis Gilberto">
+                <picture>
+                    <source media="(max-width: 1023px)" srcset="/assets/images/Logomark_White_a.png">
+                    <img src="/assets/images/AUg_logo_White.png" alt="Luis Gilberto">
+                </picture>
             </a>
+            
             <div class="nav-right">
                 <nav class="nav-links">
                     <a href="/index.html#portfolio" class="nav-link active">Portfolio</a>
                     <a href="/insights/" class="nav-link">Insights</a>
                     <a href="/TheHub/" class="nav-link">The Hub</a>
-                    <a href="https://portal.luis-gilberto.com" class="nav-link">The Portal</a>
+                    <a href="https://portal.luis-gilberto.com" class="nav-link">Portal</a>
                 </nav>
-                <button class="theme-btn" id="themeToggle">
-                     <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
-                       <circle cx="12" cy="12" r="5"></circle>
-                       <line x1="12" y1="1" x2="12" y2="3"></line>
-                       <line x1="12" y1="21" x2="12" y2="23"></line>
-                       <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                       <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                       <line x1="1" y1="12" x2="3" y2="12"></line>
-                       <line x1="21" y1="12" x2="23" y2="12"></line>
-                       <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                       <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                     </svg>
-                     <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                       <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                     </svg>
-                </button>
-                <button class="mobile-toggle" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
+                <button class="mobile-toggle" id="mobileMenuBtn"><i class="fa-solid fa-bars"></i></button>
             </div>
         </div>
     </header>
@@ -347,315 +441,318 @@
         </div>
     </div>
 
-    <!-- MOBILE DRAWER -->
-    <div class="mobile-drawer" id="mobileDrawer">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span style="font-family:var(--font-display); font-size:1.5rem;">MENU</span>
+    <!-- DRAWER -->
+    <div class="mobile-drawer" id="mobileDrawer" style="display:none;">
+        <div class="drawer-header">
+            <img src="/assets/images/Logomark_White_a.png" style="height:32px;">
             <button id="drawerClose" style="background:none; border:none; color:white; font-size:1.5rem;">✕</button>
         </div>
-        <nav style="display: flex; flex-direction: column; gap: 1.5rem;">
-            <a href="/index.html" style="font-size:1.2rem; text-transform:uppercase;">Portfolio</a>
-            <a href="/insights/" style="font-size:1.2rem; text-transform:uppercase;">Insights</a>
-            <a href="/TheHub/" style="font-size:1.2rem; text-transform:uppercase;">The Hub</a>
-            <a href="/brand.html" style="font-size:1.2rem; text-transform:uppercase;">Identity</a>
-        </nav>
+        <div class="drawer-content">
+            <div class="drawer-section">
+                <span class="drawer-label">Global</span>
+                <a href="/" class="drawer-link">Portfolio</a>
+                <a href="/insights" class="drawer-link">Insights</a>
+                <a href="/TheHub/" class="drawer-link">The Hub</a>
+                <a href="https://portal.luis-gilberto.com" class="drawer-link">Portal</a>
+            </div>
+            <div class="drawer-section">
+                <span class="drawer-label">Portfolio</span>
+                <a href="/index.html" class="drawer-link">Home</a>
+                <a href="/timeline.html" class="drawer-link">Timeline</a>
+                <a href="/myexperience.html" class="drawer-link active" style="color:var(--coral);">Experience</a>
+                <a href="/about.html" class="drawer-link">About</a>
+                <a href="/brand.html" class="drawer-link">Identity</a>
+            </div>
+        </div>
     </div>
 
-    <!-- HERO -->
-    <section class="hero">
-        <div class="container">
-            <p style="font-family: var(--font-display); letter-spacing:0.2em; color:var(--coral); font-size:0.9rem; margin-bottom:1rem;">15+ YEARS OF IMPACT</p>
-            <h1>EXPERIENCE IN <br><span style="color:var(--teal);">THREE DIMENSIONS</span></h1>
-            <p class="hero-desc">
-                From managing multi-million dollar budgets to crafting human narratives for AI. Explore my career through the lens that matters most to you.
-            </p>
+    <main>
+        <!-- HERO -->
+        <section class="hero">
+            <div class="container">
+                <p style="font-family: var(--font-display); letter-spacing:0.2em; color:var(--coral); font-size:0.9rem; margin-bottom:1rem;">15+ YEARS OF IMPACT</p>
+                <h1>EXPERIENCE IN <br><span class="hero-highlight">THREE DIMENSIONS</span></h1>
+                <p class="hero-desc">From managing multi-million dollar budgets to crafting human narratives for AI. Explore my career through the lens that matters most to you.</p>
 
-            <div class="path-grid">
-                <div class="path-card" onclick="document.getElementById('numbers').scrollIntoView();">
-                    <div class="path-icon"><i class="fas fa-chart-pie"></i></div>
-                    <h3 class="path-title">The Numbers</h3>
-                    <p class="path-meta">Reach, Budget, ROI</p>
-                </div>
-                <div class="path-card" onclick="document.getElementById('stories').scrollIntoView();">
-                    <div class="path-icon"><i class="fas fa-book-open"></i></div>
-                    <h3 class="path-title">The Stories</h3>
-                    <p class="path-meta">Deep Dive Case Studies</p>
-                </div>
-                <div class="path-card" onclick="document.getElementById('resume').scrollIntoView();">
-                    <div class="path-icon"><i class="fas fa-file-contract"></i></div>
-                    <h3 class="path-title">The Resume</h3>
-                    <p class="path-meta">Roles & Timeline</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- SECTION 1: THE NUMBERS -->
-    <section class="section" id="numbers">
-        <div class="container">
-            <h2 style="margin-bottom: 3rem; text-align:center;">I. Quantified Impact</h2>
-            
-            <div class="stat-grid-main">
-                <div class="stat-card-main">
-                    <div class="stat-val-main" style="color:var(--coral);">150M+</div>
-                    <div class="stat-lbl-main">Total Users Reached</div>
-                </div>
-                <div class="stat-card-main">
-                    <div class="stat-val-main" style="color:var(--teal);">$25M+</div>
-                    <div class="stat-lbl-main">Media Budget Managed</div>
-                </div>
-                <div class="stat-card-main">
-                    <div class="stat-val-main">85%</div>
-                    <div class="stat-lbl-main">Campaign Success Rate</div>
-                </div>
-            </div>
-
-            <div class="stat-grid-sec">
-                <div class="stat-card-sec">
-                    <div class="stat-val-sec">12</div>
-                    <div class="stat-lbl-sec">Product Launches</div>
-                </div>
-                <div class="stat-card-sec">
-                    <div class="stat-val-sec">6</div>
-                    <div class="stat-lbl-sec">Microsoft Products</div>
-                </div>
-                <div class="stat-card-sec">
-                    <div class="stat-val-sec">8</div>
-                    <div class="stat-lbl-sec">Global Markets</div>
-                </div>
-                <div class="stat-card-sec">
-                    <div class="stat-val-sec">3.2x</div>
-                    <div class="stat-lbl-sec">Avg ROI Lift</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- SECTION 2: THE STORIES -->
-    <section class="section" id="stories">
-        <div class="container">
-            <h2 style="margin-bottom: 1rem; text-align:center;">II. The Narrative</h2>
-            <p style="text-align:center; max-width:600px; margin:0 auto 4rem;">Context is everything. Here is how strategy translates into execution.</p>
-
-            <div class="story-grid">
-                <!-- Story 1 -->
-                <div class="story-card" onclick="window.location.href='case-study-fsa.html'">
-                    <div class="story-img-wrap"><img src="assets/images/01_FSA.jpg" class="story-img" alt="Family Safety"></div>
-                    <div class="story-content">
-                        <div class="story-tags"><span class="tag">Strategy</span><span class="tag">Launch</span></div>
-                        <h3 class="story-title">Microsoft Family Safety</h3>
-                        <div class="story-link">Read Case Study <i class="fas fa-arrow-right"></i></div>
+                <div class="path-grid">
+                    <div class="path-card" onclick="document.getElementById('numbers').scrollIntoView();">
+                        <div class="path-icon"><i class="fas fa-chart-pie"></i></div>
+                        <h3 class="path-title">The Numbers</h3>
+                        <p class="path-meta">Reach, Budget, ROI</p>
                     </div>
-                </div>
-                <!-- Story 2 -->
-                <div class="story-card" onclick="window.location.href='case-study-teams-final-dm.html'">
-                    <div class="story-img-wrap"><img src="assets/images/04_Teams.jpg" class="story-img" alt="Teams"></div>
-                    <div class="story-content">
-                        <div class="story-tags"><span class="tag">Brand</span><span class="tag">Campaign</span></div>
-                        <h3 class="story-title">Teams Consumer Launch</h3>
-                        <div class="story-link">Read Case Study <i class="fas fa-arrow-right"></i></div>
+                    <div class="path-card" onclick="document.getElementById('stories').scrollIntoView();">
+                        <div class="path-icon"><i class="fas fa-book-open"></i></div>
+                        <h3 class="path-title">The Stories</h3>
+                        <p class="path-meta">Deep Dive Case Studies</p>
                     </div>
-                </div>
-                <!-- Story 3 -->
-                <div class="story-card" onclick="window.location.href='case-study-ai-browsing.html'">
-                    <div class="story-img-wrap"><img src="assets/images/03_Browse_AI.jpg" class="story-img" alt="AI Browsing"></div>
-                    <div class="story-content">
-                        <div class="story-tags"><span class="tag">AI</span><span class="tag">Product Marketing</span></div>
-                        <h3 class="story-title">Transforming Browsing</h3>
-                        <div class="story-link">Read Case Study <i class="fas fa-arrow-right"></i></div>
-                    </div>
-                </div>
-                <!-- Story 4 -->
-                <div class="story-card" onclick="window.location.href='case-study-free-to-be-free.html'">
-                    <div class="story-img-wrap"><img src="assets/images/02_F2BF.jpg" class="story-img" alt="Free to be Free"></div>
-                    <div class="story-content">
-                        <div class="story-tags"><span class="tag">Social</span><span class="tag">Viral</span></div>
-                        <h3 class="story-title">Free To Be Free</h3>
-                        <div class="story-link">Read Case Study <i class="fas fa-arrow-right"></i></div>
-                    </div>
-                </div>
-
-                <!-- Story 5: Edge-ucational -->
-                <div class="story-card" onclick="window.location.href='case-study-edge-ucational.html'">
-                    <div class="story-img-wrap"><img src="assets/images/05_EdgeUcational.jpg" class="story-img" alt="Edge-ucational"></div>
-                    <div class="story-content">
-                        <div class="story-tags"><span class="tag">Content</span><span class="tag">Video</span></div>
-                        <h3 class="story-title">Edge-ucational Series</h3>
-                        <div class="story-link">Read Case Study <i class="fas fa-arrow-right"></i></div>
-                    </div>
-                </div>
-
-                <!-- Story 6: Edge Mobile -->
-                <div class="story-card" onclick="window.location.href='caseStudy_edge_mobile.html'">
-                    <div class="story-img-wrap"><img src="assets/images/edgemobile.png" class="story-img" alt="Edge Mobile"></div>
-                    <div class="story-content">
-                        <div class="story-tags"><span class="tag">Mobile</span><span class="tag">Rebrand</span></div>
-                        <h3 class="story-title">Edge Mobile Rebrand</h3>
-                        <div class="story-link">Read Case Study <i class="fas fa-arrow-right"></i></div>
+                    <div class="path-card" onclick="document.getElementById('resume').scrollIntoView();">
+                        <div class="path-icon"><i class="fas fa-file-contract"></i></div>
+                        <h3 class="path-title">The Resume</h3>
+                        <p class="path-meta">Roles & Timeline</p>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- SECTION 3: THE RESUME -->
-    <section class="section" id="resume">
-        <div class="container">
-            <h2 style="margin-bottom: 3rem; text-align:center;">III. Professional Record</h2>
-            
-            <div class="resume-preview">
-                <div class="resume-cta-col">
-                    <h3 style="font-size:2.5rem;">The Full Story</h3>
-                    <p>Download the official CV or view the interactive web version.</p>
-                    <a href="assets/Components/Resume_final.pdf" target="_blank" class="resume-btn" download="Luis_Gilberto_Resume.pdf">Download PDF</a>
-                    <a href="cv.html" style="margin-top:1rem; text-decoration:underline; opacity:0.7;">View Web Version</a>
-                </div>
+        <!-- SECTION 1: NUMBERS (Light Container) -->
+        <section class="section" id="numbers">
+            <div class="container">
+                <h2 style="margin-bottom: 3rem; text-align:center;">I. Quantified Impact</h2>
                 
-                <div class="resume-list"> 
-                    <!-- Role 1: Ecosystem --> 
-                    <div class="role-row"> 
-                        <div class="role-date" style="color:var(--coral);">2024-Pres</div> 
-                        <div> 
-                            <div class="role-title">Principal & Systems Architect</div> 
-                            <div class="role-company">Luis Gilberto Ecosystem</div> 
-                        </div> 
-                    </div> 
-                
-                    <!-- Role 2: Edge/Copilot --> 
-                    <div class="role-row"> 
-                        <div class="role-date">2022-2025</div> 
-                        <div> 
-                            <div class="role-title">Sr. Integrated Marketing Lead</div> 
-                            <div class="role-company">Microsoft Edge & Copilot</div> 
-                        </div> 
-                    </div> 
-                
-                    <!-- Role 3: M365 --> 
-                    <div class="role-row"> 
-                        <div class="role-date">2016-2022</div> 
-                        <div> 
-                            <div class="role-title">Sr. Integrated Marketing Lead</div> 
-                            <div class="role-company">Microsoft 365 Consumer</div> 
-                        </div> 
-                    </div> 
-                
-                    <!-- Role 4: Retail --> 
-                    <div class="role-row"> 
-                        <div class="role-date">2012-2016</div> 
-                        <div> 
-                            <div class="role-title">Marketing Manager</div> 
-                            <div class="role-company">Worldwide Retail Channel</div> 
-                        </div> 
-                    </div> 
-                
-                    <!-- Education --> 
-                    <div class="role-row" style="border:none; padding-bottom:0;"> 
-                        <div class="role-date">Education</div> 
-                        <div> 
-                            <div class="role-title">B.S. Computer Sciences</div> 
-                            <div class="role-company">University of South Alabama</div> 
-                        </div> 
-                    </div> 
+                <div class="stats-wrap">
+                    <div class="stat-grid-main">
+                        <div>
+                            <div class="stat-val-main stat-accent-coral">15+</div>
+                            <div class="stat-lbl-main">Years Experience</div>
+                        </div>
+                        <div>
+                            <div class="stat-val-main stat-accent-teal">$50M+</div>
+                            <div class="stat-lbl-main">Media Budgets Managed</div>
+                        </div>
+                        <div>
+                            <div class="stat-val-main">Global</div>
+                            <div class="stat-lbl-main">Campaign Scale</div>
+                        </div>
+                    </div>
+                    <div class="stat-grid-sec">
+                        <div><div class="stat-val-sec">3</div><div class="stat-lbl-sec">Global Rebrands</div></div>
+                        <div><div class="stat-val-sec">10+</div><div class="stat-lbl-sec">Product Launches</div></div>
+                        <div><div class="stat-val-sec">300%</div><div class="stat-lbl-sec">Growth Metrics</div></div>
+                        <div><div class="stat-val-sec">5</div><div class="stat-lbl-sec">Awards Won</div></div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+
+        <!-- SECTION 2: STORIES (Dark Cards) -->
+        <section class="section" id="stories">
+            <div class="container">
+                <h2 style="margin-bottom: 1rem; text-align:center;">II. The Narrative</h2>
+                <p style="text-align:center; max-width:600px; margin:0 auto 4rem; color:rgba(255,255,255,0.6);">Context is everything. Here is how strategy translates into execution.</p>
+
+                <div class="bento-container">
+    
+                    <div class="bento-row">
+                        <div class="bento-card" onclick="window.location.href='case-study-teams-launch.html'">
+                            <img src="assets/images/04_Teams.jpg" class="bento-bg" alt="Teams Portfolio">
+                            <div class="bento-content">
+                                <span class="bento-label label-blueprint">Technical Blueprint</span>
+                                <h3 class="bento-title">Teams Consumer Launch</h3>
+                                <span class="bento-link">View Execution <i class="fas fa-arrow-right"></i></span>
+                            </div>
+                        </div>
+                        <div class="bento-card" onclick="window.location.href='insights/teams-consumer-launch/index.html'">
+                            <video class="bento-bg" autoplay muted loop playsinline>
+                                <source src="assets/images/Teams/Creative_Positioning_animation.mp4" type="video/mp4">
+                            </video>
+                            <div class="bento-content">
+                                <span class="bento-label label-insight">Director's Commentary</span>
+                                <h3 class="bento-title">"We Rebuilt the Story"</h3>
+                                <span class="bento-link">Read Perspective <i class="fas fa-arrow-right"></i></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bento-row alt">
+                        <div class="bento-card" onclick="window.location.href='insights/edge-ucational-series/index.html'">
+                            <img src="assets/images/Marketing-Toolkit.gif" class="bento-bg" alt="Edge Insights">
+                            <div class="bento-content">
+                                <span class="bento-label label-insight">Director's Commentary</span>
+                                <h3 class="bento-title">"Confusion is Intent"</h3>
+                                <span class="bento-link">Read Perspective <i class="fas fa-arrow-right"></i></span>
+                            </div>
+                        </div>
+                        <div class="bento-card" onclick="window.location.href='case-study-edge-ucational.html'">
+                            <img src="assets/images/Edge-ucational_TechnicalBlueprint.png" class="bento-bg" alt="Edge Portfolio">
+                            <div class="bento-content">
+                                <span class="bento-label label-blueprint">Technical Blueprint</span>
+                                <h3 class="bento-title">Edge-ucational Series</h3>
+                                <span class="bento-link">View Execution <i class="fas fa-arrow-right"></i></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bento-row">
+                        <div class="bento-card" onclick="window.location.href='case-study-family-safety.html'">
+                            <img src="assets/images/01_FSA.jpg" class="bento-bg" alt="Family Safety Portfolio">
+                            <div class="bento-content">
+                                <span class="bento-label label-blueprint">Technical Blueprint</span>
+                                <h3 class="bento-title">Microsoft Family Safety</h3>
+                                <span class="bento-link">View Execution <i class="fas fa-arrow-right"></i></span>
+                            </div>
+                        </div>
+                        <div class="bento-card" onclick="window.location.href='insights/family-safety-launch/index.html'">
+                            <img src="assets/images/ffc4.jpg" class="bento-bg" alt="Family Safety Insights">
+                            <div class="bento-content">
+                                <span class="bento-label label-insight">Director's Commentary</span>
+                                <h3 class="bento-title">"Peace of Mind"</h3>
+                                <span class="bento-link">Read Perspective <i class="fas fa-arrow-right"></i></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bento-row alt">
+                        <div class="bento-card" onclick="window.location.href='insights/edge-mobile-rebrand/index.html'">
+                            <img src="assets/images/edgemobile.png" class="bento-bg" alt="Mobile Insights">
+                            <div class="bento-content">
+                                <span class="bento-label label-insight">Director's Commentary</span>
+                                <h3 class="bento-title">"Reinventing Momentum"</h3>
+                                <span class="bento-link">Read Perspective <i class="fas fa-arrow-right"></i></span>
+                            </div>
+                        </div>
+                        <div class="bento-card" onclick="window.location.href='caseStudy_edge_mobile.html'">
+                            <img src="assets/images/edge-mobile.png" class="bento-bg" alt="Mobile Portfolio">
+                            <div class="bento-content">
+                                <span class="bento-label label-blueprint">Technical Blueprint</span>
+                                <h3 class="bento-title">Edge Mobile Rebrand</h3>
+                                <span class="bento-link">View Execution <i class="fas fa-arrow-right"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bento-row">
+                        <div class="bento-card" onclick="window.location.href='case-study-ai-browsing.html'">
+                            <img src="assets/images/03_Browse_AI.jpg" class="bento-bg" alt="AI Portfolio">
+                            <div class="bento-content">
+                                <span class="bento-label label-blueprint">Technical Blueprint</span>
+                                <h3 class="bento-title">Transforming Browsing</h3>
+                                <span class="bento-link">View Execution <i class="fas fa-arrow-right"></i></span>
+                            </div>
+                        </div>
+                        <div class="bento-card" onclick="window.location.href='insights/transforming-browsing-ai/index.html'">
+                            <img src="assets/images/03_Browse_AI.jpg" class="bento-bg" alt="AI Insights">
+                            <div class="bento-content">
+                                <span class="bento-label label-insight">Director's Commentary</span>
+                                <h3 class="bento-title">"The AI Shift"</h3>
+                                <span class="bento-link">Read Perspective <i class="fas fa-arrow-right"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bento-row alt">
+                        <div class="bento-card" onclick="window.location.href='insights/free-to-be-free/index.html'">
+                            <img src="assets/images/02_F2BF.jpg" class="bento-bg" alt="Free Insights">
+                            <div class="bento-content">
+                                <span class="bento-label label-insight">Director's Commentary</span>
+                                <h3 class="bento-title">"Creative Freedom"</h3>
+                                <span class="bento-link">Read Perspective <i class="fas fa-arrow-right"></i></span>
+                            </div>
+                        </div>
+                        <div class="bento-card" onclick="window.location.href='case-study-free-to-be-free.html'">
+                            <img src="assets/images/02_F2BF.jpg" class="bento-bg" alt="Free Portfolio">
+                            <div class="bento-content">
+                                <span class="bento-label label-blueprint">Technical Blueprint</span>
+                                <h3 class="bento-title">Free to Be Free</h3>
+                                <span class="bento-link">View Execution <i class="fas fa-arrow-right"></i></span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: RESUME (Dark Panel) -->
+        <section class="section" id="resume">
+            <div class="container">
+                <h2 style="margin-bottom: 3rem; text-align:center;">III. Professional Record</h2>
+                <div class="resume-preview">
+                    <div class="resume-cta-col">
+                        <h3>The Full Story</h3>
+                        <p>Download the official CV or view the interactive web version.</p>
+                        <a href="assets/Components/Resume_final.pdf" target="_blank" class="resume-btn" download>Download PDF</a>
+                        <a href="/cv.html" style="margin-top:1.5rem; text-decoration:underline; opacity:0.7; font-size:0.9rem;">View Web Version</a>
+                    </div>
+                    
+                    <div class="resume-list">
+                        <div class="role-row">
+                            <div class="role-date" style="color:var(--coral);">2024-Pres</div>
+                            <div><div class="role-title">Principal & Systems Architect</div><div class="role-company">Luis Gilberto Ecosystem</div></div>
+                        </div>
+                        <div class="role-row">
+                            <div class="role-date">2023-2024</div>
+                            <div><div class="role-title">Principal Creative Strategist</div><div class="role-company">Microsoft Copilot & AI Platform</div></div>
+                        </div>
+                        <div class="role-row">
+                            <div class="role-date">2018-2023</div>
+                            <div><div class="role-title">Sr. Integrated Marketing Lead</div><div class="role-company">Microsoft Edge Consumer</div></div>
+                        </div>
+                        <div class="role-row">
+                            <div class="role-date">2016-2018</div>
+                            <div><div class="role-title">Global Product Marketing Manager</div><div class="role-company">Microsoft 365 Consumer</div></div>
+                        </div>
+                        <div class="role-row" style="border:none; padding-bottom:0; margin-bottom:0;">
+                            <div class="role-date">2012-2016</div>
+                            <div><div class="role-title">Marketing Manager</div><div class="role-company">Worldwide Retail Channel</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
 
     <!-- FOOTER -->
-    <footer class="site-footer">
-        <div class="container">
-            <div class="footer-grid">
-                <!-- Col 1 -->
-                <div class="footer-col">
-                    <div class="footer-logo">
-                        <img src="/assets/images/AUg_logo_White.png" alt="Luis Gilberto">
-                        <span class="footer-logo-text">Luis Gilberto</span>
-                    </div>
-                    <p class="footer-tagline">Making technology feel human through clarity, beautiful execution, and systems that scale.</p>
-                    <div class="footer-social">
-                        <a href="#" class="footer-social-link"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#" class="footer-social-link"><i class="fas fa-envelope"></i></a>
-                    </div>
-                </div>
-                <!-- Col 2 -->
-                <div class="footer-col">
-                    <h4 class="footer-title">Ecosystem</h4>
-                    <div class="footer-links">
-                        <a href="/index.html">Portfolio</a>
-                        <a href="/TheHub/">The Hub</a>
-                        <a href="/insights/">Insights</a>
-                        <a href="https://portal.luis-gilberto.com">The Portal ↗</a>
-                        <a href="/brand.html" style="color:var(--coral); font-style:italic;">How it all connects</a>
-                    </div>
-                </div>
-                <!-- Col 3 -->
-                <div class="footer-col">
-                    <h4 class="footer-title">Connect</h4>
-                    <div class="footer-links">
-                        <a href="/contact">Contact</a>
-                        <a href="/about.html">About Me</a>
-                        <a href="#">LinkedIn</a>
-                    </div>
-                </div>
-                <!-- Col 4 -->
-                <div class="footer-col">
-                    <h4 class="footer-title">Status</h4>
-                    <div class="status-card">
-                        <div class="status-header">
-                            <span class="status-dot"></span> ACCEPTING PROJECTS
-                        </div>
-                        <p class="status-text">Currently available for strategic consulting.</p>
-                        <a href="/contact" class="status-link">Start a Conversation →</a>
-                    </div>
+    <footer class="portfolio-footer">
+        <div class="footer-grid-portfolio">
+            <div class="pf-brand">
+                <a href="/index.html"><img src="/assets/images/Logomark_White_a.png" alt="LG"></a>
+                <p class="pf-tagline">Making technology feel human through clarity, beautiful execution, and systems that scale.</p>
+                <div class="pf-social">
+                    <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="social-icon"><i class="far fa-envelope"></i></a>
                 </div>
             </div>
-            <div class="footer-bottom">
-                <span>© 2026 Luis Gilberto. All Rights Reserved.</span>
-                <div class="footer-legal">
-                    <a href="#">Privacy</a><a href="#">Terms</a>
+            <div class="pf-col">
+                <h4>Ecosystem</h4>
+                <a href="/index.html" class="pf-link">Portfolio</a>
+                <a href="/TheHub/" class="pf-link">The Hub</a>
+                <a href="/insights/" class="pf-link">Insights</a>
+                <a href="https://portal.luis-gilberto.com" class="pf-link accent">The Portal &rarr;</a>
+            </div>
+            <div class="pf-col">
+                <h4>Connect</h4>
+                <a href="/contact.html" class="pf-link">Contact</a>
+                <a href="/about.html" class="pf-link">About Me</a>
+                <a href="#" class="pf-link">LinkedIn</a>
+            </div>
+            <div class="pf-col">
+                <div class="pf-status">
+                    <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
+                        <span style="width:8px; height:8px; background:#2ED3C6; border-radius:50%;"></span>
+                        <span style="font-weight:700; font-size:0.8rem; text-transform:uppercase; color:white;">Accepting Projects</span>
+                    </div>
+                    <a href="/contact.html" style="color:white; font-size:0.9rem; text-decoration:none; border-bottom:1px solid white;">Start a Conversation &rarr;</a>
                 </div>
             </div>
         </div>
+        <div class="pf-copyright">© 2026 Luis Gilberto. All Rights Reserved.</div>
     </footer>
 
+    <!-- SCRIPTS -->
     <script>
-        // Theme Toggle
-        const themeBtn = document.getElementById('themeToggle');
-        const body = document.body;
-        const currentTheme = localStorage.getItem('theme') || 'light'; // Default Light
-        body.setAttribute('data-theme', currentTheme);
-        
-        // Icon update function
-        const updateIcons = (theme) => {
-            const sun = themeBtn.querySelector('.sun-icon');
-            const moon = themeBtn.querySelector('.moon-icon');
-            if (theme === 'dark') {
-                sun.style.display = 'block';
-                moon.style.display = 'none';
-            } else {
-                sun.style.display = 'none';
-                moon.style.display = 'block';
-            }
-        };
-        
-        // Initial icon state
-        updateIcons(currentTheme);
-
-        themeBtn.addEventListener('click', () => {
-            const isDark = body.getAttribute('data-theme') === 'dark';
-            const newTheme = isDark ? 'light' : 'dark';
-            body.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            updateIcons(newTheme);
+        const cursor = document.getElementById('cursor-lens');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+        document.querySelectorAll('a, button, .path-card, .story-card, .bento-card, .resume-btn').forEach(el => {
+            el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+            el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
         });
 
-        // Mobile Drawer
+        // Mobile Menu
         const drawer = document.getElementById('mobileDrawer');
-        document.getElementById('mobileMenuBtn').addEventListener('click', () => {
-            drawer.classList.add('active');
-        });
-        document.getElementById('drawerClose').addEventListener('click', () => {
+        const openBtn = document.getElementById('mobileMenuBtn');
+        const closeBtn = document.getElementById('drawerClose');
+        function toggleDrawer() {
+            drawer.style.display = 'flex';
+            setTimeout(() => { drawer.classList.toggle('active'); }, 10);
+        }
+        openBtn.addEventListener('click', toggleDrawer);
+        closeBtn.addEventListener('click', () => {
             drawer.classList.remove('active');
+            setTimeout(() => { drawer.style.display = 'none'; }, 300);
         });
     </script>
 </body>
