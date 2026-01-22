@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timeline Fixes - Implementation Guide</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .code-block { 
+            background: #1a1a1a; 
+            color: #e5e5e5;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        .step-number {
+            background: linear-gradient(135deg, #F96F6E, #FF8A80);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        .issue-badge {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .fix-badge {
+            background: #dcfce7;
+            color: #16a34a;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        pre { white-space: pre-wrap; word-wrap: break-word; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <div class="max-w-4xl mx-auto p-8">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-sm border p-8 mb-8">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-12 h-12 bg-gradient-to-br from-red-400 to-red-500 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-tools text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">Timeline Fixes Package</h1>
+                    <p class="text-gray-600">Implementation Guide for Luis Gilberto Timeline Issues</p>
+                </div>
+            </div>
+            
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                <div class="flex items-center gap-2 mb-2">
+                    <i class="fas fa-exclamation-triangle text-red-500"></i>
+                    <h3 class="font-semibold text-red-800">Critical Issues Identified</h3>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <span class="issue-badge">Timeline Endless Cycling</span>
+                    <span class="issue-badge">Text Cut-off in Cards</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Issues Overview -->
+        <div class="bg-white rounded-lg shadow-sm border p-8 mb-8">
+            <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                <i class="fas fa-bug text-red-500"></i>
+                Issues Identified
+            </h2>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="border border-red-200 rounded-lg p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <i class="fas fa-sync-alt text-red-500"></i>
+                        <h3 class="font-bold text-lg">Issue #1: Endless Cycling</h3>
+                    </div>
+                    <p class="text-gray-600 mb-3">The timeline carousel continues scrolling indefinitely instead of stopping at the last visible card.</p>
+                    <div class="bg-red-50 p-3 rounded text-sm">
+                        <strong>Root Cause:</strong> JavaScript logic doesn't calculate visible cards vs total cards properly.
+                    </div>
+                </div>
+                
+                <div class="border border-red-200 rounded-lg p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <i class="fas fa-cut text-red-500"></i>
+                        <h3 class="font-bold text-lg">Issue #2: Text Cut-off</h3>
+                    </div>
+                    <p class="text-gray-600 mb-3">Card descriptions are too long for the fixed-height containers, causing text to be cut off.</p>
+                    <div class="bg-red-50 p-3 rounded text-sm">
+                        <strong>Root Cause:</strong> Card descriptions exceed the available vertical space in the 320px container.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Implementation Steps -->
+        <div class="bg-white rounded-lg shadow-sm border p-8 mb-8">
+            <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                <i class="fas fa-list-ol text-blue-500"></i>
+                Implementation Steps for Trae
+            </h2>
+            
+            <div class="space-y-6">
+                <!-- Step 1 -->
+                <div class="flex gap-4">
+                    <div class="step-number">1</div>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-lg mb-2">Backup Current Files</h3>
+                        <p class="text-gray-600 mb-3">Create a backup before making any changes.</p>
+                        <div class="code-block p-4">
+                            <pre><code># Create backup with timestamp
+cp timeline.html timeline_backup_$(date +%Y%m%d_%H%M%S).html
+
+# Verify backup was created
+ls -la timeline_backup_*</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="flex gap-4">
+                    <div class="step-number">2</div>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-lg mb-2">Fix JavaScript Logic</h3>
+                        <p class="text-gray-600 mb-3">Replace the entire &lt;script&gt; section at the bottom of timeline.html</p>
+                        <div class="bg-yellow-50 border border-yellow-200 rounded p-3 mb-3">
+                            <strong>Location:</strong> Find the &lt;script&gt; tag near the bottom of the HTML file (around line 500+)
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="flex gap-4">
+                    <div class="step-number">3</div>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-lg mb-2">Update Card Descriptions</h3>
+                        <p class="text-gray-600 mb-3">Replace both desktop and mobile card descriptions with shorter versions.</p>
+                        <div class="bg-yellow-50 border border-yellow-200 rounded p-3 mb-3">
+                            <strong>Location:</strong> Find the fs-card elements in both desktop and mobile sections
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="flex gap-4">
+                    <div class="step-number">4</div>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-lg mb-2">Test Implementation</h3>
+                        <p class="text-gray-600 mb-3">Verify both fixes work correctly.</p>
+                        <div class="bg-green-50 border border-green-200 rounded p-3">
+                            <strong>Testing Checklist:</strong>
+                            <ul class="list-disc list-inside mt-2 text-sm">
+                                <li>Timeline stops at last card</li>
+                                <li>All text fits in cards</li>
+                                <li>Navigation buttons work properly</li>
+                                <li>Mobile version works correctly</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fix 1: JavaScript Code -->
+        <div class="bg-white rounded-lg shadow-sm border p-8 mb-8">
+            <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                <i class="fas fa-code text-purple-500"></i>
+                Fix #1: Updated JavaScript
+            </h2>
+            
+            <div class="mb-4">
+                <span class="fix-badge">COMPLETE REPLACEMENT</span>
+                <p class="text-gray-600 mt-2">Replace the entire &lt;script&gt; section with this code:</p>
+            </div>
+            
+            <div class="code-block p-4 text-sm">
+                <pre><code>&lt;script&gt;
+        // Timeline data
+        const timelineData = {
+            foundations: {
+                title: "Foundations (2012–2014)",
+                quote: "This era was my entry into the tech world—and into Microsoft's boldest bets.",
+                description: "From the debut of &lt;strong&gt;Windows 8&lt;/strong&gt; and the first &lt;strong&gt;Surface&lt;/strong&gt; devices to supporting the &lt;strong&gt;Office 2013&lt;/strong&gt; rollout, I guided in-store strategy and retail attach for Microsoft's hardware and software milestones.",
+                achievements: [
+                    "&lt;strong&gt;Windows 8 &amp; Surface&lt;/strong&gt; launch support across retail channels",
+                    "Retail attach strategy for &lt;strong&gt;Office 2013&lt;/strong&gt;",
+                    "Campaign optimizations for &lt;strong&gt;PC Accessories&lt;/strong&gt;",
+                    "Product storytelling &amp; marketing enablement online"
+                ],
+                brandsSupported: {
+                    title: "Brands I Supported",
+                    image: { src: "assets/images/Brands_I_Supported_Foundations.png", alt: "Comprehensive overview of brands supported during the Foundations era" }
+                }
+            },
+            ascent: {
+                title: "Ascent (2014–2016)",
+                quote: "Refined my craft; scaled impact; deepened expertise.",
+                description: "I expanded Microsoft's in-store experiences—launching categories like &lt;strong&gt;Surface Pro 3&lt;/strong&gt;, &lt;strong&gt;HoloLens&lt;/strong&gt;, and &lt;strong&gt;Microsoft Band&lt;/strong&gt;—then moved into Integrated Marketing for &lt;strong&gt;Office&lt;/strong&gt;, shaping cross-platform storytelling.",
+                achievements: [
+                    "Office for iPad launch &amp; cross-platform narrative",
+                    "Surface Pro 3 demo kit &amp; campaign alignment",
+                    "Microsoft Band &amp; HoloLens retail support",
+                    "Windows 10 attach strategy &amp; Office GTM coordination"
+                ],
+                brandsSupported: {
+                    title: "Brands I Supported",
+                    image: { src: "assets/images/Brands_I_Supported_Ascent.png", alt: "Comprehensive overview of brands supported during the Ascent era" }
+                }
+            },
+            rewrite: {
+                title: "Expansion (2016–2018)",
+                quote: "Pushed boundaries; grew technically and creatively.",
+                description: "Joining the Office Business Group, I led seasonal campaigns and partner go-to-market strategies, guiding the narrative arc from &lt;strong&gt;Office 2016&lt;/strong&gt; to &lt;strong&gt;Office 2019&lt;/strong&gt;.",
+                achievements: [
+                    "Retail &amp; partner marketing for Office 2016 lifecycle",
+                    "Early narrative direction for Office 2019",
+                    "Creative assets for seasonal &amp; evergreen campaigns",
+                    "Translating product updates into consumer stories"
+                ],
+                brandsSupported: {
+                    title: "Brands I Supported",
+                    image: { src: "assets/images/Brands_I_Supported_Rewrite.png", alt: "Comprehensive overview of brands supported during the Rewrite era" }
+                }
+            },
+            pivot: {
+                title: "Disruption (2018–2020)",
+                quote: "Faced setbacks; re-evaluated direction; regenerated approach.",
+                description: "I led the consumer launch of &lt;strong&gt;&lt;a href='case-study-fsa.html' target='_blank' style='color: inherit; text-decoration: underline;'&gt;Family Safety&lt;/a&gt;&lt;/strong&gt; during the pandemic and steered the rebrand from Office 365 to &lt;strong&gt;Microsoft 365&lt;/strong&gt;, building modular kits of parts for global scale.",
+                achievements: [
+                    "&lt;strong&gt;&lt;a href='case-study-fsa.html' target='_blank' style='color: inherit; text-decoration: underline;'&gt;Family Safety&lt;/a&gt;&lt;/strong&gt; launch BoM &amp; animated story &lt;a href='case-study-fsa.html' target='_blank' style='color: inherit; text-decoration: underline;'&gt;campaign&lt;/a&gt;",
+                    "Microsoft 365 rebrand partner rollout",
+                    "Scalable creative kits for retail &amp; digital"
+                ],
+                brandsSupported: {
+                    title: "Brands I Supported",
+                    image: { src: "assets/images/Brands_I_Supported_Pivot.png", alt: "Comprehensive overview of brands supported during the Pivot era" }
+                }
+            },
+            rise: {
+                title: "Reinvention (2020–2022)",
+                quote: "Integrated new identity; clarified values and direction.",
+                description: "I created the '&lt;strong&gt;&lt;a href='case-study-free-to-be-free.html' target='_blank' style='color: inherit; text-decoration: underline;'&gt;Free to Be Free&lt;/a&gt;&lt;/strong&gt;' campaign celebrating digital liberation, and previewed &lt;strong&gt;&lt;a href='case-study-teams-final-dm.html' target='_blank' style='color: inherit; text-decoration: underline;'&gt;Teams for Life&lt;/a&gt;&lt;/strong&gt;—blending lifestyle marketing with product narratives.",
+                achievements: [
+                    "&lt;strong&gt;&lt;a href='case-study-free-to-be-free.html' target='_blank' style='color: inherit; text-decoration: underline;'&gt;Free to Be Free&lt;/a&gt;&lt;/strong&gt; brand campaign",
+                    "&lt;strong&gt;&lt;a href='case-study-teams-final-dm.html' target='_blank' style='color: inherit; text-decoration: underline;'&gt;Teams for Life&lt;/a&gt;&lt;/strong&gt; preview launch"
+                ],
+                brandsSupported: {
+                    title: "Brands I Supported",
+                    image: { src: "assets/images/Brands_I_Supported_Rise.png", alt: "Comprehensive overview of brands supported during the Reinvention era" }
+                }
+            },
+            reinvention: {
+                title: "Integration (2022–Present)",
+                quote: "Even AI needs a heartbeat.",
+                description: "I led Microsoft Edge's shift into the AI-powered browser and shaped Copilot narratives—making smart shopping and productivity tools approachable through integrated, human-centered campaigns.",
+                achievements: [
+                    "&lt;strong&gt;&lt;a href='case-study-edge-ucational.html' target='_blank' style='color: inherit; text-decoration: underline;'&gt;Edge-ucational Series&lt;/a&gt;&lt;/strong&gt;",
+                    "&lt;strong&gt;&lt;a href='case-study-ai-browsing.html' target='_blank' style='color: inherit; text-decoration: underline;'&gt;Edge AI Campaign&lt;/a&gt;&lt;/strong&gt;",
+                    "&lt;strong&gt;Mobile App Store Rebrand&lt;/strong&gt;",
+                    "&lt;strong&gt;&lt;a href='insights/' target='_blank' style='color: inherit; text-decoration: underline;'&gt;Personal Insights &amp; Learnings&lt;/a&gt;&lt;/strong&gt; - Reflections on career transitions and creative renaissance"
+                ],
+                brandsSupported: {
+                    title: "Brands I Supported",
+                    image: { src: "assets/images/Brands_I_Supported_Reinvention.png", alt: "Comprehensive overview of brands supported during the Reinvention era" }
+                }
+            }
+        };
+
+        // Initialize when DOM loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Filmstrip navigation
+            let currentIndex = 0;
+            const cardsContainer = document.getElementById('cardsContainer');
+            const progressBar = document.getElementById('progressBar');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            // Calculate visible cards and total cards
+            const getVisibleCards = () =&gt; {
+                const trackWidth = document.querySelector('.fs-track').offsetWidth;
+                const cardWidth = 280 + 16; // card width + gap
+                return Math.floor(trackWidth / cardWidth);
+            };
+            
+            const getTotalCards = () =&gt; {
+                return document.querySelectorAll('.fs-cards-container .fs-card').length;
+            };
+
+            function updateFilmstrip() {
+                const visibleCards = getVisibleCards();
+                const totalCards = getTotalCards();
+                const maxIndex = Math.max(0, totalCards - visibleCards);
+                
+                // Clamp currentIndex within bounds
+                currentIndex = Math.max(0, Math.min(currentIndex, maxIndex));
+                
+                const cardWidth = 280 + 16; // card width + gap
+                const offset = -currentIndex * cardWidth;
+                cardsContainer.style.transform = `translateX(${offset}px)`;
+                
+                // Update progress bar
+                const progress = maxIndex &gt; 0 ? ((currentIndex / maxIndex) * 100) : 100;
+                progressBar.style.width = `${Math.min(100, Math.max(16.66, progress))}%`;
+                
+                // Update button states
+                prevBtn.disabled = currentIndex &lt;= 0;
+                nextBtn.disabled = currentIndex &gt;= maxIndex;
+                
+                // Update button opacity
+                prevBtn.style.opacity = currentIndex &lt;= 0 ? '0.3' : '1';
+                nextBtn.style.opacity = currentIndex &gt;= maxIndex ? '0.3' : '1';
+            }
+
+            prevBtn.addEventListener('click', () =&gt; {
+                if (currentIndex &gt; 0) {
+                    currentIndex--;
+                    updateFilmstrip();
+                }
+            });
+
+            nextBtn.addEventListener('click', () =&gt; {
+                const visibleCards = getVisibleCards();
+                const totalCards = getTotalCards();
+                const maxIndex = Math.max(0, totalCards - visibleCards);
+                
+                if (currentIndex &lt; maxIndex) {
+                    currentIndex++;
+                    updateFilmstrip();
+                }
+            });
+
+            // Initialize filmstrip
+            updateFilmstrip();
+            
+            // Update on window resize
+            window.addEventListener('resize', updateFilmstrip);
+
+            // Modal functionality
+            const modal = document.getElementById('timeline-modal');
+            
+            function openTimelineModal(era) {
+                if (!modal) return;
+                
+                const data = timelineData[era] || {};
+                
+                // Populate modal content
+                document.getElementById('modal-title').textContent = data.title || '';
+                document.getElementById('modal-quote').textContent = data.quote ? `"${data.quote}"` : '';
+                document.getElementById('modal-description').innerHTML = `&lt;p&gt;${data.description || ''}&lt;/p&gt;`;
+                
+                // Populate achievements
+                const achievementsList = document.querySelector('#modal-achievements ul');
+                achievementsList.innerHTML = '';
+                (data.achievements || []).forEach(achievement =&gt; {
+                    const li = document.createElement('li');
+                    li.innerHTML = achievement;
+                    achievementsList.appendChild(li);
+                });
+                
+                // Populate brands supported
+                const brandsSupportedContainer = document.querySelector('#modal-brands-supported .brands-supported-image');
+                const brandsSupportedSection = document.querySelector('#modal-brands-supported');
+                if (data.brandsSupported &amp;&amp; data.brandsSupported.image) {
+                    brandsSupportedContainer.innerHTML = '';
+                    const img = document.createElement('img');
+                    img.src = data.brandsSupported.image.src;
+                    img.alt = data.brandsSupported.image.alt;
+                    img.onerror = function() { brandsSupportedSection.style.display = 'none'; };
+                    brandsSupportedContainer.appendChild(img);
+                    brandsSupportedSection.style.display = 'block';
+                } else {
+                    brandsSupportedSection.style.display = 'none';
+                }
+                
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            
+            function closeTimelineModal() {
+                if (modal) {
+                    modal.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            }
+            
+            // Event delegation for timeline cards (both desktop and mobile)
+            document.addEventListener('click', function(e) {
+                const card = e.target.closest('.fs-card');
+                if (card &amp;&amp; card.dataset.era) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openTimelineModal(card.dataset.era);
+                }
+            });
+            
+            // Modal close functionality
+            const closeBtn = document.querySelector('.timeline-modal .modal-close');
+            const modalOverlay = document.querySelector('.timeline-modal .modal-overlay');
+            
+            if (closeBtn) {
+                closeBtn.addEventListener('click', closeTimelineModal);
+            }
+            if (modalOverlay) {
+                modalOverlay.addEventListener('click', closeTimelineModal);
+            }
+            
+            // ESC to close modal
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' &amp;&amp; modal &amp;&amp; modal.classList.contains('active')) {
+                    closeTimelineModal();
+                }
+            });
+
+            // Mobile menu functionality
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileMenu = document.createElement('div');
+            mobileMenu.style.cssText = 'position: fixed; top: 80px; left: 0; right: 0; background: rgba(15, 15, 15, 0.95); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(64, 64, 64, 0.2); padding: 1.5rem; z-index: 1000; display: none; text-align: center;';
+            mobileMenu.className = 'mobile-menu-overlay';
+            mobileMenu.innerHTML = `
+                &lt;a href="index.html" style="display: block; color: #D1D5DB; text-decoration: none; font-weight: 500; padding: 0.75rem 0; transition: color 0.3s ease; text-align: center;" onmouseover="this.style.color='#F96F6E'" onmouseout="this.style.color='#D1D5DB'"&gt;Home&lt;/a&gt;
+                &lt;a href="about.html" style="display: block; color: #D1D5DB; text-decoration: none; font-weight: 500; padding: 0.75rem 0; transition: color 0.3s ease; text-align: center;" onmouseover="this.style.color='#F96F6E'" onmouseout="this.style.color='#D1D5DB'"&gt;About Me&lt;/a&gt;
+                &lt;a href="cv.html" style="display: block; color: #D1D5DB; text-decoration: none; font-weight: 500; padding: 0.75rem 0; transition: color 0.3s ease; text-align: center;" onmouseover="this.style.color='#F96F6E'" onmouseout="this.style.color='#D1D5DB'"&gt;CV&lt;/a&gt;
+                &lt;a href="timeline.html" style="display: block; color: #F96F6E; text-decoration: none; font-weight: 500; padding: 0.75rem 0; transition: color 0.3s ease; text-align: center;"&gt;Timeline&lt;/a&gt;
+                &lt;a href="myexperience.html" style="display: block; color: #D1D5DB; text-decoration: none; font-weight: 500; padding: 0.75rem 0; transition: color 0.3s ease; text-align: center;" onmouseover="this.style.color='#F96F6E'" onmouseout="this.style.color='#D1D5DB'"&gt;Experience&lt;/a&gt;
+                &lt;a href="contact-clean.html" style="display: block; color: #D1D5DB; text-decoration: none; font-weight: 500; padding: 0.75rem 0; transition: color 0.3s ease; text-align: center;" onmouseover="this.style.color='#F96F6E'" onmouseout="this.style.color='#D1D5DB'"&gt;Contact&lt;/a&gt;
+            `;
+            
+            document.body.appendChild(mobileMenu);
+            
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    if (mobileMenu.style.display === 'none') {
+                        mobileMenu.style.display = 'block';
+                    } else {
+                        mobileMenu.style.display = 'none';
+                    }
+                });
+            }
+        });
+    &lt;/script&gt;</code></pre>
+            </div>
+        </div>
+
+        <!-- Fix 2: Desktop Cards -->
+        <div class="bg-white rounded-lg shadow-sm border p-8 mb-8">
+            <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                <i class="fas fa-desktop text-blue-500"></i>
+                Fix #2A: Desktop Card Descriptions
+            </h2>
+            
+            <div class="mb-4">
+                <span class="fix-badge">REPLACE CONTENT</span>
+                <p class="text-gray-600 mt-2">Find the desktop fs-cards-container section and replace all card content:</p>
+            </div>
+            
+            <div class="code-block p-4 text-sm">
+                <pre><code>&lt;div class="fs-cards-container" id="cardsContainer"&gt;
+    &lt;div class="fs-card" data-era="foundations"&gt;
+        &lt;img src="assets/images/Foundations.png" alt="Foundations"/&gt;
+        &lt;div class="fs-meta"&gt;
+            &lt;div class="fs-eyebrow"&gt;2012–2014&lt;/div&gt;
+            &lt;h3&gt;Foundations&lt;/h3&gt;
+            &lt;p&gt;Built my voice through editorial grit and early brand work.&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="fs-card" data-era="ascent"&gt;
+        &lt;img src="assets/images/timeline-era-2-demo-strategy.png" alt="Ascent"/&gt;
+        &lt;div class="fs-meta"&gt;
+            &lt;div class="fs-eyebrow"&gt;2014–2016&lt;/div&gt;
+            &lt;h3&gt;Ascent&lt;/h3&gt;
+            &lt;p&gt;Refined my craft; scaled impact; deepened expertise.&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="fs-card" data-era="rewrite"&gt;
+        &lt;img src="assets/images/Rewrite.png" alt="Rewrite"/&gt;
+        &lt;div class="fs-meta"&gt;
+            &lt;div class="fs-eyebrow"&gt;2016–2018&lt;/div&gt;
+            &lt;h3&gt;Expansion&lt;/h3&gt;
+            &lt;p&gt;Pushed boundaries; grew technically and creatively.&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="fs-card" data-era="pivot"&gt;
+        &lt;img src="assets/images/Pivot.png" alt="Pivot"/&gt;
+        &lt;div class="fs-meta"&gt;
+            &lt;div class="fs-eyebrow"&gt;2018–2020&lt;/div&gt;
+            &lt;h3&gt;Disruption&lt;/h3&gt;
+            &lt;p&gt;Faced setbacks; regenerated approach.&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="fs-card" data-era="rise"&gt;
+        &lt;img src="assets/images/Rise.png" alt="Rise"/&gt;
+        &lt;div class="fs-meta"&gt;
+            &lt;div class="fs-eyebrow"&gt;2020–2022&lt;/div&gt;
+            &lt;h3&gt;Reinvention&lt;/h3&gt;
+            &lt;p&gt;Integrated new identity; clarified values and direction.&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="fs-card" data-era="reinvention"&gt;
+        &lt;img src="assets/images/Reinvention.png" alt="Reinvention"/&gt;
+        &lt;div class="fs-meta"&gt;
+            &lt;div class="fs-eyebrow"&gt;2022–Present&lt;/div&gt;
+            &lt;h3&gt;Integration&lt;/h3&gt;
+            &lt;p&gt;Merged experience with intention—designing with clarity.&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+            </div>
+        </div>
+
+        <!-- Fix 3: Mobile Cards -->
+        <div class="bg-white rounded-lg shadow-sm border p-8 mb-8">
+            <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                <i class="fas fa-mobile-alt text-green-500"></i>
+                Fix #2B: Mobile Card Descriptions
+            </h2>
+            
+            <div class="mb-4">
+                <span class="fix-badge">REPLACE CONTENT</span>
+                <p class="text-gray-600 mt-2">Find the timeline-stack section in the mobile timeline and replace all card content:</p>
+            </div>
+            
+            <div class="code-block p-4 text-sm">
+                <pre><code>&lt;div class="timeline-stack"&gt;
+    &lt;div class="fs-card" data-era="foundations"&gt;
+        &lt;img src="assets/images/Foundations.png" alt="Foundations"/&gt;
+        &lt;div class="fs-meta"&gt;
+            &lt;div class="fs-eyebrow"&gt;2012–2014&lt;/div&gt;
+            &lt;h3&gt;Foundations&lt;/h3&gt;
+            &lt;p&gt;Built voice through editorial grit and brand work.&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="fs-card" data-era="ascent"&gt;
+        &lt;img src="assets/images/timeline-era-2-demo-strategy.png" alt="Ascent"/&gt;
+        &lt;div class="fs-meta"&gt;
+            &lt;div class="fs-eyebrow"&gt;2014–2016&lt;/div&gt;
+            &lt;h3&gt;Ascent&lt;/h3&gt;
+            &lt;p&gt;Refined craft; scaled impact; deepened expertise.&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="fs-card" data-era="rewrite"&gt;
+        &lt;img src="assets/images/Rewrite.png" alt="Rewrite"/&gt;
+        &lt;div class="fs-meta"&gt;
+            &lt;div class="fs-eyebrow"&gt;2016–2018&lt;/div&gt;
+            &lt;h3&gt;Expansion&lt;/h3&gt;
+            &lt;p&gt;Pushed boundaries; grew technically and creatively.&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="fs-card" data-era="pivot"&gt;
+        &lt;img src="assets/images/Pivot.png" alt="Pivot"/&gt;
+        &lt;div class="fs-meta"&gt;
+            &lt;div class="fs-eyebrow"&gt;2018–2020&lt;/div&gt;
+            &lt;h3&gt;Disruption&lt;/h3&gt;
+            &lt;p&gt;Faced setbacks; regenerated approach.&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="fs-card" data-era="rise"&gt;
+        &lt;img src="assets/images/Rise.png" alt="Rise"/&gt;
+        &lt;div class="fs-meta"&gt;
+            &lt;div class="fs-eyebrow"&gt;2020–2022&lt;/div&gt;
+            &lt;h3&gt;Reinvention&lt;/h3&gt;
+            &lt;p&gt;Integrated new identity; clarified values.&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="fs-card" data-era="reinvention"&gt;
+        &lt;img src="assets/images/Reinvention.png" alt="Reinvention"/&gt;
+        &lt;div class="fs-meta"&gt;
+            &lt;div class="fs-eyebrow"&gt;2022–Present&lt;/div&gt;
+            &lt;h3&gt;Integration&lt;/h3&gt;
+            &lt;p&gt;Merged experience with intention.&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+            </div>
+        </div>
+
+        <!-- Testing Checklist -->
+        <div class="bg-white rounded-lg shadow-sm border p-8 mb-8">
+            <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                <i class="fas fa-check-circle text-green-500"></i>
+                Testing Checklist
+            </h2>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                        <i class="fas fa-desktop text-blue-500"></i>
+                        Desktop Testing
+                    </h3>
+                    <div class="space-y-3">
+                        <label class="flex items-center gap-3">
+                            <input type="checkbox" class="w-4 h-4 text-blue-600">
+                            <span>Timeline stops at last visible card</span>
+                        </label>
+                        <label class="flex items-center gap-3">
+                            <input type="checkbox" class="w-4 h-4 text-blue-600">
+                            <span>Progress bar shows correct position</span>
+                        </label>
+                        <label class="flex items-center gap-3">
+                            <input type="checkbox" class="w-4 h-4 text-blue-600">
+                            <span>Navigation buttons disable properly</span>
+                        </label>
+                        <label class="flex items-center gap-3">
+                            <input type="checkbox" class="w-4 h-4 text-blue-600">
+                            <span>All card text fits without cut-off</span>
+                        </label>
+                        <label class="flex items-center gap-3">
+                            <input type="checkbox" class="w-4 h-4 text-blue-600">
+                            <span>Cards open modals when clicked</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                        <i class="fas fa-mobile-alt text-green-500"></i>
+                        Mobile Testing
+                    </h3>
+                    <div class="space-y-3">
+                        <label class="flex items-center gap-3">
+                            <input type="checkbox" class="w-4 h-4 text-green-600">
+                            <span>Mobile timeline displays correctly</span>
+                        </label>
+                        <label class="flex items-center gap-3">
+                            <input type="checkbox" class="w-4 h-4 text-green-600">
+                            <span>Mobile card text fits properly</span>
+                        </label>
+                        <label class="flex items-center gap-3">
+                            <input type="checkbox" class="w-4 h-4 text-green-600">
+                            <span>Touch interactions work smoothly</span>
+                        </label>
+                        <label class="flex items-center gap-3">
+                            <input type="checkbox" class="w-4 h-4 text-green-600">
+                            <span>Mobile modals open and close</span>
+                        </label>
+                        <label class="flex items-center gap-3">
+                            <input type="checkbox" class="w-4 h-4 text-green-600">
+                            <span>Responsive design works at all sizes</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rollback Instructions -->
+        <div class="bg-white rounded-lg shadow-sm border p-8">
+            <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                <i class="fas fa-undo text-yellow-500"></i>
+                Rollback Instructions
+            </h2>
+            
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+                <h3 class="font-bold text-lg mb-3">If Issues Occur</h3>
+                <p class="text-gray-700 mb-4">If the fixes cause any problems, you can quickly restore the original version:</p>
+                
+                <div class="code-block p-4">
+                    <pre><code># Restore from backup
+cp timeline_backup_*.html timeline.html
+
+# Verify restoration
+ls -la timeline.html</code></pre>
+                </div>
+                
+                <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded">
+                    <strong>Important:</strong> Always test the fixes on a staging environment before applying to production.
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-12 text-center text-gray-500 text-sm">
+            <p>Timeline Fixes Package - Created for Luis Gilberto Portfolio</p>
+            <p>Implementation Date: January 2025</p>
+        </div>
+    </div>
+</body>
+</html>
+    <script id="html_badge_script1">
+        window.__genspark_remove_badge_link = "https://www.genspark.ai/api/html_badge/" +
+            "remove_badge?token=To%2FBnjzloZ3UfQdcSaYfDtbycZmAinMwzFwZr%2Fod0gd6s9waYpiEFwLkvmkcI1dWte%2Fv4Ha7eggJDo2CtrrPGb3Bt5BsAJpmh3ra0WrFf4KcUKpHuVHtjtXS7zni3SGXdGRjpPXy7aJf%2FUdrFdMG4GaGondVqjo40hpdUDTqL3deY5hThgVaoSpdwpw7WMIy96s%2Bj97QdVXijl5hYl1xuJFBO1MZBdcgcYS82YU3uO7SM1iC6mSZbV5r3Dcgh6HmJw4N59IfeKpEwFhe9Xcy2r1VJwv8DuwG9R9L8%2BLqsQi%2FupNVlPFBEwV1PrJNKHe%2BLOpsLTY2XbF6AvGTSZ3ywUBxvDbvr5%2BvyVPi1ejUdwuavZaVRuvqlB5NghMC9KZXiAEFVGybtXgmvEFiD9BPwv7QZPMxPKmlwUT65og2QW79Fhp0IWzee9eRn%2FymB5DAI62MG7RGqa7OhYUtVfcWPNsTRXa0WBuXPpGkKjEPyWF3oOHDiLjk2ZJo8kAmxlwxa4QQAb6S86Ia21R4%2B7kVmskctv%2FUUI9AhQK%2B3NOBO%2Fk%3D";
+        window.__genspark_locale = "en-US";
+        window.__genspark_token = "To/BnjzloZ3UfQdcSaYfDtbycZmAinMwzFwZr/od0gd6s9waYpiEFwLkvmkcI1dWte/v4Ha7eggJDo2CtrrPGb3Bt5BsAJpmh3ra0WrFf4KcUKpHuVHtjtXS7zni3SGXdGRjpPXy7aJf/UdrFdMG4GaGondVqjo40hpdUDTqL3deY5hThgVaoSpdwpw7WMIy96s+j97QdVXijl5hYl1xuJFBO1MZBdcgcYS82YU3uO7SM1iC6mSZbV5r3Dcgh6HmJw4N59IfeKpEwFhe9Xcy2r1VJwv8DuwG9R9L8+LqsQi/upNVlPFBEwV1PrJNKHe+LOpsLTY2XbF6AvGTSZ3ywUBxvDbvr5+vyVPi1ejUdwuavZaVRuvqlB5NghMC9KZXiAEFVGybtXgmvEFiD9BPwv7QZPMxPKmlwUT65og2QW79Fhp0IWzee9eRn/ymB5DAI62MG7RGqa7OhYUtVfcWPNsTRXa0WBuXPpGkKjEPyWF3oOHDiLjk2ZJo8kAmxlwxa4QQAb6S86Ia21R4+7kVmskctv/UUI9AhQK+3NOBO/k=";
+    </script>
+    
+    <script id="html_notice_dialog_script" src="https://www.genspark.ai/notice_dialog.js"></script>
+    

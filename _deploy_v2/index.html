@@ -4,8 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Luis Gilberto - Creative Strategist & Marketing Professional</title>
-  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="/assets/icons/apple-touch-icon.png">
   
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -639,13 +637,15 @@
     .tile-cta:hover svg {
       transform: translateX(4px);
     }
-    /* VISIBLE CTA STATE */
-    .hero-tile.is-revealed .tile-cta {
-      display: flex !important;
-      opacity: 1 !important;
-      transform: translateX(-50%) translateY(0) !important;
-      animation: ctaPulse 2s infinite ease-in-out;
-      pointer-events: auto;
+    /* VISIBLE CTA STATE (Desktop) */
+    @media (pointer: fine) {
+      .hero-tile.is-revealed .tile-cta {
+        display: flex !important;
+        opacity: 1 !important;
+        transform: translateX(-50%) translateY(0) !important;
+        animation: ctaPulse 2s infinite ease-in-out;
+        pointer-events: auto;
+      }
     }
 
     /* HIDE HINT WHEN REVEALED */
@@ -734,8 +734,26 @@
       }
     }
 
+    @media (max-width: 768px) {
+      .tile-cta {
+        bottom: 10px !important;
+        padding: 0.8rem 1.5rem;
+        width: 90%;
+        justify-content: center;
+      }
+    }
+
+    .tile-cta.show-mobile {
+      opacity: 1 !important;
+      transform: translateX(-50%) translateY(0) !important;
+      display: flex !important;
+    }
+
     .hero-subhead {
-      font-size: 1.25rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      line-height: 1.5;
       color: var(--text-secondary);
       margin-bottom: 2rem;
     }
@@ -1946,13 +1964,13 @@
           </div>
 
           <!-- Tile 2: Teams Case Study -->
-          <div class="hero-tile" style="--delay: 0.1s; --rotation: 3deg; --offset-x: 2px; --offset-y: -1px;" data-link-0="" data-link-1="/insights/teams-consumer-launch/" data-label-0="" data-label-1="How I ship">
+          <div class="hero-tile" style="--delay: 0.1s; --rotation: 3deg; --offset-x: 2px; --offset-y: -1px;" data-link-0="" data-link-1="https://www.luis-gilberto.com/insights/teams-consumer-launch/" data-label-0="" data-label-1="How I ship">
             <div class="tile-inner">
               <img src="assets/hp/abstract2.png" alt="Architectural installation" class="tile-image tile-image-1 active">
               <img src="assets/hp/tech-01-human-emoji.webp" alt="Human interaction with technology" class="tile-image tile-image-2">
               <div class="tile-overlay">
                 <span class="tile-hint">Drag to reveal</span>
-                <a href="/insights/teams-consumer-launch/" class="tile-cta">
+                <a href="https://www.luis-gilberto.com/insights/teams-consumer-launch/" class="tile-cta">
                   <span>How I ship</span>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -1970,7 +1988,7 @@
               <img src="assets/hp/tech-02-interface-humans-emojis.webp" alt="Family safety interface" class="tile-image tile-image-2">
               <div class="tile-overlay">
                 <span class="tile-hint">Drag to reveal</span>
-                <a href="/case-study-fsa" class="tile-cta">
+                <a href="/insights/family-safety-launch/" class="tile-cta">
                   <span>How I lead</span>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -1982,13 +2000,13 @@
           </div>
 
           <!-- Tile 4: Edge Educational -->
-          <div class="hero-tile" style="--delay: 0.3s; --rotation: 2deg; --offset-x: -2px; --offset-y: -2px;" data-link-0="" data-link-1="/case-study-edge-ucational.html" data-label-0="" data-label-1="How I teach">
+          <div class="hero-tile" style="--delay: 0.3s; --rotation: 2deg; --offset-x: -2px; --offset-y: -2px;" data-link-0="" data-link-1="/insights/edge-ucational-series/" data-label-0="" data-label-1="How I teach">
             <div class="tile-inner">
               <img src="assets/hp/abstract4.png" alt="Abstract flowing forms" class="tile-image tile-image-1 active">
-              <img src="assets/hp/Edge-ucational_humans.png" alt="Edge-ucational couple scene" class="tile-image tile-image-2">
+              <img src="assets/hp/Edge-ucational_humans.png" alt="Educational environment design" class="tile-image tile-image-2">
               <div class="tile-overlay">
                 <span class="tile-hint">Drag to reveal</span>
-                <a href="/case-study-edge-ucational.html" class="tile-cta">
+                <a href="/insights/edge-ucational-series/" class="tile-cta">
                   <span>How I teach</span>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -2630,7 +2648,7 @@
           totalDistance = 0;
         };
         
-        // REVEAL LOGIC
+        // UPDATED REVEAL LOGIC
         const reveal = () => {
           isRevealed = true;
           tile.classList.add('is-revealed');
@@ -2642,12 +2660,13 @@
           // 2. Hide "Drag to Explore" Hint
           if (hint) hint.style.opacity = '0';
 
-          // 3. Activate Levitation Effect
+          // 3. Activate Levitation
           setTimeout(() => {
             tile.classList.add('tile-levitating');
           }, 100);
 
-          // 4. Reset Cursor
+          // 4. NOTE: We do NOT show the CTA here anymore.
+          // It remains hidden to keep the image clean.
           tile.style.cursor = 'pointer';
 
           // 5. Success Haptic (Mobile only)
@@ -2664,10 +2683,29 @@
         document.addEventListener('touchmove', handleMove, { passive: false });
         document.addEventListener('touchend', handleEnd);
         
-        // CLICK LOGIC
+        // UPDATED CLICK LOGIC (The Two-Step Tap)
         tile.addEventListener('click', (e) => {
-          if (isRevealed && cta) {
-            const link = cta.getAttribute('href');
+          if (!isRevealed) return; // Ignore clicks if not revealed
+
+          const link = cta.getAttribute('href');
+
+          // Check if we are on mobile/touch
+          const isTouch = window.matchMedia('(pointer: coarse)').matches;
+
+          if (isTouch) {
+            // MOBILE LOGIC:
+            // Tap 1: Show CTA
+            // Tap 2: Navigate
+            if (!cta.classList.contains('show-mobile')) {
+              e.preventDefault(); // Stop navigation
+              cta.classList.add('show-mobile'); // Show button
+            } else {
+              // Button is already visible, allow navigation
+              if (link) window.location.href = link;
+            }
+          } else {
+            // DESKTOP LOGIC:
+            // Just go to link (CTA shows on hover)
             if (link) window.location.href = link;
           }
         });
@@ -3036,6 +3074,7 @@
  </script>
 
 <script>
+// === CUSTOM CURSOR (THE LENS) ===
 (function() {
     const cursor = document.getElementById('cursor-lens');
     if (!cursor) {
@@ -3051,6 +3090,7 @@
         return;
     }
     
+    // Track mouse movement
     document.addEventListener('mousemove', (e) => {
         requestAnimationFrame(() => {
             cursor.style.left = e.clientX + 'px';
@@ -3058,8 +3098,10 @@
         });
     });
 
+    // Add hover effects to interactive elements
     const hoverElements = 'a, button, .belief-card, .channel-btn, .cta-btn, input, textarea, select, .mobile-menu-toggle, .theme-toggle, .tour-card, .card-cta, .hero-tile, .mobile-menu-close, .mobile-nav-link-primary, .mobile-nav-link-secondary, .subnav-link';
     
+    // Function to add listeners
     const addHoverListeners = (el) => {
         el.addEventListener('mouseenter', () => { 
             document.body.classList.add('cursor-hover'); 
@@ -3069,13 +3111,16 @@
         });
     };
 
+    // Apply to existing elements
     document.querySelectorAll(hoverElements).forEach(addHoverListeners);
     
+    // Observe for new elements
     const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
             if (mutation.addedNodes.length) {
                 const newElements = document.querySelectorAll(hoverElements);
                 newElements.forEach(el => {
+                    // Simple re-bind (in a real app, you'd want to be more selective)
                     el.removeEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
                     el.removeEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
                     addHoverListeners(el);
@@ -3087,17 +3132,5 @@
     observer.observe(document.body, { childList: true, subtree: true });
 })();
 </script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  var isCoarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
-  var label = isCoarse ? 'Tap to reveal' : 'Drag to reveal';
-  var hints = document.querySelectorAll('.hint-text, .tile-hint');
-  hints.forEach(function(el) {
-    el.textContent = label;
-  });
-});
-</script>
-
 </body>
 </html>

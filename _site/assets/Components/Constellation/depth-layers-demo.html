@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Depth Layers Demo - The Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0A0A0A;
+            color: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #F96F6E, #2ED3C6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn.active {
+            background: #F96F6E;
+            border-color: #F96F6E;
+            color: white;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .demo-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .demo-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .demo-card .stats {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+            font-family: monospace;
+        }
+
+        .preview-box {
+            background: #050505;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            height: 300px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .shape-demo {
+            position: absolute;
+            height: auto;
+            backface-visibility: hidden;
+        }
+
+        /* Far Background */
+        .far-layer .shape-demo {
+            opacity: 0.06;
+            filter: blur(2px) saturate(0.7);
+        }
+
+        .far-compass {
+            top: 20%;
+            left: 10%;
+            width: 40px;
+            animation: rotate 50s linear infinite;
+        }
+
+        .far-queen {
+            bottom: 20%;
+            right: 10%;
+            width: 36px;
+            animation: pendulum 48s ease-in-out infinite;
+        }
+
+        /* Mid Background */
+        .mid-layer .shape-demo {
+            opacity: 0.12;
+            filter: blur(1px) saturate(0.85);
+        }
+
+        .mid-atom {
+            top: 25%;
+            left: 30%;
+            width: 44px;
+            animation: pendulum 42s ease-in-out infinite;
+        }
+
+        .mid-telescope {
+            bottom: 25%;
+            right: 25%;
+            width: 46px;
+            animation: rotate 44s linear infinite reverse;
+        }
+
+        /* Foreground */
+        .front-layer .shape-demo {
+            opacity: 0.18;
+            filter: blur(0.5px) saturate(0.92);
+        }
+
+        .front-compass {
+            top: 35%;
+            left: 15%;
+            width: 60px;
+            animation: rotate 34s linear infinite;
+        }
+
+        .front-atom {
+            top: 30%;
+            right: 20%;
+            width: 50px;
+            animation: pendulum 32s ease-in-out infinite;
+        }
+
+        .front-telescope {
+            bottom: 15%;
+            left: 18%;
+            width: 72px;
+            animation: rotate 40s linear infinite reverse;
+            opacity: 0.22;
+        }
+
+        .front-queen {
+            bottom: 18%;
+            right: 15%;
+            width: 68px;
+            animation: pendulum 36s ease-in-out infinite;
+            opacity: 0.20;
+        }
+
+        /* Coral shapes */
+        .coral {
+            filter: drop-shadow(0 4px 12px rgba(249, 111, 110, 0.3));
+        }
+
+        /* Teal shapes */
+        .teal {
+            filter: drop-shadow(0 4px 12px rgba(46, 211, 198, 0.3));
+        }
+
+        /* Combined view */
+        .combined-layer .shape-demo {
+            mix-blend-mode: screen;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pendulum {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(180deg); }
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-label {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .feature-value {
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+        }
+
+        .color-badge {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            margin-right: 0.5rem;
+        }
+
+        .coral-badge {
+            background: #F96F6E;
+        }
+
+        .teal-badge {
+            background: #2ED3C6;
+        }
+
+        @media (max-width: 768px) {
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .shape-demo {
+                animation: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Floating Shapes - Depth Layers Demo</h1>
+        <p class="subtitle">Interactive demonstration of the 3-layer constellation system</p>
+
+        <div class="demo-grid">
+            <!-- Far Background Layer -->
+            <div class="demo-card">
+                <h3>Layer 1: Far Background</h3>
+                <p class="stats">z-index: 0 | opacity: 0.06 | blur: 2px</p>
+                
+                <div class="preview-box far-layer">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%23F96F6E'/%3E%3C/svg%3E" 
+                         class="shape-demo far-compass coral" alt="Compass">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,10 70,90 50,75 30,90' fill='%232ED3C6'/%3E%3C/svg%3E" 
+                         class="shape-demo far-queen teal" alt="Queen">
+                </div>
+
+                <ul class="feature-list">
+                    <li>
+                        <span class="feature-label">Purpose</span>
+                        <span class="feature-value">Distant stars</span>
+                    </li>
+                    <li>
+                        <span class="feature-label">Shapes</span>
+                        <span class="feature-value">
+                            <span class="color-badge coral-badge"></span>Compass
+                            <span class="color-badge teal-badge"></span>Queen
+                        </span>
+                    </li>
+                    <li>
+                        <span class="feature-label">Animation</span>
+                        <span class="feature-value">48-50s (slowest)</span>
+                    </li>
+                    <li>
+                        <span class="feature-label">Size Range</span>
+                        <span class="feature-value">26-48px</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Mid Background Layer -->
+            <div class="demo-card">
+                <h3>Layer 2: Mid Background</h3>
+                <p class="stats">z-index: 1 | opacity: 0.12 | blur: 1px</p>
+                
+                <div class="preview-box mid-layer">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='20' fill='none' stroke='%232ED3C6' stroke-width='4'/%3E%3Ccircle cx='50' cy='30' r='5' fill='%232ED3C6'/%3E%3C/svg%3E" 
+                         class="shape-demo mid-atom teal" alt="Atom">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='20' y='40' width='60' height='20' fill='%23F96F6E'/%3E%3C/svg%3E" 
+                         class="shape-demo mid-telescope coral" alt="Telescope">
+                </div>
+
+                <ul class="feature-list">
+                    <li>
+                        <span class="feature-label">Purpose</span>
+                        <span class="feature-value">Supporting layer</span>
+                    </li>
+                    <li>
+                        <span class="feature-label">Shapes</span>
+                        <span class="feature-value">
+                            <span class="color-badge teal-badge"></span>Atom
+                            <span class="color-badge coral-badge"></span>Telescope
+                        </span>
+                    </li>
+                    <li>
+                        <span class="feature-label">Animation</span>
+                        <span class="feature-value">42-44s (medium)</span>
+                    </li>
+                    <li>
+                        <span class="feature-label">Size Range</span>
+                        <span class="feature-value">32-56px</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Foreground Layer -->
+            <div class="demo-card">
+                <h3>Layer 3: Foreground</h3>
+                <p class="stats">z-index: 2 | opacity: 0.18-0.22 | blur: 0.5px</p>
+                
+                <div class="preview-box front-layer">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%23F96F6E'/%3E%3C/svg%3E" 
+                         class="shape-demo front-compass coral" alt="Compass">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='20' fill='none' stroke='%232ED3C6' stroke-width='4'/%3E%3C/svg%3E" 
+                         class="shape-demo front-atom teal" alt="Atom">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='20' y='40' width='60' height='20' fill='%23F96F6E'/%3E%3C/svg%3E" 
+                         class="shape-demo front-telescope coral" alt="Telescope">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,10 70,90 50,75 30,90' fill='%232ED3C6'/%3E%3C/svg%3E" 
+                         class="shape-demo front-queen teal" alt="Queen">
+                </div>
+
+                <ul class="feature-list">
+                    <li>
+                        <span class="feature-label">Purpose</span>
+                        <span class="feature-value">Main constellation</span>
+                    </li>
+                    <li>
+                        <span class="feature-label">Shapes</span>
+                        <span class="feature-value">
+                            <span class="color-badge coral-badge"></span>Compass + Telescope
+                            <span class="color-badge teal-badge"></span>Atom + Queen
+                        </span>
+                    </li>
+                    <li>
+                        <span class="feature-label">Animation</span>
+                        <span class="feature-value">32-40s (fastest)</span>
+                    </li>
+                    <li>
+                        <span class="feature-label">Size Range</span>
+                        <span class="feature-value">32-88px (largest)</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Combined View -->
+            <div class="demo-card" style="grid-column: 1 / -1;">
+                <h3>All Layers Combined</h3>
+                <p class="stats">Full depth constellation effect with 8 total shapes</p>
+                
+                <div class="preview-box combined-layer" style="height: 500px;">
+                    <!-- Far -->
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%23F96F6E'/%3E%3C/svg%3E" 
+                         class="shape-demo far-compass coral" style="opacity: 0.06; filter: blur(2px);" alt="">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,10 70,90 50,75 30,90' fill='%232ED3C6'/%3E%3C/svg%3E" 
+                         class="shape-demo far-queen teal" style="opacity: 0.06; filter: blur(2px);" alt="">
+                    
+                    <!-- Mid -->
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='20' fill='none' stroke='%232ED3C6' stroke-width='4'/%3E%3C/svg%3E" 
+                         class="shape-demo mid-atom teal" style="opacity: 0.12; filter: blur(1px);" alt="">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='20' y='40' width='60' height='20' fill='%23F96F6E'/%3E%3C/svg%3E" 
+                         class="shape-demo mid-telescope coral" style="opacity: 0.12; filter: blur(1px);" alt="">
+                    
+                    <!-- Front -->
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%23F96F6E'/%3E%3C/svg%3E" 
+                         class="shape-demo front-compass coral" style="opacity: 0.18; filter: blur(0.5px);" alt="">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='20' fill='none' stroke='%232ED3C6' stroke-width='4'/%3E%3C/svg%3E" 
+                         class="shape-demo front-atom teal" style="opacity: 0.16; filter: blur(0.5px);" alt="">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='20' y='40' width='60' height='20' fill='%23F96F6E'/%3E%3C/svg%3E" 
+                         class="shape-demo front-telescope coral" style="opacity: 0.22; filter: blur(0.5px);" alt="">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,10 70,90 50,75 30,90' fill='%232ED3C6'/%3E%3C/svg%3E" 
+                         class="shape-demo front-queen teal" style="opacity: 0.20; filter: blur(0.5px);" alt="">
+                    
+                    <!-- Sample content to show layering -->
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 3; text-align: center;">
+                        <div style="background: rgba(255,255,255,0.03); padding: 2rem; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);">
+                            <h2 style="margin-bottom: 1rem; font-size: 2rem;">The Hub</h2>
+                            <p style="color: rgba(255,255,255,0.6); max-width: 400px;">
+                                Notice how shapes appear at different depths, creating a constellation effect
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
