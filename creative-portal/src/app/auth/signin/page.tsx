@@ -10,50 +10,42 @@ import Image from 'next/image'
 export default function SignIn() {
   const router = useRouter()
   const [email, setEmail] = useState('')
-  const [name, setName] = useState('')
+  const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     
-    // Save name for profile creation
-    localStorage.setItem('auth_temp_name', name.trim());
-
-    const result = await signIn('email', { email, redirect: false })
-    setLoading(false)
-    
-    if (result?.error) {
-      alert(`Sign-in error: ${result.error}. Please check your email format.`);
-      console.error('Sign-in error:', result.error)
-    } else if (result?.url) {
-      router.push('/auth/verify-request')
-    }
-  }
-
-  const isFormValid = name.trim().length > 1 && email.includes('@') && email.includes('.');
-
-  const handleDevLogin = async (email: string) => {
-    setLoading(true);
     try {
       const result = await signIn('credentials', { 
         email, 
-        code: '123456', 
+        password,
         redirect: false 
-      });
+      })
       
       if (result?.error) {
-        alert(`Dev login failed: ${result.error}`);
+        alert('Access Denied. Please check your credentials.');
+        console.error('Sign-in error:', result.error)
       } else {
-        router.push('/dashboard');
+        // Successful login - Handle Role-Based Redirection
+        if (email.toLowerCase().includes('admin')) {
+          router.push('/admin');
+        } else if (email.toLowerCase().includes('consultant')) {
+          router.push('/strategyiq');
+        } else {
+          router.push('/dashboard');
+        }
       }
-    } catch (e) {
-      console.error(e);
-      alert('Login error occurred');
+    } catch (error) {
+      console.error('Login error:', error);
+      alert('An unexpected error occurred.');
     } finally {
       setLoading(false);
     }
-  };
+  }
+
+  const isFormValid = email.includes('@') && email.includes('.') && password.length > 0;
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-[#121212]">
@@ -80,26 +72,14 @@ export default function SignIn() {
         
         <div className="text-center mb-8 relative z-10">
           <h1 className="font-serif text-3xl text-white mb-2">
-            Welcome to The Portal
+            System Access
           </h1>
           <p className="font-sans text-sm text-gray-400">
-            Your Strategic Access Point to the LG Ecosystem
+            Secure Enterprise Gateway
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
-           {/* Name Input */}
-          <div className="space-y-1.5">
-            <Input 
-              type="text" 
-              placeholder="Your Full Name" 
-              value={name} 
-              onChange={(e) => setName(e.target.value)} 
-              required 
-              className="h-12 bg-black/50 border-white/10 text-white placeholder:text-gray-500 focus:border-[var(--coral)] focus:ring-1 focus:ring-[var(--coral)] rounded-lg transition-all"
-            />
-          </div>
-
           {/* Email Input */}
           <div className="space-y-1.5">
             <Input 
@@ -111,14 +91,30 @@ export default function SignIn() {
               className="h-12 bg-black/50 border-gray-700 text-white placeholder:text-gray-500 focus:border-[var(--coral)] focus:ring-1 focus:ring-[var(--coral)] rounded-lg transition-all"
             />
           </div>
+
+          {/* Password Input */}
+          <div className="space-y-1.5">
+            <Input 
+              type="password" 
+              placeholder="••••••••" 
+              value={password} 
+              onChange={(e) => setPassword(e.target.value)} 
+              required 
+              className="h-12 bg-black/50 border-gray-700 text-white placeholder:text-gray-500 focus:border-[var(--coral)] focus:ring-1 focus:ring-[var(--coral)] rounded-lg transition-all"
+            />
+          </div>
           
           <Button 
             type="submit" 
             disabled={loading || !isFormValid} 
             className="w-full h-12 bg-gradient-to-r from-[var(--coral)] to-[#e55a5a] hover:from-[#e55a5a] hover:to-[var(--coral)] text-white font-bold uppercase tracking-widest rounded-lg shadow-lg shadow-red-900/20 transition-all hover:-translate-y-0.5"
           >
-            {loading ? 'Accessing Vault...' : 'Enter Portal'}
+            {loading ? 'Authenticating...' : 'Sign In'}
           </Button>
+
+          <p className="mt-6 text-center text-xs text-gray-500 max-w-xs mx-auto leading-relaxed">
+            Authorized Personnel Only. Access to StrategyIQ™ is monitored and logged.
+          </p>
         </form>
 
         <div className="mt-8 text-center relative z-10">
@@ -127,35 +123,6 @@ export default function SignIn() {
           </p>
         </div>
       </div>
-
-      {/* Dev Shortcuts Panel */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="w-full max-w-md mt-8 p-6 rounded-xl border border-dashed border-white/10 bg-white/5 backdrop-blur-sm">
-          <div className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 text-center">
-            Development Access Keys
-          </div>
-          <div className="grid grid-cols-3 gap-3">
-            <button
-              onClick={() => handleDevLogin('admin@example.com')}
-              className="px-2 py-2 text-[10px] font-bold text-white bg-red-500/80 hover:bg-red-500 rounded border border-white/10 transition-colors uppercase tracking-wider"
-            >
-              Admin
-            </button>
-            <button
-              onClick={() => handleDevLogin('client@example.com')}
-              className="px-2 py-2 text-[10px] font-bold text-white bg-emerald-600/80 hover:bg-emerald-600 rounded border border-white/10 transition-colors uppercase tracking-wider"
-            >
-              Client
-            </button>
-            <button
-              onClick={() => handleDevLogin('consultant@example.com')}
-              className="px-2 py-2 text-[10px] font-bold text-white bg-purple-600/80 hover:bg-purple-600 rounded border border-white/10 transition-colors uppercase tracking-wider"
-            >
-              Consultant
-            </button>
-          </div>
-        </div>
-      )}
     </div> 
   ) 
 }

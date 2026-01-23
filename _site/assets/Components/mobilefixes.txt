@@ -1,0 +1,145 @@
+Likely issues & surgical fixes
+1) Missing mobile header markup on those pages
+
+On Timeline/Contact, make sure the same header block used on your homepage is included (burger + off-canvas). If those pages are hand-coded HTML, paste in the same header snippet you use site-wide.
+
+What to look for (HTML):
+
+A toggle button (hamburger) with aria-controls pointing to your mobile menu container.
+
+A menu panel container with an id/class your JS expects (e.g., id="site-menu").
+
+Drop-in example (good defaults):
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="/">LUIS GILBERTO</a>
+
+    <nav class="desktop-nav">
+      <a href="/about-integrated-marketing-expert/">About</a>
+      <a href="/my-experience/">CV</a>
+      <a href="/timeline/">Timeline</a>
+      <a href="/portfolio/">Experience</a>
+      <a href="/contact/">Contact</a>
+    </nav>
+
+    <button class="mobile-nav-btn" aria-controls="site-menu" aria-expanded="false">
+      <span class="sr-only">Open menu</span>
+      ☰
+    </button>
+  </div>
+
+  <nav id="site-menu" class="mobile-nav" hidden>
+    <a href="/about-integrated-marketing-expert/">About</a>
+    <a href="/my-experience/">CV</a>
+    <a href="/timeline/">Timeline</a>
+    <a href="/portfolio/">Experience</a>
+    <a href="/contact/">Contact</a>
+  </nav>
+</header>
+
+2) Media query hiding the wrong thing (common!)
+
+Your CSS might be doing:
+
+@media (max-width: 767px) { .desktop-nav { display:none } } (correct) but forgetting to show the mobile button/panel.
+
+What to look for (CSS):
+Find any rules that include .desktop-nav, .mobile-nav-btn, .mobile-nav around mobile breakpoints.
+
+Replace with (safe baseline):
+
+/* Desktop vs mobile visibility */
+@media (min-width: 768px) {
+  .desktop-nav { display: flex; }
+  .mobile-nav-btn, .mobile-nav { display: none; }
+}
+@media (max-width: 767px) {
+  .desktop-nav { display: none; }
+  .mobile-nav-btn { display: inline-flex; }
+  .mobile-nav { display: block; }
+}
+
+3) The menu exists but is under a hero/overlay (z-index/pointer-events)
+
+Your pages use full-bleed hero layers and occasional overlays/veils. If any of those have a high z-index and span the top, they will block the header and taps.
+
+What to look for (CSS):
+Classes like .curtain, .veil, .hero::before, .overlay with:
+
+position: fixed/absolute; top:0; left:0; right:0; height:…
+
+z-index ≥ 1000
+
+pointer-events: auto
+
+Patch (keep header on top, disable overlay clicks at top):
+
+/* Keep header clickable and above all */
+.site-header { position: relative; z-index: 9999; }
+
+/* If a hero/overlay spans the top, let taps pass through */
+.hero-overlay, .veil, .curtain {
+  pointer-events: none; /* only if the layer shouldn’t be interactive */
+}
+
+/* Or at least put it under header */
+.hero-overlay, .veil, .curtain { z-index: 1; }
+
+4) Toggle JS not loaded on those pages
+
+If tapping the burger does nothing and there’s no console error on the homepage, the toggle script file isn’t included on Timeline/Contact.
+
+What to look for (JS):
+A small script that toggles [hidden] or a class like .open on #site-menu.
+
+Add this at the end of the page (before </body>):
+
+<script>
+  (function () {
+    const btn = document.querySelector('.mobile-nav-btn');
+    const menu = document.getElementById('site-menu');
+    if (!btn || !menu) return;
+
+    btn.addEventListener('click', () => {
+      const open = menu.hasAttribute('hidden') ? false : true;
+      if (open) {
+        menu.setAttribute('hidden', '');
+        btn.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      } else {
+        menu.removeAttribute('hidden');
+        btn.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden'; /* lock scroll */
+      }
+    });
+  })();
+</script>
+
+5) Color/contrast (the menu is there but invisible)
+
+Dark header on dark background? Ensure the mobile button has a visible color.
+
+.site-header, .mobile-nav-btn { color:#fff; }
+.mobile-nav { background: #111; color: #fff; }
+.mobile-nav a { color: #fff; display:block; padding:16px 20px; }
+
+“Trae, do exactly this” (copy/paste brief)
+
+Unify header: Use the same header include across all pages (Home, Timeline, Contact). Ensure it contains the burger button and the #site-menu off-canvas container.
+
+CSS: Apply the Desktop/Mobile visibility rules above, and set .site-header { z-index:9999; }. Reduce overlay z-indexes and set pointer-events:none on decorative veils near the top.
+
+JS: Ensure the toggle script is included on every template, not just the homepage.
+
+QA: In responsive view (≤767px), confirm:
+
+Burger is visible and tappable
+
+Menu opens, page scroll locks
+
+Menu sits above hero/overlays
+
+Links are readable and accessible (contrast + focus states)
+
+If you want, send me the CSS/HTML of those two pages and I’ll mark the exact lines to replace. But these patches should unblock you now.

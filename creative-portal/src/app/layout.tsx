@@ -15,10 +15,6 @@ const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-serif",
 })
-const bigShoulders = Inter({
-  subsets: ["latin"],
-  variable: "--font-big-shoulders",
-})
 
 export const metadata: Metadata = {
   title: "The Portal | Luis Gilberto",
@@ -34,8 +30,10 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
-      <body className={`${inter.variable} ${playfair.variable} ${bigShoulders.variable} font-sans antialiased bg-portal-bg text-[var(--text-primary)] min-h-screen flex flex-col`}>
+      <body className={`${inter.variable} ${playfair.variable} font-sans antialiased bg-portal-bg text-[var(--text-primary)] min-h-screen flex flex-col`}>
         {/* Cinematic Corridor Background */}
         <div className="fixed inset-0 z-[-1] h-screen w-full">
           <Image
@@ -56,10 +54,12 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <Navigation />
-            <main className="flex-grow pt-[112px] flex flex-col relative z-10">
+            <main className="flex-grow pt-16 flex flex-col relative z-10">
               {children}
             </main>
-            <Footer />
+            <div className="lg:pl-[256px] transition-all duration-300">
+              <Footer />
+            </div>
           </ThemeProvider>
         </AuthSessionProvider>
       </body>

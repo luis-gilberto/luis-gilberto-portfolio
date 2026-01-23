@@ -11,9 +11,9 @@ const mockMessages = [
   { id: 2, user: 'Client Partner', content: 'Thanks! Just confirming the kickoff call for tomorrow.', time: '10:05 AM', isClient: true },
 ]
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+const supabase = (SUPABASE_URL && SUPABASE_ANON_KEY) ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null
 
 export default function MessagesPage() {
   const { data: session } = useSession()
@@ -62,6 +62,7 @@ export default function MessagesPage() {
     setNewMessage('')
     // attempt Supabase insert (RLS must allow user)
     try {
+      if (!supabase) return
       const email = session?.user?.email
       await supabase.from('messages').insert({
         user_email: email,

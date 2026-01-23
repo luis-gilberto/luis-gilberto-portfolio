@@ -259,6 +259,16 @@ Use these exact HTML blocks for each file:
 - Grid system ensures equal-width columns
 - Flexbox centers content vertically
 
+---
+
+## Edge-ucational Header & TOC Architecture
+
+- Two-row header: global ecosystem links (row 1) and portfolio context (row 2)
+- Integrated hero TOC acts as the case study control panel (Overview, Strategy, Work, Results)
+- Mobile drawer is only activated via the hamburger button below 968px viewport width
+- Mobile controls are hidden on desktop to prevent stray trigger icons in the global nav
+- Body-level `overflow-x: hidden` and fixed header ensure no horizontal scrolling on mobile
+
 ### ✅ Text Wrapping
 - `line-height: 1.4` prevents awkward breaks
 - Titles wrap gracefully within card boundaries

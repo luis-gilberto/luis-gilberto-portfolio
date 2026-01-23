@@ -1,0 +1,297 @@
+IMC Services — Hub & Hero Implementation Pack (Trae-ready)
+Goal
+
+Make the IMC Hub menu read logically and feel premium:
+
+Elegant tooltips (from existing data-tooltip attributes)
+
+“Current: …” pill auto-filled from the active page
+
+Right-side Details Rail that mirrors tooltip copy (so users aren’t forced to hover)
+
+Show Services Hub subsections only on the Services page
+
+Keep all styles inside this page (safe to inline), no breaking changes to your HTML
+
+Your page already has:
+
+body data-page="services"
+
+Good link structure and data-tooltip attributes on the Hub links
+
+New hero headline & CTAs
+
+This pack adds CSS + a small JS module. No other files are required.
+
+0) Backup
+
+Make a quick copy of your current HTML file.
+
+1) Paste this CSS (near the end of your <head>, after your current styles)
+
+If you prefer, you can place this in ./assets/css/lg-advanced-navigation.css. Keeping it inline is fine.
+
+<style>
+/* ============= IMC HUB POLISH ============= */
+
+/* “Current: …” pill just below the nav header */
+.lg-nav-current {
+  display:flex; align-items:center; gap:.5rem;
+  margin:10px 0 12px; font-size:.9rem; opacity:.9;
+}
+.lg-nav-current .pill {
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:12px; padding:6px 10px; font-weight:600;
+  background:linear-gradient(90deg, var(--lg-coral) 0%, var(--lg-teal) 100%);
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+}
+
+/* Active hub link gets a subtle glow + gradient underline */
+.lg-nav-link.active{
+  position:relative;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.03);
+  border-radius:12px;
+}
+.lg-nav-link.active::after{
+  content:""; position:absolute; inset:auto 0 -2px 0; height:2px;
+  background:linear-gradient(90deg, var(--lg-coral), var(--lg-teal));
+  border-radius:2px;
+}
+
+/* Tooltips powered by [data-tooltip] (desktop only) */
+.lg-nav-link[data-tooltip]{ position:relative; }
+.lg-nav-link[data-tooltip]::before,
+.lg-nav-link[data-tooltip]::after{
+  position:absolute; left:calc(100% + 12px); top:50%;
+  transform:translateY(-50%);
+  opacity:0; pointer-events:none; transition:opacity .12s ease, transform .12s ease;
+}
+.lg-nav-link[data-tooltip]::before{
+  content:attr(data-tooltip);
+  max-width:280px; width:max-content;
+  background:rgba(20,20,20,.96);
+  border:1px solid rgba(255,255,255,.10);
+  color:#fff; padding:10px 12px; border-radius:10px;
+  line-height:1.45; font-size:.9rem; box-shadow:0 8px 24px rgba(0,0,0,.35);
+}
+.lg-nav-link[data-tooltip]::after{
+  content:""; width:8px; height:8px; background:rgba(20,20,20,.96);
+  border-left:1px solid rgba(255,255,255,.10);
+  border-top:1px solid rgba(255,255,255,.10);
+  transform:translate(-6px,-50%) rotate(45deg);
+}
+.lg-nav-link:hover::before,
+.lg-nav-link:hover::after,
+.lg-nav-link:focus::before,
+.lg-nav-link:focus::after{
+  opacity:1; transform:translateY(-50%) translateX(0);
+}
+
+/* Right-side Details Rail inside the nav (desktop only) */
+.lg-nav-menu{ position:relative; }
+.lg-nav-details {
+  position:absolute; right:-300px; top:68px; width:280px;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:14px; padding:12px; color:#fff;
+}
+.lg-nav-details h4{ margin:.1rem 0 .2rem; font-weight:700; }
+.lg-nav-details p{ margin:0 0 .6rem; opacity:.9; font-size:.92rem; line-height:1.45; }
+.lg-nav-details a{ color:var(--lg-teal); font-weight:600; text-decoration:none; }
+
+/* Show Services page sections only on Services */
+body[data-page="services"] .services-sections{ display:block; }
+body:not([data-page="services"]) .services-sections{ display:none; }
+
+/* Keyboard focus: visible, brand-safe */
+.lg-nav-link:focus{
+  outline:2px solid rgba(46,211,198,.6);
+  outline-offset:2px; border-radius:12px;
+}
+
+/* Mobile/tablet: hide hover-tooltips; Details rail becomes inline */
+@media (max-width: 960px){
+  .lg-nav-link[data-tooltip]::before,
+  .lg-nav-link[data-tooltip]::after{ display:none; }
+  .lg-nav-details{ position:static; width:auto; margin:8px 0 0; }
+}
+</style>
+
+2) Paste this JS (right before </body>, AFTER your existing lg-advanced-navigation.js)
+<script>
+/* IMC Hub Enhancements (Current pill, Details Rail, Services sections gating) */
+(function(){
+  const nav = document.querySelector('.lg-nav-menu');
+  if(!nav) return;
+
+  /* Insert "Current: ..." pill (once) under the nav header */
+  const header = nav.querySelector('.lg-nav-header');
+  if(header && !nav.querySelector('.lg-nav-current')){
+    const currentWrap = document.createElement('div');
+    currentWrap.className = 'lg-nav-current';
+    currentWrap.innerHTML = `<span class="pill">Current: <span id="lg-current-page">—</span></span>`;
+    header.insertAdjacentElement('afterend', currentWrap);
+  }
+
+  /* Build a Details Rail (once) */
+  if(!nav.querySelector('.lg-nav-details')){
+    const rail = document.createElement('aside');
+    rail.className = 'lg-nav-details';
+    rail.innerHTML = `
+      <h4>Services</h4>
+      <p>Explore the full suite—strategy, narrative, campaigns, and GTM systems.</p>
+      <a href="#services">Jump to Services</a>
+    `;
+    nav.appendChild(rail);
+  }
+
+  /* Map hub pages to detail copy */
+  const detailsCopy = {
+    services: {
+      title: 'Services',
+      desc: 'Explore the full suite—strategy, narrative, campaigns, and GTM systems.',
+      href: '#services'
+    },
+    advisory: {
+      title: 'Advisory',
+      desc: 'Get clarity fast: positioning, roadmap, and executive guidance.',
+      href: './advisory/index.html'
+    },
+    scopeiq: {
+      title: 'ScopeIQ',
+      desc: 'Start with a 5-minute diagnostic, then map services to your needs.',
+      href: './scopeiq-wizard/index.html'
+    }
+  };
+
+  const links = [...nav.querySelectorAll('.lg-nav-section .lg-nav-link')];
+
+  /* Determine current from body[data-page] or the .active link */
+  const pageHint = (document.body.getAttribute('data-page') || '').toLowerCase();
+  let current = links.find(l => l.classList.contains('active')) || null;
+  if(!current && pageHint){
+    current = links.find(l => l.textContent.trim().toLowerCase().includes(pageHint));
+  }
+  const currentLabel = current ? current.textContent.trim() : 'Services';
+
+  /* Update "Current:" pill */
+  const currentEl = document.getElementById('lg-current-page');
+  if(currentEl) currentEl.textContent = currentLabel;
+
+  /* Ensure aria-current for a11y */
+  links.forEach(l => l.removeAttribute('aria-current'));
+  if(current) current.setAttribute('aria-current','page');
+
+  /* Wire Details Rail updates on hover/focus for the three hub links */
+  const rail = nav.querySelector('.lg-nav-details');
+  function updateRail(label){
+    const key = label.toLowerCase();
+    const data = key.includes('advisory') ? detailsCopy.advisory
+               : key.includes('scopeiq') ? detailsCopy.scopeiq
+               : detailsCopy.services;
+    if(!rail || !data) return;
+    rail.querySelector('h4').textContent = data.title;
+    rail.querySelector('p').textContent = data.desc;
+    rail.querySelector('a').setAttribute('href', data.href);
+  }
+  links.forEach(link=>{
+    const t = link.textContent.trim().toLowerCase();
+    if(t.includes('services') || t.includes('advisory') || t.includes('scopeiq')){
+      link.addEventListener('mouseenter', ()=>updateRail(t));
+      link.addEventListener('focus', ()=>updateRail(t));
+    }
+  });
+
+  /* Initialize rail to current */
+  updateRail(currentLabel);
+
+  /* Optional: close rail on Escape while focusing inside nav */
+  nav.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape'){
+      const closeBtn = nav.querySelector('.lg-nav-close');
+      if(closeBtn) closeBtn.click();
+    }
+  });
+})();
+</script>
+
+3) Verify your markup (quick checklist)
+
+<body data-page="services"> ✔ (already present)
+
+Hub links have data-tooltip strings ✔ (you already added them)
+
+The active Hub link has class="lg-nav-link active" ✔ (present on “Services”)
+
+Keep section IDs in Services Hub:
+
+#services (Capabilities)
+
+#process (How It Works)
+
+#results (Impact)
+
+#engagement (Ways to Partner)
+
+No other HTML changes are required.
+
+4) QA steps (desktop)
+
+Open the page and click the Hub toggle.
+
+You should see a “Current: Services Hub” pill under the header.
+
+Hover Services / Advisory / ScopeIQ — a tooltip appears, and the Details Rail (right side) updates title + copy + link.
+
+Scroll and confirm Services Hub subsection links (Capabilities, How It Works, Impact, Ways to Partner) are visible in the menu (because data-page="services").
+
+Click each subsection; page scrolls smoothly to the right section.
+
+Use keyboard (Tab) to focus links — a visible teal outline appears; tooltips show on focus.
+
+Mobile/tablet
+
+Tooltips are disabled (no hover).
+
+Details Rail becomes an inline card below the nav sections so the explanatory copy is still visible.
+
+5) Copy/tone (optional micro-polish)
+
+If you want the Details Rail copy to fully mirror your tone, edit the detailsCopy object in the JS:
+
+const detailsCopy = {
+  services: {
+    title: 'Services',
+    desc: 'Strategic marketing + creative execution delivered as one integrated team.',
+    href: '#services'
+  },
+  advisory: {
+    title: 'Advisory',
+    desc: 'Direct access to Luis for strategy, positioning and executive guidance.',
+    href: './advisory/index.html'
+  },
+  scopeiq: {
+    title: 'ScopeIQ',
+    desc: 'A fast diagnostic to surface your growth priorities and next steps.',
+    href: './scopeiq-wizard/index.html'
+  }
+};
+
+6) Known good states / what “done” looks like
+
+Menu title reads IMC Hub
+
+Pill shows Current: Services Hub
+
+Tooltips appear on hover/focus for the three Hub entries
+
+Details Rail changes content when you move between Services / Advisory / ScopeIQ
+
+Services subsections show only on the Services page
+
+Keyboard focus rings are visible and brand-consistent
+
+That’s it. Paste the CSS and JS exactly as above, save, refresh, and the Hub will behave as intended. If Trae needs a single snippet to insert, give them Step 1 CSS and Step 2 JS verbatim.
+
+ChatGPT can make mistakes. Ch

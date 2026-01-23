@@ -1,0 +1,152 @@
+
+Trae Patch — Fix Contact CTA Rendering + IMC Variant (v5)
+Best Option: Point CTA to root contact route + add IMC variant hooks
+Author: ChatGPT for Luis Gilberto
+Date: 2025-09-22
+
+WHY THIS PATCH
+--------------
+The “bad-looking” contact page occurs when it is opened from a nested path (e.g., /assets/Contact/contact.html?from=imc). Relative asset paths like "styles/main.css" then resolve to /assets/Contact/styles/main.css (404). The safest, smallest fix is to always route users to the ROOT contact page so assets load correctly, and then add the IMC variant (anchor + copy swap + attribution).
+
+FILES TO EDIT
+-------------
+[1] IMCServices/index.html
+[2] contact.html  (root-level contact page)
+
+TASK 0 — SAFETY
+---------------
+Create a quick backup branch/commit before changes.
+
+TASK 1 — Update the IMC Services CTA to point at the ROOT contact page
+-----------------------------------------------------------------------
+OPEN: IMCServices/index.html
+
+FIND: The final CTA link/button with visible text “Start the conversation”.
+
+SET its href to EXACTLY (preferred):
+/contact.html?from=imc#cta-hook
+
+(If your production uses pretty routes instead of files, use: /contact/?from=imc#cta-hook)
+
+Example desired markup:
+<a class="btn btn-primary" href="/contact.html?from=imc#cta-hook" aria-label="Start the conversation — jump to contact form">
+  Start the conversation
+</a>
+
+TASK 2 — Add anchor + hooks + hidden field on the contact page
+--------------------------------------------------------------
+OPEN: contact.html (root)
+
+2A) Change the **wrapper** around the form to have the anchor id:
+BEFORE:
+<section class="contact-form-section" id="contact-form">
+AFTER:
+<section class="contact-form-section" id="cta-hook">
+
+2B) Remove the duplicate id from the <form> element (keep it id-less):
+BEFORE:
+<form id="contact-form" ...>
+AFTER:
+<form ...>
+
+2C) Add lightweight **copy hooks** so the variant can swap text:
+Change the form header block to include:
+<h2 class="section-title" data-contact-headline>Start the Conversation</h2>
+<p data-contact-subcopy>Tell me about your project, goals, and how I can help bring your vision to life.</p>
+
+2D) Add a tiny **IMC badge** near the header (optional but recommended):
+<span class="imc-badge" aria-hidden="true">IMC Services</span>
+
+2E) Add a **hidden attribution field** inside the <form>:
+<input type="hidden" name="lead_source" id="lead_source" value="">
+
+TASK 3 — Add the IMC variant CSS (just before </head>)
+------------------------------------------------------
+Insert this <style> block **after** your existing styles and **before** </head>:
+
+<style>
+  /* Make #cta-hook anchor land neatly under sticky header */
+  #cta-hook { scroll-margin-top: 96px; } /* adjust to actual header height */
+
+  /* Subtle IMC variant when arrival has from=imc */
+  .from-imcservices #cta-hook {
+    border: 1px solid rgba(249,111,110,0.35); /* coral glow */
+    box-shadow: 0 18px 50px rgba(249,111,110,0.08);
+  }
+
+  .from-imcservices .imc-badge {
+    display: inline-flex;
+    font-size: 12px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #F96F6E, #2ED3C6);
+    color: #111;
+    margin-bottom: 8px;
+    box-shadow: 0 6px 24px rgba(249,111,110,.25);
+  }
+
+  /* Optional: a hint of emphasis on primary buttons in variant state */
+  .from-imcservices .btn-primary { outline: 2px solid #F96F6E22; }
+</style>
+
+TASK 4 — Add the detection script (just before </body>)
+-------------------------------------------------------
+Insert this <script> block **right before** </body>:
+
+<script>
+(function(){
+  var params = new URLSearchParams(location.search);
+  var from = (params.get('from') || '').toLowerCase();
+
+  // Set attribution for submissions
+  var lead = document.getElementById('lead_source');
+  if (lead) lead.value = from || 'organic';
+
+  if (from === 'imc') {
+    // Enable IMC variant
+    document.documentElement.classList.add('from-imcservices');
+
+    // Copy swap
+    var head = document.querySelector('[data-contact-headline]');
+    var sub  = document.querySelector('[data-contact-subcopy]');
+    if (head) head.textContent = "Let’s scope the right engagement.";
+    if (sub)  sub.textContent  = "You came from the IMC Services hub. Tell us where you are in your journey and we’ll map the smartest next step.";
+
+    // Smooth nudge so anchor lands below sticky header
+    if (location.hash === '#cta-hook') {
+      var el = document.getElementById('cta-hook');
+      if (el) requestAnimationFrame(function(){
+        var y = el.getBoundingClientRect().top + scrollY - 96; // adjust offset to header height
+        scrollTo({ top: y, behavior: 'auto' });
+      });
+    }
+  }
+})();
+</script>
+
+TASK 5 — QA / Test
+------------------
+1) From /IMCServices/, click “Start the conversation” CTA.
+   EXPECT URL: /contact.html?from=imc#cta-hook  (or /contact/?from=imc#cta-hook if using pretty routes)
+   EXPECT: Page loads fully styled; jumps to the form.
+2) Verify on /contact:
+   - <html> has class from-imcservices
+   - Hidden #lead_source value = "imc"
+   - Badge shows, headline/subcopy swapped
+3) Visit /contact.html directly (no params): default copy; no badge; lead_source = "organic".
+4) Network tab: confirm no 404s for styles/main.css, styles/contact.css, scripts/main.js.
+
+ROLLBACK
+--------
+- Revert the CTA href in IMCServices/index.html to its prior value.
+- In contact.html, revert:
+  - id change back (or simply keep #cta-hook; it’s harmless)
+  - remove the inserted <style> and <script> blocks
+  - remove the hidden #lead_source and data-* hooks if desired.
+
+NOTES
+-----
+- This patch intentionally avoids changing asset paths; it fixes the rendering by ensuring the contact page is always loaded from root (so current relative links keep working).
+- If, in the future, the contact page must be served from a nested path, switch asset URLs to root-absolute (e.g., href="/styles/main.css") or add <base href="/"> in <head> and test nav thoroughly.

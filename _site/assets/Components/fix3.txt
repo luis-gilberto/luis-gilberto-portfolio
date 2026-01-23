@@ -1,0 +1,212 @@
+// REPLACE YOUR ENTIRE <script> SECTION WITH THIS
+
+// Get DOM elements
+const hubHeader = document.getElementById('hubHeader');
+const backdropBlur = document.getElementById('backdropBlur');
+const hubLogoMain = document.querySelector('.hub-logo-main');
+const navTriggerLine = document.querySelector('.nav-trigger-line');
+const navMenu = document.querySelector('.hub-nav-menu');
+
+let isNavActive = false;
+let openTimer = null;
+let closeTimer = null;
+let blurTimer = null;
+
+// Check if mobile
+function isMobile() {
+    return window.innerWidth <= 768;
+}
+
+// Show navigation - menu first, then blur
+function showNavigation() {
+    if (isNavActive) return; // Already open, don't re-trigger
+    
+    isNavActive = true;
+    
+    // Clear all timers
+    clearTimeout(closeTimer);
+    clearTimeout(blurTimer);
+    
+    // Show menu immediately
+    hubHeader.classList.add('nav-active');
+    
+    // Add blur after menu is visible (prevents blocking)
+    blurTimer = setTimeout(() => {
+        if (isNavActive) {
+            backdropBlur.classList.add('active');
+        }
+    }, 300); // Delay blur until menu is mostly visible
+}
+
+// Hide navigation - blur first, then menu
+function hideNavigation() {
+    if (!isNavActive) return; // Already closed, don't re-trigger
+    
+    isNavActive = false;
+    
+    // Clear all timers
+    clearTimeout(openTimer);
+    clearTimeout(blurTimer);
+    
+    // Remove blur immediately
+    backdropBlur.classList.remove('active');
+    
+    // Hide menu after a short delay
+    setTimeout(() => {
+        hubHeader.classList.remove('nav-active');
+    }, 150);
+}
+
+// Setup hover behavior for desktop
+function setupDesktopInteractions() {
+    // Hover to open
+    hubHeader.addEventListener('mouseenter', () => {
+        if (isMobile()) return;
+        
+        clearTimeout(closeTimer);
+        clearTimeout(openTimer);
+        
+        // Small delay to prevent accidental triggers
+        openTimer = setTimeout(() => {
+            showNavigation();
+        }, 200);
+    });
+    
+    // Leave to close
+    hubHeader.addEventListener('mouseleave', (e) => {
+        if (isMobile()) return;
+        
+        clearTimeout(openTimer);
+        clearTimeout(closeTimer);
+        
+        // Get the element the mouse is moving to
+        const toElement = e.relatedTarget;
+        
+        // Don't close if moving to the navigation menu
+        if (toElement && navMenu && navMenu.contains(toElement)) {
+            return;
+        }
+        
+        // Generous delay for user to move back
+        closeTimer = setTimeout(() => {
+            hideNavigation();
+        }, 600);
+    });
+    
+    // Keep menu open when hovering over it
+    if (navMenu) {
+        navMenu.addEventListener('mouseenter', () => {
+            if (isMobile()) return;
+            clearTimeout(closeTimer);
+        });
+        
+        navMenu.addEventListener('mouseleave', () => {
+            if (isMobile()) return;
+            
+            closeTimer = setTimeout(() => {
+                hideNavigation();
+            }, 400);
+        });
+    }
+}
+
+// Setup mobile click interactions
+function setupMobileInteractions() {
+    const toggleElements = [hubLogoMain, navTriggerLine];
+    
+    toggleElements.forEach(element => {
+        if (element) {
+            element.addEventListener('click', (e) => {
+                if (!isMobile()) return;
+                
+                e.preventDefault();
+                e.stopPropagation();
+                
+                if (isNavActive) {
+                    hideNavigation();
+                } else {
+                    showNavigation();
+                }
+            });
+        }
+    });
+}
+
+// Setup closing interactions
+function setupClosingInteractions() {
+    // Click backdrop to close
+    backdropBlur.addEventListener('click', () => {
+        hideNavigation();
+    });
+    
+    // Click outside to close
+    document.addEventListener('click', (e) => {
+        if (isNavActive && !hubHeader.contains(e.target)) {
+            hideNavigation();
+        }
+    });
+    
+    // Escape key to close
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && isNavActive) {
+            hideNavigation();
+        }
+    });
+    
+    // Close when clicking navigation links
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+            // Instant close for navigation
+            isNavActive = false;
+            backdropBlur.classList.remove('active');
+            hubHeader.classList.remove('nav-active');
+            clearTimeout(blurTimer);
+            clearTimeout(closeTimer);
+            clearTimeout(openTimer);
+        });
+    });
+}
+
+// Handle window resize
+window.addEventListener('resize', () => {
+    if (isMobile() && isNavActive) {
+        hideNavigation();
+    }
+});
+
+// Initialize everything
+setupDesktopInteractions();
+setupMobileInteractions();
+setupClosingInteractions();
+
+// Loading screen
+window.addEventListener('load', function() {
+    const loadingContainer = document.getElementById('loadingContainer');
+    if (loadingContainer) {
+        setTimeout(() => {
+            loadingContainer.classList.add('hidden');
+        }, 500);
+    }
+});
+
+// Card animations
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
+    });
+}, observerOptions);
+
+document.querySelectorAll('.nav-card').forEach(card => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(20px)';
+    card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    observer.observe(card);
+});

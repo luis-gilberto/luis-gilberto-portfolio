@@ -3,6 +3,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import EmailProvider from "next-auth/providers/email"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { prisma } from "@/lib/prisma"
+import bcrypt from "bcryptjs"
 import fs from "fs"
 import path from "path"
 
@@ -43,33 +44,32 @@ export const authOptions: AuthOptions = {
       },
     }),
     CredentialsProvider({
-      name: "Dev Credentials",
+      name: "Enterprise Login",
       credentials: {
         email: { label: "Email", type: "email" },
-        code: { label: "Code", type: "text" }
+        password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        if (!credentials?.email) return null;
-
-        let role = 'CLIENT';
-        if (credentials.email.includes("admin")) {
-            role = "ADMIN";
-        } else if (credentials.email.includes("consultant")) {
-            role = "CONSULTANT";
-        } else {
-            role = "CLIENT";
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Invalid credentials");
         }
 
-        // Upsert user to ensure they exist in DB with correct role
-        const user = await prisma.user.upsert({
-          where: { email: credentials.email },
-          update: { role: role as any },
-          create: {
-            email: credentials.email,
-            name: credentials.email.split('@')[0],
-            role: role as any
-          }
+        const email = credentials.email.toLowerCase();
+
+        const user = await prisma.user.findUnique({
+          where: { email }
         });
+
+        if (!user || !user.password) {
+          // For security, do not reveal if user exists
+          throw new Error("Invalid credentials");
+        }
+
+        const isValid = await bcrypt.compare(credentials.password, user.password);
+
+        if (!isValid) {
+          throw new Error("Invalid credentials");
+        }
         
         return user;
       }
