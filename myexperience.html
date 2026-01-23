@@ -76,6 +76,34 @@
             --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
+        /* Light Mode Variables */
+        [data-theme="light"] {
+            /* Brand Colors - Keep same */
+            --coral: #F96F6E;
+            --teal: #2ED3C6;
+            --ink: #0A0A0A;
+            --cloud: #0A0A0A; /* Change from #F4F1ED to dark for text */
+            
+            /* Surfaces - Inverted */
+            --bg-body: #FAFAFA;
+            --surface-dark: #FFFFFF;
+            --surface-dark-2: #F5F5F5;
+            --surface-light: #FFFFFF;
+            
+            /* Text Colors - Inverted */
+            --text-primary: #0A0A0A;
+            --text-muted: rgba(0, 0, 0, 0.65);
+            --text-subtle: rgba(0, 0, 0, 0.5);
+            
+            /* UI Tokens - Adjusted */
+            --border-light: 1px solid rgba(0, 0, 0, 0.08);
+            --border-hover: 1px solid rgba(0, 0, 0, 0.2);
+            --shadow-soft: 0 12px 35px rgba(0, 0, 0, 0.08);
+            --shadow-deep: 0 20px 60px rgba(0, 0, 0, 0.12);
+            --shadow-glow-coral: 0 0 30px rgba(249, 111, 110, 0.25);
+            --shadow-glow-teal: 0 0 30px rgba(46, 211, 198, 0.25);
+        }
+
         /* =========================================
            2. RESET & BASE
            ========================================= */
@@ -328,6 +356,80 @@
             font-weight: 700;
         }
 
+        /* Light Mode fixes for stat grid and role rows */
+        [data-theme="light"] .stat-grid-sec {
+            border-top: 1px solid rgba(0,0,0,0.08);
+        }
+
+        [data-theme="light"] .role-row {
+            border-bottom: 1px dashed rgba(0,0,0,0.08);
+        }
+
+        /* Theme Toggle Styling */
+        .theme-toggle {
+            background: none;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--coral);
+            color: var(--coral);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Force Navigation to Stay Dark in Both Modes */
+        .primary-nav {
+            background: rgba(10, 10, 10, 0.95) !important;
+            color: #ffffff !important;
+        }
+
+        [data-theme="light"] .primary-nav {
+            background: rgba(10, 10, 10, 0.95) !important;
+            color: #ffffff !important;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.7) !important;
+        }
+
+        [data-theme="light"] .nav-link {
+            color: rgba(255, 255, 255, 0.7) !important;
+        }
+
+        .nav-link.active {
+            color: #ffffff !important;
+        }
+
+        [data-theme="light"] .nav-link.active {
+            color: #ffffff !important;
+        }
+
+        .theme-toggle {
+            color: #ffffff !important;
+        }
+
+        [data-theme="light"] .theme-toggle {
+            color: #ffffff !important;
+            border-color: rgba(255,255,255,0.3) !important;
+        }
+
+        .mobile-toggle {
+            color: #ffffff !important;
+        }
+
+        [data-theme="light"] .mobile-toggle {
+            color: #ffffff !important;
+        }
+
         /* =========================================
            4. HERO - Trinity Typography
            ========================================= */
@@ -341,6 +443,13 @@
                 radial-gradient(900px 540px at 80% 0%, rgba(249,111,110,0.10), transparent 60%),
                 linear-gradient(180deg, rgba(0,0,0,0), rgba(10,10,10,1));
             overflow: hidden;
+        }
+
+        [data-theme="light"] .hero {
+            background-image:
+                radial-gradient(900px 540px at 20% 0%, rgba(46,211,198,0.08), transparent 60%),
+                radial-gradient(900px 540px at 80% 0%, rgba(249,111,110,0.08), transparent 60%),
+                linear-gradient(180deg, rgba(255,255,255,0), #FAFAFA);
         }
         
         /* Animated background glow */
@@ -1312,14 +1421,19 @@
             </a>
             
             <div class="nav-right">
-                <nav class="nav-links">
-                    <a href="/index.html#portfolio" class="nav-link active">Portfolio</a>
-                    <a href="/insights/" class="nav-link">Insights</a>
-                    <a href="/TheHub/" class="nav-link">The Hub</a>
-                    <a href="https://portal.luis-gilberto.com" class="nav-link">Portal</a>
-                </nav>
-                <button class="mobile-toggle" id="mobileMenuBtn" aria-label="Open menu">
-                    <i class="fa-solid fa-bars"></i>
+                <div class="nav-links">
+                    <a href="#numbers" class="nav-link active">The Numbers</a>
+                    <a href="#story" class="nav-link">The Story</a>
+                    <a href="#resume" class="nav-link">The Resume</a>
+                </div>
+                
+                <!-- Theme Toggle -->
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle Theme">
+                    <i class="fas fa-sun" id="themeIcon"></i>
+                </button>
+
+                <button class="mobile-toggle" id="mobileMenuBtn" aria-label="Menu">
+                    <i class="fas fa-bars"></i>
                 </button>
             </div>
         </div>
@@ -1847,6 +1961,37 @@
                     }
                 });
             });
+        }
+
+        // =========================================
+        // 7. THEME TOGGLE
+        // =========================================
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const html = document.documentElement;
+
+        // Check local storage
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        html.setAttribute('data-theme', savedTheme);
+        updateIcon(savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateIcon(newTheme);
+        });
+
+        function updateIcon(theme) {
+            if (theme === 'light') {
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            } else {
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            }
         }
     </script>
 </body>
