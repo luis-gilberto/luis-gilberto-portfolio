@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Family Safety App Launch - Technical Blueprint | Luis Gilberto</title>
+    <link rel="icon" type="image/png" href="/insights/assets/icons/favicon-32x32.png">
+    
+    <!-- GOLD STANDARD TYPOGRAPHY -->
+    <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@400;600;700;800&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous"></script>
+    
+    <!-- CORE CSS -->
+    <link rel="stylesheet" href="assets/css/case-study-theme.css">
+    
+    <style>
+        /* --- 1. DOUBLE NAVIGATION SYSTEM --- */
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            /* Solid dark background with slight transparency for glass effect */
+            background: rgba(5, 5, 5, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            /* Reset padding and pointer events */
+            padding-bottom: 0;
+            pointer-events: auto;
+        }
+        .global-nav-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 2rem 3rem; pointer-events: auto;
+        }
+        /* Logo Sizing */
+        .logo-img { height: 48px; width: auto; display: block; }
+        .global-menu { display: flex; gap: 2rem; align-items: center; }
+        .global-link {
+            font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600;
+            letter-spacing: 0.05em; text-transform: uppercase; color: #666;
+            text-decoration: none; transition: color 0.3s;
+        }
+        .global-link:hover, .global-link.active { color: white; }
+        .global-link.active { border-bottom: 2px solid #008272; padding-bottom: 4px; }
+
+        .sub-nav-bar {
+            display: flex; justify-content: center; gap: 2.5rem;
+            padding-top: 0.5rem; pointer-events: auto;
+        }
+        .sub-link {
+            font-family: 'Inter', sans-serif; font-size: 0.95rem; color: #888;
+            text-decoration: none; transition: color 0.3s;
+        }
+        .sub-link:hover, .sub-link.active { color: white; }
+        .mobile-toggle { display: none; }
+
+        /* --- 2. HERO --- */
+        .case-hero {
+            position: relative; height: 100vh; display: flex; align-items: center;
+            background: #050505; overflow: hidden; margin-top: 0 !important;
+            padding-top: 140px;
+        }
+        .hero-video-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; z-index: 0; opacity: 0.8;
+        }
+        .hero-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(5,5,5,0.2), rgba(5,5,5,1)); z-index: 1;
+        }
+        .hero-content {
+            position: relative; z-index: 2; max-width: 1400px;
+            margin: 0 auto; padding: 0 2rem; width: 100%;
+        }
+
+        /* --- 3. LAYOUT & GRID --- */
+        .case-grid {
+            display: grid; grid-template-columns: 250px 1fr; gap: 5rem;
+            padding: 6rem 2rem; max-width: 1400px; margin: 0 auto;
+        }
+
+        /* Video Showcase */
+        .video-showcase-wrapper {
+            position: relative; width: 100%; padding-bottom: 56.25%;
+            background: #000; border-radius: 12px; overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .video-showcase-wrapper video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+        /* Process List (Rollout) */
+        .process-list { list-style: none; padding: 0; margin-top: 2rem; }
+        .process-item { border-top: 1px solid #333; padding: 2rem 0; display: grid; grid-template-columns: 150px 1fr; gap: 2rem; }
+        .process-phase { font-family: 'Big Shoulders Display'; color: #008272; font-size: 1.5rem; }
+        .process-desc { color: #aaa; font-size: 1rem; margin: 0; line-height: 1.6; }
+        .process-desc strong { color: white; display: block; margin-bottom: 0.25rem; }
+
+        /* KPI List (Internal Measures) */
+        .kpi-list { margin-top: 3rem; border-top: 1px solid #333; padding-top: 2rem; }
+        .kpi-item { display: flex; gap: 1rem; margin-bottom: 1rem; color: #888; font-size: 0.95rem; }
+        .kpi-bullet { color: #008272; font-weight: bold; }
+
+        /* GALLERY GRID */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .gallery-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            background: #111;
+        }
+        .gallery-item:hover { transform: translateY(-5px); }
+        .gallery-item img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            display: block;
+            opacity: 0.9;
+            transition: opacity 0.3s;
+        }
+        .gallery-item:hover img { opacity: 1; }
+        .gallery-caption {
+            padding: 1rem;
+            font-size: 0.85rem;
+            color: #888;
+            border-top: 1px solid #222;
+        }
+        .gallery-caption strong { color: white; display: block; margin-bottom: 4px; }
+
+        /* Lightbox */
+        .lightbox {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 2000; align-items: center; justify-content: center;
+        }
+        .lightbox.active { display: flex; }
+        .lightbox img { max-width: 90%; max-height: 90vh; border-radius: 4px; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
+        .lightbox-close { position: absolute; top: 2rem; right: 2rem; color: white; font-size: 2rem; cursor: pointer; }
+
+        /* Mobile */
+        @media (max-width: 968px) {
+            .logo-img { height: 32px; } /* Smaller on mobile */
+            .global-nav-bar { padding: 1rem 1.5rem; } /* Tighter mobile padding */
+            .mobile-toggle { display: block; }
+            .sub-nav-bar, .global-menu { display: none !important; }
+            
+            /* Ensure drawer behaves */
+            .mobile-drawer.is-open { display: flex !important; }
+
+            .mobile-toggle { color: white; font-size: 1.5rem; background: none; border: none; pointer-events: auto; }
+            .case-grid { grid-template-columns: 1fr; padding: 2rem 1.5rem; }
+            .sidebar { display: none; }
+            .hero-title { font-size: 3.5rem !important; }
+            .process-item { grid-template-columns: 1fr; gap: 0.5rem; }
+        }
+
+        /* --- MOBILE OPTIMIZATION OVERRIDES --- */
+        @media (max-width: 968px) {
+            /* 1. Collapse Grids */
+            .grid-3,
+            .stat-grid,
+            .gallery-grid {
+                grid-template-columns: 1fr !important;
+                gap: 2rem !important;
+            }
+
+            /* 2. Adjust Layout */
+            .case-grid {
+                grid-template-columns: 1fr !important;
+                padding: 2rem 1.5rem !important;
+                gap: 3rem !important;
+            }
+            
+            /* 3. Hide Desktop Elements */
+            .sidebar,
+            .sub-nav-bar,
+            .global-menu {
+                display: none !important;
+            }
+
+            /* 4. Show Mobile Controls */
+            .mobile-toggle {
+                display: block !important;
+            }
+            
+            .mobile-drawer.is-open {
+                display: flex !important;
+            }
+
+            /* 5. Typography Scaling */
+            .hero-title {
+                font-size: 3.5rem !important;
+                line-height: 1 !important;
+            }
+            .hero-subtitle {
+                font-size: 1.1rem !important;
+                max-width: 100% !important;
+            }
+            h2 {
+                font-size: 2.2rem !important;
+            }
+
+            /* 6. Footer Stacking */
+            .footer-grid-portfolio {
+                grid-template-columns: 1fr !important;
+                text-align: center;
+                gap: 3rem !important;
+            }
+            .footer-brand {
+                margin: 0 auto;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            /* 7. Hero Padding */
+            .case-hero {
+                min-height: auto !important;
+                padding-top: 120px !important;
+                padding-bottom: 4rem !important;
+            }
+            
+            /* 8. Logo Sizing */
+            .logo-img {
+                height: 32px !important;
+            }
+            .global-nav-bar {
+                padding: 1rem 1.5rem !important;
+            }
+        }
+    </style>
+</head>
+
+<body data-theme="dark">
+
+    <!-- 1. HEADER -->
+    <header class="site-header">
+        <div class="global-nav-bar">
+            <a href="index.html" class="brand-logo">
+                <picture>
+                    <!-- Mobile: Logomark -->
+                    <source media="(max-width: 968px)" srcset="assets/images/Logomark_White_a.png">
+                    <!-- Desktop: Full Logo -->
+                    <img src="assets/images/AUg_logo_White.png" alt="Luis Gilberto" class="logo-img">
+                </picture>
+            </a>
+            
+            <!-- Desktop Nav -->
+            <nav class="global-menu">
+                <a href="myexperience.html" class="global-link active">Portfolio</a>
+                <a href="insights/index.html" class="global-link">Insights</a>
+                <a href="/TheHub/" class="global-link">The Hub</a>
+                <a href="/about.html" class="global-link">Portal</a>
+            </nav>
+
+            <!-- Mobile Toggle -->
+            <button class="mobile-toggle" id="mobileMenuBtn" aria-label="Open Menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+        </div>
+
+        <!-- Desktop Subnav -->
+        <nav class="sub-nav-bar">
+            <a href="index.html" class="sub-link">Home</a>
+            <a href="timeline.html" class="sub-link">Timeline</a>
+            <a href="myexperience.html" class="sub-link active">Experience</a>
+            <a href="about.html" class="sub-link">About</a>
+        </nav>
+    </header>
+
+    <!-- MOBILE DRAWER -->
+    <div class="mobile-drawer" id="mobileDrawer" style="display:none; position:fixed; inset:0; background:#050505; z-index:2000; padding:2rem; flex-direction:column;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:3rem; align-items:center;">
+            <img src="assets/images/Logomark_White_a.png" style="height:32px; width:auto;">
+            <button id="drawerClose" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;">✕</button>
+        </div>
+        
+        <div class="drawer-content" style="overflow-y:auto;">
+            <div style="margin-bottom:3rem;">
+                <h3 style="font-family:'Playfair Display', serif; font-size:1.8rem; margin:0 0 0.5rem 0; color:white;">Luis Gilberto</h3>
+                <p style="color:#666; margin:0; font-size:0.9rem;">Creative Strategy</p>
+            </div>
+            
+            <div style="margin-bottom:3rem;">
+                <span style="display:block; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.15em; color:#666; margin-bottom:1rem; font-weight:700;">Global</span>
+                <a href="/" style="display:block; font-family:'Big Shoulders Display'; font-size:2.2rem; color:#FF6B6B; text-decoration:none; margin-bottom:0.5rem;">Portfolio</a>
+                <a href="/insights" style="display:block; font-family:'Big Shoulders Display'; font-size:2.2rem; color:white; text-decoration:none; margin-bottom:0.5rem;">Insights</a>
+                <a href="/TheHub/" style="display:block; font-family:'Big Shoulders Display'; font-size:2.2rem; color:white; text-decoration:none; margin-bottom:0.5rem;">The Hub</a>
+                <a href="/about.html" style="display:block; font-family:'Big Shoulders Display'; font-size:2.2rem; color:white; text-decoration:none; margin-bottom:0.5rem;">Portal</a>
+            </div>
+
+            <div>
+                <span style="display:block; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.15em; color:#666; margin-bottom:1rem; font-weight:700;">Portfolio</span>
+                <a href="index.html" style="display:block; font-size:1.1rem; color:#888; text-decoration:none; margin-bottom:1rem;">Home</a>
+                <a href="timeline.html" style="display:block; font-size:1.1rem; color:#888; text-decoration:none; margin-bottom:1rem;">Timeline</a>
+                <a href="myexperience.html" style="display:block; font-size:1.1rem; color:white; text-decoration:none; margin-bottom:1rem; border-left:2px solid #FF6B6B; padding-left:10px;">Experience</a>
+                <a href="about.html" style="display:block; font-size:1.1rem; color:#888; text-decoration:none; margin-bottom:1rem;">About</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. HERO -->
+    <section class="case-hero">
+        <!-- CINEMA LOOP: Autoplays silently in background -->
+        <video class="hero-video-bg" autoplay muted loop playsinline poster="assets/images/FSA/FSA_BG.png">
+            <source src="assets/videos/FSA_Hero.mp4" type="video/mp4">
+        </video>
+        
+        <!-- Dark Overlay for text readability -->
+        <div class="hero-overlay"></div>
+
+        <div class="hero-content">
+            <div class="hero-meta" style="margin-bottom: 1rem; display: flex; gap: 1rem;">
+                <span style="background: rgba(255,255,255,0.1); padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; letter-spacing: 1px;">MICROSOFT</span>
+                <span style="background: rgba(255,255,255,0.1); padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; letter-spacing: 1px;">GLOBAL LAUNCH</span>
+            </div>
+            <h1 class="hero-title" style="font-family: 'Big Shoulders Display'; font-size: 6rem; line-height: 0.9; margin-bottom: 1.5rem; text-transform: uppercase;">Peace of Mind<br>in Your Palm</h1>
+            <p class="hero-subtitle" style="font-size: 1.25rem; color: #b0b0b0; max-width: 600px; line-height: 1.6; letter-spacing: 1px; text-transform: uppercase;">The Technical Blueprint</p>
+        </div>
+    </section>
+
+    <!-- 3. MAIN CONTENT GRID -->
+    <div class="container case-grid">
+        
+        <!-- SIDEBAR -->
+        <aside class="sidebar" style="position: sticky; top: 150px; height: fit-content;">
+            <div class="sticky-toc">
+                <p style="font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; color: #666; margin-bottom: 1.5rem;">Blueprint</p>
+                <ul class="toc-list" style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 0.8rem;"><a href="#role" style="color: white; text-decoration: none;">01 Role & Challenge</a></li>
+                    <li style="margin-bottom: 0.8rem;"><a href="#orchestration" style="color: #666; text-decoration: none;">02 Orchestration</a></li>
+                    <li style="margin-bottom: 0.8rem;"><a href="#build" style="color: #666; text-decoration: none;">03 The Build</a></li>
+                    <li style="margin-bottom: 0.8rem;"><a href="#rollout" style="color: #666; text-decoration: none;">04 Rollout</a></li>
+                    <li style="margin-bottom: 0.8rem;"><a href="#gallery" style="color: #666; text-decoration: none;">05 Asset Gallery</a></li>
+                    <li style="margin-bottom: 0.8rem;"><a href="#kpi" style="color: #666; text-decoration: none;">06 KPI Ownership</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- CONTENT -->
+        <main class="content">
+
+            <!-- 01 ROLE -->
+            <section id="role" style="margin-bottom: 8rem;">
+                <h2 style="font-family: 'Big Shoulders Display'; font-size: 3rem; margin-bottom: 1.5rem; color: #008272;">Role & Challenge</h2>
+                <p class="lead" style="font-size: 1.3rem; line-height: 1.7; color: #e0e0e0; margin-bottom: 2rem;">As Creative Strategy Lead, I architected the global launch of Microsoft Family Safety. My remit: position the app as a wellness tool, not a surveillance mechanism; then build the campaign system to scale that message across digital, social, and in-app surfaces.</p>
+                <p style="font-size: 1.1rem; line-height: 1.8; color: #a0a0a0;">The product solved a real tension: parents wanted visibility, but kids needed autonomy. We had to reframe safety as connection. The campaign couldn’t feel like a warning; it had to feel like a shared exhale.</p>
+            </section>
+
+            <!-- STYLIZED PULL QUOTE -->
+            <div class="quote-card" style="background: linear-gradient(145deg, #1a1a1a, #0d0d0d); border: 1px solid rgba(255,255,255,0.05); padding: 4rem 2rem; border-radius: 12px; text-align: center; margin: 4rem 0;">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="#FF6B6B" style="opacity:0.8; margin-bottom:1.5rem;"><path d="M14.017 21L14.017 18C14.017 16.8954 14.9124 16 16.017 16H19.017C19.5693 16 20.017 15.5523 20.017 15V9C20.017 8.44772 19.5693 8 19.017 8H15.017C14.4647 8 14.017 8.44772 14.017 9V11C14.017 11.5523 13.5693 12 13.017 12H12.017V5H22.017V15C22.017 18.3137 19.3307 21 16.017 21H14.017ZM5.0166 21L5.0166 18C5.0166 16.8954 5.91203 16 7.0166 16H10.0166C10.5689 16 11.0166 15.5523 11.0166 15V9C11.0166 8.44772 10.5689 8 10.0166 8H6.0166C5.46432 8 5.0166 8.44772 5.0166 9V11C5.0166 11.5523 4.56889 12 4.0166 12H3.0166V5H13.0166V15C13.0166 18.3137 10.3303 21 7.0166 21H5.0166Z"></path></svg>
+                <p style="font-family: 'Inter', sans-serif; font-size: 1.8rem; font-weight: 500; color: white; line-height: 1.4; max-width: 20ch; margin: 0 auto;">
+                    We didn't lead with control. We led with clarity.
+                </p>
+            </div>
+
+            <!-- 02 ORCHESTRATION -->
+            <section id="orchestration" style="margin-bottom: 8rem;">
+                <h2 style="font-family: 'Big Shoulders Display'; font-size: 2.5rem; margin-bottom: 1.5rem;">Orchestration</h2>
+                <p style="font-size: 1.1rem; line-height: 1.8; color: #a0a0a0; margin-bottom: 3rem;">I aligned product, marketing, and creative teams across five time zones. We used Microsoft’s Campaign Architecture to build a modular system that could flex across cultures and channels. I led the development of the Bill of Materials, ensuring every asset (from hero film to in-app onboarding) reinforced the same emotional truth.</p>
+                
+                <div class="video-showcase-wrapper">
+                    <video controls preload="metadata" poster="assets/images/FSA/FSA_video_poster.jpg" style="width: 100%; height: 100%; object-fit: cover;">
+                        <source src="assets/videos/FSA_Hero.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+
+                <!-- VISUAL ANCHOR: The Heart Motif -->
+                <figure class="visual-break" style="margin-top: 3rem; margin-bottom: 2rem;">
+                    <img src="assets/images/ffc4.jpg" alt="Family Safety Heart Motif" style="border-radius: 8px; width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
+                    <figcaption style="text-align: center; color: #666; font-size: 0.9rem; margin-top: 1rem; font-style: italic;">
+                        The stylized heart motif became the visual anchor for trust and connection.
+                    </figcaption>
+                </figure>
+            </section>
+
+            <!-- 03 BUILD -->
+            <section id="build" style="margin-bottom: 8rem;">
+                <h2 style="font-family: 'Big Shoulders Display'; font-size: 2.5rem; margin-bottom: 1.5rem;">The Build</h2>
+                <div class="grid-3" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;">
+                    <div class="card" style="background: #111; padding: 2rem; border-radius: 8px;">
+                        <h3 style="color: white; margin-bottom: 1rem;">Narrative Assets</h3>
+                        <p style="color: #888; font-size: 0.95rem;">Crafted "Vanessa’s Journey" to show long-term product value. Directed a non-verbal hero film to ensure accessibility and emotional clarity.</p>
+                    </div>
+                    <div class="card" style="background: #111; padding: 2rem; border-radius: 8px;">
+                        <h3 style="color: white; margin-bottom: 1rem;">Digital Ecosystem</h3>
+                        <p style="color: #888; font-size: 0.95rem;">Designed social content, display banners, and in-store activations. Built onboarding flows that reinforced trust.</p>
+                    </div>
+                    <div class="card" style="background: #111; padding: 2rem; border-radius: 8px;">
+                        <h3 style="color: white; margin-bottom: 1rem;">Localization</h3>
+                        <p style="color: #888; font-size: 0.95rem;">Partnered with regional teams to adapt messaging for cultural nuance while preserving brand integrity.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 04 ROLLOUT -->
+            <section id="rollout" style="margin-bottom: 8rem;">
+                <h2 style="font-family: 'Big Shoulders Display'; font-size: 2.5rem; margin-bottom: 1.5rem;">Rollout Strategy</h2>
+                <ul class="process-list">
+                    <li class="process-item">
+                        <span class="process-phase">Teaser</span>
+                        <p class="process-desc"><strong>Connection vs. Control</strong>Introduced the emotional tension.</p>
+                    </li>
+                    <li class="process-item">
+                        <span class="process-phase">Hero Film</span>
+                        <p class="process-desc"><strong>Core Narrative</strong>Delivered the story in a universally relatable format.</p>
+                    </li>
+                    <li class="process-item">
+                        <span class="process-phase">Activation</span>
+                        <p class="process-desc"><strong>Deployment</strong>Assets across retail, app surfaces, and social channels.</p>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- 05 GALLERY -->
+            <section id="gallery" style="margin-bottom: 8rem;">
+                <h2 style="font-family: 'Big Shoulders Display'; font-size: 2.5rem; margin-bottom: 1.5rem;">Campaign Gallery</h2>
+                <div class="gallery-grid">
+                    <div class="gallery-item" onclick="openLightbox(this)">
+                        <img src="assets/images/ffc1.jpg" alt="Content Filters">
+                        <div class="gallery-caption"><strong>Content Filters UI</strong>Intuitive and empowering.</div>
+                    </div>
+                    <div class="gallery-item" onclick="openLightbox(this)">
+                        <img src="assets/images/ffc2.jpg" alt="Screen Time">
+                        <div class="gallery-caption"><strong>Screen Time</strong>Visualized autonomy.</div>
+                    </div>
+                    <div class="gallery-item" onclick="openLightbox(this)">
+                        <img src="assets/images/ffc3.jpg" alt="Usage Reports">
+                        <div class="gallery-caption"><strong>Usage Reports</strong>Transparency and trust.</div>
+                    </div>
+                    <div class="gallery-item" onclick="openLightbox(this)">
+                        <img src="assets/images/ffc4.jpg" alt="Iconography">
+                        <div class="gallery-caption"><strong>Brand Iconography</strong>Stylized heart motif.</div>
+                    </div>
+                    <div class="gallery-item" onclick="openLightbox(this)">
+                        <img src="assets/images/ffc5.jpg" alt="Textures">
+                        <div class="gallery-caption"><strong>Textures</strong>Softness, safety, modernity.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 06 KPI OWNERSHIP -->
+            <section id="kpi" style="margin-bottom: 4rem;">
+                <h2 style="font-family: 'Big Shoulders Display'; font-size: 3rem; margin-bottom: 1.5rem; color: #008272;">KPI Ownership</h2>
+                
+                <h3 style="color: white; margin-bottom: 1rem; font-size: 1.2rem;">Reported Campaign Outcomes</h3>
+                <div class="stat-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-bottom: 4rem;">
+                    <div class="stat-card" style="text-align: center;">
+                        <span style="display: block; font-size: 3rem; font-family: 'Big Shoulders Display'; font-weight: 800; color: white;">100M+</span>
+                        <span style="color: #666; font-size: 0.9rem;">Impressions</span>
+                    </div>
+                    <div class="stat-card" style="text-align: center;">
+                        <span style="display: block; font-size: 3rem; font-family: 'Big Shoulders Display'; font-weight: 800; color: white;">High</span>
+                        <span style="color: #666; font-size: 0.9rem;">Video Completion Rate</span>
+                    </div>
+                    <div class="stat-card" style="text-align: center;">
+                        <span style="display: block; font-size: 3rem; font-family: 'Big Shoulders Display'; font-weight: 800; color: white;">Lift</span>
+                        <span style="color: #666; font-size: 0.9rem;">In App Downloads</span>
+                    </div>
+                </div>
+
+                <div class="kpi-list">
+                    <h3 style="color: white; margin-bottom: 1rem; font-size: 1.2rem;">Internal Success Measures</h3>
+                    <div class="kpi-item"><span class="kpi-bullet">✓</span> Driving engagement performance across paid and organic channels.</div>
+                    <div class="kpi-item"><span class="kpi-bullet">✓</span> Ensuring positive sentiment through narrative clarity and creative alignment.</div>
+                    <div class="kpi-item"><span class="kpi-bullet">✓</span> Supporting adoption growth through coordinated rollout sequencing.</div>
+                    <div class="kpi-item"><span class="kpi-bullet">✓</span> Partnering with regional teams to validate cultural resonance.</div>
+                </div>
+
+                <!-- REFLECTION BRIDGE -->
+                <div class="bridge-container" style="background: #111; padding: 3rem; border-radius: 12px; border-left: 4px solid #008272; margin-top: 4rem;">
+                    <a href="/insights/family-safety-launch/index.html" style="text-decoration: none; display: block; color: inherit;">
+                        <span style="font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; color: #008272; display: block; margin-bottom: 0.5rem;">The Reflection</span>
+                        <h3 style="font-family: 'Big Shoulders Display'; font-size: 2rem; color: white; margin-bottom: 1rem;">The Philosophy Behind the Launch</h3>
+                        <p style="color: #aaa; margin-bottom: 1.5rem; line-height: 1.6;">"We didn’t just launch a product; we launched a philosophy." Read my thoughts on earning trust during a global crisis.</p>
+                        <span style="color: white; font-weight: 600;">Read the Article &rarr;</span>
+                    </a>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- LIGHTBOX -->
+    <div id="lightbox" class="lightbox" onclick="closeLightbox(event)">
+        <span class="lightbox-close" onclick="closeLightbox(event)">✕</span>
+        <img id="lightbox-img" src="" alt="">
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="portfolio-footer">
+        <div class="footer-grid-portfolio">
+            <div class="pf-brand">
+                <a href="/index.html"><img src="/assets/images/Logomark_White_a.png" alt="LG"></a>
+                <p class="pf-tagline">Making technology feel human through clarity, beautiful execution, and systems that scale.</p>
+                <div class="pf-social">
+                    <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="social-icon"><i class="far fa-envelope"></i></a>
+                </div>
+            </div>
+            <div class="pf-col">
+                <h4>Ecosystem</h4>
+                <a href="/index.html" class="pf-link">Portfolio</a>
+                <a href="/TheHub/" class="pf-link">The Hub</a>
+                <a href="/insights/" class="pf-link">Insights</a>
+                <a href="https://portal.luis-gilberto.com" class="pf-link" style="color:#F96F6E;">The Portal &rarr;</a>
+            </div>
+            <div class="pf-col">
+                <h4>Connect</h4>
+                <a href="/contact.html" class="pf-link">Contact</a>
+                <a href="/about.html" class="pf-link">About Me</a>
+                <a href="#" class="pf-link">LinkedIn</a>
+            </div>
+            <div class="pf-col">
+                <div class="pf-status">
+                    <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
+                        <span style="width:8px; height:8px; background:#2ED3C6; border-radius:50%;"></span>
+                        <span style="font-weight:700; font-size:0.8rem; text-transform:uppercase;">Accepting Projects</span>
+                    </div>
+                    <a href="/contact.html" style="color:white; font-size:0.9rem; text-decoration:none;">Start a Conversation &rarr;</a>
+                </div>
+            </div>
+        </div>
+        <div class="pf-copyright">© 2026 Luis Gilberto. All Rights Reserved.</div>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script>
+        const menuBtn = document.getElementById('mobileMenuBtn'); 
+        const drawer = document.getElementById('mobileDrawer'); 
+        const closeDrawer = document.getElementById('drawerClose'); 
+    
+        function toggleMenu() { 
+            if (drawer.style.display === 'none') { 
+                drawer.style.display = 'flex'; 
+                document.body.style.overflow = 'hidden'; // Lock scroll 
+            } else { 
+                drawer.style.display = 'none'; 
+                document.body.style.overflow = ''; // Unlock scroll 
+            } 
+        } 
+    
+        if(menuBtn) menuBtn.addEventListener('click', toggleMenu); 
+        if(closeDrawer) closeDrawer.addEventListener('click', toggleMenu);
+
+        function openLightbox(element) {
+            const img = element.querySelector('img');
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            lightboxImg.src = img.src;
+            lightbox.classList.add('active');
+        }
+        function closeLightbox(event) {
+            if(event.target !== document.getElementById('lightbox-img')) {
+                document.getElementById('lightbox').classList.remove('active');
+            }
+        }
+        
+        // ScrollSpy
+        const sections = document.querySelectorAll('section');
+        const navLi = document.querySelectorAll('.toc-list a');
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 250) { current = section.getAttribute('id'); }
+            });
+            navLi.forEach(a => {
+                a.style.color = '#666';
+                if (a.getAttribute('href').includes(current)) { a.style.color = 'white'; }
+            });
+        });
+    </script>
+</body>
+</html>
