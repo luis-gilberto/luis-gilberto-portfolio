@@ -35,6 +35,30 @@
             }
         }
     </script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const observerOptions = { root: null, threshold: 0.4 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const container = entry.target;
+                    const nodes = container.querySelectorAll('.flow-node');
+                    const connectors = container.querySelectorAll('.flow-connector');
+                    setTimeout(() => { nodes[0]?.classList.add('active'); }, 200);
+                    setTimeout(() => { connectors[0]?.classList.add('active'); }, 600);
+                    setTimeout(() => { nodes[1]?.classList.add('active'); }, 1000);
+                    setTimeout(() => { connectors[1]?.classList.add('active'); }, 1400);
+                    setTimeout(() => { nodes[2]?.classList.add('active'); }, 1800);
+                    setTimeout(() => { connectors[2]?.classList.add('active'); }, 2200);
+                    setTimeout(() => { nodes[3]?.classList.add('active'); }, 2600);
+                    observer.unobserve(container);
+                }
+            });
+        }, observerOptions);
+        const flowSystem = document.getElementById('flow-system');
+        if(flowSystem) observer.observe(flowSystem);
+    });
+    </script>
 
     <style>
         /* ==========================================
@@ -54,6 +78,7 @@
             --border-subtle: rgba(0, 0, 0, 0.06);
             --border-strong: rgba(0, 0, 0, 0.12);
             --card-bg: #FFFFFF;
+            --card-hover-overlay: rgba(0, 0, 0, 0.02);
             --nav-bg: rgba(255, 255, 255, 0.95);
             --thread-line: rgba(0, 0, 0, 0.06);
             --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.04);
@@ -71,6 +96,7 @@
             --border-subtle: rgba(255, 255, 255, 0.08);
             --border-strong: rgba(255, 255, 255, 0.15);
             --card-bg: rgba(255, 255, 255, 0.03);
+            --card-hover-overlay: rgba(255, 255, 255, 0.05);
             --nav-bg: rgba(5, 5, 5, 0.95);
             --thread-line: rgba(255, 255, 255, 0.08);
             --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.4);
@@ -155,13 +181,24 @@
 
         /* Controls */
         .theme-toggle {
-            width: 40px; height: 40px; border-radius: 50%;
-            background: rgba(125,125,125,0.1); border: 1px solid var(--border-strong);
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; color: var(--text-primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #FFFFFF;
             transition: all 0.3s ease;
         }
-        .theme-toggle:hover { background: var(--coral); border-color: var(--coral); color: white; }
+
+        .theme-toggle:hover {
+            background: var(--coral);
+            border-color: var(--coral);
+            color: white;
+        }
         
         /* Hide/Show Icons based on Theme */
         [data-theme="dark"] .sun-icon { display: block; }
@@ -177,7 +214,7 @@
             gap: 6px; cursor: pointer; z-index: 10002;
         }
         .nav-toggle-bar {
-            width: 24px; height: 2px; background-color: var(--text-primary);
+            width: 24px; height: 2px; background-color: #FFFFFF !important;
             transition: all 0.3s ease;
         }
         .mobile-nav-toggle.open .nav-toggle-bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
@@ -188,9 +225,8 @@
            MOBILE DRAWER
            ========================================== */
         .mobile-menu-overlay {
-            position: fixed; inset: 0; background: var(--bg-primary);
-            z-index: 10001;
-            padding: 8rem 2rem 2rem;
+            position: fixed; inset: 0; background: #0A0A0A !important;
+            z-index: 10001; padding: 8rem 2rem 2rem;
             display: flex; flex-direction: column; gap: 2rem;
             transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             overflow-y: auto;
@@ -198,10 +234,10 @@
         .mobile-menu-overlay.active { transform: translateX(0); }
 
         .mobile-link-group { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; }
-        .mobile-label { font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.15em; margin-bottom: 0.5rem; }
-        .mobile-link.main { font-family: 'Big Shoulders Display', sans-serif; font-size: 2.5rem; font-weight: 700; line-height: 1.1; color: var(--text-primary); text-decoration: none; }
-        .mobile-link.sub { font-family: 'Inter', sans-serif; font-size: 1.1rem; font-weight: 500; color: var(--text-secondary); text-decoration: none; padding-left: 1rem; border-left: 2px solid transparent; }
-        .mobile-link:hover, .mobile-link.active { color: var(--coral); }
+        .mobile-label { font-size: 0.8rem; text-transform: uppercase; color: #666666 !important; letter-spacing: 0.15em; margin-bottom: 0.5rem; }
+        .mobile-link.main { font-family: 'Big Shoulders Display', sans-serif; font-size: 2.5rem; font-weight: 700; line-height: 1.1; color: #FFFFFF !important; text-decoration: none; }
+        .mobile-link.sub { font-family: 'Inter', sans-serif; font-size: 1.1rem; font-weight: 500; color: #A0A0A0 !important; text-decoration: none; padding-left: 1rem; border-left: 2px solid transparent; }
+        .mobile-link:hover, .mobile-link.active { color: var(--coral) !important; }
         .mobile-link.sub.active { border-left-color: var(--coral); font-weight: 700; }
 
         /* ==========================================
@@ -224,10 +260,17 @@
         .architecture-grid { 
             display: grid; 
             gap: 1.5rem; 
-            /* Default Mobile/Tablet: Auto-fit (keeps it responsive) */ 
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); 
+            /* Default Mobile: 1 Column stack */ 
+            grid-template-columns: 1fr; 
             margin-top: 3rem; 
         } 
+        
+        /* Tablet/Intermediate: Force 2x2 Grid (Avoids 3x1 orphan) */
+        @media (min-width: 600px) {
+            .architecture-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
         
         /* Desktop Override: Force 4 Columns */ 
         @media (min-width: 1200px) { 
@@ -248,9 +291,13 @@
         
         .arch-card:hover { 
             transform: translateY(-8px); 
-            background: linear-gradient(180deg, var(--card-bg) 0%, rgba(255,255,255,0.05) 100%); /* Subtle gradient shift */
+            background: var(--card-bg);
             border-color: var(--coral); 
             box-shadow: var(--shadow-hover);
+        }
+        .arch-card:hover .arch-desc { 
+            color: var(--text-secondary); 
+            opacity: 1; 
         }
 
         /* Icon Circle Animation */
@@ -264,7 +311,15 @@
 
         .arch-card:hover .icon-circle { 
             transform: scale(1.1); 
-            background: rgba(255,255,255,0.05); 
+            background: transparent; 
+        }
+        [data-theme="light"] .arch-card { 
+            background: #FFFFFF; 
+            border: 1px solid rgba(0, 0, 0, 0.1); 
+        }
+        [data-theme="light"] .arch-card:hover { 
+            background: #FAFAFA; 
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12); 
         }
 
         /* Specific Glows based on card role */
@@ -304,30 +359,106 @@
             background: var(--card-bg); border: 1px solid var(--border-subtle); border-radius: 16px; 
             padding: 2rem 1.5rem; text-align: center; width: 220px; position: relative; z-index: 2; 
         }
-        
-        /* Flow Connector Animation */
-        @keyframes flowLine { 
-            0% { width: 0%; opacity: 0; } 
-            100% { width: 100%; opacity: 1; } 
+
+        /* Flow Link Styles */
+        .flow-link { 
+            display: block; 
+            text-decoration: none; 
+            color: var(--text-primary); 
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; 
+        } 
+        .flow-link:hover { 
+            transform: translateY(-4px); 
+            border-color: var(--teal); 
+            box-shadow: var(--shadow-hover); 
+        }
+
+        /* Anchor Offset Fix */
+        #pillars, 
+        #how-it-works,
+        #diagnostic { 
+            scroll-margin-top: 140px; /* 72px header + 48px subnav + buffer */ 
         } 
         
-        .flow-connector { 
-            flex-grow: 1; height: 1px; background: var(--border-strong); position: relative; min-width: 30px; margin: 0 15px; 
+        /* QUICK DIAGNOSTIC STYLES */
+        .section-diagnostic { background: var(--bg-tertiary); padding: 5rem 0; }
+        
+        .diagnostic-card { 
+            background: rgba(255,255,255,0.03); 
+            border: 1px solid var(--border-subtle); 
+            border-radius: 20px; 
+            padding: 3rem; 
+            display: grid; 
+            grid-template-columns: 1.6fr 1fr; 
+            gap: 2.5rem; 
+            box-shadow: var(--shadow-soft); 
+            position: relative; 
+            overflow: hidden; 
         }
         
-        .flow-connector::after { 
-            content: ''; 
-            position: absolute; 
-            top: 0; left: 0; bottom: 0; 
-            background: var(--teal); 
-            width: 0%; /* Start empty */ 
-            transition: width 0.5s ease; 
+        .diag-content { position: relative; z-index: 2; }
+        
+        .diag-label {
+            display: inline-block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--teal);
+            border: 1px solid var(--teal);
+            padding: 0.4rem 0.8rem;
+            border-radius: 50px;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .diag-heading {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        
+        .diag-desc {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .diag-visual { 
+            position: relative; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        
+        /* Visual Decoration */
+        .diag-circle {
+            width: 200px; height: 200px;
+            border-radius: 50%;
+            border: 1px solid var(--teal);
+            position: absolute;
+            opacity: 0.2;
+        }
+        .diag-circle:nth-child(1) { width: 200px; height: 200px; border-style: dashed; animation: spinSlow 20s linear infinite; }
+        .diag-circle:nth-child(2) { width: 140px; height: 140px; border-color: var(--coral); opacity: 0.3; }
+        
+        @keyframes spinSlow { to { transform: rotate(360deg); } }
+
+        @media (max-width: 900px) {
+            .diagnostic-card { grid-template-columns: 1fr; text-align: center; padding: 2rem; }
+            .diag-visual { display: none; } /* Hide visual on mobile to save space */
+            .diag-heading { font-size: 2rem; }
         } 
         
-        /* On hover of container, fill the lines */ 
-        .flow-container:hover .flow-connector::after { 
-            width: 100%; 
+        .scroll-section h2 { 
+            scroll-margin-top: 140px; 
+            color: var(--text-primary);
         }
+        
+        
         .flow-sub { font-size: 0.7rem; letter-spacing: 0.15em; color: var(--text-secondary); text-transform: uppercase; display: block; margin-bottom: 0.5rem; }
         .flow-title { font-family: 'Big Shoulders Display'; font-size: 1.25rem; font-weight: 700; }
 
@@ -380,13 +511,7 @@
             .mobile-nav-toggle { display: flex; }
             .primary-nav { padding: 0 1.5rem; }
             
-            /* Stack Flow Vertically */
-            .flow-container { flex-direction: column; gap: 0; }
-            .flow-node { width: 100%; max-width: 300px; margin: 0 auto; }
-            .flow-connector { 
-                width: 1px; height: 40px; min-width: 0; margin: 0 auto; 
-                background: var(--border-strong);
-            }
+            
             
             .footer-grid { grid-template-columns: 1fr; text-align: center; gap: 2rem; }
             .footer-brand, .footer-social { align-items: center; justify-content: center; }
@@ -403,10 +528,22 @@
         }
     </style>
 </head>
-<body>
+<body class="bg-dark">
+    <!-- Ambient Background Layer -->
+    <div class="ambient-bg"></div>
 
-    <!-- HEADER -->
-    <nav class="primary-nav">
+    <!-- Hub Activation Pulse -->
+    <div class="hub-pulse">
+        <div class="pulse-ring"></div>
+        <div class="pulse-ring"></div>
+        <div class="pulse-ring"></div>
+    </div>
+
+    
+
+    <div id="main-content" style="opacity: 0; transition: opacity 2s ease;">
+        <!-- HEADER -->
+        <nav class="primary-nav">
         <div class="hub-container nav-inner">
             <!-- LEFT: Brand -->
             <a href="/index.html" class="nav-brand">
@@ -426,11 +563,11 @@
 
                 <!-- Controls -->
                 <div class="nav-controls">
-                    <a href="https://portal.luis-gilberto.com/auth/signin" class="nav-link" target="_blank" style="margin-right: 12px; font-size: 11px;">Client login</a>
                     <button class="theme-toggle" id="themeToggle" aria-label="Toggle Theme">
                         <i class="fas fa-sun sun-icon"></i>
                         <i class="fas fa-moon moon-icon"></i>
                     </button>
+                    <a href="https://portal.luis-gilberto.com/auth/signin" class="nav-link" target="_blank" style="font-size: 11px;">Client login</a>
                     <button class="mobile-nav-toggle" id="mobileToggle" aria-label="Menu">
                         <span class="nav-toggle-bar"></span>
                         <span class="nav-toggle-bar"></span>
@@ -472,11 +609,11 @@
             <!-- Left Column: Content -->
             <div class="hero-content">
                 <h1 class="hero-headline">STRATEGY,<br>OPERATIONALIZED.</h1>
-                <p class="hero-subhead">The Hub is the strategic system I use to create meaningful progress. It reveals what’s slowing you down, clarifies what matters most, and builds a plan designed to deliver real outcomes. Shaped by fifteen years of consumer-first marketing, it’s built for clarity, momentum, and execution.</p>
+                <p class="hero-subhead hub-hero-desc">The Hub is the <span class="ra">strategic system</span> I use to create <span class="ra">meaningful progress</span>. It reveals <span class="ra">what’s slowing you down</span>, clarifies <span class="ra">what matters most</span>, and builds a plan designed to deliver <span class="ra">real outcomes</span>. Shaped by fifteen years of <span class="ra">consumer-first marketing</span>, it’s built for <span class="ra">clarity, momentum, and execution</span>.</p>
                 
                 <div class="cta-buttons-hero">
+                    <a href="#pillars" class="btn-teal">Explore the pillars</a>
                     <a href="#how-it-works" class="btn-coral">See how The Hub works</a>
-                    <a href="https://www.luis-gilberto.com/TheHub/" class="btn-teal">Explore the pillars</a>
                 </div>
             </div>
 
@@ -497,7 +634,7 @@
     <style>
         /* HERO SECTION OVERRIDES */
         .hero-section {
-            background-color: #0A0A0A;
+            background-color: var(--bg-primary);
             padding: 4rem 0 0;
             position: relative;
             overflow: hidden;
@@ -519,7 +656,7 @@
             font-weight: 800;
             font-size: clamp(3.5rem, 5vw, 5.5rem);
             line-height: 0.95;
-            color: #FFFFFF;
+            color: var(--text-primary);
             margin-bottom: 1.5rem;
             text-transform: uppercase;
         }
@@ -528,7 +665,7 @@
             font-family: 'Inter', sans-serif;
             font-weight: 300;
             font-size: 1.125rem;
-            color: #A0A0A0;
+            color: var(--text-secondary);
             line-height: 1.6;
             margin-bottom: 2.5rem;
             max-width: 540px;
@@ -592,14 +729,14 @@
 
         /* Definition Strip */
         .definition-strip {
-            background-color: #141414;
+            background-color: var(--bg-alt);
             padding: 2.5rem 0;
             width: 100%;
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
         .definition-text {
-            color: #FFFFFF;
+            color: var(--text-primary);
             text-align: center;
             font-family: 'Inter', sans-serif;
             font-size: 1.1rem;
@@ -634,13 +771,164 @@
                 order: -1; /* Image top on mobile */
             }
         }
+
+        /* ========================================= 
+           Read Assist (Inter) - hero paragraph 
+           Teal sweep + staggered semibold keywords 
+           ========================================= */ 
+        .hub-hero-desc{ 
+          position: relative; 
+          font-variant-ligatures: none; 
+          -webkit-font-smoothing: antialiased; 
+          text-rendering: geometricPrecision; 
+        } 
+
+        /* Soft TEAL mist sweep (subtle, premium) */ 
+        .hub-hero-desc::after{ 
+          content: ""; 
+          position: absolute; 
+          left: -10px; 
+          right: -10px; 
+          top: -10px; 
+          bottom: -10px; 
+          pointer-events: none; 
+          opacity: 0; 
+          border-radius: 16px; 
+          background: radial-gradient( 
+            70% 90% at 10% 15%, 
+            rgba(27, 166, 166, 0.07) 0%, 
+            rgba(27, 166, 166, 0.03) 35%, 
+            rgba(27, 166, 166, 0.00) 70% 
+          ); 
+          filter: blur(10px); 
+          transition: opacity 220ms ease; 
+        } 
+        
+        .hub-hero-desc:hover::after{ 
+          opacity: 1; 
+        } 
+
+        /* Keywords start neutral */ 
+        .hub-hero-desc .ra{ 
+          font-weight: 400; 
+          opacity: 0.78; 
+          transition: font-weight 260ms ease, opacity 260ms ease; 
+        } 
+        
+        /* Keywords activate only when JS adds .is-on */ 
+        .hub-hero-desc .ra.is-on{ 
+          font-weight: 600; 
+          opacity: 0.98; 
+        }
+        
+        /* Accessibility: reduced motion */ 
+        @media (prefers-reduced-motion: reduce){ 
+          .hub-hero-desc::after, 
+          .hub-hero-desc .ra{ 
+            transition: none !important; 
+          } 
+        }
+
+        /* ==========================================
+           HUB REVEAL PAYOFF & ARTIFACTS
+           ========================================== */
+        .ambient-bg {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(249, 111, 110, 0.03) 0%, transparent 70%);
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 2s ease;
+        }
+
+        .ambient-bg.active {
+            opacity: 1;
+        }
+
+        /* Hub Pulse Effect */
+        .hub-pulse {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            z-index: 10001; /* Above loader overlay */
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .pulse-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid #F96F6E;
+            opacity: 0;
+        }
+
+        .hub-pulse.active {
+            animation: hubActivation 2s ease-out forwards;
+        }
+
+        .hub-pulse.active .pulse-ring:nth-child(1) {
+            animation: pulseExpand 2s ease-out 0s forwards;
+        }
+
+        .hub-pulse.active .pulse-ring:nth-child(2) {
+            animation: pulseExpand 2s ease-out 0.3s forwards;
+        }
+
+        .hub-pulse.active .pulse-ring:nth-child(3) {
+            animation: pulseExpand 2s ease-out 0.6s forwards;
+        }
+
+        @keyframes hubActivation {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        @keyframes pulseExpand {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(15);
+                opacity: 0;
+            }
+        }
+
+        #pillars { color: var(--text-primary) !important; }
+        .section-flow { background: var(--bg-alt); padding: 4rem 0; }
+        .flow-container { display: flex; align-items: stretch; justify-content: center; gap: 0; margin-top: 3rem; max-width: 1100px; margin-left: auto; margin-right: auto; position: relative; }
+        .flow-node { background: var(--card-bg); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 1.5rem; width: 220px; text-decoration: none; text-align: left; transition: all 0.3s ease; position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: space-between; min-height: 140px; }
+        .node-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border-strong); transition: background 0.3s ease, box-shadow 0.3s ease; }
+        .flow-title { font-size: 1.25rem; color: var(--text-primary); margin-bottom: 0.25rem; font-family: 'Big Shoulders Display', sans-serif; font-weight: 700; }
+        .flow-desc { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4; }
+        .flow-sub { font-size: 0.7rem; letter-spacing: 0.15em; color: var(--text-secondary); text-transform: uppercase; }
+        .flow-node.active { border-color: var(--teal); background: rgba(46, 211, 198, 0.03); transform: translateY(-4px); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .flow-node.active .status-dot { background: var(--teal); box-shadow: 0 0 10px var(--teal); }
+        .flow-node.node-portal.active { border-color: var(--coral); background: rgba(249, 111, 110, 0.03); }
+        .flow-node.node-portal.active .status-dot { background: var(--coral); box-shadow: 0 0 10px var(--coral); }
+        .flow-connector { flex-grow: 1; height: 1px; background: var(--border-subtle); align-self: center; position: relative; min-width: 40px; }
+        .signal-line { position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: linear-gradient(90deg, transparent, var(--teal), var(--teal)); opacity: 0; transition: width 0.8s ease, opacity 0.3s ease; }
+        .flow-connector.active .signal-line { width: 100%; opacity: 1; }
+        @media (max-width: 900px) { .flow-container { flex-direction: column; align-items: center; gap: 0; } .flow-node { width: 100%; max-width: 340px; min-height: auto; margin-bottom: 0; } .flow-connector { width: 1px; height: 40px; min-width: 0; margin: 0; background: var(--border-subtle); } .signal-line { width: 1px; height: 0%; top: 0; left: 0; background: var(--teal); } .flow-connector.active .signal-line { height: 100%; width: 1px; } }
+
+        
     </style>
 
     <!-- ARCHITECTURE CARDS -->
     <section class="scroll-section">
         <div class="hub-container">
             <div style="text-align: center; margin-bottom: 3rem;">
-                <h2 style="font-family:'Big Shoulders Display'; font-size:3rem; margin-bottom:0.5rem;">The Architecture</h2>
+                <h2 id="pillars" style="font-family:'Big Shoulders Display'; font-size:3rem; margin-bottom:0.5rem; color:var(--text-primary) !important;">The Architecture</h2>
                 <p style="color:var(--text-secondary);">Four distinct arms. One integrated system.</p>
             </div>
 
@@ -681,33 +969,82 @@
     <section class="section-flow" id="how-it-works">
         <div class="hub-container">
             <div style="text-align: center; margin-bottom: 3rem;">
-                <h2 style="font-family:'Big Shoulders Display'; font-size:3rem; margin-bottom:0.5rem;">The Flow</h2>
+                <h2 style="font-family:'Big Shoulders Display'; font-size:3rem; margin-bottom:0.5rem; color:var(--text-primary);">The Flow</h2>
                 <p style="color:var(--text-secondary);">From diagnosis to delivery.</p>
             </div>
             
-            <div class="flow-container">
-                <div class="flow-node">
-                    <span class="flow-sub">STEP 1</span>
+            <div class="flow-container" id="flow-system">
+                <a href="/TheHub/strategy-iq.html" class="flow-node" data-step="1">
+                    <div class="node-header">
+                        <span class="flow-sub">STEP 1</span>
+                        <div class="status-dot"></div>
+                    </div>
                     <h3 class="flow-title">StrategyIQ</h3>
-                    <span class="flow-sub">Diagnosis</span>
+                    <span class="flow-desc">Diagnosis &<br>Roadmap</span>
+                </a>
+
+                <div class="flow-connector">
+                    <div class="signal-line"></div>
                 </div>
-                <div class="flow-connector"></div>
-                <div class="flow-node">
-                    <span class="flow-sub">STEP 2</span>
+
+                <a href="/TheHub/advisory/index.html" class="flow-node" data-step="2">
+                    <div class="node-header">
+                        <span class="flow-sub">STEP 2</span>
+                        <div class="status-dot"></div>
+                    </div>
                     <h3 class="flow-title">Advisory</h3>
-                    <span class="flow-sub">Strategy</span>
+                    <span class="flow-desc">Strategic<br>Alignment</span>
+                </a>
+
+                <div class="flow-connector">
+                    <div class="signal-line"></div>
                 </div>
-                <div class="flow-connector"></div>
-                <div class="flow-node">
-                    <span class="flow-sub">STEP 3</span>
+
+                <a href="/TheHub/studio.html" class="flow-node" data-step="3">
+                    <div class="node-header">
+                        <span class="flow-sub">STEP 3</span>
+                        <div class="status-dot"></div>
+                    </div>
                     <h3 class="flow-title">The Studio</h3>
-                    <span class="flow-sub">Execution</span>
+                    <span class="flow-desc">High-Fidelity<br>Production</span>
+                </a>
+
+                <div class="flow-connector">
+                    <div class="signal-line"></div>
                 </div>
-                <div class="flow-connector"></div>
-                <div class="flow-node" style="border-color:var(--teal);">
-                    <span class="flow-sub" style="color:var(--teal);">LIVING IN</span>
+
+                <a href="https://portal.luis-gilberto.com" class="flow-node node-portal" data-step="4" target="_blank">
+                    <div class="node-header">
+                        <span class="flow-sub">LIVING IN</span>
+                        <div class="status-dot"></div>
+                    </div>
                     <h3 class="flow-title">The Portal</h3>
-                    <span class="flow-sub">Management</span>
+                    <span class="flow-desc">Management &<br>Approvals</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- QUICK DIAGNOSTIC -->
+    <section class="section-diagnostic scroll-section" id="diagnostic">
+        <div class="hub-container">
+            <div class="diagnostic-card">
+                <!-- Content -->
+                <div class="diag-content">
+                    <span class="diag-label">ScopeIQ™ Energy Check</span>
+                    <h2 class="diag-heading">Where is your momentum leaking?</h2>
+                    <p class="diag-desc">Before we build, we diagnose. Take this 2-minute assessment to identify the exact friction points slowing your execution.</p>
+                    
+                    <a href="/TheHub/strategy-iq.html" class="btn-accent" style="box-shadow: 0 4px 20px rgba(46, 211, 198, 0.25);">
+                        Start Quick Diagnostic
+                    </a>
+                </div>
+                
+                <!-- Visual -->
+                <div class="diag-visual">
+                    <div class="diag-circle"></div>
+                    <div class="diag-circle"></div>
+                    <img src="../assets/images/icons/strategyiq-icon-3d.png" alt="Diagnostic" style="width: 80px; height: auto; position: relative; z-index: 2;">
                 </div>
             </div>
         </div>
@@ -717,16 +1054,16 @@
     <section class="section-cta scroll-section" style="background: var(--bg-tertiary);">
         <div class="hub-container">
             <div style="text-align: center; padding: 2rem 0;">
-                <h2 class="section-heading" style="font-family: 'Big Shoulders Display', sans-serif; font-size: 3rem; margin-bottom: 1rem;">Ready to Activate?</h2>
+                <h2 class="section-heading" style="font-family: 'Big Shoulders Display', sans-serif; font-size: 3rem; margin-bottom: 1rem; color: var(--text-primary);">Ready to Activate?</h2>
                 <p style="color: var(--text-secondary); margin-bottom: 2.5rem; font-size: 1.1rem;">
-                    Stop guessing. Start building.
+                    Start with a quick diagnostic. Then we’ll build the right plan.
                 </p>
                 <div class="cta-buttons">
-                    <a href="/TheHub/strategy-iq.html" class="btn-accent" style="box-shadow: 0 4px 20px rgba(249, 111, 110, 0.4);">
-                        Start StrategyIQ Assessment
+                    <a href="/contact.html" class="btn-accent" style="box-shadow: 0 4px 20px rgba(46, 211, 198, 0.25);">
+                        Start Quick Diagnostic
                     </a>
-                    <a href="https://portal.luis-gilberto.com" class="btn-outline" target="_blank" rel="noopener noreferrer">
-                        Client Login
+                    <a href="/contact.html" class="btn-outline">
+                        Talk to Luis
                     </a>
                 </div>
             </div>
@@ -775,13 +1112,14 @@
             </div>
         </div>
     </footer>
+    </div> <!-- End #main-content -->
 
     <!-- SCRIPTS -->
     <script>
-        // Theme Logic
+        // Theme Logic - Simplified
         const themeToggle = document.getElementById('themeToggle');
         const html = document.documentElement;
-        const savedTheme = localStorage.getItem('theme') || 'dark';
+        const savedTheme = localStorage.getItem('theme') || 'light';
         html.setAttribute('data-theme', savedTheme);
 
         if(themeToggle) {
@@ -790,14 +1128,7 @@
                 const next = current === 'light' ? 'dark' : 'light';
                 html.setAttribute('data-theme', next);
                 localStorage.setItem('theme', next);
-                // Fix Logo Color on Light Mode
-                const logo = document.querySelector('.primary-nav img');
-                if(next === 'light') { logo.style.filter = 'invert(1)'; } 
-                else { logo.style.filter = 'none'; }
             });
-            // Init Logo State
-            const logo = document.querySelector('.primary-nav img');
-            if(savedTheme === 'light') { logo.style.filter = 'invert(1)'; }
         }
 
         // Mobile Menu Logic
@@ -815,12 +1146,86 @@
         // Hub Reveal Animation Loader (Existing logic support)
         document.addEventListener('DOMContentLoaded', () => {
             const hubLoader = window.HubLoader;
-            if(hubLoader && sessionStorage.getItem('hubNavigated') !== 'true') {
-                // Init animation if needed (Script source included in head)
-                hubLoader.create({ videoUrl: './assets/components/hub-animation/coral_laser_line.mp4', autoStart: true });
+            const hasSeenIntro = sessionStorage.getItem('hubNavigated') === 'true';
+
+            if (hubLoader && !hasSeenIntro) {
+                hubLoader.create({ 
+                    videoUrl: './assets/components/hub-animation/coral_laser_line.mp4', 
+                    autoStart: true,
+                    onComplete: () => {
+                        window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+                        if ("scrollRestoration" in history) {
+                            history.scrollRestoration = "manual";
+                        }
+
+                        const ambientBg = document.querySelector('.ambient-bg');
+                        if (ambientBg) ambientBg.classList.add('active');
+
+                        setTimeout(() => {
+                            const hubPulse = document.querySelector('.hub-pulse');
+                            if (hubPulse) {
+                                hubPulse.classList.add('active');
+                            }
+                        }, 500);
+
+                        setTimeout(() => {
+                            const mainContent = document.getElementById('main-content');
+                            if (mainContent) {
+                                mainContent.style.opacity = '1';
+                            }
+                        }, 2500);
+                    }
+                });
                 sessionStorage.setItem('hubNavigated', 'true');
+            } else {
+                const ambientBg = document.querySelector('.ambient-bg');
+                if (ambientBg) ambientBg.classList.add('active');
+                const mainContent = document.getElementById('main-content');
+                if (mainContent) {
+                    mainContent.style.opacity = '1';
+                }
             }
         });
     </script>
+    
+    <!-- Read Assist Cascade Script -->
+    <script> 
+     (() => { 
+       const para = document.querySelector('.hub-hero-desc'); 
+       if (!para) return; 
+     
+       const phrases = Array.from(para.querySelectorAll('.ra')); 
+       if (!phrases.length) return; 
+     
+       // Respect reduced motion 
+       const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; 
+     
+       let timerIds = []; 
+     
+       const reset = () => { 
+         timerIds.forEach(id => clearTimeout(id)); 
+         timerIds = []; 
+         phrases.forEach(p => p.classList.remove('is-on')); 
+       }; 
+     
+       const runCascade = () => { 
+         reset(); 
+         if (reduceMotion) { 
+           // If reduced motion, turn them on immediately 
+           phrases.forEach(p => p.classList.add('is-on')); 
+           return; 
+         } 
+     
+         const baseDelay = 160; // rhythm speed (increase for slower) 
+         phrases.forEach((p, i) => { 
+           const id = setTimeout(() => p.classList.add('is-on'), i * baseDelay); 
+           timerIds.push(id); 
+         }); 
+       }; 
+     
+       para.addEventListener('mouseenter', runCascade); 
+       para.addEventListener('mouseleave', reset); 
+     })(); 
+     </script> 
 </body>
 </html>
