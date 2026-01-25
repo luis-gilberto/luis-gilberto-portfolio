@@ -28,20 +28,20 @@ export default function StrategicBriefModal({ isOpen, onClose, data }: Strategic
 
   // 1. Narrative Generator
   const generateNarrative = (score: number, answers: Record<string, number> = {}) => {
-    let narrative = `The assessment indicates ${data.clientName} is operating at a ${getMaturityLabel(score)} level. `;
+    let narrative = `Based on our strategic assessment, ${data.clientName} is currently operating at a ${getMaturityLabel(score)} maturity level. `;
 
     // DYNAMIC INJECTION: Check specific critical answers
     if (answers && answers['brand_positioning'] !== undefined && answers['brand_positioning'] <= 30) {
-      narrative += "Critical friction exists in market positioning, creating a risk of commoditization. ";
+      narrative += "We've identified critical friction in your market positioning, which creates a risk of commoditization. ";
     }
     if (answers && answers['creative_audit'] !== undefined && answers['creative_audit'] <= 25) {
-      narrative += "Operational velocity is severely hampered by fragmented creative assets. ";
+      narrative += "Your operational velocity is currently hampered by fragmented creative assets. ";
     }
     if (answers && answers['gtm_segmentation'] !== undefined && answers['gtm_segmentation'] <= 30) {
-      narrative += "Launch efficiency is compromised by a lack of precise audience segmentation. ";
+      narrative += "Launch efficiency is being compromised by a lack of precise audience segmentation. ";
     }
 
-    narrative += "To unlock scalable growth, the focus must shift from reactive execution to a structured, data-driven foundation.";
+    narrative += "To unlock scalable growth, we recommend shifting focus from reactive execution to a structured, data-driven foundation.";
     return narrative;
   };
 
@@ -84,32 +84,96 @@ export default function StrategicBriefModal({ isOpen, onClose, data }: Strategic
 
   const scopeOfWork = getScopeOfWork(data.serviceTitle);
 
+  const handlePrint = () => {
+    // 1. Get the content
+    const content = document.getElementById('strategic-brief-content');
+    if (!content) return;
+
+    // 2. Open a new "Clean" window
+    const printWindow = window.open('', '', 'height=800,width=800');
+    if (!printWindow) return;
+
+    // 3. Clone ALL styles from the main document (Tailwind + Fonts)
+    const styles = Array.from(document.head.querySelectorAll('link[rel="stylesheet"], style'))
+      .map(node => node.outerHTML)
+      .join('');
+
+    // 4. Write the HTML with Cloned Styles + Print Overrides
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Strategic Brief</title>
+          ${styles}
+          <style>
+            /* Critical Print Overrides */
+            body {
+              background-color: white;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              margin: 0;
+            }
+            
+            /* Ensure the brief container fills the print page nicely */
+            .strategic-brief-content {
+              padding: 40px !important;
+              max-width: 100% !important;
+              margin: 0 auto !important;
+            }
+
+            /* Force Backgrounds and Colors */
+            * {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+
+            /* Hide UI elements just in case */
+            .no-print, button { display: none !important; }
+          </style>
+        </head>
+        <body>
+          ${content.outerHTML}
+        </body>
+      </html>
+    `);
+
+    // 5. Trigger Print and Close
+    printWindow.document.close();
+    printWindow.focus();
+    
+    // Wait for styles/fonts to apply
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 500);
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 print-parent-reset">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm no-print"
           />
           
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-white text-[#1A1A1A] rounded-sm shadow-2xl"
+            className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-white text-[#1A1A1A] rounded-sm shadow-2xl print-parent-reset"
           >
             {/* TOOLBAR */}
             <div className="sticky top-0 z-10 flex justify-between items-center p-4 bg-[#141414] text-white border-b border-white/10 no-print">
               <div className="text-sm font-medium text-gray-400">Preview Mode</div>
               <div className="flex items-center gap-2">
-                <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
+                <Button variant="ghost" size="sm" onClick={handlePrint} className="text-gray-400 hover:text-white">
                   <Printer size={16} className="mr-2" /> Print
                 </Button>
-                <Button variant="default" size="sm" className="bg-teal-500 hover:bg-teal-600 text-black">
+                <Button variant="default" size="sm" onClick={handlePrint} className="bg-teal-500 hover:bg-teal-600 text-black">
                   <Download size={16} className="mr-2" /> Export PDF
                 </Button>
                 <div className="w-px h-6 bg-white/20 mx-2" />
@@ -120,7 +184,7 @@ export default function StrategicBriefModal({ isOpen, onClose, data }: Strategic
             </div>
 
             {/* DOCUMENT CONTENT */}
-            <div className="p-12 md:p-16 font-sans">
+            <div id="strategic-brief-content" className="p-12 md:p-16 font-sans strategic-brief-content">
               
               {/* HEADER */}
               <div className="flex flex-col md:flex-row justify-between items-start md:items-end border-b-4 border-[#2ED3C6] pb-6 mb-12">
@@ -140,7 +204,7 @@ export default function StrategicBriefModal({ isOpen, onClose, data }: Strategic
               </div>
 
               {/* EXECUTIVE SUMMARY */}
-              <div className="mb-16">
+              <div className="mb-16 break-inside-avoid">
                 <h3 className="text-xs font-bold uppercase tracking-widest text-[#2ED3C6] mb-4">
                   01 // Executive Summary
                 </h3>
@@ -150,7 +214,7 @@ export default function StrategicBriefModal({ isOpen, onClose, data }: Strategic
               </div>
 
               {/* IMMEDIATE PRIORITIES */}
-              <div className="mb-16">
+              <div className="mb-16 break-inside-avoid">
                 <h3 className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-6">
                   02 // Immediate Priorities
                 </h3>
@@ -165,7 +229,7 @@ export default function StrategicBriefModal({ isOpen, onClose, data }: Strategic
               </div>
 
               {/* DIAGNOSIS GRID */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16 break-inside-avoid">
                 
                 {/* LEFT: SCORE */}
                 <div className="bg-[#F5F5F5] p-8 border-l-4 border-[#1A1A1A]">
@@ -182,7 +246,7 @@ export default function StrategicBriefModal({ isOpen, onClose, data }: Strategic
                 </div>
 
                 {/* RIGHT: INTERVENTION */}
-                <div className="bg-[#1A1A1A] p-8 text-white border-l-4 border-[#2ED3C6]">
+                <div className="bg-[#1A1A1A] p-8 text-white border-l-4 border-[#2ED3C6] print-reset-bg">
                   <h3 className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-6">
                     04 // Recommended Intervention
                   </h3>

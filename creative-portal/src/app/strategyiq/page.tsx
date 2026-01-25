@@ -20,6 +20,7 @@ import {
 import { AnimatePresence, motion } from 'framer-motion';
 // Imports adjusted based on file tree check
 import Sidebar from '../../components/dashboard-ui/Sidebar';
+import TopNavBar from '@/components/TopNavBar';
 import { Button } from '@/components/ui/button';
 import AssessmentRunner from '../../components/strategy/AssessmentRunner';
 import StrategicBriefModal from '../../components/strategy/StrategicBriefModal';
@@ -58,7 +59,6 @@ const assessmentAreas = [
     title: 'Go-to-Market Sprint',
     description: 'Market entry strategy, positioning, and launch roadmap.',
     duration: '6-12 WEEKS',
-    isHighlight: true, // Highlights this card
   },
   {
     id: 'brand',
@@ -66,7 +66,6 @@ const assessmentAreas = [
     title: 'Brand Intelligence',
     description: 'Positioning, messaging, and systematic brand development.',
     duration: '8-16 WEEKS',
-    isHighlight: false,
   },
   {
     id: 'campaign',
@@ -74,7 +73,6 @@ const assessmentAreas = [
     title: 'Strategic Campaigns',
     description: 'Integrated campaign strategy and optimization.',
     duration: '12-20 WEEKS',
-    isHighlight: false,
   },
   {
     id: 'creative',
@@ -82,7 +80,6 @@ const assessmentAreas = [
     title: 'Creative Strategy',
     description: 'Content frameworks and scalable creative systems.',
     duration: '4-12 WEEKS',
-    isHighlight: false,
   },
 ];
 
@@ -216,12 +213,18 @@ export default function StrategyIQPage() {
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#F4F1ED] font-sans">
       
+      <TopNavBar 
+        mobileMenuOpen={mobileMenuOpen}
+        onMenuToggle={() => setMobileMenuOpen(!mobileMenuOpen)}
+      />
+
       <div className="flex">
         <Sidebar 
           collapsed={sidebarCollapsed} 
           onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
           mobileOpen={mobileMenuOpen}
           onMobileClose={() => setMobileMenuOpen(false)}
+          onMobileToggle={() => setMobileMenuOpen(!mobileMenuOpen)}
         />
         
         <main className={`flex-1 transition-all duration-300 ease-in-out ${sidebarCollapsed ? 'lg:ml-[72px]' : 'lg:ml-[256px]'}`}>

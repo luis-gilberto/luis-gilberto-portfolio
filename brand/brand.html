@@ -322,7 +322,7 @@
         }
 
         /* CUSTOM CURSOR */
-        #cursor-lens { position: fixed; top: 0; left: 0; width: 40px; height: 40px; pointer-events: none; z-index: 99999; transform: translate(-50%, -50%); }
+        #cursor-lens { position: fixed; top: 0; left: 0; width: 40px; height: 40px; pointer-events: none; z-index: 200000; transform: translate(-50%, -50%); }
         .lens-outer { position: absolute; inset: 0; border: 1px solid var(--text-muted); border-radius: 50%; }
         .lens-center { position: absolute; top: 50%; left: 50%; width: 6px; height: 6px; background: var(--coral); border-radius: 50%; transform: translate(-50%, -50%); }
         body.cursor-hover .lens-outer { width: 60px; height: 60px; border-color: var(--teal); background: rgba(46,211,198,0.1); }
@@ -720,12 +720,46 @@
 
         // Custom Cursor
         const cursor = document.getElementById('cursor-lens');
-        if (matchMedia('(pointer:fine)').matches) {
-            document.addEventListener('mousemove', e => {
-                cursor.style.left = e.clientX + 'px';
-                cursor.style.top = e.clientY + 'px';
+        
+        if (cursor) {
+            // Initialize off-screen or center to prevent top-left jump
+            let mouseX = window.innerWidth / 2; 
+            let mouseY = window.innerHeight / 2;
+            let cursorX = mouseX; 
+            let cursorY = mouseY;
+            let isVisible = false;
+            
+            // Initially hide cursor until movement detected
+            cursor.style.opacity = '0';
+            cursor.style.transition = 'width 0.3s var(--ease-out), height 0.3s var(--ease-out), opacity 0.3s ease';
+            
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                
+                // Show cursor on first movement
+                if (!isVisible) {
+                    isVisible = true;
+                    cursor.style.opacity = '1';
+                    cursorX = mouseX; // Snap to position immediately
+                    cursorY = mouseY;
+                }
             });
-            document.querySelectorAll('a, button, .pillar-card').forEach(el => {
+            
+            // Smooth cursor animation
+            function animateCursor() {
+                const speed = 0.15;
+                cursorX += (mouseX - cursorX) * speed;
+                cursorY += (mouseY - cursorY) * speed;
+                cursor.style.left = cursorX + 'px';
+                cursor.style.top = cursorY + 'px';
+                requestAnimationFrame(animateCursor);
+            }
+            animateCursor();
+            
+            // Hover states
+            const hoverSelectors = 'a, button, .pillar-card, .voice-item, .swatch, .type-card, .visual-card';
+            document.querySelectorAll(hoverSelectors).forEach(el => {
                 el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
                 el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
             });

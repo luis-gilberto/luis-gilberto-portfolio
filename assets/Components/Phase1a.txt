@@ -1,0 +1,160 @@
+We are completing Phase 1 (Settings) and starting Phase 2 (StrategyIQ Data).
+
+Please execute these 2 steps to activate the Settings page and populate the GTM Module data.
+
+STEP 1: Activate "Settings" Page
+File: `src/app/admin/settings/page.tsx`
+Action: Replace content with a "Profile & Security" layout.
+Code:
+'''tsx
+'use client';
+
+import React from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { User, Lock, Shield } from 'lucide-react';
+
+export default function SettingsPage() {
+  return (
+    <div className="p-8 max-w-[1000px] mx-auto text-white">
+      <div className="mb-12">
+        <h1 className="text-4xl font-display font-bold mb-2">System Configuration</h1>
+        <p className="text-gray-400">Manage your admin credentials and ecosystem preferences.</p>
+      </div>
+
+      <div className="grid gap-8">
+        {/* Profile Card */}
+        <div className="bg-[#0A0A0A] border border-white/5 rounded-xl p-8">
+          <div className="flex items-center gap-4 mb-8">
+            <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center text-[#F96F6E]">
+              <User size={24} />
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold">Admin Profile</h3>
+              <p className="text-sm text-gray-500">Public identity within the ecosystem</p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label className="text-gray-400">Full Name</Label>
+              <Input defaultValue="Luis Gilberto" className="bg-white/5 border-white/10 text-white" />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-gray-400">Email Address</Label>
+              <Input defaultValue="admin@luis-gilberto.com" disabled className="bg-white/5 border-white/10 text-gray-500 cursor-not-allowed" />
+            </div>
+          </div>
+          <div className="mt-6 flex justify-end">
+             <Button variant="outline" className="border-white/10 hover:bg-white/5 text-gray-300">Save Changes</Button>
+          </div>
+        </div>
+
+        {/* Security Card */}
+        <div className="bg-[#0A0A0A] border border-white/5 rounded-xl p-8">
+          <div className="flex items-center gap-4 mb-8">
+            <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center text-teal-400">
+              <Shield size={24} />
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold">Security</h3>
+              <p className="text-sm text-gray-500">Password and authentication settings</p>
+            </div>
+          </div>
+          
+          <div className="space-y-4">
+            <Button className="w-full sm:w-auto bg-white/5 hover:bg-white/10 text-white border border-white/10 justify-start gap-3">
+              <Lock size={16} /> Change Master Password
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+'''
+
+STEP 2: Inject GTM Module Data
+File: `src/lib/strategyData.ts`
+Action: Locate the `gtmQuestions` array (it might be empty or commented out). Replace it with this full strategic logic:
+
+'''typescript
+export const gtmQuestions = [
+  {
+    id: 'market_readiness',
+    text: "How would you characterize the product's market readiness?",
+    options: [
+      { label: "MVP / Beta", score: 10, value: "beta", insight: "Focus on early adopter feedback loops." },
+      { label: "Market Proven", score: 20, value: "proven", insight: "Scale acquisition channels immediately." },
+      { label: "Legacy / Pivot", score: 15, value: "pivot", insight: "Re-frame value prop to avoid churn." }
+    ],
+    copilot: {
+      ask: "Is the product completely new to the market, or are we relaunching an existing solution?",
+      context: "Launch velocity depends entirely on product maturity.",
+      redFlags: ["Scaling spend before product-market fit is confirmed."],
+      upsell: "GTM Sprint"
+    }
+  },
+  {
+    id: 'audience_clarity',
+    text: "How clearly defined is the Ideal Customer Profile (ICP)?",
+    options: [
+      { label: "Broad / Generic", score: 5, value: "broad", insight: "High risk of wasted ad spend." },
+      { label: "Segmented", score: 15, value: "segmented", insight: "Good foundation, push for personalization." },
+      { label: "Hyper-Targeted", score: 25, value: "targeted", insight: "Ready for ABM (Account Based Marketing)." }
+    ],
+    copilot: {
+      ask: "Do we know exactly who buys this, or are we guessing?",
+      context: "Specificity sells. Generalism kills.",
+      redFlags: ["'Everyone is our customer' mindset."],
+      upsell: "Audience Segmentation Workshop"
+    }
+  },
+  {
+    id: 'comp_advantage',
+    text: "What is the primary competitive moat?",
+    options: [
+      { label: "Price / Speed", score: 10, value: "commodity", insight: "Vulnerable to 'race to the bottom'." },
+      { label: "Brand / Trust", score: 20, value: "brand", insight: "Defensible, leverage social proof." },
+      { label: "Proprietary Tech", score: 25, value: "tech", insight: "High barrier to entry. Emphasize IP." }
+    ],
+    copilot: {
+      ask: "Why do customers choose us over the cheaper alternative?",
+      context: "We need to identify the 'Unfair Advantage'.",
+      redFlags: ["Competing solely on price."],
+      upsell: "Brand Positioning"
+    }
+  },
+  {
+    id: 'sales_motion',
+    text: "What is the primary sales motion?",
+    options: [
+      { label: "Product-Led (PLG)", score: 20, value: "plg", insight: "Focus on UX and onboarding friction." },
+      { label: "Sales-Led (Outbound)", score: 15, value: "outbound", insight: "Requires strong collateral and scripts." },
+      { label: "Partner / Channel", score: 15, value: "channel", insight: "Incentive structures are key." }
+    ],
+    copilot: {
+      ask: "Does the product sell itself, or does it need a human to explain it?",
+      context: "The funnel shape changes completely based on this answer.",
+      redFlags: ["Using Enterprise sales tactics for a $10/mo product."],
+      upsell: "Funnel Optimization"
+    }
+  },
+  {
+    id: 'launch_budget',
+    text: "What is the committed launch budget runway?",
+    options: [
+      { label: "< 3 Months", score: 5, value: "short", insight: "Guerilla tactics required. High urgency." },
+      { label: "3-6 Months", score: 15, value: "medium", insight: "Standard validation window." },
+      { label: "6+ Months", score: 25, value: "long", insight: "Allows for brand building investment." }
+    ],
+    copilot: {
+      ask: "How long can we sustain this push before we need ROI?",
+      context: "Timeline dictates aggression level.",
+      redFlags: ["High burn rate with short runway."],
+      upsell: "Growth Partnership"
+    }
+  }
+];
+'''

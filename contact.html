@@ -19,7 +19,7 @@
         #cursor-lens {
             position: fixed;
             pointer-events: none;
-            z-index: 9999;
+            z-index: 200000;
             width: 40px;
             height: 40px;
             transform: translate(-50%, -50%);
@@ -1270,21 +1270,41 @@
                 return;
             }
             
-            const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
-            if (isCoarsePointer) {
-                console.log('Coarse pointer detected, disabling custom cursor');
-                cursor.style.display = 'none';
-                document.body.style.cursor = 'auto';
-                return;
-            }
+            // Initialize off-screen or center to prevent top-left jump
+            let mouseX = window.innerWidth / 2; 
+            let mouseY = window.innerHeight / 2;
+            let cursorX = mouseX; 
+            let cursorY = mouseY;
+            let isVisible = false;
+            
+            // Initially hide cursor until movement detected
+            cursor.style.opacity = '0';
+            cursor.style.transition = 'width 0.3s var(--ease-out), height 0.3s var(--ease-out), opacity 0.3s ease';
             
             // Track mouse movement
             document.addEventListener('mousemove', (e) => {
-                requestAnimationFrame(() => {
-                    cursor.style.left = e.clientX + 'px';
-                    cursor.style.top = e.clientY + 'px';
-                });
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                
+                // Show cursor on first movement
+                if (!isVisible) {
+                    isVisible = true;
+                    cursor.style.opacity = '1';
+                    cursorX = mouseX; // Snap to position immediately
+                    cursorY = mouseY;
+                }
             });
+
+            // Smooth cursor animation
+            function animateCursor() {
+                const speed = 0.15;
+                cursorX += (mouseX - cursorX) * speed;
+                cursorY += (mouseY - cursorY) * speed;
+                cursor.style.left = cursorX + 'px';
+                cursor.style.top = cursorY + 'px';
+                requestAnimationFrame(animateCursor);
+            }
+            animateCursor();
 
             // Add hover effects to interactive elements
             const hoverElements = 'a, button, .belief-card, .channel-btn, .cta-btn, input, textarea, select, .mobile-menu-toggle, .theme-toggle, .tour-card, .card-cta, .hero-tile, .mobile-menu-close, .mobile-nav-link-primary, .mobile-nav-link-secondary, .subnav-link';
@@ -1308,7 +1328,7 @@
                     if (mutation.addedNodes.length) {
                         const newElements = document.querySelectorAll(hoverElements);
                         newElements.forEach(el => {
-                            // Simple re-bind (in a real app, you'd want to be more selective)
+                            // Simple re-bind
                             el.removeEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
                             el.removeEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
                             addHoverListeners(el);

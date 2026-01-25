@@ -2,21 +2,37 @@
 
 import { useSession, signOut } from "next-auth/react"
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import AuthButton from "@/components/layout/AuthButton"
+import ThemeToggle from "@/components/ui/ThemeToggle"
 
 export function Navigation() {
   const { data: session } = useSession()
   const pathname = usePathname()
   const [isMobileOpen, setIsMobileOpen] = useState(false)
 
+  const portalMobileLinks = [
+    { label: 'Dashboard', href: '/admin' },
+    { label: 'Strategy Engine', href: '/strategyiq' },
+    { label: 'Projects', href: '/admin/projects' },
+    { label: 'Clients', href: '/admin/clients' },
+    { label: 'Analytics', href: '/admin/analytics' },
+    { label: 'Settings', href: '/admin/settings' },
+  ]
+
   const handleSignOut = async () => {
-    await signOut({ callbackUrl: "/" })
+    await signOut({ callbackUrl: "/login" })
   }
 
   const isActive = (path: string) => pathname === path
+  const isLandingPage = pathname === '/' || pathname === '/portal'
+
+  // Portal Check: Hide Global Nav on Portal Routes to prevent duplication
+  const isPortal = pathname?.startsWith('/admin') || pathname?.startsWith('/strategyiq')
+  if (isPortal) return null
 
   return (
     <>
@@ -26,9 +42,15 @@ export function Navigation() {
           
           {/* Logo Area */}
           <div className="flex items-center gap-4">
-            <a href="https://luis-gilberto.com" className="flex items-center">
-              <img src="/assets/images/The_Portal_Logo.png" alt="LG Portal" className="h-8 w-auto" decoding="async" loading="eager" />
-            </a>
+            <Link href="/" className="relative w-32 h-8">
+              <Image 
+                src="/brand/portal-full.png" 
+                alt="The Portal" 
+                fill 
+                className="object-contain object-left" 
+                priority 
+              />
+            </Link>
           </div>
 
           {/* Desktop Links (Global Ecosystem) */}
@@ -42,7 +64,12 @@ export function Navigation() {
 
           {/* User / Auth Controls */}
           <div className="flex items-center gap-4">
-            <AuthButton />
+            {!isLandingPage && (
+              <>
+                <ThemeToggle />
+                <AuthButton />
+              </>
+            )}
 
             {/* Mobile Toggle */}
             <button 
@@ -72,9 +99,16 @@ export function Navigation() {
               <div className="text-xs font-bold text-gray-500 tracking-tight mb-3">Portal</div>
                 {session ? (
                   <>
-                    <Link href="/dashboard" className="text-lg font-medium text-gray-300" onClick={() => setIsMobileOpen(false)}>Dashboard</Link>
-                    <Link href="/projects" className="text-lg font-medium text-gray-300" onClick={() => setIsMobileOpen(false)}>Projects</Link>
-                    <Link href="/documents" className="text-lg font-medium text-gray-300" onClick={() => setIsMobileOpen(false)}>Documents</Link>
+                    {portalMobileLinks.map((link) => (
+                      <Link 
+                        key={link.href} 
+                        href={link.href} 
+                        className="text-lg font-medium text-gray-300" 
+                        onClick={() => setIsMobileOpen(false)}
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
                     <button onClick={() => { handleSignOut(); setIsMobileOpen(false); }} className="text-left text-lg font-medium text-[var(--coral)]">Sign Out</button>
                   </>
                 ) : (

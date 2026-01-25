@@ -57,9 +57,7 @@ export default function RootLayout({
             <main className="flex-grow pt-16 flex flex-col relative z-10">
               {children}
             </main>
-            <div className="lg:pl-[256px] transition-all duration-300">
-              <Footer />
-            </div>
+            <Footer />
           </ThemeProvider>
         </AuthSessionProvider>
       </body>

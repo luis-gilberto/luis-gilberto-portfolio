@@ -1185,7 +1185,7 @@
             width: 40px; 
             height: 40px; 
             pointer-events: none; 
-            z-index: 99999; 
+            z-index: 200000; 
             transform: translate(-50%, -50%);
             transition: width 0.3s var(--ease-out), height 0.3s var(--ease-out);
         }
@@ -1832,21 +1832,42 @@
         // 1. CUSTOM CURSOR
         // =========================================
         const cursor = document.getElementById('cursor-lens');
-        let mouseX = 0, mouseY = 0;
-        let cursorX = 0, cursorY = 0;
+        
+        // Initialize off-screen or center to prevent top-left jump
+        let mouseX = window.innerWidth / 2; 
+        let mouseY = window.innerHeight / 2;
+        let cursorX = mouseX; 
+        let cursorY = mouseY;
+        let isVisible = false;
+        
+        // Initially hide cursor until movement detected
+        if (cursor) {
+            cursor.style.opacity = '0';
+            cursor.style.transition = 'width 0.3s var(--ease-out), height 0.3s var(--ease-out), opacity 0.3s ease';
+        }
         
         document.addEventListener('mousemove', (e) => {
             mouseX = e.clientX;
             mouseY = e.clientY;
+            
+            // Show cursor on first movement
+            if (!isVisible && cursor) {
+                isVisible = true;
+                cursor.style.opacity = '1';
+                cursorX = mouseX; // Snap to position immediately
+                cursorY = mouseY;
+            }
         });
         
         // Smooth cursor animation
         function animateCursor() {
-            const speed = 0.15;
-            cursorX += (mouseX - cursorX) * speed;
-            cursorY += (mouseY - cursorY) * speed;
-            cursor.style.left = cursorX + 'px';
-            cursor.style.top = cursorY + 'px';
+            if (cursor) {
+                const speed = 0.15;
+                cursorX += (mouseX - cursorX) * speed;
+                cursorY += (mouseY - cursorY) * speed;
+                cursor.style.left = cursorX + 'px';
+                cursor.style.top = cursorY + 'px';
+            }
             requestAnimationFrame(animateCursor);
         }
         animateCursor();

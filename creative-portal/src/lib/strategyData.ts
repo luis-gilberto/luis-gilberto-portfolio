@@ -451,3 +451,81 @@ export const determineServiceTier = (intelligenceScore: number): ServiceTier => 
     };
   }
 };
+
+export const gtmQuestions = [
+  {
+    id: 'market_readiness',
+    text: "How would you characterize the product's market readiness?",
+    options: [
+      { label: "MVP / Beta", score: 10, value: "beta", insight: "Focus on early adopter feedback loops." },
+      { label: "Market Proven", score: 20, value: "proven", insight: "Scale acquisition channels immediately." },
+      { label: "Legacy / Pivot", score: 15, value: "pivot", insight: "Re-frame value prop to avoid churn." }
+    ],
+    copilot: {
+      ask: "Is the product completely new to the market, or are we relaunching an existing solution?",
+      context: "Launch velocity depends entirely on product maturity.",
+      redFlags: ["Scaling spend before product-market fit is confirmed."],
+      upsell: "GTM Sprint"
+    }
+  },
+  {
+    id: 'audience_clarity',
+    text: "How clearly defined is the Ideal Customer Profile (ICP)?",
+    options: [
+      { label: "Broad / Generic", score: 5, value: "broad", insight: "High risk of wasted ad spend." },
+      { label: "Segmented", score: 15, value: "segmented", insight: "Good foundation, push for personalization." },
+      { label: "Hyper-Targeted", score: 25, value: "targeted", insight: "Ready for ABM (Account Based Marketing)." }
+    ],
+    copilot: {
+      ask: "Do we know exactly who buys this, or are we guessing?",
+      context: "Specificity sells. Generalism kills.",
+      redFlags: ["'Everyone is our customer' mindset."],
+      upsell: "Audience Segmentation Workshop"
+    }
+  },
+  {
+    id: 'comp_advantage',
+    text: "What is the primary competitive moat?",
+    options: [
+      { label: "Price / Speed", score: 10, value: "commodity", insight: "Vulnerable to 'race to the bottom'." },
+      { label: "Brand / Trust", score: 20, value: "brand", insight: "Defensible, leverage social proof." },
+      { label: "Proprietary Tech", score: 25, value: "tech", insight: "High barrier to entry. Emphasize IP." }
+    ],
+    copilot: {
+      ask: "Why do customers choose us over the cheaper alternative?",
+      context: "We need to identify the 'Unfair Advantage'.",
+      redFlags: ["Competing solely on price."],
+      upsell: "Brand Positioning"
+    }
+  },
+  {
+    id: 'sales_motion',
+    text: "What is the primary sales motion?",
+    options: [
+      { label: "Product-Led (PLG)", score: 20, value: "plg", insight: "Focus on UX and onboarding friction." },
+      { label: "Sales-Led (Outbound)", score: 15, value: "outbound", insight: "Requires strong collateral and scripts." },
+      { label: "Partner / Channel", score: 15, value: "channel", insight: "Incentive structures are key." }
+    ],
+    copilot: {
+      ask: "Does the product sell itself, or does it need a human to explain it?",
+      context: "The funnel shape changes completely based on this answer.",
+      redFlags: ["Using Enterprise sales tactics for a $10/mo product."],
+      upsell: "Funnel Optimization"
+    }
+  },
+  {
+    id: 'launch_budget',
+    text: "What is the committed launch budget runway?",
+    options: [
+      { label: "< 3 Months", score: 5, value: "short", insight: "Guerilla tactics required. High urgency." },
+      { label: "3-6 Months", score: 15, value: "medium", insight: "Standard validation window." },
+      { label: "6+ Months", score: 25, value: "long", insight: "Allows for brand building investment." }
+    ],
+    copilot: {
+      ask: "How long can we sustain this push before we need ROI?",
+      context: "Timeline dictates aggression level.",
+      redFlags: ["High burn rate with short runway."],
+      upsell: "Growth Partnership"
+    }
+  }
+];

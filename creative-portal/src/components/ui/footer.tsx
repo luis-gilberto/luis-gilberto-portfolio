@@ -1,8 +1,24 @@
+'use client'
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { usePathname } from "next/navigation"
 
 export function Footer() {
   const currentYear = new Date().getFullYear()
+  const pathname = usePathname()
+
+  // Strict Portal Blackout: Remove footer on all app routes
+  const isPortal = pathname === '/' || 
+                  pathname === '/portal' ||
+                  pathname?.startsWith('/admin') || 
+                  pathname?.startsWith('/strategyiq') || 
+                  pathname?.startsWith('/dashboard') ||
+                  pathname?.startsWith('/projects') ||
+                  pathname?.startsWith('/clients') ||
+                  pathname?.startsWith('/settings')
+
+  if (isPortal) return null
 
   return (
     <footer className="bg-[var(--bg-primary)] border-t border-[var(--border-subtle)] pt-16 pb-10 mt-auto">
