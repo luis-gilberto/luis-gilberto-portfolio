@@ -1012,6 +1012,40 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* === QUICK DIAGNOSTIC UPGRADES === */
+        .qd-input { 
+            width: 100%; 
+            background: rgba(255,255,255,0.04); 
+            color: rgba(255,255,255,0.92); 
+            border: 1px solid rgba(255,255,255,0.10); 
+            border-radius: 12px; 
+            padding: 12px 14px; 
+            outline: none; 
+            font-family: 'Inter', sans-serif; 
+            font-size: 14px; 
+        } 
+        .qd-input::placeholder { color: rgba(255,255,255,0.45); } 
+        .qd-input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(46, 211, 198, 0.14); } 
+
+        select.qd-input { 
+            appearance: none; -webkit-appearance: none; 
+            background-image: linear-gradient(45deg, transparent 50%, rgba(255,255,255,0.65) 50%), 
+                              linear-gradient(135deg, rgba(255,255,255,0.65) 50%, transparent 50%); 
+            background-position: calc(100% - 18px) calc(50% - 2px), calc(100% - 12px) calc(50% - 2px); 
+            background-size: 6px 6px, 6px 6px; 
+            background-repeat: no-repeat; 
+            padding-right: 40px; 
+            cursor: pointer; 
+        } 
+        select.qd-input option { 
+            background-color: #0E0E0F; 
+            color: #F5F5F5; 
+        } 
+
+        .qd-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 8px; } 
+        .qd-optional { font-size: 11px; font-weight: 400; color: rgba(255,255,255,0.4); text-transform: none; margin-left: 4px; } 
+        @media (max-width: 768px) { .qd-grid-3 { grid-template-columns: 1fr; gap: 16px; } }
+
         
     </style>
 
@@ -1331,6 +1365,23 @@
             <div class="qd-content">
                 <div id="qdFormState" class="qd-step active">
                     <form id="diagnosticForm">
+                        <!-- Identity Fields -->
+                        <div class="qd-group">
+                            <div class="qd-grid-3">
+                                <div>
+                                    <label class="qd-label" for="qdName">Name <span class="qd-optional">(optional)</span></label>
+                                    <input id="qdName" name="qdName" type="text" class="qd-input" placeholder="Name" autocomplete="name">
+                                </div>
+                                <div>
+                                    <label class="qd-label" for="qdEmail">Email <span class="qd-optional">(recommended)</span></label>
+                                    <input id="qdEmail" name="qdEmail" type="email" class="qd-input" placeholder="you@company.com" autocomplete="email">
+                                </div>
+                                <div>
+                                    <label class="qd-label" for="qdCompany">Company <span class="qd-optional">(optional)</span></label>
+                                    <input id="qdCompany" name="qdCompany" type="text" class="qd-input" placeholder="Company" autocomplete="organization">
+                                </div>
+                            </div>
+                        </div>
                         <div class="qd-group">
                             <label class="qd-label">1. Where is the primary friction?</label>
                             <div class="qd-options" style="grid-template-columns: 1fr 1fr 1fr;">
@@ -1354,20 +1405,24 @@
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                             <div class="qd-group">
                                 <label class="qd-label">3. Timeline</label>
-                                <select class="qd-textarea" name="timeline" style="padding:10px;">
-                                    <option>ASAP (1-2 weeks)</option>
-                                    <option>This Month</option>
-                                    <option>This Quarter</option>
-                                    <option>Just Exploring</option>
+                                <select class="qd-input" name="timeline">
+                                    <option value="ASAP (1–2 weeks)">ASAP (1 to 2 weeks)</option>
+                                    <option value="Soon (3–6 weeks)">Soon (3 to 6 weeks)</option>
+                                    <option value="This quarter (6–12 weeks)">This quarter (6 to 12 weeks)</option>
+                                    <option value="Next quarter (3–6 months)">Next quarter (3 to 6 months)</option>
+                                    <option value="Longer runway (6–12 months)">Longer runway (6 to 12 months)</option>
+                                    <option value="Exploring">Exploring</option>
                                 </select>
                             </div>
                             <div class="qd-group">
                                 <label class="qd-label">4. Budget Tier</label>
-                                <select class="qd-textarea" name="budget" style="padding:10px;">
-                                    <option>Under $5k</option>
-                                    <option>$5k - $15k</option>
-                                    <option>$15k - $40k</option>
-                                    <option>$40k+</option>
+                                <select class="qd-input" name="budget">
+                                    <option value="Under $5K">Under $5K</option>
+                                    <option value="$5K–$10K">$5K to $10K</option>
+                                    <option value="$10K–$20K">$10K to $20K</option>
+                                    <option value="$20K–$40K">$20K to $40K</option>
+                                    <option value="$40K+">$40K+</option>
+                                    <option value="Not sure yet">Not sure yet</option>
                                 </select>
                             </div>
                         </div>
@@ -1441,6 +1496,10 @@
             const suggestion = insights[data.friction] || insights['Other'];
             generatedBrief = `STRATEGIC BRIEF (Quick Diagnostic)\n` +
                 `Date: ${new Date().toLocaleDateString()}\n` +
+                `----------------------------------------\n` +
+                `Name:     ${data.qdName || 'Not provided'}\n` +
+                `Email:    ${data.qdEmail || 'Not provided'}\n` +
+                `Company:  ${data.qdCompany || 'Not provided'}\n` +
                 `----------------------------------------\n` +
                 `Friction: ${data.friction}\n` +
                 `Building: ${data.building || 'Not specified'}\n` +
