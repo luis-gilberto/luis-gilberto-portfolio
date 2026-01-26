@@ -1376,28 +1376,40 @@
     /* === PREFILL LOGIC FROM HUB DIAGNOSTIC === */
     (function() {
         const urlParams = new URLSearchParams(window.location.search);
-        const prefill = urlParams.get('prefillBrief');
+
         const messageBox = document.getElementById('message');
-        if (prefill && messageBox) {
-            messageBox.value = decodeURIComponent(prefill);
-            window.history.replaceState({}, document.title, window.location.pathname);
-            const form = document.querySelector('.contact-form');
-            if(form) form.scrollIntoView({ behavior: 'smooth' });
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const companyInput = document.getElementById('company');
+
+        const prefillBrief = urlParams.get('prefillBrief');
+        if (prefillBrief && messageBox) {
+            messageBox.value = decodeURIComponent(prefillBrief);
         } else {
             const storedBrief = localStorage.getItem('hubQuickDiagBrief');
             if(storedBrief && messageBox && !messageBox.value) {
                 const helper = document.createElement('div');
-                helper.style.marginBottom = '10px';
-                helper.style.fontSize = '13px';
-                helper.style.color = 'var(--coral)';
+                helper.style.marginBottom = '10px'; helper.style.fontSize = '13px'; helper.style.color = 'var(--coral)';
                 helper.innerHTML = `Found your Quick Diagnostic brief. <a href="#" id="insertBrief" style="text-decoration:underline; font-weight:700;">Insert it?</a>`;
                 messageBox.parentNode.insertBefore(helper, messageBox);
                 document.getElementById('insertBrief').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    messageBox.value = storedBrief;
-                    helper.remove();
+                    e.preventDefault(); messageBox.value = storedBrief; helper.remove();
                 });
             }
+        }
+
+        const pName = urlParams.get('prefillName');
+        const pEmail = urlParams.get('prefillEmail');
+        const pCompany = urlParams.get('prefillCompany');
+
+        if (pName && nameInput) nameInput.value = decodeURIComponent(pName);
+        if (pEmail && emailInput) emailInput.value = decodeURIComponent(pEmail);
+        if (pCompany && companyInput) companyInput.value = decodeURIComponent(pCompany);
+
+        if (prefillBrief || pName || pEmail) {
+            window.history.replaceState({}, document.title, window.location.pathname);
+            const form = document.querySelector('.contact-form');
+            if(form) form.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     })();
     </script>
