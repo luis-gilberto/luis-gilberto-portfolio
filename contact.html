@@ -812,7 +812,7 @@
         .faq-content {
             max-height: 0; overflow: hidden; transition: max-height 0.3s ease;
         }
-        .faq-item.active .faq-content { max-height: 200px; margin-top: 16px; }
+        .faq-item.active .faq-content { max-height: 1000px; margin-top: 16px; }
         .faq-content p { color: var(--text-secondary); font-size: 15px; margin: 0; }
 
         .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
@@ -1371,6 +1371,35 @@
                 }
             }
         })();
+    </script>
+    <script>
+    /* === PREFILL LOGIC FROM HUB DIAGNOSTIC === */
+    (function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const prefill = urlParams.get('prefillBrief');
+        const messageBox = document.getElementById('message');
+        if (prefill && messageBox) {
+            messageBox.value = decodeURIComponent(prefill);
+            window.history.replaceState({}, document.title, window.location.pathname);
+            const form = document.querySelector('.contact-form');
+            if(form) form.scrollIntoView({ behavior: 'smooth' });
+        } else {
+            const storedBrief = localStorage.getItem('hubQuickDiagBrief');
+            if(storedBrief && messageBox && !messageBox.value) {
+                const helper = document.createElement('div');
+                helper.style.marginBottom = '10px';
+                helper.style.fontSize = '13px';
+                helper.style.color = 'var(--coral)';
+                helper.innerHTML = `Found your Quick Diagnostic brief. <a href="#" id="insertBrief" style="text-decoration:underline; font-weight:700;">Insert it?</a>`;
+                messageBox.parentNode.insertBefore(helper, messageBox);
+                document.getElementById('insertBrief').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    messageBox.value = storedBrief;
+                    helper.remove();
+                });
+            }
+        }
+    })();
     </script>
     <script>
         // === CUSTOM CURSOR (THE LENS) ===
