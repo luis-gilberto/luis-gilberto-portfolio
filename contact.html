@@ -574,22 +574,111 @@
             border-radius: 2px; margin: 2px 0; display: block;
         }
 
-        .mobile-menu-overlay { position: fixed; inset: 0; background-color: var(--bg-primary); z-index: 11000; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; }
-        .mobile-menu-overlay.active { transform: translateX(0); }
-        .mobile-drawer-header { display: flex; justify-content: space-between; align-items: center; padding: 0 24px; height: 80px; border-bottom: 1px solid var(--border-light); }
-        .mobile-drawer-logo { height: 32px; width: auto; object-fit: contain; filter: brightness(0) invert(1); }
-        .mobile-controls { display: flex; align-items: center; gap: 16px; }
-        .drawer-close-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.1); border-radius: 50%; color: var(--text-primary); cursor: pointer; transition: all 0.2s ease; }
-        [data-theme="dark"] .drawer-close-btn { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); color: #fff; }
-        .drawer-close-btn:hover { background: #F96F6E; color: white; border-color: #F96F6E; transform: rotate(90deg); }
-        .mobile-drawer-content { padding: 40px 32px; padding-bottom: max(40px, calc(40px + env(safe-area-inset-bottom))); overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; gap: 32px; }
-        .mobile-group-label { font-family: 'Inter', sans-serif; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 16px; opacity: 0.7; }
-        .mobile-link { display: block; text-decoration: none; color: var(--text-primary); transition: color 0.2s; }
-        .mobile-link.main { font-family: var(--font-display); font-size: 2.5rem; font-weight: 700; line-height: 1.1; margin-bottom: 8px; }
-        .mobile-link.sub { font-family: 'Inter', sans-serif; font-size: 1.1rem; font-weight: 500; margin-bottom: 12px; color: var(--text-secondary); padding-left: 0; transition: all 0.2s; }
-        .mobile-link:hover { color: #F96F6E; }
-        .mobile-link.active-parent { color: #F96F6E; }
-        .mobile-link.sub.active { color: #F96F6E; font-weight: 700; padding-left: 12px; border-left: 3px solid #F96F6E; }
+        /* === MOBILE MENU STANDARDIZATION (Matches Index.html) === */
+        .mobile-menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0.75rem;
+            color: var(--text-primary);
+            z-index: 1002;
+        }
+
+        .mobile-menu-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.35);
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            display: block;
+        }
+
+        .mobile-menu-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .mobile-drawer {
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 100vh;
+            width: 85vw;
+            max-width: 400px;
+            background: #000000;
+            box-shadow: -12px 0 30px rgba(0,0,0,0.4);
+            transform: translateX(100%);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mobile-menu-overlay.active .mobile-drawer {
+            transform: translateX(0);
+        }
+
+        .mobile-menu-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 44px;
+            height: 44px;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            color: #ffffff;
+            font-size: 32px;
+            line-height: 1;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            z-index: 10;
+        }
+
+        .mobile-menu-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            padding: 1.5rem 1.5rem 2rem;
+            padding-bottom: max(2rem, calc(2rem + env(safe-area-inset-bottom)));
+        }
+
+        .mobile-drawer-header {
+            padding: 2rem 0 2rem 0.25rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 2rem;
+            display: block;
+        }
+
+        .mobile-drawer-brand { display: flex; flex-direction: column; gap: 0.25rem; }
+        .mobile-drawer-name { font-family: var(--font-display); font-size: 1.5rem; font-weight: 600; color: #ffffff; letter-spacing: -0.02em; }
+        .mobile-drawer-role { font-family: var(--font-sans); font-size: 0.8125rem; font-weight: 400; color: rgba(255, 255, 255, 0.5); letter-spacing: 0.02em; }
+
+        .mobile-nav-section { display: flex; flex-direction: column; gap: 0; margin-bottom: 2.5rem; }
+        .mobile-nav-label { font-family: var(--font-sans); font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255, 255, 255, 0.4); margin-bottom: 1.25rem; padding-left: 0.25rem; }
+
+        .mobile-nav-link-primary {
+            font-family: var(--font-display); font-size: 1.75rem; font-weight: 500; line-height: 1.3;
+            color: rgba(255, 255, 255, 0.85); padding: 0.5rem 0.25rem; transition: all 0.2s ease;
+            text-decoration: none; position: relative; display: block;
+        }
+        .mobile-nav-link-secondary {
+            font-family: var(--font-sans); font-size: 1rem; font-weight: 400; line-height: 1.5;
+            color: rgba(255, 255, 255, 0.65); padding: 0.625rem 0.25rem; transition: all 0.2s ease;
+            text-decoration: none; display: block;
+        }
+
+        .mobile-nav-link-primary:hover, .mobile-nav-link-secondary:hover { color: var(--coral); transform: translateX(4px); }
+        .mobile-nav-link-primary.active, .mobile-nav-link-secondary.active { color: var(--coral); font-weight: 600; }
+
+        @media (max-width: 1023px) {
+            .mobile-menu-toggle { display: flex; align-items: center; justify-content: center; }
+        }
         .mobile-divider { height: 1px; width: 100%; background: var(--border-light); }
         @media (max-width: 1023px) { .nav-links, .portfolio-subnav { display: none; } body { padding-top: 64px; } }
 
@@ -834,34 +923,36 @@
         </div>
     </nav>
 
-    <div class="mobile-menu-overlay" id="mobileOverlay" aria-hidden="true">
-        <div class="mobile-drawer-header">
-            <div class="mobile-brand">
-                <img src="/assets/images/Symbol_mobile.svg" alt="Logo" class="mobile-drawer-logo">
+    <!-- Standardized Mobile Drawer -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay" aria-hidden="true">
+        <div class="mobile-drawer" role="dialog" aria-modal="true" aria-label="Mobile menu">
+            <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">&times;</button>
+            <div class="mobile-menu-content">
+                <div class="mobile-drawer-header">
+                    <div class="mobile-drawer-brand">
+                        <span class="mobile-drawer-name">Luis Gilberto</span>
+                        <span class="mobile-drawer-role">Creative Strategy</span>
+                    </div>
+                </div>
+
+                <div class="mobile-nav-section">
+                    <div class="mobile-nav-label">GLOBAL</div>
+                    <a href="/index.html" class="mobile-nav-link-primary">Portfolio</a>
+                    <a href="/insights/index.html" class="mobile-nav-link-primary">Insights</a>
+                    <a href="/TheHub/index.html" class="mobile-nav-link-primary">The Hub</a>
+                    <a href="https://portal.luis-gilberto.com" class="mobile-nav-link-primary" target="_blank" rel="noopener noreferrer">The Portal</a>
+                </div>
+
+                <div class="mobile-nav-section">
+                    <div class="mobile-nav-label">PORTFOLIO</div>
+                    <a href="/index.html" class="mobile-nav-link-secondary">Home</a>
+                    <a href="/timeline.html" class="mobile-nav-link-secondary">Timeline</a>
+                    <a href="/myexperience.html" class="mobile-nav-link-secondary">Experience</a>
+                    <a href="/about.html" class="mobile-nav-link-secondary">About</a>
+                    <a href="/brand/" class="mobile-nav-link-secondary">Identity</a>
+                    <a href="/contact.html" class="mobile-nav-link-secondary active">Contact</a>
+                </div>
             </div>
-            <div class="mobile-controls">
-                <button class="drawer-close-btn" id="drawerCloseBtn" aria-label="Close Menu">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                </button>
-            </div>
-        </div>
-        <div class="mobile-drawer-content">
-            <nav class="mobile-nav-group">
-                <div class="mobile-group-label">Global</div>
-                <a href="/index.html" class="mobile-link main">Portfolio</a>
-                <a href="/insights/index.html" class="mobile-link main">Insights</a>
-                <a href="/TheHub/" class="mobile-link main">The Hub</a>
-                <a href="https://portal.luis-gilberto.com" class="mobile-link main" target="_blank" rel="noopener noreferrer" aria-label="The Portal (opens in a new tab)">The Portal</a>
-            </nav>
-            <div class="mobile-divider"></div>
-            <nav class="mobile-nav-group" aria-label="Portfolio sub-navigation">
-                <div class="mobile-group-label">Submenu</div>
-                <a href="/index.html" class="mobile-link sub">Home</a>
-                <a href="/timeline.html" class="mobile-link sub">Timeline</a>
-                <a href="/myexperience.html" class="mobile-link sub">Experience</a>
-                <a href="/about.html" class="mobile-link sub">About</a>
-                <a href="/contact.html" class="mobile-link sub active">Contact</a>
-            </nav>
         </div>
     </div>
 
@@ -1194,17 +1285,42 @@
             localStorage.setItem('theme', theme);
         });
 
-        document.getElementById('yr').textContent = new Date().getFullYear();
+        (function(){ const yr = document.getElementById('yr'); if (yr) { yr.textContent = new Date().getFullYear(); } })();
 
-        const mobileToggle = document.getElementById('mobileToggle');
-        const mobileOverlay = document.getElementById('mobileOverlay');
-        const drawerCloseBtn = document.getElementById('drawerCloseBtn');
-        function openDrawer() { if (mobileOverlay) { mobileOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; } }
-        function closeDrawer() { if (mobileOverlay) { mobileOverlay.classList.remove('active'); document.body.style.overflow = ''; } }
-        if (mobileToggle) mobileToggle.addEventListener('click', openDrawer);
-        if (drawerCloseBtn) drawerCloseBtn.addEventListener('click', closeDrawer);
-        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDrawer(); });
-        if (mobileOverlay) { mobileOverlay.addEventListener('click', (e) => { if (e.target === mobileOverlay) closeDrawer(); }); }
+        // MOBILE MENU LOGIC (Standardized)
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+        const mobileMenuClose = document.getElementById('mobileMenuClose');
+
+        if (mobileMenuToggle && mobileMenuOverlay) {
+            mobileMenuToggle.addEventListener('click', () => {
+                mobileMenuOverlay.classList.add('active');
+                mobileMenuOverlay.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+            });
+
+            function closeDrawer() {
+                mobileMenuOverlay.classList.remove('active');
+                mobileMenuOverlay.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+            }
+
+            if (mobileMenuClose) {
+                mobileMenuClose.addEventListener('click', closeDrawer);
+            }
+
+            mobileMenuOverlay.addEventListener('click', (e) => {
+                if (e.target === mobileMenuOverlay) {
+                    closeDrawer();
+                }
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && mobileMenuOverlay.classList.contains('active')) {
+                    closeDrawer();
+                }
+            });
+        }
 
         // FAQ Toggle
         function toggleFAQ(element) {
