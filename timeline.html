@@ -255,38 +255,21 @@
         .mobile-controls { display: none; align-items: center; gap: 1rem; }
         .mobile-menu-toggle { background: transparent; border: none; cursor: pointer; padding: 0.75rem; color: #ffffff; }
 
-        /* Portfolio Sub-Navigation - Theme Adaptive */
-        .portfolio-subnav {
-            position: fixed;
-            top: 96px;
-            left: 0;
-            right: 0;
-            z-index: 999;
-            background: rgba(26, 26, 26, 0.6);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border-light);
-            padding: 0;
+        /* Sub-Navigation (Standardized) */
+        .sub-navigation {
+            position: fixed; top: 96px; left: 0; right: 0; z-index: 999;
+            background: rgba(26, 26, 26, 0.6); backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-light); padding: 0;
         }
-
-        .portfolio-subnav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 1.25rem 2rem;
-            display: flex;
-            gap: 2.5rem;
-            overflow-x: auto;
-            align-items: center;
-        }
-
-        .subnav-link { font-size: 0.875rem; font-weight: 500; letter-spacing: 0.02em; line-height: 1.6; text-transform: none; opacity: 0.7; white-space: nowrap; transition: opacity 0.15s ease; font-family: var(--font-sans); display: inline-block; padding: 0.25rem 0; color: var(--text-primary); text-decoration: none; }
-
-        .subnav-link:hover { opacity: 1; }
-
-        .subnav-link.active { color: var(--coral); opacity: 1; position: relative; font-weight: 600; }
-        .subnav-link.active::before { content: "-"; color: var(--coral); display: inline-block; margin-right: 8px; }
+        .sub-nav-container { max-width: 1400px; margin: 0 auto; padding: 1.25rem 2rem; }
+        .sub-nav-list { list-style: none; display: flex; gap: 2.5rem; overflow-x: auto; align-items: center; margin: 0; padding: 0; }
+        .sub-nav-list a { font-size: 0.875rem; font-weight: 500; letter-spacing: 0.02em; line-height: 1.6; text-transform: none; opacity: 0.7; white-space: nowrap; transition: opacity 0.15s ease; font-family: var(--font-sans); display: inline-block; padding: 0.25rem 0; color: var(--text-primary); text-decoration: none; }
+        .sub-nav-list a:hover { opacity: 1; }
+        .sub-nav-list a.active { color: var(--coral); opacity: 1; position: relative; font-weight: 600; }
+        .sub-nav-list a.active::before { content: "-"; color: var(--coral); display: inline-block; margin-right: 8px; }
 
         /* Mobile Toggle - Styled for Dark Nav */
-        @media (max-width: 1023px) { .portfolio-subnav { display: none; } .nav-links { display: none !important; } .mobile-controls { display: flex !important; } }
+        @media (max-width: 1023px) { .sub-navigation { display: none; } .nav-links { display: none !important; } .mobile-controls { display: flex !important; } }
 
         .mobile-nav-toggle:hover {
             background: rgba(255, 255, 255, 0.1);
@@ -347,6 +330,13 @@
         .mobile-nav-link-primary.active, .mobile-nav-link-secondary.active { color: var(--coral); font-weight: 600; }
         .mobile-nav-link-primary.active::before { content:''; position:absolute; left:-0.5rem; top:50%; transform:translateY(-50%); width:3px; height:24px; background: var(--coral); border-radius:2px; }
         .mobile-nav-link-secondary.active::before { content:''; position:absolute; left:-0.5rem; top:50%; transform:translateY(-50%); width:2px; height:16px; background: var(--coral); border-radius:2px; }
+
+        /* Lens Cursor */
+        #cursor-lens { position: fixed; pointer-events: none; z-index: 200000; width: 40px; height: 40px; transform: translate(-50%, -50%); transition: all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .lens-outer { position: absolute; top: 50%; left: 50%; width: 40px; height: 40px; border: 2px solid var(--coral); border-radius: 50%; transform: translate(-50%, -50%); opacity: 0.4; transition: all 0.2s ease; }
+        .lens-center { position: absolute; top: 50%; left: 50%; width: 4px; height: 4px; background: var(--teal); border-radius: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 10px var(--teal); }
+        body.cursor-hover .lens-outer { width: 56px; height: 56px; border-color: var(--teal); opacity: 0.8; }
+        @media (pointer: coarse) { #cursor-lens { display: none !important; } body { cursor: auto !important; } }
 
         /* TIMELINE HERO UPDATE */
         .timeline-hero {
@@ -1441,13 +1431,15 @@
       </nav>
     </header>
 
-    <nav class="portfolio-subnav" role="navigation" aria-label="Portfolio sub-navigation">
-      <div class="portfolio-subnav-container">
-        <a href="/index.html" class="subnav-link">Home</a>
-        <a href="/timeline.html" class="subnav-link active">Timeline</a>
-        <a href="/myexperience.html" class="subnav-link">Experience</a>
-        <a href="/about.html" class="subnav-link">About</a>
-        <a href="/brand/" class="subnav-link">Identity</a>
+    <nav class="sub-navigation" role="navigation" aria-label="Portfolio sub-navigation">
+      <div class="sub-nav-container">
+        <ul class="sub-nav-list">
+          <li><a href="/index.html">Home</a></li>
+          <li><a href="/timeline.html" class="active">Timeline</a></li>
+          <li><a href="/myexperience.html">Experience</a></li>
+          <li><a href="/about.html">About</a></li>
+          <li><a href="/brand/">Identity</a></li>
+        </ul>
       </div>
     </nav>
 
@@ -1912,8 +1904,42 @@
                     <a href="/legal/accessibility.html" class="footer-legal-link">Accessibility</a>
                 </div>
             </div>
-        </div>
+    </div>
     </footer>
+
+    <script>
+      (function(){
+        const html = document.documentElement;
+        const themeToggle = document.getElementById('themeToggle');
+        const saved = localStorage.getItem('theme') || 'light';
+        html.setAttribute('data-theme', saved);
+        if (themeToggle) {
+          themeToggle.addEventListener('click', () => {
+            const next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+          });
+        }
+
+        const toggle = document.getElementById('mobileMenuToggle');
+        const overlay = document.getElementById('mobileMenuOverlay');
+        const closeBtn = document.getElementById('mobileMenuClose');
+        if (toggle && overlay) {
+          toggle.addEventListener('click', () => { overlay.classList.add('active'); document.body.style.overflow = 'hidden'; });
+          const close = () => { overlay.classList.remove('active'); document.body.style.overflow = ''; };
+          if (closeBtn) closeBtn.addEventListener('click', close);
+          overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+          document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay.classList.contains('active')) close(); });
+        }
+
+        const cursor = document.getElementById('cursor-lens');
+        document.addEventListener('mousemove', (e) => { if (cursor) { cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px'; } });
+        document.querySelectorAll('a, button').forEach(el => {
+          el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+          el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+        });
+      })();
+    </script>
 
     <script>
         const _cy = document.getElementById('currentYear'); if (_cy) { _cy.textContent = new Date().getFullYear(); }

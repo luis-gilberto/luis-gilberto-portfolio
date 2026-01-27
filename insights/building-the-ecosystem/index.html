@@ -14,56 +14,52 @@
 
     <link rel="stylesheet" href="/insights/assets/css/article-theme.css">
     <style>
-        /* Signature Overlay Styles */
+        /* 1. Fix the container so it hugs the image drawing exactly */
         .theme-image-container {
             position: relative !important;
-            display: block;
-            /* Ensure container shrinks to image width so signature stays attached */
-            width: fit-content !important; 
-            max-width: 100% !important; /* CRITICAL: Prevent container from exceeding parent/image width on small screens */
-            margin-left: auto;
-            margin-right: auto;
-            line-height: 0; /* Kill ghost space below image */
+            display: inline-block !important;
+            width: auto !important; /* Prevents stretching to screen edge */
+            max-width: 100% !important;
+            line-height: 0;
+            margin: 0 auto; /* Centers the container if the parent is a flex/center block */
         }
-        /* Increase specificity to override external .theme-image-container img { display: none !important } */
-        .theme-image-container .signature-overlay,
-        .visual-break .signature-overlay {
-            position: absolute;
-            bottom: 15px;
-            right: 15px;
-            width: 100px;
-            opacity: 0.75;
-            z-index: 100;
-            pointer-events: none;
-            mix-blend-mode: normal;
+
+        /* Base Signature Positioning */
+        div.theme-image-container img.sig-sticker {
             display: block !important;
+            position: absolute !important;
+            bottom: 5% !important;
+            right: 5% !important;
+            width: 22% !important;
+            min-width: 80px !important;
+            max-width: 150px !important;
+            z-index: 100 !important;
+            transform: rotate(-2.5deg) !important;
+            opacity: 0.85 !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            border: none !important;
+            pointer-events: none !important;
         }
 
-        /* Specific Placement Modifiers */
-        /* The Manual Strategist (Pivot) & The System Architect - Absolute containment with precise padding (10px) */
-        .theme-image-container .signature-overlay.manual-strategist,
-        .theme-image-container .signature-overlay.system-architect {
-            bottom: 10px !important;
-            right: 10px !important;
-        }
+        /* Theme-specific visibility */
+        [data-theme="light"] .sig-sticker.theme-img-dark { display: none !important; }
+        [data-theme="dark"] .sig-sticker.theme-img-light { display: none !important; }
 
-        /* The Architect's Model (Hero) - Larger negative space (15px) */
-        .theme-image-container .signature-overlay.hero {
-            bottom: 15px;
-            right: 15px;
-        }
-        
+        /* Blending for 'Ink-on-Paper' feel */
+        [data-theme="light"] .sig-sticker.theme-img-light { mix-blend-mode: multiply !important; }
+        [data-theme="dark"] .sig-sticker.theme-img-dark { mix-blend-mode: screen !important; }
+
+        /* Use dedicated dark asset and hide the light asset in dark mode */
+        [data-theme="dark"] .sig-sticker.theme-img-dark { filter: none !important; }
+        [data-theme="dark"] .sig-sticker.theme-img-light { display: none !important; }
+        [data-theme="light"] .sig-sticker.theme-img-dark { display: none !important; }
+
         /* Button Alignment Fix */
         .btn-pill-black {
             display: inline-flex !important;
             align-items: center;
             justify-content: center;
-        }
-
-        /* Invert signature color in Dark Mode */
-        [data-theme="dark"] .signature-overlay {
-            filter: invert(1);
-            opacity: 0.8;
         }
 
         /* Modal Overlay - Full screen, hidden by default */
@@ -276,6 +272,8 @@
         
         <div class="hero-illustration">
             <div class="theme-image-container"> 
+                <img src="../assets/images/signature-AI.png" class="sig-sticker theme-img-light" alt="Luis Gilberto / AI Signature"> 
+                <img src="../assets/images/signature-AI-dark.png" class="sig-sticker theme-img-dark" alt="Luis Gilberto / AI Signature (Dark)"> 
                 <!-- Light Mode Hero --> 
                 <img src="/insights/assets/images/ecosystem-design.png" 
                      alt="The Ecosystem Architecture Model" 
@@ -284,7 +282,6 @@
                 <img src="/insights/assets/images/ecosystem-design-dark.png" 
                      alt="The Ecosystem Architecture Model (Dark Mode)" 
                      class="theme-img-dark"> 
-                <img src="/insights/assets/images/signature.svg" class="signature-overlay hero" alt="Luis Gilberto / AI">
             </div>
             <p class="caption" style="margin-top: 2rem; opacity: 0.7;">The Vision: Designing the machine that builds the work.</p>
         </div>
@@ -354,7 +351,6 @@
                         <img src="/insights/assets/images/ecosystem-problem-dark.png" 
                              alt="Illustration of manual strategy (Dark Mode)" 
                              class="theme-img-dark"> 
-                        <img src="/insights/assets/images/signature.svg" class="signature-overlay manual-strategist" alt="Luis Gilberto / AI">
                     </div>
                     <p class="caption">The trap: trying to build a cathedral without a blueprint.</p> 
                 </div>
@@ -386,7 +382,9 @@
                 
                 <div class="visual-break">
                     <div class="theme-image-container">
-                        <!-- Light Mode Image -->
+                        <img src="../assets/images/signature-AI.png" class="sig-sticker theme-img-light" alt="Luis Gilberto / AI Signature">
+                        <img src="../assets/images/signature-AI-dark.png" class="sig-sticker theme-img-dark" alt="Luis Gilberto / AI Signature (Dark)">
+                        <!-- Light Mode Image --> 
                         <img src="/insights/assets/images/ecosystem-solution.png" 
                              alt="The Ecosystem Solution" 
                              class="theme-img-light">
@@ -394,7 +392,6 @@
                         <img src="/insights/assets/images/ecosystem-solution-dark.png" 
                              alt="The Ecosystem Solution (Dark Mode)" 
                              class="theme-img-dark">
-                        <img src="/insights/assets/images/signature.svg" class="signature-overlay system-architect" alt="Luis Gilberto / AI">
                     </div>
                     <p class="caption">The Solution: A unified operating system for growth.</p>
                 </div>
