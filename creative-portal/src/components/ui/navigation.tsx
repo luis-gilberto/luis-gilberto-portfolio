@@ -113,7 +113,7 @@ export function Navigation() {
                   </>
                 ) : (
                   <>
-                    <Link href="/auth/signin" className="text-lg font-bold text-[var(--coral)]" onClick={() => setIsMobileOpen(false)}>Log In</Link>
+                    <Link href="/login" className="text-lg font-bold text-[var(--coral)]" onClick={() => setIsMobileOpen(false)}>Log In</Link>
                   </>
                 )}
               </div>

@@ -6,7 +6,7 @@ export default withAuth(
   async function middleware(req) {
     const token = await getToken({ req })
     const isAuth = !!token
-    const isAuthPage = req.nextUrl.pathname.startsWith("/auth")
+    const isAuthPage = req.nextUrl.pathname.startsWith("/login") || req.nextUrl.pathname.startsWith("/auth")
 
     if (isAuthPage) {
       if (isAuth) {
@@ -21,7 +21,7 @@ export default withAuth(
         from += req.nextUrl.search
       }
       return NextResponse.redirect(
-        new URL(`/auth/signin?from=${encodeURIComponent(from)}`, req.url)
+        new URL(`/login?from=${encodeURIComponent(from)}`, req.url)
       )
     }
 
@@ -49,5 +49,5 @@ export default withAuth(
 )
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/admin/:path*", "/auth/:path*", "/projects/:path*", "/documents/:path*", "/messages/:path*"],
+  matcher: ["/dashboard/:path*", "/admin/:path*", "/login", "/auth/:path*", "/projects/:path*", "/documents/:path*", "/messages/:path*"],
 }

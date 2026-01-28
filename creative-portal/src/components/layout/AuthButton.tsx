@@ -14,7 +14,7 @@ export default function AuthButton() {
   if (session) {
     return (
       <button
-        onClick={() => signOut({ callbackUrl: '/auth/signin' })}
+        onClick={() => signOut({ callbackUrl: '/login' })}
         className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all"
       >
         <LogOut size={16} />
@@ -25,7 +25,7 @@ export default function AuthButton() {
 
   return (
     <Link
-      href="/auth/signin"
+      href="/login"
       className="px-4 py-2 text-sm font-medium bg-[#F96F6E] hover:bg-[#ff8584] text-white rounded-lg transition-colors"
     >
       Portal Login
