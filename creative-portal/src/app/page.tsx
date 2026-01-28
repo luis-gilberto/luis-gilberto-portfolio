@@ -35,7 +35,7 @@ export default function Home() {
           asChild 
           className="h-12 px-8 text-base bg-[var(--coral)] hover:bg-[#e55a5a] text-white rounded-full font-bold shadow-lg transition-all"
         >
-          <Link href="/auth/signin">Enter System</Link>
+          <Link href="/admin">Enter System</Link>
         </Button>
         
         <Button 

@@ -80,9 +80,9 @@ export const authOptions: AuthOptions = {
     maxAge: 30 * 24 * 60 * 60,
   },
   pages: {
-    signIn: '/auth/signin',
-    verifyRequest: '/auth/verify-request',
-    newUser: '/dashboard',
+    signIn: '/login',
+    error: '/login',
+    signOut: '/login',
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -104,7 +104,12 @@ export const authOptions: AuthOptions = {
       return session
     },
     async redirect({ url, baseUrl }) {
-      return baseUrl + '/dashboard'
+      if (url.startsWith('/')) return `${baseUrl}${url}`
+      try {
+        const target = new URL(url)
+        if (target.origin === baseUrl) return url
+      } catch (e) {}
+      return `${baseUrl}/admin`
     },
   },
   secret: process.env.NEXTAUTH_SECRET,

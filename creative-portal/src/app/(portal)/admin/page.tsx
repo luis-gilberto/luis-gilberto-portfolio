@@ -1,45 +1,45 @@
-'use client';
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
+import { redirect } from 'next/navigation'
+import { prisma } from '@/lib/prisma'
+import AdminDashboardClient from './AdminDashboardClient'
 
-import { useEffect, useRef } from 'react';
-import gsap from 'gsap';
-// Import your UI components (StatsRow, QuickActions, etc.)
-import PageHeader from '@/components/dashboard-ui/PageHeader';
-import StatsRow from '@/components/dashboard-ui/StatsRow';
-import QuickActions from '@/components/dashboard-ui/QuickActions';
-import RecentProjects from '@/components/dashboard-ui/RecentProjects';
-import SystemFeed from '@/components/dashboard-ui/SystemFeed';
+export default async function AdminPage() {
+  const session = await getServerSession(authOptions)
 
-export default function AdminDashboard() {
-  const contentRef = useRef<HTMLDivElement>(null);
+  if (!session) {
+    redirect('/login')
+  }
 
-  // Animation on Load
-  useEffect(() => {
-    if (contentRef.current) {
-      gsap.fromTo(contentRef.current.children,
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.6, stagger: 0.1, ease: 'power2.out' }
-      );
-    }
-  }, []);
+  const adminEmail = process.env.PORTAL_ADMIN_EMAIL
+  if (adminEmail && session.user?.email !== adminEmail) {
+    redirect('/login')
+  }
+
+  const totalClients = await prisma.client.count()
+  const totalProjects = await prisma.project.count()
+
+  const activeProjectsCount = await prisma.project.count({
+    where: {
+      status: { in: ['Active', 'In Progress'] },
+    },
+  })
+
+  const recentProjects = await prisma.project.findMany({
+    take: 5,
+    orderBy: { startDate: 'desc' },
+    include: { client: true },
+  })
 
   return (
-    <div 
-      ref={contentRef} 
-      className="max-w-[1600px] mx-auto py-6"
-    >
-      <PageHeader />
-      <StatsRow className="mt-8" />
-      
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-12">
-        <div className="lg:col-span-8">
-          <RecentProjects />
-        </div>
-        <div className="lg:col-span-4">
-          <SystemFeed />
-        </div>
-      </div>
-      
-      <QuickActions className="mt-12" />
-    </div>
-  );
+    <AdminDashboardClient
+      stats={{
+        totalClients,
+        totalProjects,
+        activeProjects: activeProjectsCount,
+        pendingTasks: 0,
+      }}
+      projects={recentProjects}
+    />
+  )
 }
