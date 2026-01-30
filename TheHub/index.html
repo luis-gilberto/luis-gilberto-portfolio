@@ -1278,47 +1278,35 @@
             });
         }
 
-        // Hub Reveal Animation Loader (Existing logic support)
+        // Hub Reveal Animation Logic
         document.addEventListener('DOMContentLoaded', () => {
             const hubLoader = window.HubLoader;
-            const hasSeenIntro = sessionStorage.getItem('hubNavigated') === 'true';
+            const mainContent = document.getElementById('main-content');
+            const ambientBg = document.querySelector('.ambient-bg');
+            const hubPulse = document.querySelector('.hub-pulse');
 
-            if (hubLoader && !hasSeenIntro) {
-                hubLoader.create({ 
-                    videoUrl: './assets/components/hub-animation/coral_laser_line.mp4', 
+            if (hubLoader && !sessionStorage.getItem('hubIntroPlayed')) {
+                hubLoader.create({
+                    videoUrl: './assets/components/hub-animation/coral_laser_line.mp4',
                     autoStart: true,
                     onComplete: () => {
-                        window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-                        if ("scrollRestoration" in history) {
-                            history.scrollRestoration = "manual";
-                        }
-
-                        const ambientBg = document.querySelector('.ambient-bg');
+                        window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
                         if (ambientBg) ambientBg.classList.add('active');
-
-                        setTimeout(() => {
-                            const hubPulse = document.querySelector('.hub-pulse');
-                            if (hubPulse) {
-                                hubPulse.classList.add('active');
-                            }
-                        }, 500);
-
-                        setTimeout(() => {
-                            const mainContent = document.getElementById('main-content');
-                            if (mainContent) {
-                                mainContent.style.opacity = '1';
-                            }
-                        }, 2500);
+                        if (hubPulse) { setTimeout(() => hubPulse.classList.add('active'), 500); }
+                        setTimeout(() => { if (mainContent) mainContent.style.opacity = '1'; }, 2500);
+                        sessionStorage.setItem('hubIntroPlayed', 'true');
                     }
                 });
-                sessionStorage.setItem('hubNavigated', 'true');
+                setTimeout(() => {
+                    if (!sessionStorage.getItem('hubIntroPlayed')) {
+                        if (ambientBg) ambientBg.classList.add('active');
+                        if (mainContent) mainContent.style.opacity = '1';
+                    }
+                }, 4000);
             } else {
-                const ambientBg = document.querySelector('.ambient-bg');
+                if (mainContent) { mainContent.style.transition = 'none'; mainContent.style.opacity = '1'; }
                 if (ambientBg) ambientBg.classList.add('active');
-                const mainContent = document.getElementById('main-content');
-                if (mainContent) {
-                    mainContent.style.opacity = '1';
-                }
+                if (hubPulse) hubPulse.style.display = 'none';
             }
         });
     </script>
