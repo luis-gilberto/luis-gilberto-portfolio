@@ -133,6 +133,15 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose
             <span>Sign Out</span>
           </button>
 
+          {/* NEW PROTECTION LABEL */}
+          <div className="px-6 pb-6 mt-auto text-center">
+            <div className="mt-6 pt-4 border-t border-white/5 text-[9px] text-gray-700 font-mono tracking-wider opacity-50">
+              CONFIDENTIAL / PROPRIETARY
+              <br />
+              SYSTEM ID: LG-V4.3
+            </div>
+          </div>
+
         </nav>
       </aside>
     </>

@@ -53,6 +53,13 @@ export default function Login() {
             {loading ? 'Authenticating...' : 'Sign In'}
           </Button>
         </form>
+        <div className="mt-6 text-center border-t border-white/5 pt-4">
+          <p className="text-[10px] text-gray-600 leading-tight">
+            <span className="text-gray-500 font-bold block mb-1">RESTRICTED ACCESS ENVIRONMENT</span>
+            By accessing The Portal, you acknowledge that the StrategyIQ™ Engine contains
+            proprietary trade secrets. Access is monitored and subject to strict NDA terms.
+          </p>
+        </div>
       </div>
     </div>
   )
