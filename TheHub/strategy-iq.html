@@ -526,7 +526,7 @@
     }
 }
 
-/* Desktop: Keep hover effect (1025px and above) */
+/* Desktop: Keep hover effect (1025px and above) and add focus/expanded access */
 @media (min-width: 1025px) {
     .expertise-card p {
         opacity: 0;
@@ -535,8 +535,9 @@
         height: 0;
         overflow: hidden;
     }
-    
-    .expertise-card:hover p {
+    .expertise-card:hover p,
+    .expertise-card:focus-within p,
+    .expertise-card.expanded p {
         opacity: 1;
         transform: translateY(0);
         height: auto;
@@ -635,7 +636,7 @@
             <div class="container">
                 <div class="expertise-grid">
                     <!-- Go-To-Market -->
-                    <div class="expertise-card" data-animate>
+                    <div class="expertise-card" data-animate tabindex="0" role="button" aria-expanded="false">
                         <div class="card-bg">
                             <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80" alt="Go-To-Market">
                             <div class="card-overlay"></div>
@@ -650,7 +651,7 @@
                     </div>
 
                     <!-- Brand Intelligence -->
-                    <div class="expertise-card" data-animate>
+                    <div class="expertise-card" data-animate tabindex="0" role="button" aria-expanded="false">
                         <div class="card-bg">
                             <img src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=800&q=80" alt="Brand Intelligence">
                             <div class="card-overlay"></div>
@@ -665,7 +666,7 @@
                     </div>
 
                     <!-- Strategic Campaigns -->
-                    <div class="expertise-card" data-animate>
+                    <div class="expertise-card" data-animate tabindex="0" role="button" aria-expanded="false">
                         <div class="card-bg">
                             <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&q=80" alt="Strategic Campaigns">
                             <div class="card-overlay"></div>
@@ -680,7 +681,7 @@
                     </div>
 
                     <!-- Creative Strategy -->
-                    <div class="expertise-card" data-animate>
+                    <div class="expertise-card" data-animate tabindex="0" role="button" aria-expanded="false">
                         <div class="card-bg">
                             <img src="https://images.unsplash.com/photo-1558655146-d09347e92766?w=800&q=80" alt="Creative Strategy">
                             <div class="card-overlay"></div>
@@ -1473,6 +1474,29 @@
     </style>
     <script src="/TheHub/hub-script.js"></script>
     <script>
+        (function(){
+            const isCoarse = window.matchMedia && window.matchMedia('(pointer:coarse)').matches;
+            const cards = document.querySelectorAll('.expertise-card');
+            cards.forEach((card, idx) => {
+                const desc = card.querySelector('.card-content p');
+                if (desc && !desc.id) desc.id = `expertise-desc-${idx+1}`;
+                card.setAttribute('aria-controls', desc ? desc.id : `expertise-desc-${idx+1}`);
+                const toggle = () => {
+                    const expanded = card.classList.toggle('expanded');
+                    card.setAttribute('aria-expanded', String(expanded));
+                };
+                if (isCoarse) {
+                    card.addEventListener('click', toggle, { passive: true });
+                }
+                card.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggle();
+                    }
+                });
+            });
+        })();
+    </script>
         // Simple Animate on Scroll
         function checkScroll() {
             const elements = document.querySelectorAll('[data-animate]');
