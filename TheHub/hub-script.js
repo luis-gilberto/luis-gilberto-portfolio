@@ -175,9 +175,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Dynamic, data-driven nav rendering (only when an intent lens is set) 🧩
     (function reorderNavFromLens(){
         const lens = getLens();
-        if (!lens) return; // default order when no lens is set
+        if (!lens) return;
 
-        const container = document.querySelector('.desktop-links');
+        const candidates = Array.from(document.querySelectorAll('.desktop-links'));
+        const container = candidates.find(el => el.querySelectorAll('a').length > 0);
         if (!container) return;
 
         const links = Array.from(container.querySelectorAll('a'));
@@ -211,7 +212,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Rebuild container in the new order (no duplication)
         const fragment = document.createDocumentFragment();
         [...ordered, ...leftovers].forEach(a => fragment.appendChild(a));
-        container.innerHTML = '';
-        container.appendChild(fragment);
+        container.replaceChildren(fragment);
     })();
 });
