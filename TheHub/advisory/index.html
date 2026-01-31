@@ -81,6 +81,9 @@
         .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
         .section-alt { background-color: var(--bg-alt); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); }
 
+        /* Mobile menu toggle base: hidden on desktop */
+        .mobile-menu-toggle { display: none; touch-action: manipulation; }
+
         /* BUTTONS */
         .btn { display: inline-flex; align-items: center; justify-content: center; padding: 14px 36px; border-radius: 99px; font-weight: 600; font-size: 14px; text-decoration: none; transition: all 0.3s; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em; }
         .btn-primary { background: var(--text-primary); color: var(--bg-primary); }
@@ -166,13 +169,70 @@
         .stat-val { font-family: 'Big Shoulders Display'; font-size: 3rem; font-weight: 700; color: var(--text-primary); line-height: 1; }
         .stat-lbl { font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.1em; }
 
+        /* ==========================================
+           MOBILE DRAWER STYLING
+           ========================================== */
+        #mobileMenuOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 10001;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        #mobileMenuOverlay.active { display: block; opacity: 1; }
+
+        #mobileMenuOverlay > div {
+            position: absolute; top: 0; right: 0; width: 85%; max-width: 400px; height: 100%;
+            background: #050505; border-left: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex; flex-direction: column;
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #mobileMenuOverlay.active > div { transform: translateX(0); }
+
+        /* Drawer Typography */
+        #mobileMenuOverlay .drawer-section-label { font-family: 'Inter', sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #666; margin-bottom: 16px; font-weight: 600; }
+        #mobileMenuOverlay .drawer-main-link { display: block; font-family: 'Big Shoulders Display', sans-serif; font-size: 32px; font-weight: 700; color: #fff; text-decoration: none; margin-bottom: 8px; transition: color 0.2s ease, transform 0.2s ease; }
+        #mobileMenuOverlay .drawer-main-link:hover { color: #F96F6E; transform: translateX(4px); }
+        #mobileMenuOverlay .drawer-main-link.active { color: #F96F6E; }
+        #mobileMenuOverlay .drawer-sub-link { display: block; font-family: 'Inter', sans-serif; font-size: 16px; color: #888; text-decoration: none; margin-bottom: 16px; transition: color 0.2s ease, padding-left 0.2s ease; }
+        #mobileMenuOverlay .drawer-sub-link:hover { color: #fff; padding-left: 4px; }
+        #mobileMenuOverlay .drawer-sub-link.active { font-weight: 700; color: #F96F6E; border-left: 2px solid #F96F6E; padding-left: 12px; }
+        #mobileMenuOverlay .drawer-divider { height: 1px; background: rgba(255, 255, 255, 0.1); margin: 40px 0; }
+        #mobileMenuOverlay .drawer-close { background: none; border: none; color: white; cursor: pointer; padding: 0; transition: transform 0.2s ease, opacity 0.2s ease; }
+        #mobileMenuOverlay .drawer-close:hover { transform: rotate(90deg); opacity: 0.7; }
+        #mobileMenuOverlay .drawer-main-link.portal-link { color: #2ED3C6; }
+        #mobileMenuOverlay .drawer-main-link.portal-link:hover { color: #26b8ab; }
+
         /* MOBILE OVERRIDES */
         @media (max-width: 1024px) {
             .desktop-links { display: none !important; }
-            .mobile-menu-toggle { display: block !important; }
             .nav-actions { gap: 1rem; }
+            nav + .fixed-dark { display: none !important; }
+
+            /* FORCE DISPLAY TOGGLE */
+            .mobile-menu-toggle {
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
+            }
+
             .legacy-stats { gap: 2rem; }
             .price-lock { flex-direction: column; }
+        }
+
+        @media (max-width: 640px) {
+            h1 { font-size: 1.875rem !important; }
+            h2 { font-size: 1.75rem !important; }
+            .stat-val { font-size: 1.75rem; }
+            .stat-lbl { font-size: 0.7rem; }
+            #mobileMenuOverlay > div { width: 90%; }
+            #mobileMenuOverlay .drawer-main-link { font-size: 28px; }
         }
     </style>
 </head>
@@ -190,7 +250,7 @@
             <a href="/index.html">Portfolio</a>
             <a href="/insights/index.html">Insights</a>
             <a href="/TheHub/index.html">The Hub</a>
-            <a href="https://portal.luis-gilberto.com">Portal</a>
+            <a href="https://portal.luis-gilberto.com">The Portal</a>
         </div>
         <div class="nav-actions" style="display: flex; align-items: center; gap: 20px;">
             <button id="themeToggle" style="width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.1); border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;">
@@ -199,8 +259,12 @@
             <a href="https://portal.luis-gilberto.com/login" class="desktop-links" style="font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: #888; text-decoration: none; border: 1px solid rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 4px; transition: 0.2s;">
                 Client Login
             </a>
-            <button class="mobile-menu-toggle" id="mobileToggle" style="display: none; background: none; border: none; font-size: 20px; cursor: pointer; color: white;">
-                <i class="fa-solid fa-bars"></i>
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-controls="mobileMenuOverlay" style="background: none; border: none; font-size: 20px; cursor: pointer; color: white;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
             </button>
         </div>
     </div>
@@ -232,7 +296,7 @@
             <div class="eyebrow">STRATEGIC PARTNERSHIP</div>
             
             <h1 style="font-size: clamp(2.5rem, 5vw, 4.5rem); line-height: 1; margin-bottom: 1.5rem; color: var(--text-primary);">
-                From Insight to <span class="text-gradient">Judgment.</span>
+                From Insight to <span class="text-gradient">Action.</span>
             </h1>
             
             <p style="font-size: 1.25rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 2.5rem;">
@@ -414,6 +478,44 @@
 
 </main>
 
+<!-- STANDARDIZED HUB DRAWER (placed after main, before footer) -->
+<div id="mobileMenuOverlay">
+    <div>
+        <!-- Close Button -->
+        <div style="padding: 24px; display: flex; justify-content: flex-end;">
+            <button id="drawerCloseBtn" class="drawer-close" aria-label="Close menu">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        
+        <!-- Links -->
+        <div style="padding: 0 32px; overflow-y: auto; flex: 1;">
+            <!-- Global Ecosystem -->
+            <div style="margin-bottom: 40px;">
+                <div class="drawer-section-label">Ecosystem</div>
+                <a href="/index.html" class="drawer-main-link">Portfolio</a>
+                <a href="/insights/index.html" class="drawer-main-link">Insights</a>
+                <a href="/TheHub/index.html" class="drawer-main-link active">The Hub</a>
+                <a href="https://portal.luis-gilberto.com" class="drawer-main-link portal-link">The Portal</a>
+            </div>
+            
+            <div class="drawer-divider"></div>
+            
+            <!-- Hub Context -->
+            <div>
+                <div class="drawer-section-label">Hub Sections</div>
+                <a href="/TheHub/index.html" class="drawer-sub-link">Home</a>
+                <a href="/TheHub/strategy-iq.html" class="drawer-sub-link">StrategyIQ</a>
+                <a href="/TheHub/advisory/index.html" class="drawer-sub-link active">Advisory</a>
+                <a href="/TheHub/studio.html" class="drawer-sub-link">The Studio</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- FOOTER (FIXED DARK) --> 
 <footer class="fixed-dark" style="border-top: 1px solid rgba(255,255,255,0.1); padding: 4rem 2rem; margin-top: auto; font-family: 'Inter', sans-serif;"> 
     <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.5fr; gap: 3rem; align-items: start;"> 
@@ -545,34 +647,35 @@
 
     // Mobile menu handled by hub-script.js
 </script>
+<script>
+// Mobile Menu Logic with Smooth Transitions
+const menuToggle = document.getElementById('mobileMenuToggle');
+const menuOverlay = document.getElementById('mobileMenuOverlay');
+const menuClose = document.getElementById('drawerCloseBtn');
+
+if (menuToggle && menuOverlay) {
+    menuToggle.addEventListener('click', () => {
+        menuOverlay.style.display = 'block';
+        menuOverlay.offsetHeight;
+        menuOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    });
+
+    const closeMenu = () => {
+        menuOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+        setTimeout(() => {
+            if (!menuOverlay.classList.contains('active')) {
+                menuOverlay.style.display = 'none';
+            }
+        }, 300);
+    };
+
+    if (menuClose) menuClose.addEventListener('click', closeMenu);
+    menuOverlay.addEventListener('click', (e) => { if (e.target === menuOverlay) closeMenu(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && menuOverlay.classList.contains('active')) closeMenu(); });
+}
+</script>
 <script src="../hub-script.js"></script>
-    <!-- Mobile Menu Overlay -->
-    <div class="mobile-menu-overlay" id="mobileOverlay">
-        <div class="mobile-drawer-header" style="display:flex; justify-content:space-between; align-items:center; padding: 0 24px; height: 80px; border-bottom: 1px solid rgba(255,255,255,0.1);">
-            <div class="nav-logo">
-                <img src="/assets/images/Logomark_White_a.png" alt="Luis Gilberto" style="height: 32px; width: auto; opacity: 0.9;">
-            </div>
-            <button class="drawer-close-btn" id="drawerCloseBtn" style="width:40px; height:40px; display:flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius:50%; color:#fff; cursor:pointer;">
-                <i class="fa-solid fa-times"></i>
-            </button>
-        </div>
-        <div class="mobile-drawer-content" style="padding: 40px 32px;">
-            <div class="mobile-link-group">
-                <span class="mobile-label">Ecosystem</span>
-                <a href="/index.html" class="mobile-link main">Portfolio</a>
-                <a href="/insights/index.html" class="mobile-link main">Insights</a>
-                <a href="/TheHub/index.html" class="mobile-link main">The Hub</a>
-                <a href="https://portal.luis-gilberto.com" class="mobile-link main" style="color: #F96F6E;">Portal</a>
-            </div>
-            <div class="mobile-divider"></div>
-            <div class="mobile-link-group">
-                <span class="mobile-label">Hub Access</span>
-                <a href="/TheHub/index.html" class="mobile-link sub">Home</a>
-                <a href="/TheHub/strategy-iq.html" class="mobile-link sub">StrategyIQ</a>
-                <a href="/TheHub/advisory/index.html" class="mobile-link sub active">Advisory</a>
-                <a href="/TheHub/studio.html" class="mobile-link sub">The Studio</a>
-            </div>
-        </div>
-    </div>
 </body>
 </html>
