@@ -73,7 +73,7 @@ const observer = new IntersectionObserver((entries, observer) => {
     });
 }, observerOptions);
 
-document.addEventListener('DOMContentLoaded', () => {
+// Initialize immediately (script is loaded at end of body, DOM is ready)
     const animatedElements = document.querySelectorAll('[data-animate]');
     console.log('Found animated elements:', animatedElements.length);
     animatedElements.forEach(el => {
@@ -117,6 +117,9 @@ document.addEventListener('DOMContentLoaded', () => {
      * NOTE: Gate UI and homepage overlay will be added later.
      * ============================================= */
 
+    // Debug toggle (developer-only) 🛠️
+    const DEBUG_LENS = true;
+
     // Central, data-driven configuration (no hard-coding in DOM)
     const LENS_CONFIG = {
         hire: {
@@ -156,15 +159,29 @@ document.addEventListener('DOMContentLoaded', () => {
     function getLens() {
         try {
             const v = localStorage.getItem('lg_intent');
-            return v && LENS_CONFIG[v] ? v : null;
+            const valid = v && LENS_CONFIG[v] ? v : null;
+            if (DEBUG_LENS) console.log('[Lens] load →', valid ?? 'null');
+            return valid;
         } catch { return null; }
     }
     function setLens(lens) {
-        if (LENS_CONFIG[lens]) {
-            try { localStorage.setItem('lg_intent', lens); } catch {}
+        if (!LENS_CONFIG[lens]) {
+            // invalid lens → clear and use default
+            try { localStorage.removeItem('lg_intent'); } catch {}
+            if (DEBUG_LENS) console.log('[Lens] set invalid, cleared');
+            renderNavForLens(null);
+            return;
         }
+        try { localStorage.setItem('lg_intent', lens); } catch {}
+        if (DEBUG_LENS) console.log('[Lens] set →', lens);
+        if (DEBUG_LENS) console.log('[Lens] navOrder applied →', LENS_CONFIG[lens].navOrder);
+        renderNavForLens(lens);
     }
-    function clearLens() { try { localStorage.removeItem('lg_intent'); } catch {} }
+    function clearLens() {
+        try { localStorage.removeItem('lg_intent'); } catch {}
+        if (DEBUG_LENS) console.log('[Lens] cleared');
+        renderNavForLens(null);
+    }
 
     // Expose helpers globally for future Gate UI integration
     window.LENS_CONFIG = LENS_CONFIG;
@@ -172,46 +189,72 @@ document.addEventListener('DOMContentLoaded', () => {
     window.setLens = setLens;
     window.clearLens = clearLens;
 
-    // Dynamic, data-driven nav rendering (only when an intent lens is set) 🧩
-    (function reorderNavFromLens(){
-        const lens = getLens();
+    // Dynamic, data-driven nav rendering (applies immediately on lens change) 🧩
+    function renderNavForLens(lensOverride){
+        const lens = lensOverride || getLens();
         if (!lens) return;
 
-        const candidates = Array.from(document.querySelectorAll('.desktop-links'));
-        const container = candidates.find(el => el.querySelectorAll('a').length > 0);
-        if (!container) return;
+        const desired = LENS_CONFIG[lens].navOrder || [];
 
-        const links = Array.from(container.querySelectorAll('a'));
-        if (!links.length) return;
-
-        // Build a lookup of existing anchors by normalized href
         const normalizeHref = (h) => {
             try {
                 const u = new URL(h, window.location.origin);
                 return u.pathname;
             } catch { return h; }
         };
-        const byHref = new Map();
-        links.forEach(a => byHref.set(normalizeHref(a.getAttribute('href')||''), a));
 
-        const desired = LENS_CONFIG[lens].navOrder;
-        const ordered = [];
-        desired.forEach(key => {
-            const targetHref = ROUTE_MAP[key];
-            if (!targetHref) return;
-            const node = byHref.get(targetHref);
-            if (node) {
-                ordered.push(node);
-                byHref.delete(targetHref);
+        function reorderContainer(container){
+            if (!container) return;
+            const links = Array.from(container.querySelectorAll('a'));
+            if (!links.length) return;
+            const byHref = new Map();
+            links.forEach(a => byHref.set(normalizeHref(a.getAttribute('href')||''), a));
+            const ordered = [];
+            desired.forEach(key => {
+                const targetHref = ROUTE_MAP[key];
+                if (!targetHref) return;
+                const node = byHref.get(targetHref);
+                if (node) { ordered.push(node); byHref.delete(targetHref); }
+            });
+            const leftovers = Array.from(byHref.values());
+            const fragment = document.createDocumentFragment();
+            [...ordered, ...leftovers].forEach(a => fragment.appendChild(a));
+            container.innerHTML = '';
+            container.appendChild(fragment);
+        }
+
+        // Apply to top global nav
+        reorderContainer(document.querySelector('.nav-links'));
+        // Apply to portfolio subnav (secondary)
+        reorderContainer(document.querySelector('.portfolio-subnav .portfolio-subnav-container'));
+    }
+
+    // Backward-compatible alias
+    function rerenderNavFromLens(){ renderNavForLens(null); }
+
+    // Initial render + debug
+    const lensOnLoad = getLens();
+    if (DEBUG_LENS) console.log('[Lens] on load →', lensOnLoad ?? 'null');
+    rerenderNavFromLens();
+
+    // Lens control in header/footer (optional UI hook) 🎛️
+    (function mountLensControl(){
+        const labelEl = document.querySelector('#lensControl');
+        const current = getLens();
+        if (!labelEl) return;
+        const text = current ? `Viewing as: ${LENS_CONFIG[current].label}` : 'Viewing as: Default';
+        labelEl.textContent = text;
+        labelEl.addEventListener('click', () => {
+            clearLens();
+            const onHome = window.location.pathname === '/';
+            if (onHome) {
+                // reopen gate if present
+                const gate = document.getElementById('intentGateOverlay');
+                if (gate) gate.classList.add('is-open');
             }
         });
-
-        // Append any remaining existing links to preserve deep links and extras
-        const leftovers = Array.from(byHref.values());
-
-        // Rebuild container in the new order (no duplication)
-        const fragment = document.createDocumentFragment();
-        [...ordered, ...leftovers].forEach(a => fragment.appendChild(a));
-        container.replaceChildren(fragment);
     })();
-});
+
+    // Expose explicit renderer
+    window.renderNavForLens = renderNavForLens;
+// End initialization

@@ -1,4 +1,4 @@
-import { LayoutDashboard, FolderKanban, Users, BarChart3, Settings, ChevronLeft, ChevronRight, Rocket, Menu, LogOut } from 'lucide-react';
+import { LayoutDashboard, FolderKanban, Users, BarChart3, Settings, ChevronLeft, ChevronRight, Rocket, Menu, LogOut, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -20,6 +20,7 @@ const navItems = [
   { icon: Users, label: 'Clients', path: '/admin/clients' },
   { icon: BarChart3, label: 'Analytics', path: '/admin/analytics' },
   { icon: Settings, label: 'Settings', path: '/admin/settings' },
+  { icon: BookOpen, label: 'Pricing KB', path: '/knowledge/pricing' },
 ];
 
 export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose, onMobileToggle }: SidebarProps) {

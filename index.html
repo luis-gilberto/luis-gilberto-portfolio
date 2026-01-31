@@ -2434,18 +2434,18 @@
     // THEME TOGGLE
     // ═══════════════════════════════════════════════════════
     
-    const html = document.documentElement;
+    const rootEl = document.documentElement;
     const themeToggle = document.getElementById('themeToggle');
     const mobileThemeToggle = document.getElementById('mobileThemeToggle');
     
     // Load saved theme or default to dark
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    html.setAttribute('data-theme', savedTheme);
+    const savedThemeLocal = localStorage.getItem('theme') || 'dark';
+    rootEl.setAttribute('data-theme', savedThemeLocal);
     
     function toggleTheme() {
-      const currentTheme = html.getAttribute('data-theme');
+      const currentTheme = rootEl.getAttribute('data-theme');
       const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      html.setAttribute('data-theme', newTheme);
+      rootEl.setAttribute('data-theme', newTheme);
       localStorage.setItem('theme', newTheme);
     }
     
@@ -3189,5 +3189,90 @@
     observer.observe(document.body, { childList: true, subtree: true });
 })();
 </script>
+  <!-- Intent Gate Overlay (Homepage Only) -->
+  <div id="intentGateOverlay" aria-hidden="true" style="display:none"></div>
+
+  <!-- Lens plumbing (shared) -->
+  <script src="/TheHub/hub-script.js"></script>
+  <script>
+    // 🚪 Gate UI rules (homepage only)
+    (function(){
+      const onHome = (window.location.pathname === '/' || window.location.pathname.endsWith('/index.html'));
+      const lens = window.getLens();
+      if (!onHome || lens) return;
+      const overlay = document.getElementById('intentGateOverlay');
+      // Build overlay content
+      overlay.style.display = 'grid';
+      overlay.style.placeItems = 'center';
+      overlay.style.position = 'fixed';
+      overlay.style.inset = '0';
+      overlay.style.zIndex = '9999';
+      overlay.style.background = 'rgba(5,5,5,0.92)';
+      overlay.style.backdropFilter = 'blur(6px)';
+      overlay.style.opacity = '0';
+      overlay.style.visibility = 'hidden';
+      overlay.style.pointerEvents = 'none';
+      overlay.style.transition = 'opacity 0.6s ease, visibility 0s linear 0.6s';
+      const inner = document.createElement('div');
+      inner.style.maxWidth = '1200px';
+      inner.style.width = '100%';
+      inner.style.color = '#eee';
+      inner.innerHTML = `
+        <h2 style="font-family: var(--font-display); font-size: clamp(2rem, 5vw, 3rem); color:#fff; margin-bottom:.5rem;">What brings you here today?</h2>
+        <p style="font-family: var(--font-body); color: rgba(255,255,255,0.7); margin-bottom: 2rem;">This space adapts to how you’re exploring. Choose a lens or continue freely.</p>
+        <div style="display:grid; grid-template-columns: repeat(3, 1fr); column-gap:1.75rem; row-gap:1rem;">
+          ${['hire','partner','explore'].map(k => {
+            const copies = {
+              hire: { t:'I’m exploring Luis as a potential hire', s:'Experience, leadership, impact.' },
+              partner: { t:'I’m interested in working with Luis', s:'Strategy, systems, partnership.' },
+              explore: { t:'I’m here to explore and get to know him', s:'Story, career, curiosity.' }
+            }[k];
+            return `<div class="gate-card" data-lens="${k}" style="background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:1.75rem; cursor:pointer; transition: transform .2s, box-shadow .2s, border-color .2s;">
+              <h3 style="font-family: var(--font-body); font-weight:600; color:#fff; margin-bottom:.25rem;">${copies.t}</h3>
+              <p style="font-family: var(--font-body); color: rgba(255,255,255,0.75); font-size:.95rem;">${copies.s}</p>
+            </div>`;
+          }).join('')}
+        </div>
+        <div style="margin-top:1rem; font-size:.85rem; color: rgba(255,255,255,0.6);">You can change this anytime.</div>
+        <div style="margin-top:.5rem;">
+          <a id="gateSkipLink" style="font-size:.85rem; color: rgba(255,255,255,0.6); text-decoration: underline; cursor: pointer;">Continue without choosing</a>
+        </div>
+      `;
+      overlay.appendChild(inner);
+      // Open (lock background scroll)
+      requestAnimationFrame(() => {
+        overlay.style.opacity='1';
+        overlay.style.visibility='visible';
+        overlay.style.pointerEvents='auto';
+        overlay.style.transition='opacity 0.6s ease, visibility 0s linear 0s';
+        document.body.style.overflow = 'hidden';
+      });
+      // Wire panels
+      overlay.querySelectorAll('.gate-card').forEach(card => card.addEventListener('click', () => {
+        const key = card.getAttribute('data-lens');
+        if (window.setLens && key) window.setLens(key);
+        overlay.style.opacity='0';
+        overlay.style.visibility='hidden';
+        overlay.style.pointerEvents='none';
+        overlay.addEventListener('transitionend', () => {
+          overlay.remove();
+          // Restore scroll
+          document.body.style.overflow = '';
+        }, { once: true });
+      }));
+      // Skip link → set explore and dismiss
+      const skip = overlay.querySelector('#gateSkipLink');
+      if (skip) skip.addEventListener('click', () => {
+        if (window.setLens) window.setLens('explore');
+        overlay.style.opacity='0';
+        overlay.style.visibility='hidden';
+        overlay.style.pointerEvents='none';
+        overlay.addEventListener('transitionend', () => {
+          overlay.remove();
+          document.body.style.overflow = '';
+        }, { once: true });
+      });
+    })();
+  </script>
 </body>
 </html>
