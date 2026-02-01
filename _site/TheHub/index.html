@@ -15,7 +15,8 @@
     <script src="./assets/components/hub-animation/hub-loader.min.js"></script>
     
     <!-- Centralized Logo System -->
-    <link rel="stylesheet" href="assets/css/logo-system.css">
+    <link rel="stylesheet" href="../assets/css/logo-system.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -34,6 +35,30 @@
                 }
             }
         }
+    </script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const observerOptions = { root: null, threshold: 0.4 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const container = entry.target;
+                    const nodes = container.querySelectorAll('.flow-node');
+                    const connectors = container.querySelectorAll('.flow-connector');
+                    setTimeout(() => { nodes[0]?.classList.add('active'); }, 200);
+                    setTimeout(() => { connectors[0]?.classList.add('active'); }, 600);
+                    setTimeout(() => { nodes[1]?.classList.add('active'); }, 1000);
+                    setTimeout(() => { connectors[1]?.classList.add('active'); }, 1400);
+                    setTimeout(() => { nodes[2]?.classList.add('active'); }, 1800);
+                    setTimeout(() => { connectors[2]?.classList.add('active'); }, 2200);
+                    setTimeout(() => { nodes[3]?.classList.add('active'); }, 2600);
+                    observer.unobserve(container);
+                }
+            });
+        }, observerOptions);
+        const flowSystem = document.getElementById('flow-system');
+        if(flowSystem) observer.observe(flowSystem);
+    });
     </script>
 
     <style>
@@ -54,6 +79,7 @@
             --border-subtle: rgba(0, 0, 0, 0.06);
             --border-strong: rgba(0, 0, 0, 0.12);
             --card-bg: #FFFFFF;
+            --card-hover-overlay: rgba(0, 0, 0, 0.02);
             --nav-bg: rgba(255, 255, 255, 0.95);
             --thread-line: rgba(0, 0, 0, 0.06);
             --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.04);
@@ -71,6 +97,7 @@
             --border-subtle: rgba(255, 255, 255, 0.08);
             --border-strong: rgba(255, 255, 255, 0.15);
             --card-bg: rgba(255, 255, 255, 0.03);
+            --card-hover-overlay: rgba(255, 255, 255, 0.05);
             --nav-bg: rgba(5, 5, 5, 0.95);
             --thread-line: rgba(255, 255, 255, 0.08);
             --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.4);
@@ -138,7 +165,7 @@
             background: rgba(5,5,5,0.95) !important; /* Force Dark */
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255,255,255,0.05);
-            z-index: 9999;
+            z-index: 10004 !important;
             display: flex; align-items: center; justify-content: center; /* CENTERED */
             gap: 2rem;
         }
@@ -147,7 +174,7 @@
             text-decoration: none; font-size: 13px; font-weight: 500;
         }
         .subnav-link:hover { color: var(--coral) !important; }
-        .subnav-link.active { color: #FFFFFF !important; font-weight: 700; }
+        .subnav-link.active { color: var(--coral) !important; font-weight: 700; }
 
         /* Mobile Toggles (Force White) */
         .nav-toggle-bar { background-color: #FFFFFF !important; }
@@ -155,13 +182,24 @@
 
         /* Controls */
         .theme-toggle {
-            width: 40px; height: 40px; border-radius: 50%;
-            background: rgba(125,125,125,0.1); border: 1px solid var(--border-strong);
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; color: var(--text-primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #FFFFFF;
             transition: all 0.3s ease;
         }
-        .theme-toggle:hover { background: var(--coral); border-color: var(--coral); color: white; }
+
+        .theme-toggle:hover {
+            background: var(--coral);
+            border-color: var(--coral);
+            color: white;
+        }
         
         /* Hide/Show Icons based on Theme */
         [data-theme="dark"] .sun-icon { display: block; }
@@ -177,7 +215,7 @@
             gap: 6px; cursor: pointer; z-index: 10002;
         }
         .nav-toggle-bar {
-            width: 24px; height: 2px; background-color: var(--text-primary);
+            width: 24px; height: 2px; background-color: #FFFFFF !important;
             transition: all 0.3s ease;
         }
         .mobile-nav-toggle.open .nav-toggle-bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
@@ -188,20 +226,25 @@
            MOBILE DRAWER
            ========================================== */
         .mobile-menu-overlay {
-            position: fixed; inset: 0; background: var(--bg-primary);
-            z-index: 10001;
-            padding: 8rem 2rem 2rem;
+            position: fixed; inset: 0; background: #0A0A0A !important;
+            z-index: 10001; padding: 8rem 2rem 2rem;
             display: flex; flex-direction: column; gap: 2rem;
             transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             overflow-y: auto;
         }
         .mobile-menu-overlay.active { transform: translateX(0); }
 
+        /* Redundant Close Button inside drawer */
+        .drawer-close { 
+            position: absolute; top: 2rem; right: 2rem; 
+            background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; 
+        }
+
         .mobile-link-group { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; }
-        .mobile-label { font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.15em; margin-bottom: 0.5rem; }
-        .mobile-link.main { font-family: 'Big Shoulders Display', sans-serif; font-size: 2.5rem; font-weight: 700; line-height: 1.1; color: var(--text-primary); text-decoration: none; }
-        .mobile-link.sub { font-family: 'Inter', sans-serif; font-size: 1.1rem; font-weight: 500; color: var(--text-secondary); text-decoration: none; padding-left: 1rem; border-left: 2px solid transparent; }
-        .mobile-link:hover, .mobile-link.active { color: var(--coral); }
+        .mobile-label { font-size: 0.8rem; text-transform: uppercase; color: #666666 !important; letter-spacing: 0.15em; margin-bottom: 0.5rem; }
+        .mobile-link.main { font-family: 'Big Shoulders Display', sans-serif; font-size: 2.5rem; font-weight: 700; line-height: 1.1; color: #FFFFFF !important; text-decoration: none; }
+        .mobile-link.sub { font-family: 'Inter', sans-serif; font-size: 1.1rem; font-weight: 500; color: #A0A0A0 !important; text-decoration: none; padding-left: 1rem; border-left: 2px solid transparent; }
+        .mobile-link:hover, .mobile-link.active { color: var(--coral) !important; }
         .mobile-link.sub.active { border-left-color: var(--coral); font-weight: 700; }
 
         /* ==========================================
@@ -224,10 +267,17 @@
         .architecture-grid { 
             display: grid; 
             gap: 1.5rem; 
-            /* Default Mobile/Tablet: Auto-fit (keeps it responsive) */ 
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); 
+            /* Default Mobile: 1 Column stack */ 
+            grid-template-columns: 1fr; 
             margin-top: 3rem; 
         } 
+        
+        /* Tablet/Intermediate: Force 2x2 Grid (Avoids 3x1 orphan) */
+        @media (min-width: 600px) {
+            .architecture-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
         
         /* Desktop Override: Force 4 Columns */ 
         @media (min-width: 1200px) { 
@@ -248,10 +298,34 @@
         
         .arch-card:hover { 
             transform: translateY(-8px); 
-            background: linear-gradient(180deg, var(--card-bg) 0%, rgba(255,255,255,0.05) 100%); /* Subtle gradient shift */
+            background: var(--card-bg);
             border-color: var(--coral); 
             box-shadow: var(--shadow-hover);
         }
+        .arch-card:hover .arch-desc { 
+            color: var(--text-secondary); 
+            opacity: 1; 
+        }
+
+        /* === NAVIGATION ALIGNMENT FIX === */
+        .primary-nav {
+            height: 64px !important;
+            min-height: 64px !important;
+        }
+        .hub-subnav {
+            top: 64px !important;
+            height: 48px !important;
+            display: flex !important;
+            align-items: center !important;
+            padding: 0 !important;
+        }
+        .hub-subnav .sub-nav-container {
+            height: 100% !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 2rem;
+        }
+        body { padding-top: 112px !important; }
 
         /* Icon Circle Animation */
         .icon-circle { 
@@ -264,7 +338,15 @@
 
         .arch-card:hover .icon-circle { 
             transform: scale(1.1); 
-            background: rgba(255,255,255,0.05); 
+            background: transparent; 
+        }
+        [data-theme="light"] .arch-card { 
+            background: #FFFFFF; 
+            border: 1px solid rgba(0, 0, 0, 0.1); 
+        }
+        [data-theme="light"] .arch-card:hover { 
+            background: #FAFAFA; 
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12); 
         }
 
         /* Specific Glows based on card role */
@@ -304,30 +386,106 @@
             background: var(--card-bg); border: 1px solid var(--border-subtle); border-radius: 16px; 
             padding: 2rem 1.5rem; text-align: center; width: 220px; position: relative; z-index: 2; 
         }
-        
-        /* Flow Connector Animation */
-        @keyframes flowLine { 
-            0% { width: 0%; opacity: 0; } 
-            100% { width: 100%; opacity: 1; } 
+
+        /* Flow Link Styles */
+        .flow-link { 
+            display: block; 
+            text-decoration: none; 
+            color: var(--text-primary); 
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; 
+        } 
+        .flow-link:hover { 
+            transform: translateY(-4px); 
+            border-color: var(--teal); 
+            box-shadow: var(--shadow-hover); 
+        }
+
+        /* Anchor Offset Fix */
+        #pillars, 
+        #how-it-works,
+        #diagnostic { 
+            scroll-margin-top: 140px; /* 72px header + 48px subnav + buffer */ 
         } 
         
-        .flow-connector { 
-            flex-grow: 1; height: 1px; background: var(--border-strong); position: relative; min-width: 30px; margin: 0 15px; 
+        /* QUICK DIAGNOSTIC STYLES */
+        .section-diagnostic { background: var(--bg-tertiary); padding: 5rem 0; }
+        
+        .diagnostic-card { 
+            background: rgba(255,255,255,0.03); 
+            border: 1px solid var(--border-subtle); 
+            border-radius: 20px; 
+            padding: 3rem; 
+            display: grid; 
+            grid-template-columns: 1.6fr 1fr; 
+            gap: 2.5rem; 
+            box-shadow: var(--shadow-soft); 
+            position: relative; 
+            overflow: hidden; 
         }
         
-        .flow-connector::after { 
-            content: ''; 
-            position: absolute; 
-            top: 0; left: 0; bottom: 0; 
-            background: var(--teal); 
-            width: 0%; /* Start empty */ 
-            transition: width 0.5s ease; 
+        .diag-content { position: relative; z-index: 2; }
+        
+        .diag-label {
+            display: inline-block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--teal);
+            border: 1px solid var(--teal);
+            padding: 0.4rem 0.8rem;
+            border-radius: 50px;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .diag-heading {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        
+        .diag-desc {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .diag-visual { 
+            position: relative; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        
+        /* Visual Decoration */
+        .diag-circle {
+            width: 200px; height: 200px;
+            border-radius: 50%;
+            border: 1px solid var(--teal);
+            position: absolute;
+            opacity: 0.2;
+        }
+        .diag-circle:nth-child(1) { width: 200px; height: 200px; border-style: dashed; animation: spinSlow 20s linear infinite; }
+        .diag-circle:nth-child(2) { width: 140px; height: 140px; border-color: var(--coral); opacity: 0.3; }
+        
+        @keyframes spinSlow { to { transform: rotate(360deg); } }
+
+        @media (max-width: 900px) {
+            .diagnostic-card { grid-template-columns: 1fr; text-align: center; padding: 2rem; }
+            .diag-visual { display: none; } /* Hide visual on mobile to save space */
+            .diag-heading { font-size: 2rem; }
         } 
         
-        /* On hover of container, fill the lines */ 
-        .flow-container:hover .flow-connector::after { 
-            width: 100%; 
+        .scroll-section h2 { 
+            scroll-margin-top: 140px; 
+            color: var(--text-primary);
         }
+        
+        
         .flow-sub { font-size: 0.7rem; letter-spacing: 0.15em; color: var(--text-secondary); text-transform: uppercase; display: block; margin-bottom: 0.5rem; }
         .flow-title { font-family: 'Big Shoulders Display'; font-size: 1.25rem; font-weight: 700; }
 
@@ -345,6 +503,8 @@
             padding-left: 2rem;
             padding-right: 2rem;
         }
+        /* FORCE HEADER WIDTH TO MATCH PORTFOLIO STANDARD */
+        .primary-nav .hub-container { max-width: 1400px !important; }
         @media (max-width: 768px) {
             .hub-container {
                 padding-left: 1.5rem;
@@ -374,20 +534,11 @@
         .footer-link:hover { color: white; }
         .footer-status { background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
 
-        /* Responsive Hide */
+        /* Responsive Visibility */
         @media (max-width: 1024px) {
-            .desktop-links { display: none; }
-            .mobile-nav-toggle { display: flex; }
+            .desktop-links, .hub-subnav { display: none !important; }
+            .mobile-menu-toggle { display: flex !important; align-items: center; justify-content: center; }
             .primary-nav { padding: 0 1.5rem; }
-            
-            /* Stack Flow Vertically */
-            .flow-container { flex-direction: column; gap: 0; }
-            .flow-node { width: 100%; max-width: 300px; margin: 0 auto; }
-            .flow-connector { 
-                width: 1px; height: 40px; min-width: 0; margin: 0 auto; 
-                background: var(--border-strong);
-            }
-            
             .footer-grid { grid-template-columns: 1fr; text-align: center; gap: 2rem; }
             .footer-brand, .footer-social { align-items: center; justify-content: center; }
         }
@@ -403,14 +554,26 @@
         }
     </style>
 </head>
-<body>
+<body class="bg-dark">
+    <!-- Ambient Background Layer -->
+    <div class="ambient-bg"></div>
 
-    <!-- HEADER -->
-    <nav class="primary-nav">
+    <!-- Hub Activation Pulse -->
+    <div class="hub-pulse">
+        <div class="pulse-ring"></div>
+        <div class="pulse-ring"></div>
+        <div class="pulse-ring"></div>
+    </div>
+
+    
+
+    <div id="main-content" style="opacity: 0; transition: opacity 2s ease;">
+        <!-- HEADER -->
+        <nav class="primary-nav">
         <div class="hub-container nav-inner">
             <!-- LEFT: Brand -->
             <a href="/index.html" class="nav-brand">
-                <img src="/assets/images/Logomark_White_a.png" alt="LG" class="nav-logo-img">
+                <img src="../assets/images/Logomark_White_a.png" alt="LG" class="nav-logo-img">
                 <span class="nav-logo-text">The Hub.</span>
             </a>
 
@@ -421,7 +584,7 @@
                     <a href="/index.html" class="nav-link">Portfolio</a>
                     <a href="/insights/index.html" class="nav-link">Insights</a>
                     <a href="/TheHub/index.html" class="nav-link active">The Hub</a>
-                    <a href="https://portal.luis-gilberto.com" class="nav-link" target="_blank">Portal</a>
+                    <a href="https://portal.luis-gilberto.com" class="nav-link" target="_blank">The Portal</a>
                 </div>
 
                 <!-- Controls -->
@@ -430,10 +593,12 @@
                         <i class="fas fa-sun sun-icon"></i>
                         <i class="fas fa-moon moon-icon"></i>
                     </button>
-                    <button class="mobile-nav-toggle" id="mobileToggle" aria-label="Menu">
-                        <span class="nav-toggle-bar"></span>
-                        <span class="nav-toggle-bar"></span>
-                        <span class="nav-toggle-bar"></span>
+                    <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Menu" style="display: none; background: none; border: none; cursor: pointer; color: white;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
                     </button>
                 </div>
             </div>
@@ -442,46 +607,486 @@
 
     <!-- SUBNAV (Desktop Only) -->
     <div class="hub-subnav">
-        <a href="/TheHub/index.html" class="subnav-link active">Home</a>
-        <a href="/TheHub/strategy-iq.html" class="subnav-link">StrategyIQ</a>
-        <a href="/TheHub/advisory/index.html" class="subnav-link">Advisory</a>
-        <a href="/TheHub/studio.html" class="subnav-link">The Studio</a>
+        <div class="sub-nav-container">
+            <a href="/TheHub/index.html" class="subnav-link active">Home</a>
+            <a href="/TheHub/strategy-iq.html" class="subnav-link">StrategyIQ</a>
+            <a href="/TheHub/advisory/index.html" class="subnav-link">Advisory</a>
+            <a href="/TheHub/studio.html" class="subnav-link">The Studio</a>
+        </div>
     </div>
 
-    <!-- MOBILE DRAWER -->
-    <div class="mobile-menu-overlay" id="mobileOverlay">
-        <div class="mobile-link-group">
-            <span class="mobile-label">Ecosystem</span>
-            <a href="/index.html" class="mobile-link main">Portfolio</a>
-            <a href="/insights/index.html" class="mobile-link main">Insights</a>
-            <a href="/TheHub/index.html" class="mobile-link main active-parent">The Hub</a>
-        </div>
-        <div class="mobile-link-group">
-            <span class="mobile-label">Hub Sections</span>
-            <a href="/TheHub/strategy-iq.html" class="mobile-link sub">StrategyIQ</a>
-            <a href="/TheHub/advisory/index.html" class="mobile-link sub">Advisory</a>
-            <a href="/TheHub/studio.html" class="mobile-link sub">The Studio</a>
-            <a href="https://portal.luis-gilberto.com" class="mobile-link sub" target="_blank">Client Portal</a>
+    <!-- STANDARDIZED HUB DRAWER -->
+    <div id="mobileMenuOverlay" style="position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); z-index: 10001; display: none;">
+        <div style="position: absolute; top: 0; right: 0; width: 85%; max-width: 400px; height: 100%; background: #050505; border-left: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column;">
+            <!-- Close Button -->
+            <div style="padding: 24px; display: flex; justify-content: flex-end;">
+                <button id="drawerCloseBtn" style="background: none; border: none; color: white; cursor: pointer;">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <!-- Links -->
+            <div style="padding: 0 32px; overflow-y: auto;">
+                <!-- Global -->
+                <div style="margin-bottom: 40px;">
+                    <div style="font-family: 'Inter'; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #666; margin-bottom: 16px;">Ecosystem</div>
+                    <a href="/index.html" style="display: block; font-family: 'Big Shoulders Display'; font-size: 32px; font-weight: 700; color: #fff; text-decoration: none; margin-bottom: 8px;">Portfolio</a>
+                    <a href="/insights/index.html" style="display: block; font-family: 'Big Shoulders Display'; font-size: 32px; font-weight: 700; color: #fff; text-decoration: none; margin-bottom: 8px;">Insights</a>
+                    <a href="/TheHub/index.html" style="display: block; font-family: 'Big Shoulders Display'; font-size: 32px; font-weight: 700; color: #F96F6E; text-decoration: none; margin-bottom: 8px;">The Hub</a>
+                </div>
+                <div style="height: 1px; background: rgba(255,255,255,0.1); margin-bottom: 40px;"></div>
+                <!-- Hub Context -->
+                <div>
+                    <div style="font-family: 'Inter'; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #666; margin-bottom: 16px;">Hub Sections</div>
+                    <a href="/TheHub/index.html" style="display: block; font-family: 'Inter'; font-size: 16px; font-weight: 700; color: #F96F6E; text-decoration: none; margin-bottom: 16px; border-left: 2px solid #F96F6E; padding-left: 12px;">Home</a>
+                    <a href="/TheHub/strategy-iq.html" style="display: block; font-family: 'Inter'; font-size: 16px; color: #888; text-decoration: none; margin-bottom: 16px;">StrategyIQ</a>
+                    <a href="/TheHub/advisory/index.html" style="display: block; font-family: 'Inter'; font-size: 16px; color: #888; text-decoration: none; margin-bottom: 16px;">Advisory</a>
+                    <a href="/TheHub/studio.html" style="display: block; font-family: 'Inter'; font-size: 16px; color: #888; text-decoration: none; margin-bottom: 16px;">The Studio</a>
+                    <a href="https://portal.luis-gilberto.com" style="display: block; font-family: 'Inter'; font-size: 16px; color: #2ED3C6; text-decoration: none; margin-bottom: 16px;">Client Portal</a>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- HERO -->
-    <section class="hero hub-container">
-        <span class="hero-eyebrow">THE ECOSYSTEM</span>
-        <h1>From Chaos<br>To <span class="text-color-hub">Architecture</span></h1>
-        <p class="hero-desc">Most agencies deliver files. We deliver a system. A unified ecosystem connecting strategic intelligence, creative execution, and real-time management.</p>
-        
-        <div class="cta-buttons">
-            <a href="strategy-iq.html" class="btn-accent">Explore StrategyIQ</a>
-            <a href="https://portal.luis-gilberto.com" class="btn-outline">Enter The Portal</a>
+    <section class="hero-section">
+        <div class="hub-container hero-grid">
+            <!-- Left Column: Content -->
+            <div class="hero-content">
+                <h1 class="hero-headline">STRATEGY,<br>OPERATIONALIZED.</h1>
+                <p class="hero-subhead hub-hero-desc">The Hub is the <span class="ra">strategic system</span> I use to create <span class="ra">meaningful progress</span>. It reveals <span class="ra">what’s slowing you down</span>, clarifies <span class="ra">what matters most</span>, and builds a plan designed to deliver <span class="ra">real outcomes</span>. Shaped by fifteen years of <span class="ra">consumer-first marketing</span>, it’s built for <span class="ra">clarity, momentum, and execution</span>.</p>
+                
+                <div class="cta-buttons-hero">
+                    <a href="#how-it-works" class="cta-primary">See how The Hub works</a>
+                    <a href="#pillars" class="cta-secondary">Explore the pillars</a>
+                </div>
+            </div>
+
+            <!-- Right Column: Visual -->
+            <div class="hero-visual">
+                <img src="../assets/images/portal/StrategyIQ_Hero_3D.png" alt="StrategyIQ 3D Visualization" class="hero-image">
+            </div>
         </div>
     </section>
+
+    <!-- DEFINITION STRIP -->
+    <div class="definition-strip">
+        <div class="hub-container">
+            <p class="definition-text">The Hub is the bridge between Thinking (Insights) and Doing (The Portal). Powered by StrategyIQ.</p>
+        </div>
+    </div>
+
+    <style>
+        /* HERO SECTION OVERRIDES */
+        .hero-section {
+            background-color: var(--bg-primary);
+            padding: 4rem 0 0;
+            position: relative;
+            overflow: hidden;
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        /* Typography */
+        .hero-headline {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-weight: 800;
+            font-size: clamp(3.5rem, 5vw, 5.5rem);
+            line-height: 0.95;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+        }
+
+        .hero-subhead {
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+            max-width: 540px;
+        }
+
+        /* Buttons */
+        .cta-buttons-hero {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-coral {
+            background-color: #F96F6E;
+            color: #FFFFFF;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: inline-block;
+        }
+
+        .btn-coral:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(249, 111, 110, 0.4);
+        }
+
+        .btn-teal {
+            background-color: transparent;
+            color: #2ED3C6;
+            border: 1px solid #2ED3C6;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            display: inline-block;
+        }
+
+        .btn-teal:hover {
+            background-color: rgba(46, 211, 198, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Right Column Visual */
+        .hero-visual {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero-image {
+            width: 100%;
+            height: auto;
+            max-width: 600px;
+            filter: drop-shadow(0 0 50px rgba(249, 111, 110, 0.15));
+            object-fit: contain;
+        }
+
+        /* Definition Strip */
+        .definition-strip {
+            background-color: var(--bg-alt);
+            padding: 2.5rem 0;
+            width: 100%;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .definition-text {
+            color: var(--text-primary);
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 400;
+            opacity: 0.9;
+            margin: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 3rem;
+            }
+            
+            .hero-headline {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .hero-subhead {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .cta-buttons-hero {
+                justify-content: center;
+            }
+
+            .hero-visual {
+                order: -1; /* Image top on mobile */
+            }
+        }
+
+        /* ========================================= 
+           Read Assist (Inter) - hero paragraph 
+           Teal sweep + staggered semibold keywords 
+           ========================================= */ 
+        .hub-hero-desc{ 
+          position: relative; 
+          font-variant-ligatures: none; 
+          -webkit-font-smoothing: antialiased; 
+          text-rendering: geometricPrecision; 
+        } 
+
+        /* Soft TEAL mist sweep (subtle, premium) */ 
+        .hub-hero-desc::after{ 
+          content: ""; 
+          position: absolute; 
+          left: -10px; 
+          right: -10px; 
+          top: -10px; 
+          bottom: -10px; 
+          pointer-events: none; 
+          opacity: 0; 
+          border-radius: 16px; 
+          background: radial-gradient( 
+            70% 90% at 10% 15%, 
+            rgba(27, 166, 166, 0.07) 0%, 
+            rgba(27, 166, 166, 0.03) 35%, 
+            rgba(27, 166, 166, 0.00) 70% 
+          ); 
+          filter: blur(10px); 
+          transition: opacity 220ms ease; 
+        } 
+        
+        .hub-hero-desc:hover::after{ 
+          opacity: 1; 
+        } 
+
+        /* Keywords start neutral */ 
+        .hub-hero-desc .ra{ 
+          font-weight: 400; 
+          opacity: 0.78; 
+          transition: font-weight 260ms ease, opacity 260ms ease; 
+        } 
+        
+        /* Keywords activate only when JS adds .is-on */ 
+        .hub-hero-desc .ra.is-on{ 
+          font-weight: 600; 
+          opacity: 0.98; 
+        }
+        
+        /* Accessibility: reduced motion */ 
+        @media (prefers-reduced-motion: reduce){ 
+          .hub-hero-desc::after, 
+          .hub-hero-desc .ra{ 
+            transition: none !important; 
+          } 
+        }
+
+        /* ==========================================
+           HUB REVEAL PAYOFF & ARTIFACTS
+           ========================================== */
+        .ambient-bg {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(249, 111, 110, 0.03) 0%, transparent 70%);
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 2s ease;
+        }
+
+        .ambient-bg.active {
+            opacity: 1;
+        }
+
+        /* Hub Pulse Effect */
+        .hub-pulse {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            z-index: 10001; /* Above loader overlay */
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .pulse-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid #F96F6E;
+            opacity: 0;
+        }
+
+        .hub-pulse.active {
+            animation: hubActivation 2s ease-out forwards;
+        }
+
+        .hub-pulse.active .pulse-ring:nth-child(1) {
+            animation: pulseExpand 2s ease-out 0s forwards;
+        }
+
+        .hub-pulse.active .pulse-ring:nth-child(2) {
+            animation: pulseExpand 2s ease-out 0.3s forwards;
+        }
+
+        .hub-pulse.active .pulse-ring:nth-child(3) {
+            animation: pulseExpand 2s ease-out 0.6s forwards;
+        }
+
+        @keyframes hubActivation {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        @keyframes pulseExpand {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(15);
+                opacity: 0;
+            }
+        }
+
+        #pillars { color: var(--text-primary) !important; }
+        .section-flow { background: var(--bg-alt); padding: 4rem 0; }
+        .flow-container { display: flex; align-items: stretch; justify-content: center; gap: 0; margin-top: 3rem; max-width: 1100px; margin-left: auto; margin-right: auto; position: relative; }
+        .flow-node { background: var(--card-bg); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 1.5rem; width: 220px; text-decoration: none; text-align: left; transition: all 0.3s ease; position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: space-between; min-height: 140px; }
+        .node-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border-strong); transition: background 0.3s ease, box-shadow 0.3s ease; }
+        .flow-title { font-size: 1.25rem; color: var(--text-primary); margin-bottom: 0.25rem; font-family: 'Big Shoulders Display', sans-serif; font-weight: 700; }
+        .flow-desc { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4; }
+        .flow-sub { font-size: 0.7rem; letter-spacing: 0.15em; color: var(--text-secondary); text-transform: uppercase; }
+        .flow-node.active { border-color: var(--teal); background: rgba(46, 211, 198, 0.03); transform: translateY(-4px); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .flow-node.active .status-dot { background: var(--teal); box-shadow: 0 0 10px var(--teal); }
+        .flow-node.node-portal.active { border-color: var(--coral); background: rgba(249, 111, 110, 0.03); }
+        .flow-node.node-portal.active .status-dot { background: var(--coral); box-shadow: 0 0 10px var(--coral); }
+        .flow-connector { flex-grow: 1; height: 1px; background: var(--border-subtle); align-self: center; position: relative; min-width: 40px; }
+        .signal-line { position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: linear-gradient(90deg, transparent, var(--teal), var(--teal)); opacity: 0; transition: width 0.8s ease, opacity 0.3s ease; }
+        .flow-connector.active .signal-line { width: 100%; opacity: 1; }
+        @media (max-width: 900px) { .flow-container { flex-direction: column; align-items: center; gap: 0; } .flow-node { width: 100%; max-width: 340px; min-height: auto; margin-bottom: 0; } .flow-connector { width: 1px; height: 40px; min-width: 0; margin: 0; background: var(--border-subtle); } .signal-line { width: 1px; height: 0%; top: 0; left: 0; background: var(--teal); } .flow-connector.active .signal-line { height: 100%; width: 1px; } }
+
+        /* === QUICK DIAGNOSTIC MODAL === */
+        .qd-overlay { 
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); 
+            z-index: 11000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; 
+            display: flex; align-items: center; justify-content: center; padding: 20px; 
+        } 
+        .qd-overlay.active { opacity: 1; pointer-events: auto; } 
+
+        .qd-modal { 
+            background: #0E0E0F; border: 1px solid rgba(255,255,255,0.1); 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+            width: 100%; max-width: 600px; border-radius: 20px; 
+            display: flex; flex-direction: column; max-height: 90vh; 
+            transform: translateY(20px); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); 
+            position: relative; overflow: hidden; 
+        } 
+        .qd-overlay.active .qd-modal { transform: translateY(0); } 
+
+        .qd-header { 
+            padding: 24px 32px; border-bottom: 1px solid rgba(255,255,255,0.05); 
+            display: flex; justify-content: space-between; align-items: flex-start; 
+            background: rgba(255,255,255,0.02); 
+        } 
+        .qd-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--teal); font-weight: 700; margin-bottom: 8px; display: block; } 
+        .qd-title { font-family: 'Big Shoulders Display', sans-serif; font-size: 32px; margin: 0; line-height: 1; } 
+        .qd-close { background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 24px; transition: color 0.2s; padding: 0; line-height: 1; } 
+        .qd-close:hover { color: var(--coral); } 
+
+        .qd-content { padding: 32px; overflow-y: auto; } 
+        .qd-step { display: none; animation: fadeIn 0.3s ease; } 
+        .qd-step.active { display: block; } 
+
+        /* Form Elements */ 
+        .qd-group { margin-bottom: 24px; } 
+        .qd-label { display: block; font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; } 
+        .qd-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; } 
+        .qd-radio-card { position: relative; cursor: pointer; } 
+        .qd-radio-card input { position: absolute; opacity: 0; } 
+        .qd-radio-card span { 
+            display: block; padding: 12px 16px; border-radius: 8px; 
+            border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.02); 
+            font-size: 13px; color: var(--text-secondary); transition: all 0.2s; text-align: center; 
+        } 
+        .qd-radio-card input:checked + span { 
+            border-color: var(--teal); background: rgba(46, 211, 198, 0.1); color: white; box-shadow: 0 0 15px rgba(46, 211, 198, 0.1); 
+        } 
+        .qd-radio-card:hover span { border-color: rgba(255,255,255,0.3); } 
+
+        .qd-textarea { 
+            width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); 
+            color: white; padding: 16px; border-radius: 8px; font-family: 'Inter', sans-serif; resize: vertical; 
+        } 
+        .qd-textarea:focus { outline: none; border-color: var(--teal); } 
+
+        /* Output State */ 
+        .qd-brief-box { 
+            background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 8px; padding: 20px; font-family: monospace; font-size: 13px; color: #ccc; 
+            white-space: pre-wrap; margin-bottom: 24px; position: relative; 
+        } 
+        .qd-copy-feedback { 
+            position: absolute; top: 10px; right: 10px; font-size: 11px; 
+            color: var(--teal); opacity: 0; transition: opacity 0.2s; 
+        } 
+
+        .qd-actions { display: flex; gap: 12px; margin-top: 24px; } 
+        .btn-qd-primary { 
+            background: var(--coral); color: white; border: none; padding: 12px 24px; 
+            border-radius: 50px; font-weight: 600; cursor: pointer; flex: 1; 
+            display: flex; align-items: center; justify-content: center; gap: 8px; transition: transform 0.2s; 
+        } 
+        .btn-qd-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(249, 111, 110, 0.3); } 
+        .btn-qd-secondary { 
+            background: transparent; border: 1px solid rgba(255,255,255,0.2); color: white; 
+            padding: 12px 24px; border-radius: 50px; font-weight: 600; cursor: pointer; transition: all 0.2s; 
+        } 
+        .btn-qd-secondary:hover { border-color: white; } 
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* === QUICK DIAGNOSTIC UPGRADES === */
+        .qd-input { 
+            width: 100%; 
+            background: rgba(255,255,255,0.04); 
+            color: rgba(255,255,255,0.92); 
+            border: 1px solid rgba(255,255,255,0.10); 
+            border-radius: 12px; 
+            padding: 12px 14px; 
+            outline: none; 
+            font-family: 'Inter', sans-serif; 
+            font-size: 14px; 
+        } 
+        .qd-input::placeholder { color: rgba(255,255,255,0.45); } 
+        .qd-input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(46, 211, 198, 0.14); } 
+
+        select.qd-input { 
+            appearance: none; -webkit-appearance: none; 
+            background-image: linear-gradient(45deg, transparent 50%, rgba(255,255,255,0.65) 50%), 
+                              linear-gradient(135deg, rgba(255,255,255,0.65) 50%, transparent 50%); 
+            background-position: calc(100% - 18px) calc(50% - 2px), calc(100% - 12px) calc(50% - 2px); 
+            background-size: 6px 6px, 6px 6px; 
+            background-repeat: no-repeat; 
+            padding-right: 40px; 
+            cursor: pointer; 
+        } 
+        select.qd-input option { 
+            background-color: #0E0E0F; 
+            color: #F5F5F5; 
+        } 
+
+        .qd-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 8px; } 
+        .qd-optional { font-size: 11px; font-weight: 400; color: rgba(255,255,255,0.4); text-transform: none; margin-left: 4px; } 
+        @media (max-width: 768px) { .qd-grid-3 { grid-template-columns: 1fr; gap: 16px; } }
+
+        
+    </style>
 
     <!-- ARCHITECTURE CARDS -->
     <section class="scroll-section">
         <div class="hub-container">
             <div style="text-align: center; margin-bottom: 3rem;">
-                <h2 style="font-family:'Big Shoulders Display'; font-size:3rem; margin-bottom:0.5rem;">The Architecture</h2>
+                <h2 id="pillars" style="font-family:'Big Shoulders Display'; font-size:3rem; margin-bottom:0.5rem; color:#ffffff !important;">The Architecture</h2>
                 <p style="color:var(--text-secondary);">Four distinct arms. One integrated system.</p>
             </div>
 
@@ -495,7 +1100,7 @@
                 </a>
                 <!-- Advisory -->
                 <a href="advisory/" class="arch-card">
-                    <div class="icon-circle"><img src="assets/images/Luis_portrait_circle.png" alt="Luis Gilberto"></div>
+                    <div class="icon-circle"><img src="../assets/images/Luis_portrait_circle.png" alt="Luis Gilberto"></div>
                     <h3 class="arch-title">Advisory</h3>
                     <span class="arch-role role-coral" style="color:var(--coral);">Partnership</span>
                     <p class="arch-desc">Direct access to Luis Gilberto for leadership alignment, narrative architecture, and decision support.</p>
@@ -509,7 +1114,7 @@
                 </a>
                 <!-- Portal -->
                 <a href="https://portal.luis-gilberto.com" class="arch-card">
-                    <div class="icon-circle"><img src="assets/images/branded-lg-dossier.png" alt="Portal"></div>
+                    <div class="icon-circle"><img src="../assets/images/portal/The_Portal_round.png" alt="The Portal Icon"></div>
                     <h3 class="arch-title">The Portal</h3>
                     <span class="arch-role role-coral" style="color:var(--coral);">Command Center</span>
                     <p class="arch-desc">Your secure environment for project management, asset approvals, and timeline tracking.</p>
@@ -519,60 +1124,91 @@
     </section>
 
     <!-- FLOW SECTION -->
-    <section class="section-flow">
+    <section class="section-flow" id="how-it-works">
         <div class="hub-container">
             <div style="text-align: center; margin-bottom: 3rem;">
-                <h2 style="font-family:'Big Shoulders Display'; font-size:3rem; margin-bottom:0.5rem;">The Flow</h2>
+                <h2 style="font-family:'Big Shoulders Display'; font-size:3rem; margin-bottom:0.5rem; color:var(--text-primary);">The Flow</h2>
                 <p style="color:var(--text-secondary);">From diagnosis to delivery.</p>
             </div>
             
-            <div class="flow-container">
-                <div class="flow-node">
-                    <span class="flow-sub">STEP 1</span>
+            <div class="flow-container" id="flow-system">
+                <a href="/TheHub/strategy-iq.html" class="flow-node" data-step="1">
+                    <div class="node-header">
+                        <span class="flow-sub">STEP 1</span>
+                        <div class="status-dot"></div>
+                    </div>
                     <h3 class="flow-title">StrategyIQ</h3>
-                    <span class="flow-sub">Diagnosis</span>
+                    <span class="flow-desc">Diagnosis &<br>Roadmap</span>
+                </a>
+
+                <div class="flow-connector">
+                    <div class="signal-line"></div>
                 </div>
-                <div class="flow-connector"></div>
-                <div class="flow-node">
-                    <span class="flow-sub">STEP 2</span>
+
+                <a href="/TheHub/advisory/index.html" class="flow-node" data-step="2">
+                    <div class="node-header">
+                        <span class="flow-sub">STEP 2</span>
+                        <div class="status-dot"></div>
+                    </div>
                     <h3 class="flow-title">Advisory</h3>
-                    <span class="flow-sub">Strategy</span>
+                    <span class="flow-desc">Strategic<br>Alignment</span>
+                </a>
+
+                <div class="flow-connector">
+                    <div class="signal-line"></div>
                 </div>
-                <div class="flow-connector"></div>
-                <div class="flow-node">
-                    <span class="flow-sub">STEP 3</span>
+
+                <a href="/TheHub/studio.html" class="flow-node" data-step="3">
+                    <div class="node-header">
+                        <span class="flow-sub">STEP 3</span>
+                        <div class="status-dot"></div>
+                    </div>
                     <h3 class="flow-title">The Studio</h3>
-                    <span class="flow-sub">Execution</span>
+                    <span class="flow-desc">High-Fidelity<br>Production</span>
+                </a>
+
+                <div class="flow-connector">
+                    <div class="signal-line"></div>
                 </div>
-                <div class="flow-connector"></div>
-                <div class="flow-node" style="border-color:var(--teal);">
-                    <span class="flow-sub" style="color:var(--teal);">LIVING IN</span>
+
+                <a href="https://portal.luis-gilberto.com" class="flow-node node-portal" data-step="4" target="_blank">
+                    <div class="node-header">
+                        <span class="flow-sub">LIVING IN</span>
+                        <div class="status-dot"></div>
+                    </div>
                     <h3 class="flow-title">The Portal</h3>
-                    <span class="flow-sub">Management</span>
+                    <span class="flow-desc">Management &<br>Approvals</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- QUICK DIAGNOSTIC -->
+    <section class="section-diagnostic scroll-section" id="diagnostic">
+        <div class="hub-container">
+            <div class="diagnostic-card">
+                <!-- Content -->
+                <div class="diag-content">
+                    <span class="diag-label">SCOPEIQ™ PULSE CHECK</span>
+                    <h2 class="diag-heading">Get a clear read on your momentum.</h2>
+                    <p class="diag-desc">In just 2 minutes, this assessment shows how prepared your strategy is to move forward. You’ll receive an instant score with clear signals on strengths, gaps, and priorities.</p>
+                    
+                    <a href="javascript:void(0)" class="cta-primary open-diagnostic-modal">
+                        Start Pulse Check
+                    </a>
+                </div>
+                
+                <!-- Visual -->
+                <div class="diag-visual">
+                    <div class="diag-circle"></div>
+                    <div class="diag-circle"></div>
+                    <img src="../assets/images/icons/strategyiq-icon-3d.png" alt="Diagnostic" style="width: 80px; height: auto; position: relative; z-index: 2;">
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- CTA SECTION -->
-    <section class="section-cta scroll-section" style="background: var(--bg-tertiary);">
-        <div class="hub-container">
-            <div style="text-align: center; padding: 2rem 0;">
-                <h2 class="section-heading" style="font-family: 'Big Shoulders Display', sans-serif; font-size: 3rem; margin-bottom: 1rem;">Ready to Activate?</h2>
-                <p style="color: var(--text-secondary); margin-bottom: 2.5rem; font-size: 1.1rem;">
-                    Stop guessing. Start building.
-                </p>
-                <div class="cta-buttons">
-                    <a href="/TheHub/strategy-iq.html" class="btn-accent" style="box-shadow: 0 4px 20px rgba(249, 111, 110, 0.4);">
-                        Start StrategyIQ Assessment
-                    </a>
-                    <a href="https://portal.luis-gilberto.com" class="btn-outline" target="_blank" rel="noopener noreferrer">
-                        Client Login
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
+    
 
     <!-- FOOTER -->
     <footer class="site-footer">
@@ -580,7 +1216,7 @@
             <div class="footer-grid">
                 <div class="footer-brand">
                     <a href="/index.html" style="display:flex; align-items:center; gap:12px; text-decoration:none; margin-bottom:1rem;">
-                        <img src="/assets/images/Logomark_White_a.png" alt="LG" style="height:32px; width:auto; opacity:0.9;">
+                        <img src="../assets/images/Logomark_White_a.png" alt="LG" style="height:32px; width:auto; opacity:0.9;">
                         <span style="font-family:'Big Shoulders Display'; font-size:24px; font-weight:700; color:white; text-transform:uppercase;">Luis Gilberto</span>
                     </a>
                     <p class="footer-tagline">Making technology feel human through clarity, beautiful execution, and systems that scale.</p>
@@ -614,15 +1250,24 @@
                     <p style="font-size:0.85rem; color:rgba(255,255,255,0.6);">Currently available for strategic consulting and creative direction.</p>
                 </div>
             </div>
-        </div>
+    </div> 
+    <!-- LEGAL SHIELD -->
+    <div style="border-top: 1px solid rgba(255,255,255,0.05); margin-top: 2rem; padding-top: 2rem; text-align: center;"> 
+        <p style="color: #444; font-size: 10px; line-height: 1.5; max-width: 600px; margin: 0 auto; font-family: 'Inter', sans-serif;"> 
+            <strong>INTELLECTUAL PROPERTY NOTICE:</strong> StrategyIQ™, The Hub™, and the associated diagnostic methodologies are proprietary intellectual property of Luis Gilberto. 
+            Unauthorized reproduction, reverse engineering, or distribution of the assessment logic is strictly prohibited. 
+            All rights reserved. 
+        </p> 
+    </div>
     </footer>
+    </div> <!-- End #main-content -->
 
     <!-- SCRIPTS -->
     <script>
-        // Theme Logic
+        // Theme Logic - Simplified
         const themeToggle = document.getElementById('themeToggle');
         const html = document.documentElement;
-        const savedTheme = localStorage.getItem('theme') || 'dark';
+        const savedTheme = localStorage.getItem('theme') || 'light';
         html.setAttribute('data-theme', savedTheme);
 
         if(themeToggle) {
@@ -631,37 +1276,304 @@
                 const next = current === 'light' ? 'dark' : 'light';
                 html.setAttribute('data-theme', next);
                 localStorage.setItem('theme', next);
-                // Fix Logo Color on Light Mode
-                const logo = document.querySelector('.primary-nav img');
-                if(next === 'light') { logo.style.filter = 'invert(1)'; } 
-                else { logo.style.filter = 'none'; }
-            });
-            // Init Logo State
-            const logo = document.querySelector('.primary-nav img');
-            if(savedTheme === 'light') { logo.style.filter = 'invert(1)'; }
-        }
-
-        // Mobile Menu Logic
-        const mobileToggle = document.getElementById('mobileToggle');
-        const mobileOverlay = document.getElementById('mobileOverlay');
-
-        if(mobileToggle && mobileOverlay) {
-            mobileToggle.addEventListener('click', () => {
-                mobileToggle.classList.toggle('open');
-                mobileOverlay.classList.toggle('active');
-                document.body.style.overflow = mobileOverlay.classList.contains('active') ? 'hidden' : '';
             });
         }
 
-        // Hub Reveal Animation Loader (Existing logic support)
+        // Mobile Menu Logic (Standardized)
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+        const drawerCloseBtn = document.getElementById('drawerCloseBtn');
+
+        if (mobileMenuToggle && mobileMenuOverlay) {
+            mobileMenuToggle.addEventListener('click', () => {
+                mobileMenuOverlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            });
+
+            const closeDrawer = () => {
+                mobileMenuOverlay.style.display = 'none';
+                document.body.style.overflow = '';
+            };
+
+            if (drawerCloseBtn) drawerCloseBtn.addEventListener('click', closeDrawer);
+            mobileMenuOverlay.addEventListener('click', (e) => {
+                if (e.target === mobileMenuOverlay) closeDrawer();
+            });
+        }
+
+        // Hub Reveal Animation Logic
         document.addEventListener('DOMContentLoaded', () => {
             const hubLoader = window.HubLoader;
-            if(hubLoader && sessionStorage.getItem('hubNavigated') !== 'true') {
-                // Init animation if needed (Script source included in head)
-                hubLoader.create({ videoUrl: './assets/components/hub-animation/coral_laser_line.mp4', autoStart: true });
-                sessionStorage.setItem('hubNavigated', 'true');
+            const mainContent = document.getElementById('main-content');
+            const ambientBg = document.querySelector('.ambient-bg');
+            const hubPulse = document.querySelector('.hub-pulse');
+
+            if (hubLoader && !localStorage.getItem('hubIntroPlayed')) {
+                hubLoader.create({
+                    videoUrl: './assets/components/hub-animation/coral_laser_line.mp4',
+                    autoStart: true,
+                    onComplete: () => {
+                        window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+                        if (ambientBg) ambientBg.classList.add('active');
+                        if (hubPulse) { setTimeout(() => hubPulse.classList.add('active'), 500); }
+                        setTimeout(() => { if (mainContent) mainContent.style.opacity = '1'; }, 2500);
+                        try { localStorage.setItem('hubIntroPlayed', 'true'); } catch {}
+                    }
+                });
+                setTimeout(() => {
+                    if (!localStorage.getItem('hubIntroPlayed')) {
+                        if (ambientBg) ambientBg.classList.add('active');
+                        if (mainContent) mainContent.style.opacity = '1';
+                        try { localStorage.setItem('hubIntroPlayed', 'true'); } catch {}
+                    }
+                }, 4000);
+            } else {
+                if (mainContent) { mainContent.style.transition = 'none'; mainContent.style.opacity = '1'; }
+                if (ambientBg) ambientBg.classList.add('active');
+                if (hubPulse) hubPulse.style.display = 'none';
             }
         });
     </script>
+    
+    <!-- Read Assist Cascade Script -->
+    <script> 
+     (() => { 
+       const para = document.querySelector('.hub-hero-desc'); 
+       if (!para) return; 
+     
+       const phrases = Array.from(para.querySelectorAll('.ra')); 
+       if (!phrases.length) return; 
+     
+       // Respect reduced motion 
+       const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; 
+     
+       let timerIds = []; 
+     
+       const reset = () => { 
+         timerIds.forEach(id => clearTimeout(id)); 
+         timerIds = []; 
+         phrases.forEach(p => p.classList.remove('is-on')); 
+       }; 
+     
+       const runCascade = () => { 
+         reset(); 
+         if (reduceMotion) { 
+           // If reduced motion, turn them on immediately 
+           phrases.forEach(p => p.classList.add('is-on')); 
+           return; 
+         } 
+     
+         const baseDelay = 160; // rhythm speed (increase for slower) 
+         phrases.forEach((p, i) => { 
+           const id = setTimeout(() => p.classList.add('is-on'), i * baseDelay); 
+           timerIds.push(id); 
+         }); 
+       }; 
+     
+       para.addEventListener('mouseenter', runCascade); 
+       para.addEventListener('mouseleave', reset); 
+     })(); 
+     </script> 
+    <!-- Quick Diagnostic Modal -->
+    <div class="qd-overlay" id="qdModal">
+        <div class="qd-modal">
+            <div class="qd-header">
+                <div>
+                    <span class="qd-eyebrow">Quick Diagnostic</span>
+                    <h3 class="qd-title">Find the leak. Build the fix.</h3>
+                </div>
+                <button class="qd-close" id="qdClose">&times;</button>
+            </div>
+            <div class="qd-content">
+                <div id="qdFormState" class="qd-step active">
+                    <form id="diagnosticForm">
+                        <!-- Identity Fields -->
+                        <div class="qd-group">
+                            <div class="qd-grid-3">
+                                <div>
+                                    <label class="qd-label" for="qdName">Name <span class="qd-optional">(optional)</span></label>
+                                    <input id="qdName" name="qdName" type="text" class="qd-input" placeholder="Name" autocomplete="name">
+                                </div>
+                                <div>
+                                    <label class="qd-label" for="qdEmail">Email <span class="qd-optional">(recommended)</span></label>
+                                    <input id="qdEmail" name="qdEmail" type="email" class="qd-input" placeholder="you@company.com" autocomplete="email">
+                                </div>
+                                <div>
+                                    <label class="qd-label" for="qdCompany">Company <span class="qd-optional">(optional)</span></label>
+                                    <input id="qdCompany" name="qdCompany" type="text" class="qd-input" placeholder="Company" autocomplete="organization">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="qd-group">
+                            <label class="qd-label">1. Where is the primary friction?</label>
+                            <div class="qd-options" style="grid-template-columns: 1fr 1fr 1fr;">
+                                <label class="qd-radio-card"><input type="radio" name="friction" value="Clarity"><span>Clarity</span></label>
+                                <label class="qd-radio-card"><input type="radio" name="friction" value="Messaging"><span>Messaging</span></label>
+                                <label class="qd-radio-card"><input type="radio" name="friction" value="Conversion"><span>Conversion</span></label>
+                                <label class="qd-radio-card"><input type="radio" name="friction" value="Execution"><span>Execution</span></label>
+                                <label class="qd-radio-card"><input type="radio" name="friction" value="Alignment"><span>Alignment</span></label>
+                                <label class="qd-radio-card"><input type="radio" name="friction" value="Other"><span>Other</span></label>
+                            </div>
+                        </div>
+                        <div class="qd-group">
+                            <label class="qd-label">2. What are you building right now?</label>
+                            <div class="qd-options">
+                                <label class="qd-radio-card"><input type="radio" name="building" value="Brand Identity"><span>Brand Identity</span></label>
+                                <label class="qd-radio-card"><input type="radio" name="building" value="Web/Landing Page"><span>Web/Landing Page</span></label>
+                                <label class="qd-radio-card"><input type="radio" name="building" value="Campaign"><span>Campaign</span></label>
+                                <label class="qd-radio-card"><input type="radio" name="building" value="Product Launch"><span>Product Launch</span></label>
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div class="qd-group">
+                                <label class="qd-label">3. Timeline</label>
+                                <select class="qd-input" name="timeline">
+                                    <option value="ASAP (1–2 weeks)">ASAP (1 to 2 weeks)</option>
+                                    <option value="Soon (3–6 weeks)">Soon (3 to 6 weeks)</option>
+                                    <option value="This quarter (6–12 weeks)">This quarter (6 to 12 weeks)</option>
+                                    <option value="Next quarter (3–6 months)">Next quarter (3 to 6 months)</option>
+                                    <option value="Longer runway (6–12 months)">Longer runway (6 to 12 months)</option>
+                                    <option value="Exploring">Exploring</option>
+                                </select>
+                            </div>
+                            <div class="qd-group">
+                                <label class="qd-label">4. Budget Tier</label>
+                                <select class="qd-input" name="budget">
+                                    <option value="Under $5K">Under $5K</option>
+                                    <option value="$5K–$10K">$5K to $10K</option>
+                                    <option value="$10K–$20K">$10K to $20K</option>
+                                    <option value="$20K–$40K">$20K to $40K</option>
+                                    <option value="$40K+">$40K+</option>
+                                    <option value="Not sure yet">Not sure yet</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="qd-group">
+                            <label class="qd-label">5. Definition of Success</label>
+                            <textarea class="qd-textarea" name="success" rows="2" placeholder="In one sentence, what does 'real progress' look like?"></textarea>
+                        </div>
+                        <div class="qd-actions">
+                            <button type="button" class="cta-primary" id="qdGenerateBtn">Generate brief</button>
+                        </div>
+                    </form>
+                </div>
+                <div id="qdOutputState" class="qd-step">
+                    <p style="color:var(--text-secondary); margin-bottom:16px; font-size:14px;">Here is your strategic snapshot. Copy it, or send it directly to me to start the conversation with context.</p>
+                    <div class="qd-brief-box" id="qdBriefOutput">
+                        <span class="qd-copy-feedback">Copied!</span>
+                    </div>
+                    <div class="qd-actions">
+                        <button class="cta-secondary" id="qdCopyBtn">Copy brief</button>
+                        <button class="cta-primary" id="qdSendBtn">Send to Luis &rarr;</button>
+                    </div>
+                    <div style="text-align:center; margin-top:16px;">
+                        <button class="cta-text" id="qdEditBtn" style="background:none; border:none; color:var(--text-secondary); text-decoration:underline; cursor:pointer; font-size:12px;">Edit answers</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    /* === QUICK DIAGNOSTIC ENGINE === */
+    document.addEventListener('DOMContentLoaded', () => {
+        const modal = document.getElementById('qdModal');
+        const formState = document.getElementById('qdFormState');
+        const outputState = document.getElementById('qdOutputState');
+        const briefOutput = document.getElementById('qdBriefOutput');
+        let generatedBrief = '';
+
+        document.querySelectorAll('.open-diagnostic-modal').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Auto-open via query/hash
+        try {
+            const params = new URLSearchParams(location.search);
+            const shouldOpen = params.get('open') === 'diagnostic' || location.hash === '#diagnostic';
+            if (shouldOpen) {
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        } catch {}
+
+        const closeStart = () => {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+            setTimeout(() => {
+                formState.classList.add('active');
+                outputState.classList.remove('active');
+            }, 300);
+        };
+        document.getElementById('qdClose').addEventListener('click', closeStart);
+        modal.addEventListener('click', (e) => { if(e.target === modal) closeStart(); });
+        document.addEventListener('keydown', (e) => { if(e.key === 'Escape' && modal.classList.contains('active')) closeStart(); });
+
+        document.getElementById('qdGenerateBtn').addEventListener('click', () => {
+            const formData = new FormData(document.getElementById('diagnosticForm'));
+            const data = Object.fromEntries(formData);
+            if(!data.friction) { alert('Please select a primary friction point.'); return; }
+            const insights = {
+                'Clarity': 'Next step: Clarify priorities and define a decision framework.',
+                'Messaging': 'Next step: Sharpen positioning and rewrite the story for action.',
+                'Conversion': 'Next step: Diagnose drop-off and rebuild the funnel path.',
+                'Execution': 'Next step: Establish a system for premium output at speed.',
+                'Alignment': 'Next step: Align stakeholders and lock a single narrative plan.',
+                'Other': 'Next step: Scope the problem and define a custom plan.'
+            };
+            const suggestion = insights[data.friction] || insights['Other'];
+            generatedBrief = `STRATEGIC BRIEF (Quick Diagnostic)\n` +
+                `Date: ${new Date().toLocaleDateString()}\n` +
+                `----------------------------------------\n` +
+                `Name:     ${data.qdName || 'Not provided'}\n` +
+                `Email:    ${data.qdEmail || 'Not provided'}\n` +
+                `Company:  ${data.qdCompany || 'Not provided'}\n` +
+                `----------------------------------------\n` +
+                `Friction: ${data.friction}\n` +
+                `Building: ${data.building || 'Not specified'}\n` +
+                `Timeline: ${data.timeline}\n` +
+                `Budget:   ${data.budget}\n` +
+                `Success:  ${data.success || 'Not defined'}\n` +
+                `----------------------------------------\n` +
+                `SUGGESTION: ${suggestion}`;
+            briefOutput.innerText = generatedBrief;
+            formState.classList.remove('active');
+            outputState.classList.add('active');
+            localStorage.setItem('hubQuickDiagBrief', generatedBrief);
+        });
+
+        document.getElementById('qdCopyBtn').addEventListener('click', () => {
+            navigator.clipboard.writeText(generatedBrief);
+            const feedback = document.querySelector('.qd-copy-feedback');
+            feedback.style.opacity = '1';
+            setTimeout(() => feedback.style.opacity = '0', 2000);
+        });
+
+        document.getElementById('qdSendBtn').addEventListener('click', () => {
+            const name = (document.getElementById('qdName')?.value || '').trim();
+            const email = (document.getElementById('qdEmail')?.value || '').trim();
+            const company = (document.getElementById('qdCompany')?.value || '').trim();
+
+            const params = new URLSearchParams();
+            params.append('prefillBrief', generatedBrief);
+            params.append('source', 'hub_quick_diagnostic');
+            if (name) params.append('prefillName', name);
+            if (email) params.append('prefillEmail', email);
+            if (company) params.append('prefillCompany', company);
+
+            window.location.href = `/contact.html?${params.toString()}`;
+        });
+
+        document.getElementById('qdEditBtn').addEventListener('click', () => {
+            outputState.classList.remove('active');
+            formState.classList.add('active');
+        });
+    });
+    </script>
+
 </body>
 </html>
