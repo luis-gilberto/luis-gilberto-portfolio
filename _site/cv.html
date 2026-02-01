@@ -1243,45 +1243,36 @@
                     downloadBtn.setAttribute('href', pdfUrl);
                     previewLabel.textContent = `Preview: ${styleNames[styleName]}`;
                     if (thumbnailUrl) {
-                        const img = new Image();
-                        img.onload = function() {
-                            console.log('✅ Thumbnail loaded successfully:', thumbnailUrl);
-                            previewThumbnail.src = thumbnailUrl;
-                            previewThumbnail.style.display = 'block';
-                        };
-                        img.onerror = function() {
-                            console.error('❌ Failed to load thumbnail:', thumbnailUrl);
-                            const altPaths = [
-                                thumbnailUrl.replace('assets/', '/assets/'),
-                                thumbnailUrl.replace('./assets/', 'assets/'),
-                                thumbnailUrl.replace('./assets/', '/assets/')
-                            ];
-                            console.log('🔄 Attempting alternative paths...');
-                            let pathIndex = 0;
-                            const tryNextPath = function() {
-                                if (pathIndex < altPaths.length) {
-                                    const altPath = altPaths[pathIndex];
-                                    console.log(`Trying: ${altPath}`);
-                                    const altImg = new Image();
-                                    altImg.onload = function() {
-                                        console.log('✅ Alternative path worked:', altPath);
-                                        previewThumbnail.src = altPath;
-                                        previewThumbnail.style.display = 'block';
-                                    };
-                                    altImg.onerror = function() {
-                                        console.log('❌ Alternative path failed:', altPath);
-                                        pathIndex++;
-                                        tryNextPath();
-                                    };
-                                    altImg.src = altPath;
-                                } else {
-                                    console.error('❌ All paths failed. Check file location.');
-                                    previewThumbnail.style.display = 'none';
-                                }
+                        const fileName = thumbnailUrl.split('/').pop();
+                        const candidates = [
+                            thumbnailUrl,
+                            thumbnailUrl.replace('./', ''),
+                            thumbnailUrl.replace('assets/', '/assets/'),
+                            '/assets/Components/THE_FOUR/' + fileName,
+                            location.origin + '/assets/Components/THE_FOUR/' + fileName
+                        ];
+                        console.log('🔎 Preview candidates:', candidates);
+                        let idx = 0;
+                        const tryLoad = () => {
+                            if (idx >= candidates.length) {
+                                console.error('❌ All preview paths failed');
+                                previewThumbnail.style.display = 'none';
+                                return;
+                            }
+                            const candidate = candidates[idx++];
+                            const testImg = new Image();
+                            testImg.onload = () => {
+                                console.log('✅ Preview loaded:', candidate);
+                                previewThumbnail.src = candidate;
+                                previewThumbnail.style.display = 'block';
                             };
-                            tryNextPath();
+                            testImg.onerror = () => {
+                                console.log('❌ Preview failed:', candidate);
+                                tryLoad();
+                            };
+                            testImg.src = candidate;
                         };
-                        img.src = thumbnailUrl;
+                        tryLoad();
                     }
                     previewPanel.classList.add('open');
                 });
