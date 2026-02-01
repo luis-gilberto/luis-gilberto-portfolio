@@ -1432,6 +1432,23 @@
 
     <style>
         /* ========================================
+           PDF vs Web Clarification UI
+           ======================================== */
+        .section-description { font-size: 0.9rem; color: var(--text-secondary); margin: 0.5rem 0 1.5rem 0; text-align: center; }
+        .web-version-callout { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color); }
+        .web-version-label { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.75rem; text-align: center; }
+        .web-version-link { display: block; text-align: center; padding: 1rem 1.5rem; background: rgba(255, 107, 107, 0.08); border: 2px solid #FF6B6B; border-radius: 8px; color: #FF6B6B; text-decoration: none; font-weight: 500; transition: all 0.2s ease; }
+        .web-version-link:hover { background: rgba(255, 107, 107, 0.12); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255, 107, 107, 0.2); }
+        .timeline-header { margin-bottom: 2rem; text-align: center; }
+        .timeline-title { font-size: 1.5rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem; }
+        .timeline-subtitle { font-size: 0.9rem; color: var(--text-secondary); margin: 0; }
+        .timeline-subtitle a { color: #FF6B6B; text-decoration: none; }
+        .timeline-subtitle a:hover { text-decoration: underline; }
+        @media (max-width: 768px) { .section-description { font-size: 0.85rem; padding: 0 1rem; } .web-version-callout { margin: 1rem 0; } .web-version-link { padding: 0.875rem 1.25rem; font-size: 0.95rem; } .timeline-header { margin-bottom: 1.5rem; } .timeline-title { font-size: 1.25rem; } .timeline-subtitle { font-size: 0.85rem; } }
+    </style>
+
+    <style>
+        /* ========================================
            Professional Record - Center Alignment
            ======================================== */
         .resume-list { display: flex; flex-direction: column; align-items: center; text-align: center; max-width: 100%; }
@@ -1775,7 +1792,8 @@
                 
                 <div class="resume-preview">
                     <div class="resume-palette-mini">
-                        <h3 class="section-subtitle">Select Your Resume Style</h3>
+                        <h3 class="section-subtitle">PDF Download Options</h3>
+                        <p class="section-description">Select a color style for your downloadable resume</p>
                         <div class="palette-grid-mini">
                             <button class="palette-mini-option active" data-style="coral-light" data-pdf="assets/Components/THE_FOUR/LS-cv_coral-light.pdf" aria-label="Select Coral Light resume style">
                                 <div class="palette-mini-preview" style="background: linear-gradient(135deg, #FF6B6B 0%, #FFE66D 100%);"></div>
@@ -1798,17 +1816,24 @@
                                 <span class="checkmark-mini" aria-hidden="true">✓</span>
                             </button>
                         </div>
-                        <p class="current-selection-mini">Currently selected: <span class="current-style-mini">Coral Light</span></p>
-                        <a href="assets/Components/THE_FOUR/LS-cv_coral-light.pdf" class="download-btn-mini" id="miniDownloadBtn" download="LS-cv_coral-light.pdf">
+                        <p class="current-selection-mini">PDF Style: <span class="current-style-mini">Coral Light</span></p>
+                        <a href="assets/Components/THE_FOUR/LS-cv_coral-light.pdf" class="download-btn-mini" id="miniDownloadBtn" download="LS-cv_coral-light.pdf" aria-label="Download PDF resume in selected color style">
                             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M10 13L6 9H8V5H12V9H14L10 13Z" fill="currentColor"/>
                                 <path d="M4 15H16V17H4V15Z" fill="currentColor"/>
                             </svg>
-                            Download This Version
+                            Download PDF in This Style
                         </a>
-                        <p class="view-web-version"><a href="cv.html">View Full Interactive Web Version →</a></p>
+                        <div class="web-version-callout">
+                            <p class="web-version-label">Want to explore the full details?</p>
+                            <a href="cv.html" class="web-version-link" aria-label="View full interactive web resume with complete timeline and project details">View Interactive Web Version →</a>
+                        </div>
                     </div>
                     
+                    <div class="timeline-header">
+                        <h3 class="timeline-title">Career Highlights</h3>
+                        <p class="timeline-subtitle">(Full timeline available in web version)</p>
+                    </div>
                     <div class="resume-list">
                         <div class="role-row">
                             <div class="role-date current">2024–Pres</div>
@@ -2074,7 +2099,15 @@
                     if(!clicked) return;
                     const pdfPath = clicked.getAttribute('data-pdf');
                     miniOptions.forEach(opt=>{ const is = opt.getAttribute('data-style')===styleName; opt.classList.toggle('active',is); opt.setAttribute('aria-pressed', is? 'true':'false'); });
-                    if(miniDownloadBtn && pdfPath){ miniDownloadBtn.href = pdfPath; const file = pdfPath.split('/').pop(); miniDownloadBtn.setAttribute('download', file); }
+                    if(miniDownloadBtn && pdfPath){
+                        miniDownloadBtn.href = pdfPath;
+                        const file = pdfPath.split('/').pop();
+                        miniDownloadBtn.setAttribute('download', file);
+                        const displayName = styleNames[styleName] || styleName;
+                        miniDownloadBtn.innerHTML = `
+                            <svg width=\"20\" height=\"20\" viewBox=\"0 0 20 20\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n                                <path d=\"M10 13L6 9H8V5H12V9H14L10 13Z\" fill=\"currentColor\"/>\n                                <path d=\"M4 15H16V17H4V15Z\" fill=\"currentColor\"/>\n                            </svg>\n                            Download PDF in ${displayName}\n                        `;
+                        miniDownloadBtn.setAttribute('aria-label', `Download PDF resume in ${displayName} style`);
+                    }
                     if(currentStyleMini){ currentStyleMini.textContent = styleNames[styleName] || styleName; }
                 }
                 miniOptions.forEach(opt=>{

@@ -2077,7 +2077,20 @@
                     if(!clicked) return;
                     const pdfPath = clicked.getAttribute('data-pdf');
                     miniOptions.forEach(opt=>{ const is = opt.getAttribute('data-style')===styleName; opt.classList.toggle('active',is); opt.setAttribute('aria-pressed', is? 'true':'false'); });
-                    if(miniDownloadBtn && pdfPath){ miniDownloadBtn.href = pdfPath; const file = pdfPath.split('/').pop(); miniDownloadBtn.setAttribute('download', file); }
+                    if(miniDownloadBtn && pdfPath){
+                        miniDownloadBtn.href = pdfPath;
+                        const file = pdfPath.split('/').pop();
+                        miniDownloadBtn.setAttribute('download', file);
+                        const displayName = styleNames[styleName] || styleName;
+                        miniDownloadBtn.innerHTML = `
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M10 13L6 9H8V5H12V9H14L10 13Z" fill="currentColor"/>
+                                <path d="M4 15H16V17H4V15Z" fill="currentColor"/>
+                            </svg>
+                            Download PDF in ${displayName}
+                        `;
+                        miniDownloadBtn.setAttribute('aria-label', `Download PDF resume in ${displayName} style`);
+                    }
                     if(currentStyleMini){ currentStyleMini.textContent = styleNames[styleName] || styleName; }
                 }
                 miniOptions.forEach(opt=>{
