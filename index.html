@@ -1679,6 +1679,28 @@
     
     /* Remove any inherited nav-link styles if necessary */ 
     .lens-badge::after { display: none !important; } 
+
+    .mobile-lens-btn { 
+        margin-top: 1.5rem; 
+        width: 100%; 
+        display: flex; 
+        align-items: center; 
+        justify-content: space-between; 
+        padding: 12px 16px; 
+        background: rgba(255, 255, 255, 0.05); 
+        border: 1px solid rgba(255, 255, 255, 0.1); 
+        border-radius: 8px; 
+        color: white; 
+        font-family: var(--font-body); 
+        font-size: 0.8rem; 
+        font-weight: 600; 
+        letter-spacing: 0.05em; 
+        text-transform: uppercase; 
+        cursor: pointer; 
+        transition: all 0.2s ease; 
+    } 
+    .mobile-lens-btn:active { background: rgba(255, 255, 255, 0.1); transform: scale(0.98); } 
+    .lens-dot { width: 6px; height: 6px; background: var(--coral); border-radius: 50%; margin-right: 10px; box-shadow: 0 0 8px var(--coral); } 
   </style>
 </head>
 <body>
@@ -1687,26 +1709,26 @@
       <h2 class="intent-header">What brings you <span class="emphasis">here?</span></h2> 
       
       <div class="intent-cards"> 
-        <!-- Card 1: Hire --> 
+        <!-- Card 1: Hire (Recruiters/Managers) --> 
         <button class="intent-card intent-card--hire" onclick="intentGate.select('hire')"> 
-          <p class="card-qualifier">I'm here as a potential</p> 
-          <h3 class="card-keyword">hire</h3> 
+          <p class="card-qualifier">I'm here to</p> 
+          <h3 class="card-keyword">assess fit</h3> 
           <p class="card-microline">Leadership · Impact · Professional Experience</p> 
         </button> 
         
-        <!-- Card 2: Partner --> 
+        <!-- Card 2: Partner (Collaborators) --> 
         <button class="intent-card intent-card--partner" onclick="intentGate.select('partner')"> 
-          <p class="card-qualifier">I'm here as a potential</p> 
-          <h3 class="card-keyword">partner</h3> 
+          <p class="card-qualifier">I'm here to explore</p> 
+          <h3 class="card-keyword">partnership</h3> 
           <p class="card-microline">Strategy · Systems · Ways to Work Together</p> 
         </button> 
         
-        <!-- Card 3: Explore --> 
-        <button class="intent-card intent-card--explore" onclick="intentGate.select('explore')"> 
-          <p class="card-qualifier">I'm just</p> 
-          <h3 class="card-keyword">exploring</h3> 
-          <p class="card-microline">Story · Work · Open Navigation</p> 
-        </button> 
+      <!-- Card 3: Explore (General) --> 
+      <button class="intent-card intent-card--explore" onclick="intentGate.select('explore')"> 
+        <p class="card-qualifier">I'm just</p> 
+        <h3 class="card-keyword">exploring</h3> 
+        <p class="card-microline">Luis’ Story · Timeline · Full Picture</p> 
+      </button> 
       </div> 
       
       <div class="intent-skip"> 
@@ -1797,12 +1819,19 @@
     <div class="mobile-drawer" role="dialog" aria-modal="true" aria-label="Mobile menu">
       <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">&times;</button>
       <div class="mobile-menu-content">
-        <div class="mobile-drawer-header">
-          <div class="mobile-drawer-brand">
-            <span class="mobile-drawer-name">Luis Gilberto</span>
-            <span class="mobile-drawer-role">Creative Strategy</span>
-          </div>
-        </div>
+        <div class="mobile-drawer-header"> 
+          <div class="mobile-drawer-brand"> 
+            <span class="mobile-drawer-name">Luis Gilberto</span> 
+            <span class="mobile-drawer-role">Creative Strategy</span> 
+          </div> 
+          
+          <!-- NEW MOBILE LENS TOGGLE --> 
+          <button id="mobileLensToggle" class="mobile-lens-btn"> 
+            <span class="lens-dot"></span> 
+            <span id="mobileLensLabel">VIEW: EXPLORE</span> 
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:0.5"><polyline points="6 9 12 15 18 9"></polyline></svg> 
+          </button> 
+        </div> 
 
         <div class="mobile-nav-section">
           <div class="mobile-nav-label">GLOBAL</div>
@@ -2888,15 +2917,37 @@
     
         // Update the "VIEW: [LENS]" text in the navbar 
         updateBadge(lens) { 
-            const badge = document.getElementById('viewBadge'); 
-            if (badge) { 
-                badge.innerText = `VIEW: ${lens.toUpperCase()}`; 
-            } 
+            const desktopBadge = document.getElementById('viewBadge'); 
+            const mobileLabel = document.getElementById('mobileLensLabel'); 
+            
+            const text = `VIEW: ${lens.toUpperCase()}`; 
+            
+            if (desktopBadge) desktopBadge.innerText = text; 
+            if (mobileLabel) mobileLabel.innerText = text; 
         } 
     }; 
     
     // Initialize on Load 
     window.addEventListener('load', () => intentGate.init()); 
+    
+    // WIRE UP MOBILE TOGGLE 
+    const mobileToggle = document.getElementById('mobileLensToggle'); 
+    if (mobileToggle) { 
+        mobileToggle.addEventListener('click', (e) => { 
+            e.preventDefault(); 
+            // Close the mobile drawer first so they can see the overlay 
+            const drawer = document.getElementById('mobileMenuOverlay'); 
+            if (drawer) { 
+                drawer.classList.remove('active'); 
+                document.body.style.overflow = ''; 
+            } 
+            
+            // Open the Intent Gate 
+            setTimeout(() => { 
+                intentGate.open(); 
+            }, 300); // Small delay for drawer closing animation 
+        }); 
+    } 
     
     // Wire up the Nav Badge to re-open the gate 
     // Robust Event Listener 
