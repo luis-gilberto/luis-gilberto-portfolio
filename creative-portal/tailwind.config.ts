@@ -10,6 +10,7 @@ const config: Config = {
       fontFamily: {
         sans: ["var(--font-inter)", "sans-serif"],
         serif: ["var(--font-serif)", "serif"],
+        "big-shoulders": ["var(--font-big-shoulders)", "cursive"],
       },
       colors: {
         background: "hsl(var(--background))",
@@ -61,6 +62,8 @@ const config: Config = {
         "portal-bg": "#050505",
         "portal-panel": "#121212",
         "surface": "#141414",
+        coral: "#F96F6E",
+        teal: "#2ED3C6",
       },
       borderRadius: {
         lg: "var(--radius)",

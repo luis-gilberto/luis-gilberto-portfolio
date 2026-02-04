@@ -17,6 +17,7 @@ model User {
   role          String    @default("CLIENT") // ADMIN or CLIENT
   createdAt     DateTime  @default(now())
   projects      Project[]
+  sentMessages  Message[]
   accounts      Account[]
   sessions      Session[]
 
@@ -45,7 +46,7 @@ model Client {
 model Project {
   id          String     @id @default(cuid())
   title       String
-  status      String     @default("Active")
+  status      String     @default("DISCOVERY")
   startDate   DateTime   @default(now())
   
   userId      String
@@ -54,10 +55,18 @@ model Project {
   clientId    String?
   client      Client?    @relation(fields: [clientId], references: [id])
 
+  // Strategy Module Statuses
+  gtmStatus      String @default("PENDING")
+  brandStatus    String @default("PENDING")
+  campaignStatus String @default("PENDING")
+  creativeStatus String @default("PENDING")
+
   documents      Document[]
   milestones     Milestone[]
   deliverables   Deliverable[]
   timelineEvents TimelineEvent[]
+  messages       Message[]
+  assessmentSessions AssessmentSession[]
 }
 
 model Document {
@@ -87,6 +96,8 @@ model Deliverable {
   fileUrl   String?
   type      String
   status    String   @default("Draft")
+  dueDate   DateTime?
+  createdAt DateTime @default(now())
   projectId String
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
@@ -100,19 +111,37 @@ model TimelineEvent {
   project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
+model Message {
+  id        String   @id @default(cuid())
+  content   String
+  senderId  String
+  sender    User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
 model AssessmentSession {
   id                String   @id @default(cuid())
   clientId          String   @map("client_id")
   client            Client   @relation(fields: [clientId], references: [id])
+  projectId         String?  @map("project_id")
+  project           Project? @relation(fields: [projectId], references: [id])
   consultantId      String   @map("consultant_id")
   assessmentType    String   @map("assessment_type")
-  status            String   @default("in_progress")
+  status            String   @default("in_progress") // PROCESSING, COMPLETED, PUBLISHED, MANUAL_REVIEW
   responses         String?  // Stored as JSON string
   intelligenceScore Int?     @map("intelligence_score")
   currentQuestion   Int?     @map("current_question")
+  isPublished       Boolean  @default(false) @map("is_published")
+  briefSummary      String?  @map("brief_summary")
+  certifiedNarrative String? @map("certified_narrative")
+  consultantAnalysis String? @map("consultant_analysis")
   startedAt         DateTime @default(now()) @map("started_at")
   updatedAt         DateTime @default(now()) @updatedAt @map("updated_at")
-
+  
+  @@unique([projectId, assessmentType])
   @@map("assessment_sessions")
 }
 

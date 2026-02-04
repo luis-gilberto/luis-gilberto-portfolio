@@ -47,7 +47,17 @@ export async function POST(req: Request) {
         budgetRange,
         timeline,
         companySize,
+        // Automatically initialize a Discovery project
+        projects: {
+          create: {
+            title: `${company || name} - Strategic Discovery`,
+            status: 'DISCOVERY',
+          }
+        }
       },
+      include: {
+        projects: true
+      }
     });
 
     return NextResponse.json(newClient, { status: 201 });

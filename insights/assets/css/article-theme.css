@@ -24,7 +24,7 @@
     --text-primary: #f0f0f0;
     --text-secondary: #a0a0a0;
     --border-color: #333333;
-    --nav-bg: rgba(10, 10, 10, 0.9);
+    --nav-bg: rgba(255, 255, 255, 0.95); /* Preserve light header in dark mode */
 }
 
 * {
@@ -66,12 +66,11 @@ h1, h2, h3, h4, .lg-logo {
 }
 
 .lg-site-header-inner {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 2rem;
+    width: 100%;
+    padding: 0 4rem; /* Increased horizontal padding */
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-between; /* LOGO LEFT, NAV RIGHT */
 }
 
 .lg-logo {
@@ -87,6 +86,61 @@ h1, h2, h3, h4, .lg-logo {
 .lg-main-nav {
     display: flex;
     gap: 2rem;
+    margin-left: auto; /* Push to the right */
+}
+
+/* --- SUBMENU STYLES --- */
+.nav-sub-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.nav-submenu {
+    position: absolute;
+    top: 100%;
+    right: 0; /* Align to the right of the parent */
+    min-width: 180px;
+    background: var(--nav-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    padding: 0.5rem;
+    display: none;
+    z-index: 1002;
+    margin-top: 10px;
+}
+
+.nav-submenu.open {
+    display: block;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.nav-submenu a {
+    display: block;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    text-decoration: none;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.nav-submenu a:hover {
+    background: rgba(0,0,0,0.05);
+    color: var(--coral-accent);
+}
+
+[data-theme="dark"] .nav-submenu a:hover {
+    background: rgba(255,255,255,0.05);
 }
 
 /* --- GLOBAL NAV LINKS --- */ 
@@ -132,11 +186,11 @@ h1, h2, h3, h4, .lg-logo {
 
 /* --- DARK MODE NAV TEXT FIX --- */ 
 [data-theme="dark"] .lg-nav-link { 
-    color: #ffffff; /* Text becomes White in dark mode */ 
+    color: #121212; /* Keep text dark since header stays light */ 
 } 
 [data-theme="dark"] .lg-nav-link:hover, 
 [data-theme="dark"] .lg-nav-link.is-active { 
-    color: #ffffff; /* FORCE Text to stay White in dark mode */ 
+    color: #121212; 
 }
 
 .mobile-menu-toggle {
@@ -145,6 +199,7 @@ h1, h2, h3, h4, .lg-logo {
     border: none;
     color: var(--text-primary);
     cursor: pointer;
+    margin-left: auto; /* Push toggle to the extreme right */
 }
 
 /* --- CONTEXT BAR --- */
@@ -707,6 +762,12 @@ h1, h2, h3, h4, .lg-logo {
 
 /* Responsive Updates */
 @media (max-width: 900px) {
+    .lg-site-header-inner {
+        padding: 0 2rem; /* Reduce padding on tablet */
+    }
+    .lg-logo {
+        margin-left: 0; /* Reset extreme pull on tablet */
+    }
     .lg-main-nav { display: none; }
     .mobile-menu-toggle { display: block; }
     
@@ -738,6 +799,9 @@ h1, h2, h3, h4, .lg-logo {
 }
 
 @media (max-width: 600px) {
+    .lg-site-header-inner {
+        padding: 0 1rem; /* Minimum padding on mobile */
+    }
     /* The Bar Grid - Mobile (1 col) */
     .the-bar-grid { grid-template-columns: 1fr; }
 }
@@ -975,9 +1039,10 @@ h1, h2, h3, h4, .lg-logo {
 [data-theme="dark"] .sig-sticker.theme-img-dark { mix-blend-mode: screen !important; }
 
 /* --- DARK MODE LOGO FIX --- */
+/* Logo remains dark because header remains light in both modes */
 [data-theme="dark"] .lg-logo img { 
-    filter: invert(1); 
-    opacity: 0.9; /* Slight soften so it isn't jarringly bright */ 
+    filter: none; 
+    opacity: 1; 
 }
 
 /* Swiper Navigation Styling */ 

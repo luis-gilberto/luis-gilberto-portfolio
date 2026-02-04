@@ -14,7 +14,15 @@ export function Navigation() {
   const pathname = usePathname()
   const [isMobileOpen, setIsMobileOpen] = useState(false)
 
-  const portalMobileLinks = [
+  const role = session?.user?.role
+
+  const portalMobileLinks = role === 'CLIENT' ? [
+    { label: 'Dashboard', href: '/dashboard' },
+    { label: 'Strategy Engine', href: '/strategyiq' },
+    { label: 'Projects', href: '/projects' },
+    { label: 'Messages', href: '/messages' },
+    { label: 'Settings', href: '/settings' },
+  ] : [
     { label: 'Dashboard', href: '/admin' },
     { label: 'Strategy Engine', href: '/strategyiq' },
     { label: 'Projects', href: '/admin/projects' },

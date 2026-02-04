@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Inter, Playfair_Display } from "next/font/google"
+import { Inter, Playfair_Display, Oswald } from "next/font/google"
 import Image from "next/image"
 import "./globals.css"
 import { AuthSessionProvider } from "@/components/providers/session-provider"
@@ -14,6 +14,10 @@ const inter = Inter({
 const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-serif",
+})
+const bigShoulders = Oswald({
+  subsets: ["latin"],
+  variable: "--font-big-shoulders",
 })
 
 export const metadata: Metadata = {
@@ -33,17 +37,17 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
-      <body className={`${inter.variable} ${playfair.variable} font-sans antialiased bg-portal-bg text-[var(--text-primary)] min-h-screen flex flex-col`}>
+      <body className={`${inter.variable} ${playfair.variable} ${bigShoulders.variable} font-sans antialiased bg-portal-bg text-[var(--text-primary)] min-h-screen flex flex-col`}>
         {/* Cinematic Corridor Background */}
-        <div className="fixed inset-0 z-[-1] h-screen w-full">
+        <div className="fixed inset-0 z-[-1] h-screen w-full overflow-hidden">
           <Image
             src="/assets/images/portal-corridor-bg.jpg"
             alt="Portal Corridor"
             fill
-            className="object-cover opacity-80"
+            className="object-cover opacity-40 blur-xl scale-110"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/90" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-transparent via-[#050505]/60 to-[#050505]" />
         </div>
 
         <AuthSessionProvider>

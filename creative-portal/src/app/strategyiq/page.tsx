@@ -15,7 +15,9 @@ import {
   BarChart3,
   TrendingUp,
   ShieldCheck,
-  FileText
+  FileText,
+  HelpCircle,
+  X
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 // Imports adjusted based on file tree check
@@ -26,18 +28,30 @@ import AssessmentRunner from '../../components/strategy/AssessmentRunner';
 import StrategicBriefModal from '../../components/strategy/StrategicBriefModal';
 import { AssessmentCategory } from '@/lib/strategyData';
 import { cn } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
+
+import { useSession } from 'next-auth/react';
+
+import { createClient } from '@supabase/supabase-js';
+
+// --- SUPABASE CLIENT ---
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabase = SUPABASE_URL && SUPABASE_ANON_KEY ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
 type AssessmentState = {
   status: 'pending' | 'in-progress' | 'completed';
   score: number; // 0-100
   answers: Record<string, number>; // Saved answers to allow resuming/editing
+  isPublished?: boolean;
 };
 
 const CLIENTS = [
   {
-    id: 'c1',
+    id: 'cml73ju300003vkikvhv32lit', // Real Acme Project ID
     name: 'Acme Corp',
-    type: 'Brand Repositioning', // <--- USER: CHANGE THIS TEXT TO UPDATE THE LABEL
+    email: 'client@acme.com',
+    type: 'Brand Repositioning',
     budget: '$25K - $50K',
     timeline: '3-6 months',
     size: '50-200 employees'
@@ -45,7 +59,8 @@ const CLIENTS = [
   {
     id: 'c2',
     name: 'TechStart Inc',
-    type: 'Product Launch (GTM)', // Example of a different type
+    email: 'techstart@example.com',
+    type: 'Product Launch (GTM)',
     budget: '$50K - $100K',
     timeline: '6-9 months',
     size: '20-50 employees'
@@ -59,6 +74,14 @@ const assessmentAreas = [
     title: 'Go-to-Market Sprint',
     description: 'Market entry strategy, positioning, and launch roadmap.',
     duration: '6-12 WEEKS',
+    education: {
+      title: 'Why GTM Strategy?',
+      points: [
+        'Market entry timing: Launching when your audience is most receptive.',
+        'Channel selection: Identifying where your high-value customers live.',
+        'Risk mitigation: Avoiding expensive pivots by validating demand early.'
+      ]
+    }
   },
   {
     id: 'brand',
@@ -66,6 +89,14 @@ const assessmentAreas = [
     title: 'Brand Intelligence',
     description: 'Positioning, messaging, and systematic brand development.',
     duration: '8-16 WEEKS',
+    education: {
+      title: 'Why Brand Intelligence?',
+      points: [
+        'Competitive Moat: Positioning that makes price irrelevant.',
+        'Messaging Clarity: Cutting through the noise with a clear value prop.',
+        'Consistency: Building trust through a systematic visual and narrative identity.'
+      ]
+    }
   },
   {
     id: 'campaign',
@@ -73,6 +104,14 @@ const assessmentAreas = [
     title: 'Strategic Campaigns',
     description: 'Integrated campaign strategy and optimization.',
     duration: '12-20 WEEKS',
+    education: {
+      title: 'Why Strategic Campaigns?',
+      points: [
+        'Lead Generation: Turning your strategy into a predictable revenue engine.',
+        'Multi-Channel Sync: Ensuring every touchpoint reinforces the same goal.',
+        'Data-Driven Iteration: Constant optimization based on real-world performance.'
+      ]
+    }
   },
   {
     id: 'creative',
@@ -80,16 +119,30 @@ const assessmentAreas = [
     title: 'Creative Strategy',
     description: 'Content frameworks and scalable creative systems.',
     duration: '4-12 WEEKS',
+    education: {
+      title: 'Why Creative Strategy?',
+      points: [
+        'Pattern Interruption: Visual hooks that stop the scroll.',
+        'Narrative Resonance: Stories that connect with human psychology.',
+        'Scalable Systems: Content frameworks that grow with your business.'
+      ]
+    }
   },
 ];
 
 export default function StrategyIQPage() {
+  const router = useRouter();
+  const { data: session } = useSession();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeAssessment, setActiveAssessment] = useState<AssessmentCategory | null>(null);
   const [viewMode, setViewMode] = useState<'dashboard' | 'assessment' | 'results'>('dashboard');
   const [selectedClient, setSelectedClient] = useState(CLIENTS[0]);
-  
+  const [activeProject, setActiveProject] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [educationModal, setEducationModal] = useState<any>(null);
+  const [dbClients, setDbClients] = useState<any[]>([]);
+
   // 1. Main State Container
   const [isMounted, setIsMounted] = useState(false);
   const [clientProgress, setClientProgress] = useState<Record<string, AssessmentState>>({ 
@@ -98,6 +151,111 @@ export default function StrategyIQPage() {
     campaign: { status: 'pending', score: 0, answers: [] }, 
     creative: { status: 'pending', score: 0, answers: [] }, 
   }); 
+
+  const role = session?.user?.role;
+
+  // Fetch real clients for Admins
+  useEffect(() => {
+    async function fetchClients() {
+      if (role === 'ADMIN' || role === 'CONSULTANT') {
+        try {
+          const res = await fetch('/api/admin/clients');
+          if (res.ok) {
+            const data = await res.json();
+            setDbClients(data);
+            if (data.length > 0) {
+              // Map DB client to the format expected by the UI
+              const mapped = data.map((c: any) => ({
+                id: c.id,
+                email: c.email,
+                name: c.name,
+                type: c.projectType || 'Strategic Discovery',
+                budget: c.budgetRange || 'TBD',
+                timeline: c.timeline || 'TBD',
+                size: c.companySize || 'TBD'
+              }));
+              setSelectedClient(mapped[0]);
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching clients:', error);
+        }
+      }
+    }
+    fetchClients();
+  }, [role]);
+
+  // Fetch Project Data for Partners or selected client
+  useEffect(() => {
+    async function fetchProjectData() {
+      const targetUserEmail = (role === 'CLIENT') ? session?.user?.email : selectedClient?.email;
+      
+      if (targetUserEmail) {
+        try {
+          if (!supabase) return;
+          
+          const { data: user } = await supabase.from('User').select('id').eq('email', targetUserEmail).single();
+          if (user) {
+            const { data: projects } = await supabase
+              .from('Project')
+              .select('*')
+              .eq('userId', user.id)
+              .in('status', ['ACTIVE', 'DISCOVERY']);
+            
+            if (projects && projects.length > 0) {
+              setActiveProject(projects[0]);
+              // If it's an admin, we update selectedClient with the actual project ID for saving
+              if (role !== 'CLIENT') {
+                setSelectedClient(prev => ({
+                  ...prev,
+                  id: projects[0].id
+                }));
+              } else {
+                setSelectedClient({
+                  ...CLIENTS[0],
+                  id: projects[0].id,
+                  name: projects[0].title
+                });
+              }
+            }
+
+            // Fetch real progress from DB for this project
+            const { data: assessments } = await supabase
+              .from('assessment_sessions')
+              .select('*')
+              .eq('project_id', projects[0].id);
+
+            if (assessments) {
+              const progress: Record<string, AssessmentState> = {
+                gtm: { status: 'pending', score: 0, answers: {} },
+                brand: { status: 'pending', score: 0, answers: {} },
+                campaign: { status: 'pending', score: 0, answers: {} },
+                creative: { status: 'pending', score: 0, answers: {} },
+              };
+
+              assessments.forEach((a: any) => {
+                if (progress[a.assessment_type]) {
+                  progress[a.assessment_type] = {
+                    status: 'completed',
+                    score: a.intelligence_score,
+                    answers: JSON.parse(a.responses || '{}')
+                  };
+                }
+              });
+              setClientProgress(progress);
+            }
+          }
+        } catch (err) {
+          console.error('Error fetching project data:', err);
+        }
+      }
+      setIsLoading(false);
+    }
+    
+    if (isMounted) {
+      fetchProjectData();
+    }
+  }, [session, role, isMounted, selectedClient?.email]);
 
   // B. Save State whenever it changes 
   useEffect(() => { 
@@ -161,30 +319,106 @@ export default function StrategyIQPage() {
   }, [viewMode]);
 
   const handleAssessmentStart = (id: string) => {
+    const role = session?.user?.role || 'CLIENT';
+    const isCompleted = clientProgress[id].status === 'completed';
+    
+    if (isCompleted) {
+      // Redirect logic: Admin goes to Workbench, Partner goes to Results
+      const projectId = activeProject?.id || 'default';
+      if (role === 'ADMIN') {
+        router.push(`/admin/projects/${projectId}/strategy/${id}/results`);
+      } else {
+        router.push(`/strategy-iq/${projectId}/${id}/results`);
+      }
+      return; 
+    }
+    
     setActiveAssessment(id as AssessmentCategory);
     setViewMode('assessment');
   };
 
-  const handleAssessmentComplete = (result: { score: number; answers: Record<string, number> }) => {
+  const handleAssessmentComplete = async (result: { score: number; answers: Record<string, number> }) => {
     if (!activeAssessment) return;
     
-    // Check if assessment is already completed
-    if (clientProgress[activeAssessment].status === 'completed') {
-      const confirmOverwrite = window.confirm('This assessment is locked. Overwrite?');
-      if (!confirmOverwrite) return;
-    }
-    
-    setClientProgress(prev => ({
-      ...prev,
-      [activeAssessment]: {
-        status: 'completed',
-        score: result.score,
-        answers: result.answers
+    // Auto-Initialization Logic for Homeless Clients
+    let projectId = activeProject?.id || (selectedClient.id !== 'c1' && selectedClient.id !== 'c2' ? selectedClient.id : null);
+
+    if (!projectId || projectId === 'default' || projectId === 'c1' || projectId === 'c2') {
+      console.log('Homeless client detected. Attempting auto-initialization...');
+      
+      try {
+        // We'll call a new auto-init API or just use the existing admin client creation logic
+        // For now, let's attempt to find or create a project via a new internal endpoint or direct prisma if we were server-side
+        // Since we are client-side, we should call an API.
+        const initRes = await fetch('/api/strategy-iq/init', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            email: session?.user?.email || selectedClient.email,
+            company: selectedClient.name
+          })
+        });
+
+        if (initRes.ok) {
+          const newProject = await initRes.json();
+          projectId = newProject.id;
+          console.log('Auto-initialized project:', projectId);
+          setActiveProject(newProject);
+        } else {
+          throw new Error('Failed to auto-initialize project');
+        }
+      } catch (err) {
+        console.error('Auto-init failed:', err);
+        alert('Error: No active project found and auto-initialization failed. Please contact support.');
+        throw err;
       }
-    }));
-    
-    setViewMode('dashboard');
-    setActiveAssessment(null);
+    }
+
+    try {
+      const response = await fetch('/api/strategy-iq/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          projectId,
+          dimension: activeAssessment,
+          score: result.score,
+          responses: result.answers
+        })
+      });
+
+      if (response.ok) {
+        setClientProgress(prev => ({
+          ...prev,
+          [activeAssessment]: {
+            status: 'completed',
+            score: result.score,
+            answers: result.answers
+          }
+        }));
+        
+        // Redirect logic: Admin goes to Workbench, Partner goes to Results
+        if (session?.user?.role === 'ADMIN') {
+          router.push(`/admin/projects/${projectId}/strategy/${activeAssessment}/results`);
+        } else {
+          router.push(`/strategy-iq/${projectId}/${activeAssessment}/results`);
+        }
+        
+        setActiveAssessment(null);
+        setViewMode('dashboard');
+      } else {
+        let errorData;
+        try {
+          errorData = await response.json();
+        } catch (e) {
+          errorData = { error: 'Unknown server error', status: response.status };
+        }
+        console.error('Save failed details:', errorData);
+        throw new Error(errorData.error || `Server error: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Error saving assessment:', error);
+      throw error;
+    }
   };
 
   const handleAssessmentClose = () => {
@@ -192,7 +426,25 @@ export default function StrategyIQPage() {
     setActiveAssessment(null);
   };
 
-  const handleAssessmentNext = () => {
+  const handlePublish = (category: AssessmentCategory) => {
+    setClientProgress(prev => ({
+      ...prev,
+      [category]: {
+        ...prev[category],
+        isPublished: true
+      }
+    }));
+    
+    // Also save to localStorage for persistence in this demo
+    const saved = localStorage.getItem('strategyiq_progress');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      parsed[category].isPublished = true;
+      localStorage.setItem('strategyiq_progress', JSON.stringify(parsed));
+    }
+  };
+
+  const handleAssessmentNext = (nextCategory: AssessmentCategory) => {
     const sequence: AssessmentCategory[] = ['gtm', 'brand', 'campaign', 'creative'];
     const currentIndex = sequence.indexOf(activeAssessment as AssessmentCategory);
     
@@ -244,56 +496,93 @@ export default function StrategyIQPage() {
                 <div className="flex justify-between items-end mb-12">
                   <div>
                     <h1 className="text-4xl md:text-5xl font-display font-bold text-white mb-2 tracking-tight">
-                      StrategyIQ<sup className="text-lg">™</sup> Engine
+                      Strategic Intake Engine
                     </h1>
                     <p className="text-gray-400 max-w-xl text-lg">
-                      Select a strategic dimension to analyze. AI will guide the discovery process and generate the final brief.
+                      Analyze your current posture and unlock bespoke strategic roadmaps across our four core intelligence pillars.
                     </p>
                   </div>
                 </div>
 
-                {/* CONTEXT BAR */}
-                <div className="bg-[#141414] border border-white/5 rounded-xl p-8 mb-12 shadow-sm">
-                  <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
-                    <h3 className="text-lg font-medium text-white">Client Context</h3>
-                    
-                    {/* DYNAMIC DROPDOWN (HTML Select Fallback) */}
-                    <div className="relative inline-block">
-                      <select 
-                        className="appearance-none bg-transparent border-none text-xs text-gray-400 hover:text-[#F96F6E] transition-colors outline-none pr-6 cursor-pointer focus:ring-0"
-                        value={selectedClient.id}
-                        onChange={(e) => setSelectedClient(CLIENTS.find(c => c.id === e.target.value) || CLIENTS[0])}
-                      >
-                        {CLIENTS.map(c => (
-                          <option key={c.id} value={c.id} className="bg-[#1A1A1A] text-gray-200">
-                            {c.name}
-                          </option>
-                        ))}
-                      </select>
-                      <ChevronRight size={14} className="rotate-90 absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400" />
+                {/* CONTEXT BAR (Locked for Partners) */}
+                {role !== 'CLIENT' ? (
+                  <div className="bg-[#141414] border border-white/5 rounded-xl p-8 mb-12 shadow-sm">
+                    <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
+                      <h3 className="text-lg font-medium text-white">Client Context</h3>
+                      
+                      {/* DYNAMIC DROPDOWN (HTML Select Fallback) */}
+                      <div className="relative inline-block">
+                        <select 
+                          className="appearance-none bg-transparent border-none text-xs text-gray-400 hover:text-[#F96F6E] transition-colors outline-none pr-6 cursor-pointer focus:ring-0"
+                          value={selectedClient.id}
+                          onChange={(e) => {
+                            const found = dbClients.find(c => c.id === e.target.value);
+                            if (found) {
+                              setSelectedClient({
+                                id: found.id,
+                                email: found.email,
+                                name: found.name,
+                                type: found.projectType || 'Strategic Discovery',
+                                budget: found.budgetRange || 'TBD',
+                                timeline: found.timeline || 'TBD',
+                                size: found.companySize || 'TBD'
+                              });
+                            }
+                          }}
+                        >
+                          {dbClients.length > 0 ? (
+                            dbClients.map(c => (
+                              <option key={c.id} value={c.id} className="bg-[#1A1A1A] text-gray-200">
+                                {c.name}
+                              </option>
+                            ))
+                          ) : (
+                            CLIENTS.map(c => (
+                              <option key={c.id} value={c.id} className="bg-[#1A1A1A] text-gray-200">
+                                {c.name}
+                              </option>
+                            ))
+                          )}
+                        </select>
+                        <ChevronRight size={14} className="rotate-90 absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400" />
+                      </div>
                     </div>
-                  </div>
 
-                  {/* DYNAMIC GRID */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                    <div>
-                      <div className="text-[10px] uppercase tracking-wider text-gray-600 mb-1.5 font-semibold">Project Type</div>
-                      <div className="text-sm font-medium text-gray-200">{selectedClient.type}</div>
-                    </div>
-                    <div>
-                      <div className="text-[10px] uppercase tracking-wider text-gray-600 mb-1.5 font-semibold">Budget Range</div>
-                      <div className="text-sm font-medium text-gray-200">{selectedClient.budget}</div>
-                    </div>
-                    <div>
-                      <div className="text-[10px] uppercase tracking-wider text-gray-600 mb-1.5 font-semibold">Timeline</div>
-                      <div className="text-sm font-medium text-gray-200">{selectedClient.timeline}</div>
-                    </div>
-                    <div>
-                      <div className="text-[10px] uppercase tracking-wider text-gray-600 mb-1.5 font-semibold">Company Size</div>
-                      <div className="text-sm font-medium text-gray-200">{selectedClient.size}</div>
+                    {/* DYNAMIC GRID */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                      <div>
+                        <div className="text-[10px] uppercase tracking-wider text-gray-600 mb-1.5 font-semibold">Project Type</div>
+                        <div className="text-sm font-medium text-gray-200">{selectedClient.type}</div>
+                      </div>
+                      <div>
+                        <div className="text-[10px] uppercase tracking-wider text-gray-600 mb-1.5 font-semibold">Budget Range</div>
+                        <div className="text-sm font-medium text-gray-200">{selectedClient.budget}</div>
+                      </div>
+                      <div>
+                        <div className="text-[10px] uppercase tracking-wider text-gray-600 mb-1.5 font-semibold">Timeline</div>
+                        <div className="text-sm font-medium text-gray-200">{selectedClient.timeline}</div>
+                      </div>
+                      <div>
+                        <div className="text-[10px] uppercase tracking-wider text-gray-600 mb-1.5 font-semibold">Company Size</div>
+                        <div className="text-sm font-medium text-gray-200">{selectedClient.size}</div>
+                      </div>
                     </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="mb-12">
+                    <div className="flex items-center gap-4 bg-white/5 border border-white/10 px-8 py-6 rounded-2xl backdrop-blur-sm">
+                      <div className="w-12 h-12 rounded-full bg-teal/10 flex items-center justify-center text-teal">
+                        <Rocket size={24} />
+                      </div>
+                      <div>
+                        <div className="text-[10px] font-bold text-white/20 uppercase tracking-widest">Active Intelligence</div>
+                        <h3 className="text-2xl font-bold text-white font-big-shoulders tracking-widest uppercase italic">
+                          Strategy Engine: <span className="text-teal">{selectedClient.name}</span>
+                        </h3>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* SECTION TITLE */}
                 <div className="mb-6">
@@ -335,6 +624,15 @@ export default function StrategyIQPage() {
                         
                         <h3 className="text-lg font-semibold mb-2 text-white flex items-center gap-2">
                           {area.title}
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEducationModal(area.education);
+                            }}
+                            className="text-white/20 hover:text-coral transition-colors"
+                          >
+                            <HelpCircle size={14} />
+                          </button>
                           {isCompleted && (
                             <span className="text-[10px] bg-teal-500/20 text-teal-400 px-2 py-0.5 rounded-full font-medium tracking-wide">
                               COMPLETED
@@ -350,11 +648,16 @@ export default function StrategyIQPage() {
                           )}>
                             {area.duration}
                           </div>
-                          {isCompleted && (
-                            <div className="text-xs font-medium text-white bg-white/5 px-3 py-1 rounded-full">
-                              Score: <span className="text-teal-400">{clientProgress[area.id].score}</span>
-                            </div>
-                          )}
+                          {isCompleted && session?.user?.role !== 'CLIENT' && (
+                          <div className="text-xs font-medium text-white bg-white/5 px-3 py-1 rounded-full">
+                            Score: <span className="text-teal-400">{clientProgress[area.id].score}</span>
+                          </div>
+                        )}
+                        {isCompleted && session?.user?.role === 'CLIENT' && (
+                          <div className="text-[10px] font-bold text-teal uppercase tracking-widest bg-teal/10 px-3 py-1 rounded-full border border-teal/20">
+                            Strategy Secured
+                          </div>
+                        )}
                         </div>
 
                         {/* Subtle Glow for Highlight Card */}
@@ -366,8 +669,9 @@ export default function StrategyIQPage() {
                   })}
                 </div>
 
-                {/* BOTTOM SCORECARD */}
-                <div className="mt-12 pt-8 border-t border-white/10">
+                {/* BOTTOM SCORECARD (Admin Only) */}
+      {session?.user?.role !== 'CLIENT' && (
+        <div className="mt-12 pt-8 border-t border-white/10">
                   <div className="bg-[#141414] rounded-xl p-8 border border-white/5 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-teal-500/5 blur-[100px] pointer-events-none" />
                     
@@ -397,22 +701,25 @@ export default function StrategyIQPage() {
                           <ShieldCheck className="text-teal-500" size={20} />
                           <span className="text-white font-medium">{serviceMatch.title}</span>
                       </div>
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
-                        className={cn(
-                          "text-xs text-gray-400 hover:text-white",
-                          !hasAnyCompletion && "opacity-50 cursor-not-allowed"
-                        )}
-                        disabled={!hasAnyCompletion}
-                        onClick={() => setIsBriefOpen(true)}
-                      >
-                        Generate Brief <ChevronRight size={14} className="ml-1" />
-                      </Button>
+                      {session?.user?.role !== 'CLIENT' && (
+                        <Button 
+                          size="sm" 
+                          variant="ghost" 
+                          className={cn(
+                            "text-xs text-gray-400 hover:text-white",
+                            !hasAnyCompletion && "opacity-50 cursor-not-allowed"
+                          )}
+                          disabled={!hasAnyCompletion}
+                          onClick={() => setIsBriefOpen(true)}
+                        >
+                          Generate Brief <ChevronRight size={14} className="ml-1" />
+                        </Button>
+                      )}
                     </div>
                   </div>
                   </div>
                 </div>
+              )}
                 
               </motion.div>
             ) : (
@@ -432,6 +739,10 @@ export default function StrategyIQPage() {
                     onComplete={handleAssessmentComplete}
                     onClose={handleAssessmentClose}
                     onStartNext={handleAssessmentNext}
+                    userRole={session?.user?.role || 'CLIENT'}
+                    isPublished={clientProgress[activeAssessment].isPublished}
+                    onPublish={() => handlePublish(activeAssessment)}
+                    projectId={activeProject?.id}
                   />
                 )}
               </motion.div>
@@ -440,18 +751,78 @@ export default function StrategyIQPage() {
         </main>
       </div>
       
-      <StrategicBriefModal 
-        isOpen={isBriefOpen}
-        onClose={() => setIsBriefOpen(false)}
-        data={{
-          clientName: selectedClient.name,
-          overallScore: overallScore,
-          serviceTitle: serviceMatch.title,
-          servicePrice: serviceMatch.price,
-          answers: Object.values(clientProgress).reduce((acc, curr) => ({ ...acc, ...curr.answers }), {}),
-          categoryScores: Object.keys(clientProgress).reduce((acc, key) => ({ ...acc, [key]: clientProgress[key].score }), {})
-        }}
-      />
+      {session?.user?.role !== 'CLIENT' && (
+        <StrategicBriefModal 
+          isOpen={isBriefOpen}
+          onClose={() => setIsBriefOpen(false)}
+          data={{
+            clientName: selectedClient.name,
+            overallScore: overallScore,
+            serviceTitle: serviceMatch.title,
+            servicePrice: serviceMatch.price,
+            answers: Object.values(clientProgress).reduce((acc, curr) => ({ ...acc, ...curr.answers }), {}),
+            categoryScores: Object.keys(clientProgress).reduce((acc, key) => ({ ...acc, [key]: clientProgress[key].score }), {})
+          }}
+        />
+      )}
+
+      {/* Education Modal */}
+      <AnimatePresence>
+        {educationModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-6">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setEducationModal(null)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-lg rounded-[32px] bg-[#141414] border border-white/10 shadow-2xl overflow-hidden"
+            >
+              <div className="p-10 space-y-8">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-coral/10 flex items-center justify-center text-coral">
+                      <HelpCircle size={20} />
+                    </div>
+                    <h2 className="text-3xl font-big-shoulders font-bold tracking-widest uppercase italic text-white">
+                      {educationModal.title}
+                    </h2>
+                  </div>
+                  <button 
+                    onClick={() => setEducationModal(null)}
+                    className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-all"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+
+                <div className="space-y-6">
+                  {educationModal.points.map((point: string, idx: number) => (
+                    <div key={idx} className="flex gap-4 items-start">
+                      <div className="w-1.5 h-1.5 rounded-full bg-coral mt-2.5 shrink-0" />
+                      <p className="text-gray-400 text-lg leading-relaxed font-inter italic">
+                        {point}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                <Button 
+                  onClick={() => setEducationModal(null)}
+                  className="w-full bg-white text-black hover:bg-gray-200 rounded-full py-6 uppercase tracking-widest text-xs font-black"
+                >
+                  Understood
+                </Button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

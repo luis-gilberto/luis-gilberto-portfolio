@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import styles from './pricing.module.css';
 import { Search, ChevronDown, Copy, Calculator, Rocket, Target, Diamond } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import { redirect } from 'next/navigation';
 
 const sections = [
   { id: 'overview', label: 'Quick Reference' },
@@ -23,10 +25,17 @@ const searchData = [
 ];
 
 export default function PricingKnowledgeBase() {
+  const { data: session, status } = useSession();
   const [activeTab, setActiveTab] = useState('overview');
   const [searchTerm, setSearchTerm] = useState('');
   const [roiResult, setRoiResult] = useState<any>(null);
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    if (status === 'unauthenticated' || (session?.user?.role === 'CLIENT')) {
+      redirect('/dashboard');
+    }
+  }, [session, status]);
 
   useEffect(() => {
     const hash = window.location.hash.replace('#', '');

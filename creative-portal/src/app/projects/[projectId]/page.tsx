@@ -25,6 +25,7 @@ const statusPill = (status: string) => {
 }
 
 export default function ProjectDetailPage() {
+  const { data: session } = useSession()
   const params = useParams() as { projectId?: string }
   const [project, setProject] = useState<ProjectData>(initialProjectState)
 
@@ -58,6 +59,8 @@ export default function ProjectDetailPage() {
     if (params.projectId) fetchProject(params.projectId)
   }, [params.projectId])
 
+  const role = session?.user?.role;
+
   return (
     <div className="max-w-7xl mx-auto px-6 py-12 min-h-screen">
       <div className="mb-12">
@@ -86,7 +89,7 @@ export default function ProjectDetailPage() {
               <a href="/docs/timeline" className="text-[var(--coral)] hover:underline">View Documentation</a>
             </div>
           </div>
-          <div className="p-6 rounded-2xl bg-[var(--card-bg)] border border-[var(--border-strong)] shadow-[var(--shadow-soft)]">
+          <div id="deliverables" className="p-6 rounded-2xl bg-[var(--card-bg)] border border-[var(--border-strong)] shadow-[var(--shadow-soft)] scroll-mt-24">
             <h3 className="text-2xl font-bold font-big-shoulders mb-4 border-b border-[var(--border-subtle)] pb-2">
               The Plan: Milestones & Deliverables
             </h3>
@@ -111,7 +114,19 @@ export default function ProjectDetailPage() {
           </div>
           <div className="p-6 rounded-2xl bg-[var(--card-bg)] border border-[var(--border-strong)] shadow-[var(--shadow-soft)]">
             <h3 className="text-xl font-bold font-big-shoulders mb-4">Quick Actions</h3>
-            <Button className="w-full bg-[var(--teal)] text-white hover:bg-[#20A29C] transition-colors mb-2">Send Client Review Link</Button>
+            {role === 'ADMIN' ? (
+              <Button className="w-full bg-[var(--teal)] text-white hover:bg-[#20A29C] transition-colors mb-2">Send Client Review Link</Button>
+            ) : (
+              <Button 
+                onClick={() => {
+                  const el = document.getElementById('deliverables');
+                  el?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="w-full bg-[var(--teal)] text-white hover:bg-[#20A29C] transition-colors mb-2"
+              >
+                View Latest Deliverables
+              </Button>
+            )}
             <Button variant="outline" className="w-full border-[var(--border-strong)] hover:border-[var(--coral)] hover:text-[var(--coral)]">View Proposal</Button>
           </div>
         </div>

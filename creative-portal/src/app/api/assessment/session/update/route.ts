@@ -1,26 +1,29 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const body = await req.json()
-    const { id, responses, intelligence_score, current_question, status } = body
-    if (!id) return NextResponse.json({ error: 'Missing id' }, { status: 400 })
+    const session = await getServerSession(authOptions)
+    if (!session || session.user.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
 
-    const dataToUpdate: any = {}
-    if (responses) dataToUpdate.responses = JSON.stringify(responses)
-    if (intelligence_score !== undefined) dataToUpdate.intelligenceScore = intelligence_score
-    if (current_question !== undefined) dataToUpdate.currentQuestion = current_question
-    if (status) dataToUpdate.status = status
+    const { sessionId, status } = await req.json()
 
-    await prisma.assessmentSession.update({
-      where: { id },
-      data: dataToUpdate
+    if (!sessionId || !status) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    }
+
+    const updatedSession = await prisma.assessmentSession.update({
+      where: { id: sessionId },
+      data: { status }
     })
 
-    return NextResponse.json({ ok: true })
-  } catch (e) {
-    return NextResponse.json({ error: 'Server error' }, { status: 500 })
+    return NextResponse.json({ success: true, session: updatedSession })
+  } catch (error) {
+    console.error('Error updating session:', error)
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }
-

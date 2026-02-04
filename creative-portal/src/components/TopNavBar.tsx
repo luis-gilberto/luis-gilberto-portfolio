@@ -4,6 +4,7 @@ import { Menu } from 'lucide-react'
 import Link from 'next/link'
 import { signOut } from 'next-auth/react'
 import Image from 'next/image'
+import { UserRoleBadge } from './ui/UserRoleBadge'
 
 interface TopNavBarProps {
   onMenuToggle?: () => void
@@ -43,13 +44,16 @@ export default function TopNavBar({ onMenuToggle }: TopNavBarProps) {
             <span className="nav-link active text-sm font-bold text-[#F96F6E]">The Portal</span>
         </nav>
 
-        {/* 4. Sign Out (Right) */}
-        <button 
-          onClick={() => signOut({ callbackUrl: "/login" })}
-          className="sign-out-btn text-sm font-medium text-gray-400 hover:text-white transition-colors ml-auto lg:ml-0"
-        >
-          Sign Out
-        </button>
+        {/* 4. User Controls (Right) */}
+        <div className="flex items-center gap-6 ml-auto lg:ml-0">
+          <UserRoleBadge />
+          <button 
+            onClick={() => signOut({ callbackUrl: "/login" })}
+            className="sign-out-btn text-sm font-medium text-gray-400 hover:text-white transition-colors"
+          >
+            Sign Out
+          </button>
+        </div>
       </div>
     </header>
   )

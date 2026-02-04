@@ -1,9 +1,10 @@
-import { LayoutDashboard, FolderKanban, Users, BarChart3, Settings, ChevronLeft, ChevronRight, Rocket, Menu, LogOut, BookOpen } from 'lucide-react';
+import { LayoutDashboard, FolderKanban, Users, BarChart3, Settings, ChevronLeft, ChevronRight, Rocket, Menu, LogOut, BookOpen, Briefcase, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
+import { useState, useEffect } from 'react';
 
 interface SidebarProps {
   collapsed: boolean;
@@ -14,7 +15,8 @@ interface SidebarProps {
 }
 
 const navItems = [
-  { icon: LayoutDashboard, label: 'Dashboard', path: '/admin' },
+  { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard', role: 'CLIENT' },
+  { icon: LayoutDashboard, label: 'Dashboard', path: '/admin', role: 'ADMIN' },
   { icon: Rocket, label: 'Strategy Engine', path: '/strategyiq' },
   { icon: FolderKanban, label: 'Projects', path: '/admin/projects' },
   { icon: Users, label: 'Clients', path: '/admin/clients' },
@@ -25,21 +27,55 @@ const navItems = [
 
 export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose, onMobileToggle }: SidebarProps) {
   const pathname = usePathname();
+  const { data: session } = useSession();
+  const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
+  const role = session?.user?.role;
+
+  useEffect(() => {
+    async function fetchActiveProject() {
+      if (role === 'CLIENT' && session?.user?.email) {
+        try {
+          const response = await fetch('/api/strategy-iq/init', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: session.user.email })
+          });
+          if (response.ok) {
+            const project = await response.json();
+            setActiveProjectId(project.id);
+          }
+        } catch (error) {
+          console.error('Failed to fetch active project for sidebar:', error);
+        }
+      }
+    }
+    fetchActiveProject();
+  }, [role, session]);
+
+  const filteredNavItems = navItems.filter(item => {
+    // Role-specific filtering for Dashboard
+    if (item.label === 'Dashboard') {
+      if (role === 'CLIENT') return item.path === '/dashboard';
+      return item.path === '/admin';
+    }
+
+    // Pricing KB is strictly internal
+    if (item.path === '/knowledge/pricing') {
+      return role === 'ADMIN' || role === 'TEAM_MEMBER';
+    }
+    
+    // Admin routes are strictly internal
+    if (item.path.startsWith('/admin')) {
+      return role === 'ADMIN' || role === 'TEAM_MEMBER';
+    }
+
+    return true;
+  });
 
   return (
     <>
       {/* Mobile Header */}
-      <div className="lg:hidden flex items-center justify-between px-6 py-4 bg-[#0A0A0A] border-b border-white/5 fixed top-0 left-0 right-0 z-50">
-        {/* Left: Brand */}
-        <div className="relative w-32 h-8">
-          <Image
-            src="/brand/portal-full.png"
-            alt="The Portal"
-            fill
-            className="object-contain object-left"
-          />
-        </div>
-
+      <div className="lg:hidden flex items-center justify-end px-6 py-4 bg-[#0A0A0A] border-b border-white/5 fixed top-0 left-0 right-0 z-50">
         {/* Right: Hamburger Toggle */}
         <Button variant="ghost" size="icon" onClick={onMobileToggle}>
           <Menu className="w-6 h-6 text-white" />
@@ -60,35 +96,9 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose
         ${collapsed ? 'lg:w-[72px]' : 'lg:w-[256px]'} 
         ${mobileOpen ? 'translate-x-0' : 'translate-x-full'} lg:translate-x-0`}
       >
-        <nav className="flex flex-col h-full p-6">
-          {/* BRAND LOCKUP - Desktop Only */}
-          <div className={`hidden lg:flex items-center ${collapsed ? 'justify-center' : 'px-4'} mb-8 mt-2 transition-all duration-300`}>
-            {collapsed ? (
-              /* COLLAPSED STATE: Square Icon */
-              <div className="relative w-8 h-8">
-                <Image
-                  src="/brand/portal-icon.png"
-                  alt="Portal Icon"
-                  fill
-                  className="object-contain"
-                />
-              </div>
-            ) : (
-              /* EXPANDED STATE: Full Wide Logo */
-              <div className="relative w-40 h-12">
-                <Image
-                  src="/brand/portal-full.png"
-                  alt="The Portal"
-                  fill
-                  className="object-contain object-left"
-                  priority
-                />
-              </div>
-            )}
-          </div>
-
+        <nav className="flex flex-col h-full pt-4 px-6 pb-6">
           <ul className="space-y-3 flex-1">
-            {navItems.map((item) => {
+            {filteredNavItems.map((item) => {
               const isActive = pathname === item.path || (item.path !== '/admin' && pathname?.startsWith(item.path));
               return (
                 <li key={item.label}>
@@ -109,6 +119,40 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose
                 </li>
               );
             })}
+
+            {/* Partner Specific Links: The War Room & The Vault */}
+            {role === 'CLIENT' && activeProjectId && (
+              <>
+                <li key="The War Room">
+                  <Link
+                    href={`/projects/${activeProjectId}`}
+                    className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg transition-all duration-200 ${
+                      pathname === `/projects/${activeProjectId}`
+                        ? 'bg-white/5 text-white'
+                        : 'text-gray-400 hover:text-white hover:bg-transparent'
+                    } ${collapsed ? 'justify-center' : ''}`}
+                    onClick={mobileOpen ? onMobileClose : undefined}
+                  >
+                    <Briefcase className="w-5 h-5 flex-shrink-0" strokeWidth={1.5} />
+                    {!collapsed && (
+                      <span className="text-[14px] font-normal">The War Room</span>
+                    )}
+                  </Link>
+                </li>
+                <li key="The Vault">
+                  <Link
+                    href={`/dashboard#vault`}
+                    className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg transition-all duration-200 text-gray-400 hover:text-white hover:bg-transparent ${collapsed ? 'justify-center' : ''}`}
+                    onClick={mobileOpen ? onMobileClose : undefined}
+                  >
+                    <ShieldCheck className="w-5 h-5 flex-shrink-0" strokeWidth={1.5} />
+                    {!collapsed && (
+                      <span className="text-[14px] font-normal">The Vault</span>
+                    )}
+                  </Link>
+                </li>
+              </>
+            )}
           </ul>
 
           <Button
