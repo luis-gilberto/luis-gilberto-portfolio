@@ -14,7 +14,7 @@ export const authOptions: AuthOptions = {
     ...PrismaAdapter(prisma),
     // CRITICAL OVERRIDE: Update the user's name upon first sign-in
     // Note: For EmailProvider, 'createUser' is called when a new user is verified.
-    createUser: async (data) => {
+    createUser: async (data: any) => {
       // Determine role based on email pattern
       let role = 'CLIENT';
       if (data.email.includes("admin")) {
@@ -30,7 +30,7 @@ export const authOptions: AuthOptions = {
           role: role as any
         }
       })
-      return user
+      return user as any
     }
   },
   providers: [
@@ -71,7 +71,7 @@ export const authOptions: AuthOptions = {
           throw new Error("Invalid credentials");
         }
         
-        return user;
+        return user as any;
       }
     })
   ],
@@ -104,12 +104,11 @@ export const authOptions: AuthOptions = {
       return session
     },
     async redirect({ url, baseUrl }) {
-      if (url.startsWith('/')) return `${baseUrl}${url}`
-      try {
-        const target = new URL(url)
-        if (target.origin === baseUrl) return url
-      } catch (e) {}
-      return `${baseUrl}/admin`
+      // Allows relative callback URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`
+      // Allows callback URLs on the same origin
+      else if (new URL(url).origin === baseUrl) return url
+      return baseUrl
     },
   },
   secret: process.env.NEXTAUTH_SECRET,

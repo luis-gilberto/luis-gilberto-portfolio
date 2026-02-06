@@ -10,15 +10,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { sessionId, status } = await req.json()
+    const { sessionId, status, isPublished } = await req.json()
 
     if (!sessionId || !status) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
+    const data: any = { status }
+    if (isPublished !== undefined) {
+      data.isPublished = isPublished
+    }
+
     const updatedSession = await prisma.assessmentSession.update({
       where: { id: sessionId },
-      data: { status }
+      data
     })
 
     return NextResponse.json({ success: true, session: updatedSession })

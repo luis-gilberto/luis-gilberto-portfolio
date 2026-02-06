@@ -61,10 +61,12 @@ export function ResultsView({
       try {
         const parsed = JSON.parse(session.certifiedNarrative)
         if (Array.isArray(parsed)) return parsed
-        return [session.certifiedNarrative] // If it's a plain string from editor
       } catch (e) {
-        return [session.certifiedNarrative]
+        // Not JSON, handle as plain text
       }
+      
+      // Split by double newlines or single newlines if it's a plain string
+      return session.certifiedNarrative.split(/\n\n+/).filter(Boolean)
     }
 
     // 2. Check if we have a pre-saved summary in the dedicated briefSummary field
@@ -73,8 +75,9 @@ export function ResultsView({
         const parsed = JSON.parse(session.briefSummary)
         if (Array.isArray(parsed)) return parsed
       } catch (e) {
-        console.error('Error parsing briefSummary field:', e)
+        // Not JSON
       }
+      return session.briefSummary.split(/\n\n+/).filter(Boolean)
     }
 
     // 2. Check if we have a pre-saved summary in the enriched responses (the hack)
@@ -123,17 +126,17 @@ export function ResultsView({
         <div className="flex items-center gap-4">
           <Badge 
             className={cn(
-              "font-black tracking-[0.2em] uppercase text-[10px] px-4 py-1.5 rounded-full",
+              "font-bold tracking-[0.2em] text-[9px] px-3 py-1 rounded-full",
               isPublished 
                 ? "bg-teal text-black" 
-                : "bg-white/10 text-white/40 border border-white/5"
+                : "bg-white/5 text-white/30 border border-white/5"
             )}
           >
-            {isPublished ? 'Certified Strategy' : 'Initial Intelligence'}
+            {isPublished ? 'Certified strategy' : 'Initial intelligence'}
           </Badge>
           {!isPublished && (
-            <p className="text-[11px] text-white/40 font-medium italic">
-              This is an immediate AI-synthesized narrative based on your inputs. Our strategy team is currently certifying these findings.
+            <p className="text-[10px] text-white/30 font-medium italic">
+              AI-synthesized narrative based on preliminary inputs. Certification pending review.
             </p>
           )}
         </div>
@@ -149,14 +152,14 @@ export function ResultsView({
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-white/10 pb-10">
         <div className="space-y-4">
           <div className="flex items-center gap-3">
-            <UserRoleBadge />
-            <Badge variant="outline" className="border-teal-500/50 text-teal-400 bg-teal-500/10 uppercase tracking-widest text-[10px] px-3 py-1">
-              {dimension.toUpperCase()} ANALYSIS
+            <UserRoleBadge role={userRole} />
+            <Badge variant="outline" className="border-teal-500/50 text-teal-400 bg-teal-500/10 tracking-widest text-[10px] px-3 py-1">
+              {dimension === 'gtm' ? 'GTM' : dimension} intelligence
             </Badge>
-            <span className="text-[10px] font-bold tracking-[0.2em] text-white/20 uppercase">Intelligence Secured</span>
+            <span className="text-[10px] font-bold tracking-[0.2em] text-white/20">Intelligence secured</span>
           </div>
-          <h1 className="text-5xl md:text-6xl font-bold text-white font-big-shoulders tracking-widest uppercase italic leading-none">
-            {dimension} Intelligence
+          <h1 className="text-5xl md:text-6xl font-bold text-white font-big-shoulders tracking-widest italic leading-none">
+            {dimension === 'gtm' ? 'GTM' : dimension} intelligence
           </h1>
           <p className="text-white/40 max-w-xl text-lg font-inter leading-relaxed italic">
             "The Story of {clientName}—captured, analyzed, and secured."
@@ -165,11 +168,11 @@ export function ResultsView({
 
         <div className="flex items-center gap-4">
           <Button 
-            variant="outline" 
-            onClick={() => router.push('/strategyiq')}
-            className="border-white/10 text-white hover:bg-white/5 uppercase tracking-widest text-[10px] h-10 px-6"
+            variant="strategy-secondary" 
+            onClick={() => router.push('/strategy-iq')}
+            className="h-10 px-6 text-[10px]"
           >
-            <ArrowLeft className="mr-2 h-3 w-3" /> Back to Engine
+            <ArrowLeft className="mr-2 h-3 w-3" /> Back to Strategy Engine
           </Button>
         </div>
       </div>
@@ -178,31 +181,39 @@ export function ResultsView({
         {/* Left Column: The Story */}
         <div className="lg:col-span-2 space-y-12">
           {/* Editorial Summary */}
-          <section className="result-card space-y-12">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-2 h-2 rounded-full bg-teal" />
-              <h2 className="text-sm font-bold tracking-widest text-white/60 uppercase font-big-shoulders italic">
-                STRATEGIC NARRATIVE <span className="text-white/20 ml-2">/ THE STORY</span>
-              </h2>
+          <section className="result-card space-y-8">
+            <div className="space-y-2">
+              <div className="text-[10px] tracking-[0.2em] text-zinc-500 font-bold">
+                {isPublished ? 'Certified strategy' : 'Preliminary intelligence (Pending review)'}
+              </div>
+              <div className="flex items-center gap-2">
+                  <div className={cn("w-1.5 h-1.5 rounded-full", isPublished ? "bg-teal" : "bg-teal/40")} />
+                  <h2 className="text-[10px] font-bold tracking-[0.2em] text-white/40 font-inter">
+                    Strategic briefing <span className="text-white/10 ml-2">/ The story</span>
+                  </h2>
+                </div>
             </div>
 
-            <div className="space-y-16">
+            <div className="space-y-10">
               {narrative.length > 0 ? (
-                narrative.map((insight, idx) => (
+                narrative.map((insight: string, idx: number) => (
                   <motion.div 
                     key={idx}
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.2 }}
-                    className="relative pl-8 md:pl-12 border-l border-white/5 hover:border-teal/30 transition-colors"
+                    transition={{ delay: idx * 0.1 }}
+                    className={cn(
+                      "relative pl-8 md:pl-10 border-l",
+                      isPublished ? "border-teal/30" : "border-white/5"
+                    )}
                   >
-                    <p className="text-2xl md:text-3xl lg:text-4xl text-gray-100 leading-relaxed font-serif italic tracking-tight opacity-90">
+                    <p className="text-lg md:text-xl text-zinc-300 leading-relaxed font-serif italic opacity-90">
                       {insight}
                     </p>
                   </motion.div>
                 ))
               ) : (
-                <p className="text-gray-500 italic text-2xl font-serif">No strategic insights available for this session.</p>
+                <p className="text-zinc-500 italic text-lg font-serif">No strategic insights available for this session.</p>
               )}
             </div>
           </section>
@@ -212,30 +223,30 @@ export function ResultsView({
         <div className="space-y-8">
           {/* Human-In-The-Loop Card */}
           <section className="result-card">
-            <Card className="bg-gradient-to-br from-teal/20 to-transparent border-teal/30 border-2 overflow-hidden relative">
-              <div className="absolute top-0 right-0 p-4 opacity-10">
-                <Users size={80} />
+            <Card className="bg-white/5 border-white/10 border overflow-hidden relative">
+              <div className="absolute top-0 right-0 p-4 opacity-5">
+                <Users size={60} />
               </div>
-              <CardHeader>
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="p-2 rounded-lg bg-teal/20 text-teal">
-                    <Clock size={20} />
+              <CardHeader className="pb-2">
+                <div className="flex items-center gap-3">
+                  <div className="p-1.5 rounded-lg bg-white/5 text-white/40">
+                    <Clock size={16} />
                   </div>
-                  <CardTitle className="text-lg text-white font-big-shoulders tracking-widest uppercase italic">Strategy Status</CardTitle>
+                  <CardTitle className="text-sm text-white/60 font-bold tracking-widest font-inter">Strategy status</CardTitle>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Badge className="bg-teal text-black font-bold text-[10px] uppercase tracking-widest">
-                  {isPublished ? 'Analysis Published' : 'Under Human Review'}
+                <Badge className="bg-white/5 text-white/40 border border-white/10 font-bold text-[9px] tracking-widest">
+                  {isPublished ? 'Analysis published' : 'Review in progress'}
                 </Badge>
-                <p className="text-gray-300 text-sm leading-relaxed font-inter">
+                <p className="text-zinc-400 text-xs leading-relaxed font-inter">
                   {isPublished 
                     ? "Your strategic roadmap has been published and is ready for execution." 
-                    : "Luis Gilberto Strategists are currently reviewing these results. A full strategic roadmap will be published following our next consultation."}
+                    : "Strategists are currently calibrating these results. A formal briefing will be provided following our review."}
                 </p>
-                <div className="pt-4 border-t border-teal/20">
-                  <p className="text-[10px] text-teal/60 uppercase font-bold tracking-widest flex items-center gap-2">
-                    <CheckCircle size={10} /> {isPublished ? 'Verification Complete' : 'Estimated review: 24 Hours'}
+                <div className="pt-4 border-t border-white/5">
+                  <p className="text-[9px] text-zinc-500 font-bold tracking-widest flex items-center gap-2">
+                    <CheckCircle size={10} /> {isPublished ? 'Verification complete' : 'Estimated review: 24 Hours'}
                   </p>
                 </div>
               </CardContent>
@@ -246,15 +257,15 @@ export function ResultsView({
           <section className="result-card">
             <div className="p-6 rounded-2xl bg-white/5 border border-white/5 text-center space-y-4">
               <ShieldCheck className="mx-auto text-white/20 h-8 w-8" />
-              <p className="text-[10px] text-white/20 uppercase tracking-[0.3em] font-bold">
+              <p className="text-[10px] text-white/20 tracking-[0.3em] font-bold">
                 Proprietary StrategyIQ™ Engine
               </p>
               <Button 
-                variant="ghost" 
+                variant="strategy-secondary" 
                 onClick={() => router.push('/dashboard')}
-                className="w-full text-xs text-gray-500 hover:text-white"
+                className="w-full text-[10px] h-10"
               >
-                Exit to Dashboard
+                Exit to dashboard
               </Button>
             </div>
           </section>

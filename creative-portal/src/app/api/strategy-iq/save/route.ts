@@ -13,12 +13,19 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json()
     console.log('Save API received body:', JSON.stringify(body, null, 2))
-    const { projectId, dimension, score, responses } = body
+    let { projectId, dimension: rawDimension, score, responses } = body
 
-    if (!projectId || !dimension || score === undefined || !responses) {
+    // Task 4: No more "default" ghost. Expect real ID.
+    if (!projectId || projectId === 'default') {
+      return NextResponse.json({ error: 'Project ID is required' }, { status: 400 })
+    }
+
+    const dimension = rawDimension.toLowerCase();
+
+    if (!dimension || score === undefined || !responses) {
       return NextResponse.json({ 
         error: 'Missing required fields', 
-        details: { projectId: !!projectId, dimension: !!dimension, score: score !== undefined, responses: !!responses } 
+        details: { dimension: !!dimension, score: score !== undefined, responses: !!responses } 
       }, { status: 400 })
     }
 
@@ -54,38 +61,19 @@ export async function POST(req: NextRequest) {
       analysis = "AI Synthesis failed or timed out. Strategist intervention required to finalize narrative."
     }
 
-    const briefSummaryString = JSON.stringify(insights)
+    // Task 3: Format briefSummary as plain text (not JSON)
+    const briefSummaryText = insights.join('\n\n')
 
     // Find the project - look for DISCOVERY or ACTIVE status
     console.log('Saving assessment for project:', projectId);
-    let project = await prisma.project.findFirst({
+    
+    const project = await prisma.project.findFirst({
       where: { 
         id: projectId,
         status: { in: ['ACTIVE', 'DISCOVERY'] }
       },
       select: { clientId: true, id: true }
     })
-
-    // If not found by ID (maybe a mock ID was passed), try to find by the user's active client/project
-    if (!project && session.user.email) {
-      console.log('Project not found by ID, searching by user email:', session.user.email);
-      
-      const client = await prisma.client.findUnique({
-        where: { email: session.user.email },
-        include: {
-          projects: {
-            where: { status: { in: ['ACTIVE', 'DISCOVERY'] } },
-            orderBy: { createdAt: 'desc' },
-            take: 1
-          }
-        }
-      })
-
-      if (client?.projects?.[0]) {
-        project = client.projects[0];
-        console.log('Found project via client relationship:', project.id);
-      }
-    }
 
     if (!project) {
       console.error('Project not found or inactive:', projectId);
@@ -96,10 +84,24 @@ export async function POST(req: NextRequest) {
     const clientId = project.clientId;
 
     if (!clientId) {
-      return NextResponse.json({ error: 'Project has no associated Client', projectId: actualProjectId }, { status: 400 })
+      // Try to find client associated with project or user
+      const projectWithClient = await prisma.project.findUnique({
+        where: { id: actualProjectId },
+        include: { client: true }
+      });
+      
+      if (!projectWithClient?.clientId) {
+        return NextResponse.json({ error: 'Project has no associated Client', projectId: actualProjectId }, { status: 400 })
+      }
     }
 
-    // Create or update assessment session (Upsert based on project and type)
+    const actualClientId = clientId || (await prisma.project.findUnique({ where: { id: actualProjectId } }))?.clientId;
+
+    if (!actualClientId) {
+      return NextResponse.json({ error: 'Could not resolve Client ID', projectId: actualProjectId }, { status: 400 })
+    }
+
+    // Task 3: Prisma Upsert Fix - Use separate columns for summary and analysis
     const assessmentSession = await prisma.assessmentSession.upsert({
       where: {
         projectId_assessmentType: {
@@ -111,12 +113,12 @@ export async function POST(req: NextRequest) {
         status: status,
         responses: JSON.stringify(responses),
         intelligenceScore: score,
-        briefSummary: briefSummaryString,
+        briefSummary: briefSummaryText,
         consultantAnalysis: analysis,
         updatedAt: new Date()
       },
       create: {
-        clientId: clientId,
+        clientId: actualClientId,
         projectId: actualProjectId,
         consultantId: session.user.id,
         assessmentType: dimension,
@@ -124,7 +126,7 @@ export async function POST(req: NextRequest) {
         responses: JSON.stringify(responses),
         intelligenceScore: score,
         isPublished: false,
-        briefSummary: briefSummaryString,
+        briefSummary: briefSummaryText,
         consultantAnalysis: analysis,
       }
     })
@@ -135,16 +137,18 @@ export async function POST(req: NextRequest) {
       where: { id: actualProjectId },
       data: {
         [statusField]: 'COMPLETED',
-        status: 'DISCOVERY' // Ensure project is in Discovery state
+        status: 'DISCOVERY' // Task 3: Use the correct string value 'DISCOVERY'
       }
     })
 
     return NextResponse.json({ success: true, sessionId: assessmentSession.id })
   } catch (error: any) {
-    console.error('Error saving assessment:', error)
+    // Task 1: Improved Error Logging
+    console.error("STRATEGY SAVE CRASH:", error);
     return NextResponse.json({ 
       error: 'Internal Server Error', 
       message: error.message,
+      details: error,
       stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     }, { status: 500 })
   }

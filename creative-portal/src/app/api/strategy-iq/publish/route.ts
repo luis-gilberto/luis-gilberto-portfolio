@@ -11,98 +11,94 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json()
-    console.log("Incoming API Body:", body)
+    console.log("[PUBLISH API] Received Payload:", JSON.stringify(body, null, 2))
 
-    const projectId = body.projectId || body.id
-    const dimension = body.dimension?.toLowerCase()
-    const { sessionId, consultantAnalysis, certifiedNarrative, isPublished } = body
-
-    if (!projectId || !dimension) {
-      console.error("Missing critical fields:", { projectId, dimension })
-      return NextResponse.json({ error: 'Missing Project ID or Dimension' }, { status: 400 })
+    let { projectId, dimension, certifiedNarrative, status } = body
+    
+    // Task 1: Validation
+    if (!projectId || !dimension || certifiedNarrative === undefined) {
+      console.error("[PUBLISH API] Validation Failed: Missing required fields", { projectId, dimension, hasNarrative: !!certifiedNarrative });
+      return NextResponse.json({ 
+        error: 'Missing required fields', 
+        details: { projectId: !!projectId, dimension: !!dimension, certifiedNarrative: !!certifiedNarrative } 
+      }, { status: 400 })
     }
 
-    // 1. Hyper-resilient lookup
-    let assessmentSession = await prisma.assessmentSession.findFirst({
-      where: { 
-        projectId: projectId,
-        assessmentType: dimension
+    const finalDimension = dimension.toLowerCase()
+    const finalStatus = status || 'PUBLISHED'
+
+    // Task 2: The "Force-Update" API Route
+    console.log("[PUBLISH API] Starting DB Update for Project:", projectId, "Dimension:", finalDimension);
+    
+    const updatedSession = await prisma.assessmentSession.update({
+      where: {
+        projectId_assessmentType: {
+          projectId: projectId,
+          assessmentType: finalDimension
+        }
       },
-      include: { project: true }
+      data: {
+        certifiedNarrative: certifiedNarrative,
+        status: finalStatus,
+        isPublished: finalStatus === 'PUBLISHED',
+        updatedAt: new Date()
+      }
     })
 
-    // If not found, try finding by sessionId if provided
-    if (!assessmentSession && sessionId) {
-      assessmentSession = await prisma.assessmentSession.findUnique({
-        where: { id: sessionId },
-        include: { project: true }
-      })
-    }
+    console.log("DATABASE RECORD UPDATED:", updatedSession.id, "CONTENT LENGTH:", updatedSession.certifiedNarrative?.length || 0);
 
-    let updatedSession;
-
-    if (assessmentSession) {
-      // Update existing
-      updatedSession = await prisma.assessmentSession.update({
-        where: { id: assessmentSession.id },
-        data: {
-          isPublished: isPublished ?? true,
-          status: isPublished !== false ? 'PUBLISHED' : 'COMPLETED',
-          consultantAnalysis: consultantAnalysis,
-          certifiedNarrative: certifiedNarrative,
-          updatedAt: new Date()
-        }
-      })
-    } else {
-      // Create new if missing (prevents "Not Found" error from blocking publish)
-      // We need a clientId to create a session, so we fetch it from the project
-      const project = await prisma.project.findUnique({
-        where: { id: projectId },
-        select: { clientId: true }
-      })
-
-      if (!project || !project.clientId) {
-        return NextResponse.json({ error: 'Project or Client context not found for creation' }, { status: 404 })
+    // Update the Project model status field for this dimension
+    const statusField = `${finalDimension}Status`
+    await prisma.project.update({
+      where: { id: projectId },
+      data: {
+        [statusField]: 'COMPLETED',
+        status: 'DISCOVERY'
       }
+    })
 
-      updatedSession = await prisma.assessmentSession.create({
-        data: {
-          projectId,
-          clientId: project.clientId,
-          consultantId: session.user.id,
-          assessmentType: dimension,
-          isPublished: isPublished ?? true,
-          status: isPublished !== false ? 'PUBLISHED' : 'COMPLETED',
-          consultantAnalysis: consultantAnalysis,
-          certifiedNarrative: certifiedNarrative,
-        }
-      })
-    }
-
-    // 2. Vault Creation Safety (Separate try/catch)
-    if (updatedSession.projectId && (isPublished !== false)) {
+    // 2. Vault Deliverable Sync (Resilient Update)
+    if (finalStatus === 'PUBLISHED') {
       try {
-        const typeLabel = (dimension || updatedSession.assessmentType).toUpperCase()
-        await prisma.deliverable.create({
-          data: {
-            projectId: updatedSession.projectId,
-            title: `${typeLabel} Strategic Mini-Brief`,
-            type: 'STRATEGY_BRIEF',
-            status: 'COMPLETED',
-            dueDate: new Date(),
-            fileUrl: `/strategy-iq/${updatedSession.projectId}/${dimension}/results`
-          }
+        const typeLabel = finalDimension.toUpperCase()
+        const title = `${typeLabel} Strategic Mini-Brief`
+        
+        // Find existing deliverable for this project and title
+        const existingDeliverable = await prisma.deliverable.findFirst({
+          where: { projectId, title }
         })
-        console.log("Vault deliverable created successfully")
+
+        if (existingDeliverable) {
+          await prisma.deliverable.update({
+            where: { id: existingDeliverable.id },
+            data: {
+              status: 'COMPLETED',
+              updatedAt: new Date(), // Force timestamp update
+              fileUrl: `/strategy-iq/${projectId}/${finalDimension}/results`
+            }
+          })
+          console.log("[PUBLISH API] Vault Deliverable Updated")
+        } else {
+          await prisma.deliverable.create({
+            data: {
+              projectId: projectId,
+              title: title,
+              type: 'STRATEGY_BRIEF',
+              status: 'COMPLETED',
+              dueDate: new Date(),
+              fileUrl: `/strategy-iq/${projectId}/${finalDimension}/results`
+            }
+          })
+          console.log("[PUBLISH API] Vault Deliverable Created")
+        }
       } catch (vaultError) {
-        console.error("Vault creation failed (non-blocking):", vaultError)
-        // We don't return error here so the main publish succeeds
+        console.error("[PUBLISH API] Vault Sync Failed:", vaultError)
       }
     }
 
-    return NextResponse.json({ success: true, session: updatedSession })
+    return NextResponse.json({ success: true, updatedData: updatedSession })
   } catch (error: any) {
-    console.error('Error publishing narrative:', error)
+    console.error('[PUBLISH API] Fatal Error:', error)
     return NextResponse.json({ error: 'Internal Server Error', message: error.message }, { status: 500 })
   }
 }

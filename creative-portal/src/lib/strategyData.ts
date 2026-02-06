@@ -3,6 +3,7 @@ export interface AssessmentOption {
   value: string;
   label: string;
   score: number;
+  insight?: string;
 }
 
 export interface CopilotGuide {
@@ -62,10 +63,10 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
         probes: ["Who is the 'Early Adopter'?", "Who is explicitly NOT your customer?"]
       },
       options: [
-        { value: 'broad_undefined', label: 'Broad / Undefined', score: 0, insight: "HIGH RISK: 'Spray and Pray' approach. We must narrow the focus to a Minimum Viable Segment (MVS) before spending ad dollars." },
-        { value: 'demographic', label: 'Demographic only', score: 30, insight: "WEAK TARGETING: Demographics don't predict buying behavior. We need to layer in Psychographics and Intent data." },
-        { value: 'beachhead', label: 'Validated Beachhead', score: 70, insight: "STRONG START: They know who to attack first. We can focus budget on high-intent channels." },
-        { value: 'icp', label: 'ICP + Account Lists', score: 100, insight: "ABM READY: If B2B, they are ready for Account-Based Marketing. If B2C, they are ready for Lookalike scaling." }
+        { value: 'broad_undefined', label: 'Broad / Undefined', score: 0, insight: "Alignment opportunity: 'Broad' approach identified. Narrowing focus to a Minimum Viable Segment (MVS) is recommended." },
+        { value: 'demographic', label: 'Demographic only', score: 30, insight: "Targeting gap: Demographics alone don't predict behavior. Consider layering psychographic data." },
+        { value: 'beachhead', label: 'Validated Beachhead', score: 70, insight: "Market resonance: Specific segment identified. Ready for focused resource allocation." },
+        { value: 'icp', label: 'ICP + Account Lists', score: 100, insight: "B2B readiness: Prepared for Account-Based Marketing or lookalike scaling." }
       ]
     },
     {
@@ -74,15 +75,15 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       type: 'single',
       consultantGuide: {
         script: "Before we scale, do we know people actually want this? Do we have pre-orders, beta users, or just a gut feeling?",
-        context: "Marketing cannot fix a product nobody wants. If validation is low, we pitch a 'Smoke Test' campaign (low budget) before the full launch.",
+        context: "Marketing cannot fix a product nobody wants. If validation is low, we suggest a 'Smoke Test' campaign before full launch.",
         redFlags: ["'We know they'll love it'", "Zero pre-orders"],
         probes: ["What is your current conversion rate?", "Do you have a waiting list?"]
       },
       options: [
-        { value: 'internal', label: 'Internal assumption only', score: 0, insight: "GAMBLING: We are betting the budget on a guess. Recommend a 'Validation Sprint' first." },
-        { value: 'qualitative', label: 'Qualitative feedback', score: 40, insight: "ANECDOTAL: Friendly feedback isn't sales. Be conservative with ad spend until we see CPA data." },
-        { value: 'pre_orders', label: 'Paid Alpha / Pre-orders', score: 80, insight: "VALIDATED: People are voting with their wallets. We can aggressively scale spend." },
-        { value: 'pmf', label: 'Product-Market Fit', score: 100, insight: "SCALE MODE: The fire is burning; we just need to pour gasoline (budget) on it." }
+        { value: 'internal', label: 'Internal assumption only', score: 0, insight: "Validation opportunity: Market assumptions identified. Recommend a validation phase first." },
+        { value: 'qualitative', label: 'Qualitative feedback', score: 40, insight: "Data potential: Friendly feedback noted. Recommend CPA validation before scaling." },
+        { value: 'pre_orders', label: 'Paid Alpha / Pre-orders', score: 80, insight: "Market traction: Direct validation observed. Ready for confident scaling." },
+        { value: 'pmf', label: 'Product-Market Fit', score: 100, insight: "Growth alignment: Clear market fit observed. Ready for increased investment." }
       ]
     },
     {
@@ -91,15 +92,15 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       type: 'single',
       consultantGuide: {
         script: "Where will the first 1,000 customers come from? Are we betting everything on Facebook Ads, or do we have an organic engine building up?",
-        context: "Single-channel dependency is dangerous. If they say 'Ads', check their CAC tolerance. If 'Organic', check their content velocity.",
+        context: "Single-channel dependency is noted. If they say 'Ads', check their CAC tolerance. If 'Organic', check their content velocity.",
         redFlags: ["'We'll just go viral'", "No budget for paid"],
         probes: ["What is your CAC target?", "Do you have an email list?"]
       },
       options: [
-        { value: 'viral', label: 'Undecided / "Viral"', score: 0, insight: "FANTASY LAND: 'Viral' is not a strategy. We need to build a 'Paid + Owned' engine immediately." },
-        { value: 'paid_social', label: 'Paid Social Dependent', score: 50, insight: "EXPENSIVE: Fast but fragile. We need to diversify into Email/SMS retention to offset high ad costs." },
-        { value: 'seo', label: 'SEO / Organic Lead', score: 70, insight: "SUSTAINABLE: Slower payoff but higher margin. We should layer Retargeting ads on top of this traffic." },
-        { value: 'diversified', label: 'Diversified Mix', score: 100, insight: "RESILIENT: They have a healthy ecosystem. We can optimize for LTV rather than just first-click attribution." }
+        { value: 'viral', label: 'Undecided / "Viral"', score: 0, insight: "Strategic gap: 'Viral' focus identified. Recommend building a sustainable engine." },
+        { value: 'paid_social', label: 'Paid Social Dependent', score: 50, insight: "Efficiency potential: High channel dependency. Recommend diversifying into retention channels." },
+        { value: 'seo', label: 'SEO / Organic Lead', score: 70, insight: "Long-term resonance: Sustainable payoff noted. Recommend layering retargeting for optimization." },
+        { value: 'diversified', label: 'Diversified Mix', score: 100, insight: "Systemic strength: Healthy ecosystem observed. Ready for LTV optimization." }
       ]
     },
     {
@@ -108,15 +109,15 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       type: 'single',
       consultantGuide: {
         script: "Is the price based on value, or just 'cost plus margin'? Does the price support the marketing budget we need?",
-        context: "Low price points ($10-20) make paid acquisition very hard. We need to check if their Unit Economics support the campaign.",
+        context: "Low price points ($10-20) make paid acquisition harder. Check if Unit Economics support the campaign.",
         redFlags: ["'Cheaper than competitors'", "No margin for ads"],
         probes: ["What is your LTV?", "Can you afford a $50 CPA?"]
       },
       options: [
-        { value: 'gut_feeling', label: 'Gut feeling / Low cost', score: 10, insight: "MARGIN SQUEEZE: Risk of losing money on every sale. We might need a 'Pricing Strategy' review." },
-        { value: 'parity', label: 'Competitor parity', score: 50, insight: "COMMODITY PRICING: Hard to differentiate. We need to sell on 'Brand Value' to justify the price." },
-        { value: 'value_based', label: 'Value-based / Premium', score: 80, insight: "HEALTHY MARGINS: Supports aggressive marketing. We can out-spend competitors to acquire customers." },
-        { value: 'dynamic', label: 'Dynamic / Tiered', score: 100, insight: "SOPHISTICATED: Allows for upselling and LTV expansion. Great for 'Land and Expand' strategies." }
+        { value: 'gut_feeling', label: 'Gut feeling / Low cost', score: 10, insight: "Pricing opportunity: Margin constraints identified. Recommend a pricing strategy review." },
+        { value: 'parity', label: 'Competitor parity', score: 50, insight: "Value differentiation potential: Commodity positioning noted. Focus on brand value to differentiate." },
+        { value: 'value_based', label: 'Value-based / Premium', score: 80, insight: "Margin health: Strong margins support growth. Ready for confident market acquisition." },
+        { value: 'dynamic', label: 'Dynamic / Tiered', score: 100, insight: "Strategic maturity: Advanced pricing observed. Ready for LTV expansion." }
       ]
     },
     {
@@ -125,15 +126,15 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       type: 'single',
       consultantGuide: {
         script: "If we turn on the faucet today and get 500 leads, does the bucket leak? Who answers the tickets? Who closes the deals?",
-        context: "Marketing success can kill a company if Ops aren't ready. We must verify 'Operational Readiness' before launch.",
+        context: "Marketing success depends on operations. Verify readiness before launch.",
         redFlags: ["'We'll figure it out'", "Solo founder doing support"],
         probes: ["Do you have a CRM?", "What is your SLA for new leads?"]
       },
       options: [
-        { value: 'not_ready', label: 'Not ready', score: 0, insight: "OPERATIONAL BOTTLENECK: Do not launch. Fix the pipes before turning on the water." },
-        { value: 'manual', label: 'Manual processes', score: 40, insight: "LEAKY BUCKET: Leads will slip through cracks. We need to implement 'Marketing Automation' (CRM/Email)." },
-        { value: 'basic_crm', label: 'Basic CRM / Automation', score: 80, insight: "READY: Core systems are in place. We can scale confidently." },
-        { value: 'revops', label: 'Full RevOps Stack', score: 100, insight: "SCALE MACHINE: Sales and Marketing are aligned. We can implement advanced 'Lead Scoring' models." }
+        { value: 'not_ready', label: 'Not ready', score: 0, insight: "Operational gap: Capacity constraints identified. Resolve before increasing volume." },
+        { value: 'manual', label: 'Manual processes', score: 40, insight: "Conversion potential: Manual processes identified. Recommend implementing automation." },
+        { value: 'basic_crm', label: 'Basic CRM / Automation', score: 80, insight: "Operational readiness: Core systems identified. Ready for scaling." },
+        { value: 'revops', label: 'Full RevOps Stack', score: 100, insight: "Scalability potential: Aligned systems observed. Ready for advanced lead scoring." }
       ]
     }
   ],
@@ -145,15 +146,15 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       type: 'single',
       consultantGuide: {
         script: "The 'Elevator Pitch' test: If I asked five different employees what this company stands for, would I get the same answer, or five different versions?",
-        context: "Internal misalignment is the root cause of weak marketing. If the team isn't aligned, the market won't be either. We must sell the 'Alignment Workshop' first.",
+        context: "Internal alignment is key. If the team isn't aligned, the market won't be either. Alignment work is recommended first.",
         redFlags: ["'We try to be everything to everyone'", "Long, jargon-filled mission statements"],
         probes: ["What is the one thing you want to be famous for?", "Who is your enemy?"]
       },
       options: [
-        { label: 'Undefined / Vague', value: 'undefined', score: 0, insight: "IDENTITY CRISIS: Do not start tactical work. Mandatory Upsell: 'Core Values & Positioning Workshop' ($8k)." },
-        { label: 'Loose Internal Consensus', value: 'loose_consensus', score: 30, insight: "CONSISTENCY RISK: Positioning exists but isn't codified. We need to create a 'Brand Manifesto' to lock it in." },
-        { label: 'Documented but Ignored', value: 'ignored', score: 60, insight: "EXECUTION GAP: They have the strategy but aren't living it. Focus on 'Brand Activation' and internal culture." },
-        { label: 'Crystal Clear & Operationalized', value: 'clear', score: 100, insight: "MARKET LEADER: Strong foundation. We can move immediately to 'Authority Building' and high-level thought leadership." }
+        { label: 'Undefined / Vague', value: 'undefined', score: 0, insight: "Positioning observation: Alignment opportunity identified. Core Values & Positioning alignment is recommended." },
+        { label: 'Loose Internal Consensus', value: 'loose_consensus', score: 30, insight: "Brand alignment opportunity: Positioning exists but lacks codification. Recommend a Brand Manifesto." },
+        { label: 'Documented but Ignored', value: 'ignored', score: 60, insight: "Activation potential: Strategic gap identified between strategy and execution." },
+        { label: 'Crystal Clear & Operationalized', value: 'clear', score: 100, insight: "Market resonance: Strong foundation observed. Ready for authority building." }
       ]
     },
 
@@ -164,15 +165,15 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       type: 'single',
       consultantGuide: {
         script: "Who are we fighting for? Are we targeting broad demographics like 'Women 25-45', or do we have psychographic profiles that tell us what keeps them up at night?",
-        context: "If they don't know who they are talking to, media spend is wasted. We cannot build a brand without a target. 'Persona Development' is non-negotiable here.",
+        context: "Specificity is key for media spend efficiency. Audience research is recommended.",
         redFlags: ["'Everyone is our customer'", "Relies solely on assumptions, no data"],
         probes: ["Show me your customer avatar.", "What is their biggest fear?"]
       },
       options: [
-        { label: 'Broad Demographics Only', value: 'broad', score: 10, insight: "GUESSWORK RISK: We are shooting in the dark. Must include 'Audience Research & Segmentation' phase." },
-        { label: 'Basic Personas', value: 'basic', score: 50, insight: "BASELINE: Good enough for general awareness, but needs refinement for high-conversion performance marketing." },
-        { label: 'Deep Psychographics', value: 'psychographics', score: 80, insight: "HIGH POTENTIAL: They know the customer's pain. We can write very sharp, emotionally resonant copy immediately." },
-        { label: 'Validated Community / Tribe', value: 'community', score: 100, insight: "CULT BRAND: Rare. Focus strategy on 'Community Mobilization' and UGC rather than traditional ads." }
+        { label: 'Broad Demographics Only', value: 'broad', score: 10, insight: "Research opportunity: Demographic focus identified. Recommend deeper audience research." },
+        { label: 'Basic Personas', value: 'basic', score: 50, insight: "Foundational state: Baseline identified. Ready for conversion optimization." },
+        { label: 'Deep Psychographics', value: 'psychographics', score: 80, insight: "Resonance potential: Emotional pain points identified. Ready for resonant copy development." },
+        { label: 'Validated Community / Tribe', value: 'community', score: 100, insight: "Brand authority: Community focus observed. Ready for mobilization strategies." }
       ]
     },
 
@@ -183,15 +184,15 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       type: 'single',
       consultantGuide: {
         script: "Does the brand sound like a human being, or a corporation? Does the voice change depending on who is writing the social post that day?",
-        context: "Inconsistent voice dilutes trust. If they lack guidelines, every piece of content we produce will get stuck in 'Subjective Review' hell.",
+        context: "Inconsistent voice affects trust. Guidelines are recommended to streamline review.",
         redFlags: ["'We want to sound professional but fun' (Generic)", "Content sounds like different people wrote it"],
         probes: ["If your brand walked into a bar, what would it drink?", "Do you have a 'Words We Don't Use' list?"]
       },
       options: [
-        { label: 'No defined voice', value: 'none', score: 0, insight: "SCHIZOPHRENIC BRAND: Copy is inconsistent. Sell 'Verbal Identity Guide' ($5k) before writing any web copy." },
-        { label: 'Loose guidelines', value: 'loose', score: 40, insight: "RISK OF BLANDNESS: They likely sound like everyone else. We need to sharpen the 'Brand Personality' to cut through noise." },
-        { label: 'Distinct, documented voice', value: 'distinct', score: 80, insight: "STRONG ASSET: We can scale content production quickly using their existing style guide." },
-        { label: 'Ownable, recognizeable character', value: 'character', score: 100, insight: "CATEGORY KING: The voice itself is a differentiator (e.g., Wendy's, Liquid Death). Protect this at all costs." }
+        { label: 'No defined voice', value: 'none', score: 0, insight: "Voice alignment opportunity: Inconsistent voice identified. Recommend a Verbal Identity alignment." },
+        { label: 'Loose guidelines', value: 'loose', score: 40, insight: "Differentiation potential: Standard voice identified. Recommend sharpening personality." },
+        { label: 'Distinct, documented voice', value: 'distinct', score: 80, insight: "Brand strength: Solid asset identified. Ready for scaled production." },
+        { label: 'Ownable, recognizeable character', value: 'character', score: 100, insight: "Category authority: Differentiated voice observed. Protecting this asset is key." }
       ]
     },
 
@@ -202,15 +203,15 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       type: 'single',
       consultantGuide: {
         script: "The 'Thumb Test': If I covered your logo on your website and your Instagram, would I still know it's you? Or does it look like two different companies?",
-        context: "Visual fragmentation creates cognitive load. Customers won't remember them. We pitch 'Visual Unification' not just 'Redesign'.",
+        context: "Visual fragmentation affects recognition. Visual unification is recommended.",
         redFlags: ["Using different fonts on different decks", "Website looks 5 years older than social"],
         probes: ["Do you use a master slide deck?", "Are social templates locked?"]
       },
       options: [
-        { label: 'Inconsistent / Messy', value: 'inconsistent', score: 10, insight: "BRAND EROSION: Every impression is wasted if they don't recognize the brand next time. Urgent 'Visual System Update' needed." },
-        { label: 'Consistent Logo/Colors only', value: 'basic', score: 50, insight: "AVERAGE: It looks clean but generic. We need to develop a 'Secondary Visual Language' (patterns, photography style)." },
-        { label: 'Comprehensive Design System', value: 'comprehensive', score: 80, insight: "SCALE READY: We can move fast. Ensure our creative team gets access to their Figma libraries immediately." },
-        { label: 'Iconic / Ownable Aesthetic', value: 'iconic', score: 100, insight: "DESIGN LED: The aesthetic is a competitive moat. Focus on keeping it fresh without breaking the rules." }
+        { label: 'Inconsistent / Messy', value: 'inconsistent', score: 10, insight: "Visual alignment gap: Fragmented identity identified. Visual system update is recommended." },
+        { label: 'Consistent Logo/Colors only', value: 'basic', score: 50, insight: "Standard state: Clean but generic identity. Recommend developing a secondary visual language." },
+        { label: 'Comprehensive Design System', value: 'comprehensive', score: 80, insight: "Visual maturity: Solid foundation observed. Ready for rapid scaling." },
+        { label: 'Iconic / Ownable Aesthetic', value: 'iconic', score: 100, insight: "Design authority: Competitive aesthetic observed. Ready for continued refinement." }
       ]
     },
 
@@ -221,15 +222,15 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       type: 'single',
       consultantGuide: {
         script: "Why do you win? Is it price, speed, quality, or innovation? If you say 'we do all of them', that's a red flag. What is the one thing you do better than anyone else?",
-        context: "If they can't answer this, they are a commodity. Commodities compete on price (race to the bottom). Brands compete on value. We must find their 'Moat'.",
+        context: "Differentiation is key to value. We focus on finding your 'Moat'.",
         redFlags: ["'We offer better service'", "'We are a one-stop-shop'", "Can't name a competitor"],
         probes: ["Why do you lose deals?", "What does your competitor say about you?"]
       },
       options: [
-        { label: 'Unclear / Commodity', value: 'commodity', score: 0, insight: "COMMODITY TRAP: They are fighting a price war. We must pivot the strategy to find a 'Blue Ocean' or niche." },
-        { label: 'Better Service / Features', value: 'service', score: 40, insight: "WEAK MOAT: Features can be copied. We need to elevate the brand story to emotional benefits." },
-        { label: 'Unique Methodology / IP', value: 'methodology', score: 80, insight: "STRONG POSITION: They own a way of doing things. We should package this IP (e.g., name their process) in marketing." },
-        { label: 'Radical Differentiation', value: 'disruptor', score: 100, insight: "DISRUPTOR: They are changing the category rules. The strategy is 'Challenger Brand'—aggressive and loud." }
+        { label: 'Unclear / Commodity', value: 'commodity', score: 0, insight: "Differentiation opportunity: Commodity focus identified. Recommend a strategic pivot." },
+        { label: 'Better Service / Features', value: 'service', score: 40, insight: "Defensibility gap: Feature-based focus identified. Recommend elevating to emotional benefits." },
+        { label: 'Unique Methodology / IP', value: 'methodology', score: 80, insight: "Positioning strength: Proprietary methodology identified. Ready for IP packaging." },
+        { label: 'Radical Differentiation', value: 'disruptor', score: 100, insight: "Market disruptor: Category-changing rules identified. Ready for challenger positioning." }
       ]
     }
   ],
@@ -245,10 +246,10 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
         probes: ["What is the primary KPI?", "Is this top or bottom of funnel?"]
       },
       options: [
-        { value: 'unclear', label: 'Unclear / "Everything"', score: 0, insight: "STRATEGIC FOG: High risk of failure. We must enforce the 'One Goal per Campaign' rule." },
-        { value: 'awareness', label: 'Pure Awareness', score: 40, insight: "LONG TERM: Good for brand equity, but set expectations that ROI won't be immediate." },
-        { value: 'lead_gen', label: 'Lead Gen / Sales', score: 80, insight: "PERFORMANCE FOCUSED: We can measure this daily. Focus on CPA and Conversion Rate." },
-        { value: 'retention', label: 'Customer Retention / LTV', score: 100, insight: "HIGH VALUE: Targeting existing customers is the most profitable campaign type." }
+        { value: 'unclear', label: 'Unclear / "Everything"', score: 0, insight: "Strategic gap: Alignment opportunity identified. Recommend a single-goal campaign structure." },
+        { value: 'awareness', label: 'Pure Awareness', score: 40, insight: "Long-term resonance: Focus on brand equity noted. ROI expectations should be calibrated for the long term." },
+        { value: 'lead_gen', label: 'Lead Gen / Sales', score: 80, insight: "Market traction: Performance focus observed. Ready for daily CPA and conversion optimization." },
+        { value: 'retention', label: 'Customer Retention / LTV', score: 100, insight: "Systemic strength: High-value retention focus observed. Ideal for profitable growth." }
       ]
     },
     {
@@ -257,15 +258,15 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       type: 'single',
       consultantGuide: {
         script: "Does the email match the ad? Does the landing page match the email? Or are these 'Random Acts of Marketing' running in silos?",
-        context: "Disjointed campaigns confuse users and tank conversion. We pitch 'Omnichannel Orchestration' to align the message.",
+        context: "Disjointed campaigns affect conversion. Omnichannel alignment is recommended.",
         redFlags: ["Social team doesn't talk to Email team", "Different offers on different channels"],
         probes: ["Do you have a campaign calendar?", "Is the visual ID consistent?"]
       },
       options: [
-        { value: 'siloed', label: 'Siloed / Disconnected', score: 10, insight: "FRAGMENTED: User experience is broken. Immediate 'Channel Integration' audit required." },
-        { value: 'visual', label: 'Visual Consistency only', score: 40, insight: "SURFACE LEVEL: It looks the same, but the user journey might still be disjointed." },
-        { value: 'sequencing', label: 'Cross-channel sequencing', score: 80, insight: "ORCHESTRATED: They are retelling the story across touchpoints. This drives high conversion." },
-        { value: 'omnichannel', label: 'Full Omnichannel Journey', score: 100, insight: "ECOSYSTEM: User is surrounded by the narrative. Ideal for high-ticket complex sales." }
+        { value: 'siloed', label: 'Siloed / Disconnected', score: 10, insight: "Systemic gap: Fragmented user experience identified. Recommend a channel integration audit." },
+        { value: 'visual', label: 'Visual Consistency only', score: 40, insight: "Foundational state: Visual alignment noted, but user journey may require deeper integration." },
+        { value: 'sequencing', label: 'Cross-channel sequencing', score: 80, insight: "Market resonance: Orchestrated narrative observed. Ready for high-conversion scaling." },
+        { value: 'omnichannel', label: 'Full Omnichannel Journey', score: 100, insight: "Design authority: Integrated ecosystem observed. Ideal for complex, high-value journeys." }
       ]
     },
     {
@@ -274,15 +275,15 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       type: 'single',
       consultantGuide: {
         script: "Are we showing the same 'Buy Now' ad to cold traffic and warm leads? Or do we have a sequence: Educate -> Engage -> Convert?",
-        context: "Asking for marriage on the first date (Sales ads to cold traffic) is expensive. We need a 'Full Funnel Content Strategy'.",
+        context: "Cold traffic sales focus is noted. Full-funnel content alignment is recommended.",
         redFlags: ["One ad for everyone", "No retargeting strategy"],
         probes: ["What is your retargeting hook?", "Do you use exclusions?"]
       },
       options: [
-        { value: 'one_message', label: 'One message for all', score: 0, insight: "INEFFICIENT: Wasting budget on cold traffic. We need to build a 'Top of Funnel' content layer." },
-        { value: 'retargeting', label: 'Basic Retargeting', score: 50, insight: "STANDARD: Better, but likely repetitive. Frequency fatigue is a risk." },
-        { value: 'segmented', label: 'Segmented Funnel', score: 80, insight: "OPTIMIZED: Right message, right time. We can scale spend efficiently here." },
-        { value: 'dynamic', label: 'Dynamic Personalization', score: 100, insight: "ADVANCED: Using data to tailor the narrative. Highest conversion potential." }
+        { value: 'one_message', label: 'One message for all', score: 0, insight: "Differentiation potential: Broad messaging identified. Recommend building a multi-layered content funnel." },
+        { value: 'retargeting', label: 'Basic Retargeting', score: 50, insight: "Standard state: Retargeting identified. Recommend diversifying creative to avoid frequency fatigue." },
+        { value: 'segmented', label: 'Segmented Funnel', score: 80, insight: "Strategic maturity: Optimized funnel observed. Ready for efficient spend scaling." },
+        { value: 'dynamic', label: 'Dynamic Personalization', score: 100, insight: "Market resonance: Advanced personalization observed. Highest conversion potential." }
       ]
     },
     {
@@ -291,15 +292,15 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       type: 'single',
       consultantGuide: {
         script: "When a sale happens, will we know came from? Are we relying on Facebook's reported numbers, or do we have a source of truth?",
-        context: "Platform data (FB/Google) lies. They over-claim credit. We need to establish a 'Single Source of Truth' (GA4, TripleWhale, etc.).",
+        context: "Platform data dependency is noted. Establishing an independent source of truth is recommended.",
         redFlags: ["'We just look at total sales'", "Blind trust in platform ROAS"],
         probes: ["Is GA4 set up correctly?", "Do you use UTM parameters?"]
       },
       options: [
-        { value: 'no_tracking', label: 'No tracking plan', score: 0, insight: "BLIND FLYING: We cannot optimize what we cannot measure. Setup 'Tracking Infrastructure' immediately." },
-        { value: 'platform', label: 'Platform Native only', score: 40, insight: "INFLATED DATA: Platforms will double-count sales. We need an independent verification tool." },
-        { value: 'ga4', label: 'Google Analytics / UTMs', score: 80, insight: "RELIABLE: Standard best practice. We can trust these numbers." },
-        { value: 'multi_touch', label: 'Multi-touch Attribution', score: 100, insight: "GRANULAR: Allows for complex budget optimization across the entire ecosystem." }
+        { value: 'no_tracking', label: 'No tracking plan', score: 0, insight: "Operational gap: Tracking constraints identified. Recommend setting up infrastructure immediately." },
+        { value: 'platform', label: 'Platform Native only', score: 40, insight: "Data potential: Platform dependency noted. Recommend independent verification tools for accuracy." },
+        { value: 'ga4', label: 'Google Analytics / UTMs', score: 80, insight: "Foundational state: Reliable tracking identified. Ready for standard optimization." },
+        { value: 'multi_touch', label: 'Multi-touch Attribution', score: 100, insight: "Strategic maturity: Granular attribution observed. Ready for complex budget optimization." }
       ]
     },
     {
@@ -308,15 +309,15 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       type: 'single',
       consultantGuide: {
         script: "Is the budget set in stone, or is it fluid based on performance? If an ad is winning, can we double the spend tomorrow?",
-        context: "Fixed budgets kill agility. We want 'Uncapped Budget at Efficiency'. If the machine prints money, don't turn it off.",
+        context: "Fixed budgets may affect agility. A flexible allocation model is recommended.",
         redFlags: ["'Use it or lose it' budget", "Annual fixed allocation"],
         probes: ["What is the approval process to increase spend?", "Do you have a testing slush fund?"]
       },
       options: [
-        { value: 'fixed', label: 'Fixed / Rigid', score: 20, insight: "HANDCUFFED: We can't react to market feedback. Try to negotiate a 20% 'Flex Fund'." },
-        { value: 'buffers', label: 'Fixed with buffers', score: 50, insight: "STANDARD: Workable, but limits upside scaling." },
-        { value: 'fluid', label: 'Fluid / Performance based', score: 90, insight: "AGILE: We can chase performance. This is how you scale 10x." },
-        { value: 'uncapped', label: 'Uncapped (ROAS constraint)', score: 100, insight: "SCALING MODE: The holy grail. If we hit the ROAS target, we spend infinity. Ideal client." }
+        { value: 'fixed', label: 'Fixed / Rigid', score: 20, insight: "Strategic gap: Rigid budget identified. Recommend negotiating a flexible 'test and scale' fund." },
+        { value: 'buffers', label: 'Fixed with buffers', score: 50, insight: "Standard state: Workable structure identified, though upside scaling may be constrained." },
+        { value: 'fluid', label: 'Fluid / Performance based', score: 90, insight: "Growth alignment: Agile budget observed. Ready for performance-driven scaling." },
+        { value: 'uncapped', label: 'Uncapped (ROAS constraint)', score: 100, insight: "Market resonance: Performance-first model observed. Ideal for rapid market capture." }
       ]
     }
   ],
@@ -327,16 +328,16 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       type: 'single',
       consultantGuide: {
         script: "Let's start with what you have. Do you have a centralized library of approved assets, or are we hunting for logos on hard drives?",
-        context: "Asset fragmentation is the #1 killer of velocity. Missing library = Mandatory 'Audit' upsell ($5k).",
+        context: "Asset fragmentation affects velocity. Asset consolidation is recommended.",
         redFlags: ["'I think our designer has them'", "Using screenshots of logos"],
         probes: ["Do you have a Brand Guidelines PDF?", "Is there a DAM system?"]
       },
       options: [
-        { value: 'scattered', label: 'Scattered / Non-existent', score: 0, insight: "CRITICAL RISK: We cannot start campaign work. Immediate Upsell: 'Asset Consolidation Sprint' ($5k)." },
-        { value: 'basic', label: 'Basic logo files only', score: 25, insight: "FOUNDATIONAL GAP: Lacking typography/color standards means every asset takes 3x longer to design. Recommendation: Sell 'Visual Identity Polish'." },
-        { value: 'outdated', label: 'Centralized but outdated', score: 50, insight: "EFFICIENCY DRAG: Assets exist but may damage brand perception. Recommendation: Include a 'Brand Refresh' phase." },
-        { value: 'guidelines', label: 'Brand Guidelines & Asset Library', score: 75, insight: "GREEN LIGHT: Foundation is solid. We can move straight to high-volume production." },
-        { value: 'system', label: 'Full Design System / DAM', score: 100, insight: "ADVANCED MATURITY: Client is ready for complex dynamic creative optimization (DCO) at scale." }
+        { value: 'scattered', label: 'Scattered / Non-existent', score: 0, insight: "Systemic gap: Fragmented assets identified. Immediate asset consolidation is recommended." },
+        { value: 'basic', label: 'Basic logo files only', score: 25, insight: "Foundational state: Limited standards identified. Recommend a visual identity alignment to improve efficiency." },
+        { value: 'outdated', label: 'Centralized but outdated', score: 50, insight: "Differentiation potential: Legacy assets identified. Recommend a refresh to align with market expectations." },
+        { value: 'guidelines', label: 'Brand Guidelines & Asset Library', score: 75, insight: "Visual maturity: Solid foundation observed. Ready for high-volume production." },
+        { value: 'system', label: 'Full Design System / DAM', score: 100, insight: "Design authority: Advanced maturity observed. Ready for dynamic creative optimization." }
       ]
     },
     {
@@ -345,15 +346,15 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       type: 'single',
       consultantGuide: {
         script: "Are you running a few big 'hero' campaigns a year, or an always-on engine that ships fresh creative every week?",
-        context: "Low velocity = Retainer Model. High velocity = Dedicated Studio Team. High ambition + low budget = Scope Risk.",
+        context: "Velocity dictates the delivery model. Iterative testing is recommended to maintain momentum.",
         redFlags: ["High ambition, low resources", "Bottlenecked by one person"],
         probes: ["How long does it take to approve a post?", "Who is the bottleneck?"]
       },
       options: [
-        { value: 'adhoc', label: 'Ad-hoc / Rarely', score: 0, insight: "LOW MOMENTUM: Client lacks a testing culture. We must sell the value of 'Iterative Testing' before promising results." },
-        { value: 'quarterly', label: 'Quarterly Campaigns', score: 30, insight: "TRADITIONAL MODEL: Risk of ad fatigue. We need to transition them to a monthly 'Flight' model to keep performance up." },
-        { value: 'monthly', label: 'Monthly Updates', score: 60, insight: "HEALTHY BASELINE: Good cadence. We can optimize this workflow for better performance without restructuring their team." },
-        { value: 'always_on', label: 'Weekly / Always-on Testing', score: 100, insight: "PERFORMANCE READY: Ideal state. This client is ready for a 'Creative Performance Retainer' with high volume." }
+        { value: 'adhoc', label: 'Ad-hoc / Rarely', score: 0, insight: "Alignment opportunity: Low momentum identified. Recommend establishing an iterative testing culture." },
+        { value: 'quarterly', label: 'Quarterly Campaigns', score: 30, insight: "Foundational state: Traditional cadence noted. Recommend transitioning to more frequent delivery cycles." },
+        { value: 'monthly', label: 'Monthly Updates', score: 60, insight: "Standard state: Healthy cadence observed. Ready for workflow optimization." },
+        { value: 'always_on', label: 'Weekly / Always-on Testing', score: 100, insight: "Market resonance: Performance-ready cadence observed. Ideal for high-volume retention models." }
       ]
     },
     {
@@ -362,15 +363,15 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       type: 'single',
       consultantGuide: {
         script: "Walk me through the approval process. Does it go to a marketing lead, or does the CEO/Founder need to sign off on every pixel?",
-        context: "Founder involvement = Delays. Set strict 'Review Rounds' in contract. Identify the 'Tie-Breaker' decision maker.",
+        context: "Complex approvals may cause delays. Streamlining the review process is recommended.",
         redFlags: ["'Everyone weighs in'", "CEO changes colors personally"],
         probes: ["Has a campaign ever died in approval?", "Do you trust your marketing lead?"]
       },
       options: [
-        { value: 'committee', label: 'Committee / Consensus', score: 20, insight: "SCOPE HAZARD: 'Design by Committee' kills ROI. We must enforce a 'Single Point of Contact' clause in the SOW." },
-        { value: 'founder', label: 'CEO / Founder', score: 40, insight: "BOTTLENECK RISK: Expect delays. We need to pre-schedule approval meetings to force decisions." },
-        { value: 'director', label: 'Marketing Director', score: 80, insight: "STANDARD PROCESS: Manageable. Ensure we align on the creative brief to avoid subjective feedback later." },
-        { value: 'autonomy', label: 'Creative Director / Autonomy', score: 100, insight: "IDEAL PARTNER: We can move fast. Focus the pitch on 'Agility' and 'Speed to Market'." }
+        { value: 'committee', label: 'Committee / Consensus', score: 20, insight: "Operational gap: Consensus-based review identified. Recommend a single point of contact for efficiency." },
+        { value: 'founder', label: 'CEO / Founder', score: 40, insight: "Strategic maturity: Founder-led review noted. Recommend pre-scheduled review cycles to maintain velocity." },
+        { value: 'director', label: 'Marketing Director', score: 80, insight: "Standard state: Professional review process observed. Ready for collaborative scaling." },
+        { value: 'autonomy', label: 'Creative Director / Autonomy', score: 100, insight: "Design authority: High autonomy observed. Ideal for rapid market testing." }
       ]
     },
     {
@@ -379,15 +380,15 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       type: 'single',
       consultantGuide: {
         script: "Who is actually making the files? Do you have an in-house team, freelancers, or are we inheriting this from another agency?",
-        context: "In-house teams often resent consultants. Frame us as 'Force Multipliers' not replacements. Freelancers mean no process exists.",
+        context: "Resource model affects delivery. Partnership alignment is recommended.",
         redFlags: ["'My nephew does it'", "Burned out in-house designer"],
         probes: ["What is your current cost per asset?", "Are source files organized?"]
       },
       options: [
-        { value: 'diy', label: 'No resources / DIY', score: 0, insight: "FULL SERVICE NEEDED: We must price for full execution capability. Do not offer 'Strategy Only'—they can't execute it." },
-        { value: 'freelancers', label: 'Freelancer Network', score: 40, insight: "STABILITY RISK: Freelancers are inconsistent. Position our studio as the 'Reliable, Scalable' alternative." },
-        { value: 'in_house', label: 'In-House Team', score: 60, insight: "PARTNERSHIP PLAY: Do not threaten the internal team. Position as 'overflow support' or 'specialized strike team'." },
-        { value: 'agency', label: 'External Agency', score: 80, insight: "DISPLACEMENT PLAY: Find out where the current agency is failing (Speed? Cost? Quality?) and attack that gap." }
+        { value: 'diy', label: 'No resources / DIY', score: 0, insight: "Alignment opportunity: Resource constraints identified. Full execution support is recommended." },
+        { value: 'freelancers', label: 'Freelancer Network', score: 40, insight: "Differentiation potential: Freelance model noted. Recommend a more centralized, reliable studio approach." },
+        { value: 'in_house', label: 'In-House Team', score: 60, insight: "Foundational state: Internal team identified. Recommend specialized support to multiply output." },
+        { value: 'agency', label: 'External Agency', score: 80, insight: "Market resonance: External agency model noted. Ready for specialized gap analysis and support." }
       ]
     },
     {
@@ -396,15 +397,15 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       type: 'single',
       consultantGuide: {
         script: "At the end of the month, how do you know if the creative worked? Are we looking at vanity metrics like 'Likes', or hard revenue data?",
-        context: "If they don't measure revenue, we can't prove ROI. We must install a 'Creative Reporting Dashboard' as part of the onboarding.",
+        context: "Metric alignment is key for ROI. Performance-based reporting is recommended.",
         redFlags: ["'We just want it to look cool'", "No access to ad account data"],
         probes: ["Do you tag your creatives?", "What is your CPA target?"]
       },
       options: [
-        { value: 'subjective', label: 'Subjective ("Does it look good?")', score: 10, insight: "EDUCATION GAP: Client needs to be taught 'Performance Creative'. Sell the 'Data-Driven Design' methodology." },
-        { value: 'vanity', label: 'Vanity Metrics (Likes/Shares)', score: 40, insight: "MISALIGNED KPI: Move the conversation to business impact. Shift focus to CTR and Engagement Rate." },
-        { value: 'conversion', label: 'Conversion / CPA', score: 80, insight: "MATURE BUYER: Speak their language. Focus on 'Iterative Testing' and 'ROAS optimization'." },
-        { value: 'attribution', label: 'Full Attribution / LTV', score: 100, insight: "UNICORN CLIENT: Rare. Focus on high-level strategy and 'Incrementality Testing'. They will pay for premium insights." }
+        { value: 'subjective', label: 'Subjective ("Does it look good?")', score: 10, insight: "Education gap: Subjective focus identified. Recommend a data-driven creative methodology." },
+        { value: 'vanity', label: 'Vanity Metrics (Likes/Shares)', score: 40, insight: "Alignment opportunity: Awareness focus noted. Recommend shifting to business impact metrics." },
+        { value: 'conversion', label: 'Conversion / CPA', score: 80, insight: "Strategic maturity: Conversion focus observed. Ready for ROAS optimization." },
+        { value: 'attribution', label: 'Full Attribution / LTV', score: 100, insight: "Market resonance: Advanced attribution observed. Ready for high-level incrementality testing." }
       ]
     }
   ]

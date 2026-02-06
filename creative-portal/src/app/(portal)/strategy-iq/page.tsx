@@ -8,6 +8,7 @@ import {
   Target, 
   Lightbulb, 
   ChevronRight, 
+  ArrowRight,
   LayoutDashboard, 
   Settings2,
   CheckCircle,
@@ -21,14 +22,13 @@ import {
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 // Imports adjusted based on file tree check
-import Sidebar from '../../components/dashboard-ui/Sidebar';
-import TopNavBar from '@/components/TopNavBar';
 import { Button } from '@/components/ui/button';
-import AssessmentRunner from '../../components/strategy/AssessmentRunner';
-import StrategicBriefModal from '../../components/strategy/StrategicBriefModal';
+import AssessmentRunner from '@/components/strategy/AssessmentRunner';
+import StrategicBriefModal from '@/components/strategy/StrategicBriefModal';
 import { AssessmentCategory } from '@/lib/strategyData';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
+import { useToast } from '@/components/providers/toast-provider';
 
 import { useSession } from 'next-auth/react';
 
@@ -74,6 +74,7 @@ const assessmentAreas = [
     title: 'Go-to-Market Sprint',
     description: 'Market entry strategy, positioning, and launch roadmap.',
     duration: '6-12 WEEKS',
+    isHighlight: false,
     education: {
       title: 'Why GTM Strategy?',
       points: [
@@ -89,6 +90,7 @@ const assessmentAreas = [
     title: 'Brand Intelligence',
     description: 'Positioning, messaging, and systematic brand development.',
     duration: '8-16 WEEKS',
+    isHighlight: true,
     education: {
       title: 'Why Brand Intelligence?',
       points: [
@@ -104,6 +106,7 @@ const assessmentAreas = [
     title: 'Strategic Campaigns',
     description: 'Integrated campaign strategy and optimization.',
     duration: '12-20 WEEKS',
+    isHighlight: false,
     education: {
       title: 'Why Strategic Campaigns?',
       points: [
@@ -119,6 +122,7 @@ const assessmentAreas = [
     title: 'Creative Strategy',
     description: 'Content frameworks and scalable creative systems.',
     duration: '4-12 WEEKS',
+    isHighlight: false,
     education: {
       title: 'Why Creative Strategy?',
       points: [
@@ -132,6 +136,7 @@ const assessmentAreas = [
 
 export default function StrategyIQPage() {
   const router = useRouter();
+  const { toast } = useToast();
   const { data: session } = useSession();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -146,10 +151,10 @@ export default function StrategyIQPage() {
   // 1. Main State Container
   const [isMounted, setIsMounted] = useState(false);
   const [clientProgress, setClientProgress] = useState<Record<string, AssessmentState>>({ 
-    gtm: { status: 'pending', score: 0, answers: [] }, 
-    brand: { status: 'pending', score: 0, answers: [] }, 
-    campaign: { status: 'pending', score: 0, answers: [] }, 
-    creative: { status: 'pending', score: 0, answers: [] }, 
+    gtm: { status: 'pending', score: 0, answers: {} }, 
+    brand: { status: 'pending', score: 0, answers: {} }, 
+    campaign: { status: 'pending', score: 0, answers: {} }, 
+    creative: { status: 'pending', score: 0, answers: {} }, 
   }); 
 
   const role = session?.user?.role;
@@ -169,7 +174,7 @@ export default function StrategyIQPage() {
                 id: c.id,
                 email: c.email,
                 name: c.name,
-                type: c.projectType || 'Strategic Discovery',
+                type: c.projectType || 'PHASE: PLANNING',
                 budget: c.budgetRange || 'TBD',
                 timeline: c.timeline || 'TBD',
                 size: c.companySize || 'TBD'
@@ -203,46 +208,47 @@ export default function StrategyIQPage() {
               .in('status', ['ACTIVE', 'DISCOVERY']);
             
             if (projects && projects.length > 0) {
-              setActiveProject(projects[0]);
+              const activeProj = projects[0];
+              setActiveProject(activeProj);
               // If it's an admin, we update selectedClient with the actual project ID for saving
               if (role !== 'CLIENT') {
                 setSelectedClient(prev => ({
                   ...prev,
-                  id: projects[0].id
+                  id: activeProj.id
                 }));
               } else {
                 setSelectedClient({
                   ...CLIENTS[0],
-                  id: projects[0].id,
-                  name: projects[0].title
+                  id: activeProj.id,
+                  name: activeProj.title
                 });
               }
-            }
 
-            // Fetch real progress from DB for this project
-            const { data: assessments } = await supabase
-              .from('assessment_sessions')
-              .select('*')
-              .eq('project_id', projects[0].id);
+              // Fetch real progress from DB for this project
+              const { data: assessments } = await supabase
+                .from('assessment_sessions')
+                .select('*')
+                .eq('project_id', activeProj.id);
 
-            if (assessments) {
-              const progress: Record<string, AssessmentState> = {
-                gtm: { status: 'pending', score: 0, answers: {} },
-                brand: { status: 'pending', score: 0, answers: {} },
-                campaign: { status: 'pending', score: 0, answers: {} },
-                creative: { status: 'pending', score: 0, answers: {} },
-              };
+              if (assessments) {
+                const progress: Record<string, AssessmentState> = {
+                  gtm: { status: 'pending', score: 0, answers: {} },
+                  brand: { status: 'pending', score: 0, answers: {} },
+                  campaign: { status: 'pending', score: 0, answers: {} },
+                  creative: { status: 'pending', score: 0, answers: {} },
+                };
 
-              assessments.forEach((a: any) => {
-                if (progress[a.assessment_type]) {
-                  progress[a.assessment_type] = {
-                    status: 'completed',
-                    score: a.intelligence_score,
-                    answers: JSON.parse(a.responses || '{}')
-                  };
-                }
-              });
-              setClientProgress(progress);
+                assessments.forEach((a: any) => {
+                  if (progress[a.assessment_type]) {
+                    progress[a.assessment_type] = {
+                      status: 'completed',
+                      score: a.intelligence_score,
+                      answers: JSON.parse(a.responses || '{}')
+                    };
+                  }
+                });
+                setClientProgress(progress);
+              }
             }
           }
         } catch (err) {
@@ -323,8 +329,9 @@ export default function StrategyIQPage() {
     const isCompleted = clientProgress[id].status === 'completed';
     
     if (isCompleted) {
-      // Redirect logic: Admin goes to Workbench, Partner goes to Results
-      const projectId = activeProject?.id || 'default';
+      // Use activeProject ID, then selectedClient ID, then fallback
+      const projectId = activeProject?.id || (selectedClient.id !== 'c1' && selectedClient.id !== 'c2' ? selectedClient.id : 'default');
+      
       if (role === 'ADMIN') {
         router.push(`/admin/projects/${projectId}/strategy/${id}/results`);
       } else {
@@ -369,7 +376,7 @@ export default function StrategyIQPage() {
         }
       } catch (err) {
         console.error('Auto-init failed:', err);
-        alert('Error: No active project found and auto-initialization failed. Please contact support.');
+        toast("INITIALIZATION FAILED", "No active project found and auto-initialization failed. Please contact support.", "error")
         throw err;
       }
     }
@@ -463,23 +470,9 @@ export default function StrategyIQPage() {
   if (!isMounted) return null;
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] text-[#F4F1ED] font-sans">
-      
-      <TopNavBar 
-        mobileMenuOpen={mobileMenuOpen}
-        onMenuToggle={() => setMobileMenuOpen(!mobileMenuOpen)}
-      />
-
+    <div className="min-h-full bg-[#0A0A0A] text-[#F4F1ED] font-sans">
       <div className="flex">
-        <Sidebar 
-          collapsed={sidebarCollapsed} 
-          onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
-          mobileOpen={mobileMenuOpen}
-          onMobileClose={() => setMobileMenuOpen(false)}
-          onMobileToggle={() => setMobileMenuOpen(!mobileMenuOpen)}
-        />
-        
-        <main className={`flex-1 transition-all duration-300 ease-in-out ${sidebarCollapsed ? 'lg:ml-[72px]' : 'lg:ml-[256px]'}`}>
+        <main className="flex-1 transition-all duration-300 ease-in-out">
           <AnimatePresence mode="wait">
             {viewMode === 'dashboard' ? (
               <motion.div 
@@ -496,7 +489,7 @@ export default function StrategyIQPage() {
                 <div className="flex justify-between items-end mb-12">
                   <div>
                     <h1 className="text-4xl md:text-5xl font-display font-bold text-white mb-2 tracking-tight">
-                      Strategic Intake Engine
+                      StrategyIQ™ Engine
                     </h1>
                     <p className="text-gray-400 max-w-xl text-lg">
                       Analyze your current posture and unlock bespoke strategic roadmaps across our four core intelligence pillars.
@@ -522,8 +515,8 @@ export default function StrategyIQPage() {
                                 id: found.id,
                                 email: found.email,
                                 name: found.name,
-                                type: found.projectType || 'Strategic Discovery',
-                                budget: found.budgetRange || 'TBD',
+                type: found.projectType || 'PHASE: PLANNING',
+                budget: found.budgetRange || 'TBD',
                                 timeline: found.timeline || 'TBD',
                                 size: found.companySize || 'TBD'
                               });
@@ -635,7 +628,7 @@ export default function StrategyIQPage() {
                           </button>
                           {isCompleted && (
                             <span className="text-[10px] bg-teal-500/20 text-teal-400 px-2 py-0.5 rounded-full font-medium tracking-wide">
-                              COMPLETED
+                              Completed
                             </span>
                           )}
                         </h3>
@@ -655,10 +648,17 @@ export default function StrategyIQPage() {
                         )}
                         {isCompleted && session?.user?.role === 'CLIENT' && (
                           <div className="text-[10px] font-bold text-teal uppercase tracking-widest bg-teal/10 px-3 py-1 rounded-full border border-teal/20">
-                            Strategy Secured
+                            {activeProject?.status === 'DISCOVERY' ? 'Discovery Secured' : 'Roadmap Active'}
                           </div>
                         )}
                         </div>
+
+                        {!isCompleted && (
+                          <div className="mt-4 flex items-center gap-2 text-xs font-bold text-coral uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                            {activeProject?.status === 'DISCOVERY' ? 'Continue Discovery' : 'View Roadmap'}
+                            <ArrowRight size={14} />
+                          </div>
+                        )}
 
                         {/* Subtle Glow for Highlight Card */}
                         {area.isHighlight && !isCompleted && (
@@ -684,7 +684,7 @@ export default function StrategyIQPage() {
                         </svg>
                       </div>
                       <div>
-                        <h3 className="text-xl font-semibold text-white mb-1">Strategic Intelligence Score</h3>
+                        <h3 className="text-xl font-semibold text-white mb-1">Strategic intelligence score</h3>
                         <p className="text-gray-400 text-sm">Aggregate score across all assessment modules.</p>
                       </div>
                     </div>
@@ -693,7 +693,7 @@ export default function StrategyIQPage() {
                     
                     <div className="flex-1 w-full relative z-10">
                       <div className="flex justify-between items-center mb-2">
-                        <span className="text-xs uppercase tracking-wider text-gray-500 font-medium">Recommended Engagement</span>
+                        <span className="text-xs uppercase tracking-wider text-gray-500 font-medium">Recommended engagement</span>
                         <span className="text-teal-400 font-bold">{serviceMatch.price}</span>
                       </div>
                       <div className="bg-[#0A0A0A] p-4 rounded-lg border border-white/5 flex items-center justify-between group cursor-pointer hover:border-teal-500/30 transition-colors">
@@ -704,15 +704,15 @@ export default function StrategyIQPage() {
                       {session?.user?.role !== 'CLIENT' && (
                         <Button 
                           size="sm" 
-                          variant="ghost" 
+                          variant="strategy-secondary" 
                           className={cn(
-                            "text-xs text-gray-400 hover:text-white",
+                            "text-[9px] h-8 px-4",
                             !hasAnyCompletion && "opacity-50 cursor-not-allowed"
                           )}
                           disabled={!hasAnyCompletion}
                           onClick={() => setIsBriefOpen(true)}
                         >
-                          Generate Brief <ChevronRight size={14} className="ml-1" />
+                          Generate brief <ChevronRight size={14} className="ml-1" />
                         </Button>
                       )}
                     </div>
@@ -814,7 +814,8 @@ export default function StrategyIQPage() {
 
                 <Button 
                   onClick={() => setEducationModal(null)}
-                  className="w-full bg-white text-black hover:bg-gray-200 rounded-full py-6 uppercase tracking-widest text-xs font-black"
+                  variant="strategy-primary"
+                  className="w-full py-6 text-[10px]"
                 >
                   Understood
                 </Button>

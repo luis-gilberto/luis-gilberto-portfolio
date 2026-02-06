@@ -15,10 +15,10 @@ export default function AuthButton() {
     return (
       <button
         onClick={() => signOut({ callbackUrl: '/login' })}
-        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all"
+        className="flex items-center gap-2 px-3 py-2 lg:px-4 text-sm font-medium text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all"
       >
         <LogOut size={16} />
-        Sign Out
+        <span className="hidden lg:inline">Sign Out</span>
       </button>
     );
   }

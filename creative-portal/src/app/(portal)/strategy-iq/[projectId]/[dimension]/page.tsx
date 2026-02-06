@@ -12,24 +12,18 @@ interface PageProps {
 }
 
 export default async function StrategyIQEntryGate({ params }: PageProps) {
-  const { projectId, dimension } = await params
+  const { projectId, dimension: rawDimension } = await params
+  const dimension = rawDimension.toLowerCase()
   const session = await getServerSession(authOptions)
   if (!session) redirect('/login')
 
   const role = session.user.role
 
-  // Handle 'default' projectId for demo purposes
-  let project;
-  if (projectId === 'default') {
-    project = await prisma.project.findFirst({
-      include: { client: true }
-    })
-  } else {
-    project = await prisma.project.findUnique({
-      where: { id: projectId },
-      include: { client: true }
-    })
-  }
+  // Handle project fetching - No more "default" ghost
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+    include: { client: true }
+  })
 
   if (!project || !project.clientId) {
     console.log(`[StrategyIQEntryGate] Project not found for ID: ${projectId}`)
@@ -43,9 +37,12 @@ export default async function StrategyIQEntryGate({ params }: PageProps) {
 
   const existingSession = await prisma.assessmentSession.findFirst({
     where: {
-      clientId: project.clientId,
-      assessmentType: dimension,
-      status: 'completed'
+      projectId: project.id,
+      assessmentType: {
+        equals: dimension,
+        mode: 'insensitive'
+      },
+      status: { in: ['COMPLETED', 'PUBLISHED', 'completed'] }
     }
   })
 

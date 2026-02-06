@@ -47,11 +47,12 @@ export async function POST(req: Request) {
         budgetRange,
         timeline,
         companySize,
-        // Automatically initialize a Discovery project
+        // Automatically initialize a Discovery project linked to the creator
         projects: {
           create: {
             title: `${company || name} - Strategic Discovery`,
             status: 'DISCOVERY',
+            userId: session.user.id
           }
         }
       },

@@ -37,37 +37,51 @@ export function StrategyWorkbench({
 }: StrategyWorkbenchProps) {
   const router = useRouter()
   const [isPublishing, setIsPublishing] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
   const [isPublished, setIsPublished] = useState(session.isPublished || false)
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle')
   
   // Workbench State
   const [editedNarrative, setEditedNarrative] = useState(
     session.certifiedNarrative || 
-    (session.briefSummary ? JSON.parse(session.briefSummary).join('\n\n') : "")
+    (session.briefSummary ? session.briefSummary : "")
   )
   const [consultantAnalysis, setConsultantAnalysis] = useState(session.consultantAnalysis || "")
 
-  const handlePublish = async () => {
-    setIsPublishing(true)
+  const handleUpdate = async (publish: boolean = false) => {
+    if (publish) setIsPublishing(true)
+    else setIsSaving(true)
+    
+    setSaveStatus('idle')
+
     try {
       const response = await fetch(`/api/strategy-iq/publish`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           sessionId: session.id,
+          projectId: projectId,
+          dimension: dimension,
           certifiedNarrative: editedNarrative,
           consultantAnalysis: consultantAnalysis,
-          isPublished: true
+          isPublished: publish || isPublished
         })
       })
       
       if (response.ok) {
-        setIsPublished(true)
+        if (publish) setIsPublished(true)
+        setSaveStatus('success')
+        setTimeout(() => setSaveStatus('idle'), 3000)
         router.refresh()
+      } else {
+        setSaveStatus('error')
       }
     } catch (error) {
-      console.error('Error publishing assessment:', error)
+      console.error('Error updating assessment:', error)
+      setSaveStatus('error')
     } finally {
       setIsPublishing(false)
+      setIsSaving(false)
     }
   }
 
@@ -94,6 +108,8 @@ export function StrategyWorkbench({
             </div>
             <p className="text-xs text-white/40 tracking-wider font-mono">
               RAW INTELLIGENCE DRAFT // STATUS: {isPublished ? 'CERTIFIED' : 'UNVETTED'}
+              {saveStatus === 'success' && <span className="text-teal ml-4">✓ CHANGES SAVED</span>}
+              {saveStatus === 'error' && <span className="text-coral ml-4">⚠ SAVE FAILED</span>}
             </p>
           </div>
         </div>
@@ -106,9 +122,20 @@ export function StrategyWorkbench({
           >
             <Eye className="mr-2 h-4 w-4" /> Preview Partner View
           </Button>
+
           <Button 
-            onClick={handlePublish}
-            disabled={isPublishing}
+            variant="outline"
+            disabled={isSaving || isPublishing}
+            onClick={() => handleUpdate(false)}
+            className="border-white/10 text-white/60 hover:text-white uppercase tracking-widest text-[10px] font-black h-12 px-8 rounded-full"
+          >
+            {isSaving ? <RefreshCw className="h-4 w-4 animate-spin mr-2" /> : <FileText className="mr-2 h-4 w-4" />}
+            Save Draft
+          </Button>
+
+          <Button 
+            onClick={() => handleUpdate(true)}
+            disabled={isPublishing || isPublished}
             className={cn(
               "rounded-full px-10 py-6 uppercase tracking-[0.2em] text-[10px] font-black transition-all duration-500",
               isPublished 

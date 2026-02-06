@@ -8,5 +8,12 @@ interface Props {
 }
 
 export function AuthSessionProvider({ children }: Props) {
-  return <SessionProvider>{children}</SessionProvider>
+  return (
+    <SessionProvider 
+      refetchOnWindowFocus={false}
+      refetchWhenOffline={false}
+    >
+      {children}
+    </SessionProvider>
+  )
 }

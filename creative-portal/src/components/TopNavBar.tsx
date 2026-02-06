@@ -2,18 +2,31 @@
 
 import { Menu } from 'lucide-react'
 import Link from 'next/link'
-import { signOut } from 'next-auth/react'
+import { useSession, signOut } from 'next-auth/react'
 import Image from 'next/image'
 import { UserRoleBadge } from './ui/UserRoleBadge'
+import ThemeToggle from './ui/ThemeToggle'
+import AuthButton from './layout/AuthButton'
 
 interface TopNavBarProps {
   onMenuToggle?: () => void
   mobileMenuOpen?: boolean
+  projectStatus?: string
 }
 
-export default function TopNavBar({ onMenuToggle }: TopNavBarProps) {
+export default function TopNavBar({ onMenuToggle, projectStatus }: TopNavBarProps) {
+  const { data: session } = useSession()
+
+  const getPhaseLabel = (status?: string) => {
+    if (status === 'DISCOVERY') return 'PHASE: DISCOVERY'
+    if (status === 'PLANNING' || status === 'ACTIVE') return 'PHASE: PLANNING'
+    return null
+  }
+
+  const phaseLabel = getPhaseLabel(projectStatus)
+
   return (
-    <header className="portal-header hidden lg:block fixed top-0 left-0 right-0 z-50 h-16 bg-[#0A0A0A]/95 backdrop-blur-md border-b border-white/10">
+    <header className="portal-header fixed top-0 left-0 right-0 z-50 h-16 bg-[#0A0A0A]/95 backdrop-blur-md border-b border-white/10">
       <div className="portal-header-inner flex items-center justify-between h-full px-6">
         {/* 1. Hamburger (Left) - Visible only on Mobile */}
         <button 
@@ -24,17 +37,34 @@ export default function TopNavBar({ onMenuToggle }: TopNavBarProps) {
           <Menu className="w-6 h-6" />
         </button>
 
-        {/* 2. Logo (Center/Left) - Visible only on Mobile */}
-        <Link href="/" className="brand-logo block lg:hidden">
-          <div className="relative w-8 h-8">
-             <Image 
-               src="/brand/portal-icon.png" 
-               alt="LG" 
-               fill
-               className="object-contain"
-             />
-          </div>
-        </Link>
+        {/* 2. Logo & Phase (Center/Left) */}
+        <div className="flex items-center gap-6">
+          <Link href="/" className="brand-logo block">
+            <div className="flex items-center gap-3">
+              <div className="relative w-10 h-10 hidden lg:block">
+                 <Image 
+                   src="/brand/portal-icon.png" 
+                   alt="LG" 
+                   fill
+                   className="object-contain"
+                 />
+              </div>
+              <span className="text-xl lg:text-2xl font-black tracking-tighter uppercase font-big-shoulders italic leading-none">
+                <span className="text-[#F96F6E]">LG</span> <span className="text-white">/ PORTAL</span>
+              </span>
+            </div>
+          </Link>
+
+          {phaseLabel && (
+            <div className="hidden md:block h-4 w-px bg-white/10" />
+          )}
+
+          {phaseLabel && (
+            <span className="hidden md:block text-[10px] font-bold tracking-[0.2em] text-white/40 uppercase">
+              {phaseLabel}
+            </span>
+          )}
+        </div>
 
         {/* 3. Desktop Nav Links - Hidden on Mobile */}
         <nav className="nav-links hidden lg:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
@@ -46,13 +76,12 @@ export default function TopNavBar({ onMenuToggle }: TopNavBarProps) {
 
         {/* 4. User Controls (Right) */}
         <div className="flex items-center gap-6 ml-auto lg:ml-0">
-          <UserRoleBadge />
-          <button 
-            onClick={() => signOut({ callbackUrl: "/login" })}
-            className="sign-out-btn text-sm font-medium text-gray-400 hover:text-white transition-colors"
-          >
-            Sign Out
-          </button>
+          <div className="hidden lg:flex items-center gap-6">
+            <ThemeToggle />
+            <UserRoleBadge role={session?.user?.role || 'CLIENT'} />
+          </div>
+
+          <AuthButton />
         </div>
       </div>
     </header>

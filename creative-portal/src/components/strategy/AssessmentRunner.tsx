@@ -24,6 +24,7 @@ import {
   AssessmentQuestion 
 } from '@/lib/strategyData';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/components/providers/toast-provider';
 
 import NextStepCard from './NextStepCard';
 
@@ -50,6 +51,7 @@ export default function AssessmentRunner({
   onPublish,
   projectId
 }: AssessmentRunnerProps) {
+  const { toast } = useToast()
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>(initialAnswers);
   const [selectedOptionValue, setSelectedOptionValue] = useState<string | null>(null);
@@ -110,6 +112,7 @@ export default function AssessmentRunner({
         // Show Victory State briefly before any potential redirect
         setIsAnalyzing(false);
         setShowSuccess(true);
+        toast("INTELLIGENCE SECURED", "Initial synthesis is now available for review.", "success")
       } catch (error) {
         console.error("Error completing assessment:", error);
         setIsAnalyzing(false);
@@ -196,7 +199,8 @@ export default function AssessmentRunner({
             
             <Button 
               onClick={onClose}
-              className="bg-white text-black hover:bg-gray-200 rounded-full px-12 py-6 uppercase tracking-widest text-[10px] font-black"
+              variant="strategy-primary"
+              className="px-12 py-6 text-[10px]"
             >
               View My Results
             </Button>
@@ -295,19 +299,20 @@ export default function AssessmentRunner({
 
                     <div className="flex justify-between pt-8 mt-4 border-t border-white/10">
                       <Button
-                        variant="ghost"
+                        variant="strategy-secondary"
                         onClick={handlePrevious}
                         disabled={currentQuestionIndex === 0}
-                        className="text-gray-400 hover:text-white hover:bg-white/10"
+                        className="px-6 py-4 text-[10px]"
                       >
                         <ArrowLeft className="mr-2 h-4 w-4" /> Previous
                       </Button>
                       <Button
+                        variant="strategy-primary"
                         onClick={handleNext}
                         disabled={!selectedOptionValue}
                         className={cn(
-                          "bg-gradient-to-r from-coral to-teal text-white border-0 hover:shadow-lg transition-all duration-300",
-                          !selectedOptionValue && "opacity-50 cursor-not-allowed grayscale"
+                          "px-8 py-4 text-[10px]",
+                          !selectedOptionValue && "opacity-50 cursor-not-allowed"
                         )}
                       >
                         {currentQuestionIndex === totalQuestions - 1 ? 'Complete Assessment' : 'Next Question'}

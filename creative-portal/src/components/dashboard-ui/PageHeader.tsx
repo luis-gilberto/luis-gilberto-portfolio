@@ -7,16 +7,16 @@ export default function PageHeader({ className = '' }: PageHeaderProps) {
   return (
     <div className={`mb-12 ${className}`}>
       <div className="flex items-center gap-4 mb-8">
-        <div className="flex flex-col">
-          <div className="flex items-center gap-3 mb-2">
+        <div className="flex flex-col w-full">
+          <div className="hidden md:flex items-center gap-3 mb-2">
             <UserRoleBadge />
             <span className="text-[10px] font-bold tracking-[0.5em] text-[#F96F6E] uppercase">Luis Gilberto</span>
           </div>
-          <h1 className="text-[42px] lg:text-[64px] font-bold text-white tracking-widest uppercase italic leading-[0.9] font-big-shoulders">
+          <h1 className="text-[42px] lg:text-[64px] font-bold text-white tracking-widest uppercase italic leading-[0.9] font-big-shoulders mt-10 md:mt-0">
             Command <span className="text-white/10">Center</span>
           </h1>
         </div>
-        <div className="flex-1 h-px bg-gradient-to-r from-white/10 to-transparent self-end mb-4" />
+        <div className="hidden md:block flex-1 h-px bg-gradient-to-r from-white/10 to-transparent self-end mb-4" />
       </div>
       <div className="flex items-center gap-3">
         <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[10px] font-bold text-white/40 uppercase tracking-widest">

@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -86,8 +88,8 @@ export default function NextStepCard({
           {/* THE STORY (Client Only) */}
           {userRole === 'CLIENT' && (
             <div className="bg-white/5 rounded-xl p-6 border border-white/10 text-left">
-              <h3 className="text-xs font-bold text-teal tracking-widest uppercase mb-3 flex items-center gap-2">
-                <History size={14} /> THE STORY / SUMMARY
+              <h3 className="text-[10px] font-bold text-teal tracking-widest uppercase mb-3 flex items-center gap-2">
+                <History size={14} /> The story / Summary
               </h3>
               <p className="text-sm text-gray-300 leading-relaxed italic">
                 "{getStoryNarrative()}"
@@ -100,11 +102,11 @@ export default function NextStepCard({
             <div className="bg-coral/5 rounded-xl p-6 border border-coral/20 text-left relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-coral/5 blur-3xl pointer-events-none" />
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xs font-bold text-coral tracking-widest uppercase flex items-center gap-2">
-                  <ShieldCheck size={14} /> STRATEGY STATUS
+                <h3 className="text-[10px] font-bold text-coral tracking-widest uppercase flex items-center gap-2">
+                  <ShieldCheck size={14} /> Strategy status
                 </h3>
                 <span className="text-[10px] font-bold bg-coral/20 text-coral px-2 py-0.5 rounded-full animate-pulse">
-                  UNDER HUMAN REVIEW
+                  Review in progress
                 </span>
               </div>
               <p className="text-sm text-white/80 leading-relaxed">
@@ -117,18 +119,19 @@ export default function NextStepCard({
           {(isPublished || userRole !== 'CLIENT') ? (
             nextStep ? (
               <div className="bg-white/5 rounded-xl p-6 border border-white/5 animate-in fade-in duration-1000">
-                <h3 className="text-lg font-medium text-white mb-2 flex items-center justify-center gap-2">
-                  <Rocket size={18} className="text-teal" /> Final Plan of Action
+                <h3 className="text-lg font-medium text-white mb-2 flex items-center justify-center gap-2 font-serif italic">
+                  Final plan of action
                 </h3>
                 <p className="text-gray-300 italic mb-6">"{nextStep.message}"</p>
                 
                 <div className="flex gap-4 justify-center">
-                  <Button variant="outline" onClick={onDashboard} className="border-white/10 text-gray-400 hover:text-white hover:bg-white/5 rounded-full px-6">
-                    Return to Dashboard
+                  <Button variant="strategy-secondary" onClick={onDashboard} className="px-6 h-10">
+                    Return to dashboard
                   </Button>
                   <Button 
+                    variant="strategy-primary"
                     onClick={() => onStartNext(nextStep.id)}
-                    className="bg-coral hover:bg-coral/90 text-white gap-2 rounded-full px-6"
+                    className="gap-2 px-6 h-10"
                   >
                     Start {nextStep.title} <ArrowRight size={16} />
                   </Button>
@@ -136,11 +139,11 @@ export default function NextStepCard({
               </div>
             ) : (
                <div className="bg-white/5 rounded-xl p-6 border border-white/5">
-                <h3 className="text-lg font-medium text-white mb-2">All Systems Go</h3>
+                <h3 className="text-lg font-medium text-white mb-2 font-serif italic">All systems go</h3>
                 <p className="text-gray-300 italic mb-6">You have completed the full strategic assessment suite.</p>
                 
-                <Button onClick={onDashboard} className="bg-white/10 hover:bg-white/20 text-white gap-2 rounded-full px-8">
-                  <LayoutDashboard size={16} /> Return to Dashboard
+                <Button variant="strategy-primary" onClick={onDashboard} className="gap-2 px-8 h-10">
+                  <LayoutDashboard size={16} /> Return to dashboard
                 </Button>
               </div>
             )
@@ -150,9 +153,10 @@ export default function NextStepCard({
               <div className="p-4 border border-dashed border-white/10 rounded-xl">
                  <Button 
                     onClick={onPublish}
-                    className="w-full bg-teal text-black font-bold uppercase tracking-widest hover:bg-teal/90"
+                    variant="strategy-primary"
+                    className="w-full h-12"
                  >
-                    Publish Final Plan to Partner
+                    Publish final plan to partner
                  </Button>
               </div>
             )

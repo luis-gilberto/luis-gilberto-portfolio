@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { knowledgeBase } from '@/app/strategyiq/knowledgeBase';
+import { knowledgeBase } from '@/app/(portal)/strategy-iq/knowledgeBase';
 
 // 1. Glossary Data
 const GLOSSARY_TERMS: Record<string, string> = {

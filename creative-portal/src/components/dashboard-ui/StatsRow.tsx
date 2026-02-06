@@ -25,14 +25,14 @@ export default function StatsRow({ className = '', stats }: StatsRowProps) {
 
   const list = mapStats(stats)
   return (
-    <div ref={statsRef} className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 ${className}`}>
+    <div ref={statsRef} className={`grid grid-cols-1 gap-y-10 md:grid-cols-2 lg:grid-cols-4 md:gap-6 ${className}`}>
       {list.map((stat, index) => (
-        <div key={index} className="bg-surface/10 border border-border/20 p-6 rounded-xl backdrop-blur-sm hover:bg-surface/20 transition-all">
-          <div className="text-[11px] tracking-tight text-text-muted font-semibold mb-4">{stat.label}</div>
-          <div className={`text-[48px] font-bold leading-none mb-2 ${stat.isHighlight ? 'text-primary' : 'text-text-primary'}`}>
+        <div key={index} className="bg-surface/10 border border-border/20 p-8 rounded-2xl backdrop-blur-sm hover:bg-surface/20 transition-all">
+          <div className="text-[11px] tracking-[0.2em] text-text-muted font-bold uppercase mb-6">{stat.label}</div>
+          <div className={`text-[56px] lg:text-[64px] font-bold leading-none mb-4 font-big-shoulders tracking-tight ${stat.isHighlight ? 'text-primary' : 'text-text-primary'}`}>
             {stat.value}{stat.suffix}
           </div>
-          <div className="text-[13px] text-text-tertiary">{stat.subtitle}</div>
+          <div className="text-[14px] text-text-tertiary font-medium">{stat.subtitle}</div>
         </div>
       ))}
     </div>

@@ -5,9 +5,11 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useRouter } from 'next/navigation'
+import { useToast } from '@/components/providers/toast-provider'
 
 export default function Login() {
   const router = useRouter()
+  const { toast } = useToast()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -18,7 +20,7 @@ export default function Login() {
     try {
       const result = await signIn('credentials', { email, password, redirect: false })
       if (result?.error) {
-        alert('Access Denied. Please check your credentials.')
+        toast("ACCESS DENIED", "Please check your credentials and try again.", "error")
         console.error('Sign-in error:', result.error)
       } else {
         if (email.toLowerCase().includes('admin')) {
@@ -31,7 +33,7 @@ export default function Login() {
       }
     } catch (error) {
       console.error('Login error:', error)
-      alert('An unexpected error occurred.')
+      toast("SYSTEM ERROR", "An unexpected error occurred. Please contact technical support.", "error")
     } finally {
       setLoading(false)
     }

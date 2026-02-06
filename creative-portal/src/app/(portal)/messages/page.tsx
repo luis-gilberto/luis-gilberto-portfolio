@@ -24,7 +24,7 @@ export default function MessagesPage() {
     const fetchMessages = async () => {
       try {
         const email = session?.user?.email
-        if (!email) return
+        if (!email || !supabase) return
         const { data, error } = await supabase
           .from('messages')
           .select('id, user_name, content, created_at, is_client')

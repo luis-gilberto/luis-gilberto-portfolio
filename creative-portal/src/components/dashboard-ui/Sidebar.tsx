@@ -1,10 +1,12 @@
-import { LayoutDashboard, FolderKanban, Users, BarChart3, Settings, ChevronLeft, ChevronRight, Rocket, Menu, LogOut, BookOpen, Briefcase, ShieldCheck } from 'lucide-react';
+import { LayoutDashboard, FolderKanban, Users, BarChart3, Settings, ChevronLeft, ChevronRight, Rocket, Menu, LogOut, BookOpen, Briefcase, ShieldCheck, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { signOut, useSession } from 'next-auth/react';
 import { useState, useEffect } from 'react';
+import ThemeToggle from '../ui/ThemeToggle';
+import { UserRoleBadge } from '../ui/UserRoleBadge';
 
 interface SidebarProps {
   collapsed: boolean;
@@ -17,7 +19,7 @@ interface SidebarProps {
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard', role: 'CLIENT' },
   { icon: LayoutDashboard, label: 'Dashboard', path: '/admin', role: 'ADMIN' },
-  { icon: Rocket, label: 'Strategy Engine', path: '/strategyiq' },
+  { icon: Rocket, label: 'Strategy Engine', path: '/strategy-iq' },
   { icon: FolderKanban, label: 'Projects', path: '/admin/projects' },
   { icon: Users, label: 'Clients', path: '/admin/clients' },
   { icon: BarChart3, label: 'Analytics', path: '/admin/analytics' },
@@ -74,14 +76,6 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose
 
   return (
     <>
-      {/* Mobile Header */}
-      <div className="lg:hidden flex items-center justify-end px-6 py-4 bg-[#0A0A0A] border-b border-white/5 fixed top-0 left-0 right-0 z-50">
-        {/* Right: Hamburger Toggle */}
-        <Button variant="ghost" size="icon" onClick={onMobileToggle}>
-          <Menu className="w-6 h-6 text-white" />
-        </Button>
-      </div>
-
       {mobileOpen && (
         <div
           className="fixed inset-0 bg-black/80 z-40 lg:hidden"
@@ -169,10 +163,31 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose
             )}
           </Button>
 
+          {/* Mobile Utility Section */}
+          <div className="lg:hidden flex flex-col gap-4 px-4 py-6 border-t border-white/5 mt-auto">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-gray-400">
+                  <User size={16} />
+                </div>
+                <div className="flex flex-col">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-white">{session?.user?.name || 'Partner'}</span>
+                    {role === 'ADMIN' && (
+                      <div className="w-2 h-2 rounded-full bg-[#2ED3C6] animate-pulse" title="COMMAND ACTIVE" />
+                    )}
+                  </div>
+                  <span className="text-[10px] text-gray-500 uppercase tracking-widest">{role || 'CLIENT'}</span>
+                </div>
+              </div>
+              <ThemeToggle />
+            </div>
+          </div>
+
           {/* Bottom: Sign Out (Mobile Only) */}
           <button 
             onClick={() => signOut({ callbackUrl: '/login' })} 
-            className="lg:hidden flex items-center gap-3 px-4 py-3 mt-auto text-gray-400 hover:text-white transition-colors w-full"
+            className="lg:hidden flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white transition-colors w-full"
           >
             <LogOut size={20} />
             <span>Sign Out</span>

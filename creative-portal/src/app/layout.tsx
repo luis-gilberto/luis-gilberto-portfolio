@@ -4,6 +4,7 @@ import Image from "next/image"
 import "./globals.css"
 import { AuthSessionProvider } from "@/components/providers/session-provider"
 import { ThemeProvider } from "@/components/providers/theme-provider"
+import { ToastProvider } from "@/components/providers/toast-provider"
 import { Navigation } from "@/components/ui/navigation"
 import { Footer } from "@/components/ui/footer"
 
@@ -57,11 +58,11 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <Navigation />
-            <main className="flex-grow pt-16 flex flex-col relative z-10">
-              {children}
-            </main>
-            <Footer />
+            <ToastProvider>
+              <main className="flex-grow flex flex-col relative z-10">
+                {children}
+              </main>
+            </ToastProvider>
           </ThemeProvider>
         </AuthSessionProvider>
       </body>

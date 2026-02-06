@@ -19,7 +19,13 @@ import {
   ShieldCheck,
   CheckCircle,
   RefreshCw,
-  Zap
+  Zap,
+  Image as ImageIcon,
+  ChevronRight,
+  MessageSquare,
+  Lock,
+  Unlock,
+  History
 } from "lucide-react"
 import { format } from "date-fns"
 import { Badge } from "@/components/ui/badge"
@@ -28,6 +34,7 @@ import { Card } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Input } from "@/components/ui/input"
 import { useRouter, useParams } from "next/navigation"
+import { useToast } from "@/components/providers/toast-provider"
 import {
   Dialog,
   DialogContent,
@@ -38,6 +45,7 @@ import {
 } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
+import { cn } from "@/lib/utils"
 
 interface ProjectWarRoomProps {
   project: any
@@ -51,14 +59,18 @@ const STRATEGY_MODULES = [
   { id: 'creative', title: 'Creative Dir', icon: FileCode, color: 'text-purple-400', bg: 'bg-purple-400/10' },
 ]
 
+type WorkspaceMode = 'INTELLIGENCE' | 'VAULT' | 'ROADMAP' | 'COMMS'
+
 export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomProps) {
   const router = useRouter()
+  const { toast } = useToast()
   const params = useParams()
   const urlProjectId = params.id as string
-  const timelineRef = useRef<HTMLDivElement>(null)
+  const [mode, setMode] = useState<WorkspaceMode>('INTELLIGENCE')
   const [message, setMessage] = useState("")
   const [messages, setMessages] = useState(project.messages)
   const [isSending, setIsSending] = useState(false)
+  const [showPulse, setShowPulse] = useState(false)
   
   // Editorial Review State
   const [isReviewOpen, setIsReviewOpen] = useState(false)
@@ -67,19 +79,20 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
   const [isPublishing, setIsPublishing] = useState(false)
   const [isGenerating, setIsGenerating] = useState(false)
   const [viewOnly, setViewModeOnly] = useState(false)
+  const [isRevisionMode, setIsRevisionMode] = useState(false)
 
   const openReview = async (session: any, forceGenerate: boolean = false, readOnly: boolean = false) => {
     setReviewSession(session)
-    setConsultantAnalysis(session.consultantAnalysis || "")
+    // Task 1: Initialize with certifiedNarrative, briefSummary, or empty string
+    setConsultantAnalysis(session.certifiedNarrative || session.briefSummary || "")
     setViewModeOnly(readOnly)
+    setIsRevisionMode(false) // Reset revision mode on open
     setIsReviewOpen(true)
     
-    // Auto-trigger generation if briefSummary is missing and it's not viewOnly
     if ((forceGenerate || !session.briefSummary) && !readOnly) {
       handleGenerateNarrative(session.id)
     }
 
-    // Transition to UNDER_REVIEW if it's currently COMPLETED or MANUAL_REVIEW
     if (['COMPLETED', 'MANUAL_REVIEW'].includes(session.status.toUpperCase()) && !readOnly) {
       try {
         await fetch('/api/assessment/session/update', {
@@ -87,7 +100,6 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ sessionId: session.id, status: 'UNDER_REVIEW' })
         })
-        // No need to refresh immediately, let the user edit
       } catch (error) {
         console.error('Error updating session status:', error)
       }
@@ -112,11 +124,6 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
           ...prev,
           briefSummary: data.briefSummary
         }))
-      } else {
-        const errorData = await response.json()
-        console.error('Generation failed:', errorData)
-        // Show fallback in UI even if API failed but we have local data?
-        // For now, just stop the spinner
       }
     } catch (error) {
       console.error('Error generating narrative:', error)
@@ -125,55 +132,104 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
     }
   }
 
+  const handleUnlock = async () => {
+    if (!reviewSession || currentUser.role !== 'ADMIN') return
+    
+    setIsRevisionMode(true)
+    setViewModeOnly(false)
+
+    try {
+      await fetch('/api/assessment/session/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          sessionId: reviewSession.id, 
+          status: 'UNDER_REVIEW',
+          isPublished: false
+        })
+      })
+    } catch (error) {
+      console.error('Error unlocking session:', error)
+    }
+  }
+
   const handlePublish = async (sessionToPublish?: any, notes?: string) => {
     const session = sessionToPublish || reviewSession
-    const finalNotes = notes !== undefined ? notes : consultantAnalysis
-    const dimension = session?.assessmentType
-    const projectId = urlProjectId || project.id
+    const projectId = (params.id as string) || project.id
+    let dimension = (session?.assessmentType || reviewSession?.assessmentType || "").toLowerCase()
+
+    // Task 1: Capture the "Live" State
+    const textareaElement = document.querySelector('textarea[name="certifiedNarrative"]') as HTMLTextAreaElement;
+    const rawNotes = notes !== undefined ? notes : (textareaElement?.value || consultantAnalysis);
     
-    if (!session || !dimension || isPublishing) return
+    // Task 4: Data Sanitization (Noise Filter)
+    const sanitizedNotes = rawNotes.trim().replace(/\s+/g, ' ');
+    
+    // Logic: Strip non-meaningful character strings and check length
+    const isRandomNoise = (str: string) => {
+      // Simple heuristic: if a string has very few vowels or too many consecutive consonants, it might be noise
+      const words = str.split(' ');
+      if (words.length < 3 && str.length > 10) {
+        const vowels = str.match(/[aeiou]/gi);
+        if (!vowels || vowels.length / str.length < 0.1) return true;
+      }
+      return false;
+    };
 
-    // X-Ray Debug (Requested)
-    console.log("DEBUG PAYLOAD:", { projectId, dimension, certifiedNarrative: finalNotes });
-    alert("CHECK CONSOLE: " + JSON.stringify({ projectId, dimension }));
+    if (sanitizedNotes.length < 10 || isRandomNoise(sanitizedNotes)) {
+      toast("ASSET INTEGRITY ERROR", "The narrative is too short or contains non-meaningful content.", "error");
+      return;
+    }
 
-    // Verification Alert requested by user
-    alert("Sending: " + projectId + " " + dimension);
+    console.log("SENDING TO API:", { projectId, dimension, certifiedNarrative: sanitizedNotes });
+    
+    if (!projectId || !dimension) {
+      console.error("Context Lost - Fatal Blocker:", { projectId, dimension });
+      return;
+    }
 
-    // Payload Verification
-    console.log("Publishing Payload:", { 
-      sessionId: session.id,
-      projectId: projectId,
-      dimension: dimension,
-      consultantAnalysis: finalNotes,
-      certifiedNarrative: finalNotes
-    })
-
+    if (isPublishing) return
     setIsPublishing(true)
+
     try {
       const response = await fetch('/api/strategy-iq/publish', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          sessionId: session.id, 
+          sessionId: session?.id, 
           projectId: projectId,
           dimension: dimension,
-          consultantAnalysis: finalNotes,
-          certifiedNarrative: finalNotes, // The Admin's edit becomes the certified narrative
-          isPublished: true
+          certifiedNarrative: sanitizedNotes,
+          status: 'PUBLISHED'
         })
       })
+
       if (response.ok) {
         setIsReviewOpen(false)
-        alert("Success: Brief Published to Vault")
+        setIsRevisionMode(false)
+        
+        // Task 4: UI Refresh & Validation (Force dump cache)
         router.refresh()
+        
+        // Local state sync for immediate feedback
+        const result = await response.json()
+        setReviewSession(result.updatedData || null)
+        
+        toast("STRATEGY CERTIFIED", "Narrative published to Partner Vault and localized to project assets.", "success")
+        
+        // Trigger pulse effect
+        setShowPulse(true)
+        setTimeout(() => {
+          setShowPulse(false)
+          // Final fallback to ensure DB sync is visible
+          router.refresh()
+        }, 2000)
       } else {
         const errorData = await response.json()
-        alert(`Publishing failed. Please ensure the database connection is active. (${errorData.error || 'Unknown error'})`)
+        toast("PUBLISHING FAILED", errorData.error || "Unknown error", "error")
       }
     } catch (error) {
       console.error('Error publishing:', error)
-      alert("Publishing failed. Please ensure the database connection is active.")
     } finally {
       setIsPublishing(false)
     }
@@ -199,508 +255,536 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
       setIsSending(false)
     }
   }
-  useEffect(() => {
-    if (timelineRef.current) {
-      const events = timelineRef.current.querySelectorAll(".timeline-event")
-      gsap.fromTo(
-        events,
-        { opacity: 0, x: -50 },
-        { 
-          opacity: 1, 
-          x: 0, 
-          duration: 0.8, 
-          stagger: 0.2, 
-          ease: "power3.out" 
-        }
-      )
-    }
-  }, [])
 
   const getStatusColor = (status: string) => {
     switch (status.toUpperCase()) {
       case "COMPLETE":
       case "APPROVED":
       case "COMPLETED":
-        return "text-teal-400 border-teal-400/30 bg-teal-400/10"
+      case "PUBLISHED":
+        return "text-teal border-teal/30 bg-teal/10"
       case "PENDING":
       case "IN_PROGRESS":
       case "ACTIVE":
         return "text-coral border-coral/30 bg-coral/10"
-      case "IN_REVIEW":
-        return "text-white/50 border-white/20 bg-white/5"
       default:
         return "text-white/30 border-white/10 bg-white/5"
     }
   }
 
-  // Helper to find assessment status
   const getAssessmentStatus = (moduleId: string) => {
-    // Priority 1: Check the new Project status fields
     const statusField = `${moduleId}Status`
     const projectStatus = project[statusField]
-    
-    // Priority 2: Check the actual session data (Check both direct project relation and client relation)
     const session = (project.assessmentSessions || project.client?.assessmentSessions)?.find(
       (s: any) => s.assessmentType === moduleId && 
       ['COMPLETED', 'PUBLISHED', 'MANUAL_REVIEW', 'UNDER_REVIEW'].includes(s.status.toUpperCase())
     )
-    
-    // If project status is COMPLETED, we treat it as active even if session isn't found in current payload
     if (projectStatus === 'COMPLETED') {
       return session || { status: 'COMPLETED', assessmentType: moduleId }
     }
-    
     return session
   }
 
-  const [isRegenerating, setIsRegenerating] = useState<string | null>(null)
-
-  const handleRegenerate = async (sessionId: string, moduleId: string) => {
-    setIsRegenerating(moduleId)
-    try {
-      const response = await fetch(`/api/strategy-iq/regenerate`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sessionId })
-      })
-      
-      if (response.ok) {
-        router.refresh()
-      }
-    } catch (error) {
-      console.error('Error regenerating narrative:', error)
-    } finally {
-      setIsRegenerating(null)
-    }
-  }
-
-  const handleForceGenerate = async (moduleId: string) => {
+  const handleForceGenerate = (moduleId: string) => {
     router.push(`/strategy-iq/${project.id}/${moduleId}/start`)
   }
 
+  // Task 1: Asset-to-Dimension Mapping
+  const getDimensionFromTitle = (title: string) => {
+    const t = title.toLowerCase()
+    if (t.includes('gtm')) return 'gtm'
+    if (t.includes('brand')) return 'brand'
+    if (t.includes('campaign')) return 'campaign'
+    if (t.includes('creative')) return 'creative'
+    return null
+  }
+
   return (
-    <div className="flex flex-col h-screen bg-portal-bg overflow-hidden font-inter">
-      {/* Header */}
-      <header className="flex items-center justify-between px-8 py-6 border-b border-white/5 bg-portal-bg/80 backdrop-blur-xl z-20">
-        <div className="flex items-center gap-6">
-          <Button 
-            variant="ghost" 
-            onClick={() => router.back()} 
-            className="rounded-full w-10 h-10 p-0 text-white/40 hover:text-coral hover:bg-coral/5 transition-all"
-          >
-            <ArrowLeft size={20} />
-          </Button>
-          <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-big-shoulders font-bold tracking-widest text-white uppercase italic">
-                {project.title}
-              </h1>
-              <Badge className={`rounded-full px-3 py-0.5 text-[10px] font-bold tracking-tighter uppercase ${getStatusColor(project.status)}`}>
-                {project.status}
-              </Badge>
-            </div>
-            <p className="text-xs text-white/40 tracking-wider">
-              CLIENT: <span className="text-white/80 font-medium uppercase tracking-widest">{project.client?.name || "N/A"}</span>
-            </p>
-          </div>
-        </div>
+    <div className="flex flex-col h-[calc(100vh-4rem)] bg-portal-bg overflow-hidden font-inter">
+      {/* Task 1: Grid Layout (Stage 9/12, Sidecar 3/12) */}
+      <div className="flex-1 grid grid-cols-12 overflow-hidden h-full">
         
-        <div className="flex items-center gap-4">
-          <div className="flex -space-x-2">
-            {[1, 2].map((i) => (
-              <div key={i} className="w-8 h-8 rounded-full border-2 border-portal-bg bg-white/5 flex items-center justify-center text-[10px] font-bold text-white/60 ring-1 ring-white/10">
-                U{i}
-              </div>
-            ))}
-          </div>
-          <Button className="rounded-full bg-coral hover:bg-coral/90 text-white font-bold px-6 py-2 transition-all">
-            MANAGE SCOPE
-          </Button>
-        </div>
-      </header>
-
-      <div className="flex-1 flex overflow-hidden p-8 gap-8">
-        {/* Column 0: Strategy Intelligence */}
-        <section className="w-1/4 flex flex-col gap-6 overflow-hidden">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-teal" />
-            <h2 className="text-sm font-bold tracking-widest text-white/60 uppercase font-big-shoulders italic">
-              STRATEGIC INTELLIGENCE <span className="text-white/20 ml-2">/ MODULES</span>
-            </h2>
-          </div>
+        {/* --- THE STAGE (Cols 1-9) --- */}
+        <div className="col-span-12 lg:col-span-9 flex flex-col overflow-hidden border-r border-white/5">
           
-          <ScrollArea className="flex-1 pr-4">
-            <div className="space-y-4">
-              {STRATEGY_MODULES.map((module) => {
-                const session = getAssessmentStatus(module.id)
-                const isCompleted = !!session
+          {/* Task 2: Mode Switcher Bar */}
+          <div className="sticky top-0 z-20 h-16 border-b border-white/5 flex items-center px-4 md:px-8 justify-between bg-black/80 backdrop-blur-md">
+            <div className="flex gap-6 md:gap-8 overflow-x-auto scrollbar-hide no-scrollbar">
+              {(['INTELLIGENCE', 'VAULT', 'ROADMAP', 'COMMS'] as WorkspaceMode[]).map((m) => (
+                <button
+                  key={m}
+                  onClick={() => setMode(m)}
+                  className={cn(
+                    "relative h-16 flex items-center text-[11px] font-black tracking-[0.2em] transition-all font-big-shoulders italic whitespace-nowrap",
+                    mode === m ? "text-teal" : "text-white/30 hover:text-white/60",
+                    m === 'COMMS' && "lg:hidden" // COMMS is mobile-only tab
+                  )}
+                >
+                  {m}
+                  {mode === m && (
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-teal shadow-[0_0_10px_rgba(46,211,198,0.5)]" />
+                  )}
+                </button>
+              ))}
+            </div>
+            <div className="hidden md:flex items-center gap-4">
+               <Badge variant="outline" className="border-white/10 text-white/40 text-[9px] tracking-widest uppercase">
+                 Project ID: {project.id.slice(-8).toUpperCase()}
+               </Badge>
+            </div>
+          </div>
 
-                return (
-                  <Card key={module.id} className="bg-white/5 border-white/10 p-5 rounded-xl group hover:bg-white/10 transition-all">
-                    <div className="flex justify-between items-start mb-4">
-                      <div className={`p-2 rounded-lg ${module.bg} ${module.color}`}>
-                        <module.icon size={18} />
-                      </div>
-                      <div className="flex flex-col items-end gap-1">
-                        <Badge variant="outline" className={`text-[9px] tracking-widest uppercase ${
-                          isCompleted 
-                            ? (['MANUAL_REVIEW', 'UNDER_REVIEW'].includes(session.status.toUpperCase()) ? 'border-red-500/30 text-red-400 bg-red-500/10' : 'border-teal-500/30 text-teal-400 bg-teal-500/10')
-                            : 'border-white/10 text-white/30'
-                        }`}>
-                          {isCompleted ? (['MANUAL_REVIEW', 'UNDER_REVIEW'].includes(session.status.toUpperCase()) ? (session.status === 'UNDER_REVIEW' ? 'Reviewing' : 'Review Needed') : 'Active') : 'Pending'}
-                        </Badge>
-                        {isCompleted && session.isPublished && (
-                          <Badge variant="outline" className="text-[7px] tracking-tighter uppercase border-teal-500/50 text-teal-400">
-                            Published
-                          </Badge>
-                        )}
-                      </div>
+          <ScrollArea className="flex-1">
+            <div className="p-8">
+              {/* Intelligence Mode */}
+              {mode === 'INTELLIGENCE' && (
+                <div className="space-y-12 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                  {/* ACTIVE / PUBLISHED MODULES */}
+                  <div className="space-y-8">
+                    <div className="flex items-center gap-2 mb-6">
+                      <div className="w-1.5 h-1.5 rounded-full bg-teal" />
+                      <h2 className="text-xs font-bold tracking-widest text-white/60 uppercase font-big-shoulders italic">
+                        Active Intelligence <span className="text-white/20 ml-2">/ Primary Pillars</span>
+                      </h2>
                     </div>
-                    
-                    <h3 className="text-sm font-bold text-white mb-1">{module.title}</h3>
-                    <p className="text-[10px] text-white/40 mb-4 leading-relaxed">
-                      {isCompleted 
-                        ? (session.isPublished ? "Narrative live in Partner Vault." : "Diagnostic complete. Awaiting review.") 
-                        : "No intelligence data found for this vector."}
-                    </p>
-
-                    {isCompleted ? (
-                      <div className="space-y-2">
-                        {session.status === 'PUBLISHED' ? (
-                          <div className="flex items-center gap-2 text-teal bg-teal/5 border border-teal/20 p-2 rounded-lg justify-center">
-                            <CheckCircle size={14} />
-                            <span className="text-[10px] font-bold uppercase tracking-widest">Live in Vault</span>
-                          </div>
-                        ) : (
-                          <>
-                            <Button 
-                              size="sm"
-                              onClick={() => openReview(session, true, false)}
-                              className="w-full bg-coral/10 hover:bg-coral/20 text-coral border border-coral/20 text-[10px] font-bold tracking-widest uppercase h-8"
-                            >
-                              <Zap className="mr-2 h-3 w-3" /> {session.status === 'UNDER_REVIEW' ? 'Continue Mini-Brief' : 'Generate Mini-Brief'}
-                            </Button>
+                    <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-6">
+                      {STRATEGY_MODULES.filter(m => {
+                        const s = getAssessmentStatus(m.id)
+                        return s && ['PUBLISHED', 'COMPLETED', 'UNDER_REVIEW', 'MANUAL_REVIEW'].includes(s.status.toUpperCase())
+                      }).map((module) => {
+                        const session = getAssessmentStatus(module.id)
+                        const isPublished = session?.status?.toUpperCase() === 'PUBLISHED'
+                        
+                        return (
+                          <Card key={module.id} className="bg-white/5 border-white/10 p-6 rounded-xl group hover:bg-white/10 transition-all">
+                            <div className="flex justify-between items-start mb-6">
+                              <div className={`p-3 rounded-lg ${module.bg} ${module.color}`}>
+                                <module.icon size={20} />
+                              </div>
+                              <div className="flex flex-col items-end gap-1">
+                                <Badge variant="outline" className={cn(
+                                  "text-[9px] tracking-widest uppercase transition-all duration-500",
+                                  getStatusColor(session.status),
+                                  (showPulse && isPublished) && "ring-2 ring-teal shadow-[0_0_15px_rgba(46,211,198,0.5)] scale-110",
+                                  "hidden md:inline-flex" // Hide secondary status badge on mobile
+                                )}>
+                                  {session.status}
+                                </Badge>
+                                {/* Mobile-only muted status label */}
+                                <span className="md:hidden text-[10px] font-bold text-white/20 uppercase tracking-widest">
+                                  {session.status.toUpperCase()}
+                                </span>
+                              </div>
+                            </div>
+                            <h3 className="text-lg font-bold text-white mb-2 font-big-shoulders tracking-widest uppercase italic">{module.title}</h3>
+                            <p className="hidden md:block text-xs text-white/40 mb-6 leading-relaxed">
+                              {isPublished ? "Narrative live in Partner Vault." : "Diagnostic complete. Awaiting review."}
+                            </p>
                             
-                            <Button 
-                              size="sm"
-                              onClick={() => openReview(session, false, true)}
-                              className="w-full bg-white/5 hover:bg-white/10 text-white border border-white/10 text-[10px] font-bold tracking-widest uppercase h-8"
-                            >
-                              <Eye className="mr-2 h-3 w-3" /> View Data
-                            </Button>
-                          </>
-                        )}
-                      </div>
-                    ) : (
-                      <Button 
-                        size="sm"
-                        onClick={() => handleForceGenerate(module.id)}
-                        className="w-full bg-coral/10 hover:bg-coral/20 text-coral border border-coral/20 text-[10px] font-bold tracking-widest uppercase h-8"
-                      >
-                        <Bot className="mr-2 h-3 w-3" /> Initialize Assessment
-                      </Button>
-                    )}
-                  </Card>
-                )
-              })}
-            </div>
-          </ScrollArea>
-        </section>
-
-        {/* Column 1: The Pulse (Timeline) */}
-        <section className="w-1/4 flex flex-col gap-6 overflow-hidden">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-teal" />
-            <h2 className="text-sm font-bold tracking-widest text-white/60 uppercase font-big-shoulders italic">
-              THE PULSE <span className="text-white/20 ml-2">/ TIMELINE</span>
-            </h2>
-          </div>
-          
-          <ScrollArea className="flex-1 pr-4">
-            <div ref={timelineRef} className="relative pl-6 border-l border-teal/20 space-y-10 py-4">
-              {project.timelineEvents.map((event: any, idx: number) => (
-                <div key={event.id} className="timeline-event relative">
-                  <div className="absolute -left-[31px] top-1.5 w-2 h-2 rounded-full bg-teal ring-4 ring-portal-bg" />
-                  <div className="flex flex-col gap-1">
-                    <span className="text-[10px] font-bold text-teal tracking-widest uppercase">
-                      {format(new Date(event.date), "MMM dd, yyyy")}
-                    </span>
-                    <h3 className="text-sm font-medium text-white/90 leading-tight">
-                      {event.description}
-                    </h3>
-                    <span className="text-[10px] text-white/30 uppercase tracking-tighter">
-                      {event.type}
-                    </span>
-                  </div>
-                </div>
-              ))}
-              {project.timelineEvents.length === 0 && (
-                <div className="text-white/20 italic text-sm py-4">No events recorded yet.</div>
-              )}
-            </div>
-          </ScrollArea>
-        </section>
-
-        {/* Column 2: The Vault (Deliverables) */}
-        <section className="flex-1 flex flex-col gap-6 overflow-hidden">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-coral" />
-              <h2 className="text-sm font-bold tracking-widest text-white/60 uppercase font-big-shoulders italic">
-                THE VAULT <span className="text-white/20 ml-2">/ ASSETS</span>
-              </h2>
-            </div>
-            <Button variant="ghost" className="text-[10px] font-bold text-white/40 hover:text-white uppercase tracking-widest p-0">
-              VIEW ALL
-            </Button>
-          </div>
-
-          <ScrollArea className="flex-1 pr-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {project.deliverables.map((deliverable: any) => (
-                <Card 
-                  key={deliverable.id} 
-                  className="bg-white/5 backdrop-blur-md border-white/10 p-5 rounded-xl hover:bg-white/10 transition-all group cursor-pointer"
-                >
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="p-3 rounded-lg bg-white/5 group-hover:bg-coral/10 transition-colors">
-                      <FileCode className="text-white/40 group-hover:text-coral transition-colors" size={24} />
+                            <div className="flex gap-3">
+                              <Button 
+                                size="sm" 
+                                onClick={() => openReview(session, true, false)}
+                                className="flex-1 bg-coral/10 hover:bg-coral/20 text-coral border border-coral/20 text-[10px] font-bold tracking-widest uppercase h-10"
+                              >
+                                {isPublished ? (
+                                  <><History className="mr-2 h-3.5 w-3.5" /> MANAGE BRIEF</>
+                                ) : (
+                                  <><Zap className="mr-2 h-3.5 w-3.5" /> REVIEW</>
+                                )}
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                onClick={() => openReview(session, false, true)}
+                                className="hidden md:flex bg-white/5 hover:bg-white/10 text-white border border-white/10 text-[10px] font-bold tracking-widest uppercase h-10 px-4"
+                              >
+                                <Eye size={16} />
+                              </Button>
+                            </div>
+                          </Card>
+                        )
+                      })}
                     </div>
-                    <Badge className={`rounded-full px-2 py-0.5 text-[9px] font-bold tracking-tighter uppercase ${getStatusColor(deliverable.status)}`}>
-                      {deliverable.status}
-                    </Badge>
                   </div>
-                  <h3 className="text-sm font-bold text-white mb-1 group-hover:text-coral transition-colors line-clamp-1">
-                    {deliverable.title}
-                  </h3>
-                  <div className="flex items-center gap-2 text-[10px] text-white/30 uppercase tracking-widest font-medium">
-                    <Calendar size={12} className="text-white/20" />
-                    DUE: {deliverable.dueDate ? format(new Date(deliverable.dueDate), "MMM dd") : "TBD"}
+
+                  {/* REMAINING / PENDING MODULES */}
+                  <div className="space-y-8 pt-8 border-t border-white/5">
+                    <div className="flex items-center gap-2 mb-6">
+                      <div className="w-1.5 h-1.5 rounded-full bg-white/20" />
+                      <h2 className="text-xs font-bold tracking-widest text-white/40 uppercase font-big-shoulders italic">
+                        Remaining Intelligence <span className="text-white/10 ml-2">/ Inactive Vectors</span>
+                      </h2>
+                    </div>
+                    <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-6">
+                      {STRATEGY_MODULES.filter(m => !getAssessmentStatus(m.id)).map((module) => (
+                        <Card key={module.id} className="bg-white/[0.02] border-white/5 p-6 rounded-xl group opacity-60 hover:opacity-100 transition-all">
+                          <div className="flex justify-between items-start mb-6">
+                            <div className={`p-3 rounded-lg bg-white/5 text-white/20 group-hover:bg-white/10 group-hover:text-white/40 transition-colors`}>
+                              <module.icon size={20} />
+                            </div>
+                            <Badge variant="outline" className="text-[9px] tracking-widest uppercase border-white/10 text-white/20 hidden md:inline-flex">
+                              Pending
+                            </Badge>
+                            <span className="md:hidden text-[10px] font-bold text-white/10 uppercase tracking-widest">
+                              PENDING
+                            </span>
+                          </div>
+                          <h3 className="text-lg font-bold text-white/40 group-hover:text-white/60 transition-colors mb-2 font-big-shoulders tracking-widest uppercase italic">{module.title}</h3>
+                          <p className="hidden md:block text-xs text-white/20 mb-6 leading-relaxed">
+                            No intelligence data found for this vector.
+                          </p>
+                          <Button 
+                            size="sm" 
+                            onClick={() => handleForceGenerate(module.id)}
+                            className="w-full bg-white/5 hover:bg-white/10 text-white/40 hover:text-white border border-white/10 text-[10px] font-bold tracking-widest uppercase h-10"
+                          >
+                            <Bot className="mr-2 h-3.5 w-3.5" /> INITIALIZE
+                          </Button>
+                        </Card>
+                      ))}
+                    </div>
                   </div>
-                </Card>
-              ))}
-              {project.deliverables.length === 0 && (
-                <div className="col-span-full border-2 border-dashed border-white/5 rounded-xl p-12 flex flex-col items-center justify-center gap-4 text-white/20">
-                  <FileText size={48} strokeWidth={1} />
-                  <p className="text-sm italic uppercase tracking-widest">The vault is currently empty.</p>
+                </div>
+              )}
+
+              {/* Task 3: Expanded Vault Mode */}
+              {mode === 'VAULT' && (
+                <div className="space-y-6 md:space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                  <div className="flex items-center gap-2 mb-4 md:mb-6">
+                    <div className="w-1.5 h-1.5 rounded-full bg-coral/50 md:bg-coral" />
+                    <h2 className="text-[10px] md:text-xs font-bold tracking-[0.2em] md:tracking-widest text-white/40 md:text-white/60 uppercase font-big-shoulders italic">
+                      The Vault <span className="text-white/10 md:text-white/20 ml-2">/ Asset List</span>
+                    </h2>
+                  </div>
+                  <div className="space-y-2 md:space-y-3">
+                    {project.deliverables.length > 0 ? project.deliverables.map((asset: any) => {
+                      const dimension = getDimensionFromTitle(asset.title)
+                      const isStrategyBrief = asset.title.toLowerCase().includes('strategy brief') || asset.type?.toLowerCase().includes('brief')
+                      
+                      return (
+                        <div key={asset.id} className="flex items-center justify-between p-3 md:p-4 bg-white/[0.03] border border-white/5 rounded-xl hover:bg-white/[0.05] transition-all group">
+                          <div className="flex items-center gap-3 md:gap-4">
+                            <div className="p-2 md:p-2.5 bg-white/5 rounded-lg text-white/30 md:text-white/40 group-hover:text-coral transition-colors">
+                              {asset.type?.toLowerCase().includes('image') ? <ImageIcon size={18} className="md:w-5 md:h-5" /> : <FileText size={18} className="md:w-5 md:h-5" />}
+                            </div>
+                            <div className="flex flex-col">
+                              <h4 className="text-sm font-bold text-white/90 group-hover:text-white leading-tight">{asset.title}</h4>
+                              <p className="hidden md:block text-[10px] text-white/20 uppercase tracking-widest mt-0.5">
+                                Uploaded {format(new Date(asset.createdAt), "MMM dd, yyyy")}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3 md:gap-6">
+                            <Badge variant="outline" className={cn(
+                              "text-[8px] md:text-[9px] tracking-widest uppercase h-5 md:h-6 px-2 md:px-3", 
+                              getStatusColor(asset.status)
+                            )}>
+                              {asset.status}
+                            </Badge>
+                            <Button 
+                              variant="ghost" 
+                              onClick={() => {
+                                if (isStrategyBrief && dimension) {
+                                  const session = getAssessmentStatus(dimension)
+                                  if (session) openReview(session, false, true)
+                                }
+                              }}
+                              className="text-white/40 hover:text-white text-[9px] md:text-[10px] font-bold tracking-widest uppercase group/btn border border-white/5 md:border-transparent hover:border-white/10 transition-all px-3 md:px-4 h-7 md:h-8 rounded-lg bg-white/5 md:bg-transparent"
+                            >
+                              <span className="hidden md:inline">View Details</span>
+                              <span className="md:hidden">View</span>
+                              <ChevronRight size={12} className="ml-1 group-hover/btn:translate-x-1 transition-transform md:w-3.5 md:h-3.5" />
+                            </Button>
+                          </div>
+                        </div>
+                      )
+                    }) : (
+                      <div className="py-20 flex flex-col items-center justify-center border-2 border-dashed border-white/5 rounded-2xl text-white/10">
+                        <ShieldCheck size={48} strokeWidth={1} />
+                        <p className="mt-4 text-xs font-bold tracking-widest uppercase">The vault is empty</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Roadmap Mode */}
+              {mode === 'ROADMAP' && (
+                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                  <div className="flex items-center gap-2 mb-6">
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+                    <h2 className="text-xs font-bold tracking-widest text-white/60 uppercase font-big-shoulders italic">
+                      Strategic Roadmap <span className="text-white/20 ml-2">/ Timeline</span>
+                    </h2>
+                  </div>
+                  <div className="relative pl-8 border-l border-white/5 space-y-12 ml-4">
+                    {project.timelineEvents.map((event: any) => (
+                      <div key={event.id} className="relative">
+                        <div className="absolute -left-[41px] top-1 w-4 h-4 rounded-full bg-portal-bg border-2 border-teal shadow-[0_0_10px_rgba(46,211,198,0.3)]" />
+                        <div className="bg-white/[0.02] border border-white/5 p-6 rounded-2xl">
+                          <div className="flex justify-between items-start mb-2">
+                            <span className="text-[10px] font-black text-teal tracking-[0.2em] uppercase font-mono">
+                              {format(new Date(event.date), "dd MMM yyyy")}
+                            </span>
+                            <Badge className="bg-white/5 text-white/40 border-none text-[8px] tracking-widest uppercase">
+                              {event.type}
+                            </Badge>
+                          </div>
+                          <h4 className="text-lg font-bold text-white mb-2">{event.description}</h4>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* COMMS Mode (Mobile Only) */}
+              {mode === 'COMMS' && (
+                <div className="lg:hidden flex flex-col h-[calc(100vh-8rem)] animate-in fade-in slide-in-from-bottom-2 duration-500">
+                  <div className="flex items-center gap-2 mb-6">
+                    <div className="w-1.5 h-1.5 rounded-full bg-coral" />
+                    <h2 className="text-xs font-bold tracking-widest text-white/60 uppercase font-big-shoulders italic">
+                      Comm Link <span className="text-white/20 ml-2">/ Direct Transmission</span>
+                    </h2>
+                  </div>
+                  <div className="flex-1 flex flex-col overflow-hidden bg-white/[0.02] rounded-2xl border border-white/5">
+                    <ScrollArea className="flex-1 px-4">
+                      <div className="flex flex-col gap-4 py-6">
+                        {messages.map((msg: any) => (
+                          <div key={msg.id} className={cn("flex flex-col gap-1.5", msg.senderId === currentUser.id ? "items-end" : "items-start")}>
+                            <div className="flex items-center gap-2 px-1">
+                              <span className="text-[9px] font-bold text-white/20 uppercase tracking-widest">{msg.sender?.name?.split(' ')[0] || "User"}</span>
+                              <span className="text-[8px] text-white/10 font-mono">{format(new Date(msg.createdAt), "HH:mm")}</span>
+                            </div>
+                            <div className={cn(
+                              "max-w-[90%] px-4 py-3 rounded-xl text-[13px] leading-relaxed",
+                              msg.senderId === currentUser.id 
+                                ? "bg-coral text-white rounded-tr-none shadow-lg shadow-coral/10" 
+                                : "bg-white/5 text-white/70 rounded-tl-none border border-white/5"
+                            )}>
+                              {msg.content}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </ScrollArea>
+                    <div className="p-4 bg-black/40 border-t border-white/5">
+                      <div className="relative">
+                        <Input 
+                          value={message}
+                          onChange={(e) => setMessage(e.target.value)}
+                          onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                          placeholder="TRANSMIT..."
+                          className="bg-white/5 border-white/10 rounded-full h-11 pl-5 pr-12 text-[11px] font-bold tracking-widest text-white focus:border-coral/50 transition-all placeholder:text-white/10"
+                        />
+                        <Button 
+                          size="icon" 
+                          onClick={handleSendMessage} 
+                          disabled={isSending}
+                          className="absolute right-1 top-1 w-9 h-9 rounded-full bg-coral hover:bg-coral/90 text-white"
+                        >
+                          {isSending ? <RefreshCw size={14} className="animate-spin" /> : <Send size={14} />}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
           </ScrollArea>
-        </section>
+        </div>
 
-        {/* Column 3: The Comm Link (Messaging) */}
-        <section className="w-1/3 flex flex-col gap-6 overflow-hidden bg-white/2 border-l border-white/5 -mr-8 px-8">
-          <div className="flex items-center gap-2 mb-2 pt-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-white/40" />
-            <h2 className="text-sm font-bold tracking-widest text-white/60 uppercase font-big-shoulders italic">
-              COMM LINK <span className="text-white/20 ml-2">/ CHAT</span>
-            </h2>
-          </div>
+        {/* --- THE SIDECAR (Cols 10-12) --- */}
+        <div className="hidden lg:flex col-span-3 flex-col bg-white/[0.01] overflow-hidden">
+          
+          {/* Messaging / Comm Link */}
+          <div className="flex-1 flex flex-col overflow-hidden border-b border-white/5">
+            <div className="h-16 flex items-center px-6 border-b border-white/5 gap-3">
+              <MessageSquare size={18} className="text-white/40" />
+              <h3 className="text-[11px] font-black tracking-[0.2em] text-white/60 uppercase font-big-shoulders italic">Comm Link</h3>
+            </div>
+            
+            <ScrollArea className="flex-1 px-6">
+              <div className="flex flex-col gap-4 py-6">
+                {messages.map((msg: any) => (
+                  <div key={msg.id} className={cn("flex flex-col gap-1.5", msg.senderId === currentUser.id ? "items-end" : "items-start")}>
+                    <div className="flex items-center gap-2 px-1">
+                      <span className="text-[9px] font-bold text-white/20 uppercase tracking-widest">{msg.sender?.name?.split(' ')[0] || "User"}</span>
+                      <span className="text-[8px] text-white/10 font-mono">{format(new Date(msg.createdAt), "HH:mm")}</span>
+                    </div>
+                    <div className={cn(
+                      "max-w-[90%] px-4 py-3 rounded-xl text-[13px] leading-relaxed",
+                      msg.senderId === currentUser.id 
+                        ? "bg-coral text-white rounded-tr-none shadow-lg shadow-coral/10" 
+                        : "bg-white/5 text-white/70 rounded-tl-none border border-white/5"
+                    )}>
+                      {msg.content}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
 
-          <ScrollArea className="flex-1 pr-4">
-            <div className="flex flex-col gap-6 py-4">
-              {messages.map((msg: any) => (
-                <div 
-                  key={msg.id} 
-                  className={`flex flex-col gap-2 ${msg.senderId === currentUser.id ? 'items-end' : 'items-start'}`}
+            <div className="p-4 bg-black/20">
+              <div className="relative">
+                <Input 
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                  placeholder="TRANSMIT..."
+                  className="bg-white/5 border-white/10 rounded-full h-11 pl-5 pr-12 text-[11px] font-bold tracking-widest text-white focus:border-coral/50 transition-all placeholder:text-white/10"
+                />
+                <Button 
+                  size="icon" 
+                  onClick={handleSendMessage} 
+                  disabled={isSending}
+                  className="absolute right-1 top-1 w-9 h-9 rounded-full bg-coral hover:bg-coral/90 text-white"
                 >
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">
-                      {msg.sender?.name || "Unknown"}
-                    </span>
-                    <span className="text-[9px] text-white/20 font-mono">
-                      {format(new Date(msg.createdAt), "HH:mm")}
-                    </span>
-                  </div>
-                  <div className={`max-w-[85%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${
-                    msg.senderId === currentUser.id 
-                      ? 'bg-coral text-white rounded-tr-none font-medium' 
-                      : 'bg-white/5 text-white/80 rounded-tl-none border border-white/5'
-                  }`}>
-                    {msg.content}
-                  </div>
-                </div>
-              ))}
-              {project.messages.length === 0 && (
-                <div className="flex flex-col items-center justify-center gap-4 py-20 text-white/10">
-                  <Send size={32} strokeWidth={1} />
-                  <p className="text-xs italic uppercase tracking-widest">Initialize transmission...</p>
-                </div>
-              )}
-            </div>
-          </ScrollArea>
-
-          <div className="pb-4 pt-2">
-            <div className="relative group">
-              <Input 
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                placeholder="TRANSMIT MESSAGE..." 
-                className="bg-white/5 border-white/10 rounded-full py-6 pl-6 pr-14 text-xs font-bold tracking-widest text-white focus:border-coral/50 transition-all placeholder:text-white/20"
-                disabled={isSending}
-              />
-              <Button 
-                size="sm"
-                onClick={handleSendMessage}
-                disabled={isSending}
-                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full w-10 h-10 bg-coral hover:bg-coral/90 text-white p-0"
-              >
-                {isSending ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Send size={16} />}
-              </Button>
+                  {isSending ? <RefreshCw size={14} className="animate-spin" /> : <Send size={14} />}
+                </Button>
+              </div>
             </div>
           </div>
-        </section>
+
+          {/* Next Up / Milestone */}
+          <div className="p-6 bg-white/[0.02]">
+            <div className="flex items-center gap-2 mb-4">
+              <Clock size={14} className="text-teal" />
+              <h3 className="text-[10px] font-black tracking-[0.2em] text-white/40 uppercase font-big-shoulders italic">Next Milestone</h3>
+            </div>
+            {project.milestones?.[0] ? (
+              <Card className="bg-white/5 border-white/10 p-4 rounded-xl">
+                <div className="flex justify-between items-start mb-2">
+                  <span className="text-[9px] font-bold text-teal tracking-widest uppercase">
+                    {format(new Date(project.milestones[0].date), "MMM dd")}
+                  </span>
+                  <Badge variant="outline" className="border-teal/20 text-teal text-[8px] uppercase tracking-widest px-2">
+                    ACTIVE
+                  </Badge>
+                </div>
+                <h4 className="text-sm font-bold text-white/90 line-clamp-2 leading-tight">{project.milestones[0].title}</h4>
+              </Card>
+            ) : (
+              <div className="text-[10px] text-white/20 italic">No upcoming milestones.</div>
+            )}
+          </div>
+        </div>
       </div>
 
-      {/* Editorial Review Room Dialog */}
+      {/* Editorial Review Dialog (Keep existing functionality but match new UI) */}
       <Dialog open={isReviewOpen} onOpenChange={setIsReviewOpen}>
-        <DialogContent className="max-w-4xl bg-[#0F0F0F] border-white/10 text-white p-0 overflow-hidden">
-          <DialogHeader className="p-8 border-b border-white/5">
-            <div className="flex items-center gap-3 mb-2">
-              <Badge className="bg-teal/20 text-teal border-none text-[10px] uppercase tracking-widest px-3 py-1">
-                Editorial Review
-              </Badge>
-              <DialogTitle className="text-3xl font-big-shoulders font-bold tracking-widest uppercase italic">
-                {reviewSession?.assessmentType.toUpperCase()} Narrative
-              </DialogTitle>
+        <DialogContent className="max-w-4xl h-[100vh] md:h-auto bg-[#0F0F0F] border-white/10 text-white p-0 overflow-hidden font-inter">
+          <DialogHeader className="p-6 md:p-8 border-b border-white/5">
+            <div className="flex items-center justify-between w-full">
+              <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3 mb-2">
+                <span className="md:hidden text-[10px] font-bold text-white/20 uppercase tracking-[0.2em]">EDITORIAL REVIEW</span>
+                <Badge className={cn(
+                  "border-none text-[9px] md:text-[10px] uppercase tracking-widest px-2 md:px-3 py-0.5 md:py-1 w-fit",
+                  isRevisionMode ? "bg-coral/20 text-coral" : "bg-teal/20 text-teal"
+                )}>
+                  {isRevisionMode ? 'Revision Mode' : 'Editorial Review'}
+                </Badge>
+                <DialogTitle className="text-2xl md:text-3xl font-big-shoulders font-bold tracking-widest uppercase italic">
+                  {reviewSession?.assessmentType.toUpperCase()} NARRATIVE
+                </DialogTitle>
+              </div>
+              
+              {currentUser.role === 'ADMIN' && reviewSession?.status.toUpperCase() === 'PUBLISHED' && !isRevisionMode && (
+                <Button 
+                  variant="outline" 
+                  onClick={handleUnlock}
+                  className="border-white/10 text-white/40 hover:text-white hover:border-coral/50 hover:bg-coral/5 transition-all text-[10px] font-bold tracking-widest uppercase md:px-4"
+                  size={viewOnly ? "icon" : "default"}
+                >
+                  <Lock size={14} className={cn(viewOnly ? "" : "mr-2")} />
+                  <span className="hidden md:inline">Unlock for Revision</span>
+                </Button>
+              )}
+              {isRevisionMode && (
+                <Badge variant="outline" className="border-coral/50 text-coral animate-pulse text-[10px] font-bold tracking-widest uppercase px-4 py-1">
+                  <Unlock size={14} className="mr-2" /> Live Editing
+                </Badge>
+              )}
             </div>
-            <DialogDescription className="text-white/40 font-inter italic">
-              Review and finalize the strategic brief for {project.client?.name}.
+            <DialogDescription className="text-white/40 italic text-xs md:text-sm hidden md:block">
+              {isRevisionMode 
+                ? "You are currently editing a published asset. Changes will not be live until you Re-Publish." 
+                : `Refine the strategic synthesis for ${project.client?.name || 'Partner'}.`}
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex h-[600px]">
-            {/* Left: AI Summary & Scoring (Read Only) */}
-            <div className="w-1/2 border-r border-white/5 p-8 overflow-y-auto bg-black/20">
-              <div className="space-y-8">
-                <div>
-                  <div className="flex justify-between items-center mb-4">
-                    <h4 className="text-[10px] font-bold text-white/20 uppercase tracking-[0.2em]">Draft Intelligence</h4>
-                    {isGenerating && (
-                      <div className="flex items-center gap-2 text-teal animate-pulse">
-                        <RefreshCw size={10} className="animate-spin" />
-                        <span className="text-[8px] font-bold uppercase tracking-widest">Brain Working...</span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="space-y-4">
-                    {isGenerating ? (
-                      <div className="space-y-3">
-                        {[1, 2, 3, 4, 5].map(i => (
-                          <div key={i} className="h-4 bg-white/5 rounded animate-pulse" style={{ width: `${Math.random() * 40 + 60}%` }} />
-                        ))}
-                      </div>
-                    ) : (
-                      reviewSession?.briefSummary ? (
-                        (() => {
-                          try {
-                            const insights = JSON.parse(reviewSession.briefSummary);
-                            if (Array.isArray(insights)) {
-                              return insights.map((insight: string, idx: number) => (
-                                <p key={idx} className="text-sm text-white/80 leading-relaxed font-serif italic">
-                                  "{insight}"
-                                </p>
-                              ));
-                            }
-                            return <p className="text-sm text-white/80 leading-relaxed font-serif italic">"{reviewSession.briefSummary}"</p>;
-                          } catch (e) {
-                            return <p className="text-sm text-white/80 leading-relaxed font-serif italic">"{reviewSession.briefSummary}"</p>;
-                          }
-                        })()
-                      ) : (
-                        <p className="text-xs text-white/20 italic">No intelligence data generated yet.</p>
-                      )
-                    )}
-                  </div>
-                </div>
-
-                <div className="pt-8 border-t border-white/5">
-                  <h4 className="text-[10px] font-bold text-white/20 uppercase tracking-[0.2em] mb-4">Internal Scoring</h4>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="p-4 bg-white/5 rounded-xl border border-white/5">
-                      <div className="text-[9px] text-white/20 uppercase tracking-widest mb-1">Intelligence Score</div>
-                      <div className="text-2xl font-bold text-teal">{reviewSession?.intelligenceScore}/100</div>
-                    </div>
-                    <div className="p-4 bg-white/5 rounded-xl border border-white/5">
-                      <div className="text-[9px] text-white/20 uppercase tracking-widest mb-1">Status</div>
-                      <div className="text-xs font-bold text-white uppercase tracking-widest">{reviewSession?.status}</div>
-                    </div>
-                  </div>
-                </div>
+          <div className="flex flex-col md:flex-row h-[calc(100vh-140px)] md:h-[550px] overflow-y-auto md:overflow-hidden pb-[120px] md:pb-0">
+            {/* Task 1: Re-stacking for mobile (Certified Narrative on top) */}
+            <div className="order-1 md:order-2 w-full md:w-1/2 p-6 md:p-8 flex flex-col border-b md:border-b-0 md:border-l border-white/5">
+              <div className="flex items-center justify-between mb-4">
+                <Label className={cn(
+                  "text-[10px] font-bold uppercase tracking-[0.2em]",
+                  isRevisionMode ? "text-coral" : "text-teal"
+                )}>
+                  {isRevisionMode ? 'REVISING NARRATIVE' : (viewOnly ? 'Certified Strategy' : 'Certified Narrative')}
+                </Label>
+                {(viewOnly && !isRevisionMode) && (
+                  <Badge className="bg-teal/10 text-teal border-teal/20 text-[8px] uppercase tracking-widest px-2 h-5">
+                    FINAL ASSET
+                  </Badge>
+                )}
+              </div>
+              <div className={cn(
+                "flex-1 rounded-2xl p-6 transition-all min-h-[300px] md:min-h-0",
+                isRevisionMode ? "bg-coral/[0.02] border border-coral/30 shadow-[0_0_20px_rgba(249,111,110,0.05)]" : (
+                  viewOnly ? "bg-teal/[0.02] border border-teal/10" : "bg-white/[0.03] border-white/10 focus-within:border-teal/50"
+                )
+              )}>
+                <Textarea 
+                  name="certifiedNarrative"
+                  value={consultantAnalysis}
+                  onChange={(e) => setConsultantAnalysis(e.target.value)}
+                  readOnly={viewOnly && !isRevisionMode}
+                  className={cn(
+                    "w-full h-full bg-transparent border-none focus-visible:ring-0 p-0 text-sm md:text-base leading-[1.75] font-sans resize-none",
+                    (viewOnly && !isRevisionMode) ? "text-white/90" : "text-white/70"
+                  )}
+                  placeholder="Finalize the narrative for the Partner Vault..."
+                />
               </div>
             </div>
 
-            {/* Right: Consultant Analysis (Editable) */}
-            <div className="w-1/2 p-8 flex flex-col gap-6">
-              <div className="flex-1 flex flex-col gap-4">
-                <Label htmlFor="consultant-analysis" className="text-[10px] font-bold text-teal uppercase tracking-[0.2em]">
-                  {viewOnly ? 'Published Narrative' : 'Consultant Analysis (Editorial)'}
-                </Label>
-                {viewOnly ? (
-                  <div className="flex-1 bg-white/2 border border-white/5 rounded-xl p-4 text-sm leading-relaxed text-white/80 overflow-y-auto font-serif italic">
-                    {reviewSession?.certifiedNarrative || reviewSession?.consultantAnalysis || "No editorial narrative available."}
-                  </div>
-                ) : (
-                  <Textarea 
-                    id="consultant-analysis"
-                    value={consultantAnalysis}
-                    onChange={(e) => setConsultantAnalysis(e.target.value)}
-                    placeholder="Refine the AI synthesis into a client-ready narrative... This will be saved as the 'Certified Narrative' in the Vault."
-                    className="flex-1 resize-none bg-white/2 border-white/5 focus:border-teal/50 transition-colors p-4 text-sm leading-relaxed"
-                  />
-                )}
-              </div>
-
-              {!viewOnly && (
-                <div className="p-6 bg-teal/5 border border-teal/20 rounded-2xl">
-                  <div className="flex gap-3 items-start">
-                    <ShieldCheck className="text-teal shrink-0" size={20} />
-                    <div>
-                      <h5 className="text-[11px] font-bold text-white uppercase tracking-wider mb-1">Ready for the Vault?</h5>
-                      <p className="text-[10px] text-white/40 leading-relaxed">
-                        Publishing will move this into the Partner's Vault as a certified Mini-Brief.
-                      </p>
-                    </div>
+            <div className="order-2 md:order-1 w-full md:w-1/2 border-r border-white/5 p-6 md:p-8 overflow-y-auto bg-black/20 opacity-60 md:opacity-100">
+              <div className="space-y-6">
+                <div>
+                  <h4 className="text-[9px] md:text-[10px] font-bold text-white/20 uppercase tracking-[0.2em] mb-4">AI Draft Intelligence (Reference)</h4>
+                  <div className="space-y-4">
+                    {isGenerating ? (
+                      <div className="space-y-3 animate-pulse">
+                        {[1,2,3,4].map(i => <div key={i} className="h-4 bg-white/5 rounded w-full" />)}
+                      </div>
+                    ) : (
+                      <div className="text-xs md:text-sm text-white/50 md:text-white/70 leading-relaxed font-serif italic space-y-4">
+                        {reviewSession?.briefSummary ? JSON.parse(reviewSession.briefSummary).map((s: string, i: number) => (
+                          <p key={i}>"{s}"</p>
+                        )) : "Initializing intelligence..."}
+                      </div>
+                    )}
                   </div>
                 </div>
-              )}
+              </div>
             </div>
           </div>
 
-          <DialogFooter className="p-8 border-t border-white/5 bg-black/40">
-            <div className="flex-1 flex flex-col items-start gap-1">
-              {(!project?.id || !reviewSession?.assessmentType) && !viewOnly && (
-                <span className="text-[10px] text-red-400 font-bold uppercase tracking-widest animate-pulse">
-                  Internal Error: Project context missing
-                </span>
-              )}
-            </div>
-            <Button 
-              variant="ghost" 
-              onClick={() => setIsReviewOpen(false)}
-              className="text-white/40 hover:text-white uppercase tracking-widest text-[10px] font-bold"
-            >
-              {viewOnly ? 'Close' : 'Cancel'}
-            </Button>
-            {!viewOnly && (
+          <DialogFooter className="fixed md:static bottom-0 left-0 right-0 p-6 md:p-8 border-t border-white/5 bg-black/60 md:bg-black/40 backdrop-blur-xl md:backdrop-blur-none z-50">
+            <Button variant="ghost" onClick={() => setIsReviewOpen(false)} className="text-white/30 hover:text-white uppercase tracking-widest text-[10px] font-bold">Cancel</Button>
+            {(!viewOnly || isRevisionMode) && (
               <Button 
                 onClick={handlePublish}
-                disabled={isPublishing || isGenerating || !project?.id || !reviewSession?.assessmentType}
-                className="bg-teal hover:bg-teal/90 text-black uppercase tracking-[0.2em] text-[10px] font-black h-12 px-10 rounded-full ml-4 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isPublishing ? (
-                  <>
-                    <RefreshCw className="w-4 h-4 animate-spin mr-2" />
-                    Publishing...
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle className="w-4 h-4 mr-2" />
-                    Finalize & Publish to Partner
-                  </>
+                disabled={isPublishing || isGenerating}
+                className={cn(
+                  "uppercase tracking-[0.2em] text-[10px] font-black h-12 px-6 md:px-10 rounded-full ml-4 flex-1 md:flex-none",
+                  isRevisionMode ? "bg-coral hover:bg-coral/90 text-white" : "bg-teal hover:bg-teal/90 text-black"
                 )}
+              >
+                {isPublishing ? <RefreshCw className="animate-spin mr-2" /> : <CheckCircle className="mr-2" size={16} />}
+                <span className="hidden md:inline">{isRevisionMode ? 'Update & Re-Publish' : 'Finalize & Publish'}</span>
+                <span className="md:hidden">FINALIZE</span>
               </Button>
             )}
           </DialogFooter>

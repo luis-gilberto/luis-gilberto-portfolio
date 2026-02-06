@@ -14,8 +14,10 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useToast } from "@/components/providers/toast-provider"
 
 export function AddClientModal({ onClientAdded }: { onClientAdded: () => void }) {
+  const { toast } = useToast()
   const [open, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
@@ -65,10 +67,11 @@ export function AddClientModal({ onClientAdded }: { onClientAdded: () => void })
         timeline: "3-6 months",
         companySize: "50-200 employees",
       })
+      toast("CLIENT ADDED", "New lead record successfully created.", "success")
       onClientAdded()
     } catch (error) {
       console.error(error)
-      alert("Error creating client")
+      toast("ERROR", "Failed to create client record. Please try again.", "error")
     } finally {
       setIsLoading(false)
     }

@@ -139,17 +139,17 @@ export default function Dashboard() {
       
       {/* 1. HERO SECTION */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-white/5 pb-12">
-        <div className="space-y-4">
-          <div className="flex items-center gap-3">
+        <div className="space-y-4 w-full">
+          <div className="hidden md:flex items-center gap-3">
             <UserRoleBadge />
             <span className="text-[10px] font-bold tracking-[0.2em] text-white/20 uppercase">Systems Online</span>
           </div>
-          <h1 className="text-5xl md:text-6xl font-bold text-white font-big-shoulders tracking-tight drop-shadow-md">
-            Welcome back, <span className="text-coral italic uppercase">{session?.user?.name?.split(' ')[0] || 'Partner'}</span>.
+          <h1 className="text-[42px] md:text-6xl font-bold text-white font-big-shoulders tracking-widest uppercase italic leading-none mt-10 md:mt-0">
+            Command <span className="text-white/10">Center</span>
           </h1>
-          <p className="text-white/40 max-w-xl text-lg font-inter leading-relaxed">
+          <p className="text-white/40 max-w-xl text-lg font-inter leading-relaxed hidden md:block">
             {activeProject?.status === 'DISCOVERY'
-              ? "You are currently in the Strategic Discovery phase. Complete all assessments to unlock your full roadmap."
+              ? "You are currently in the DISCOVERY phase. Complete all assessments to unlock your full roadmap."
               : hasProjects
                 ? "Your strategic ecosystem is active. Monitor progress and access intelligence assets below."
                 : "Ready to initialize? Your strategic journey begins with the StrategyIQ assessment."}
@@ -190,7 +190,7 @@ export default function Dashboard() {
                     <div className="space-y-6">
                       <div className="flex items-center justify-between">
                         <Badge className="bg-coral/10 text-coral border border-coral/20 text-[10px] uppercase tracking-widest px-3 py-1">
-                          Strategic Discovery Phase
+                          PHASE: DISCOVERY
                         </Badge>
                         <span className="text-xs font-mono text-white/40">PROGRESS: {discoveryProgress}/4</span>
                       </div>
@@ -227,7 +227,7 @@ export default function Dashboard() {
                       </div>
                     </div>
 
-                    <Link href="/strategyiq" className="flex items-center gap-4 group/btn w-fit">
+                    <Link href="/strategy-iq" className="flex items-center gap-4 group/btn w-fit">
                       <div className="w-12 h-12 rounded-full bg-coral flex items-center justify-center text-white group-hover/btn:scale-110 transition-transform shadow-lg shadow-coral/20">
                         <ArrowRight size={20} />
                       </div>
@@ -301,8 +301,8 @@ export default function Dashboard() {
                 Complete your StrategyIQ assessment to initialize your first project thread.
               </p>
             </div>
-            <Link href="/strategyiq" className="bg-coral hover:bg-coral/90 text-white px-10 py-4 rounded-full text-xs font-bold uppercase tracking-[0.2em] transition-all shadow-lg shadow-coral/20">
-              Enter Discovery Engine
+            <Link href="/strategy-iq" className="bg-coral hover:bg-coral/90 text-white px-10 py-4 rounded-full text-xs font-bold uppercase tracking-[0.2em] transition-all shadow-lg shadow-coral/20">
+              Enter Strategy Engine
             </Link>
           </div>
         )}
@@ -371,11 +371,7 @@ export default function Dashboard() {
         </div>
 
         <Link 
-          href={
-            hasAssessment && latestAssessment 
-              ? `/strategy-iq/${activeProject?.id || 'default'}/${latestAssessment.assessment_type}/results`
-              : `/strategy-iq/${activeProject?.id || 'default'}/gtm/start`
-          } 
+          href="/strategy-iq" 
           className="group block"
         >
           <div className="bg-[#0A0A0A]/80 backdrop-blur-2xl border border-white/20 p-8 rounded-3xl hover:bg-[#0A0A0A]/90 transition-all flex flex-col md:flex-row justify-between items-center gap-8 border-l-4 border-l-coral shadow-xl">
@@ -396,7 +392,7 @@ export default function Dashboard() {
             </div>
             
             <div className="flex items-center gap-3 text-xs font-bold text-coral uppercase tracking-[0.2em]">
-              {hasAssessment ? "View Results" : "Continue Strategic Intake"}
+              {hasAssessment ? "View Results" : "Continue Strategy Engine"}
               <ArrowRight size={16} />
             </div>
           </div>
