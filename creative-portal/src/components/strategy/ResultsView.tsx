@@ -22,6 +22,8 @@ import { useRouter } from 'next/navigation'
 import gsap from 'gsap'
 
 import { UserRoleBadge } from '@/components/ui/UserRoleBadge'
+import ReactMarkdown from 'react-markdown'
+import { safeJsonParse } from '@/lib/json-utils'
 
 interface ResultsViewProps {
   session: any
@@ -48,7 +50,7 @@ export function ResultsView({
     }
   }, [userRole, projectId, dimension, router])
   
-  const responses = JSON.parse(session.responses || '{}') as Record<string, number>
+  const responses = safeJsonParse(session.responses, {}) as Record<string, number>
   const questions = assessmentQuestions[dimension as AssessmentCategory] || []
   const score = session.intelligenceScore || 0
 
@@ -58,31 +60,25 @@ export function ResultsView({
   const getNarrative = () => {
     // 1. Prefer Certified Narrative if published
     if (isPublished && session.certifiedNarrative) {
-      try {
-        const parsed = JSON.parse(session.certifiedNarrative)
-        if (Array.isArray(parsed)) return parsed
-      } catch (e) {
-        // Not JSON, handle as plain text
-      }
-      
-      // Split by double newlines or single newlines if it's a plain string
-      return session.certifiedNarrative.split(/\n\n+/).filter(Boolean)
+      const parsed = safeJsonParse(session.certifiedNarrative)
+      if (typeof parsed === 'string') return parsed
+      if (parsed && typeof parsed === 'object') return Object.values(parsed).join('\n\n')
+      return ""
     }
 
     // 2. Check if we have a pre-saved summary in the dedicated briefSummary field
     if (session.briefSummary) {
-      try {
-        const parsed = JSON.parse(session.briefSummary)
-        if (Array.isArray(parsed)) return parsed
-      } catch (e) {
-        // Not JSON
-      }
-      return session.briefSummary.split(/\n\n+/).filter(Boolean)
+      const parsed = safeJsonParse(session.briefSummary)
+      if (typeof parsed === 'string') return parsed
+      if (parsed && typeof parsed === 'object') return Object.values(parsed).join('\n\n')
+      return ""
     }
 
     // 2. Check if we have a pre-saved summary in the enriched responses (the hack)
-    if (responses.__briefSummary && Array.isArray(responses.__briefSummary)) {
-      return responses.__briefSummary;
+    if (responses.__briefSummary) {
+      return Array.isArray(responses.__briefSummary) 
+        ? responses.__briefSummary.join('\n\n')
+        : responses.__briefSummary;
     }
 
     // 3. Fallback to on-the-fly generation
@@ -98,7 +94,7 @@ export function ResultsView({
       }
     })
     
-    return insights
+    return insights.join('\n\n')
   }
 
   const narrative = getNarrative()
@@ -120,7 +116,23 @@ export function ResultsView({
   }, [])
 
   return (
-    <div ref={containerRef} className="max-w-5xl mx-auto px-6 space-y-12">
+    <div ref={containerRef} className="max-w-3xl mx-auto px-6 space-y-12 pb-20">
+      {/* Centered Brand Header */}
+      <div className="text-center space-y-2 pt-12">
+        <h3 className="text-[10px] font-black tracking-[0.4em] text-white/20 uppercase font-big-shoulders italic">
+          Luis Gilberto / Portal
+        </h3>
+        <div className="flex items-center justify-center gap-2">
+          <Badge className="bg-coral/20 text-coral border-none text-[9px] uppercase tracking-widest px-3 py-1">
+            Partner Briefing
+          </Badge>
+          <div className="w-1 h-1 rounded-full bg-white/20" />
+          <span className="text-[9px] font-bold tracking-widest text-white/40 uppercase">
+            Confidential
+          </span>
+        </div>
+      </div>
+
       {/* Transparency Layer Header */}
       <div className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10">
         <div className="flex items-center gap-4">
@@ -195,23 +207,21 @@ export function ResultsView({
             </div>
 
             <div className="space-y-10">
-              {narrative.length > 0 ? (
-                narrative.map((insight: string, idx: number) => (
-                  <motion.div 
-                    key={idx}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.1 }}
-                    className={cn(
-                      "relative pl-8 md:pl-10 border-l",
-                      isPublished ? "border-teal/30" : "border-white/5"
-                    )}
-                  >
-                    <p className="text-lg md:text-xl text-zinc-300 leading-relaxed font-serif italic opacity-90">
-                      {insight}
-                    </p>
-                  </motion.div>
-                ))
+              {narrative ? (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={cn(
+                    "relative pl-8 md:pl-10 border-l",
+                    isPublished ? "border-teal/30" : "border-white/5"
+                  )}
+                >
+                  <div className="prose prose-invert prose-sm md:prose-base prose-p:leading-relaxed prose-pre:whitespace-pre-wrap whitespace-pre-wrap max-w-none text-zinc-300 prose-p:mb-6 prose-strong:text-white prose-ul:list-disc prose-ul:ml-6 prose-ul:mb-6 prose-ul:space-y-2 prose-li:pl-2 prose-ol:list-decimal prose-ol:ml-6 prose-ol:mb-6 prose-ol:space-y-2 prose-li:marker:text-teal">
+                    <ReactMarkdown>
+                      {narrative}
+                    </ReactMarkdown>
+                  </div>
+                </motion.div>
               ) : (
                 <p className="text-zinc-500 italic text-lg font-serif">No strategic insights available for this session.</p>
               )}

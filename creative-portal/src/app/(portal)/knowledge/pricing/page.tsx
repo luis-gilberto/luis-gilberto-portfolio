@@ -5,6 +5,7 @@ import styles from './pricing.module.css';
 import { Search, ChevronDown, Copy, Calculator, Rocket, Target, Diamond } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
+import { useToast } from '@/components/providers/toast-provider';
 
 const sections = [
   { id: 'overview', label: 'Quick Reference' },
@@ -26,6 +27,7 @@ const searchData = [
 
 export default function PricingKnowledgeBase() {
   const { data: session, status } = useSession();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('overview');
   const [searchTerm, setSearchTerm] = useState('');
   const [roiResult, setRoiResult] = useState<any>(null);
@@ -50,7 +52,7 @@ export default function PricingKnowledgeBase() {
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
-    alert("Script copied to clipboard!");
+    toast("INTELLIGENCE SECURED", "Script copied to strategist clipboard.", "success");
   };
 
   const calculateROI = (e: React.FormEvent) => {

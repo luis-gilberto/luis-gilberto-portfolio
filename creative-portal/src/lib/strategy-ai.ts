@@ -1,6 +1,7 @@
 import OpenAI from 'openai'
 import { prisma } from '@/lib/prisma'
 import { assessmentQuestions, AssessmentCategory } from '@/lib/strategyData'
+import { safeJsonParse } from '@/lib/json-utils'
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || 'mock-key',
@@ -8,7 +9,7 @@ const openai = new OpenAI({
 
 export async function generateStrategyNarrative(assessmentSession: any) {
   try {
-    const responses = JSON.parse(assessmentSession.responses || '{}')
+    const responses = safeJsonParse(assessmentSession.responses, {})
     const currentDimension = assessmentSession.assessmentType as AssessmentCategory
     const questions = assessmentQuestions[currentDimension] || []
 
@@ -58,7 +59,7 @@ export async function generateStrategyNarrative(assessmentSession: any) {
         const content = completion.choices[0].message.content
         
         if (content) {
-          const parsed = JSON.parse(content)
+          const parsed = safeJsonParse(content, {})
           const insights = parsed.insights || parsed.summary || (Array.isArray(parsed) ? parsed : Object.values(parsed)[0])
           if (Array.isArray(insights)) {
             generatedSummary = JSON.stringify(insights)

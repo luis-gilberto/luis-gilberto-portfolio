@@ -46,6 +46,7 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
+import { EditorialReviewModal } from "@/components/strategy/EditorialReviewModal"
 
 interface ProjectWarRoomProps {
   project: any
@@ -68,7 +69,7 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
   const urlProjectId = params.id as string
   const [mode, setMode] = useState<WorkspaceMode>('INTELLIGENCE')
   const [message, setMessage] = useState("")
-  const [messages, setMessages] = useState(project.messages)
+  const [messages, setMessages] = useState(project.messages || [])
   const [isSending, setIsSending] = useState(false)
   const [showPulse, setShowPulse] = useState(false)
   
@@ -93,7 +94,7 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
       handleGenerateNarrative(session.id)
     }
 
-    if (['COMPLETED', 'MANUAL_REVIEW'].includes(session.status.toUpperCase()) && !readOnly) {
+    if (session?.status && ['COMPLETED', 'MANUAL_REVIEW'].includes(session.status.toUpperCase()) && !readOnly) {
       try {
         await fetch('/api/assessment/session/update', {
           method: 'POST',
@@ -257,6 +258,7 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
   }
 
   const getStatusColor = (status: string) => {
+    if (!status) return "text-white/30 border-white/10 bg-white/5"
     switch (status.toUpperCase()) {
       case "COMPLETE":
       case "APPROVED":
@@ -277,7 +279,7 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
     const projectStatus = project[statusField]
     const session = (project.assessmentSessions || project.client?.assessmentSessions)?.find(
       (s: any) => s.assessmentType === moduleId && 
-      ['COMPLETED', 'PUBLISHED', 'MANUAL_REVIEW', 'UNDER_REVIEW'].includes(s.status.toUpperCase())
+      ['COMPLETED', 'PUBLISHED', 'MANUAL_REVIEW', 'UNDER_REVIEW'].includes(s.status?.toUpperCase())
     )
     if (projectStatus === 'COMPLETED') {
       return session || { status: 'COMPLETED', assessmentType: moduleId }
@@ -350,7 +352,7 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
                     <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-6">
                       {STRATEGY_MODULES.filter(m => {
                         const s = getAssessmentStatus(m.id)
-                        return s && ['PUBLISHED', 'COMPLETED', 'UNDER_REVIEW', 'MANUAL_REVIEW'].includes(s.status.toUpperCase())
+                        return s && s.status && ['PUBLISHED', 'COMPLETED', 'UNDER_REVIEW', 'MANUAL_REVIEW'].includes(s.status.toUpperCase())
                       }).map((module) => {
                         const session = getAssessmentStatus(module.id)
                         const isPublished = session?.status?.toUpperCase() === 'PUBLISHED'
@@ -364,7 +366,7 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
                               <div className="flex flex-col items-end gap-1">
                                 <Badge variant="outline" className={cn(
                                   "text-[9px] tracking-widest uppercase transition-all duration-500",
-                                  getStatusColor(session.status),
+                                  getStatusColor(session?.status),
                                   (showPulse && isPublished) && "ring-2 ring-teal shadow-[0_0_15px_rgba(46,211,198,0.5)] scale-110",
                                   "hidden md:inline-flex" // Hide secondary status badge on mobile
                                 )}>
@@ -372,7 +374,7 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
                                 </Badge>
                                 {/* Mobile-only muted status label */}
                                 <span className="md:hidden text-[10px] font-bold text-white/20 uppercase tracking-widest">
-                                  {session.status.toUpperCase()}
+                                  {session?.status?.toUpperCase() || 'PENDING'}
                                 </span>
                               </div>
                             </div>
@@ -457,7 +459,7 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
                     </h2>
                   </div>
                   <div className="space-y-2 md:space-y-3">
-                    {project.deliverables.length > 0 ? project.deliverables.map((asset: any) => {
+                    {project.deliverables && project.deliverables.length > 0 ? project.deliverables.map((asset: any) => {
                       const dimension = getDimensionFromTitle(asset.title)
                       const isStrategyBrief = asset.title.toLowerCase().includes('strategy brief') || asset.type?.toLowerCase().includes('brief')
                       
@@ -518,7 +520,7 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
                     </h2>
                   </div>
                   <div className="relative pl-8 border-l border-white/5 space-y-12 ml-4">
-                    {project.timelineEvents.map((event: any) => (
+                    {project.timelineEvents && project.timelineEvents.map((event: any) => (
                       <div key={event.id} className="relative">
                         <div className="absolute -left-[41px] top-1 w-4 h-4 rounded-full bg-portal-bg border-2 border-teal shadow-[0_0_10px_rgba(46,211,198,0.3)]" />
                         <div className="bg-white/[0.02] border border-white/5 p-6 rounded-2xl">
@@ -671,125 +673,24 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
         </div>
       </div>
 
-      {/* Editorial Review Dialog (Keep existing functionality but match new UI) */}
-      <Dialog open={isReviewOpen} onOpenChange={setIsReviewOpen}>
-        <DialogContent className="max-w-4xl h-[100vh] md:h-auto bg-[#0F0F0F] border-white/10 text-white p-0 overflow-hidden font-inter">
-          <DialogHeader className="p-6 md:p-8 border-b border-white/5">
-            <div className="flex items-center justify-between w-full">
-              <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3 mb-2">
-                <span className="md:hidden text-[10px] font-bold text-white/20 uppercase tracking-[0.2em]">EDITORIAL REVIEW</span>
-                <Badge className={cn(
-                  "border-none text-[9px] md:text-[10px] uppercase tracking-widest px-2 md:px-3 py-0.5 md:py-1 w-fit",
-                  isRevisionMode ? "bg-coral/20 text-coral" : "bg-teal/20 text-teal"
-                )}>
-                  {isRevisionMode ? 'Revision Mode' : 'Editorial Review'}
-                </Badge>
-                <DialogTitle className="text-2xl md:text-3xl font-big-shoulders font-bold tracking-widest uppercase italic">
-                  {reviewSession?.assessmentType.toUpperCase()} NARRATIVE
-                </DialogTitle>
-              </div>
-              
-              {currentUser.role === 'ADMIN' && reviewSession?.status.toUpperCase() === 'PUBLISHED' && !isRevisionMode && (
-                <Button 
-                  variant="outline" 
-                  onClick={handleUnlock}
-                  className="border-white/10 text-white/40 hover:text-white hover:border-coral/50 hover:bg-coral/5 transition-all text-[10px] font-bold tracking-widest uppercase md:px-4"
-                  size={viewOnly ? "icon" : "default"}
-                >
-                  <Lock size={14} className={cn(viewOnly ? "" : "mr-2")} />
-                  <span className="hidden md:inline">Unlock for Revision</span>
-                </Button>
-              )}
-              {isRevisionMode && (
-                <Badge variant="outline" className="border-coral/50 text-coral animate-pulse text-[10px] font-bold tracking-widest uppercase px-4 py-1">
-                  <Unlock size={14} className="mr-2" /> Live Editing
-                </Badge>
-              )}
-            </div>
-            <DialogDescription className="text-white/40 italic text-xs md:text-sm hidden md:block">
-              {isRevisionMode 
-                ? "You are currently editing a published asset. Changes will not be live until you Re-Publish." 
-                : `Refine the strategic synthesis for ${project.client?.name || 'Partner'}.`}
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="flex flex-col md:flex-row h-[calc(100vh-140px)] md:h-[550px] overflow-y-auto md:overflow-hidden pb-[120px] md:pb-0">
-            {/* Task 1: Re-stacking for mobile (Certified Narrative on top) */}
-            <div className="order-1 md:order-2 w-full md:w-1/2 p-6 md:p-8 flex flex-col border-b md:border-b-0 md:border-l border-white/5">
-              <div className="flex items-center justify-between mb-4">
-                <Label className={cn(
-                  "text-[10px] font-bold uppercase tracking-[0.2em]",
-                  isRevisionMode ? "text-coral" : "text-teal"
-                )}>
-                  {isRevisionMode ? 'REVISING NARRATIVE' : (viewOnly ? 'Certified Strategy' : 'Certified Narrative')}
-                </Label>
-                {(viewOnly && !isRevisionMode) && (
-                  <Badge className="bg-teal/10 text-teal border-teal/20 text-[8px] uppercase tracking-widest px-2 h-5">
-                    FINAL ASSET
-                  </Badge>
-                )}
-              </div>
-              <div className={cn(
-                "flex-1 rounded-2xl p-6 transition-all min-h-[300px] md:min-h-0",
-                isRevisionMode ? "bg-coral/[0.02] border border-coral/30 shadow-[0_0_20px_rgba(249,111,110,0.05)]" : (
-                  viewOnly ? "bg-teal/[0.02] border border-teal/10" : "bg-white/[0.03] border-white/10 focus-within:border-teal/50"
-                )
-              )}>
-                <Textarea 
-                  name="certifiedNarrative"
-                  value={consultantAnalysis}
-                  onChange={(e) => setConsultantAnalysis(e.target.value)}
-                  readOnly={viewOnly && !isRevisionMode}
-                  className={cn(
-                    "w-full h-full bg-transparent border-none focus-visible:ring-0 p-0 text-sm md:text-base leading-[1.75] font-sans resize-none",
-                    (viewOnly && !isRevisionMode) ? "text-white/90" : "text-white/70"
-                  )}
-                  placeholder="Finalize the narrative for the Partner Vault..."
-                />
-              </div>
-            </div>
-
-            <div className="order-2 md:order-1 w-full md:w-1/2 border-r border-white/5 p-6 md:p-8 overflow-y-auto bg-black/20 opacity-60 md:opacity-100">
-              <div className="space-y-6">
-                <div>
-                  <h4 className="text-[9px] md:text-[10px] font-bold text-white/20 uppercase tracking-[0.2em] mb-4">AI Draft Intelligence (Reference)</h4>
-                  <div className="space-y-4">
-                    {isGenerating ? (
-                      <div className="space-y-3 animate-pulse">
-                        {[1,2,3,4].map(i => <div key={i} className="h-4 bg-white/5 rounded w-full" />)}
-                      </div>
-                    ) : (
-                      <div className="text-xs md:text-sm text-white/50 md:text-white/70 leading-relaxed font-serif italic space-y-4">
-                        {reviewSession?.briefSummary ? JSON.parse(reviewSession.briefSummary).map((s: string, i: number) => (
-                          <p key={i}>"{s}"</p>
-                        )) : "Initializing intelligence..."}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <DialogFooter className="fixed md:static bottom-0 left-0 right-0 p-6 md:p-8 border-t border-white/5 bg-black/60 md:bg-black/40 backdrop-blur-xl md:backdrop-blur-none z-50">
-            <Button variant="ghost" onClick={() => setIsReviewOpen(false)} className="text-white/30 hover:text-white uppercase tracking-widest text-[10px] font-bold">Cancel</Button>
-            {(!viewOnly || isRevisionMode) && (
-              <Button 
-                onClick={handlePublish}
-                disabled={isPublishing || isGenerating}
-                className={cn(
-                  "uppercase tracking-[0.2em] text-[10px] font-black h-12 px-6 md:px-10 rounded-full ml-4 flex-1 md:flex-none",
-                  isRevisionMode ? "bg-coral hover:bg-coral/90 text-white" : "bg-teal hover:bg-teal/90 text-black"
-                )}
-              >
-                {isPublishing ? <RefreshCw className="animate-spin mr-2" /> : <CheckCircle className="mr-2" size={16} />}
-                <span className="hidden md:inline">{isRevisionMode ? 'Update & Re-Publish' : 'Finalize & Publish'}</span>
-                <span className="md:hidden">FINALIZE</span>
-              </Button>
-            )}
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Editorial Review Modal */}
+      <EditorialReviewModal 
+        isOpen={isReviewOpen}
+        onOpenChange={setIsReviewOpen}
+        reviewSession={reviewSession}
+        currentUser={currentUser}
+        project={project}
+        consultantAnalysis={consultantAnalysis}
+        setConsultantAnalysis={setConsultantAnalysis}
+        isRevisionMode={isRevisionMode}
+        setIsRevisionMode={setIsRevisionMode}
+        viewOnly={viewOnly}
+        setViewModeOnly={setViewModeOnly}
+        isGenerating={isGenerating}
+        isPublishing={isPublishing}
+        handleUnlock={handleUnlock}
+        handlePublish={handlePublish}
+      />
     </div>
   )
 }

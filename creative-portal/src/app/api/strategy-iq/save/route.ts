@@ -64,38 +64,18 @@ export async function POST(req: NextRequest) {
     // Task 3: Format briefSummary as plain text (not JSON)
     const briefSummaryText = insights.join('\n\n')
 
-    // Find the project - look for DISCOVERY or ACTIVE status
-    console.log('Saving assessment for project:', projectId);
-    
-    const project = await prisma.project.findFirst({
-      where: { 
-        id: projectId,
-        status: { in: ['ACTIVE', 'DISCOVERY'] }
+    // Force DISCOVERY status for project
+    const project = await prisma.project.update({
+      where: { id: projectId },
+      data: {
+        status: 'DISCOVERY',
+        [`${dimension}Status`]: 'COMPLETED'
       },
       select: { clientId: true, id: true }
     })
 
-    if (!project) {
-      console.error('Project not found or inactive:', projectId);
-      return NextResponse.json({ error: 'No active/discovery project found', projectId }, { status: 404 })
-    }
-
     const actualProjectId = project.id;
-    const clientId = project.clientId;
-
-    if (!clientId) {
-      // Try to find client associated with project or user
-      const projectWithClient = await prisma.project.findUnique({
-        where: { id: actualProjectId },
-        include: { client: true }
-      });
-      
-      if (!projectWithClient?.clientId) {
-        return NextResponse.json({ error: 'Project has no associated Client', projectId: actualProjectId }, { status: 400 })
-      }
-    }
-
-    const actualClientId = clientId || (await prisma.project.findUnique({ where: { id: actualProjectId } }))?.clientId;
+    const actualClientId = project.clientId;
 
     if (!actualClientId) {
       return NextResponse.json({ error: 'Could not resolve Client ID', projectId: actualProjectId }, { status: 400 })
@@ -130,6 +110,22 @@ export async function POST(req: NextRequest) {
         consultantAnalysis: analysis,
       }
     })
+
+    // Log system event for assessment completion
+    try {
+      await prisma.systemEvent?.create({
+        data: {
+          type: 'ASSESSMENT_COMPLETE',
+          message: `Assessment ${dimension.toUpperCase()} completed for project ${actualProjectId}`,
+          metadata: JSON.stringify({ projectId: actualProjectId, dimension, score })
+        }
+      }).catch(() => {
+        // SystemEvent table might not exist yet, ignore if so
+        console.log('SystemEvent table missing, skipping event logging');
+      });
+    } catch (e) {
+      // Ignore
+    }
 
     // Update the Project model status field for this dimension
     const statusField = `${dimension}Status`

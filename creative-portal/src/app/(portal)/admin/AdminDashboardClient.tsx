@@ -7,6 +7,8 @@ import StatsRow from '@/components/dashboard-ui/StatsRow'
 import QuickActions from '@/components/dashboard-ui/QuickActions'
 import RecentProjects from '@/components/dashboard-ui/RecentProjects'
 import SystemFeed from '@/components/dashboard-ui/SystemFeed'
+import { AddClientModal } from '@/components/admin/add-client-modal'
+import { useState } from 'react'
 
 interface AdminDashboardProps {
   stats: {
@@ -16,10 +18,12 @@ interface AdminDashboardProps {
     pendingTasks: number
   }
   projects: any[]
+  systemEvents: any[]
 }
 
-export default function AdminDashboardClient({ stats, projects }: AdminDashboardProps) {
+export default function AdminDashboardClient({ stats, projects, systemEvents }: AdminDashboardProps) {
   const contentRef = useRef<HTMLDivElement>(null)
+  const [isNewProjectModalOpen, setIsNewProjectModalOpen] = useState(false)
 
   useEffect(() => {
     if (contentRef.current) {
@@ -41,11 +45,20 @@ export default function AdminDashboardClient({ stats, projects }: AdminDashboard
           <RecentProjects data={projects} />
         </div>
         <div className="lg:col-span-4">
-          <SystemFeed />
+          <SystemFeed data={systemEvents} />
         </div>
       </div>
 
-      <QuickActions className="mt-12" />
+      <QuickActions 
+        className="mt-12" 
+        onNewProject={() => setIsNewProjectModalOpen(true)}
+      />
+
+      <AddClientModal 
+        isOpen={isNewProjectModalOpen} 
+        onOpenChange={setIsNewProjectModalOpen} 
+        onClientAdded={() => window.location.reload()} 
+      />
     </div>
   )
 }

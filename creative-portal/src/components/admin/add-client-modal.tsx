@@ -16,10 +16,23 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/components/providers/toast-provider"
 
-export function AddClientModal({ onClientAdded }: { onClientAdded: () => void }) {
+export function AddClientModal({ 
+  onClientAdded, 
+  isOpen: externalOpen, 
+  onOpenChange: setExternalOpen 
+}: { 
+  onClientAdded: () => void,
+  isOpen?: boolean,
+  onOpenChange?: (open: boolean) => void
+}) {
   const { toast } = useToast()
-  const [open, setOpen] = useState(false)
+  const [internalOpen, setInternalOpen] = useState(false)
+  
+  const open = externalOpen !== undefined ? externalOpen : internalOpen
+  const setOpen = setExternalOpen !== undefined ? setExternalOpen : setInternalOpen
+
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     name: "",
     contact: "",
@@ -43,6 +56,7 @@ export function AddClientModal({ onClientAdded }: { onClientAdded: () => void })
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
+    setError(null)
 
     try {
       const response = await fetch("/api/admin/clients", {
@@ -51,8 +65,10 @@ export function AddClientModal({ onClientAdded }: { onClientAdded: () => void })
         body: JSON.stringify(formData),
       })
 
+      const data = await response.json()
+
       if (!response.ok) {
-        throw new Error("Failed to create client")
+        throw new Error(data.error || data.message || "Failed to create client")
       }
 
       setOpen(false)
@@ -69,9 +85,10 @@ export function AddClientModal({ onClientAdded }: { onClientAdded: () => void })
       })
       toast("CLIENT ADDED", "New lead record successfully created.", "success")
       onClientAdded()
-    } catch (error) {
-      console.error(error)
-      toast("ERROR", "Failed to create client record. Please try again.", "error")
+    } catch (err: any) {
+      console.error(err)
+      setError(err.message || "Failed to create client record. Please try again.")
+      toast("ERROR", err.message || "Failed to create client record. Please try again.", "error")
     } finally {
       setIsLoading(false)
     }
@@ -159,6 +176,11 @@ export function AddClientModal({ onClientAdded }: { onClientAdded: () => void })
             </Select>
           </div>
         </form>
+        {error && (
+          <div className="px-4 py-2 mb-4 mx-6 bg-red-500/10 border border-red-500/20 rounded text-red-400 text-xs italic">
+            {error}
+          </div>
+        )}
         <DialogFooter>
           <Button type="submit" onClick={handleSubmit} disabled={isLoading} className="bg-[var(--coral)] hover:bg-[#e55a5a] text-white">
             {isLoading ? "Saving..." : "Save Client"}

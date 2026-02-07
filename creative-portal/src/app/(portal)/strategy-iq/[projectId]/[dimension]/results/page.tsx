@@ -108,7 +108,7 @@ export default async function StrategyIQResultsPage({ params }: PageProps) {
             Our AI is currently synthesizing your narrative. This process usually takes 5-10 seconds. 
           </p>
           <div className="pt-4">
-             <RefreshButton projectId={projectId} dimension={dimension} />
+             <RefreshButton projectId={projectId} dimension={dimension} autoRefresh={true} />
           </div>
         </div>
       </div>

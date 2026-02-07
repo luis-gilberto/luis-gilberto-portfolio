@@ -29,6 +29,7 @@ import { AssessmentCategory } from '@/lib/strategyData';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/providers/toast-provider';
+import { safeJsonParse } from '@/lib/json-utils';
 
 import { useSession } from 'next-auth/react';
 
@@ -243,7 +244,7 @@ export default function StrategyIQPage() {
                     progress[a.assessment_type] = {
                       status: 'completed',
                       score: a.intelligence_score,
-                      answers: JSON.parse(a.responses || '{}')
+                      answers: safeJsonParse(a.responses, {})
                     };
                   }
                 });
@@ -268,11 +269,7 @@ export default function StrategyIQPage() {
     setIsMounted(true);
     const saved = localStorage.getItem('strategyiq_progress'); 
     if (saved) { 
-      try { 
-        setClientProgress(JSON.parse(saved)); 
-      } catch (e) { 
-        console.error('Failed to parse progress', e); 
-      } 
+      setClientProgress(safeJsonParse(saved, {})); 
     } 
   }, []);
 
@@ -404,14 +401,16 @@ export default function StrategyIQPage() {
         }));
         
         // Redirect logic: Admin goes to Workbench, Partner goes to Results
-        if (session?.user?.role === 'ADMIN') {
-          router.push(`/admin/projects/${projectId}/strategy/${activeAssessment}/results`);
-        } else {
-          router.push(`/strategy-iq/${projectId}/${activeAssessment}/results`);
-        }
-        
-        setActiveAssessment(null);
-        setViewMode('dashboard');
+        setTimeout(() => {
+          if (session?.user?.role === 'ADMIN') {
+            router.push(`/admin/projects/${projectId}/strategy/${activeAssessment}/results`);
+          } else {
+            router.push(`/strategy-iq/${projectId}/${activeAssessment}/results`);
+          }
+          
+          setActiveAssessment(null);
+          setViewMode('dashboard');
+        }, 500);
       } else {
         let errorData;
         try {
@@ -445,9 +444,11 @@ export default function StrategyIQPage() {
     // Also save to localStorage for persistence in this demo
     const saved = localStorage.getItem('strategyiq_progress');
     if (saved) {
-      const parsed = JSON.parse(saved);
-      parsed[category].isPublished = true;
-      localStorage.setItem('strategyiq_progress', JSON.stringify(parsed));
+      const parsed = safeJsonParse(saved, {});
+      if (parsed[category]) {
+        parsed[category].isPublished = true;
+        localStorage.setItem('strategyiq_progress', JSON.stringify(parsed));
+      }
     }
   };
 

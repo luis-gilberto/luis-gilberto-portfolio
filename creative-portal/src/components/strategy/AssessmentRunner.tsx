@@ -113,6 +113,9 @@ export default function AssessmentRunner({
         setIsAnalyzing(false);
         setShowSuccess(true);
         toast("INTELLIGENCE SECURED", "Initial synthesis is now available for review.", "success")
+        
+        // Final Task: Wait for DB consistency before redirecting if we are in dashboard mode
+        // Note: handleAssessmentComplete in page.tsx handles the actual redirect
       } catch (error) {
         console.error("Error completing assessment:", error);
         setIsAnalyzing(false);

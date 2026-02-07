@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     console.log("[PUBLISH API] Received Payload:", JSON.stringify(body, null, 2))
 
-    let { projectId, dimension, certifiedNarrative, status } = body
+    let { projectId, dimension, certifiedNarrative, consultantAnalysis, status } = body
     
     // Task 1: Validation
     if (!projectId || !dimension || certifiedNarrative === undefined) {
@@ -39,6 +39,7 @@ export async function POST(req: NextRequest) {
       },
       data: {
         certifiedNarrative: certifiedNarrative,
+        consultantAnalysis: consultantAnalysis,
         status: finalStatus,
         isPublished: finalStatus === 'PUBLISHED',
         updatedAt: new Date()

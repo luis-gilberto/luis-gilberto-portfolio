@@ -17,7 +17,7 @@ export default function PortalLayout({
 
   useEffect(() => {
     async function fetchProjectStatus() {
-      if (session?.user?.email) {
+      if (session?.user?.email && session?.user?.role === 'CLIENT') {
         try {
           const response = await fetch('/api/strategy-iq/init', {
             method: 'POST',

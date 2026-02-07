@@ -6,11 +6,21 @@ import { useRouter } from 'next/navigation';
 interface RefreshButtonProps {
   projectId?: string;
   dimension?: string;
+  autoRefresh?: boolean;
 }
 
-export default function RefreshButton({ projectId, dimension }: RefreshButtonProps) {
+export default function RefreshButton({ projectId, dimension, autoRefresh = false }: RefreshButtonProps) {
   const router = useRouter();
   const [isRefreshing, setIsRefreshing] = useState(false);
+
+  React.useEffect(() => {
+    if (autoRefresh && !isRefreshing) {
+      const timer = setTimeout(() => {
+        handleRefresh();
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [autoRefresh]);
 
   const handleRefresh = async () => {
     setIsRefreshing(true);

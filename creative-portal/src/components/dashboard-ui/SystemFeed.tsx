@@ -1,10 +1,26 @@
-import { CheckCircle2, AlertCircle, UserPlus } from 'lucide-react';
+import { CheckCircle2, AlertCircle, UserPlus, Zap, FileText } from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
 
-export default function SystemFeed() {
-  const feed = [
-    { icon: UserPlus, color: 'text-emerald-400', text: 'New user registration: consultant@example.com', time: '2h ago' },
-    { icon: AlertCircle, color: 'text-primary', text: 'Project "Alpha" status updated to Review', time: '4h ago' },
-    { icon: CheckCircle2, color: 'text-blue-400', text: 'System backup completed successfully', time: '6h ago' },
+interface SystemFeedProps {
+  data?: any[];
+}
+
+export default function SystemFeed({ data = [] }: SystemFeedProps) {
+  const getEventIcon = (type: string) => {
+    switch (type) {
+      case 'ASSESSMENT_COMPLETE': return { icon: Zap, color: 'text-teal' };
+      case 'PROJECT_CREATED': return { icon: FileText, color: 'text-blue-400' };
+      case 'USER_REGISTERED': return { icon: UserPlus, color: 'text-emerald-400' };
+      default: return { icon: AlertCircle, color: 'text-primary' };
+    }
+  };
+
+  const feed = data.length > 0 ? data.map(event => ({
+    ...getEventIcon(event.type),
+    text: event.message,
+    time: formatDistanceToNow(new Date(event.createdAt), { addSuffix: true })
+  })) : [
+    { icon: UserPlus, color: 'text-emerald-400', text: 'No recent activity recorded.', time: 'System Ready' }
   ];
 
   return (

@@ -21,15 +21,27 @@ export default async function AdminPage() {
 
   const activeProjectsCount = await prisma.project.count({
     where: {
-      status: { in: ['Active', 'In Progress'] },
+      status: { in: ['Active', 'In Progress', 'DISCOVERY'] },
+    },
+  })
+
+  const pendingTasks = await prisma.assessmentSession.count({
+    where: {
+      status: { in: ['COMPLETED', 'MANUAL_REVIEW', 'UNDER_REVIEW'] },
     },
   })
 
   const recentProjects = await prisma.project.findMany({
-    take: 5,
-    orderBy: { startDate: 'desc' },
+    take: 3,
+    orderBy: { updatedAt: 'desc' },
     include: { client: true },
   })
+
+  // Fetch real system events
+  const systemEvents = await prisma.systemEvent?.findMany({
+    take: 5,
+    orderBy: { createdAt: 'desc' },
+  }).catch(() => []) || []
 
   return (
     <AdminDashboardClient
@@ -37,9 +49,10 @@ export default async function AdminPage() {
         totalClients,
         totalProjects,
         activeProjects: activeProjectsCount,
-        pendingTasks: 0,
+        pendingTasks: pendingTasks,
       }}
       projects={recentProjects}
+      systemEvents={systemEvents}
     />
   )
 }

@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { assessmentQuestions, AssessmentCategory } from '@/lib/strategyData'
+import { safeJsonParse } from '@/lib/json-utils'
 
 export async function POST(req: NextRequest) {
   try {
@@ -26,7 +27,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Session not found' }, { status: 404 })
     }
 
-    const responses = JSON.parse(assessmentSession.responses || '{}')
+    const responses = safeJsonParse(assessmentSession.responses, {})
     const dimension = assessmentSession.assessmentType as AssessmentCategory
     const score = assessmentSession.intelligenceScore || 0
 

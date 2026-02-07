@@ -47,7 +47,7 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose
             setActiveProjectId(project.id);
           }
         } catch (error) {
-          console.error('Failed to fetch active project for sidebar:', error);
+          // Silent fail for sidebar init
         }
       }
     }
@@ -135,8 +135,12 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose
                 </li>
                 <li key="The Vault">
                   <Link
-                    href={`/dashboard#vault`}
-                    className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg transition-all duration-200 text-gray-400 hover:text-white hover:bg-transparent ${collapsed ? 'justify-center' : ''}`}
+                    href={`/vault`}
+                    className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg transition-all duration-200 ${
+                      pathname === '/vault'
+                        ? 'bg-white/5 text-white'
+                        : 'text-gray-400 hover:text-white hover:bg-transparent'
+                    } ${collapsed ? 'justify-center' : ''}`}
                     onClick={mobileOpen ? onMobileClose : undefined}
                   >
                     <ShieldCheck className="w-5 h-5 flex-shrink-0" strokeWidth={1.5} />
