@@ -7,7 +7,6 @@ import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import AuthButton from "@/components/layout/AuthButton"
-import ThemeToggle from "@/components/ui/ThemeToggle"
 
 export function Navigation() {
   const { data: session } = useSession()
@@ -74,7 +73,6 @@ export function Navigation() {
           <div className="flex items-center gap-4">
             {!isLandingPage && (
               <>
-                <ThemeToggle />
                 <AuthButton />
               </>
             )}

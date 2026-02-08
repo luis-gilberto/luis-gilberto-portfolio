@@ -11,7 +11,6 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json()
-    console.log("[PUBLISH API] Received Payload:", JSON.stringify(body, null, 2))
 
     let { projectId, dimension, certifiedNarrative, consultantAnalysis, status } = body
     
@@ -28,7 +27,6 @@ export async function POST(req: NextRequest) {
     const finalStatus = status || 'PUBLISHED'
 
     // Task 2: The "Force-Update" API Route
-    console.log("[PUBLISH API] Starting DB Update for Project:", projectId, "Dimension:", finalDimension);
     
     const updatedSession = await prisma.assessmentSession.update({
       where: {
@@ -45,8 +43,6 @@ export async function POST(req: NextRequest) {
         updatedAt: new Date()
       }
     })
-
-    console.log("DATABASE RECORD UPDATED:", updatedSession.id, "CONTENT LENGTH:", updatedSession.certifiedNarrative?.length || 0);
 
     // Update the Project model status field for this dimension
     const statusField = `${finalDimension}Status`
@@ -78,7 +74,6 @@ export async function POST(req: NextRequest) {
               fileUrl: `/strategy-iq/${projectId}/${finalDimension}/results`
             }
           })
-          console.log("[PUBLISH API] Vault Deliverable Updated")
         } else {
           await prisma.deliverable.create({
             data: {
@@ -90,7 +85,6 @@ export async function POST(req: NextRequest) {
               fileUrl: `/strategy-iq/${projectId}/${finalDimension}/results`
             }
           })
-          console.log("[PUBLISH API] Vault Deliverable Created")
         }
       } catch (vaultError) {
         console.error("[PUBLISH API] Vault Sync Failed:", vaultError)

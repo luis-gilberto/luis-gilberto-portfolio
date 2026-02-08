@@ -348,8 +348,6 @@ export default function StrategyIQPage() {
     let projectId = activeProject?.id || (selectedClient.id !== 'c1' && selectedClient.id !== 'c2' ? selectedClient.id : null);
 
     if (!projectId || projectId === 'default' || projectId === 'c1' || projectId === 'c2') {
-      console.log('Homeless client detected. Attempting auto-initialization...');
-      
       try {
         // We'll call a new auto-init API or just use the existing admin client creation logic
         // For now, let's attempt to find or create a project via a new internal endpoint or direct prisma if we were server-side
@@ -366,7 +364,6 @@ export default function StrategyIQPage() {
         if (initRes.ok) {
           const newProject = await initRes.json();
           projectId = newProject.id;
-          console.log('Auto-initialized project:', projectId);
           setActiveProject(newProject);
         } else {
           throw new Error('Failed to auto-initialize project');
@@ -418,7 +415,6 @@ export default function StrategyIQPage() {
         } catch (e) {
           errorData = { error: 'Unknown server error', status: response.status };
         }
-        console.error('Save failed details:', errorData);
         throw new Error(errorData.error || `Server error: ${response.status}`);
       }
     } catch (error) {

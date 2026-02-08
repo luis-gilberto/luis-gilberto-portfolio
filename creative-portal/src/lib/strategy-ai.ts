@@ -74,7 +74,6 @@ export async function generateStrategyNarrative(assessmentSession: any) {
 
     // 3. Fallback to Rule-Based Synthesis if AI fails or key is missing
     if (!generatedSummary) {
-      console.log('Using fallback rule-based synthesis')
       const insights = dataPoints.map(dp => dp.insight).filter(Boolean)
       if (insights.length === 0) {
         insights.push(`The ${currentDimension.toUpperCase()} diagnostic identifies key opportunities for market differentiation. Your current posture reflects a foundational stage.`)

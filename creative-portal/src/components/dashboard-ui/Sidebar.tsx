@@ -5,8 +5,6 @@ import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { signOut, useSession } from 'next-auth/react';
 import { useState, useEffect } from 'react';
-import ThemeToggle from '../ui/ThemeToggle';
-import { UserRoleBadge } from '../ui/UserRoleBadge';
 
 interface SidebarProps {
   collapsed: boolean;
@@ -184,7 +182,6 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose
                   <span className="text-[10px] text-gray-500 uppercase tracking-widest">{role || 'CLIENT'}</span>
                 </div>
               </div>
-              <ThemeToggle />
             </div>
           </div>
 

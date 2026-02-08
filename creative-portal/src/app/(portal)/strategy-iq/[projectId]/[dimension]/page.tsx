@@ -26,7 +26,6 @@ export default async function StrategyIQEntryGate({ params }: PageProps) {
   })
 
   if (!project || !project.clientId) {
-    console.log(`[StrategyIQEntryGate] Project not found for ID: ${projectId}`)
     return (
       <div className="p-12 text-center">
         <h1 className="text-2xl font-bold text-white">Project Not Found</h1>
@@ -46,22 +45,12 @@ export default async function StrategyIQEntryGate({ params }: PageProps) {
     }
   })
 
-  console.log(`[StrategyIQEntryGate] Debug:`, {
-    role,
-    projectId,
-    dimension,
-    clientId: project.clientId,
-    assessmentFound: !!existingSession
-  })
-
   if (existingSession) {
     // If result exists and user is CLIENT, redirect to read-only results
     // CLIENTs are NEVER allowed to overwrite completed assessments
-    console.log(`[StrategyIQEntryGate] Result exists, redirecting to /results`)
     redirect(`/strategy-iq/${projectId}/${dimension}/results`)
   }
 
   // If no result exists, we need to show the assessment form
-  console.log(`[StrategyIQEntryGate] No result exists, redirecting to /start`)
   redirect(`/strategy-iq/${projectId}/${dimension}/start`)
 }

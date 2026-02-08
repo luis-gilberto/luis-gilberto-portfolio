@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { useSession, signOut } from 'next-auth/react'
 import Image from 'next/image'
 import { UserRoleBadge } from './ui/UserRoleBadge'
-import ThemeToggle from './ui/ThemeToggle'
 import AuthButton from './layout/AuthButton'
 
 interface TopNavBarProps {
@@ -77,7 +76,6 @@ export default function TopNavBar({ onMenuToggle, projectStatus }: TopNavBarProp
         {/* 4. User Controls (Right) */}
         <div className="flex items-center gap-6 ml-auto lg:ml-0">
           <div className="hidden lg:flex items-center gap-6">
-            <ThemeToggle />
             <UserRoleBadge role={session?.user?.role || 'CLIENT'} />
           </div>
 

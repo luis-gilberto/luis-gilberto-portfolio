@@ -6,11 +6,13 @@ import Link from 'next/link'
 import { createClient } from '@supabase/supabase-js'
 import { UserRoleBadge } from '@/components/ui/UserRoleBadge'
 import { PartnerLibrary } from '@/components/portal/client/PartnerLibrary'
-import { ShieldCheck, ArrowRight, LayoutDashboard, Zap, MessageSquare, FileText } from 'lucide-react'
+import { ShieldCheck, ArrowRight, LayoutDashboard, Zap, MessageSquare, FileText, Activity, Search, Send } from 'lucide-react'
 import gsap from 'gsap'
 import { redirect } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 
 // --- SUPABASE CLIENT ---
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -26,20 +28,37 @@ export default function Dashboard() {
   const [activeProject, setActiveProject] = useState<any>(null)
   const [completedAssessmentCount, setCompletedAssessmentCount] = useState(0)
   const [vaultDeliverables, setVaultDeliverables] = useState<any[]>([])
+  const [messages, setMessages] = useState<any[]>([])
+  const [newMessage, setNewMessage] = useState('')
   const containerRef = useRef<HTMLDivElement>(null)
 
   const role = session?.user?.role
 
   const discoveryProgress = completedAssessmentCount
 
-  const discoveryDimensions = [
-    { id: 'gtm', label: 'Go-to-Market', status: activeProject?.gtmStatus },
-    { id: 'brand', label: 'Brand Intelligence', status: activeProject?.brandStatus },
-    { id: 'campaign', label: 'Strategic Campaigns', status: activeProject?.campaignStatus },
-    { id: 'creative', label: 'Creative Strategy', status: activeProject?.creativeStatus },
+  const pillars = [
+    { id: 'gtm', label: 'GTM Strategy', key: 'gtmStatus' },
+    { id: 'brand', label: 'Brand Position', key: 'brandStatus' },
+    { id: 'campaign', label: 'Campaign Ops', key: 'campaignStatus' },
+    { id: 'creative', label: 'Creative Dir', key: 'creativeStatus' },
   ]
 
-  const nextDiscovery = discoveryDimensions.find(d => d.status !== 'COMPLETED')
+  const getPillarStatus = (pillarKey: string) => {
+    const status = activeProject?.[pillarKey] || 'NOT_STARTED'
+    
+    switch (status) {
+      case 'PUBLISHED':
+        return { label: 'PUBLISHED', action: 'View Final Brief', color: 'text-teal', bg: 'bg-teal/10', border: 'border-teal/20', icon: ShieldCheck }
+      case 'COMPLETED':
+      case 'MANUAL_REVIEW':
+      case 'UNDER_REVIEW':
+        return { label: 'AWAITING LG REVIEW', action: 'View Status', color: 'text-amber-400', bg: 'bg-amber-400/10', border: 'border-amber-400/20', icon: Activity }
+      case 'IN_PROGRESS':
+        return { label: 'IN PROGRESS', action: 'Resume', color: 'text-coral', bg: 'bg-coral/10', border: 'border-coral/20', icon: Zap }
+      default:
+        return { label: 'NOT STARTED', action: 'Initialize', color: 'text-white/20', bg: 'bg-white/5', border: 'border-white/10', icon: LayoutDashboard }
+    }
+  }
 
   useEffect(() => {
     if (status === 'authenticated' && role && role !== 'CLIENT') {
@@ -68,6 +87,24 @@ export default function Dashboard() {
             if (projects && projects.length > 0) {
               setHasProjects(true)
               setActiveProject(projects[0])
+
+              // Fetch messages
+              const { data: msgs } = await supabase
+                .from('messages')
+                .select('*')
+                .eq('user_email', session.user.email)
+                .order('created_at', { ascending: true })
+              
+              if (msgs) {
+                setMessages(msgs.map(m => ({
+                  id: m.id,
+                  user: m.user_name || 'Partner',
+                  content: m.content,
+                  time: new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                  isClient: !!m.is_client,
+                  role: m.role || 'PARTNER'
+                })))
+              }
 
               // Fetch count of completed assessments for this project
               const { count, error: countError } = await supabase
@@ -110,6 +147,35 @@ export default function Dashboard() {
     checkClientStatus();
   }, [session, status]);
 
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newMessage.trim() || !supabase || !session?.user?.email) return
+
+    const msg = {
+      id: Date.now(),
+      user: session.user.name || 'Partner',
+      content: newMessage,
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      isClient: true,
+      role: role
+    }
+
+    setMessages(prev => [...prev, msg])
+    setNewMessage('')
+
+    try {
+      await supabase.from('messages').insert({
+        user_email: session.user.email,
+        user_name: session.user.name || 'Partner',
+        content: newMessage,
+        is_client: true,
+        role: role
+      })
+    } catch (err) {
+      console.error('Error sending message:', err)
+    }
+  }
+
   useEffect(() => {
     if (!isLoading && containerRef.current) {
       gsap.fromTo(
@@ -145,11 +211,11 @@ export default function Dashboard() {
             <span className="text-[10px] font-bold tracking-[0.2em] text-white/20 uppercase">Systems Online</span>
           </div>
           <h1 className="text-[42px] md:text-6xl font-bold text-white font-big-shoulders tracking-widest uppercase italic leading-none mt-10 md:mt-0">
-            Command <span className="text-white/10">Center</span>
+            {activeProject?.status === 'DISCOVERY' ? 'Strategic' : 'Command'} <span className="text-white/10">{activeProject?.status === 'DISCOVERY' ? 'Command' : 'Center'}</span>
           </h1>
           <p className="text-white/40 max-w-xl text-lg font-inter leading-relaxed hidden md:block">
             {activeProject?.status === 'DISCOVERY'
-              ? "You are currently in the DISCOVERY phase. Complete all assessments to unlock your full roadmap."
+              ? "Phase-aware intelligence surface. Complete your assessments to unlock high-fidelity strategic briefs."
               : hasProjects
                 ? "Your strategic ecosystem is active. Monitor progress and access intelligence assets below."
                 : "Ready to initialize? Your strategic journey begins with the StrategyIQ assessment."}
@@ -169,146 +235,126 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* 2. PRIMARY ROW: ACTIVE PROJECT / WAR ROOM */}
-      <section className="space-y-6">
-        <div className="flex items-center gap-2 mb-2">
-          <div className="w-2 h-2 rounded-full bg-teal" />
-          <h2 className="text-sm font-bold tracking-widest text-white/60 uppercase font-big-shoulders italic">
-            ACTIVE ENGAGEMENT <span className="text-white/20 ml-2">/ THE WAR ROOM</span>
-          </h2>
-        </div>
+      {/* 2. PRIMARY ROW: ENGAGEMENT LEDGER & COMM LINK */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+        {/* LEDGER SIDE */}
+        <section className="lg:col-span-7 space-y-8">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-2 h-2 rounded-full bg-teal" />
+            <h2 className="text-sm font-bold tracking-widest text-white/60 uppercase font-big-shoulders italic">
+              ENGAGEMENT LEDGER <span className="text-white/20 ml-2">/ STRATEGIC TRACKS</span>
+            </h2>
+          </div>
 
-        {activeProject && completedAssessmentCount > 0 ? (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {activeProject.status === 'DISCOVERY' ? (
-              <div className="lg:col-span-2 group block">
-                <div className="h-full relative overflow-hidden p-8 rounded-3xl bg-gradient-to-br from-[#141414] to-transparent border border-coral/20 hover:border-coral/40 transition-all duration-500 shadow-[0_0_40px_rgba(249,111,110,0.05)]">
-                  <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
-                    <Zap size={120} className="text-coral" />
-                  </div>
-                  <div className="relative z-10 flex flex-col justify-between h-full gap-8">
-                    <div className="space-y-6">
-                      <div className="flex items-center justify-between">
-                        <Badge className="bg-coral/10 text-coral border border-coral/20 text-[10px] uppercase tracking-widest px-3 py-1">
-                          PHASE: DISCOVERY
-                        </Badge>
-                        <span className="text-xs font-mono text-white/40">PROGRESS: {discoveryProgress}/4</span>
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <h3 className="text-4xl font-bold text-white font-big-shoulders tracking-widest uppercase italic">
-                          {nextDiscovery ? `Synthesizing ${nextDiscovery.label}` : 'Discovery Complete'}
-                        </h3>
-                        <p className="text-white/40 text-sm max-w-md font-inter leading-relaxed">
-                          {nextDiscovery 
-                            ? `Complete ${nextDiscovery.label} to unlock your full Strategic Roadmap.`
-                            : "Your discovery phase is complete. Our team is finalizing your Strategic Roadmap."}
-                        </p>
-                      </div>
-
-                      <div className="w-full bg-white/5 rounded-full h-2 overflow-hidden border border-white/5">
-                        <motion.div 
-                          initial={{ width: 0 }}
-                          animate={{ width: `${(discoveryProgress / 4) * 100}%` }}
-                          transition={{ duration: 1, ease: "easeOut" }}
-                          className="h-full bg-gradient-to-r from-coral to-coral/50"
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-4 gap-2">
-                        {discoveryDimensions.map((d) => (
-                          <div key={d.id} className="space-y-2">
-                            <div className={`h-1 rounded-full ${d.status === 'COMPLETED' ? 'bg-teal' : 'bg-white/10'}`} />
-                            <span className={`text-[8px] uppercase tracking-tighter font-bold block truncate ${d.status === 'COMPLETED' ? 'text-teal' : 'text-white/20'}`}>
-                              {d.label}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
+          <div className="space-y-4">
+            {pillars.map((pillar) => {
+              const status = getPillarStatus(pillar.key)
+              const StatusIcon = status.icon
+              return (
+                <div 
+                  key={pillar.id}
+                  className="group relative flex items-center justify-between p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-white/20 transition-all duration-300"
+                >
+                  <div className="flex items-center gap-6">
+                    <div className={`w-12 h-12 rounded-xl ${status.bg} flex items-center justify-center ${status.color}`}>
+                      <StatusIcon size={24} />
                     </div>
-
-                    <Link href="/strategy-iq" className="flex items-center gap-4 group/btn w-fit">
-                      <div className="w-12 h-12 rounded-full bg-coral flex items-center justify-center text-white group-hover/btn:scale-110 transition-transform shadow-lg shadow-coral/20">
-                        <ArrowRight size={20} />
-                      </div>
-                      <span className="text-xs font-bold text-white uppercase tracking-widest">
-                        {nextDiscovery ? 'Continue Discovery' : 'Enter Strategy Engine'}
-                      </span>
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <Link href={`/projects/${activeProject.id}`} className="lg:col-span-2 group block">
-                <div className="h-full relative overflow-hidden p-8 rounded-3xl bg-gradient-to-br from-white/5 to-transparent border border-white/10 hover:border-teal/50 transition-all duration-500 group-hover:shadow-[0_0_40px_rgba(46,211,198,0.1)]">
-                  <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none group-hover:opacity-10 transition-opacity">
-                    <LayoutDashboard size={120} />
-                  </div>
-                  <div className="relative z-10 flex flex-col justify-between h-full gap-8">
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-3">
-                        <span className="px-3 py-1 rounded-full bg-teal/10 text-teal text-[10px] font-bold tracking-widest uppercase border border-teal/20">
-                          {activeProject.status || 'ACTIVE'}
+                    <div>
+                      <h3 className="text-xl font-bold text-white font-big-shoulders tracking-wider uppercase italic">
+                        {pillar.label}
+                      </h3>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className={`text-[10px] font-bold tracking-widest uppercase ${status.color}`}>
+                          {status.label}
                         </span>
                       </div>
-                      <h3 className="text-4xl font-bold text-white font-big-shoulders tracking-widest uppercase">
-                        {activeProject.title}
-                      </h3>
-                      <p className="text-white/40 text-sm max-w-md font-inter leading-relaxed">
-                        Tactical dashboard for real-time updates, deliverables, and communication threads.
-                      </p>
                     </div>
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full bg-teal flex items-center justify-center text-black group-hover:scale-110 transition-transform">
-                        <ArrowRight size={20} />
+                  </div>
+
+                  <div className="flex items-center gap-4">
+                    {status.label === 'PUBLISHED' ? (
+                      <Link 
+                        href={`/projects/${activeProject?.id}/strategy/${pillar.id}/results`}
+                        className="flex items-center gap-2 text-[10px] font-bold text-teal uppercase tracking-widest hover:gap-3 transition-all"
+                      >
+                        {status.action} <ArrowRight size={14} />
+                      </Link>
+                    ) : (
+                      <Link 
+                        href="/strategy-iq"
+                        className={`flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest hover:gap-3 transition-all ${status.label === 'NOT STARTED' ? 'text-white/40' : 'text-coral'}`}
+                      >
+                        {status.action} <ArrowRight size={14} />
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </section>
+
+        {/* COMM LINK SIDE */}
+        <section className="lg:col-span-5 space-y-8">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-2 h-2 rounded-full bg-coral" />
+            <h2 className="text-sm font-bold tracking-widest text-white/60 uppercase font-big-shoulders italic">
+              THE COMM LINK <span className="text-white/20 ml-2">/ DIRECT ALIGNMENT</span>
+            </h2>
+          </div>
+
+          <div className="flex flex-col h-[500px] rounded-3xl bg-white/5 border border-white/10 overflow-hidden backdrop-blur-sm">
+            {/* Messages Area */}
+            <div className="flex-grow overflow-y-auto p-6 space-y-6">
+              {messages.length === 0 ? (
+                <div className="h-full flex flex-col items-center justify-center text-center space-y-4 opacity-20">
+                  <MessageSquare size={48} />
+                  <p className="text-sm font-inter">No secure transmissions found.<br/>Initialize alignment below.</p>
+                </div>
+              ) : (
+                messages.map((msg) => {
+                  const isLG = msg.role === 'ADMIN' || msg.role === 'TEAM_MEMBER'
+                  return (
+                    <div key={msg.id} className={`flex flex-col ${msg.isClient ? 'items-start' : 'items-end'} space-y-1`}>
+                      <div className="flex items-center gap-2 px-1">
+                        <span className={`text-[8px] font-bold tracking-widest uppercase ${isLG ? 'text-teal' : 'text-white/40'}`}>
+                          {isLG ? 'STRATEGIST / LG' : 'PARTNER / CLIENT'}
+                        </span>
+                        <span className="text-[8px] text-white/20 font-mono">{msg.time}</span>
                       </div>
-                      <span className="text-xs font-bold text-white uppercase tracking-widest">Enter War Room</span>
+                      <div className={`max-w-[85%] p-4 rounded-2xl text-sm font-inter leading-relaxed ${
+                        isLG 
+                          ? 'bg-transparent border border-teal/30 text-white shadow-[0_0_20px_rgba(46,211,198,0.05)]' 
+                          : 'bg-white/10 text-white/80'
+                      }`}>
+                        {msg.content}
+                      </div>
                     </div>
-                  </div>
-                </div>
-              </Link>
-            )}
+                  )
+                })
+              )}
+            </div>
 
-            <div className="flex flex-col gap-6">
-              <Link href="/messages" className="group bg-white/5 border border-white/10 p-6 rounded-2xl hover:bg-white/10 transition-all">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400">
-                    <MessageSquare size={20} />
-                  </div>
-                  <h4 className="font-bold text-white uppercase tracking-widest text-sm">Messages</h4>
-                </div>
-                <p className="text-xs text-white/40 font-inter">Direct strategic alignment thread.</p>
-              </Link>
-              <Link href="/documents" className="group bg-white/5 border border-white/10 p-6 rounded-2xl hover:bg-white/10 transition-all">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400">
-                    <FileText size={20} />
-                  </div>
-                  <h4 className="font-bold text-white uppercase tracking-widest text-sm">Assets</h4>
-                </div>
-                <p className="text-xs text-white/40 font-inter">Contracts, invoices, and final deliverables.</p>
-              </Link>
-            </div>
+            {/* Input Area */}
+            <form onSubmit={handleSendMessage} className="p-4 bg-white/5 border-t border-white/10 flex gap-3">
+              <Input 
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder="Secure transmission..."
+                className="bg-white/5 border-white/10 focus:border-coral/50 text-white placeholder:text-white/20 rounded-xl h-12"
+              />
+              <Button 
+                type="submit"
+                className="bg-coral hover:bg-coral/90 text-white w-12 h-12 rounded-xl p-0 flex items-center justify-center transition-all active:scale-95 shadow-lg shadow-coral/20"
+              >
+                <Send size={20} />
+              </Button>
+            </form>
           </div>
-        ) : (
-          <div className="p-12 rounded-3xl border-2 border-dashed border-white/20 bg-[#0A0A0A]/80 backdrop-blur-2xl flex flex-col items-center justify-center text-center gap-6">
-            <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-white/20">
-              <LayoutDashboard size={32} />
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-xl font-bold text-white/60">No Active Project Found</h3>
-              <p className="text-white/30 max-w-xs text-sm">
-                Complete your StrategyIQ assessment to initialize your first project thread.
-              </p>
-            </div>
-            <Link href="/strategy-iq" className="bg-coral hover:bg-coral/90 text-white px-10 py-4 rounded-full text-xs font-bold uppercase tracking-[0.2em] transition-all shadow-lg shadow-coral/20">
-              Enter Strategy Engine
-            </Link>
-          </div>
-        )}
-      </section>
+        </section>
+      </div>
 
-      {/* 2.5 THE VAULT SECTION */}
+      {/* 3. THE VAULT SECTION */}
       {vaultDeliverables.length > 0 && (
         <section id="vault" className="space-y-6 scroll-mt-24">
           <div className="flex items-center gap-2 mb-2">
@@ -356,47 +402,9 @@ export default function Dashboard() {
         </section>
       )}
 
-      {/* 3. SECONDARY ROW: PARTNER LIBRARY */}
+      {/* 4. PARTNER LIBRARY */}
       <section className="py-12">
         <PartnerLibrary />
-      </section>
-
-      {/* 4. TERTIARY ROW: STRATEGY STATUS */}
-      <section className="py-12 pb-24">
-        <div className="flex items-center gap-2 mb-2">
-          <div className="w-2 h-2 rounded-full bg-coral" />
-          <h2 className="text-sm font-bold tracking-widest text-white/60 uppercase font-big-shoulders italic">
-            STRATEGY ENGINE <span className="text-white/20 ml-2">/ INTELLIGENCE STATUS</span>
-          </h2>
-        </div>
-
-        <Link 
-          href="/strategy-iq" 
-          className="group block"
-        >
-          <div className="bg-[#0A0A0A]/80 backdrop-blur-2xl border border-white/20 p-8 rounded-3xl hover:bg-[#0A0A0A]/90 transition-all flex flex-col md:flex-row justify-between items-center gap-8 border-l-4 border-l-coral shadow-xl">
-            <div className="flex items-center gap-6">
-              <div className="w-16 h-16 rounded-2xl bg-coral/10 flex items-center justify-center text-coral group-hover:rotate-12 transition-transform">
-                <ShieldCheck size={32} />
-              </div>
-              <div className="space-y-1">
-                <h3 className="text-2xl font-bold text-white font-big-shoulders tracking-widest uppercase">
-                  Latest Strategy Status
-                </h3>
-                <p className="text-white/40 text-sm leading-relaxed max-w-md font-inter">
-                  {hasAssessment 
-                    ? "Your assessment is currently under human review. Refined results will appear here."
-                    : "StrategyIQ assessment required. Initialize to unlock project roadmap."}
-                </p>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-3 text-xs font-bold text-coral uppercase tracking-[0.2em]">
-              {hasAssessment ? "View Results" : "Continue Strategy Engine"}
-              <ArrowRight size={16} />
-            </div>
-          </div>
-        </Link>
       </section>
 
     </div>

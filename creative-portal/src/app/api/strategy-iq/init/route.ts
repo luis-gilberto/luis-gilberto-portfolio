@@ -59,7 +59,6 @@ export async function POST(req: NextRequest) {
       }
     })
 
-    console.log('Auto-created Discovery project for:', targetEmail)
     return NextResponse.json(newProject)
 
   } catch (error: any) {

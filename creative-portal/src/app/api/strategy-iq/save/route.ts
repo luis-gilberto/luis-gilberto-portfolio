@@ -12,7 +12,6 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json()
-    console.log('Save API received body:', JSON.stringify(body, null, 2))
     let { projectId, dimension: rawDimension, score, responses } = body
 
     // Task 4: No more "default" ghost. Expect real ID.
@@ -55,7 +54,6 @@ export async function POST(req: NextRequest) {
         throw new Error("No insights generated")
       }
     } catch (aiError) {
-      console.error('Synthesis Error:', aiError)
       status = 'MANUAL_REVIEW'
       insights = [`The ${dimension.toUpperCase()} diagnostic identifies key opportunities for market differentiation. Your current posture reflects a foundational stage.`]
       analysis = "AI Synthesis failed or timed out. Strategist intervention required to finalize narrative."
@@ -119,9 +117,6 @@ export async function POST(req: NextRequest) {
           message: `Assessment ${dimension.toUpperCase()} completed for project ${actualProjectId}`,
           metadata: JSON.stringify({ projectId: actualProjectId, dimension, score })
         }
-      }).catch(() => {
-        // SystemEvent table might not exist yet, ignore if so
-        console.log('SystemEvent table missing, skipping event logging');
       });
     } catch (e) {
       // Ignore
@@ -140,7 +135,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, sessionId: assessmentSession.id })
   } catch (error: any) {
     // Task 1: Improved Error Logging
-    console.error("STRATEGY SAVE CRASH:", error);
     return NextResponse.json({ 
       error: 'Internal Server Error', 
       message: error.message,
