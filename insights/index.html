@@ -366,16 +366,44 @@
             }
         }
 
-        /* THEME IMAGE VISIBILITY LOGIC */ 
-        [data-theme="light"] .theme-img-dark { display: none !important; } 
-        [data-theme="dark"] .theme-img-light { display: none !important; } 
+        /* THEME IMAGE VISIBILITY LOGIC — Nuclear specificity to override article-theme.css */ 
+        html .theme-image-container img.theme-img-dark, 
+        html[data-theme="light"] .theme-image-container img.theme-img-dark { 
+            display: none !important; 
+            visibility: hidden !important; 
+            height: 0 !important; 
+            overflow: hidden !important; 
+        } 
+ 
+        html .theme-image-container img.theme-img-light, 
+        html[data-theme="light"] .theme-image-container img.theme-img-light { 
+            display: block !important; 
+            visibility: visible !important; 
+        } 
+ 
+        html[data-theme="dark"] .theme-image-container img.theme-img-dark { 
+            display: block !important; 
+            visibility: visible !important; 
+            height: auto !important; 
+        } 
+ 
+        html[data-theme="dark"] .theme-image-container img.theme-img-light { 
+            display: none !important; 
+            visibility: hidden !important; 
+            height: 0 !important; 
+            overflow: hidden !important; 
+        } 
 
-        /* Ensure images fill container */ 
-        .theme-image-container img { 
+        /* Ensure images fill container — but respect theme visibility */ 
+        .theme-image-container { 
+            position: relative; 
+        } 
+ 
+        .theme-image-container img.theme-img-light, 
+        .theme-image-container img.theme-img-dark { 
             width: 100%; 
             height: auto; 
-            display: block; 
-        }
+        } 
 
         /* FORCE LIGHT HEADER (Regardless of Theme) */ 
         html[data-theme="dark"] .lg-site-header { 
