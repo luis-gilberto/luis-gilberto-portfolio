@@ -67,10 +67,8 @@
             --space-2xl: 6rem;
             --space-3xl: 8rem;
             
-            /* Layout Standardized */
-            --header-h: 64px;
-            --header-h-mobile: 56px;
-            --header-height: var(--header-h);
+            /* Layout */
+            --header-height: 80px;
             --container-max: 1400px;
             
             /* Transitions */
@@ -124,7 +122,11 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             overflow-x: hidden;
-            cursor: none;
+            /* cursor: none; */
+        }
+
+        @media (pointer: fine) { 
+            body { cursor: none; } 
         }
 
         /* Typography Base */
@@ -193,259 +195,230 @@
             display: none;
         }
 
-        /* =========================================
-           3. NAVIGATION
-           ========================================= */
-        .primary-nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: var(--header-height);
-            background: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: var(--border-light);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-        }
-        
-        .nav-inner { 
-            display: flex; 
-            justify-content: space-between; 
+        /* MEGA HEADER (Standard v2.2) */  
+        .site-header {  
+            position: fixed; top: 0; left: 0; width: 100%; height: 80px;  
+            background: rgba(10,10,10,0.95); backdrop-filter: blur(12px);  
+            border-bottom: 1px solid rgba(255,255,255,0.1); z-index: 1000;  
+        }  
+        [data-theme="light"] .site-header { background: rgba(244,241,237,0.95); border-bottom: 1px solid rgba(0,0,0,0.1); } 
+         
+        /* HEADER GRID FIX */ 
+        .nav-container { 
+            max-width: 1400px; 
+            margin: 0 auto; 
+            padding: 0 2rem; 
+            height: 100%; 
+            display: grid !important; 
+            grid-template-columns: 200px 1fr 200px !important; 
             align-items: center; 
-            width: 100%;
-            padding: 0 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
+            width: 100%; 
+        } 
+        
+        /* Force Center Alignment for Nav */ 
+        .desktop-nav { 
+            justify-self: center !important; 
+            display: flex !important; 
+            align-items: center; 
+            gap: 2.5rem; 
+        } 
+        
+        /* Force Right Alignment for Actions */ 
+        .nav-actions { 
+            justify-self: end !important; 
+            display: flex; 
+            align-items: center; 
+            gap: 1.5rem; 
+        } 
+         
+        /* LOGO SIZING & RESPONSIVENESS */ 
+        .nav-logo { 
+            display: flex; 
+            align-items: center; 
+            justify-content: flex-start; /* Ensure left alignment */ 
+        } 
         
         .nav-logo img { 
-            height: 40px; 
-            width: auto;
-        }
-
-        .nav-right { 
-            display: flex; 
-            align-items: center; 
-            gap: 2rem;
-        }
+            height: 37px; /* Increased by 5% from 35px */ 
+            width: auto; 
+            transition: height 0.2s ease; 
+        } 
         
-        .nav-links { 
-            display: flex; 
-            gap: 2.5rem;
+        @media (max-width: 1023px) { 
+            .nav-logo img { 
+                height: 32px; /* Standard size for logomark on mobile */ 
+            } 
+        } 
+         
+        /* Mega Menu Core Styles */ 
+        .nav-item--mega { position: relative; display: inline-flex; align-items: center; }  
+        .mega-panel { 
+          position: fixed; 
+          left: 0; 
+          right: 0; 
+          top: 80px; 
+          z-index: 1400; 
+          opacity: 0; 
+          pointer-events: none; 
+          transform: translateY(-10px); 
+          transition: opacity 0.16s ease, transform 0.16s ease; 
+        } 
+        .mega-panel::before { content: ""; position: absolute; inset: 0; background: rgba(0,0,0,0.40); backdrop-filter: blur(6px); }  
+        .mega-card-shell { position: relative; max-width: 980px; margin: 18px auto 0; padding: 18px; }  
+        .mega-card { border-radius: 16px; background: #0A0A0A; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 18px 60px rgba(0,0,0,0.55); overflow: hidden; }  
+        [data-theme="light"] .mega-card { background: #FFF; border-color: rgba(0,0,0,0.1); } 
+        .mega-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 18px; }  
+        .mega-item { display: flex; align-items: center; gap: 14px; padding: 14px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.03); transition: all 0.16s ease; text-decoration: none; }  
+        [data-theme="light"] .mega-item { border-color: rgba(0,0,0,0.08); background: rgba(0,0,0,0.03); } 
+        .mega-item:hover { transform: translateY(-2px); border-color: var(--coral); background: rgba(255,255,255,0.05); }  
+        .mega-title { display: block; font-family: var(--font-orchestrator); font-size: 0.98rem; font-weight: 700; color: rgba(255,255,255,0.92); line-height: 1.2; }  
+        [data-theme="light"] .mega-title { color: #111; } 
+        .mega-desc { display: block; font-family: var(--font-orchestrator); font-size: 0.86rem; color: rgba(255,255,255,0.52); line-height: 1.2; font-weight: 400; } 
+        [data-theme="light"] .mega-desc { color: #666; } 
+        .nav-item--mega.is-open .mega-panel { opacity: 1; pointer-events: auto; transform: translateY(0); } 
+         
+        /* Theme Toggle Fixes */ 
+        .theme-toggle, .mobile-toggle {  
+            background: transparent !important;  
+            border: none !important;  
+            box-shadow: none !important; 
+            color: #FFF !important;  
+            width: 40px; height: 40px;  
+            display: flex; align-items: center; justify-content: center;  
+            border-radius: 50%;  
+            transition: background 0.2s;  
+        }  
+        .theme-toggle:hover, .mobile-toggle:hover {  
+            background: rgba(255,255,255,0.1) !important;  
+        } 
+        [data-theme="light"] .theme-toggle,  
+        [data-theme="light"] .mobile-toggle {  
+            color: #111 !important;  
+        } 
+         
+        /* ==========================================
+           RESUME PALETTE SELECTOR - SIMPLE SWATCHES
+           ========================================== */
+        .resume-palette-selector { 
+            background: var(--surface-dark); 
+            border: var(--border-light); 
+            border-radius: var(--radius); 
+            padding: var(--space-lg); 
+            box-shadow: var(--shadow-soft); 
         }
-        
-        .nav-link {
-            font-family: var(--font-orchestrator);
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-subtle);
-            position: relative;
-            padding: 0.5rem 0;
-            text-decoration: none;
-        }
-        
-        .nav-link:hover { color: var(--text-primary); }
-        .nav-link.active { color: var(--text-primary); }
-        
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: var(--coral);
-            transform: scaleX(0);
-            transition: transform 0.2s ease;
-        }
-        .nav-link.active::after, .nav-link:hover::after {
-            transform: scaleX(1);
-        }
-
-        .mobile-toggle { 
-            display: none; 
-            background: none; 
-            border: none; 
-            color: var(--text-primary); 
-            font-size: 1.5rem; 
-            cursor: pointer;
-        }
-
-        /* Subnav */
-        .subnav {
-            position: fixed;
-            top: var(--header-height);
-            left: 0;
-            right: 0;
-            z-index: 999;
-            padding: 1rem 0;
-            background: var(--surface-dark-2);
-            border-bottom: var(--border-light);
-            backdrop-filter: blur(12px);
-        }
-        
-        .subnav-links { 
-            display: flex; 
-            gap: 2.5rem; 
-            justify-content: flex-start;
-            align-items: center;
-            padding: 0 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        .subnav a {
-            font-size: 0.9rem;
-            font-weight: 500;
-            opacity: 0.6;
-            transition: all 0.2s var(--ease-out);
-        }
-        
-        .subnav a:hover { 
-            opacity: 1; 
-            color: var(--text-primary);
-        }
-        
-        .subnav a.active { 
-            opacity: 1; 
-            color: var(--coral); 
-            font-weight: 600;
-        }
-        
-        .subnav a.active::before { 
-            content: '— '; 
-            color: var(--coral);
-        }
-
-        /* Mobile Drawer */
-        .mobile-drawer {
-            position: fixed;
-            inset: 0;
-            background: #000;
-            z-index: 2000;
-            padding: 2rem;
-            transform: translateX(100%);
-            transition: transform 0.3s var(--ease-out);
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-        }
-        
-        .mobile-drawer.active { transform: translateX(0); }
-        
-        .drawer-header { 
-            display: flex; 
-            justify-content: space-between; 
-            margin-bottom: 3rem; 
-            align-items: center;
-        }
-        
-        .drawer-link { 
-            display: block; 
+        [data-theme="light"] .resume-palette-selector { background: var(--surface-light); }
+        .selector-label { 
             font-family: var(--font-strategist); 
-            font-size: 2.2rem; 
-            color: var(--text-subtle); 
-            margin-bottom: 0.5rem;
-            transition: all 0.2s var(--ease-out);
-        }
-        
-        .drawer-link:hover { color: var(--text-primary); }
-        
-        .drawer-link.active { 
-            color: var(--coral); 
-            padding-left: 10px; 
-            border-left: 2px solid var(--coral);
-        }
-        
-        .drawer-section { margin-bottom: 3rem; }
-        
-        .drawer-label { 
-            font-size: 0.75rem; 
+            font-size: 0.85rem; 
+            font-weight: 700; 
             text-transform: uppercase; 
-            color: #666; 
-            margin-bottom: 1rem; 
             letter-spacing: 0.1em; 
-            font-weight: 700;
+            color: var(--text-primary); 
+            margin-bottom: var(--space-sm); 
+            display: block; 
         }
-
-        /* Light Mode fixes for stat grid and role rows */
-        [data-theme="light"] .stat-grid-sec {
-            border-top: 1px solid rgba(0,0,0,0.08);
+        .palette-options { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 12px; 
+            margin-bottom: var(--space-md); 
         }
-
-        [data-theme="light"] .role-row {
-            border-bottom: 1px dashed rgba(0,0,0,0.08);
+        .palette-option { 
+            background: var(--surface-dark-2); 
+            border: 2px solid transparent; 
+            border-radius: var(--radius-sm); 
+            padding: 16px 14px; 
+            cursor: pointer; 
+            transition: all 0.3s var(--ease-out); 
+            position: relative; 
         }
+        [data-theme="light"] .palette-option { background: #F9F9F9; }
+        .palette-option:hover { 
+            transform: translateY(-3px); 
+            box-shadow: var(--shadow-soft); 
+            border-color: rgba(255, 255, 255, 0.15); 
+        }
+        [data-theme="light"] .palette-option:hover { border-color: rgba(0, 0, 0, 0.1); }
+        .palette-option.active { border-color: var(--coral); background: rgba(249, 111, 110, 0.05); }
 
-        /* Theme Toggle Styling */
-        .theme-toggle {
-            background: none;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: var(--text-primary);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
+        .palette-colors { display: flex; gap: 4px; margin-bottom: 8px; }
+        .color-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .palette-name { font-family: var(--font-orchestrator); font-size: 0.9rem; font-weight: 700; color: var(--text-primary); margin-bottom: 2px; }
+        .palette-desc { font-size: 0.75rem; color: var(--text-subtle); }
+        .checkmark { position: absolute; top: 10px; right: 10px; color: var(--coral); font-size: 0.8rem; display: none; }
+        .palette-option.active .checkmark { display: block; }
+
+        .current-selection { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.05); }
+        .current-label { font-size: 0.7rem; text-transform: uppercase; color: var(--text-subtle); margin-bottom: 4px; }
+        .current-style { font-family: var(--font-strategist); font-size: 1.2rem; color: var(--coral); }
+        .download-btn { 
+            background: var(--coral); 
+            color: white; 
+            display: block; 
+            text-align: center; 
+            padding: 1rem; 
+            border-radius: var(--radius-sm); 
+            font-family: var(--font-strategist); 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            letter-spacing: 0.05em; 
+            margin-top: 1rem; 
             transition: all 0.3s ease;
         }
+        .download-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(249,111,110,0.3); }
+        .view-full-cv-link { display: block; text-align: center; margin-top: 1rem; font-size: 0.85rem; color: var(--text-subtle); border-bottom: 1px solid transparent; width: fit-content; margin-left: auto; margin-right: auto; }
+        .view-full-cv-link:hover { color: var(--teal); border-bottom-color: var(--teal); }
 
-        .theme-toggle:hover {
-            border-color: var(--coral);
-            color: var(--coral);
-            background: rgba(255, 255, 255, 0.05);
-        }
+        /* === MOBILE DRAWER (Standardized) === */ 
+        .mobile-menu-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 2000; opacity: 0; transition: opacity 0.3s ease; pointer-events: none; } 
+        .mobile-menu-overlay.active { opacity: 1; pointer-events: auto; } 
+        .mobile-drawer { position: absolute; top: 0; right: 0; height: 100vh; height: 100dvh; width: 85vw; max-width: 400px; background: #000000; box-shadow: -12px 0 30px rgba(0,0,0,0.4); transform: translateX(100%); transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; } 
+        .mobile-menu-overlay.active .mobile-drawer { transform: translateX(0); } 
+        .mobile-menu-close { position: absolute; top: 1rem; right: 1rem; width: 44px; height: 44px; border: none; border-radius: 8px; background: transparent; color: #fff; font-size: 32px; line-height: 1; cursor: pointer; transition: background 0.2s ease; z-index: 10; } 
+        .mobile-menu-close:hover { background: rgba(255,255,255,0.1); } 
+        .mobile-menu-content { display: flex; flex-direction: column; gap: 0; padding: 1.5rem 1.5rem 2rem; padding-bottom: max(2rem, calc(2rem + env(safe-area-inset-bottom))); } 
+        .mobile-drawer-header { padding: 2rem 0 2rem 0.25rem; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 2rem; } 
+        .mobile-drawer-brand { display: flex; flex-direction: column; gap: 0.25rem; } 
+        .mobile-drawer-name { font-family: var(--font-storyteller); font-size: 1.5rem; font-weight: 600; color: #fff; letter-spacing: -0.02em; } 
+        .mobile-drawer-role { font-family: var(--font-orchestrator); font-size: 0.8125rem; font-weight: 400; color: rgba(255,255,255,0.5); letter-spacing: 0.02em; } 
+        .mobile-nav-section { display: flex; flex-direction: column; gap: 0; margin-bottom: 2.5rem; } 
+        .mobile-nav-section:last-of-type { margin-bottom: 1rem; } 
+        .mobile-nav-label { font-family: var(--font-orchestrator); font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 1.25rem; padding-left: 0.25rem; } 
+        .mobile-nav-link-primary { font-family: var(--font-storyteller); font-size: 1.75rem; font-weight: 500; line-height: 1.3; color: rgba(255,255,255,0.85); padding: 0.5rem 0.25rem; transition: all 0.2s ease; text-decoration: none; letter-spacing: -0.01em; position: relative; } 
+        .mobile-nav-link-primary:hover { color: #fff; transform: translateX(4px); } 
+        .mobile-nav-link-secondary { font-family: var(--font-orchestrator); font-size: 1rem; font-weight: 400; line-height: 1.5; color: rgba(255,255,255,0.65); padding: 0.625rem 0.25rem; transition: all 0.2s ease; text-decoration: none; position: relative; } 
+        .mobile-nav-link-secondary:hover { color: rgba(255,255,255,0.9); transform: translateX(4px); } 
+        .mobile-nav-link-primary.active, .mobile-nav-link-secondary.active { color: var(--coral); font-weight: 600; } 
+        .mobile-nav-link-primary.active::before { content:''; position:absolute; left:-0.5rem; top:50%; transform:translateY(-50%); width:3px; height:24px; background:var(--coral); border-radius:2px; } 
+        .mobile-nav-link-secondary.active::before { content:''; position:absolute; left:-0.5rem; top:50%; transform:translateY(-50%); width:2px; height:16px; background:var(--coral); border-radius:2px; } 
+        .mobile-drawer-actions { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.08); } 
+        .mobile-theme-btn { display: flex; align-items: center; gap: 0.5rem; padding: 10px 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: rgba(255,255,255,0.7); font-family: var(--font-orchestrator); font-size: 0.8rem; font-weight: 500; cursor: pointer; transition: all 0.2s ease; width: 100%; justify-content: center; } 
+        .mobile-theme-btn:active { background: rgba(255,255,255,0.1); transform: scale(0.98); } 
+         
+        /* Visibility Logic */ 
+        @media (min-width: 1024px) { .mobile-menu-overlay, .mobile-controls { display: none !important; } } 
+        @media (max-width: 1023px) {  
+            .nav-container { display: flex !important; justify-content: space-between; grid-template-columns: none !important; }  
+            .desktop-nav, .nav-actions { display: none !important; }  
+            .mobile-controls { display: flex !important; align-items: center; gap: 1rem; }  
+            .mega-panel { display: none !important; }  
+        } 
 
-        /* Force Navigation to Stay Dark in Both Modes */
-        .primary-nav {
-            background: rgba(10, 10, 10, 0.95) !important;
-            color: #ffffff !important;
-        }
+        @media (max-width: 1023px) { 
+            .hero { padding: calc(var(--header-height) + 2rem) 0 4rem; } 
+            .bento-card { min-height: 220px; } 
+            .stat-grid-main { gap: 1.5rem; } 
+            .bgVideo { display: none !important; } /* Disable heavy videos on mobile */ 
+        } 
+        @media (max-width: 640px) { 
+            .bento-card { min-height: 200px; } 
+            .palette-options { grid-template-columns: 1fr; } 
+        } 
+        @media (pointer: coarse) { 
+            .bento-card:active { transform: scale(0.98); transition: transform 0.1s ease; } 
+            .path-card:active { transform: scale(0.97); transition: transform 0.1s ease; } 
+        } 
 
-        [data-theme="light"] .primary-nav {
-            background: rgba(10, 10, 10, 0.95) !important;
-            color: #ffffff !important;
-        }
-
-        .nav-link {
-            color: rgba(255, 255, 255, 0.7) !important;
-        }
-
-        [data-theme="light"] .nav-link {
-            color: rgba(255, 255, 255, 0.7) !important;
-        }
-
-        .nav-link.active {
-            color: #ffffff !important;
-        }
-
-        [data-theme="light"] .nav-link.active {
-            color: #ffffff !important;
-        }
-
-        .theme-toggle {
-            color: #ffffff !important;
-        }
-
-        [data-theme="light"] .theme-toggle {
-            color: #ffffff !important;
-            border-color: rgba(255,255,255,0.3) !important;
-        }
-
-        .mobile-toggle {
-            color: #ffffff !important;
-        }
-
-        [data-theme="light"] .mobile-toggle {
-            color: #ffffff !important;
-        }
 
         /* =========================================
            4. HERO - Trinity Typography
@@ -1417,58 +1390,6 @@
                 background-position: center;
             }
         }
-
-        /* Ensure two-column layout on medium screens */
-        @media (min-width: 768px) {
-            .resume-preview { grid-template-columns: 1fr 2fr; }
-        }
-    </style>
-
-    <style>
-        /* ==========================================
-           RESUME PALETTE SELECTOR - SIMPLE SWATCHES
-           ========================================== */
-        .resume-palette-selector { background: var(--surface-dark); border: var(--border-light); border-radius: var(--radius); padding: var(--space-lg); box-shadow: var(--shadow-soft); }
-        [data-theme="light"] .resume-palette-selector { background: var(--surface-light); }
-        .selector-label { font-family: var(--font-strategist); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-primary); margin-bottom: var(--space-sm); display: block; }
-        .palette-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: var(--space-md); }
-        .palette-option { background: var(--surface-dark-2); border: 2px solid transparent; border-radius: var(--radius-sm); padding: 16px 14px; cursor: pointer; transition: all 0.3s var(--ease-out); position: relative; }
-        [data-theme="light"] .palette-option { background: #F9F9F9; }
-        .palette-option:hover { transform: translateY(-3px); box-shadow: var(--shadow-soft); border-color: rgba(255, 255, 255, 0.15); }
-        [data-theme="light"] .palette-option:hover { border-color: rgba(0, 0, 0, 0.1); }
-        .palette-option.active { border-color: var(--coral); background: rgba(249, 111, 110, 0.05); }
-        .palette-option .checkmark { position: absolute; top: 8px; right: 8px; width: 22px; height: 22px; background: var(--coral); border-radius: 50%; display: none; align-items: center; justify-content: center; color: white; font-size: 13px; font-weight: bold; }
-        .palette-option.active .checkmark { display: flex; }
-        .palette-colors { display: flex; gap: 7px; margin-bottom: 10px; }
-        .color-dot { width: 18px; height: 18px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.12); transition: transform 0.2s var(--ease-out); }
-        [data-theme="light"] .color-dot { border-color: rgba(0, 0, 0, 0.1); }
-        .palette-option:hover .color-dot { transform: scale(1.15); }
-        .palette-name { font-family: var(--font-orchestrator); font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
-        .palette-desc { font-family: var(--font-orchestrator); font-size: 12px; color: var(--text-muted); line-height: 1.4; }
-        .current-selection { background: var(--surface-dark-2); border-radius: var(--radius-sm); padding: 14px; margin-bottom: var(--space-md); text-align: center; }
-        [data-theme="light"] .current-selection { background: #F5F5F5; }
-        .current-label { font-family: var(--font-orchestrator); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-subtle); margin-bottom: 5px; font-weight: 600; }
-        .current-style { font-family: var(--font-storyteller); font-style: italic; font-size: 17px; font-weight: 600; color: var(--coral); }
-        .download-btn { display: block; width: 100%; background: var(--coral); color: white; text-decoration: none; padding: 15px; border-radius: var(--radius-sm); font-family: var(--font-strategist); font-weight: 700; font-size: 14px; text-align: center; text-transform: uppercase; letter-spacing: 0.06em; transition: all 0.3s var(--ease-out); border: none; cursor: pointer; margin-bottom: var(--space-sm); }
-        .download-btn:hover { background: #E85E5D; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(249, 111, 110, 0.35); }
-        .download-btn:active { transform: translateY(0); }
-        .view-full-cv-link { display: block; text-align: center; font-family: var(--font-orchestrator); font-size: 13px; font-weight: 500; color: var(--text-muted); text-decoration: none; transition: color 0.2s var(--ease-out); padding: 8px; }
-        .view-full-cv-link:hover { color: var(--coral); }
-        @media (max-width: 640px) { .palette-options { grid-template-columns: 1fr; } .palette-option { padding: 14px 12px; } }
-    </style>
-
-    <style>
-        /* ========================================
-           Professional Record - Center Alignment
-           ======================================== */
-        .resume-list { display: flex; flex-direction: column; align-items: center; text-align: center; max-width: 100%; }
-        .resume-timeline-col { display: flex; flex-direction: column; gap: 1rem; align-items: center; }
-        .timeline-header { width: 100%; max-width: 600px; margin: 0 auto 2rem; text-align: center; }
-        .role-row { width: 100%; max-width: 600px; margin: 0 auto 0.75rem; display: flex; flex-direction: column; align-items: center; text-align: center; }
-        .role-date { text-align: center; display: block; width: 100%; }
-        .role-title { text-align: center; display: block; width: 100%; }
-        .role-company { text-align: center; display: block; width: 100%; font-style: italic; }
-        @media (max-width: 768px) { .role-row { max-width: 100%; padding: 0 1rem; } }
     </style>
 </head>
 <body>
@@ -1479,73 +1400,112 @@
         <div class="lens-center"></div>
     </div>
 
-    <!-- PRIMARY NAVIGATION -->
-    <header class="primary-nav">
-        <div class="container nav-inner">
-            <a href="/index.html" class="nav-logo">
-                <picture>
-                    <source media="(max-width: 1023px)" srcset="/assets/images/Logomark_White_a.png">
-                    <img src="/assets/images/AUg_logo_White.png" alt="Luis Gilberto">
-                </picture>
-            </a>
-            
-            <div class="nav-right">
-                <div class="nav-links">
-                    <a href="/index.html" class="nav-link active">Portfolio</a>
-                    <a href="/insights/" class="nav-link">Insights</a>
-                    <a href="/TheHub/" class="nav-link">The Hub</a>
-                    <a href="https://portal.luis-gilberto.com" class="nav-link" target="_blank" rel="noopener noreferrer">The Portal</a>
-                </div>
-                
-                <!-- Theme Toggle -->
-                <button class="theme-toggle" id="themeToggle" aria-label="Toggle Theme">
-                    <i class="fas fa-sun" id="themeIcon"></i>
-                </button>
+    <header class="site-header"> 
+        <div class="nav-container"> 
+            <a href="/index.html" class="nav-logo"> 
+                <picture> 
+                    <!-- Mobile/Tablet Image (Logomark) --> 
+                    <source media="(max-width: 1023px)" srcset="/assets/images/Logomark_White_a.png"> 
+                    <!-- Desktop Image (Full Logo) --> 
+                    <img src="/assets/images/AUg_logo_White.png" alt="Luis Gilberto"> 
+                </picture> 
+            </a> 
+     
+            <nav class="desktop-nav"> 
+                <div class="nav-item nav-item--mega" id="portfolioMega"> 
+                    <button class="nav-link" id="navPortfolioTrigger"> 
+                    PORTFOLIO <i class="fas fa-chevron-down" style="font-size:0.7em;"></i> 
+                </button> 
+                <div class="mega-panel" id="portfolioMegaPanel"> 
+                    <div class="mega-card-shell"> 
+                        <div class="mega-card"> 
+                            <div class="mega-grid"> 
+                                <a href="/index.html" class="mega-item"> 
+                                    <div class="mega-icon"><i class="fas fa-home"></i></div> 
+                                    <div class="mega-meta"><span class="mega-title">Home</span><span class="mega-desc">Return to overview</span></div> 
+                                </a> 
+                                <a href="/timeline.html" class="mega-item"> 
+                                    <div class="mega-icon"><i class="fas fa-history"></i></div> 
+                                    <div class="mega-meta"><span class="mega-title">Timeline</span><span class="mega-desc">15+ years of milestones</span></div> 
+                                </a> 
+                                <a href="/myexperience.html" class="mega-item"> 
+                                    <div class="mega-icon"><i class="fas fa-briefcase"></i></div> 
+                                    <div class="mega-meta"><span class="mega-title">Experience</span><span class="mega-desc">Deep dives & case studies</span></div> 
+                                </a> 
+                                <a href="/about.html" class="mega-item"> 
+                                    <div class="mega-icon"><i class="fas fa-user"></i></div> 
+                                    <div class="mega-meta"><span class="mega-title">About Me</span><span class="mega-desc">The human behind the work</span></div> 
+                                </a> 
+                                <a href="/brand/index.html" class="mega-item"> 
+                                    <div class="mega-icon"><i class="fas fa-fingerprint"></i></div> 
+                                    <div class="mega-meta"><span class="mega-title">Identity</span><span class="mega-desc">Brand book & visual DNA</span></div> 
+                                </a> 
+                                <a href="/contact.html" class="mega-item"> 
+                                    <div class="mega-icon"><i class="fas fa-paper-plane"></i></div> 
+                                    <div class="mega-meta"><span class="mega-title">Contact</span><span class="mega-desc">Start a conversation</span></div> 
+                                </a> 
+                            </div> 
+                        </div> 
+                    </div> 
+                </div> 
+                </div> 
+                <a href="/insights/" class="nav-link">INSIGHTS</a> 
+                <a href="/TheHub/" class="nav-link">THE HUB</a> 
+                <a href="https://portal.luis-gilberto.com" class="nav-link">THE PORTAL</a> 
+            </nav> 
+     
+            <div class="nav-actions"> 
+                <button class="theme-toggle" id="themeToggle"><i class="fa-regular fa-moon"></i></button> 
+            </div> 
+     
+            <div class="mobile-controls"> 
+                <button class="theme-toggle" id="mobileThemeToggle"><i class="fa-regular fa-moon"></i></button> 
+                <button class="mobile-toggle" id="mobileMenuBtn" aria-label="Open menu"> 
+                    <i class="fas fa-bars"></i> 
+                </button> 
+            </div> 
+        </div> 
+    </header> 
 
-                <button class="mobile-toggle" id="mobileMenuBtn" aria-label="Menu">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- SUBNAV -->
-    <nav class="subnav" aria-label="Portfolio navigation" data-lens-ignore="true">
-        <div class="subnav-links">
-            <a href="/index.html">Home</a>
-            <a href="/timeline.html">Timeline</a>
-            <a href="/myexperience.html" class="active">Experience</a>
-            <a href="/about.html">About</a>
-            <a href="/brand/">Identity</a>
-            <a href="/contact.html">Contact</a>
-        </div>
-    </nav>
-
-    <!-- MOBILE DRAWER -->
-    <div class="mobile-drawer" id="mobileDrawer" role="dialog" aria-modal="true" aria-label="Navigation menu">
-        <div class="drawer-header">
-            <img src="/assets/images/Logomark_White_a.png" alt="LG" style="height:32px;">
-            <button id="drawerClose" aria-label="Close menu" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;">✕</button>
-        </div>
-        <div class="drawer-content">
-            <div class="drawer-section">
-                <span class="drawer-label">Global</span>
-                <a href="/index.html" class="drawer-link active">Portfolio</a>
-                <a href="/insights/" class="drawer-link">Insights</a>
-                <a href="/TheHub/" class="drawer-link">The Hub</a>
-                <a href="https://portal.luis-gilberto.com" class="drawer-link" target="_blank" rel="noopener noreferrer">The Portal</a>
-            </div>
-            <div class="drawer-section">
-                <span class="drawer-label">Portfolio</span>
-                <a href="/index.html" class="drawer-link">Home</a>
-                <a href="/timeline.html" class="drawer-link">Timeline</a>
-                <a href="/myexperience.html" class="drawer-link active">Experience</a>
-                <a href="/about.html" class="drawer-link">About</a>
-                <a href="/brand/" class="drawer-link">Identity</a>
-                <a href="/contact.html" class="drawer-link">Contact</a>
-            </div>
-        </div>
-    </div>
+    <!-- MOBILE DRAWER (Homepage Pattern) --> 
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay" aria-hidden="true"> 
+        <div class="mobile-drawer" role="dialog" aria-modal="true" aria-label="Navigation menu"> 
+            <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">&times;</button> 
+            <div class="mobile-menu-content"> 
+                <div class="mobile-drawer-header"> 
+                    <div class="mobile-drawer-brand"> 
+                        <span class="mobile-drawer-name">Luis Gilberto</span> 
+                        <span class="mobile-drawer-role">Creative Strategy</span> 
+                    </div> 
+                </div> 
+     
+                <div class="mobile-nav-section"> 
+                    <div class="mobile-nav-label">Global</div> 
+                    <a href="/index.html" class="mobile-nav-link-primary">Portfolio</a> 
+                    <a href="/insights/" class="mobile-nav-link-primary">Insights</a> 
+                    <a href="/TheHub/" class="mobile-nav-link-primary">The Hub</a> 
+                    <a href="https://portal.luis-gilberto.com" class="mobile-nav-link-primary" target="_blank" rel="noopener noreferrer">The Portal</a> 
+                </div> 
+     
+                <div class="mobile-nav-section"> 
+                    <div class="mobile-nav-label">Portfolio</div> 
+                    <a href="/index.html" class="mobile-nav-link-secondary">Home</a> 
+                    <a href="/timeline.html" class="mobile-nav-link-secondary">Timeline</a> 
+                    <a href="/myexperience.html" class="mobile-nav-link-secondary active">Experience</a> 
+                    <a href="/about.html" class="mobile-nav-link-secondary">About</a> 
+                    <a href="/brand/" class="mobile-nav-link-secondary">Identity</a> 
+                    <a href="/contact.html" class="mobile-nav-link-secondary">Contact</a> 
+                </div> 
+     
+                <div class="mobile-drawer-actions"> 
+                    <button class="mobile-theme-btn" id="drawerThemeToggle"> 
+                        <i class="fa-regular fa-moon" id="drawerThemeIcon"></i> 
+                        <span id="drawerThemeLabel">Switch to Light</span> 
+                    </button> 
+                </div> 
+            </div> 
+        </div> 
+    </div> 
 
     <main>
         <!-- =============================================
@@ -1804,60 +1764,55 @@
                 </header>
                 
                 <div class="resume-preview">
-                    <div class="resume-palette-selector">
-                        <label class="selector-label">Choose Your Resume Style</label>
-                        <div class="palette-options">
-                            <div class="palette-option active" data-style="coral-light" data-pdf="assets/Components/THE_FOUR/LS-cv_coral-light.pdf">
-                                <span class="checkmark">✓</span>
-                                <div class="palette-colors">
-                                    <span class="color-dot" style="background:#F96F6E;"></span>
-                                    <span class="color-dot" style="background:#F4F1ED;"></span>
-                                    <span class="color-dot" style="background:#E8E6E3;"></span>
-                                </div>
-                                <div class="palette-name">Coral Light</div>
-                                <div class="palette-desc">Warm & approachable</div>
-                            </div>
-                            <div class="palette-option" data-style="coral-dark" data-pdf="assets/Components/THE_FOUR/LS-cv_coral-dark-pdf.pdf">
-                                <span class="checkmark">✓</span>
-                                <div class="palette-colors">
-                                    <span class="color-dot" style="background:#F96F6E;"></span>
-                                    <span class="color-dot" style="background:#2A2A2A;"></span>
-                                    <span class="color-dot" style="background:#FF9B9A;"></span>
-                                </div>
-                                <div class="palette-name">Coral Dark</div>
-                                <div class="palette-desc">Bold & premium</div>
-                            </div>
-                            <div class="palette-option" data-style="teal-hybrid" data-pdf="assets/Components/THE_FOUR/LS-cv_teal-hybrid-pdf.pdf">
-                                <span class="checkmark">✓</span>
-                                <div class="palette-colors">
-                                    <span class="color-dot" style="background:#2A2A2A;"></span>
-                                    <span class="color-dot" style="background:#2ED3C6;"></span>
-                                    <span class="color-dot" style="background:#F4F1ED;"></span>
-                                </div>
-                                <div class="palette-name">Teal Hybrid</div>
-                                <div class="palette-desc">Modern & strategic</div>
-                            </div>
-                            <div class="palette-option" data-style="print-bw" data-pdf="assets/Components/THE_FOUR/LS-cv_print-bw-pdf.pdf">
-                                <span class="checkmark">✓</span>
-                                <div class="palette-colors">
-                                    <span class="color-dot" style="background:#FFFFFF;border:1px solid #CCC;"></span>
-                                    <span class="color-dot" style="background:#0A0A0A;"></span>
-                                </div>
-                                <div class="palette-name">Print B&W</div>
-                                <div class="palette-desc">Ink-saver elegance</div>
-                            </div>
-                        </div>
-                        <div class="current-selection"><div class="current-label">Currently Selected</div><div class="current-style" id="currentStyle">Coral Light</div></div>
-                        <a href="assets/Components/THE_FOUR/LS-cv_coral-light.pdf" class="download-btn" id="downloadBtn" download>Download PDF</a>
-                        <a href="cv.html" class="view-full-cv-link">View Full Interactive Web Version →</a>
+                    <div class="resume-palette-selector"> 
+                        <label class="selector-label">Choose Your Resume Style</label> 
+                        <div class="palette-options"> 
+                            <div class="palette-option active" data-style="coral-light" data-pdf="assets/Components/THE_FOUR/LS-cv_coral-light.pdf"> 
+                                <span class="checkmark">✓</span> 
+                                <div class="palette-colors"> 
+                                    <span class="color-dot" style="background:#F96F6E;"></span> 
+                                    <span class="color-dot" style="background:#F4F1ED;"></span> 
+                                    <span class="color-dot" style="background:#E8E6E3;"></span> 
+                                </div> 
+                                <div class="palette-name">Coral Light</div> 
+                                <div class="palette-desc">Warm & approachable</div> 
+                            </div> 
+                            <div class="palette-option" data-style="coral-dark" data-pdf="assets/Components/THE_FOUR/LS-cv_coral-dark-pdf.pdf"> 
+                                <span class="checkmark">✓</span> 
+                                <div class="palette-colors"> 
+                                    <span class="color-dot" style="background:#F96F6E;"></span> 
+                                    <span class="color-dot" style="background:#2A2A2A;"></span> 
+                                    <span class="color-dot" style="background:#FF9B9A;"></span> 
+                                </div> 
+                                <div class="palette-name">Coral Dark</div> 
+                                <div class="palette-desc">Bold & premium</div> 
+                            </div> 
+                            <div class="palette-option" data-style="teal-hybrid" data-pdf="assets/Components/THE_FOUR/LS-cv_teal-hybrid-pdf.pdf"> 
+                                <span class="checkmark">✓</span> 
+                                <div class="palette-colors"> 
+                                    <span class="color-dot" style="background:#2A2A2A;"></span> 
+                                    <span class="color-dot" style="background:#2ED3C6;"></span> 
+                                    <span class="color-dot" style="background:#F4F1ED;"></span> 
+                                </div> 
+                                <div class="palette-name">Teal Hybrid</div> 
+                                <div class="palette-desc">Modern & strategic</div> 
+                            </div> 
+                            <div class="palette-option" data-style="print-bw" data-pdf="assets/Components/THE_FOUR/LS-cv_print-bw-pdf.pdf"> 
+                                <span class="checkmark">✓</span> 
+                                <div class="palette-colors"> 
+                                    <span class="color-dot" style="background:#FFFFFF;border:1px solid #CCC;"></span> 
+                                    <span class="color-dot" style="background:#0A0A0A;"></span> 
+                                </div> 
+                                <div class="palette-name">Print B&W</div> 
+                                <div class="palette-desc">Ink-saver elegance</div> 
+                            </div> 
+                        </div> 
+                        <div class="current-selection"><div class="current-label">Currently Selected</div><div class="current-style" id="currentStyle">Coral Light</div></div> 
+                        <a href="assets/Components/THE_FOUR/LS-cv_coral-light.pdf" class="download-btn" id="downloadBtn" download>Download PDF</a> 
+                        <a href="cv.html" class="view-full-cv-link">View Full Interactive Web Version →</a> 
                     </div>
                     
-                    <div class="resume-timeline-col">
-                        <div class="timeline-header">
-                            <h3 class="timeline-title">Career Highlights</h3>
-                            <p class="timeline-subtitle">(Full timeline available in web version)</p>
-                        </div>
-                        <div class="resume-list">
+                    <div class="resume-list">
                         <div class="role-row">
                             <div class="role-date current">2024–Pres</div>
                             <div>
@@ -1892,7 +1847,6 @@
                                 <div class="role-title">Marketing Manager</div>
                                 <div class="role-company">Worldwide Retail Channel</div>
                             </div>
-                        </div>
                         </div>
                     </div>
                 </div>
@@ -1973,38 +1927,29 @@
             el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
         });
 
-        // =========================================
-        // 2. MOBILE MENU
-        // =========================================
-        const drawer = document.getElementById('mobileDrawer');
-        const openBtn = document.getElementById('mobileMenuBtn');
-        const closeBtn = document.getElementById('drawerClose');
-        
-        function openDrawer() {
-            drawer.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-            requestAnimationFrame(() => {
-                drawer.classList.add('active');
-            });
-        }
-        
-        function closeDrawer() {
-            drawer.classList.remove('active');
-            document.body.style.overflow = '';
-            setTimeout(() => {
-                drawer.style.display = 'none';
-            }, 300);
-        }
-        
-        openBtn.addEventListener('click', openDrawer);
-        closeBtn.addEventListener('click', closeDrawer);
-        
-        // Close on escape
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && drawer.classList.contains('active')) {
-                closeDrawer();
-            }
-        });
+        // MOBILE DRAWER LOGIC 
+        (function() { 
+            const overlay = document.getElementById('mobileMenuOverlay'); 
+            const openBtn = document.getElementById('mobileMenuBtn'); 
+            const closeBtn = document.getElementById('mobileMenuClose'); 
+            if (!overlay || !openBtn) return; 
+         
+            function openDrawer() { 
+                overlay.classList.add('active'); 
+                overlay.setAttribute('aria-hidden', 'false'); 
+                document.body.style.overflow = 'hidden'; 
+            } 
+            function closeDrawer() { 
+                overlay.classList.remove('active'); 
+                overlay.setAttribute('aria-hidden', 'true'); 
+                document.body.style.overflow = ''; 
+            } 
+         
+            openBtn.addEventListener('click', openDrawer); 
+            if (closeBtn) closeBtn.addEventListener('click', closeDrawer); 
+            overlay.addEventListener('click', (e) => { if (e.target === overlay) closeDrawer(); }); 
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay.classList.contains('active')) closeDrawer(); }); 
+        })(); 
 
         // =========================================
         // 3. SCROLL ANIMATIONS (Intersection Observer)
@@ -2078,58 +2023,134 @@
             });
         }
 
+        // THEME TOGGLE (Unified) 
+        const themeToggle = document.getElementById('themeToggle'); 
+        const mobileThemeToggle = document.getElementById('mobileThemeToggle'); 
+        const drawerThemeToggle = document.getElementById('drawerThemeToggle'); 
+        const drawerThemeIcon = document.getElementById('drawerThemeIcon'); 
+        const drawerThemeLabel = document.getElementById('drawerThemeLabel'); 
+        const html = document.documentElement; 
+         
+        // 1. Load State 
+        const savedTheme = localStorage.getItem('theme') || 'dark'; 
+        html.setAttribute('data-theme', savedTheme); 
+        updateAllThemeIcons(savedTheme); 
+         
+        // 2. Update Helper 
+        function updateAllThemeIcons(theme) { 
+            const iconClass = theme === 'light' ? 'fa-regular fa-sun' : 'fa-regular fa-moon'; 
+            const btnContent = `<i class="${iconClass}"></i>`; 
+             
+            if (themeToggle) themeToggle.innerHTML = btnContent; 
+            if (mobileThemeToggle) mobileThemeToggle.innerHTML = btnContent; 
+             
+            if (drawerThemeIcon) drawerThemeIcon.className = iconClass; 
+            if (drawerThemeLabel) drawerThemeLabel.textContent = theme === 'dark' ? 'Switch to Light' : 'Switch to Dark'; 
+        } 
+         
+        // 3. Toggle Function 
+        function toggleTheme() { 
+            const currentTheme = html.getAttribute('data-theme'); 
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark'; 
+             
+            html.setAttribute('data-theme', newTheme); 
+            localStorage.setItem('theme', newTheme); 
+            updateAllThemeIcons(newTheme); 
+        } 
+         
+        // 4. Bind Events 
+        if (themeToggle) themeToggle.addEventListener('click', toggleTheme); 
+        if (mobileThemeToggle) mobileThemeToggle.addEventListener('click', toggleTheme); 
+        if (drawerThemeToggle) drawerThemeToggle.addEventListener('click', toggleTheme); 
+
         // =========================================
-        // 7. THEME TOGGLE
+        // 8. MEGA MENU LOGIC
         // =========================================
-        const themeToggle = document.getElementById('themeToggle');
-        const themeIcon = document.getElementById('themeIcon');
-        const html = document.documentElement;
+        (function initMegaMenu(){ 
+            const mega = document.getElementById('portfolioMega'); 
+            const panel = document.getElementById('portfolioMegaPanel'); 
+            if(!mega || !panel) return; 
+         
+            let closeTimeout; 
+            const open = () => { clearTimeout(closeTimeout); mega.classList.add('is-open'); }; 
+            const close = () => { closeTimeout = setTimeout(() => mega.classList.remove('is-open'), 150); }; 
+         
+            mega.addEventListener('mouseenter', open); 
+            mega.addEventListener('mouseleave', close); 
+            panel.addEventListener('mouseenter', () => clearTimeout(closeTimeout)); 
+            panel.addEventListener('mouseleave', close); 
+        })();
 
-        // Check local storage
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        html.setAttribute('data-theme', savedTheme);
-        updateIcon(savedTheme);
-
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = html.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            
-            html.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            updateIcon(newTheme);
-        });
-
-        function updateIcon(theme) {
-            if (theme === 'light') {
-                themeIcon.classList.remove('fa-sun');
-                themeIcon.classList.add('fa-moon');
-            } else {
-                themeIcon.classList.remove('fa-moon');
-                themeIcon.classList.add('fa-sun');
-            }
-        }
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const options = document.querySelectorAll('.palette-option');
-            const currentStyleLabel = document.getElementById('currentStyle');
+        // =========================================
+        // 9. RESUME PALETTE SELECTOR LOGIC
+        // =========================================
+        (function initPaletteSelector() {
+            const paletteOptions = document.querySelectorAll('.palette-option');
+            const currentStyle = document.getElementById('currentStyle');
             const downloadBtn = document.getElementById('downloadBtn');
-            if (!options.length || !currentStyleLabel || !downloadBtn) return;
-            const names = { 'coral-light':'Coral Light','coral-dark':'Coral Dark','teal-hybrid':'Teal Hybrid','print-bw':'Print B&W' };
-            options.forEach(opt=>{
-                opt.addEventListener('click', function(){
-                    options.forEach(o=>o.classList.remove('active'));
+            const styleNames = { 
+                'coral-light': 'Coral Light', 
+                'coral-dark': 'Coral Dark', 
+                'teal-hybrid': 'Teal Hybrid', 
+                'print-bw': 'Print B&W' 
+            };
+
+            paletteOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove active class from all
+                    paletteOptions.forEach(opt => opt.classList.remove('active'));
+                    // Add to clicked
                     this.classList.add('active');
+                    
                     const style = this.getAttribute('data-style');
-                    const pdf = this.getAttribute('data-pdf');
-                    currentStyleLabel.textContent = names[style]||style;
-                    downloadBtn.href = pdf;
+                    const pdfUrl = this.getAttribute('data-pdf');
+                    
+                    // Update text and download link
+                    if (currentStyle) currentStyle.textContent = styleNames[style];
+                    if (downloadBtn) downloadBtn.href = pdfUrl;
+                    
+                    console.log('🎨 Resume style changed to:', style);
                 });
-                opt.style.cursor='pointer';
             });
-        });
+        })();
     </script>
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"7d9039f5d5b84e54a54bb66d7a78302f","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
-    <script src="/TheHub/hub-script.js"></script>
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
 </body>
 </html>

@@ -22,124 +22,182 @@
     
     <!-- Page Specific Overrides -->
     <style>
+        /* ========================================= 
+           CORE VARIABLES (v2.1) 
+           ========================================= */ 
+        :root { 
+            --coral: #F96F6E; 
+            --teal: #2ED3C6; 
+            --ink: #0A0A0A; 
+            --cloud: #F4F1ED; 
+            --bg-body: #0A0A0A; 
+            --surface-dark: #111216; 
+            --border-light: 1px solid rgba(255,255,255,0.08); 
+            --radius: 16px; 
+            --header-height: 80px; 
+            --container-width: 1400px; 
+
+            /* Insights Specific Colors mapping to v2.1 */
+            --text-primary: #EDEDED;
+            --text-secondary: rgba(255,255,255,0.7);
+            --border-color: rgba(255,255,255,0.1);
+            --bg-primary: #0A0A0A;
+            --bg-secondary: #111216;
+            --coral-accent: var(--coral);
+            --teal-accent: var(--teal);
+        } 
+
         /* Theme safety: enforce single image/signature per theme */
+        html[data-theme="light"] {
+            --bg-body: #F4F1ED;
+            --text-primary: #111111;
+            --text-secondary: #555555;
+            --bg-primary: #F4F1ED;
+            --bg-secondary: #EAE6E1;
+            --border-color: rgba(0,0,0,0.1);
+        }
+        
         html[data-theme="light"] .theme-img-dark, html[data-theme="light"] .sig-sticker.theme-img-dark { display: none !important; }
         html[data-theme="dark"] .theme-img-light, html[data-theme="dark"] .sig-sticker.theme-img-light { display: none !important; }
 
-        /* Ensure signature overlays stay within the Latest Insight image only */
-        .latest-section .theme-image-container { position: relative; display: inline-block; max-width:100%; line-height:0; }
-        .latest-section .sig-sticker { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; z-index: 10; }
-        /* Explicitly disable any signature in the hero section */
-        .hero-section .sig-sticker { display: none !important; }
-        /* Landing Page Specific Styles */
-        :root {
-            --header-h: 64px;
-            --header-h-mobile: 56px;
-            --header-height: var(--header-h);
-            --hero-height: 80vh;
+        /* RESET */ 
+        * { margin: 0; padding: 0; box-sizing: border-box; } 
+        html { scroll-behavior: smooth; } 
+        body { 
+            background-color: var(--bg-body); 
+            color: var(--text-primary); 
+            font-family: 'Inter', sans-serif; 
+            line-height: 1.6; 
+            overflow-x: hidden; 
+            cursor: none; 
+        } 
+
+        h1, h2, h3, h4 { font-family: 'Big Shoulders Display', sans-serif; text-transform: uppercase; line-height: 0.95; color: var(--text-primary); } 
+        p { font-weight: 300; margin-bottom: 1rem; color: var(--text-secondary); } 
+        a { text-decoration: none; color: inherit; transition: all 0.2s ease; } 
+        img { display: block; max-width: 100%; height: auto; border-radius: var(--radius); } 
+
+        .container { max-width: var(--container-width); margin: 0 auto; padding: 0 2rem; } 
+
+        /* ========================================= 
+           1. MEGA HEADER (Fixed) 
+           ========================================= */ 
+        .site-header { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 80px; 
+            background: rgba(10,10,10,0.95); backdrop-filter: blur(12px); 
+            border-bottom: 1px solid rgba(255,255,255,0.1); z-index: 1000; 
+        } 
+        [data-theme="light"] .site-header {
+            background: rgba(244,241,237,0.95);
+            border-bottom: 1px solid rgba(0,0,0,0.1);
         }
+
+        .nav-container { 
+            max-width: 1400px; margin: 0 auto; padding: 0 2rem; height: 100%; 
+            display: grid; 
+            grid-template-columns: 200px 1fr 200px; 
+            align-items: center; 
+        } 
+
+        .nav-logo { justify-self: start; }
+        .nav-logo img { height: 32px; width: auto; } 
+
+        /* Desktop Nav */ 
+        .desktop-nav { justify-self: center; display: flex; align-items: center; gap: 1rem; height: 100%; } 
+
+        .nav-link { 
+            font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600; 
+            text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); 
+            text-decoration: none; padding: 0.5rem 1rem; border-radius: 6px; 
+            transition: all 0.2s; display: flex; align-items: center; gap: 6px; 
+            background: transparent; border: none; cursor: pointer; 
+        } 
+        [data-theme="light"] .nav-link { color: #555; }
+
+        .nav-link:hover, .nav-link:focus, .nav-link.active { color: var(--text-primary); background: rgba(255,255,255,0.05); } 
+        [data-theme="light"] .nav-link:hover { background: rgba(0,0,0,0.05); color: #000; }
         
-        /* Hero Video Section */
-        .hero-section {
-            position: relative;
-            min-height: calc(100vh - 120px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 4rem 1rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .insights-video-title {
-            max-width: 600px;
-            margin: 0 auto 2rem;
-            position: relative;
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-        }
-
-        .insights-video {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .hero-subtitle {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(1.2rem, 4vw, 1.5rem);
-            color: var(--text-secondary);
-            max-width: 700px;
-            margin: 0 auto 2rem;
-            line-height: 1.6;
-        }
-
-        /* Sub-Navigation (Specific to Landing) */
-        .insights-subnav {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            padding: 1.5rem 0;
-            border-bottom: 1px solid var(--border-color);
-            background: var(--bg-primary);
-            position: sticky;
-            top: 64px;
-            z-index: 90;
-        }
-
-        /* Mobile Menu Drawer Fix - NUCLEAR OPTION */ 
-        #mobileMenuOverlay,
-        .mobile-menu-overlay { 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100vh; 
-            background-color: var(--bg-primary); 
-            z-index: 9999; 
-            
-            /* CRITICAL: Remove from render tree completely to prevent obstruction */
-            display: none !important; 
-            visibility: hidden !important;
-            opacity: 0 !important;
-            
-            flex-direction: column; 
-            padding: 1.5rem; 
-            overflow-y: auto; 
+        /* Mega Dropdown Logic */ 
+        .has-dropdown { position: relative; height: 100%; display: flex; align-items: center; } 
+        .has-dropdown:hover .mega-dropdown { 
+            opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); pointer-events: auto; 
         } 
         
-        /* Support for common toggle states */ 
-        #mobileMenuOverlay.active,
-        #mobileMenuOverlay.is-open,
-        .mobile-menu-overlay.active, 
-        .mobile-menu-overlay.is-open, 
-        .mobile-menu-overlay.show { 
-            display: flex !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-            animation: fadeInDrawer 0.3s ease forwards;
+        .mega-dropdown { 
+            position: absolute; top: 80px; left: 50%; transform: translateX(-50%) translateY(10px); 
+            width: 600px; background: #0A0A0A; border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 16px; padding: 1.5rem; box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+            opacity: 0; visibility: hidden; pointer-events: none; transition: all 0.2s ease; 
+        } 
+        [data-theme="light"] .mega-dropdown {
+            background: #FFFFFF;
+            border: 1px solid rgba(0,0,0,0.1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+        }
+        
+        .mega-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; } 
+        .mega-link { 
+            display: flex; align-items: flex-start; gap: 1rem; padding: 1rem; 
+            border-radius: 8px; text-decoration: none; transition: background 0.2s; 
+        } 
+        .mega-link:hover { background: rgba(255,255,255,0.05); } 
+        [data-theme="light"] .mega-link:hover { background: rgba(0,0,0,0.05); }
+
+        .mega-icon { width: 32px; height: 32px; background: rgba(255,255,255,0.05); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: var(--text-primary); flex-shrink: 0; } 
+        [data-theme="light"] .mega-icon { background: rgba(0,0,0,0.05); color: #333; }
+
+        .mega-link:hover .mega-icon { background: var(--coral); color: #FFF; } 
+        .mega-title { display: block; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.9rem; color: var(--text-primary); margin-bottom: 0.2rem; } 
+        .mega-desc { display: block; font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4; } 
+ 
+        /* Controls */ 
+        .nav-actions { justify-self: end; display: flex; align-items: center; gap: 1rem; } 
+        .theme-toggle { background: none; border: none; cursor: pointer; color: var(--text-primary); font-size: 1.2rem; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; transition: background 0.2s; } 
+        .theme-toggle:hover { background: rgba(255,255,255,0.05); }
+        [data-theme="light"] .theme-toggle:hover { background: rgba(0,0,0,0.05); }
+
+        /* Hamburger */ 
+        .mobile-toggle { display: none; background: none; border: none; color: var(--text-primary); font-size: 1.5rem; cursor: pointer; } 
+
+        /* --- SUBNAV --- */ 
+        .insights-subnav { 
+            position: fixed; top: 80px; left: 0; width: 100%; 
+            background: #141414; border-bottom: var(--border-light); 
+            padding: 1rem 0; z-index: 900; 
+            backdrop-filter: blur(12px);
+            display: flex; justify-content: center; gap: 2rem;
+        } 
+        [data-theme="light"] .insights-subnav {
+            background: #EAE6E1;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
         }
 
-        @keyframes fadeInDrawer {
-            from { opacity: 0; transform: translateX(100%); }
-            to { opacity: 1; transform: translateX(0); }
-        }
+        .subnav-link { color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; } 
+        .subnav-link:hover { color: var(--text-primary); } 
+        .subnav-link.active { color: var(--coral); font-weight: 600; } 
+        .subnav-link.active::before { content: '— '; color: var(--coral); }
 
-        .subnav-link {
-            text-decoration: none;
-            color: var(--text-secondary);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            font-weight: 500;
-            transition: color 0.2s;
+        /* MOBILE DRAWER (v2.1) */
+        .mobile-drawer {
+            position: fixed; top: 0; right: 0; width: 300px; height: 100%;
+            background: #0A0A0A; border-left: 1px solid rgba(255,255,255,0.1);
+            z-index: 2000; transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 2rem; display: flex; flex-direction: column; gap: 2rem;
         }
-
-        .subnav-link:hover, .subnav-link.active {
-            color: var(--coral-accent);
+        [data-theme="light"] .mobile-drawer { background: #F4F1ED; border-left: 1px solid rgba(0,0,0,0.1); }
+        .mobile-drawer.active { transform: translateX(0); }
+        .drawer-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px); z-index: 1999; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
         }
+        .drawer-overlay.active { opacity: 1; pointer-events: auto; }
+        .drawer-close { background: none; border: none; color: var(--text-primary); font-size: 1.5rem; cursor: pointer; align-self: flex-end; }
+        .drawer-links { display: flex; flex-direction: column; gap: 1.5rem; }
+        .drawer-link { font-family: 'Big Shoulders Display'; font-size: 2rem; text-transform: uppercase; color: var(--text-primary); text-decoration: none; }
+        .drawer-link:hover { color: var(--coral); }
+        .drawer-link.active { color: var(--teal); }
 
         /* Latest Feature Section */
         .latest-section {
@@ -385,62 +443,90 @@
 </head>
 <body>
 
-    <!-- Standard Header -->
-    <header class="lg-site-header" role="banner">
-      <div class="lg-site-header-inner">
-        <a href="/insights" class="lg-logo" title="Luis Gilberto's Insights">
-            <img src="/insights/assets/images/insights_logo_light.svg" alt="Luis Gilberto's Insights" style="height: 32px; width: auto;">
-        </a>
-        <nav class="lg-main-nav">
-          <a href="https://luis-gilberto.com" class="lg-nav-link">PORTFOLIO</a>
-          <a href="/insights" class="lg-nav-link is-active">INSIGHTS</a>
-          <a href="/TheHub/" class="lg-nav-link">THE HUB</a>
-          <a href="https://portal.luis-gilberto.com/" class="lg-nav-link">PORTAL</a>
-        </nav>
-        
-        <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Menu">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-        </button>
-      </div>
-    </header>
+    <div id="cursor-lens"><div class="lens-outer"></div><div class="lens-center"></div></div>
 
-    <!-- Sub Nav (Desktop Only) -->
-    <nav class="insights-subnav" data-lens-ignore="true">
+    <!-- MOBILE DRAWER -->
+    <div class="drawer-overlay" id="drawerOverlay"></div>
+    <div class="mobile-drawer" id="mobileDrawer">
+      <button class="drawer-close" id="drawerClose"><i class="fa-solid fa-xmark"></i></button>
+      <nav class="drawer-links">
+        <a href="/index.html" class="drawer-link">Home</a>
+        <a href="/timeline.html" class="drawer-link">Timeline</a>
+        <a href="/myexperience.html" class="drawer-link">Experience</a>
+        <a href="/brand/index.html" class="drawer-link">Identity</a>
+        <a href="/insights/" class="drawer-link active">Insights</a>
+        <a href="/TheHub/" class="drawer-link">The Hub</a>
+        <a href="https://portal.luis-gilberto.com" class="drawer-link">Portal</a>
+      </nav>
+    </div>
+
+    <!-- HEADER --> 
+    <header class="site-header">
+       <div class="nav-container">
+         <!-- Left: Logo -->
+         <div class="nav-logo">
+           <a href="/index.html">
+             <img src="/assets/images/AUg_logo_White.png" alt="Luis Gilberto" class="theme-img-dark">
+             <img src="/assets/images/AUg_logo_Black.png" alt="Luis Gilberto" class="theme-img-light">
+           </a>
+         </div>
+   
+         <!-- Center: Navigation -->
+         <nav class="desktop-nav">
+           <div class="has-dropdown">
+             <button class="nav-link">Portfolio <i class="fa-solid fa-chevron-down" style="font-size: 0.7rem; opacity: 0.5;"></i></button>
+             <div class="mega-dropdown">
+               <div class="mega-grid">
+                 <a href="/index.html" class="mega-link">
+                   <div class="mega-icon"><i class="fa-solid fa-house"></i></div>
+                   <div>
+                     <span class="mega-title">Home</span>
+                     <span class="mega-desc">Return to the overview.</span>
+                   </div>
+                 </a>
+                 <a href="/timeline.html" class="mega-link">
+                   <div class="mega-icon"><i class="fa-solid fa-timeline"></i></div>
+                   <div>
+                     <span class="mega-title">Timeline</span>
+                     <span class="mega-desc">15+ years of career milestones.</span>
+                   </div>
+                 </a>
+                 <a href="/myexperience.html" class="mega-link">
+                   <div class="mega-icon"><i class="fa-solid fa-briefcase"></i></div>
+                   <div>
+                     <span class="mega-title">Experience</span>
+                     <span class="mega-desc">Deep dives into key projects.</span>
+                   </div>
+                 </a>
+                 <a href="/brand/index.html" class="mega-link">
+                   <div class="mega-icon"><i class="fa-solid fa-fingerprint"></i></div>
+                   <div>
+                     <span class="mega-title">Identity</span>
+                     <span class="mega-desc">Personal ethos and visual language.</span>
+                   </div>
+                 </a>
+               </div>
+             </div>
+           </div>
+           <a href="/insights/" class="nav-link active">Insights</a>
+           <a href="/TheHub/" class="nav-link">The Hub</a>
+           <a href="https://portal.luis-gilberto.com" class="nav-link">The Portal</a>
+         </nav>
+   
+         <!-- Right: Actions -->
+         <div class="nav-actions">
+           <button class="theme-toggle"><i class="fa-regular fa-moon"></i></button>
+           <button class="mobile-toggle"><i class="fa-solid fa-bars"></i></button>
+         </div>
+       </div>
+     </header>
+
+    <!-- Sub Nav -->
+    <nav class="insights-subnav">
         <a href="#" class="subnav-link active">Latest</a>
         <a href="/insights/series/" class="subnav-link">Series</a>
         <a href="/insights/topics/" class="subnav-link">Topics</a>
     </nav>
-
-    <!-- Standardized Mobile Drawer -->
-    <div class="mobile-menu-overlay" id="mobileMenuOverlay">
-        <div class="mobile-menu-header">
-            <img src="/insights/assets/images/insights_logo_light.svg" alt="Insights" style="height: 28px; width: auto;">
-            <button class="mobile-close-btn" id="mobileMenuClose">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
-        </div>
-
-        <!-- Global Level -->
-        <nav class="mobile-global-nav">
-            <a href="https://luis-gilberto.com" class="mobile-nav-link">PORTFOLIO</a>
-            <a href="/insights" class="mobile-nav-link is-active">INSIGHTS</a>
-            <a href="/TheHub/" class="mobile-nav-link">THE HUB</a>
-            <a href="https://portal.luis-gilberto.com/" class="mobile-nav-link">PORTAL</a>
-        </nav>
-
-        <!-- Context Level (Standardized for Index) -->
-        <div class="mobile-sub-nav" data-lens-ignore="true">
-            <span class="mobile-sub-label">Explore:</span>
-            <a href="#" class="mobile-sub-link active-context">Latest Stories</a>
-            <a href="/insights/series/" class="mobile-sub-link">Browse Series</a>
-            <a href="/insights/topics/" class="mobile-sub-link">Browse Topics</a>
-        </div>
-    </div>
-
-    <button class="theme-toggle" id="themeToggle">
-        <svg class="sun-icon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="5"></circle></svg>
-        <svg class="moon-icon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-    </button>
 
     <!-- Hero Section -->
     <section class="hero-section">
@@ -703,74 +789,118 @@
     </div> 
 
     <!-- Standard Footer -->
-    <footer class="site-footer" role="contentinfo">
-        <div class="footer-container">
-            <div class="footer-grid-layout">
-                <div class="footer-brand-col">
-                    <a href="/index.html" class="footer-logo-link">
-                        <img src="/assets/images/Logomark_White_a.png" alt="Luis Gilberto" class="footer-logo-img">
-                        <span class="footer-brand-name">Luis Gilberto</span>
-                    </a>
-                    <p class="footer-tagline">Making technology feel human through clarity, beautiful execution, and systems that scale.</p>
-                    <div class="footer-social">
-                        <a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="mailto:contact@luis-gilberto.com" class="social-icon"><i class="far fa-envelope"></i></a>
-                    </div>
-                </div>
-                <nav class="footer-nav-col">
-                    <h3 class="footer-nav-heading">Ecosystem</h3>
-                    <ul class="footer-nav-list">
-                        <li><a href="/index.html" class="footer-nav-link">Portfolio</a></li>
-                        <li><a href="/insights/" class="footer-nav-link">Insights</a></li>
-                        <li><a href="/TheHub/" class="footer-nav-link">The Hub</a></li>
-                        <li><a href="https://portal.luis-gilberto.com" class="footer-nav-link footer-portal-link">The Portal</a></li>
-                    </ul>
-                </nav>
-                <nav class="footer-nav-col">
-                    <h3 class="footer-nav-heading">Connect</h3>
-                    <ul class="footer-nav-list">
-                        <li><a href="/contact.html" class="footer-nav-link">Contact</a></li>
-                        <li><a href="/about.html" class="footer-nav-link">About Me</a></li>
-                        <li><a href="https://www.linkedin.com/in/luisgilberto00" class="footer-nav-link">LinkedIn</a></li>
-                        <li><a href="#" id="openAiModalLink" class="footer-ai-link">About AI Collaboration</a></li>
-                    </ul>
-                </nav>
-                <div class="footer-status-col">
-                    <div class="footer-status-card">
-                        <div class="status-indicator"><span class="status-dot"></span><span class="status-text">Accepting Projects</span></div>
-                        <a href="/contact.html" class="status-cta">Start a Conversation &rarr;</a>
-                    </div>
-                </div>
+    <footer class="portfolio-footer">
+        <div class="footer-grid-portfolio">
+          <div>
+            <h4 style="margin-bottom: 1.5rem; color: var(--coral);">Luis Gilberto</h4>
+            <p style="font-size: 0.85rem; color: #666;">Crafting digital experiences with strategic intention and creative soul. Based in the future.</p>
+          </div>
+          
+          <div>
+            <h4 style="margin-bottom: 1.5rem;">Explore</h4>
+            <a href="/timeline.html" class="pf-link">Timeline</a>
+            <a href="/myexperience.html" class="pf-link">Experience</a>
+            <a href="/brand/index.html" class="pf-link">Identity</a>
+            <a href="/cv.html" class="pf-link">Resume</a>
+          </div>
+          
+          <div>
+            <h4 style="margin-bottom: 1.5rem;">Connect</h4>
+            <a href="https://linkedin.com" class="pf-link">LinkedIn</a>
+            <a href="https://twitter.com" class="pf-link">Twitter</a>
+            <a href="mailto:hello@luis-gilberto.com" class="pf-link">Email</a>
+            <a href="/TheHub/" class="pf-link">The Hub</a>
+          </div>
+          
+          <div>
+            <div class="pf-status">
+              <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                <span class="status-dot"></span>
+                <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #FFF;">System Status: Active</span>
+              </div>
+              <p style="font-size: 0.8rem; color: #666; margin: 0;">Currently accepting select strategic partnerships for 2024.</p>
             </div>
+          </div>
         </div>
-        <div class="footer-bottom-bar">
-            <div class="footer-bottom-container">
-                <p class="footer-copyright">© 2026 Luis Gilberto. All Rights Reserved.</p>
-            </div>
-        </div>
-    </footer>
+      </footer>
 
     <!-- Scripts -->
     <script src="/insights/assets/js/article-interactions.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>
+        (function() {
+        // Theme Management
+        const html = document.documentElement;
+        const themeToggle = document.querySelector('.theme-toggle');
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        html.setAttribute('data-theme', savedTheme);
+        
+        function toggleTheme() {
+          const current = html.getAttribute('data-theme');
+          const next = current === 'dark' ? 'light' : 'dark';
+          html.setAttribute('data-theme', next);
+          localStorage.setItem('theme', next);
+        }
+        if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
+
+        // Mobile Drawer Management
+        const mobileToggle = document.querySelector('.mobile-toggle');
+        const mobileDrawer = document.getElementById('mobileDrawer');
+        const drawerClose = document.getElementById('drawerClose');
+
+        if (mobileToggle && mobileDrawer) {
+          mobileToggle.addEventListener('click', () => {
+            mobileDrawer.classList.add('active');
+            document.body.style.overflow = 'hidden';
+          });
+          
+          const closeDrawer = () => {
+            mobileDrawer.classList.remove('active');
+            document.body.style.overflow = '';
+          };
+          
+          if (drawerClose) drawerClose.addEventListener('click', closeDrawer);
+          
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && mobileDrawer.classList.contains('active')) closeDrawer();
+          });
+        }
+
+        // Custom Cursor
+        const cursor = document.getElementById('cursor-lens');
+        if (cursor) {
+            let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+            let cursorX = mouseX, cursorY = mouseY;
+            let isVisible = false;
+            cursor.style.opacity = '0';
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX; mouseY = e.clientY;
+                if (!isVisible) { isVisible = true; cursor.style.opacity = '1'; cursorX = mouseX; cursorY = mouseY; }
+            });
+            function animateCursor() {
+                const speed = 0.15;
+                cursorX += (mouseX - cursorX) * speed;
+                cursorY += (mouseY - cursorY) * speed;
+                cursor.style.left = cursorX + 'px';
+                cursor.style.top = cursorY + 'px';
+                requestAnimationFrame(animateCursor);
+            }
+            animateCursor();
+            const hoverElements = 'a, button, .story-card, .tab-btn';
+            document.querySelectorAll(hoverElements).forEach(el => {
+                el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+                el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+            });
+        }
+
         // Stories Swiper Init
         const storiesSwiper = new Swiper('.stories-swiper', {
             slidesPerView: 1,
             spaceBetween: 20,
             loop: true,
-            pagination: { 
-                el: '.stories-swiper .swiper-pagination', 
-                clickable: true 
-            },
-            navigation: {
-                nextEl: '.stories-swiper .swiper-button-next',
-                prevEl: '.stories-swiper .swiper-button-prev',
-            },
-            breakpoints: {
-                768: { slidesPerView: 2, spaceBetween: 30 },
-                1024: { slidesPerView: 3, spaceBetween: 40 }
-            }
+            pagination: { el: '.stories-swiper .swiper-pagination', clickable: true },
+            navigation: { nextEl: '.stories-swiper .swiper-button-next', prevEl: '.stories-swiper .swiper-button-prev' },
+            breakpoints: { 768: { slidesPerView: 2, spaceBetween: 30 }, 1024: { slidesPerView: 3, spaceBetween: 40 } }
         });
 
         // Tab Logic
@@ -788,49 +918,32 @@
             slidesPerView: 1,
             spaceBetween: 20,
             loop: true,
-            pagination: { 
-                el: '.work-swiper .swiper-pagination', 
-                clickable: true 
-            },
-            navigation: {
-                nextEl: '.work-swiper-next',
-                prevEl: '.work-swiper-prev',
-            },
-            breakpoints: {
-                768: { slidesPerView: 2, spaceBetween: 30 },
-                1024: { slidesPerView: 3, spaceBetween: 40 }
-            }
+            pagination: { el: '.work-swiper .swiper-pagination', clickable: true },
+            navigation: { nextEl: '.work-swiper-next', prevEl: '.work-swiper-prev' },
+            breakpoints: { 768: { slidesPerView: 2, spaceBetween: 30 }, 1024: { slidesPerView: 3, spaceBetween: 40 } }
         });
 
         // Theme-aware video source switching
         function updateVideoSource() {
-            const theme = document.documentElement.getAttribute('data-theme');
+            const theme = html.getAttribute('data-theme');
             const videoSource = document.getElementById('heroVideoSource');
             const video = document.getElementById('heroVideo');
-            
-            if (theme === 'dark') {
-                videoSource.src = '/insights/assets/videos/insights-video-dark.webm';
-            } else {
-                videoSource.src = '/insights/assets/videos/insights-video-light.webm';
+            if (videoSource && video) {
+                videoSource.src = theme === 'dark' ? '/insights/assets/videos/insights-video-dark.webm' : '/insights/assets/videos/insights-video-light.webm';
+                video.load();
+                video.play().catch(() => {});
             }
-            
-            video.load();
-            video.play();
         }
 
         // Listen for theme changes
         const observer = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
-                if (mutation.attributeName === 'data-theme') {
-                    updateVideoSource();
-                }
+                if (mutation.attributeName === 'data-theme') updateVideoSource();
             });
         });
-
-        observer.observe(document.documentElement, {
-            attributes: true,
-            attributeFilter: ['data-theme']
-        });
+        observer.observe(html, { attributes: true, attributeFilter: ['data-theme'] });
+        updateVideoSource();
+        })();
     </script>
     <script src="/TheHub/hub-script.js"></script>
 </body>
