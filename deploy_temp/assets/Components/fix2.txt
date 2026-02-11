@@ -1,0 +1,182 @@
+// REPLACE YOUR ENTIRE SCRIPT SECTION WITH THIS FIXED VERSION
+
+// Get DOM elements
+const hubHeader = document.getElementById('hubHeader');
+const backdropBlur = document.getElementById('backdropBlur');
+const hubLogoMain = document.querySelector('.hub-logo-main');
+const navTriggerLine = document.querySelector('.nav-trigger-line');
+const navMenu = document.querySelector('.hub-nav-menu');
+
+let isNavActive = false;
+let hoverTimer = null;
+let closeTimer = null;
+
+// Check if mobile
+function isMobile() {
+    return window.innerWidth <= 768;
+}
+
+// Show navigation with proper timing
+function showNavigation() {
+    if (!isNavActive) {
+        isNavActive = true;
+        // Clear any pending close timers
+        clearTimeout(closeTimer);
+        
+        // First, show the navigation menu
+        hubHeader.classList.add('nav-active');
+        
+        // THEN show the blur after a short delay so menu is visible first
+        setTimeout(() => {
+            if (isNavActive) { // Double-check still active
+                backdropBlur.classList.add('active');
+            }
+        }, 200); // Blur appears AFTER menu starts appearing
+    }
+}
+
+// Hide navigation with proper timing
+function hideNavigation() {
+    if (isNavActive) {
+        isNavActive = false;
+        
+        // First remove the blur
+        backdropBlur.classList.remove('active');
+        
+        // Then hide the menu after a short delay
+        setTimeout(() => {
+            hubHeader.classList.remove('nav-active');
+        }, 100);
+    }
+}
+
+// Toggle navigation (for mobile)
+function toggleNavigation() {
+    if (isNavActive) {
+        hideNavigation();
+    } else {
+        showNavigation();
+    }
+}
+
+// Desktop hover interactions - SIMPLIFIED
+hubHeader.addEventListener('mouseenter', () => {
+    if (!isMobile()) {
+        // Clear any pending close timer
+        clearTimeout(closeTimer);
+        clearTimeout(hoverTimer);
+        
+        // Show navigation after brief delay to avoid accidental triggers
+        hoverTimer = setTimeout(() => {
+            showNavigation();
+        }, 100);
+    }
+});
+
+hubHeader.addEventListener('mouseleave', () => {
+    if (!isMobile()) {
+        // Clear any pending timers
+        clearTimeout(hoverTimer);
+        clearTimeout(closeTimer);
+        
+        // Delay before closing to allow moving to menu
+        closeTimer = setTimeout(() => {
+            hideNavigation();
+        }, 500); // Generous delay for moving to menu items
+    }
+});
+
+// Keep navigation open when hovering over the menu itself
+if (navMenu) {
+    navMenu.addEventListener('mouseenter', () => {
+        if (!isMobile()) {
+            clearTimeout(closeTimer);
+        }
+    });
+    
+    navMenu.addEventListener('mouseleave', () => {
+        if (!isMobile()) {
+            closeTimer = setTimeout(() => {
+                hideNavigation();
+            }, 300);
+        }
+    });
+}
+
+// Mobile click interactions
+hubLogoMain.addEventListener('click', (e) => {
+    if (isMobile()) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleNavigation();
+    }
+});
+
+navTriggerLine.addEventListener('click', (e) => {
+    if (isMobile()) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleNavigation();
+    }
+});
+
+// Close when clicking backdrop
+backdropBlur.addEventListener('click', () => {
+    hideNavigation();
+});
+
+// Close with Escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isNavActive) {
+        hideNavigation();
+    }
+});
+
+// Handle navigation link clicks - close immediately
+document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+        // Immediately close navigation when clicking a link
+        isNavActive = false;
+        backdropBlur.classList.remove('active');
+        hubHeader.classList.remove('nav-active');
+    });
+});
+
+// Handle window resize
+window.addEventListener('resize', () => {
+    if (isMobile() && isNavActive) {
+        hideNavigation();
+    }
+});
+
+// Loading screen
+window.addEventListener('load', function() {
+    const loadingContainer = document.getElementById('loadingContainer');
+    if (loadingContainer) {
+        setTimeout(() => {
+            loadingContainer.classList.add('hidden');
+        }, 600);
+    }
+});
+
+// Card animations
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
+    });
+}, observerOptions);
+
+document.querySelectorAll('.nav-card').forEach(card => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(20px)';
+    card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    observer.observe(card);
+});

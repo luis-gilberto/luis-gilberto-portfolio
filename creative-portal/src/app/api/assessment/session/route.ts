@@ -24,6 +24,7 @@ export async function POST(req: Request) {
       }
     })
 
+    console.log("[DATA ACCESS] Assessment Session Created. ClientID:", client_id, "Type:", assessment_type, "SessionID:", session.id);
     return NextResponse.json({ id: session.id })
   } catch (e: any) {
     console.error('Assessment session insert error:', e)

@@ -19,7 +19,7 @@
         #cursor-lens {
             position: fixed;
             pointer-events: none;
-            z-index: 9999;
+            z-index: 200000;
             width: 40px;
             height: 40px;
             transform: translate(-50%, -50%);
@@ -222,19 +222,9 @@
         color: #0077B5;
     }
 
-    .footer-nav-divider {
-        margin-top: 0.5rem;
-        padding-top: 0.75rem;
-        border-top: 1px solid rgba(255,255,255,0.15);
-    }
-
-    .footer-system-link {
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: var(--coral);
-        text-decoration: none;
-        font-style: italic;
-    }
+    .footer-nav-divider { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.1); }
+    .footer-system-link { font-size: 0.85rem; color: var(--coral); font-style: italic; text-decoration: none; transition: opacity 0.2s; }
+    .footer-system-link:hover { opacity: 0.8; }
 
     .footer-status-card {
         background: rgba(255,255,255,0.03);
@@ -561,35 +551,112 @@
         [data-theme="dark"] .sun-icon { display: block; }
         [data-theme="dark"] .moon-icon { display: none; }
 
-        /* Mobile Toggle */
-        .mobile-nav-toggle {
-            display: none; width: 44px; height: 44px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px; cursor: pointer;
-            align-items: center; justify-content: center;
-        }
-        .nav-toggle-bar {
-            width: 20px; height: 2px; background: #fff;
-            border-radius: 2px; margin: 2px 0; display: block;
+
+        /* === MOBILE MENU STANDARDIZATION (Matches Index.html) === */
+        .mobile-menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0.75rem;
+            color: var(--text-primary);
+            z-index: 1002;
         }
 
-        .mobile-menu-overlay { position: fixed; inset: 0; background-color: var(--bg-primary); z-index: 11000; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; }
-        .mobile-menu-overlay.active { transform: translateX(0); }
-        .mobile-drawer-header { display: flex; justify-content: space-between; align-items: center; padding: 0 24px; height: 80px; border-bottom: 1px solid var(--border-light); }
-        .mobile-drawer-logo { height: 32px; width: auto; object-fit: contain; filter: brightness(0) invert(1); }
-        .mobile-controls { display: flex; align-items: center; gap: 16px; }
-        .drawer-close-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.1); border-radius: 50%; color: var(--text-primary); cursor: pointer; transition: all 0.2s ease; }
-        [data-theme="dark"] .drawer-close-btn { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); color: #fff; }
-        .drawer-close-btn:hover { background: #F96F6E; color: white; border-color: #F96F6E; transform: rotate(90deg); }
-        .mobile-drawer-content { padding: 40px 32px; padding-bottom: max(40px, calc(40px + env(safe-area-inset-bottom))); overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; gap: 32px; }
-        .mobile-group-label { font-family: 'Inter', sans-serif; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 16px; opacity: 0.7; }
-        .mobile-link { display: block; text-decoration: none; color: var(--text-primary); transition: color 0.2s; }
-        .mobile-link.main { font-family: var(--font-display); font-size: 2.5rem; font-weight: 700; line-height: 1.1; margin-bottom: 8px; }
-        .mobile-link.sub { font-family: 'Inter', sans-serif; font-size: 1.1rem; font-weight: 500; margin-bottom: 12px; color: var(--text-secondary); padding-left: 0; transition: all 0.2s; }
-        .mobile-link:hover { color: #F96F6E; }
-        .mobile-link.active-parent { color: #F96F6E; }
-        .mobile-link.sub.active { color: #F96F6E; font-weight: 700; padding-left: 12px; border-left: 3px solid #F96F6E; }
+        .mobile-menu-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.35);
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            display: block;
+        }
+
+        .mobile-menu-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .mobile-drawer {
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 100vh;
+            width: 85vw;
+            max-width: 400px;
+            background: #000000;
+            box-shadow: -12px 0 30px rgba(0,0,0,0.4);
+            transform: translateX(100%);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mobile-menu-overlay.active .mobile-drawer {
+            transform: translateX(0);
+        }
+
+        .mobile-menu-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 44px;
+            height: 44px;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            color: #ffffff;
+            font-size: 32px;
+            line-height: 1;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            z-index: 10;
+        }
+
+        .mobile-menu-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            padding: 1.5rem 1.5rem 2rem;
+            padding-bottom: max(2rem, calc(2rem + env(safe-area-inset-bottom)));
+        }
+
+        .mobile-drawer-header {
+            padding: 2rem 0 2rem 0.25rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 2rem;
+            display: block;
+        }
+
+        .mobile-drawer-brand { display: flex; flex-direction: column; gap: 0.25rem; }
+        .mobile-drawer-name { font-family: var(--font-display); font-size: 1.5rem; font-weight: 600; color: #ffffff; letter-spacing: -0.02em; }
+        .mobile-drawer-role { font-family: var(--font-sans); font-size: 0.8125rem; font-weight: 400; color: rgba(255, 255, 255, 0.5); letter-spacing: 0.02em; }
+
+        .mobile-nav-section { display: flex; flex-direction: column; gap: 0; margin-bottom: 2.5rem; }
+        .mobile-nav-label { font-family: var(--font-sans); font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255, 255, 255, 0.4); margin-bottom: 1.25rem; padding-left: 0.25rem; }
+
+        .mobile-nav-link-primary {
+            font-family: var(--font-display); font-size: 1.75rem; font-weight: 500; line-height: 1.3;
+            color: rgba(255, 255, 255, 0.85); padding: 0.5rem 0.25rem; transition: all 0.2s ease;
+            text-decoration: none; position: relative; display: block;
+        }
+        .mobile-nav-link-secondary {
+            font-family: var(--font-sans); font-size: 1rem; font-weight: 400; line-height: 1.5;
+            color: rgba(255, 255, 255, 0.65); padding: 0.625rem 0.25rem; transition: all 0.2s ease;
+            text-decoration: none; display: block;
+        }
+
+        .mobile-nav-link-primary:hover, .mobile-nav-link-secondary:hover { color: var(--coral); transform: translateX(4px); }
+        .mobile-nav-link-primary.active, .mobile-nav-link-secondary.active { color: var(--coral); font-weight: 600; }
+
+        @media (max-width: 1023px) {
+            .mobile-menu-toggle { display: flex; align-items: center; justify-content: center; }
+        }
         .mobile-divider { height: 1px; width: 100%; background: var(--border-light); }
         @media (max-width: 1023px) { .nav-links, .portfolio-subnav { display: none; } body { padding-top: 64px; } }
 
@@ -735,7 +802,7 @@
         .faq-content {
             max-height: 0; overflow: hidden; transition: max-height 0.3s ease;
         }
-        .faq-item.active .faq-content { max-height: 200px; margin-top: 16px; }
+        .faq-item.active .faq-content { max-height: 1000px; margin-top: 16px; }
         .faq-content p { color: var(--text-secondary); font-size: 15px; margin: 0; }
 
         .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
@@ -762,9 +829,9 @@
 
         /* Responsive */
         @media (max-width: 1023px) {
-            body { padding-top: 56px; }
-            .nav-links { display: none; }
-            .mobile-nav-toggle { display: flex; }
+            .nav-links, .portfolio-subnav, .sub-navigation { display: none; }
+            body { padding-top: 64px; }
+            .mobile-menu-toggle { display: flex; }
             .portfolio-subnav { 
                 position: static; background: var(--bg-primary); 
                 overflow-x: auto; 
@@ -776,7 +843,7 @@
             .dossier-sheet { padding: 24px; }
             .dossier-header { flex-direction: column; gap: 8px; }
         }
-        @media (min-width: 1024px) { .mobile-nav-toggle { display: none; } }
+        @media (min-width: 1024px) { .mobile-menu-toggle { display: none; } }
     </style>
 </head>
 <body>
@@ -806,17 +873,21 @@
                 <img src="assets/images/AUg_logo_White.png" alt="LG" style="height: 48px; width: auto;">
             </a>
             <div class="nav-links">
-                <a href="/index.html" class="nav-link">Portfolio</a>
-                <a href="/insights/index.html" class="nav-link">Insights</a>
-                <a href="/TheHub/index.html" class="nav-link">The Hub</a>
+                <a href="/index.html" class="nav-link active">Portfolio</a>
+                <a href="/insights/" class="nav-link">Insights</a>
+                <a href="/TheHub/" class="nav-link">The Hub</a>
                 <a href="https://portal.luis-gilberto.com" class="nav-link" target="_blank" rel="noopener noreferrer" aria-label="Access The Portal (opens in new tab)">The Portal</a>
                 <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" aria-pressed="false">
                     <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
                     <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
                 </button>
             </div>
-            <button class="mobile-nav-toggle" id="mobileToggle" aria-label="Toggle menu" aria-controls="mobileOverlay" aria-expanded="false">
-                <span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span>
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
             </button>
         </div>
     </nav>
@@ -829,39 +900,42 @@
                 <li><a href="/timeline.html">Timeline</a></li>
                 <li><a href="/myexperience.html">Experience</a></li>
                 <li><a href="/about.html">About</a></li>
+                <li><a href="/brand/">Identity</a></li>
                 <li><a href="/contact.html" class="active">Contact</a></li>
             </ul>
         </div>
     </nav>
 
-    <div class="mobile-menu-overlay" id="mobileOverlay" aria-hidden="true">
-        <div class="mobile-drawer-header">
-            <div class="mobile-brand">
-                <img src="/assets/images/Symbol_mobile.svg" alt="Logo" class="mobile-drawer-logo">
+    <!-- Standardized Mobile Drawer -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay" aria-hidden="true">
+        <div class="mobile-drawer" role="dialog" aria-modal="true" aria-label="Mobile menu">
+            <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">&times;</button>
+            <div class="mobile-menu-content">
+                <div class="mobile-drawer-header">
+                    <div class="mobile-drawer-brand">
+                        <span class="mobile-drawer-name">Luis Gilberto</span>
+                        <span class="mobile-drawer-role">Creative Strategy</span>
+                    </div>
+                </div>
+
+                <div class="mobile-nav-section">
+                    <div class="mobile-nav-label">GLOBAL</div>
+                    <a href="/index.html" class="mobile-nav-link-primary active">Portfolio</a>
+                    <a href="/insights/" class="mobile-nav-link-primary">Insights</a>
+                    <a href="/TheHub/" class="mobile-nav-link-primary">The Hub</a>
+                    <a href="https://portal.luis-gilberto.com" class="mobile-nav-link-primary" target="_blank" rel="noopener noreferrer">The Portal</a>
+                </div>
+
+                <div class="mobile-nav-section">
+                    <div class="mobile-nav-label">PORTFOLIO</div>
+                    <a href="/index.html" class="mobile-nav-link-secondary">Home</a>
+                    <a href="/timeline.html" class="mobile-nav-link-secondary">Timeline</a>
+                    <a href="/myexperience.html" class="mobile-nav-link-secondary">Experience</a>
+                    <a href="/about.html" class="mobile-nav-link-secondary">About</a>
+                    <a href="/brand/" class="mobile-nav-link-secondary">Identity</a>
+                    <a href="/contact.html" class="mobile-nav-link-secondary active">Contact</a>
+                </div>
             </div>
-            <div class="mobile-controls">
-                <button class="drawer-close-btn" id="drawerCloseBtn" aria-label="Close Menu">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                </button>
-            </div>
-        </div>
-        <div class="mobile-drawer-content">
-            <nav class="mobile-nav-group">
-                <div class="mobile-group-label">Global</div>
-                <a href="/index.html" class="mobile-link main">Portfolio</a>
-                <a href="/insights/index.html" class="mobile-link main">Insights</a>
-                <a href="/TheHub/" class="mobile-link main">The Hub</a>
-                <a href="https://portal.luis-gilberto.com" class="mobile-link main" target="_blank" rel="noopener noreferrer" aria-label="The Portal (opens in a new tab)">The Portal</a>
-            </nav>
-            <div class="mobile-divider"></div>
-            <nav class="mobile-nav-group" aria-label="Portfolio sub-navigation">
-                <div class="mobile-group-label">Submenu</div>
-                <a href="/index.html" class="mobile-link sub">Home</a>
-                <a href="/timeline.html" class="mobile-link sub">Timeline</a>
-                <a href="/myexperience.html" class="mobile-link sub">Experience</a>
-                <a href="/about.html" class="mobile-link sub">About</a>
-                <a href="/contact.html" class="mobile-link sub active">Contact</a>
-            </nav>
         </div>
     </div>
 
@@ -993,24 +1067,28 @@
                     <!-- COLUMN 1: THE ECOSYSTEM (Philosophy) -->
                     <div class="faq-column">
                         <h3 class="faq-group-title">Navigating the Ecosystem</h3>
+                        <!-- Question 1 -->
                         <div class="faq-item fade-in" onclick="toggleFAQ(this)">
                             <div class="faq-header">
                                 <h3>What ties everything together?</h3>
                                 <span class="faq-toggle">+</span>
                             </div>
                             <div class="faq-content">
-                                <p>My ecosystem is built to show how I think, how I create, and how I help brands move forward. Everything uses the same brand system—coral, typography, and design voice—to present one ecosystem with three lenses: what I build, what I have built, and how I think.</p>
+                                <p>My ecosystem is built to show how I think, how I create, and how I help brands move forward. Everything uses the same brand system (coral, typography, and design voice) to present one ecosystem with four lenses: what I build, what I have built, how I think, and where we work.</p>
                             </div>
                         </div>
+
+                        <!-- Question 2 -->
                         <div class="faq-item fade-in" onclick="toggleFAQ(this)">
                             <div class="faq-header">
-                                <h3>How do the three sections connect?</h3>
+                                <h3>How do the four sections connect?</h3>
                                 <span class="faq-toggle">+</span>
                             </div>
                             <div class="faq-content">
                                 <p>They feed into each other like a well-choreographed campaign:</p>
                                 <ul style="margin-top:10px; padding-left:20px; list-style:disc; color:var(--text-secondary);">
                                     <li><strong>The Hub:</strong> The engine. Structured consulting tools and frameworks for clients.</li>
+                                    <li><strong>The Portal:</strong> The command center. A dedicated workspace where strategy becomes action.</li>
                                     <li><strong>Portfolio:</strong> The proof. The foundation and work that shaped my career.</li>
                                     <li><strong>Insights:</strong> The lab. Where I share ideas, essays, and evolving thinking.</li>
                                 </ul>
@@ -1194,17 +1272,42 @@
             localStorage.setItem('theme', theme);
         });
 
-        document.getElementById('yr').textContent = new Date().getFullYear();
+        (function(){ const yr = document.getElementById('yr'); if (yr) { yr.textContent = new Date().getFullYear(); } })();
 
-        const mobileToggle = document.getElementById('mobileToggle');
-        const mobileOverlay = document.getElementById('mobileOverlay');
-        const drawerCloseBtn = document.getElementById('drawerCloseBtn');
-        function openDrawer() { if (mobileOverlay) { mobileOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; } }
-        function closeDrawer() { if (mobileOverlay) { mobileOverlay.classList.remove('active'); document.body.style.overflow = ''; } }
-        if (mobileToggle) mobileToggle.addEventListener('click', openDrawer);
-        if (drawerCloseBtn) drawerCloseBtn.addEventListener('click', closeDrawer);
-        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDrawer(); });
-        if (mobileOverlay) { mobileOverlay.addEventListener('click', (e) => { if (e.target === mobileOverlay) closeDrawer(); }); }
+        // MOBILE MENU LOGIC (Standardized)
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+        const mobileMenuClose = document.getElementById('mobileMenuClose');
+
+        if (mobileMenuToggle && mobileMenuOverlay) {
+            mobileMenuToggle.addEventListener('click', () => {
+                mobileMenuOverlay.classList.add('active');
+                mobileMenuOverlay.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+            });
+
+            function closeDrawer() {
+                mobileMenuOverlay.classList.remove('active');
+                mobileMenuOverlay.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+            }
+
+            if (mobileMenuClose) {
+                mobileMenuClose.addEventListener('click', closeDrawer);
+            }
+
+            mobileMenuOverlay.addEventListener('click', (e) => {
+                if (e.target === mobileMenuOverlay) {
+                    closeDrawer();
+                }
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && mobileMenuOverlay.classList.contains('active')) {
+                    closeDrawer();
+                }
+            });
+        }
 
         // FAQ Toggle
         function toggleFAQ(element) {
@@ -1261,6 +1364,47 @@
         })();
     </script>
     <script>
+    /* === PREFILL LOGIC FROM HUB DIAGNOSTIC === */
+    (function() {
+        const urlParams = new URLSearchParams(window.location.search);
+
+        const messageBox = document.getElementById('message');
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const companyInput = document.getElementById('company');
+
+        const prefillBrief = urlParams.get('prefillBrief');
+        if (prefillBrief && messageBox) {
+            messageBox.value = decodeURIComponent(prefillBrief);
+        } else {
+            const storedBrief = localStorage.getItem('hubQuickDiagBrief');
+            if(storedBrief && messageBox && !messageBox.value) {
+                const helper = document.createElement('div');
+                helper.style.marginBottom = '10px'; helper.style.fontSize = '13px'; helper.style.color = 'var(--coral)';
+                helper.innerHTML = `Found your Quick Diagnostic brief. <a href="#" id="insertBrief" style="text-decoration:underline; font-weight:700;">Insert it?</a>`;
+                messageBox.parentNode.insertBefore(helper, messageBox);
+                document.getElementById('insertBrief').addEventListener('click', (e) => {
+                    e.preventDefault(); messageBox.value = storedBrief; helper.remove();
+                });
+            }
+        }
+
+        const pName = urlParams.get('prefillName');
+        const pEmail = urlParams.get('prefillEmail');
+        const pCompany = urlParams.get('prefillCompany');
+
+        if (pName && nameInput) nameInput.value = decodeURIComponent(pName);
+        if (pEmail && emailInput) emailInput.value = decodeURIComponent(pEmail);
+        if (pCompany && companyInput) companyInput.value = decodeURIComponent(pCompany);
+
+        if (prefillBrief || pName || pEmail) {
+            window.history.replaceState({}, document.title, window.location.pathname);
+            const form = document.querySelector('.contact-form');
+            if(form) form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    })();
+    </script>
+    <script>
         // === CUSTOM CURSOR (THE LENS) ===
         (function() {
             console.log('Cursor init started');
@@ -1270,21 +1414,41 @@
                 return;
             }
             
-            const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
-            if (isCoarsePointer) {
-                console.log('Coarse pointer detected, disabling custom cursor');
-                cursor.style.display = 'none';
-                document.body.style.cursor = 'auto';
-                return;
-            }
+            // Initialize off-screen or center to prevent top-left jump
+            let mouseX = window.innerWidth / 2; 
+            let mouseY = window.innerHeight / 2;
+            let cursorX = mouseX; 
+            let cursorY = mouseY;
+            let isVisible = false;
+            
+            // Initially hide cursor until movement detected
+            cursor.style.opacity = '0';
+            cursor.style.transition = 'width 0.3s var(--ease-out), height 0.3s var(--ease-out), opacity 0.3s ease';
             
             // Track mouse movement
             document.addEventListener('mousemove', (e) => {
-                requestAnimationFrame(() => {
-                    cursor.style.left = e.clientX + 'px';
-                    cursor.style.top = e.clientY + 'px';
-                });
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                
+                // Show cursor on first movement
+                if (!isVisible) {
+                    isVisible = true;
+                    cursor.style.opacity = '1';
+                    cursorX = mouseX; // Snap to position immediately
+                    cursorY = mouseY;
+                }
             });
+
+            // Smooth cursor animation
+            function animateCursor() {
+                const speed = 0.15;
+                cursorX += (mouseX - cursorX) * speed;
+                cursorY += (mouseY - cursorY) * speed;
+                cursor.style.left = cursorX + 'px';
+                cursor.style.top = cursorY + 'px';
+                requestAnimationFrame(animateCursor);
+            }
+            animateCursor();
 
             // Add hover effects to interactive elements
             const hoverElements = 'a, button, .belief-card, .channel-btn, .cta-btn, input, textarea, select, .mobile-menu-toggle, .theme-toggle, .tour-card, .card-cta, .hero-tile, .mobile-menu-close, .mobile-nav-link-primary, .mobile-nav-link-secondary, .subnav-link';
@@ -1308,7 +1472,7 @@
                     if (mutation.addedNodes.length) {
                         const newElements = document.querySelectorAll(hoverElements);
                         newElements.forEach(el => {
-                            // Simple re-bind (in a real app, you'd want to be more selective)
+                            // Simple re-bind
                             el.removeEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
                             el.removeEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
                             addHoverListeners(el);

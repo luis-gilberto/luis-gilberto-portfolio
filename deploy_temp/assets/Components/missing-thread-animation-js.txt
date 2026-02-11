@@ -1,0 +1,103 @@
+/* ============================================
+   MISSING THREAD ANIMATION JAVASCRIPT
+   Add this code to your <script> section
+   ============================================ */
+
+// Thread animation - New Yorker editorial style
+// Add this INSIDE your existing DOMContentLoaded event listener
+// OR create a new one if you want it separate
+
+(function() {
+    'use strict';
+
+    const config = {
+        startDelay: 400,
+        pathDuration: 2500,
+        dotAppearDelay: 2500,
+        dotDuration: 500
+    };
+
+    function initThreadAnimation() {
+        const threadPath = document.querySelector('.thread-path');
+        const threadDot = document.querySelector('.thread-dot');
+        
+        if (!threadPath || !threadDot) {
+            console.warn('Thread animation elements not found');
+            return;
+        }
+
+        const pathLength = threadPath.getTotalLength();
+        
+        threadPath.style.strokeDasharray = pathLength;
+        threadPath.style.strokeDashoffset = pathLength;
+        threadPath.style.opacity = '0';
+        threadDot.style.opacity = '0';
+        threadDot.style.transform = 'scale(0)';
+
+        setTimeout(() => {
+            threadPath.style.transition = `
+                stroke-dashoffset ${config.pathDuration}ms cubic-bezier(0.65, 0, 0.35, 1),
+                opacity 200ms ease-out
+            `;
+            threadPath.style.strokeDashoffset = '0';
+            threadPath.style.opacity = '1';
+
+            setTimeout(() => {
+                threadDot.style.transition = `
+                    opacity ${config.dotDuration}ms ease-out,
+                    transform ${config.dotDuration}ms cubic-bezier(0.34, 1.56, 0.64, 1)
+                `;
+                threadDot.style.opacity = '1';
+                threadDot.style.transform = 'scale(1)';
+            }, config.dotAppearDelay);
+        }, config.startDelay);
+    }
+
+    // Call the animation function
+    initThreadAnimation();
+})();
+
+/* ============================================
+   WHERE TO ADD THIS CODE
+   ============================================ */
+
+/**
+ * OPTION 1 (Recommended): Add at the end of your existing DOMContentLoaded
+ * 
+ * Your current script section starts with:
+ * document.addEventListener('DOMContentLoaded', () => {
+ *     // Theme Toggle
+ *     // Tab Switching
+ *     // etc...
+ * 
+ *     // ADD THE THREAD ANIMATION CODE HERE (before the closing });
+ * });
+ */
+
+/**
+ * OPTION 2: Add as a separate script after your existing DOMContentLoaded
+ * 
+ * Just paste the entire code block above after your existing
+ * <script> section but before the closing </body> tag
+ */
+
+/* ============================================
+   QUICK TRAE PROMPT
+   ============================================ */
+
+/**
+ * Copy this prompt for Trae:
+ * 
+ * In the file /insights/index.html, find the <script> section at the bottom 
+ * that contains the DOMContentLoaded event listener. At the very end of that 
+ * event listener (but before the closing }); add the thread animation JavaScript 
+ * code that initializes the thread-path and thread-dot animations on page load.
+ * 
+ * The code should:
+ * 1. Get references to .thread-path and .thread-dot elements
+ * 2. Calculate the path length using getTotalLength()
+ * 3. Set initial styles (opacity 0, strokeDashoffset to full length)
+ * 4. After 400ms delay, animate the stroke-dashoffset to 0 over 2500ms
+ * 5. After the path completes, fade in the dot with a scale animation
+ * 6. Use cubic-bezier easing for organic motion
+ */

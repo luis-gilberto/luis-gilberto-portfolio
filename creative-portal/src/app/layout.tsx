@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Inter, Playfair_Display, Oswald } from "next/font/google"
+import { Inter, Playfair_Display } from "next/font/google"
 import Image from "next/image"
 import "./globals.css"
 import { AuthSessionProvider } from "@/components/providers/session-provider"
@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/providers/theme-provider"
 import { ToastProvider } from "@/components/providers/toast-provider"
 import { Navigation } from "@/components/ui/navigation"
 import { Footer } from "@/components/ui/footer"
+import { DiagnosticsPanel } from "@/components/admin/DiagnosticsPanel"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -15,10 +16,6 @@ const inter = Inter({
 const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-serif",
-})
-const bigShoulders = Oswald({
-  subsets: ["latin"],
-  variable: "--font-big-shoulders",
 })
 
 export const metadata: Metadata = {
@@ -37,8 +34,9 @@ export default function RootLayout({
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@400;600;700;900&display=swap" rel="stylesheet" />
       </head>
-      <body className={`${inter.variable} ${playfair.variable} ${bigShoulders.variable} font-sans antialiased bg-portal-bg text-[var(--text-primary)] min-h-screen flex flex-col`}>
+      <body className={`${inter.variable} ${playfair.variable} font-sans antialiased bg-portal-bg text-[var(--text-primary)] min-h-screen flex flex-col`}>
         {/* Cinematic Corridor Background */}
         <div className="fixed inset-0 z-[-1] h-screen w-full overflow-hidden">
           <Image
@@ -62,6 +60,7 @@ export default function RootLayout({
               <main className="flex-grow flex flex-col relative z-10">
                 {children}
               </main>
+              <DiagnosticsPanel />
             </ToastProvider>
           </ThemeProvider>
         </AuthSessionProvider>

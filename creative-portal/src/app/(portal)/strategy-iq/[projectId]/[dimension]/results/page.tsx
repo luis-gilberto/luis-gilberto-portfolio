@@ -3,6 +3,7 @@ import { authOptions } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { ResultsView } from '@/components/strategy/ResultsView'
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
 import RefreshButton from '@/components/strategy/RefreshButton'
 import { Rocket, Bot } from 'lucide-react'
 import { generateStrategyNarrative } from '@/lib/strategy-ai'
@@ -42,7 +43,7 @@ export default async function StrategyIQResultsPage({ params }: PageProps) {
           </div>
           <h2 className="text-2xl font-bold text-white uppercase tracking-widest font-big-shoulders italic">Initializing Intelligence</h2>
           <p className="text-zinc-400 text-sm leading-relaxed">
-            We're calibrating the discovery engine for this project. If you've just completed an assessment, please wait a moment.
+            We're calibrating the StrategyIQ™ Engine for this project. If you've just completed an assessment, please wait a moment.
           </p>
           <a href="/strategy-iq" className="inline-block text-coral hover:text-coral/80 text-xs font-bold uppercase tracking-widest pt-4">
             Back to Strategy Hub
@@ -117,6 +118,15 @@ export default async function StrategyIQResultsPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] pt-24 pb-12">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 mb-8">
+        <Breadcrumbs 
+          items={[
+            { label: 'Dashboard', href: '/dashboard' },
+            { label: 'StrategyIQ™ Engine', href: '/strategy-iq' },
+            { label: `${dimension.toUpperCase()} Results`, active: true }
+          ]} 
+        />
+      </div>
       <ResultsView 
         session={assessmentSession}
         projectId={projectId}

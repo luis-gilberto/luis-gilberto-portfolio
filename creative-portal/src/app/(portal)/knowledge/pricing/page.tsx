@@ -24,7 +24,7 @@ const sections = [
   { id: 'roi', label: 'ROI Calculator', icon: Calculator }
 ];
 
-export default function PricingKbPage() {
+export default function StrategyEnablementHub() {
   const { data: session, status } = useSession();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('service-tiers');
@@ -50,7 +50,7 @@ export default function PricingKbPage() {
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
-    toast("SCRIPT COPIED", "Strategy secured to strategist clipboard.", "success");
+    toast("SCRIPT SECURED", "Strategic narrative copied to clipboard.", "success");
   };
 
   const calculateROI = (e: React.FormEvent) => {
@@ -74,25 +74,30 @@ export default function PricingKbPage() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <div className="flex justify-between items-center mb-10">
-          <div className="flex items-center gap-2">
-            <span className="text-xl font-bold tracking-tighter text-white">LG <span className="text-gray-500">/</span> PORTAL</span>
+        <div className="flex justify-between items-center mb-16">
+          <div className="flex items-center gap-3">
+            <div className="w-1.5 h-1.5 rounded-full bg-teal" />
+            <span className="text-[10px] font-bold tracking-[0.4em] text-white/40 uppercase">Enablement // Intelligence</span>
           </div>
-          <div className="flex items-center gap-2 bg-[#2ED3C6]/10 px-3 py-1 rounded-full border border-[#2ED3C6]/20">
-            <div className="w-2 h-2 rounded-full bg-[#2ED3C6] animate-pulse" />
-            <span className="text-[10px] font-bold text-[#2ED3C6] tracking-widest uppercase">COMMAND</span>
+          <div className="flex items-center gap-2 bg-teal/10 px-4 py-1 border border-teal/20">
+            <div className="w-2 h-2 rounded-full bg-teal animate-pulse" />
+            <span className="text-[9px] font-bold text-teal tracking-[0.2em] uppercase">System Active</span>
           </div>
         </div>
 
-        <h1>Pricing <span className="text-white/20">Knowledge Base</span></h1>
-        <p>Tactical Reference Tool • Proprietary Intelligence Data</p>
+        <h1 className="text-2xl md:text-3xl font-medium text-zinc-400 tracking-tight font-inter mb-4">
+          Strategy Enablement Hub
+        </h1>
+        <p className="text-zinc-500 text-lg font-inter leading-relaxed italic mb-12">
+          Tactical Reference Tool // Proprietary Intelligence Data
+        </p>
 
         <div className={styles.searchBar}>
           <div className="relative">
-            <Search className="absolute left-4 top-3.5 text-gray-400" size={18} />
+            <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-zinc-600" size={18} />
             <input
               type="text"
-              className={styles.searchInput}
+              className="w-full bg-white/[0.02] border border-white/10 rounded-2xl py-5 pl-16 pr-8 text-zinc-300 font-inter focus:border-teal/30 transition-all outline-none"
               placeholder="Search scripts, leverage points, or rationale..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}

@@ -67,8 +67,10 @@
             --space-2xl: 6rem;
             --space-3xl: 8rem;
             
-            /* Layout */
-            --header-height: 80px;
+            /* Layout Standardized */
+            --header-h: 64px;
+            --header-h-mobile: 56px;
+            --header-height: var(--header-h);
             --container-max: 1400px;
             
             /* Transitions */
@@ -214,6 +216,9 @@
             justify-content: space-between; 
             align-items: center; 
             width: 100%;
+            padding: 0 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
         }
         
         .nav-logo img { 
@@ -224,7 +229,7 @@
         .nav-right { 
             display: flex; 
             align-items: center; 
-            gap: 3rem;
+            gap: 2rem;
         }
         
         .nav-links { 
@@ -241,19 +246,25 @@
             color: var(--text-subtle);
             position: relative;
             padding: 0.5rem 0;
+            text-decoration: none;
         }
         
         .nav-link:hover { color: var(--text-primary); }
         .nav-link.active { color: var(--text-primary); }
         
-        .nav-link.active::after {
+        .nav-link::after {
             content: '';
             position: absolute;
-            bottom: -2px;
+            bottom: -4px;
             left: 0;
             width: 100%;
             height: 2px;
             background: var(--coral);
+            transform: scaleX(0);
+            transition: transform 0.2s ease;
+        }
+        .nav-link.active::after, .nav-link:hover::after {
+            transform: scaleX(1);
         }
 
         .mobile-toggle { 
@@ -267,19 +278,25 @@
 
         /* Subnav */
         .subnav {
-            margin-top: var(--header-height);
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            right: 0;
+            z-index: 999;
             padding: 1rem 0;
             background: var(--surface-dark-2);
             border-bottom: var(--border-light);
-            position: sticky;
-            top: var(--header-height);
-            z-index: 900;
+            backdrop-filter: blur(12px);
         }
         
         .subnav-links { 
             display: flex; 
             gap: 2.5rem; 
             justify-content: flex-start;
+            align-items: center;
+            padding: 0 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
         }
         
         .subnav a {
@@ -1400,7 +1417,13 @@
                 background-position: center;
             }
         }
+
+        /* Ensure two-column layout on medium screens */
+        @media (min-width: 768px) {
+            .resume-preview { grid-template-columns: 1fr 2fr; }
+        }
     </style>
+
     <style>
         /* ==========================================
            RESUME PALETTE SELECTOR - SIMPLE SWATCHES
@@ -1432,28 +1455,6 @@
         .view-full-cv-link { display: block; text-align: center; font-family: var(--font-orchestrator); font-size: 13px; font-weight: 500; color: var(--text-muted); text-decoration: none; transition: color 0.2s var(--ease-out); padding: 8px; }
         .view-full-cv-link:hover { color: var(--coral); }
         @media (max-width: 640px) { .palette-options { grid-template-columns: 1fr; } .palette-option { padding: 14px 12px; } }
-
-    <style>
-        .resume-timeline-col { display: flex; flex-direction: column; gap: 1rem; align-items: center; }
-        .timeline-header { width: 100%; max-width: 600px; margin: 0 auto 2rem; text-align: center; }
-        @media (min-width: 768px) { .resume-preview { grid-template-columns: 1fr 2fr; } }
-    </style>
-
-    <style>
-        /* ========================================
-           PDF vs Web Clarification UI
-           ======================================== */
-        .section-description { font-size: 0.9rem; color: var(--text-secondary); margin: 0.5rem 0 1.5rem 0; text-align: center; }
-        .web-version-callout { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color); }
-        .web-version-label { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.75rem; text-align: center; }
-        .web-version-link { display: block; text-align: center; padding: 1rem 1.5rem; background: rgba(255, 107, 107, 0.08); border: 2px solid #FF6B6B; border-radius: 8px; color: #FF6B6B; text-decoration: none; font-weight: 500; transition: all 0.2s ease; }
-        .web-version-link:hover { background: rgba(255, 107, 107, 0.12); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255, 107, 107, 0.2); }
-        .timeline-header { margin-bottom: 2rem; text-align: center; }
-        .timeline-title { font-size: 1.5rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem; }
-        .timeline-subtitle { font-size: 0.9rem; color: var(--text-secondary); margin: 0; }
-        .timeline-subtitle a { color: #FF6B6B; text-decoration: none; }
-        .timeline-subtitle a:hover { text-decoration: underline; }
-        @media (max-width: 768px) { .section-description { font-size: 0.85rem; padding: 0 1rem; } .web-version-callout { margin: 1rem 0; } .web-version-link { padding: 0.875rem 1.25rem; font-size: 0.95rem; } .timeline-header { margin-bottom: 1.5rem; } .timeline-title { font-size: 1.25rem; } .timeline-subtitle { font-size: 0.85rem; } }
     </style>
 
     <style>
@@ -1461,6 +1462,8 @@
            Professional Record - Center Alignment
            ======================================== */
         .resume-list { display: flex; flex-direction: column; align-items: center; text-align: center; max-width: 100%; }
+        .resume-timeline-col { display: flex; flex-direction: column; gap: 1rem; align-items: center; }
+        .timeline-header { width: 100%; max-width: 600px; margin: 0 auto 2rem; text-align: center; }
         .role-row { width: 100%; max-width: 600px; margin: 0 auto 0.75rem; display: flex; flex-direction: column; align-items: center; text-align: center; }
         .role-date { text-align: center; display: block; width: 100%; }
         .role-title { text-align: center; display: block; width: 100%; }
@@ -1488,9 +1491,10 @@
             
             <div class="nav-right">
                 <div class="nav-links">
-                    <a href="#numbers" class="nav-link active">The Numbers</a>
-                    <a href="#story" class="nav-link">The Story</a>
-                    <a href="#resume" class="nav-link">The Resume</a>
+                    <a href="/index.html" class="nav-link active">Portfolio</a>
+                    <a href="/insights/" class="nav-link">Insights</a>
+                    <a href="/TheHub/" class="nav-link">The Hub</a>
+                    <a href="https://portal.luis-gilberto.com" class="nav-link" target="_blank" rel="noopener noreferrer">The Portal</a>
                 </div>
                 
                 <!-- Theme Toggle -->
@@ -1506,15 +1510,14 @@
     </header>
 
     <!-- SUBNAV -->
-    <nav class="subnav" aria-label="Portfolio navigation">
-        <div class="container">
-            <div class="subnav-links">
-                <a href="/index.html">Home</a>
-                <a href="/timeline.html">Timeline</a>
-                <a href="/myexperience.html" class="active">Experience</a>
-                <a href="/about.html">About</a>
-                <a href="/brand/">Identity</a>
-            </div>
+    <nav class="subnav" aria-label="Portfolio navigation" data-lens-ignore="true">
+        <div class="subnav-links">
+            <a href="/index.html">Home</a>
+            <a href="/timeline.html">Timeline</a>
+            <a href="/myexperience.html" class="active">Experience</a>
+            <a href="/about.html">About</a>
+            <a href="/brand/">Identity</a>
+            <a href="/contact.html">Contact</a>
         </div>
     </nav>
 
@@ -1527,10 +1530,10 @@
         <div class="drawer-content">
             <div class="drawer-section">
                 <span class="drawer-label">Global</span>
-                <a href="/" class="drawer-link">Portfolio</a>
-                <a href="/insights" class="drawer-link">Insights</a>
+                <a href="/index.html" class="drawer-link active">Portfolio</a>
+                <a href="/insights/" class="drawer-link">Insights</a>
                 <a href="/TheHub/" class="drawer-link">The Hub</a>
-                <a href="https://portal.luis-gilberto.com" class="drawer-link">Portal</a>
+                <a href="https://portal.luis-gilberto.com" class="drawer-link" target="_blank" rel="noopener noreferrer">The Portal</a>
             </div>
             <div class="drawer-section">
                 <span class="drawer-label">Portfolio</span>
@@ -1539,6 +1542,7 @@
                 <a href="/myexperience.html" class="drawer-link active">Experience</a>
                 <a href="/about.html" class="drawer-link">About</a>
                 <a href="/brand/" class="drawer-link">Identity</a>
+                <a href="/contact.html" class="drawer-link">Contact</a>
             </div>
         </div>
     </div>
@@ -1804,38 +1808,49 @@
                         <label class="selector-label">Choose Your Resume Style</label>
                         <div class="palette-options">
                             <div class="palette-option active" data-style="coral-light" data-pdf="assets/Components/THE_FOUR/LS-cv_coral-light.pdf">
-                        <span class="checkmark">✓</span>
-                        <div class="palette-colors"><span class="color-dot" style="background:#F96F6E;"></span><span class="color-dot" style="background:#F4F1ED;"></span><span class="color-dot" style="background:#E8E6E3;"></span></div>
-                        <div class="palette-name">Coral Light</div>
-                        <div class="palette-desc">Warm & approachable</div>
+                                <span class="checkmark">✓</span>
+                                <div class="palette-colors">
+                                    <span class="color-dot" style="background:#F96F6E;"></span>
+                                    <span class="color-dot" style="background:#F4F1ED;"></span>
+                                    <span class="color-dot" style="background:#E8E6E3;"></span>
+                                </div>
+                                <div class="palette-name">Coral Light</div>
+                                <div class="palette-desc">Warm & approachable</div>
                             </div>
-
                             <div class="palette-option" data-style="coral-dark" data-pdf="assets/Components/THE_FOUR/LS-cv_coral-dark-pdf.pdf">
-                        <span class="checkmark">✓</span>
-                        <div class="palette-colors"><span class="color-dot" style="background:#F96F6E;"></span><span class="color-dot" style="background:#2A2A2A;"></span><span class="color-dot" style="background:#FF9B9A;"></span></div>
-                        <div class="palette-name">Coral Dark</div>
-                        <div class="palette-desc">Bold & premium</div>
+                                <span class="checkmark">✓</span>
+                                <div class="palette-colors">
+                                    <span class="color-dot" style="background:#F96F6E;"></span>
+                                    <span class="color-dot" style="background:#2A2A2A;"></span>
+                                    <span class="color-dot" style="background:#FF9B9A;"></span>
+                                </div>
+                                <div class="palette-name">Coral Dark</div>
+                                <div class="palette-desc">Bold & premium</div>
                             </div>
-
                             <div class="palette-option" data-style="teal-hybrid" data-pdf="assets/Components/THE_FOUR/LS-cv_teal-hybrid-pdf.pdf">
-                        <span class="checkmark">✓</span>
-                        <div class="palette-colors"><span class="color-dot" style="background:#2A2A2A;"></span><span class="color-dot" style="background:#2ED3C6;"></span><span class="color-dot" style="background:#F4F1ED;"></span></div>
-                        <div class="palette-name">Teal Hybrid</div>
-                        <div class="palette-desc">Modern & strategic</div>
+                                <span class="checkmark">✓</span>
+                                <div class="palette-colors">
+                                    <span class="color-dot" style="background:#2A2A2A;"></span>
+                                    <span class="color-dot" style="background:#2ED3C6;"></span>
+                                    <span class="color-dot" style="background:#F4F1ED;"></span>
+                                </div>
+                                <div class="palette-name">Teal Hybrid</div>
+                                <div class="palette-desc">Modern & strategic</div>
                             </div>
-
                             <div class="palette-option" data-style="print-bw" data-pdf="assets/Components/THE_FOUR/LS-cv_print-bw-pdf.pdf">
-                        <span class="checkmark">✓</span>
-                        <div class="palette-colors"><span class="color-dot" style="background:#FFFFFF;border:1px solid #CCC;"></span><span class="color-dot" style="background:#0A0A0A;"></span></div>
-                        <div class="palette-name">Print B&W</div>
-                        <div class="palette-desc">Ink-saver elegance</div>
+                                <span class="checkmark">✓</span>
+                                <div class="palette-colors">
+                                    <span class="color-dot" style="background:#FFFFFF;border:1px solid #CCC;"></span>
+                                    <span class="color-dot" style="background:#0A0A0A;"></span>
+                                </div>
+                                <div class="palette-name">Print B&W</div>
+                                <div class="palette-desc">Ink-saver elegance</div>
                             </div>
                         </div>
                         <div class="current-selection"><div class="current-label">Currently Selected</div><div class="current-style" id="currentStyle">Coral Light</div></div>
                         <a href="assets/Components/THE_FOUR/LS-cv_coral-light.pdf" class="download-btn" id="downloadBtn" download>Download PDF</a>
                         <a href="cv.html" class="view-full-cv-link">View Full Interactive Web Version →</a>
                     </div>
-                    
                     
                     <div class="resume-timeline-col">
                         <div class="timeline-header">
@@ -2095,11 +2110,11 @@
         }
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', function(){
+        document.addEventListener('DOMContentLoaded', function() {
             const options = document.querySelectorAll('.palette-option');
             const currentStyleLabel = document.getElementById('currentStyle');
             const downloadBtn = document.getElementById('downloadBtn');
-            if(!options.length || !currentStyleLabel || !downloadBtn) return;
+            if (!options.length || !currentStyleLabel || !downloadBtn) return;
             const names = { 'coral-light':'Coral Light','coral-dark':'Coral Dark','teal-hybrid':'Teal Hybrid','print-bw':'Print B&W' };
             options.forEach(opt=>{
                 opt.addEventListener('click', function(){
@@ -2107,12 +2122,14 @@
                     this.classList.add('active');
                     const style = this.getAttribute('data-style');
                     const pdf = this.getAttribute('data-pdf');
-                    currentStyleLabel.textContent = names[style] || style;
+                    currentStyleLabel.textContent = names[style]||style;
                     downloadBtn.href = pdf;
                 });
-                opt.style.cursor = 'pointer';
+                opt.style.cursor='pointer';
             });
         });
     </script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"7d9039f5d5b84e54a54bb66d7a78302f","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+    <script src="/TheHub/hub-script.js"></script>
 </body>
 </html>

@@ -3,6 +3,7 @@ import { authOptions } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { StrategyWorkbench } from '@/components/strategy/StrategyWorkbench'
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
 
 interface PageProps {
   params: Promise<{
@@ -45,6 +46,15 @@ export default async function AdminStrategyWorkbenchPage({ params }: PageProps) 
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] pt-24 pb-12">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 mb-8">
+        <Breadcrumbs 
+          items={[
+            { label: 'Admin Dashboard', href: '/admin' },
+            { label: project.title, href: `/admin/projects/${projectId}` },
+            { label: `${dimension.toUpperCase()} Strategy`, active: true }
+          ]} 
+        />
+      </div>
       <StrategyWorkbench 
         session={assessmentSession}
         projectId={projectId}

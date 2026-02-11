@@ -1,0 +1,404 @@
+🚨 EMERGENCY FIX FOR TRAE - Complete Code Replacement
+Step 1: Replace ALL Card-Related CSS
+Find your card CSS section and REPLACE IT ENTIRELY with this:
+
+/* ═══════════════════════════════════════════════════════
+   CARD FLIP ANIMATION & HOVER VIDEO - COMPLETE FIX
+   ═══════════════════════════════════════════════════════ */
+
+/* Card container */
+.tour-card {
+  perspective: 1000px;
+  width: 300px;
+  height: 400px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  z-index: 1;
+  margin: 0 auto;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tour-card:hover {
+  transform: translateY(-8px);
+  z-index: 10;
+}
+
+/* Card inner - enables flip */
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+}
+
+/* Flipped state */
+.tour-card.flipped .card-inner {
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
+}
+
+/* Card front and back sides */
+.card-front,
+.card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--border-color);
+}
+
+/* Front side */
+.card-front {
+  background: var(--bg-tertiary);
+  position: relative;
+  z-index: 2;
+  transform: rotateY(0deg);
+}
+
+/* Back side - rotated 180deg */
+.card-back {
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: white;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Back side background colors */
+.card-back-coral {
+  background: var(--coral);
+}
+
+.card-back-teal {
+  background: var(--teal);
+}
+
+.card-back-deep-blue {
+  background: var(--deep-blue);
+}
+
+/* Static image on front */
+.card-front img.card-static-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+  transition: opacity 0.5s ease-in-out;
+}
+
+/* Hover video on front */
+.card-hover-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Card overlay on front */
+.card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.8) 100%);
+  z-index: 3;
+}
+
+/* Card icon */
+.card-icon {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  color: white;
+  transition: transform 0.3s ease;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+  z-index: 4;
+}
+
+.card-icon-teal {
+  color: var(--teal);
+}
+
+/* Card title on front */
+.card-front h3 {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  right: 1.5rem;
+  color: white;
+  font-size: 1.5rem;
+  font-family: var(--font-display);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  z-index: 4;
+  margin: 0;
+}
+
+/* Back side content */
+.card-back .card-icon-large {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 1rem;
+  flex-shrink: 0;
+}
+
+.card-back p {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.9);
+  flex-grow: 1;
+  margin: 0 0 1.5rem 0;
+}
+
+.card-back a {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 600;
+  font-size: 1.125rem;
+  color: white;
+  transition: transform 0.3s ease;
+  text-decoration: none;
+}
+
+.card-back a:hover {
+  transform: translateX(6px);
+}
+
+/* ===== DESKTOP: Hover video animation ===== */
+@media (hover: hover) and (pointer: fine) {
+  .tour-card-video:hover .card-hover-video {
+    opacity: 1;
+  }
+  
+  .tour-card-video:hover .card-static-img {
+    opacity: 0;
+  }
+  
+  .tour-card-video:hover .card-hover-video {
+    transform: scale(1.05);
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+  }
+  
+  .tour-card:hover .card-icon {
+    transform: scale(1.1) rotate(5deg);
+  }
+  
+  .tour-card:hover .card-front h3 {
+    transform: translateX(4px);
+  }
+}
+
+/* ===== MOBILE: Touch-based controls ===== */
+@media (hover: none) and (pointer: coarse) {
+  /* Show video when 'playing' class is active */
+  .tour-card-video.playing .card-hover-video {
+    opacity: 1;
+    z-index: 2;
+  }
+  
+  .tour-card-video.playing .card-static-img {
+    opacity: 0;
+  }
+  
+  /* Remove desktop hover effects */
+  .tour-card:hover {
+    transform: none;
+  }
+}
+
+/* Card glow effect on hover (desktop only) */
+@media (hover: hover) {
+  .tour-card::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(135deg, rgba(249, 111, 110, 0.2), rgba(46, 211, 198, 0.2));
+    border-radius: 18px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+    filter: blur(8px);
+    pointer-events: none;
+  }
+  
+  .tour-card:hover::before {
+    opacity: 1;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .tour-card {
+    width: 100%;
+    max-width: 300px;
+    height: 400px;
+  }
+}
+Step 2: Replace ALL Card JavaScript
+Find your card JavaScript (the <script> block) and REPLACE IT ENTIRELY with this:
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const videoCards = document.querySelectorAll('.tour-card-video');
+  const allCards = document.querySelectorAll('.tour-card');
+  
+  // Detect if device supports hover
+  const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  
+  // ===== VIDEO CONTROLS =====
+  videoCards.forEach(card => {
+    const video = card.querySelector('.card-hover-video');
+    if (!video) return;
+    
+    // Pause initially
+    video.pause();
+    
+    if (supportsHover) {
+      // ===== DESKTOP: Hover to play =====
+      card.addEventListener('mouseenter', () => {
+        if (!card.classList.contains('flipped')) {
+          video.play().catch(err => console.log('Video play failed:', err));
+        }
+      });
+      
+      card.addEventListener('mouseleave', () => {
+        video.pause();
+        video.currentTime = 0;
+      });
+      
+    } else {
+      // ===== MOBILE: Long press to play =====
+      let longPressTimer = null;
+      let touchStartTime = 0;
+      
+      card.addEventListener('touchstart', (e) => {
+        touchStartTime = Date.now();
+        
+        // Start long press timer (500ms)
+        longPressTimer = setTimeout(() => {
+          if (!card.classList.contains('flipped')) {
+            e.preventDefault();
+            card.classList.add('playing');
+            video.play().catch(err => console.log('Video play failed:', err));
+          }
+        }, 500);
+      });
+      
+      card.addEventListener('touchmove', () => {
+        clearTimeout(longPressTimer);
+      });
+      
+      card.addEventListener('touchend', () => {
+        clearTimeout(longPressTimer);
+        const touchDuration = Date.now() - touchStartTime;
+        
+        // If long press happened, stop video
+        if (touchDuration >= 500) {
+          card.classList.remove('playing');
+          video.pause();
+          video.currentTime = 0;
+        }
+      });
+      
+      card.addEventListener('touchcancel', () => {
+        clearTimeout(longPressTimer);
+        card.classList.remove('playing');
+        video.pause();
+        video.currentTime = 0;
+      });
+    }
+    
+    // Pause video when card flips (both desktop and mobile)
+    const observer = new MutationObserver(() => {
+      if (card.classList.contains('flipped')) {
+        video.pause();
+        card.classList.remove('playing');
+      }
+    });
+    
+    observer.observe(card, { attributes: true, attributeFilter: ['class'] });
+  });
+  
+  // ===== CARD FLIP LOGIC =====
+  allCards.forEach(card => {
+    card.addEventListener('click', function(e) {
+      // Don't flip if long-pressing on mobile
+      if (!supportsHover && this.classList.contains('playing')) {
+        return;
+      }
+      
+      // Toggle flip
+      this.classList.toggle('flipped');
+      
+      // Close other flipped cards
+      allCards.forEach(otherCard => {
+        if (otherCard !== this && otherCard.classList.contains('flipped')) {
+          otherCard.classList.remove('flipped');
+        }
+      });
+    });
+  });
+});
+</script>
+Step 3: Verify Your HTML Structure
+Make sure your card back content looks like this (example for About Me):
+
+<div class="card-back card-back-coral">
+  <svg class="card-icon-large" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+    <circle cx="12" cy="7" r="4"></circle>
+  </svg>
+  <p>Your about me text goes here. Make sure there's actual text content in this paragraph tag.</p>
+  <a href="/about.html">
+    Learn More →
+  </a>
+</div>
+Check that:
+
+The <p> tag has actual text inside it (not empty)
+The card-back has a background color class (card-back-coral, card-back-teal, etc.)
+The content is NOT wrapped in extra divs
+✅ What This Fixes:
+Desktop:
+✅ Hover over card = video animates smoothly
+✅ Move mouse away = video stops and resets
+✅ Click card = flips to show back content
+
+Mobile:
+✅ Quick tap = card flips, shows back content (with text!)
+✅ Long press (0.5 sec) = video plays
+✅ Release = video stops
+✅ Back content is visible and readable
+
+🔍 If Back Content Is Still Empty:
+Open your browser dev tools (F12) and check:
+
+Is the text there in the HTML?
+
+Right-click the flipped card → Inspect
+Look for .card-back → should have <p> with text
+Is the background color showing?
+
+If the back is transparent, the class card-back-coral (or teal/deep-blue) is missing
+Is the z-index wrong?
+
+The .card-back should be behind .card-front when not flipped
+If you still see empty backs after this, send me a screenshot of one card's HTML from your code and I'll spot the issue immediately.

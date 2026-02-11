@@ -21,8 +21,8 @@ const navItems = [
   { icon: FolderKanban, label: 'Projects', path: '/admin/projects' },
   { icon: Users, label: 'Clients', path: '/admin/clients' },
   { icon: BarChart3, label: 'Analytics', path: '/admin/analytics' },
-  { icon: Settings, label: 'Settings', path: '/admin/settings' },
-  { icon: BookOpen, label: 'Pricing KB', path: '/knowledge/pricing' },
+  { icon: Settings, label: 'Settings', path: '/settings' },
+  { icon: BookOpen, label: 'Knowledge Base', path: '/knowledge/pricing' },
 ];
 
 export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose, onMobileToggle }: SidebarProps) {
@@ -30,6 +30,12 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose
   const { data: session } = useSession();
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
   const role = session?.user?.role;
+
+  const handleSignOut = () => {
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('currentScope');
+    signOut({ callbackUrl: '/login' });
+  };
 
   useEffect(() => {
     async function fetchActiveProject() {
@@ -187,7 +193,7 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose
 
           {/* Bottom: Sign Out (Mobile Only) */}
           <button 
-            onClick={() => signOut({ callbackUrl: '/login' })} 
+            onClick={handleSignOut} 
             className="lg:hidden flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white transition-colors w-full"
           >
             <LogOut size={20} />

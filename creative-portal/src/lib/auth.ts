@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
 import fs from "fs"
 import path from "path"
+import { USERS } from "@/lib/users"
 
 console.log("EmailProvider customized for dev magic link logging")
 
@@ -56,12 +57,27 @@ export const authOptions: AuthOptions = {
 
         const email = credentials.email.toLowerCase();
 
+        // 1. Check hardcoded USERS first (as requested)
+        if (USERS[email]) {
+          const user = USERS[email];
+          if (credentials.password === user.password) {
+            return {
+              id: user.id,
+              email: email,
+              name: user.name,
+              role: user.role,
+              company: user.company
+            };
+          }
+          throw new Error("Invalid credentials");
+        }
+
+        // 2. Fallback to Prisma database
         const user = await prisma.user.findUnique({
           where: { email }
         });
 
         if (!user || !user.password) {
-          // For security, do not reveal if user exists
           throw new Error("Invalid credentials");
         }
 

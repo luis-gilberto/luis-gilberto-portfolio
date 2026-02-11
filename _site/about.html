@@ -220,20 +220,15 @@
         .nav-link::after {
             content: '';
             position: absolute;
+            bottom: -4px;
             left: 0;
-            right: 0;
-            bottom: -6px;
+            width: 100%;
             height: 2px;
             background: var(--coral);
             transform: scaleX(0);
-            transform-origin: left;
             transition: transform 0.2s ease;
-            border-radius: 999px;
-            display: block;
         }
-
-        .nav-link.active::after,
-        .nav-link:hover::after {
+        .nav-link.active::after, .nav-link:hover::after {
             transform: scaleX(1);
         }
 
@@ -529,6 +524,29 @@
             .portfolio-subnav, .sub-navigation { display: none; } 
             .nav-links, .nav-menu { display: none !important; } 
             .mobile-controls { display: flex !important; } 
+        }
+
+        /* Sub-Navigation Styles (Standardized) */
+        .sub-navigation { 
+            position: fixed; top: 64px; left: 0; width: 100%; 
+            background: #141414; border-bottom: 1px solid rgba(255,255,255,0.08); 
+            z-index: 999; padding: 0; height: 48px; display: flex; align-items: center; 
+        } 
+        .sub-nav-container { 
+            max-width: 1400px; margin: 0 auto; padding: 0 2rem; width: 100%; 
+        } 
+        .sub-nav-list { 
+            list-style: none; display: flex; gap: 2rem; padding: 0; margin: 0; 
+        } 
+        .sub-nav-list a { 
+            font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.5); 
+            transition: color 0.2s; text-decoration: none; 
+        } 
+        .sub-nav-list a:hover { color: #ffffff; } 
+        .sub-nav-list a.active { color: #F96F6E; font-weight: 600; } 
+        
+        @media (max-width: 1024px) { 
+            .sub-navigation { display: none; } 
         }
         
         /* Hero Section */
@@ -1746,15 +1764,18 @@
       </nav>
     </header>
 
-    <!-- Portfolio Subnav -->
-    <nav class="portfolio-subnav" role="navigation" aria-label="Portfolio sub-navigation">
-      <div class="portfolio-subnav-container">
-        <a href="/index.html" class="subnav-link">Home</a>
-        <a href="/timeline.html" class="subnav-link">Timeline</a>
-        <a href="/myexperience.html" class="subnav-link">Experience</a>
-        <a href="/about.html" class="subnav-link active">About</a>
-        <a href="/brand/" class="subnav-link">Identity</a>
-      </div>
+    <!-- Sub Nav -->
+    <nav class="sub-navigation">
+        <div class="sub-nav-container">
+            <ul class="sub-nav-list">
+                <li><a href="/index.html">Home</a></li>
+                <li><a href="/timeline.html">Timeline</a></li>
+                <li><a href="/myexperience.html">Experience</a></li>
+                <li><a href="/about.html" class="active">About</a></li>
+                <li><a href="/brand/">Identity</a></li>
+                <li><a href="/contact.html">Contact</a></li>
+            </ul>
+        </div>
     </nav>
 
     <!-- Mobile Menu Overlay -->
@@ -1785,6 +1806,7 @@
             <a href="/myexperience.html" class="mobile-nav-link-secondary">Experience</a>
             <a href="/about.html" class="mobile-nav-link-secondary active">About</a>
             <a href="/brand/" class="mobile-nav-link-secondary">Identity</a>
+            <a href="/contact.html" class="mobile-nav-link-secondary">Contact</a>
           </div>
         </div>
       </div>
@@ -1973,8 +1995,8 @@
                     <h3 class="footer-nav-heading">Ecosystem</h3>
                     <ul class="footer-nav-list">
                         <li><a href="/index.html" class="footer-nav-link">Portfolio</a></li>
-                        <li><a href="/TheHub/index.html" class="footer-nav-link">The Hub</a></li>
                         <li><a href="/insights/index.html" class="footer-nav-link">Insights</a></li>
+                        <li><a href="/TheHub/index.html" class="footer-nav-link">The Hub</a></li>
                         <li><a href="https://portal.luis-gilberto.com" target="_blank" rel="noopener noreferrer" aria-label="Access The Portal (opens in new tab)" class="footer-nav-link footer-portal-link">
                             The Portal <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
                         </a></li>
@@ -2040,21 +2062,41 @@
                 return;
             }
             
-            const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
-            if (isCoarsePointer) {
-                console.log('Coarse pointer detected, disabling custom cursor');
-                cursor.style.display = 'none';
-                document.body.style.cursor = 'auto';
-                return;
-            }
+            // Initialize off-screen or center to prevent top-left jump
+            let mouseX = window.innerWidth / 2; 
+            let mouseY = window.innerHeight / 2;
+            let cursorX = mouseX; 
+            let cursorY = mouseY;
+            let isVisible = false;
+            
+            // Initially hide cursor until movement detected
+            cursor.style.opacity = '0';
+            cursor.style.transition = 'width 0.3s var(--ease-out), height 0.3s var(--ease-out), opacity 0.3s ease';
             
             // Track mouse movement
             document.addEventListener('mousemove', (e) => {
-                requestAnimationFrame(() => {
-                    cursor.style.left = e.clientX + 'px';
-                    cursor.style.top = e.clientY + 'px';
-                });
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                
+                // Show cursor on first movement
+                if (!isVisible) {
+                    isVisible = true;
+                    cursor.style.opacity = '1';
+                    cursorX = mouseX; // Snap to position immediately
+                    cursorY = mouseY;
+                }
             });
+
+            // Smooth cursor animation
+            function animateCursor() {
+                const speed = 0.15;
+                cursorX += (mouseX - cursorX) * speed;
+                cursorY += (mouseY - cursorY) * speed;
+                cursor.style.left = cursorX + 'px';
+                cursor.style.top = cursorY + 'px';
+                requestAnimationFrame(animateCursor);
+            }
+            animateCursor();
 
             // Add hover effects to interactive elements
             const hoverElements = 'a, button, .belief-card, .channel-btn, .cta-btn, input, textarea, select, .mobile-menu-toggle, .theme-toggle, .tour-card, .card-cta, .hero-tile, .mobile-menu-close, .mobile-nav-link-primary, .mobile-nav-link-secondary, .subnav-link';
@@ -2078,7 +2120,7 @@
                     if (mutation.addedNodes.length) {
                         const newElements = document.querySelectorAll(hoverElements);
                         newElements.forEach(el => {
-                            // Simple re-bind (in a real app, you'd want to be more selective)
+                            // Simple re-bind
                             el.removeEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
                             el.removeEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
                             addHoverListeners(el);

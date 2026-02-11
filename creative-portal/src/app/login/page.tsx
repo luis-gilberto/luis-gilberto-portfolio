@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useRouter } from 'next/navigation'
 import { useToast } from '@/components/providers/toast-provider'
+import { USERS } from '@/lib/users'
 
 export default function Login() {
   const router = useRouter()
@@ -23,6 +24,18 @@ export default function Login() {
         toast("ACCESS DENIED", "Please check your credentials and try again.", "error")
         console.error('Sign-in error:', result.error)
       } else {
+        // PERSONALIZATION LOGIC: Save to localStorage for dashboard personalization
+        const userEmail = email.toLowerCase();
+        if (USERS[userEmail]) {
+          const user = USERS[userEmail];
+          localStorage.setItem('currentUser', JSON.stringify({
+            name: user.name,
+            company: user.company,
+            id: user.id
+          }));
+          localStorage.setItem('currentScope', user.id);
+        }
+
         if (email.toLowerCase().includes('admin')) {
           router.push('/admin')
         } else if (email.toLowerCase().includes('consultant')) {

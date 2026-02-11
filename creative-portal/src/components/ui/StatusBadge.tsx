@@ -1,29 +1,35 @@
 import React from "react"
 import { cn } from "@/lib/utils"
 
+export type StatusVariant = "NOT_STARTED" | "UNDER_REVIEW" | "PUBLISHED" | "IN_PROGRESS"
+
 interface StatusBadgeProps {
-  variant?: "dev" | "beta"
+  status: StatusVariant
   className?: string
 }
 
-export default function StatusBadge({ variant = "dev", className }: StatusBadgeProps) {
+export default function StatusBadge({ status, className }: StatusBadgeProps) {
   const variants = {
-    dev: "text-gray-500 border-gray-700 bg-black/50",
-    beta: "text-coral-400 border-coral-500/30 bg-coral-500/10",
+    NOT_STARTED: "text-zinc-500 border-zinc-800 bg-zinc-900/50",
+    UNDER_REVIEW: "text-yellow-400 border-yellow-500/30 bg-yellow-500/10",
+    PUBLISHED: "text-teal border-teal/30 bg-teal/5",
+    IN_PROGRESS: "text-coral border-coral/30 bg-coral/5",
   }
 
   const content = {
-    dev: "IN DEVELOPMENT",
-    beta: "BETA",
+    NOT_STARTED: "NOT STARTED",
+    UNDER_REVIEW: "UNDER REVIEW",
+    PUBLISHED: "PUBLISHED",
+    IN_PROGRESS: "IN PROGRESS",
   }
 
   return (
     <span className={cn(
-      "text-[10px] uppercase tracking-widest font-bold px-2 py-1 rounded border inline-block",
-      variants[variant],
+      "text-[9px] uppercase tracking-[0.2em] font-black px-3 py-1 rounded-none border inline-block transition-all",
+      variants[status] || variants.NOT_STARTED,
       className
     )}>
-      {content[variant]}
+      {content[status] || status}
     </span>
   )
 }

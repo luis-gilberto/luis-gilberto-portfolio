@@ -15,11 +15,14 @@ model User {
   image         String?
   emailVerified DateTime?
   role          String    @default("CLIENT")
+  title         String?
+  clientId      String?
   createdAt     DateTime  @default(now())
   accounts      Account[]
   sentMessages  Message[]
   projects      Project[]
   sessions      Session[]
+  client        Client?   @relation(fields: [clientId], references: [id])
 
   @@map("User")
 }
@@ -40,6 +43,7 @@ model Client {
   updatedAt          DateTime            @updatedAt
   projects           Project[]
   assessmentSessions AssessmentSession[]
+  users              User[]
 }
 
 model Project {
@@ -53,6 +57,14 @@ model Project {
   campaignStatus     String              @default("PENDING")
   creativeStatus     String              @default("PENDING")
   gtmStatus          String              @default("PENDING")
+  businessOKRs       String?             @db.Text
+  strategicConstraints String?           @db.Text
+  primaryBusinessGoals String?           @db.Text
+  masterRoadmap      String?             @db.Text
+  masterPlan         Json?
+  overallIntelligenceScore Int?
+  quotedInvestment   String?
+  roadmapStatus      String              @default("PENDING")
   updatedAt          DateTime            @default(now()) @updatedAt
   deliverables       Deliverable[]
   documents          Document[]

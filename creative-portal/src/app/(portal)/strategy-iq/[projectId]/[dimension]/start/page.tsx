@@ -15,10 +15,21 @@ export default function StrategyIQStartPage() {
   const [dimension, setDimension] = useState<AssessmentCategory | null>(null)
   const [initialAnswers, setInitialAnswers] = useState<Record<string, number>>({})
   const [isHydrating, setIsHydrating] = useState(true)
+  const [isReadOnly, setIsReadOnly] = useState(false)
 
   useEffect(() => {
     if (params.projectId) setProjectId(params.projectId as string)
-    if (params.dimension) setDimension(params.dimension as AssessmentCategory)
+    if (params.dimension) {
+      const dim = params.dimension as AssessmentCategory
+      setDimension(dim)
+      
+      // Check query params or localStorage
+      const urlParams = new URLSearchParams(window.location.search)
+      const isReview = urlParams.get('review') === 'true'
+      const isCompleted = localStorage.getItem(`${dim.toLowerCase()}_assessment_completed`) === 'true'
+      
+      setIsReadOnly(isReview || isCompleted)
+    }
   }, [params])
 
   useEffect(() => {
@@ -53,6 +64,11 @@ export default function StrategyIQStartPage() {
   }
 
   const handleComplete = async (result: { score: number; answers: Record<string, number> }) => {
+    if (isReadOnly) {
+      router.push(`/strategy-iq/${projectId}/${dimension}/results`)
+      return
+    }
+
     // Save to DB
     try {
       const response = await fetch('/api/strategy-iq/save', {
@@ -97,6 +113,8 @@ export default function StrategyIQStartPage() {
         onClose={handleClose}
         projectId={projectId}
         initialAnswers={initialAnswers}
+        readOnly={isReadOnly}
+        onEdit={() => setIsReadOnly(false)}
       />
     </div>
   )

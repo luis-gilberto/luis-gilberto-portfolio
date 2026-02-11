@@ -94,10 +94,11 @@ export function StrategyWorkbench({
         <div className="flex items-center gap-6">
           <Button 
             variant="ghost" 
-            onClick={() => router.back()} 
-            className="rounded-full w-12 h-12 p-0 text-white/40 hover:text-coral hover:bg-coral/5 transition-all border border-white/5"
+            onClick={() => router.push(`/projects/${projectId}`)} 
+            className="flex items-center gap-3 px-4 h-12 text-white/40 hover:text-coral hover:bg-coral/5 transition-all border border-white/5 rounded-full group"
           >
-            <ArrowLeft size={24} />
+            <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
+            <span className="text-[10px] font-bold tracking-widest uppercase">Back to project overview</span>
           </Button>
           <div>
             <div className="flex items-center gap-3 mb-1">

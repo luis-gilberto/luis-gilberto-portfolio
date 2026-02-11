@@ -46,6 +46,7 @@ export async function POST(req: NextRequest) {
     })
 
     if (existingProject) {
+      console.log("[DATA ACCESS] User Role:", session.user.role, "ProjectID:", existingProject.id, "ClientID:", client.id);
       return NextResponse.json(existingProject)
     }
 
@@ -59,6 +60,7 @@ export async function POST(req: NextRequest) {
       }
     })
 
+    console.log("[DATA ACCESS] User Role:", session.user.role, "ProjectID:", newProject.id, "ClientID:", client.id, "(AUTO-INIT)");
     return NextResponse.json(newProject)
 
   } catch (error: any) {

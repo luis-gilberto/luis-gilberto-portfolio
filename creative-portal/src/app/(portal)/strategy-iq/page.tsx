@@ -20,9 +20,11 @@ import {
   HelpCircle,
   X
 } from 'lucide-react';
+import { StrategyCard, AssessmentStatus } from '@/components/strategy/StrategyCard';
 import { AnimatePresence, motion } from 'framer-motion';
 // Imports adjusted based on file tree check
 import { Button } from '@/components/ui/button';
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import AssessmentRunner from '@/components/strategy/AssessmentRunner';
 import StrategicBriefModal from '@/components/strategy/StrategicBriefModal';
 import { AssessmentCategory } from '@/lib/strategyData';
@@ -149,7 +151,7 @@ export default function StrategyIQPage() {
   const [educationModal, setEducationModal] = useState<any>(null);
   const [dbClients, setDbClients] = useState<any[]>([]);
 
-  // 1. Main State Container
+  // 1. Database-First State Management
   const [isMounted, setIsMounted] = useState(false);
   const [clientProgress, setClientProgress] = useState<Record<string, AssessmentState>>({ 
     gtm: { status: 'pending', score: 0, answers: {} }, 
@@ -160,7 +162,7 @@ export default function StrategyIQPage() {
 
   const role = session?.user?.role;
 
-  // Fetch real clients for Admins
+  // 1. Fetch real clients for Admins
   useEffect(() => {
     async function fetchClients() {
       if (role === 'ADMIN' || role === 'CONSULTANT') {
@@ -170,7 +172,6 @@ export default function StrategyIQPage() {
             const data = await res.json();
             setDbClients(data);
             if (data.length > 0) {
-              // Map DB client to the format expected by the UI
               const mapped = data.map((c: any) => ({
                 id: c.id,
                 email: c.email,
@@ -191,7 +192,7 @@ export default function StrategyIQPage() {
     fetchClients();
   }, [role]);
 
-  // Fetch Project Data for Partners or selected client
+  // 2. Fetch Project Data for Partners or selected client (Priority)
   useEffect(() => {
     async function fetchProjectData() {
       const targetUserEmail = (role === 'CLIENT') ? session?.user?.email : selectedClient?.email;
@@ -209,9 +210,10 @@ export default function StrategyIQPage() {
               .in('status', ['ACTIVE', 'DISCOVERY']);
             
             if (projects && projects.length > 0) {
-              const activeProj = projects[0];
+              // Task 2: Anchor to Acme Project VHV32LIT
+              const activeProj = projects.find((p: any) => p.id.endsWith('vhv32lit')) || projects[0];
               setActiveProject(activeProj);
-              // If it's an admin, we update selectedClient with the actual project ID for saving
+              
               if (role !== 'CLIENT') {
                 setSelectedClient(prev => ({
                   ...prev,
@@ -225,7 +227,7 @@ export default function StrategyIQPage() {
                 });
               }
 
-              // Fetch real progress from DB for this project
+              // Fetch real progress from DB (Master Record)
               const { data: assessments } = await supabase
                 .from('assessment_sessions')
                 .select('*')
@@ -240,11 +242,13 @@ export default function StrategyIQPage() {
                 };
 
                 assessments.forEach((a: any) => {
-                  if (progress[a.assessment_type]) {
-                    progress[a.assessment_type] = {
-                      status: 'completed',
+                  const type = a.assessment_type.toLowerCase()
+                  if (progress[type]) {
+                    progress[type] = {
+                      status: a.status as any,
                       score: a.intelligence_score,
-                      answers: safeJsonParse(a.responses, {})
+                      answers: safeJsonParse(a.responses, {}),
+                      isPublished: a.isPublished
                     };
                   }
                 });
@@ -264,15 +268,20 @@ export default function StrategyIQPage() {
     }
   }, [session, role, isMounted, selectedClient?.email]);
 
-  // B. Save State whenever it changes 
-  useEffect(() => { 
+  // 3. Session Backup (Secondary)
+  useEffect(() => {
     setIsMounted(true);
-    const saved = localStorage.getItem('strategyiq_progress'); 
-    if (saved) { 
-      setClientProgress(safeJsonParse(saved, {})); 
-    } 
+    const saved = localStorage.getItem('strategyiq_progress');
+    if (saved) {
+      setClientProgress(prev => {
+        const local = safeJsonParse(saved, {});
+        // Only use local if it has more data or DB failed
+        return { ...prev, ...local };
+      });
+    }
   }, []);
 
+  // Effect to keep localStorage updated as secondary backup
   useEffect(() => {
     if (isMounted) {
       localStorage.setItem('strategyiq_progress', JSON.stringify(clientProgress));
@@ -481,14 +490,20 @@ export default function StrategyIQPage() {
                 ref={contentRef} 
                 className="max-w-[1400px] mx-auto px-6 lg:px-12 py-12"
               >
+                <Breadcrumbs 
+                  items={[
+                    { label: 'Dashboard', href: '/dashboard' },
+                    { label: 'StrategyIQ™ Engine', active: true }
+                  ]} 
+                />
                 
                 {/* Header */}
                 <div className="flex justify-between items-end mb-12">
                   <div>
-                    <h1 className="text-4xl md:text-5xl font-display font-bold text-white mb-2 tracking-tight">
+                    <h1 className="text-2xl md:text-3xl font-medium text-zinc-400 tracking-tight font-inter mb-2">
                       StrategyIQ™ Engine
                     </h1>
-                    <p className="text-gray-400 max-w-xl text-lg">
+                    <p className="text-zinc-500 max-w-xl text-lg font-inter leading-relaxed italic">
                       Analyze your current posture and unlock bespoke strategic roadmaps across our four core intelligence pillars.
                     </p>
                   </div>
@@ -498,12 +513,17 @@ export default function StrategyIQPage() {
                 {role !== 'CLIENT' ? (
                   <div className="bg-[#141414] border border-white/5 rounded-xl p-8 mb-12 shadow-sm">
                     <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
-                      <h3 className="text-lg font-medium text-white">Client Context</h3>
+                      <div className="flex items-center gap-3">
+                        <div className="w-1.5 h-1.5 rounded-full bg-coral" />
+                        <h3 className="text-[11px] font-bold tracking-widest text-white/40 uppercase">
+                          Client context
+                        </h3>
+                      </div>
                       
                       {/* DYNAMIC DROPDOWN (HTML Select Fallback) */}
                       <div className="relative inline-block">
                         <select 
-                          className="appearance-none bg-transparent border-none text-xs text-gray-400 hover:text-[#F96F6E] transition-colors outline-none pr-6 cursor-pointer focus:ring-0"
+                          className="appearance-none bg-transparent border-none text-[10px] font-bold text-zinc-500 hover:text-teal transition-colors outline-none pr-6 cursor-pointer focus:ring-0 uppercase tracking-widest"
                           value={selectedClient.id}
                           onChange={(e) => {
                             const found = dbClients.find(c => c.id === e.target.value);
@@ -512,8 +532,8 @@ export default function StrategyIQPage() {
                                 id: found.id,
                                 email: found.email,
                                 name: found.name,
-                type: found.projectType || 'PHASE: PLANNING',
-                budget: found.budgetRange || 'TBD',
+                                type: found.projectType || 'PHASE: PLANNING',
+                                budget: found.budgetRange || 'TBD',
                                 timeline: found.timeline || 'TBD',
                                 size: found.companySize || 'TBD'
                               });
@@ -527,11 +547,7 @@ export default function StrategyIQPage() {
                               </option>
                             ))
                           ) : (
-                            CLIENTS.map(c => (
-                              <option key={c.id} value={c.id} className="bg-[#1A1A1A] text-gray-200">
-                                {c.name}
-                              </option>
-                            ))
+                            <option value="none" className="bg-[#1A1A1A] text-gray-200">No clients found</option>
                           )}
                         </select>
                         <ChevronRight size={14} className="rotate-90 absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400" />
@@ -541,20 +557,20 @@ export default function StrategyIQPage() {
                     {/* DYNAMIC GRID */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                       <div>
-                        <div className="text-[10px] uppercase tracking-wider text-gray-600 mb-1.5 font-semibold">Project Type</div>
-                        <div className="text-sm font-medium text-gray-200">{selectedClient.type}</div>
+                        <div className="text-[9px] uppercase tracking-[0.2em] text-white/20 mb-2 font-bold">Project Type</div>
+                        <div className="text-sm font-medium text-zinc-400">{selectedClient.type}</div>
                       </div>
                       <div>
-                        <div className="text-[10px] uppercase tracking-wider text-gray-600 mb-1.5 font-semibold">Budget Range</div>
-                        <div className="text-sm font-medium text-gray-200">{selectedClient.budget}</div>
+                        <div className="text-[9px] uppercase tracking-[0.2em] text-white/20 mb-2 font-bold">Budget Range</div>
+                        <div className="text-sm font-medium text-zinc-400">{selectedClient.budget}</div>
                       </div>
                       <div>
-                        <div className="text-[10px] uppercase tracking-wider text-gray-600 mb-1.5 font-semibold">Timeline</div>
-                        <div className="text-sm font-medium text-gray-200">{selectedClient.timeline}</div>
+                        <div className="text-[9px] uppercase tracking-[0.2em] text-white/20 mb-2 font-bold">Timeline</div>
+                        <div className="text-sm font-medium text-zinc-400">{selectedClient.timeline}</div>
                       </div>
                       <div>
-                        <div className="text-[10px] uppercase tracking-wider text-gray-600 mb-1.5 font-semibold">Company Size</div>
-                        <div className="text-sm font-medium text-gray-200">{selectedClient.size}</div>
+                        <div className="text-[9px] uppercase tracking-[0.2em] text-white/20 mb-2 font-bold">Company Size</div>
+                        <div className="text-sm font-medium text-zinc-400">{selectedClient.size}</div>
                       </div>
                     </div>
                   </div>
@@ -565,9 +581,9 @@ export default function StrategyIQPage() {
                         <Rocket size={24} />
                       </div>
                       <div>
-                        <div className="text-[10px] font-bold text-white/20 uppercase tracking-widest">Active Intelligence</div>
-                        <h3 className="text-2xl font-bold text-white font-big-shoulders tracking-widest uppercase italic">
-                          Strategy Engine: <span className="text-teal">{selectedClient.name}</span>
+                        <div className="text-[10px] font-bold text-white/20 tracking-widest">Active intelligence</div>
+                        <h3 className="text-2xl font-bold text-white font-big-shoulders tracking-widest italic">
+                          Strategy engine: <span className="text-teal">{selectedClient.name}</span>
                         </h3>
                       </div>
                     </div>
@@ -575,95 +591,43 @@ export default function StrategyIQPage() {
                 )}
 
                 {/* SECTION TITLE */}
-                <div className="mb-6">
-                  <h2 className="text-2xl font-semibold mb-2 text-white">Strategic <span className="text-[#F96F6E]">Assessment</span> Areas</h2>
-                  <p className="text-gray-500 text-sm">Select the primary strategic focus area to begin the intelligence assessment.</p>
+                <div className="mb-12">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-teal" />
+                    <h2 className="text-[11px] font-bold tracking-widest text-white/40 uppercase">
+                      Strategic assessment areas
+                    </h2>
+                  </div>
+                  <p className="text-zinc-500 text-lg font-inter italic">Select the primary strategic focus area to begin the intelligence assessment.</p>
                 </div>
 
-                {/* CARDS GRID */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {assessmentAreas.map((area, index) => {
-                    const status = clientProgress[area.id].status;
-                    const isCompleted = status === 'completed';
-                    
-                    return (
-                      <div 
-                        key={index}
-                        onClick={() => handleAssessmentStart(area.id)}
-                        className={cn(
-                          "group relative p-8 rounded-xl border transition-all duration-300 cursor-pointer overflow-hidden",
-                          area.isHighlight 
-                            ? 'bg-gradient-to-br from-[#2A1515] to-[#1A1A1A] border-[#F96F6E]/20 hover:border-[#F96F6E]/40' 
-                            : 'bg-[#141414] border-white/5 hover:border-white/10 hover:bg-[#1A1A1A]',
-                          isCompleted && "opacity-80 grayscale-[0.3] hover:opacity-100 hover:grayscale-0"
-                        )}
-                      >
-                        <div className="flex justify-between items-start mb-6">
-                          <div className={cn(
-                            "p-3 rounded-lg transition-colors",
-                            area.isHighlight ? 'bg-[#F96F6E]/10 text-[#F96F6E]' : 'bg-white/5 text-gray-400',
-                            isCompleted && "bg-teal-500/10 text-teal-400"
-                          )}>
-                            {isCompleted ? <CheckCircle size={24} /> : <area.icon size={24} strokeWidth={1.5} />}
-                          </div>
-                          <ChevronRight className={cn(
-                            "opacity-0 group-hover:opacity-100 transition-opacity",
-                            area.isHighlight ? 'text-[#F96F6E]' : 'text-gray-500'
-                          )} />
-                        </div>
-                        
-                        <h3 className="text-lg font-semibold mb-2 text-white flex items-center gap-2">
-                          {area.title}
-                          <button 
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setEducationModal(area.education);
-                            }}
-                            className="text-white/20 hover:text-coral transition-colors"
-                          >
-                            <HelpCircle size={14} />
-                          </button>
-                          {isCompleted && (
-                            <span className="text-[10px] bg-teal-500/20 text-teal-400 px-2 py-0.5 rounded-full font-medium tracking-wide">
-                              Completed
-                            </span>
-                          )}
-                        </h3>
-                        <p className="text-sm text-gray-400 mb-6 leading-relaxed">{area.description}</p>
-                        
-                        <div className="flex items-center justify-between">
-                          <div className={cn(
-                            "text-[10px] font-bold tracking-widest uppercase",
-                            area.isHighlight ? 'text-[#F96F6E]' : 'text-[#F96F6E]/80'
-                          )}>
-                            {area.duration}
-                          </div>
-                          {isCompleted && session?.user?.role !== 'CLIENT' && (
-                          <div className="text-xs font-medium text-white bg-white/5 px-3 py-1 rounded-full">
-                            Score: <span className="text-teal-400">{clientProgress[area.id].score}</span>
-                          </div>
-                        )}
-                        {isCompleted && session?.user?.role === 'CLIENT' && (
-                          <div className="text-[10px] font-bold text-teal uppercase tracking-widest bg-teal/10 px-3 py-1 rounded-full border border-teal/20">
-                            {activeProject?.status === 'DISCOVERY' ? 'Discovery Secured' : 'Roadmap Active'}
-                          </div>
-                        )}
-                        </div>
+                  {assessmentAreas.map((area) => {
+                     const p = clientProgress[area.id]
+                     let status: AssessmentStatus = "NOT_STARTED"
+                     
+                     // 1. Check DB progress first
+                     if (p.isPublished) status = "PUBLISHED"
+                     else if (p.status === 'completed' || p.status === 'COMPLETED' || p.status === 'PUBLISHED') status = "PUBLISHED"
+                     else if (p.status === 'UNDER_REVIEW' || p.status === 'MANUAL_REVIEW') status = "UNDER_REVIEW"
+                     else if (p.status === 'in-progress' || p.status === 'IN_PROGRESS') status = "IN_PROGRESS"
 
-                        {!isCompleted && (
-                          <div className="mt-4 flex items-center gap-2 text-xs font-bold text-coral uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
-                            {activeProject?.status === 'DISCOVERY' ? 'Continue Discovery' : 'View Roadmap'}
-                            <ArrowRight size={14} />
-                          </div>
-                        )}
+                     // 2. Check local completed state fallback
+                     const isLocalCompleted = typeof window !== 'undefined' && localStorage.getItem(`${area.id.toLowerCase()}_assessment_completed`) === 'true'
+                     if (status === "NOT_STARTED" && isLocalCompleted) status = "COMPLETED"
 
-                        {/* Subtle Glow for Highlight Card */}
-                        {area.isHighlight && !isCompleted && (
-                          <div className="absolute top-0 right-0 w-32 h-32 bg-[#F96F6E] opacity-5 blur-[80px] pointer-events-none" />
-                        )}
-                      </div>
-                    );
-                  })}
+                     return (
+                       <StrategyCard
+                         key={area.id}
+                         id={area.id}
+                         title={area.title}
+                         description={area.description}
+                         status={status}
+                         projectId={activeProject?.id || "cml73ju300003vkikvhv32lit"}
+                         onClick={() => handleAssessmentStart(area.id)}
+                       />
+                     )
+                   })}
                 </div>
 
                 {/* BOTTOM SCORECARD (Admin Only) */}
@@ -690,7 +654,7 @@ export default function StrategyIQPage() {
                     
                     <div className="flex-1 w-full relative z-10">
                       <div className="flex justify-between items-center mb-2">
-                        <span className="text-xs uppercase tracking-wider text-gray-500 font-medium">Recommended engagement</span>
+                        <span className="text-xs tracking-wider text-gray-500 font-medium">Recommended engagement</span>
                         <span className="text-teal-400 font-bold">{serviceMatch.price}</span>
                       </div>
                       <div className="bg-[#0A0A0A] p-4 rounded-lg border border-white/5 flex items-center justify-between group cursor-pointer hover:border-teal-500/30 transition-colors">
@@ -786,7 +750,7 @@ export default function StrategyIQPage() {
                     <div className="w-10 h-10 rounded-xl bg-coral/10 flex items-center justify-center text-coral">
                       <HelpCircle size={20} />
                     </div>
-                    <h2 className="text-3xl font-big-shoulders font-bold tracking-widest uppercase italic text-white">
+                    <h2 className="text-3xl font-big-shoulders font-bold tracking-widest italic text-white">
                       {educationModal.title}
                     </h2>
                   </div>

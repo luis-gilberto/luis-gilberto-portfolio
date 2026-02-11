@@ -38,6 +38,8 @@ interface AssessmentRunnerProps {
   isPublished?: boolean;
   onPublish?: () => void;
   projectId?: string;
+  readOnly?: boolean;
+  onEdit?: () => void;
 }
 
 export default function AssessmentRunner({ 
@@ -49,7 +51,9 @@ export default function AssessmentRunner({
   userRole,
   isPublished = false,
   onPublish,
-  projectId
+  projectId,
+  readOnly = false,
+  onEdit
 }: AssessmentRunnerProps) {
   const { toast } = useToast()
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -82,6 +86,7 @@ export default function AssessmentRunner({
   }, [currentQuestionIndex, currentQuestion, answers]);
 
   const handleOptionSelect = (value: string, score: number) => {
+    if (readOnly) return;
     setSelectedOptionValue(value);
     setAnswers(prev => ({
       ...prev,
@@ -177,7 +182,7 @@ export default function AssessmentRunner({
                 <Bot size={48} className="text-white animate-bounce" />
               </div>
             </div>
-            <h3 className="text-2xl font-bold text-white font-big-shoulders tracking-widest uppercase mb-2 italic">Analyzing Inputs...</h3>
+            <h3 className="text-2xl font-bold text-white font-big-shoulders tracking-widest mb-2 italic">Analyzing inputs...</h3>
             <p className="text-gray-400 font-inter max-w-xs mx-auto">
               Our AI is calibrating your strategic posture based on industry benchmarks.
             </p>
@@ -194,9 +199,13 @@ export default function AssessmentRunner({
               <CheckCircle size={48} />
             </div>
             <div className="space-y-2">
-              <h3 className="text-4xl font-bold text-white font-big-shoulders tracking-[0.2em] uppercase mb-2 italic">Success: Synthesis Initialized</h3>
+              <h3 className="text-4xl font-bold text-white font-big-shoulders tracking-[0.2em] mb-2 italic">
+                {readOnly ? "Review Complete" : "Success: Synthesis initialized"}
+              </h3>
               <p className="text-gray-400 font-inter max-w-sm mx-auto">
-                Your strategic inputs have been securely captured and the discovery engine is processing the results.
+                {readOnly 
+                  ? "Your strategic inputs have been reviewed. You can now access the full intelligence brief."
+                  : "Your strategic inputs have been securely captured and the StrategyIQ™ Engine is processing the results."}
               </p>
             </div>
             
@@ -205,7 +214,7 @@ export default function AssessmentRunner({
               variant="strategy-primary"
               className="px-12 py-6 text-[10px]"
             >
-              View My Results
+              {readOnly ? "View Final Brief" : "View My Results"}
             </Button>
           </motion.div>
         ) : isFinished ? (
@@ -227,7 +236,14 @@ export default function AssessmentRunner({
             exit={{ opacity: 0 }}
           >
             <div className="flex justify-between items-center mb-6">
-              <div>
+              <button 
+                onClick={onClose}
+                className="flex items-center gap-2 text-[10px] font-bold text-white/20 hover:text-white/40 tracking-widest uppercase transition-colors group"
+              >
+                <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+                Back to intelligence overview
+              </button>
+              <div className="text-right">
                 <h2 className="text-2xl font-display font-bold text-white mb-1">
                   {category.toUpperCase()} Assessment
                 </h2>
@@ -235,13 +251,6 @@ export default function AssessmentRunner({
                   Question {currentQuestionIndex + 1} of {totalQuestions}
                 </p>
               </div>
-              <Button 
-                variant="ghost" 
-                onClick={onClose}
-                className="text-gray-400 hover:text-white hover:bg-white/10"
-              >
-                Exit Assessment
-              </Button>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -253,8 +262,8 @@ export default function AssessmentRunner({
                 <Card className="bg-[#141414] border-white/10 shadow-2xl overflow-hidden">
                   <CardHeader className="pb-2">
                     <div className="flex justify-between items-center mb-4">
-                      <Badge variant="outline" className="border-teal-500/50 text-teal-400 bg-teal-500/10 uppercase tracking-wider text-xs">
-                        {currentQuestion.type === 'single' ? 'Single Select' : 'Multiple Select'}
+                      <Badge variant="outline" className="border-teal-500/50 text-teal-400 bg-teal-500/10 tracking-wider text-xs">
+                        {currentQuestion.type === 'single' ? 'Single select' : 'Multiple select'}
                       </Badge>
                       <Progress value={progress} className="w-1/3 h-2 bg-white/5" indicatorClassName="bg-gradient-to-r from-coral to-teal" />
                     </div>
@@ -271,14 +280,16 @@ export default function AssessmentRunner({
                           whileTap={{ scale: 0.99 }}
                         >
                           <div
-                            onClick={() => handleOptionSelect(option.value, option.score)}
-                            className={cn(
-                              "p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 flex items-center gap-4 group",
-                              selectedOptionValue === option.value
-                                ? "border-coral bg-coral/10 shadow-[0_0_20px_rgba(249,111,110,0.15)]"
-                                : "border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10"
-                            )}
-                          >
+                              onClick={() => handleOptionSelect(option.value, option.score)}
+                              className={cn(
+                                "p-4 rounded-xl border-2 transition-all duration-200 flex items-center gap-4 group",
+                                readOnly ? "cursor-default" : "cursor-pointer",
+                                selectedOptionValue === option.value
+                                  ? "border-coral bg-coral/10 shadow-[0_0_20px_rgba(249,111,110,0.15)]"
+                                  : "border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10",
+                                readOnly && selectedOptionValue !== option.value && "opacity-40 grayscale-[0.5]"
+                              )}
+                            >
                             <div className={cn(
                               "w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors",
                               selectedOptionValue === option.value
@@ -301,24 +312,39 @@ export default function AssessmentRunner({
                     </div>
 
                     <div className="flex justify-between pt-8 mt-4 border-t border-white/10">
-                      <Button
-                        variant="strategy-secondary"
-                        onClick={handlePrevious}
-                        disabled={currentQuestionIndex === 0}
-                        className="px-6 py-4 text-[10px]"
-                      >
-                        <ArrowLeft className="mr-2 h-4 w-4" /> Previous
-                      </Button>
+                      <div className="flex gap-4">
+                        <Button
+                          variant="strategy-secondary"
+                          onClick={handlePrevious}
+                          disabled={currentQuestionIndex === 0}
+                          className="px-6 py-4 text-[10px]"
+                        >
+                          <ArrowLeft className="mr-2 h-4 w-4" /> Previous
+                        </Button>
+                        
+                        {readOnly && onEdit && (
+                          <Button
+                            variant="ghost"
+                            onClick={onEdit}
+                            className="px-6 py-4 text-[10px] border border-coral text-coral hover:bg-coral/10"
+                          >
+                            Edit Responses
+                          </Button>
+                        )}
+                      </div>
+                      
                       <Button
                         variant="strategy-primary"
                         onClick={handleNext}
-                        disabled={!selectedOptionValue}
+                        disabled={!selectedOptionValue && !readOnly}
                         className={cn(
                           "px-8 py-4 text-[10px]",
-                          !selectedOptionValue && "opacity-50 cursor-not-allowed"
+                          (!selectedOptionValue && !readOnly) && "opacity-50 cursor-not-allowed"
                         )}
                       >
-                        {currentQuestionIndex === totalQuestions - 1 ? 'Complete Assessment' : 'Next Question'}
+                        {currentQuestionIndex === totalQuestions - 1 
+                          ? (readOnly ? 'Finish Review' : 'Complete Assessment') 
+                          : 'Next Question'}
                         {currentQuestionIndex === totalQuestions - 1 ? (
                           <CheckCircle className="ml-2 h-4 w-4" />
                         ) : (

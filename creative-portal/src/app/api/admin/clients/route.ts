@@ -14,6 +14,7 @@ export async function GET() {
     const clients = await prisma.client.findMany({
       orderBy: { createdAt: 'desc' },
     });
+    console.log("[DATA ACCESS] Admin Client List Fetched. Count:", clients.length);
     return NextResponse.json(clients);
   } catch (error) {
     console.error('Failed to fetch clients:', error);
@@ -78,6 +79,7 @@ export async function POST(req: Request) {
       return { client: newClient, project: newProject };
     });
 
+    console.log("[DATA ACCESS] New Client/Project Created. ClientID:", result.client.id, "ProjectID:", result.project.id);
     return NextResponse.json(result.client, { status: 201 });
   } catch (error: any) {
     console.error('Failed to create client:', error);

@@ -24,7 +24,7 @@
     --text-primary: #f0f0f0;
     --text-secondary: #a0a0a0;
     --border-color: #333333;
-    --nav-bg: rgba(10, 10, 10, 0.9);
+    --nav-bg: rgba(255, 255, 255, 0.95); /* Preserve light header in dark mode */
 }
 
 * {
@@ -56,20 +56,21 @@ h1, h2, h3, h4, .lg-logo {
     position: sticky;
     top: 0;
     z-index: 1000;
+    height: var(--header-height, 64px);
+    display: flex;
+    align-items: center;
     background: var(--nav-bg);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border-color);
-    padding: 1rem 0;
 }
 
 .lg-site-header-inner {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 2rem;
+    width: 100%;
+    padding: 0 4rem; /* Increased horizontal padding */
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-between; /* LOGO LEFT, NAV RIGHT */
 }
 
 .lg-logo {
@@ -85,6 +86,61 @@ h1, h2, h3, h4, .lg-logo {
 .lg-main-nav {
     display: flex;
     gap: 2rem;
+    margin-left: auto; /* Push to the right */
+}
+
+/* --- SUBMENU STYLES --- */
+.nav-sub-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.nav-submenu {
+    position: absolute;
+    top: 100%;
+    right: 0; /* Align to the right of the parent */
+    min-width: 180px;
+    background: var(--nav-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    padding: 0.5rem;
+    display: none;
+    z-index: 1002;
+    margin-top: 10px;
+}
+
+.nav-submenu.open {
+    display: block;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.nav-submenu a {
+    display: block;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    text-decoration: none;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.nav-submenu a:hover {
+    background: rgba(0,0,0,0.05);
+    color: var(--coral-accent);
+}
+
+[data-theme="dark"] .nav-submenu a:hover {
+    background: rgba(255,255,255,0.05);
 }
 
 /* --- GLOBAL NAV LINKS --- */ 
@@ -130,11 +186,11 @@ h1, h2, h3, h4, .lg-logo {
 
 /* --- DARK MODE NAV TEXT FIX --- */ 
 [data-theme="dark"] .lg-nav-link { 
-    color: #ffffff; /* Text becomes White in dark mode */ 
+    color: #121212; /* Keep text dark since header stays light */ 
 } 
 [data-theme="dark"] .lg-nav-link:hover, 
 [data-theme="dark"] .lg-nav-link.is-active { 
-    color: #ffffff; /* FORCE Text to stay White in dark mode */ 
+    color: #121212; 
 }
 
 .mobile-menu-toggle {
@@ -143,6 +199,7 @@ h1, h2, h3, h4, .lg-logo {
     border: none;
     color: var(--text-primary);
     cursor: pointer;
+    margin-left: auto; /* Push toggle to the extreme right */
 }
 
 /* --- CONTEXT BAR --- */
@@ -705,6 +762,12 @@ h1, h2, h3, h4, .lg-logo {
 
 /* Responsive Updates */
 @media (max-width: 900px) {
+    .lg-site-header-inner {
+        padding: 0 2rem; /* Reduce padding on tablet */
+    }
+    .lg-logo {
+        margin-left: 0; /* Reset extreme pull on tablet */
+    }
     .lg-main-nav { display: none; }
     .mobile-menu-toggle { display: block; }
     
@@ -736,6 +799,9 @@ h1, h2, h3, h4, .lg-logo {
 }
 
 @media (max-width: 600px) {
+    .lg-site-header-inner {
+        padding: 0 1rem; /* Minimum padding on mobile */
+    }
     /* The Bar Grid - Mobile (1 col) */
     .the-bar-grid { grid-template-columns: 1fr; }
 }
@@ -937,35 +1003,46 @@ h1, h2, h3, h4, .lg-logo {
     color: white; 
 }
 
-/* --- THEME AWARE IMAGES (ROBUST) --- */ 
-
-/* 1. Base State: Hide ALL theme images inside the container */
-.theme-image-container img,
-.theme-image-container .theme-img-light, 
-.theme-image-container .theme-img-dark {
+/* --- UNIVERSAL THEME TOGGLE (Kill Doubling) --- */
+[data-theme="light"] .theme-img-dark,
+[data-theme="light"] .sig-sticker.theme-img-dark {
+    display: none !important;
+}
+[data-theme="dark"] .theme-img-light,
+[data-theme="dark"] .sig-sticker.theme-img-light {
     display: none !important;
 }
 
-/* 2. Light Mode: Show only light image */
-html[data-theme="light"] .theme-image-container .theme-img-light {
-    display: block !important;
+/* --- THE SIGNATURE ANCHOR SYSTEM --- */
+.img-sig-wrapper {
+    position: relative !important;
+    display: table !important; /* Forces container to hug image width */
+    margin: 0 auto !important;
+    line-height: 0;
 }
-
-/* 3. Dark Mode: Show only dark image */
-html[data-theme="dark"] .theme-image-container .theme-img-dark {
-    display: block !important;
+.sig-sticker {
+    position: absolute !important;
+    bottom: 4% !important;
+    right: 4% !important;
+    width: 22% !important;
+    min-width: 80px !important;
+    max-width: 140px !important;
+    z-index: 100 !important;
+    transform: rotate(-2deg) !important;
+    pointer-events: none !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
 }
-
-/* 4. Container Sizing */
-.theme-image-container {
-    min-height: 100px;
-    width: 100%;
-}
+[data-theme="light"] .sig-sticker.theme-img-light { mix-blend-mode: multiply !important; }
+[data-theme="dark"] .sig-sticker.theme-img-dark { mix-blend-mode: screen !important; }
 
 /* --- DARK MODE LOGO FIX --- */
+/* Logo remains dark because header remains light in both modes */
 [data-theme="dark"] .lg-logo img { 
-    filter: invert(1); 
-    opacity: 0.9; /* Slight soften so it isn't jarringly bright */ 
+    filter: none; 
+    opacity: 1; 
 }
 
 /* Swiper Navigation Styling */ 
@@ -1238,3 +1315,108 @@ a.work-card {
     margin: 0 auto 4rem auto; 
     padding: 0 2rem; 
 }
+
+/* (Removed legacy GLOBAL SIGNATURE SYSTEM and theme-image-container to comply with spec) */
+
+/* --- Footer AI Link (Insights Teal) --- */
+.footer-ai-link {
+    color: #1BA6A6 !important;
+    font-weight: 500;
+    transition: opacity 0.2s ease;
+}
+
+.footer-ai-link:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+}
+
+/* --- Enhanced AI Collaboration Modal --- */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #111;
+    color: #eee;
+    padding: 40px;
+    border: 1px solid rgba(27, 166, 166, 0.3);
+    border-top: 4px solid #1BA6A6;
+    width: 90%;
+    max-width: 550px;
+    border-radius: 12px;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+
+.modal-content h2 {
+    color: #1BA6A6;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+}
+
+.modal-close-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 28px;
+    color: #666;
+    cursor: pointer;
+}
+
+.modal-close-button:hover { color: #1BA6A6; }
+
+/* --- Global Signature Anchor System --- */
+.theme-image-container,
+.visual-break {
+    display: block !important;
+    margin: 0 auto 3rem auto !important;
+    text-align: center;
+}
+
+.img-sig-wrapper {
+    position: relative !important;
+    display: table !important;
+    margin: 0 auto !important;
+    line-height: 0;
+}
+
+.img-sig-wrapper img:not(.sig-sticker) {
+    display: block !important;
+    max-width: 100% !important;
+    height: auto !important;
+}
+
+.theme-image-container img:not(.sig-sticker),
+.visual-break img:not(.sig-sticker) {
+    display: block !important;
+    max-width: 100% !important;
+    height: auto !important;
+}
+
+.sig-sticker {
+    position: absolute !important;
+    bottom: 5% !important;
+    right: 5% !important;
+    width: 22% !important;
+    min-width: 85px !important;
+    max-width: 145px !important;
+    z-index: 10 !important;
+    transform: rotate(-2.5deg) !important;
+    pointer-events: none !important;
+}
+
+[data-theme="light"] .sig-sticker.theme-img-light { display: block !important; mix-blend-mode: multiply !important; }
+[data-theme="dark"] .sig-sticker.theme-img-dark { display: block !important; mix-blend-mode: screen !important; }
+
+/* Signature support override removed to avoid conflicts with Golden Standard */

@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Engagement Toolkit | Luis Gilberto</title>
+
+  <!-- Tailwind (layout utility only) -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+
+  <!-- Brand Fonts: General Sans (UI), Recoleta (display), Editorial New (editorial subheads) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=General+Sans:wght@400;500;600;700;800&family=Recoleta:wght@500;600;700&family=Editorial+New:opsz@6..72&display=swap" rel="stylesheet"/>
+
+  <style>
+    /* =========================
+       LUIS GILBERTO — THEME
+       Dark-first, coral-accented, editorial
+       ========================= */
+
+    :root{
+      /* 🎨 Core tokens */
+      --coral:#F96F6E;               /* Vivid accent */
+      --bg:#111111;                  /* Page background (dark) */
+      --card:#191919;                /* Card surface (dark) */
+      --line:rgba(255,255,255,.12);  /* Subtle divider */
+      --ink-on-dark:#F1F1F1;         /* Primary text on dark */
+      --ink-2-on-dark:#CFCFCF;       /* Secondary text on dark */
+      --shadow:0 8px 24px rgba(0,0,0,.35);
+      --shadow-xl:0 30px 60px rgba(0,0,0,.45);
+
+      /* Fonts */
+      --font-ui:'General Sans',system-ui,-apple-system,Segoe UI,Inter,Arial,sans-serif;
+      --font-display:'Recoleta','Editorial New',Georgia,serif;
+      --font-editorial:'Editorial New','Recoleta',Georgia,serif;
+    }
+
+    /* Base */
+    *{ box-sizing:border-box; }
+    body{
+      font-family:var(--font-ui);
+      background:var(--bg);
+      color:var(--ink-on-dark);
+      line-height:1.6;
+      overflow-x:hidden;
+    }
+    h1,h2,h3{ color:rgba(255,255,255,.95); }
+    p, li, small{ color:rgba(255,255,255,.78); }
+
+    /* Typography helpers */
+    .font-display{ font-family:var(--font-display); letter-spacing:-.01em; }
+    .font-editorial{ font-family:var(--font-editorial); }
+
+    /* LG surfaces */
+    .glass{
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.10);
+      backdrop-filter: blur(10px);
+    }
+    .bg-coral{ background:var(--coral); }
+    .rule-coral{ height:2px; width:96px; background:var(--coral); border-radius:2px; }
+
+    /* Motion */
+    .hover-lift{ transition: transform .25s ease, box-shadow .25s ease; }
+    .hover-lift:hover{ transform: translateY(-4px); box-shadow: var(--shadow-xl); }
+
+    /* Tags */
+    .skill-tag{
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.14);
+      color:var(--ink-on-dark);
+      padding:.5rem 1rem;
+      border-radius:999px;
+      font-size:.875rem;
+      font-weight:600;
+      display:inline-block;
+      margin:.25rem;
+    }
+
+    /* Cards */
+    .stats-card{
+      position:relative;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:1rem;
+      padding:1.5rem;
+      color:var(--ink-on-dark);
+      overflow:hidden;
+    }
+    .stats-card::after{
+      content:'';
+      position:absolute; inset:auto auto 0 0;
+      height:3px; width:100%;
+      background:var(--coral);
+    }
+    .testimonial-card{
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:1rem;
+      padding:1.5rem;
+      position:relative;
+    }
+
+    /* Packages */
+    .package-row{
+      transition:all .3s ease;
+      border-left:4px solid transparent;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:1rem;
+    }
+    .package-row:hover{
+      border-left-color:var(--coral);
+      background:rgba(255,255,255,.06);
+      transform: translateX(4px);
+    }
+
+    /* Animations */
+    .animate-fade-in{ animation:fadeIn .6s ease-out; }
+    .animate-slide-up{ animation:slideUp .8s ease-out; }
+    .animate-pulse-subtle{ animation:pulseSubtle 2s infinite; }
+    @keyframes fadeIn{ from{opacity:0;} to{opacity:1;} }
+    @keyframes slideUp{ from{opacity:0; transform:translateY(30px);} to{opacity:1; transform:translateY(0);} }
+    @keyframes pulseSubtle{ 0%,100%{opacity:1;} 50%{opacity:.85;} }
+
+    /* Config panel glass */
+    .config-panel{
+      background: linear-gradient(135deg, rgba(25,25,25,.9) 0%, rgba(25,25,25,.7) 100%);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,.12);
+    }
+
+    /* Print */
+    @media print{
+      .no-print{ display:none !important; }
+      body{ background:#fff; color:#000; }
+      .glass, .stats-card, .testimonial-card, .package-row{ background:#fff !important; border:1px solid #ddd !important; }
+      .rule-coral{ background:#000 !important; }
+      a{ color:#000 !important; text-decoration:underline; }
+    }
+  </style>
+</head>
+
+<body class="min-h-screen">
+  <!-- Subtle background pattern -->
+  <div class="fixed inset-0 pointer-events-none" style="opacity:.04; background-image: radial-gradient(circle at 1px 1px, #fff 1px, transparent 0); background-size: 18px 18px;"></div>
+
+  <div class="relative z-10 max-w-7xl mx-auto px-4 py-8">
+    <!-- Top Bar -->
+    <div class="flex items-center justify-between mb-8 animate-fade-in">
+      <div class="flex items-center gap-4">
+        <div class="bg-coral text-white px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2">
+          <i class="fas fa-lock"></i>
+          Private • By Invitation
+        </div>
+      </div>
+      <div class="flex items-center gap-4 no-print">
+        <!-- Use your preferred lockup; swap to icon on small screens if desired -->
+        <img src="https://luis-gilberto.com/wp-content/uploads/2025/05/Preferred-version.png" alt="Luis Gilberto" class="h-8 opacity-95" />
+        <button class="glass text-white px-4 py-2 rounded-lg hover-lift transition-colors flex items-center gap-2" id="copyLink">
+          <i class="fas fa-link opacity-90"></i><span>Copy Share Link</span>
+        </button>
+        <button class="bg-coral text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity flex items-center gap-2" onclick="window.print()">
+          <i class="fas fa-download"></i><span>Download PDF</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Config Panel -->
+    <div class="config-panel rounded-2xl p-6 mb-8 animate-slide-up no-print" id="configBar">
+      <div class="flex flex-wrap items-center justify-between gap-6">
+        <div class="flex flex-wrap items-center gap-6">
+          <div>
+            <strong class="mb-2 block" style="color:rgba(255,255,255,.9)">Show sections:</strong>
+            <div class="flex flex-wrap gap-4">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" data-toggle="sec-intro" checked class="rounded border-gray-300 focus:ring-indigo-500">
+                <span style="color:rgba(255,255,255,.75)" class="text-sm">Intro</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" data-toggle="sec-offer" checked class="rounded border-gray-300 focus:ring-indigo-500">
+                <span style="color:rgba(255,255,255,.75)" class="text-sm">What You Get</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" data-toggle="sec-trust" checked class="rounded border-gray-300 focus:ring-indigo-500">
+                <span style="color:rgba(255,255,255,.75)" class="text-sm">Where I’ve Operated</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" data-toggle="sec-models" checked class="rounded border-gray-300 focus:ring-indigo-500">
+                <span style="color:rgba(255,255,255,.75)" class="text-sm">Ways to Work Together</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" data-toggle="sec-footer" checked class="rounded border-gray-300 focus:ring-indigo-500">
+                <span style="color:rgba(255,255,255,.75)" class="text-sm">Footer</span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div>
+          <strong class="mb-2 block" style="color:rgba(255,255,255,.9)">Packages:</strong>
+          <div class="flex flex-wrap gap-4">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" data-package="quick" checked class="rounded border-gray-300 focus:ring-indigo-500">
+              <span style="color:rgba(255,255,255,.75)" class="text-sm">Quick-Start</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" data-package="fractional" checked class="rounded border-gray-300 focus:ring-indigo-500">
+              <span style="color:rgba(255,255,255,.75)" class="text-sm">Fractional</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" data-package="launch" checked class="rounded border-gray-300 focus:ring-indigo-500">
+              <span style="color:rgba(255,255,255,.75)" class="text-sm">Launch</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" data-package="ally" checked class="rounded border-gray-300 focus:ring-indigo-500">
+              <span style="color:rgba(255,255,255,.75)" class="text-sm">Founder’s Ally</span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="mt-4 text-sm flex items-center gap-2" style="color:rgba(255,255,255,.7)">
+        <i class="fas fa-lightbulb" style="color:#FFD766"></i>
+        Tip: use the “Copy Share Link” button to generate a URL with your current selections.
+      </div>
+    </div>
+
+    <!-- Main Card -->
+    <section class="rounded-3xl overflow-hidden animate-slide-up glass" style="box-shadow: var(--shadow-xl);">
+      <div class="grid lg:grid-cols-3 gap-0">
+        <!-- Left Column - 2/3 -->
+        <div class="lg:col-span-2 p-8 lg:p-12">
+          <!-- Intro -->
+          <div id="sec-intro" class="mb-12">
+            <div class="flex items-center gap-3 mb-6">
+              <div class="w-12 h-12 bg-coral rounded-full flex items-center justify-center animate-pulse-subtle">
+                <i class="fas fa-user-tie text-white text-lg"></i>
+              </div>
+              <div class="text-sm font-semibold uppercase tracking-wider" style="color:rgba(255,255,255,.75)">Luis Gilberto</div>
+            </div>
+
+            <h1 class="font-display text-5xl lg:text-6xl font-bold mb-4 leading-tight">
+              Integrated Marketing Partner
+            </h1>
+            <p class="text-xs tracking-widest uppercase mb-6" style="letter-spacing:.18em; color:rgba(255,255,255,.7)">Strategy. Story. Swagger.</p>
+            <div class="rule-coral mb-8"></div>
+
+            <div class="flex flex-wrap items-center gap-4 mb-8">
+              <div class="skill-tag">Strategy</div>
+              <div class="skill-tag">Storytelling</div>
+              <div class="skill-tag">Campaigns</div>
+            </div>
+
+            <p class="text-xl leading-relaxed mb-4">
+              15+ years across Edge, Microsoft 365, Surface, Teams, and Copilot. I shape positioning, orchestrate campaigns, and make the message land—with clarity and soul.
+            </p>
+            <p class="leading-relaxed">
+              Not a vendor. A creative-strategy partner who connects the dots, simplifies decisions, and delivers work you can scale.
+            </p>
+          </div>
+
+          <!-- What You Get -->
+          <div id="sec-offer" class="mb-12">
+            <h2 class="font-display text-3xl font-semibold mb-8 flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg glass flex items-center justify-center">
+                <i class="fas fa-rocket text-sm" style="color:rgba(255,255,255,.9)"></i>
+              </div>
+              What You Get
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="hover-lift glass p-6 rounded-2xl border border-[rgba(255,255,255,.10)]">
+                <div class="flex items-center gap-3 mb-3">
+                  <i class="fas fa-compass text-lg" style="color:rgba(255,255,255,.9)"></i>
+                  <h3 class="font-semibold">Go-to-Market Strategy</h3>
+                </div>
+                <p>Market mapping, positioning, and decisive focus—so teams move in one direction.</p>
+              </div>
+
+              <div class="hover-lift glass p-6 rounded-2xl border border-[rgba(255,255,255,.10)]">
+                <div class="flex items-center gap-3 mb-3">
+                  <i class="fas fa-bullhorn text-lg" style="color:rgba(255,255,255,.9)"></i>
+                  <h3 class="font-semibold">Brand Positioning & Messaging</h3>
+                </div>
+                <p>Voice, narrative, and proof—crafted to resonate across channels.</p>
+              </div>
+
+              <div class="hover-lift glass p-6 rounded-2xl border border-[rgba(255,255,255,.10)]">
+                <div class="flex items-center gap-3 mb-3">
+                  <i class="fas fa-chart-line text-lg" style="color:rgba(255,255,255,.9)"></i>
+                  <h3 class="font-semibold">Campaign Planning & Execution</h3>
+                </div>
+                <p>From insight to launch: creative, media, content, and iteration.</p>
+              </div>
+
+              <div class="hover-lift glass p-6 rounded-2xl border border-[rgba(255,255,255,.10)]">
+                <div class="flex items-center gap-3 mb-3">
+                  <i class="fas fa-pen-fancy text-lg" style="color:rgba(255,255,255,.9)"></i>
+                  <h3 class="font-semibold">Cross-Channel Narrative</h3>
+                </div>
+                <p>One story, many touchpoints—connected and measurable.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Where I’ve Operated -->
+          <div id="sec-trust" class="mb-12">
+            <h2 class="font-display text-3xl font-semibold mb-8 flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg glass flex items-center justify-center">
+                <i class="fas fa-award text-sm" style="color:rgba(255,255,255,.9)"></i>
+              </div>
+              Where I’ve Operated
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-8">
+              <div class="stats-card hover-lift">
+                <div class="relative z-10">
+                  <h3 class="text-2xl font-bold mb-2">Microsoft Ecosystem</h3>
+                  <p style="color:rgba(255,255,255,.7)" class="mb-4">Edge • Microsoft 365 • Surface • Teams • Copilot</p>
+                  <div class="text-4xl font-bold">15+</div>
+                  <div style="color:rgba(255,255,255,.75)" class="text-sm">Years of Experience</div>
+                </div>
+              </div>
+
+              <div class="testimonial-card hover-lift">
+                <div class="relative z-10">
+                  <p class="mb-4 italic" style="color:rgba(255,255,255,.85)">
+                    “Luis brings clarity and narrative discipline—our GTM moved faster and landed stronger.”
+                  </p>
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-coral rounded-full flex items-center justify-center">
+                      <i class="fas fa-building text-white text-sm"></i>
+                    </div>
+                    <div>
+                      <div class="font-semibold">Enterprise Client</div>
+                      <div style="color:rgba(255,255,255,.7)" class="text-sm">Fortune 500 Company</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column - 1/3 -->
+        <div class="p-8 lg:p-12 border-l" id="sec-models" style="background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)); border-color:var(--line)">
+          <h2 class="font-display text-3xl font-semibold mb-8 flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg glass flex items-center justify-center">
+              <i class="fas fa-handshake text-sm" style="color:rgba(255,255,255,.9)"></i>
+            </div>
+            Ways to Work Together
+          </h2>
+
+          <div class="space-y-4" id="packagesTable">
+            <!-- Quick-Start -->
+            <div class="package-row p-6 shadow-sm pkg" data-id="quick">
+              <div class="flex items-start justify-between mb-3">
+                <h3 class="font-semibold">Quick-Start Sprint</h3>
+                <div class="font-bold text-lg" style="color:var(--coral)">$4k–$8k</div>
+              </div>
+              <p>Strategic audit • GTM roadmap • Messaging framework</p>
+              <div class="flex items-center gap-2 text-xs" style="color:rgba(255,255,255,.7)">
+                <i class="fas fa-clock"></i>
+                <span>2–4 weeks</span>
+              </div>
+            </div>
+
+            <!-- Fractional -->
+            <div class="package-row p-6 shadow-sm pkg" data-id="fractional">
+              <div class="flex items-start justify-between mb-3">
+                <h3 class="font-semibold">Fractional Leadership</h3>
+                <div class="font-bold text-lg" style="color:var(--coral)">$3k–$6k/mo</div>
+              </div>
+              <p>Monthly retainer for strategic marketing leadership</p>
+              <div class="flex items-center gap-2 text-xs" style="color:rgba(255,255,255,.7)">
+                <i class="fas fa-calendar"></i>
+                <span>Ongoing partnership</span>
+              </div>
+            </div>
+
+            <!-- Launch -->
+            <div class="package-row p-6 shadow-sm pkg" data-id="launch">
+              <div class="flex items-start justify-between mb-3">
+                <h3 class="font-semibold">Launch Architect</h3>
+                <div class="font-bold text-lg" style="color:var(--coral)">$10k–$20k</div>
+              </div>
+              <p>Complete GTM strategy • Content • Campaign execution</p>
+              <div class="flex items-center gap-2 text-xs" style="color:rgba(255,255,255,.7)">
+                <i class="fas fa-rocket"></i>
+                <span>Full launch cycle</span>
+              </div>
+            </div>
+
+            <!-- Ally -->
+            <div class="package-row p-6 shadow-sm pkg" data-id="ally">
+              <div class="flex items-start justify-between mb-3">
+                <h3 class="font-semibold">Founder’s Ally</h3>
+                <div class="font-bold text-lg" style="color:var(--coral)">Custom</div>
+              </div>
+              <p>Long-term partnership (equity + cash hybrid)</p>
+              <div class="flex items-center gap-2 text-xs" style="color:rgba(255,255,255,.7)">
+                <i class="fas fa-handshake"></i>
+                <span>Strategic partnership</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-8 p-4 glass rounded-xl border border-[rgba(255,255,255,.10)]">
+            <div class="flex items-start gap-3">
+              <i class="fas fa-info-circle mt-1" style="color:rgba(255,255,255,.8)"></i>
+              <div>
+                <p class="font-medium text-sm" style="color:rgba(255,255,255,.9)">Pricing Note</p>
+                <p class="text-xs" style="color:rgba(255,255,255,.7)">Final pricing depends on scope, timeline, and deliverables. Every engagement includes strategic guidance and clear checkpoints.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <div id="sec-footer" class="mt-12 pt-8 animate-fade-in" style="border-top:1px solid var(--line)">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="flex items-center gap-6" style="color:rgba(255,255,255,.75)">
+          <div class="flex items-center gap-2">
+            <i class="fas fa-map-marker-alt" style="color:var(--coral)"></i>
+            <span>Based in Seattle • Available globally</span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-6">
+          <a href="https://luis-gilberto.com" class="font-medium hover:opacity-90" style="color:var(--coral)">
+            luis-gilberto.com
+          </a>
+          <div class="flex items-center gap-4">
+            <a href="https://www.linkedin.com/in/luisgilberto00" class="w-10 h-10 glass rounded-full flex items-center justify-center hover-lift">
+              <i class="fab fa-linkedin"></i>
+            </a>
+            <a href="mailto:hello@luis-gilberto.com" class="w-10 h-10 glass rounded-full flex items-center justify-center hover-lift">
+              <i class="fas fa-envelope"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================
+       Scripts
+       ========================= -->
+  <script>
+    // Utility helpers
+    const qs = new URLSearchParams(location.search);
+    const $ = (s, p=document) => p.querySelector(s);
+    const $$ = (s, p=document) => Array.from(p.querySelectorAll(s));
+
+    // Apply incoming query params
+    (function initFromQuery(){
+      const show = (qs.get('show')||'intro,offer,trust,models,footer')
+        .split(',').map(s=>s.trim().toLowerCase());
+      const pkgs = (qs.get('packages')||'quick,fractional,launch,ally')
+        .split(',').map(s=>s.trim());
+
+      // Sections map
+      const map = {
+        intro:'sec-intro', offer:'sec-offer', trust:'sec-trust',
+        models:'sec-models', footer:'sec-footer'
+      };
+
+      // Reflect in UI
+      Object.entries(map).forEach(([k,id])=>{
+        const el = document.getElementById(id);
+        const on = show.includes(k);
+        if (el) el.style.display = on ? '' : 'none';
+        const chk = document.querySelector(`[data-toggle="${id}"]`);
+        if (chk) chk.checked = on;
+      });
+
+      // Packages
+      $$('.pkg').forEach(row=>{
+        const id = row.dataset.id;
+        const on = pkgs.includes(id);
+        row.style.display = on ? 'block' : 'none';
+        const chk = document.querySelector(`[data-package="${id}"]`);
+        if (chk) chk.checked = on;
+      });
+    })();
+
+    // Live toggles
+    $$('#configBar [data-toggle]').forEach(chk=>{
+      chk.addEventListener('change', e=>{
+        const id = e.target.getAttribute('data-toggle');
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.style.display = e.target.checked ? '' : 'none';
+      });
+    });
+
+    $$('#configBar [data-package]').forEach(chk=>{
+      chk.addEventListener('change', e=>{
+        const id = e.target.getAttribute('data-package');
+        const row = document.querySelector(`.pkg[data-id="${id}"]`);
+        if (row) row.style.display = e.target.checked ? 'block' : 'none';
+      });
+    });
+
+    // Copy share link
+    $('#copyLink')?.addEventListener('click', ()=>{
+      const sections = [];
+      const map = { 'sec-intro':'intro','sec-offer':'offer','sec-trust':'trust','sec-models':'models','sec-footer':'footer' };
+      Object.entries(map).forEach(([id,key])=>{
+        const el = document.getElementById(id);
+        if (el && el.style.display !== 'none') sections.push(key);
+      });
+      const pkgs = $$('.pkg').filter(r=>r.style.display!=='none').map(r=>r.dataset.id);
+      const url = new URL(location.href);
+      url.searchParams.set('show', sections.join(','));
+      url.searchParams.set('packages', pkgs.join(','));
+      navigator.clipboard.writeText(url.toString()).then(()=>{
+        const toast = document.createElement('div');
+        toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center gap-2';
+        toast.innerHTML = '<i class="fas fa-check"></i> Share link copied to clipboard!';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+      });
+    });
+
+    // Intersection Observer for soft reveal on glass cards
+    document.addEventListener('DOMContentLoaded', function() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+          }
+        });
+      }, { threshold: 0.08 });
+
+      $$('.hover-lift').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(16px)';
+        el.style.transition = 'all 0.6s ease';
+        observer.observe(el);
+      });
+    });
+  </script>
+
+  <!-- Genspark badge script preserved (unchanged) -->
+  <script id="html_badge_script1">
+    window.__genspark_remove_badge_link = "https://www.genspark.ai/api/html_badge/remove_badge?token=To%2FBnjzloZ3UfQdcSaYfDg8hJfjVdgTqRuyyLR%2B4rN%2FIRWc8qf7oxIDPVNwTB02JqpiAkO4S4%2FRdXImL4zPclBkS2ackrclEg5ruXUQYIMrtGNrF%2FnSp9Blu%2FovT0wFU02ec%2Bk1efhTNgwrnkAZJOWkpIotqNFQOFUUmDrpwmqzXUsPne%2BxU236ANNX8XrWBAshWQmTvMn42hQjBDpQ9XwA4b7P5QCiSDiHrtF0zQ6TrTTl18p%2FMPkdoFxCPrFGdiSAmzULtNuAI21mus4mocy4GY2bEbRmvRxAt2BM5xHhJxVzPp%2FovO9XT1TWBCLg4Jm8HQirJIG2hecUkRe1WnLOSoLYB9HRQ%2BuXnHnJTKZmn1QhQqHKC2M81KEnYJxZQMcqGdiGW0WJkYOOw0P9WmXbdWRhcTCmqsvK%2BWPRe740FdCzlIZw5pqDztiXI4NYnb5n2l71BqNt04jiEsMtqR2%2BT5ovWbcxz5tIRUjhI7i7DDvV8ZLVB%2BIMzmf1uJDcDxZBR1A0lnuuLPqusAIILLIUstVlXwOUASqDG1%2B1xvu0%3D";
+    window.__genspark_locale = "en-US";
+    window.__genspark_token = "To/BnjzloZ3UfQdcSaYfDg8hJfjVdgTqRuyyLR+4rN/IRWc8qf7oxIDPVNwTB02JqpiAkO4S4/RdXImL4zPclBkS2ackrclEg5ruXUQYIMrtGNrF/nSp9Blu/ovT0wFU02ec+k1efhTNgwrnkAZJOWkpIotqNFQOFUUmDrpwmqzXUsPne+xU236ANNX8XrWBAshWQmTvMn42hQjBDpQ9XwA4b7P5QCiSDiHrtF0zQ6TrTTl18p/MPkdoFxCPrFGdiSAmzULtNuAI21mus4mocy4GY2bEbRmvRxAt2BM5xHhJxVzPp/ovO9XT1TWBCLg4Jm8HQirJIG2hecUkRe1WnLOSoLYB9HRQ+uXnHnJTKZmn1QhQqHKC2M81KEnYJxZQMcqGdiGW0WJkYOOw0P9WmXbdWRhcTCmqsvK+WPRe740FdCzlIZw5pqDztiXI4NYnb5n2l71BqNt04jiEsMtqR2+T5ovWbcxz5tIRUjhI7i7DDvV8ZLVB+IMzmf1uJDcDxZBR1A0lnuuLPqusAIILLIUstVlXwOUASqDG1+1xvu0=";
+  </script>
+  <script id="html_notice_dialog_script" src="https://www.genspark.ai/notice_dialog.js"></script>
+</body>
+</html>

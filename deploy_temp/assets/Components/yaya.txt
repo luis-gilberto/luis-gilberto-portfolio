@@ -1,0 +1,218 @@
+# 🎯 Exact Location of Duplicate CSS Blocks
+
+## The Problem in Your HTML
+
+Your `index.html` has the Hub Reveal System CSS defined **MULTIPLE TIMES**. Each definition conflicts with the others.
+
+---
+
+## Where to Find Duplicates
+
+Search your HTML for `.hub-reveal-system` - you'll find it defined in these locations:
+
+### Duplicate #1 (Keep This One)
+**Location:** Inside `<head>` section, around line 250-450  
+**Status:** ✅ **KEEP THIS ONE** - It's the cleanest version  
+**Identifying text:**
+```css
+/* Hub Reveal System - Production Ready */
+.hub-reveal-system {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    background: transparent;
+    backdrop-filter: none;
+```
+
+### Duplicate #2 (DELETE)
+**Location:** Around line 850-950  
+**Status:** ❌ **DELETE THIS BLOCK**  
+**Identifying text:**
+```css
+.service-image.reveal {
+    opacity: 0.85; /* Increased opacity for better visibility */
+    transform: translate(var(--final-x), var(--final-y)) scale(1);
+}
+```
+
+### Duplicate #3 (DELETE)
+**Location:** Around line 1050-1150  
+**Status:** ❌ **DELETE THIS BLOCK**  
+**Identifying text:**
+```css
+/* ==========================================
+   HUB REVEAL SYSTEM - Simplified Two-Rectangle Version
+   ========================================== */
+
+.hub-reveal-system {
+    position: fixed;
+```
+
+### Duplicate #4 (DELETE)
+**Location:** Around line 1350-1450  
+**Status:** ❌ **DELETE THIS BLOCK**  
+**Identifying text:**
+```css
+        height: 100vh;
+        pointer-events: none;
+        z-index: 1;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .hub-reveal-system.active {
+```
+
+---
+
+## How to Delete Duplicates
+
+### Step 1: Open Your HTML
+Open `index.html` in a code editor (VS Code, Sublime, etc.)
+
+### Step 2: Find Duplicates
+Press `Cmd + F` (Mac) or `Ctrl + F` (Windows) and search for:
+```
+.hub-reveal-system
+```
+
+### Step 3: Identify the Keeper
+The **first one you find** (in the `<head>`) is usually the keeper. It should have:
+- `background: transparent`
+- `backdrop-filter: none`
+- Clean, organized comments
+
+### Step 4: Delete the Others
+For each subsequent `.hub-reveal-system` block:
+1. Select the entire CSS block (from the opening `{` to closing `}`)
+2. Delete it
+3. Make sure you delete ALL related rules (`.energy-burst`, `.service-image`, etc.)
+
+### Step 5: Increase Opacity (Temporary Fix)
+In the ONE remaining CSS block, find these four rules:
+```css
+.service-advisory.reveal { opacity: 0.15; }
+.service-imc.reveal { opacity: 0.15; }
+.service-scope.reveal { opacity: 0.15; }
+.service-strategy.reveal { opacity: 0.15; }
+```
+
+Change ALL to:
+```css
+.service-advisory.reveal { opacity: 0.85; }
+.service-imc.reveal { opacity: 0.85; }
+.service-scope.reveal { opacity: 0.85; }
+.service-strategy.reveal { opacity: 0.85; }
+```
+
+This will make them MUCH more visible for testing. Once confirmed working, you can dial it back to 0.15 for the subtle ambient effect.
+
+---
+
+## Verification
+
+After deleting duplicates:
+1. Search again for `.hub-reveal-system`
+2. Should find **only ONE instance**
+3. It should be in the `<head>` section
+4. It should have clean, production-ready comments
+
+---
+
+## Before/After Example
+
+### ❌ BEFORE (Current State)
+```
+index.html:
+  <head>
+    ...
+    <style>
+      .hub-reveal-system { ... }  ← KEEP
+    </style>
+  </head>
+  <body>
+    ...
+    <style>
+      .hub-reveal-system { ... }  ← DELETE
+    </style>
+    ...
+    <style>
+      .hub-reveal-system { ... }  ← DELETE
+    </style>
+    ...
+    <style>
+      .hub-reveal-system { ... }  ← DELETE
+    </style>
+  </body>
+```
+
+### ✅ AFTER (Fixed State)
+```
+index.html:
+  <head>
+    ...
+    <style>
+      .hub-reveal-system { ... }  ← ONLY ONE
+    </style>
+  </head>
+  <body>
+    ...
+    (no more duplicate styles)
+  </body>
+```
+
+---
+
+## What to Delete Exactly
+
+For each duplicate, delete **THE ENTIRE BLOCK** from the opening comment to the closing brace of the last rule.
+
+Example of what to select and delete:
+```css
+/* ==========================================  ← Start deleting here
+   HUB REVEAL SYSTEM - Whatever
+   ========================================== */
+
+.hub-reveal-system {
+    ...all properties...
+}
+
+.energy-burst {
+    ...
+}
+
+.service-image {
+    ...
+}
+
+@keyframes hubServiceRotate {
+    ...
+}  ← Stop deleting here
+```
+
+---
+
+## After Cleanup
+
+1. Save the file
+2. Upload to server
+3. Clear browser cache (`Cmd + Shift + R`)
+4. Clear sessionStorage: Open console, type `sessionStorage.clear()`
+5. Reload page
+
+Images should now appear! 🎉
+
+---
+
+## If Still Not Working
+
+Run the diagnostic tests:
+1. **CONSOLE_TEST.md** - Test if images exist
+2. **test_images.html** - Visual confirmation
+
+Report back with results!

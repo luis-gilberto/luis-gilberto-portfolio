@@ -65,15 +65,15 @@ export function EditorialReviewModal({
         <DialogHeader className="p-6 md:p-8 border-b border-white/5">
           <div className="flex items-center justify-between w-full">
             <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3 mb-2">
-              <span className="md:hidden text-[10px] font-bold text-white/20 uppercase tracking-[0.2em]">EDITORIAL REVIEW</span>
+              <span className="md:hidden text-[10px] font-bold text-white/20 tracking-[0.2em]">Editorial review</span>
               <Badge className={cn(
-                "border-none text-[9px] md:text-[10px] uppercase tracking-widest px-2 md:px-3 py-0.5 md:py-1 w-fit",
+                "border-none text-[9px] md:text-[10px] tracking-widest px-2 md:px-3 py-0.5 md:py-1 w-fit",
                 isRevisionMode ? "bg-coral/20 text-coral" : "bg-teal/20 text-teal"
               )}>
-                {isRevisionMode ? 'Revision Mode' : 'Editorial Review'}
+                {isRevisionMode ? 'Revision mode' : 'Editorial review'}
               </Badge>
-              <DialogTitle className="text-2xl md:text-3xl font-big-shoulders font-bold tracking-widest uppercase italic">
-                {reviewSession?.assessmentType?.toUpperCase() || 'STRATEGIC'} NARRATIVE
+              <DialogTitle className="text-2xl md:text-3xl font-big-shoulders font-bold tracking-widest italic">
+                {reviewSession?.assessmentType?.toUpperCase() || 'Strategic'} narrative
               </DialogTitle>
             </div>
             
@@ -81,16 +81,16 @@ export function EditorialReviewModal({
               <Button 
                 variant="outline" 
                 onClick={handleUnlock}
-                className="border-white/10 text-white/40 hover:text-white hover:border-coral/50 hover:bg-coral/5 transition-all text-[10px] font-bold tracking-widest uppercase md:px-4"
+                className="border-white/10 text-white/40 hover:text-white hover:border-coral/50 hover:bg-coral/5 transition-all text-[10px] font-bold tracking-widest md:px-4"
                 size={viewOnly ? "icon" : "default"}
               >
                 <Lock size={14} className={cn(viewOnly ? "" : "mr-2")} />
-                <span className="hidden md:inline">Unlock for Revision</span>
+                <span className="hidden md:inline">Unlock for revision</span>
               </Button>
             )}
             {isRevisionMode && (
-              <Badge variant="outline" className="border-coral/50 text-coral animate-pulse text-[10px] font-bold tracking-widest uppercase px-4 py-1">
-                <Unlock size={14} className="mr-2" /> Live Editing
+              <Badge variant="outline" className="border-coral/50 text-coral animate-pulse text-[10px] font-bold tracking-widest px-4 py-1">
+                <Unlock size={14} className="mr-2" /> Live editing
               </Badge>
             )}
           </div>
@@ -106,14 +106,14 @@ export function EditorialReviewModal({
           <div className="order-1 md:order-2 w-full md:w-1/2 p-6 md:p-8 flex flex-col border-b md:border-b-0 md:border-l border-white/5">
             <div className="flex items-center justify-between mb-4">
               <Label className={cn(
-                "text-[10px] font-bold uppercase tracking-[0.2em]",
+                "text-[10px] font-bold tracking-[0.2em]",
                 isRevisionMode ? "text-coral" : "text-teal"
               )}>
-                {isRevisionMode ? 'REVISING NARRATIVE' : (viewOnly ? 'Certified Strategy' : 'Certified Narrative')}
+                {isRevisionMode ? 'Revising narrative' : (viewOnly ? 'Certified strategy' : 'Certified narrative')}
               </Label>
               {(viewOnly && !isRevisionMode) && (
-                <Badge className="bg-teal/10 text-teal border-teal/20 text-[8px] uppercase tracking-widest px-2 h-5">
-                  FINAL ASSET
+                <Badge className="bg-teal/10 text-teal border-teal/20 text-[8px] tracking-widest px-2 h-5">
+                  Final asset
                 </Badge>
               )}
             </div>
@@ -124,7 +124,7 @@ export function EditorialReviewModal({
               )
             )}>
               {viewOnly && !isRevisionMode ? (
-                <div className="prose prose-invert prose-sm md:prose-base prose-p:leading-relaxed prose-pre:whitespace-pre-wrap whitespace-pre-wrap max-w-none text-zinc-300 prose-p:mb-6 prose-strong:text-white prose-ul:list-disc prose-ul:ml-6 prose-ul:mb-6 prose-ul:space-y-2 prose-li:pl-2 prose-ol:list-decimal prose-ol:ml-6 prose-ol:mb-6 prose-ol:space-y-2 prose-li:marker:text-teal">
+                <div className="prose prose-invert max-w-none whitespace-pre-wrap text-zinc-300 text-lg leading-relaxed prose-strong:text-white prose-strong:font-bold prose-p:mb-4 prose-ul:list-disc prose-ul:ml-6 prose-ul:mb-4 prose-ul:space-y-2 prose-li:pl-2 prose-ol:list-decimal prose-ol:ml-6 prose-ol:mb-4 prose-ol:space-y-2 prose-li:marker:text-teal">
                   <ReactMarkdown>
                     {consultantAnalysis}
                   </ReactMarkdown>
@@ -149,14 +149,14 @@ export function EditorialReviewModal({
           <div className="order-2 md:order-1 w-full md:w-1/2 border-r border-white/5 p-6 md:p-8 overflow-y-auto bg-black/20 opacity-60 md:opacity-100">
             <div className="space-y-6">
               <div>
-                <h4 className="text-[9px] md:text-[10px] font-bold text-white/20 uppercase tracking-[0.2em] mb-4">AI Draft Intelligence (Reference)</h4>
+                <h4 className="text-[9px] md:text-[10px] font-bold text-white/20 tracking-[0.2em] mb-4">AI draft intelligence (Reference)</h4>
                 <div className="space-y-4">
                   {isGenerating ? (
                     <div className="space-y-3 animate-pulse">
                       {[1,2,3,4].map(i => <div key={i} className="h-4 bg-white/5 rounded w-full" />)}
                     </div>
                   ) : (
-                    <div className="text-xs md:text-sm text-white/50 md:text-white/70 leading-relaxed font-inter italic space-y-4 prose prose-invert prose-sm md:prose-base prose-p:leading-relaxed prose-pre:whitespace-pre-wrap whitespace-pre-wrap max-w-none text-zinc-300 prose-p:mb-6 prose-strong:text-white prose-ul:list-disc prose-ul:ml-6 prose-ul:mb-6 prose-ul:space-y-2 prose-li:pl-2 prose-ol:list-decimal prose-ol:ml-6 prose-ol:mb-6 prose-ol:space-y-2 prose-li:marker:text-teal">
+                    <div className="text-xs md:text-sm text-white/50 md:text-white/70 leading-relaxed font-inter italic space-y-4 prose prose-invert max-w-none text-zinc-300 prose-p:mb-4 prose-strong:text-white prose-strong:font-bold prose-ul:list-disc prose-ul:ml-6 prose-ul:mb-4 prose-ul:space-y-2 prose-li:pl-2 prose-ol:list-decimal prose-ol:ml-6 prose-ol:mb-4 prose-ol:space-y-2 prose-li:marker:text-teal">
                       {reviewSession?.briefSummary ? (
                         <ReactMarkdown>
                           {(() => {
@@ -176,19 +176,19 @@ export function EditorialReviewModal({
         </div>
 
         <DialogFooter className="fixed md:static bottom-0 left-0 right-0 p-6 md:p-8 border-t border-white/5 bg-black/60 md:bg-black/40 backdrop-blur-xl md:backdrop-blur-none z-50">
-          <Button variant="ghost" onClick={() => onOpenChange(false)} className="text-white/30 hover:text-white uppercase tracking-widest text-[10px] font-bold">Cancel</Button>
+          <Button variant="ghost" onClick={() => onOpenChange(false)} className="text-white/30 hover:text-white tracking-widest text-[10px] font-bold">Cancel</Button>
           {(!viewOnly || isRevisionMode) && (
             <Button 
               onClick={handlePublish}
               disabled={isPublishing || isGenerating}
               className={cn(
-                "uppercase tracking-[0.2em] text-[10px] font-black h-12 px-6 md:px-10 rounded-full ml-4 flex-1 md:flex-none",
+                "tracking-[0.2em] text-[10px] font-black h-12 px-6 md:px-10 rounded-full ml-4 flex-1 md:flex-none",
                 isRevisionMode ? "bg-coral hover:bg-coral/90 text-white" : "bg-teal hover:bg-teal/90 text-black"
               )}
             >
               {isPublishing ? <RefreshCw className="animate-spin mr-2" /> : <CheckCircle className="mr-2" size={16} />}
-              <span className="hidden md:inline">{isRevisionMode ? 'Update & Re-Publish' : 'Finalize & Publish'}</span>
-              <span className="md:hidden">FINALIZE</span>
+              <span className="hidden md:inline">{isRevisionMode ? 'Update & re-publish' : 'Finalize & publish'}</span>
+              <span className="md:hidden">Finalize</span>
             </Button>
           )}
         </DialogFooter>

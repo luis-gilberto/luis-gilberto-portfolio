@@ -6,6 +6,13 @@ import Link from 'next/link';
 interface RecentProjectsProps { data: any[] }
 
 export default function RecentProjects({ data }: RecentProjectsProps) {
+  const getInitials = (name: string) => {
+    if (!name) return '??';
+    const parts = name.split(' ');
+    if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+    return name.substring(0, 2).toUpperCase();
+  };
+
   return (
     <div className="bg-surface/20 backdrop-blur-sm border border-border/20 rounded-xl p-10">
       <div className="flex items-center justify-between mb-10">
@@ -19,14 +26,19 @@ export default function RecentProjects({ data }: RecentProjectsProps) {
       </div>
       <ScrollArea className="h-[600px] -mr-4 pr-4">
         <div className="space-y-2">
-          {(data && data.length > 0 ? data : []).map((project: any, index: number) => (
-            <Link key={index} href={`/admin/projects/${project.id}`}>
-              <div className="group py-6 px-5 -mx-5 rounded-lg hover:bg-surface-elevated/40 transition-all duration-200 cursor-pointer">
-                <div className="flex items-start gap-5">
-                  <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 opacity-50 group-hover:opacity-100 transition-opacity bg-white/5 flex items-center justify-center text-teal font-bold uppercase border border-white/10">
-                    {project.title?.[0] || project.name?.[0] || 'P'}
-                  </div>
-                  <div className="flex-1 min-w-0">
+          {(data && data.length > 0 ? data : []).map((project: any, index: number) => {
+            const clientName = project.client?.name || project.client?.company || project.client || 'Unknown';
+            const initials = getInitials(clientName);
+            
+            return (
+              <Link key={index} href={`/admin/projects/${project.id}`}>
+                <div className="group py-6 px-5 -mx-5 rounded-lg hover:bg-surface-elevated/40 transition-all duration-200 cursor-pointer">
+                  <div className="flex items-start gap-5">
+                    {/* Task 4: Teal/Coral Gradient Initial Circle */}
+                    <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center text-white text-xs font-black tracking-widest bg-gradient-to-br from-teal to-coral shadow-lg shadow-black/20 group-hover:scale-105 transition-transform duration-300 border border-white/10">
+                      {initials}
+                    </div>
+                    <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
@@ -56,7 +68,7 @@ export default function RecentProjects({ data }: RecentProjectsProps) {
                 </div>
               </div>
             </Link>
-          ))}
+          )})}
           {(!data || data.length === 0) && (
             <div className="text-center text-text-tertiary text-sm py-8">No active projects found.</div>
           )}

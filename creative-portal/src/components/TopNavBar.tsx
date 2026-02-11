@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useSession, signOut } from 'next-auth/react'
 import Image from 'next/image'
 import { UserRoleBadge } from './ui/UserRoleBadge'
+import { Badge } from "@/components/ui/badge"
 import AuthButton from './layout/AuthButton'
 
 interface TopNavBarProps {
@@ -17,9 +18,11 @@ export default function TopNavBar({ onMenuToggle, projectStatus }: TopNavBarProp
   const { data: session } = useSession()
 
   const getPhaseLabel = (status?: string) => {
-    if (status === 'DISCOVERY') return 'PHASE: DISCOVERY'
-    if (status === 'PLANNING' || status === 'ACTIVE') return 'PHASE: PLANNING'
-    return null
+    const s = status?.toUpperCase()
+    if (s === 'DISCOVERY') return 'PHASE 1: DISCOVERY'
+    if (s === 'PLANNING' || s === 'ACTIVE') return 'PHASE 2: STRATEGIC PLANNING'
+    if (s === 'EXECUTION') return 'PHASE 3: EXECUTION'
+    return 'PHASE: DISCOVERY' // Default
   }
 
   const phaseLabel = getPhaseLabel(projectStatus)
@@ -36,49 +39,24 @@ export default function TopNavBar({ onMenuToggle, projectStatus }: TopNavBarProp
           <Menu className="w-6 h-6" />
         </button>
 
-        {/* 2. Logo & Phase (Center/Left) */}
-        <div className="flex items-center gap-6">
+        {/* 2. Logo (Centered on Mobile, Left on Desktop) */}
+        <div className="absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0 lg:flex items-center gap-6">
           <Link href="/" className="brand-logo block">
             <div className="flex items-center gap-3">
-              <div className="relative w-10 h-10 hidden lg:block">
-                 <Image 
-                   src="/brand/portal-icon.png" 
-                   alt="LG" 
-                   fill
-                   className="object-contain"
-                 />
-              </div>
               <span className="text-xl lg:text-2xl font-black tracking-tighter uppercase font-big-shoulders italic leading-none">
                 <span className="text-[#F96F6E]">LG</span> <span className="text-white">/ PORTAL</span>
               </span>
             </div>
           </Link>
-
-          {phaseLabel && (
-            <div className="hidden md:block h-4 w-px bg-white/10" />
-          )}
-
-          {phaseLabel && (
-            <span className="hidden md:block text-[10px] font-bold tracking-[0.2em] text-white/40 uppercase">
-              {phaseLabel}
-            </span>
-          )}
         </div>
 
-        {/* 3. Desktop Nav Links - Hidden on Mobile */}
-        <nav className="nav-links hidden lg:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
-            <a href="https://luis-gilberto.com" className="nav-link text-sm font-medium text-gray-500 hover:text-white transition-colors">Portfolio</a>
-            <a href="https://luis-gilberto.com/insights/" className="nav-link text-sm font-medium text-gray-500 hover:text-white transition-colors">Insights</a>
-            <a href="https://luis-gilberto.com/TheHub/" className="nav-link text-sm font-medium text-gray-500 hover:text-white transition-colors">The Hub</a>
-            <span className="nav-link active text-sm font-bold text-[#F96F6E]">The Portal</span>
-        </nav>
-
-        {/* 4. User Controls (Right) */}
-        <div className="flex items-center gap-6 ml-auto lg:ml-0">
-          <div className="hidden lg:flex items-center gap-6">
-            <UserRoleBadge role={session?.user?.role || 'CLIENT'} />
-          </div>
-
+        {/* 3. Phase Badge (Right) - Hidden on Mobile to prevent overlap */}
+        <div className="flex items-center gap-6 ml-auto">
+          {phaseLabel && (
+            <Badge variant="outline" className="hidden md:flex bg-white/[0.03] text-white/40 border-white/10 text-[9px] tracking-[0.2em] uppercase py-1 px-3 font-bold rounded-none border">
+              {phaseLabel}
+            </Badge>
+          )}
           <AuthButton />
         </div>
       </div>

@@ -108,3 +108,32 @@
          }, 500); 
      } 
  });
+
+// Global AI Collaboration Modal Logic
+document.addEventListener('DOMContentLoaded', function() {
+  const modal = document.getElementById('aiCollaborationModal');
+  const openLink = document.getElementById('openAiModalLink');
+  const closeBtn = document.querySelector('.modal-close-button');
+
+  if (openLink && modal) {
+    openLink.onclick = function(e) {
+      e.preventDefault();
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    };
+  }
+
+  if (closeBtn) {
+    closeBtn.onclick = function() {
+      modal.style.display = 'none';
+      document.body.style.overflow = 'auto';
+    };
+  }
+
+  window.onclick = function(event) {
+    if (event.target === modal) {
+      modal.style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+  };
+});
