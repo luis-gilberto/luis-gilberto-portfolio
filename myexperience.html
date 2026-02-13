@@ -276,12 +276,41 @@
         /* Toggle state */ 
         .nav-item--mega.is-open .mega-panel { opacity: 1; pointer-events: auto; transform: translateY(0); } 
          
-        /* KILL THE HAMBURGER ON DESKTOP */ 
-        .mobile-controls, .mobile-toggle { display: none !important; } 
+        /* --- MOBILE NAVIGATION RESTORATION --- */ 
+        .mobile-controls { 
+            display: none !important; /* Hidden on Desktop */ 
+            justify-content: flex-end; 
+            align-items: center; 
+        } 
+        
+        .mobile-toggle { 
+            background: transparent !important; 
+            border: none !important; 
+            color: #FFFFFF !important; /* Force white icon */ 
+            font-size: 24px !important; 
+            cursor: pointer; 
+            padding: 10px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        } 
+        
         @media (max-width: 1023px) { 
-            .nav-container { display: flex !important; justify-content: space-between; } 
-            .desktop-nav, .nav-actions { display: none !important; } 
-            .mobile-controls { display: flex !important; align-items: center; } 
+            #primaryNav .nav-container { 
+                display: flex !important; 
+                justify-content: space-between !important; 
+            } 
+            .desktop-nav, .nav-actions { 
+                display: none !important; 
+            } 
+            .mobile-controls { 
+                display: flex !important; /* Show on Mobile */ 
+            } 
+        } 
+        
+        /* Ensure Drawer is on top of everything */ 
+        .mobile-menu-overlay { 
+            z-index: 200000 !important; 
         } 
          
         /* ==========================================
@@ -1466,46 +1495,6 @@
         </div> 
     </header> 
 
-    <!-- MOBILE DRAWER (Homepage Pattern) --> 
-    <div class="mobile-menu-overlay" id="mobileMenuOverlay" aria-hidden="true"> 
-        <div class="mobile-drawer" role="dialog" aria-modal="true" aria-label="Navigation menu"> 
-            <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">&times;</button> 
-            <div class="mobile-menu-content"> 
-                <div class="mobile-drawer-header"> 
-                    <div class="mobile-drawer-brand"> 
-                        <span class="mobile-drawer-name">Luis Gilberto</span> 
-                        <span class="mobile-drawer-role">Creative Strategy</span> 
-                    </div> 
-                </div> 
-     
-                <div class="mobile-nav-section"> 
-                    <div class="mobile-nav-label">Global</div> 
-                    <a href="/index.html" class="mobile-nav-link-primary">Portfolio</a> 
-                    <a href="/insights/" class="mobile-nav-link-primary">Insights</a> 
-                    <a href="/TheHub/" class="mobile-nav-link-primary">The Hub</a> 
-                    <a href="https://portal.luis-gilberto.com" class="mobile-nav-link-primary" target="_blank" rel="noopener noreferrer">The Portal</a> 
-                </div> 
-     
-                <div class="mobile-nav-section"> 
-                    <div class="mobile-nav-label">Portfolio</div> 
-                    <a href="/index.html" class="mobile-nav-link-secondary">Home</a> 
-                    <a href="/timeline.html" class="mobile-nav-link-secondary">Timeline</a> 
-                    <a href="/myexperience.html" class="mobile-nav-link-secondary active">Experience</a> 
-                    <a href="/about.html" class="mobile-nav-link-secondary">About</a> 
-                    <a href="/brand/" class="mobile-nav-link-secondary">Identity</a> 
-                    <a href="/contact.html" class="mobile-nav-link-secondary">Contact</a> 
-                </div> 
-     
-                <div class="mobile-drawer-actions"> 
-                    <button class="mobile-theme-btn" id="drawerThemeToggle"> 
-                        <i class="fa-regular fa-moon" id="drawerThemeIcon"></i> 
-                        <span id="drawerThemeLabel">Switch to Light</span> 
-                    </button> 
-                </div> 
-            </div> 
-        </div> 
-    </div> 
-
     <main>
         <!-- =============================================
              HERO SECTION - Trinity Typography
@@ -1893,6 +1882,38 @@
         </div>
     </footer>
 
+    <!-- MOBILE MENU DRAWER (Standardized) -->  
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay" aria-hidden="true">  
+        <div class="mobile-drawer" role="dialog" aria-modal="true">  
+            <button class="mobile-menu-close" id="mobileMenuClose">&times;</button>  
+            <div class="mobile-menu-content">  
+                <div class="mobile-drawer-header">  
+                    <div class="mobile-drawer-brand">  
+                        <span class="mobile-drawer-name">Luis Gilberto</span>  
+                        <span class="mobile-drawer-role">Creative Strategy</span>  
+                    </div>  
+                </div>  
+      
+                <div class="mobile-nav-section">  
+                    <div class="mobile-nav-label">Global</div>  
+                    <a href="/index.html" class="mobile-nav-link-primary">Portfolio</a>  
+                    <a href="/insights/" class="mobile-nav-link-primary">Insights</a>  
+                    <a href="/TheHub/" class="mobile-nav-link-primary">The Hub</a>  
+                    <a href="https://portal.luis-gilberto.com" class="mobile-nav-link-primary" target="_blank">The Portal</a>  
+                </div>  
+      
+                <div class="mobile-nav-section">  
+                    <div class="mobile-nav-label">Portfolio</div>  
+                    <a href="/index.html" class="mobile-nav-link-secondary">Home</a>  
+                    <a href="/timeline.html" class="mobile-nav-link-secondary">Timeline</a>  
+                    <a href="/myexperience.html" class="mobile-nav-link-secondary active">Experience</a>  
+                    <a href="/about.html" class="mobile-nav-link-secondary">About</a>  
+                    <a href="/contact.html" class="mobile-nav-link-secondary">Contact</a>  
+                </div>  
+            </div>  
+        </div>  
+    </div>
+
     <!-- =============================================
          SCRIPTS
          ============================================= -->
@@ -1927,29 +1948,33 @@
             el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
         });
 
-        // MOBILE DRAWER LOGIC 
+        // --- MOBILE DRAWER TOGGLE LOGIC --- 
         (function() { 
             const overlay = document.getElementById('mobileMenuOverlay'); 
             const openBtn = document.getElementById('mobileMenuBtn'); 
             const closeBtn = document.getElementById('mobileMenuClose'); 
-            if (!overlay || !openBtn) return; 
+            
+            if (!openBtn) { 
+                console.error("System Error: mobileMenuBtn not found in HTML"); 
+                return; 
+            } 
          
-            function openDrawer() { 
+            openBtn.addEventListener('click', function() { 
+                console.log("System: Opening Mobile Drawer"); 
                 overlay.classList.add('active'); 
                 overlay.setAttribute('aria-hidden', 'false'); 
                 document.body.style.overflow = 'hidden'; 
-            } 
-            function closeDrawer() { 
+            }); 
+            
+            const closeDrawer = () => { 
                 overlay.classList.remove('active'); 
                 overlay.setAttribute('aria-hidden', 'true'); 
                 document.body.style.overflow = ''; 
-            } 
-         
-            openBtn.addEventListener('click', openDrawer); 
+            }; 
+        
             if (closeBtn) closeBtn.addEventListener('click', closeDrawer); 
-            overlay.addEventListener('click', (e) => { if (e.target === overlay) closeDrawer(); }); 
-            document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay.classList.contains('active')) closeDrawer(); }); 
-        })(); 
+            if (overlay) overlay.addEventListener('click', (e) => { if (e.target === overlay) closeDrawer(); }); 
+        })();
 
         // =========================================
         // 3. SCROLL ANIMATIONS (Intersection Observer)
