@@ -2,7 +2,7 @@ export const USERS: Record<string, any> = {
     'client@acme.com': { 
         name: 'Acme Executive', 
         company: 'Acme Corp', 
-        password: 'password123', 
+        password: 'portal123', 
         id: 'cml73jtjz0000vkikg0n33eg7',
         role: 'CLIENT'
     }, 

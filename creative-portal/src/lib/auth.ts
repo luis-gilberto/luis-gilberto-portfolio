@@ -62,6 +62,29 @@ export const authOptions: AuthOptions = {
           where: { email }
         });
 
+        // AUTO-HEAL: If DB user exists but password mismatch with hardcoded config, update DB.
+        // This handles cases where we change the password in code (e.g. users.ts) but DB is stale.
+        if (user && USERS[email]) {
+             const hardcoded = USERS[email];
+             // If user provides the hardcoded password
+             if (credentials.password === hardcoded.password) {
+                  const isMatch = await bcrypt.compare(credentials.password, user.password);
+                  if (!isMatch) {
+                       console.log(`[AUTH] Auto-correcting password for ${email}`);
+                       const hashedPassword = await bcrypt.hash(credentials.password, 10);
+                       
+                       // Update password in DB
+                       await prisma.user.update({
+                           where: { email },
+                           data: { password: hashedPassword }
+                       });
+                       
+                       // Return user immediately (we know password is valid)
+                       return user as any;
+                  }
+             }
+        }
+
         // 2. Fallback to Hardcoded USERS only if DB user not found
         // This ensures DB overrides local config
         if (!user && USERS[email]) {
