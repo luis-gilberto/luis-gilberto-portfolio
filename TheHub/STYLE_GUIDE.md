@@ -24,6 +24,21 @@
 - Use `loading="lazy"` and `decoding="async"`
 - Keep file sizes small; target PNG <50KB, provide WebP alternative when available
 
+## Favicons & Meta Icons
+
+- Canonical favicon set for Hub and brand pages:
+
+  ```html
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png">
+  <link rel="manifest" href="/assets/images/site.webmanifest">
+  <link rel="shortcut icon" href="/assets/images/favicon.ico">
+  ```
+
+- Use absolute paths from the site root so pages under `/brand`, `/TheHub`, and `/insights` share the same icon set.
+- Verify icons load without 404s and render correctly in Chrome, Firefox, Safari, and Edge.
+
 ## QA Checklist
 
 - Lighthouse Performance: target >90 on Hub pages

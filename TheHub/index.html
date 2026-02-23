@@ -12,6 +12,9 @@
     
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <!-- Tailwind CDN (for mega menu grid utilities) -->
+    <script src="https://cdn.tailwindcss.com"></script>
     
     <style>
         /* ========================================= 
@@ -78,7 +81,7 @@
         .section { padding: 8rem 0; position: relative; } 
 
         /* ========================================= 
-           1. SITE HEADER 
+           1. SITE HEADER — Grid-centered nav
            ========================================= */ 
         .site-header { 
             position: fixed; top: 0; left: 0; width: 100%; height: var(--header-height); 
@@ -90,12 +93,16 @@
             border-bottom: 1px solid rgba(0,0,0,0.06); 
         }
 
+        /* Grid layout: logo | nav (centered) | actions */
         .nav-container { 
             max-width: 1400px; margin: 0 auto; padding: 0 2rem; height: 100%; 
-            display: flex; align-items: center; justify-content: space-between;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 1rem;
         } 
 
-        .nav-logo { display: flex; align-items: center; flex-shrink: 0; }
+        .nav-logo { display: flex; align-items: center; }
         .nav-logo img { height: 36px; width: auto; filter: brightness(1.2); } 
         [data-theme="light"] .nav-logo img { filter: none; }
 
@@ -103,7 +110,8 @@
            2. DESKTOP NAV with MEGA MENUS
            ========================================= */ 
         .desktop-nav { 
-            display: flex; align-items: center; gap: 0.25rem; height: 100%; 
+            display: flex; align-items: center; justify-content: center;
+            gap: 0.25rem; height: 100%;
         } 
 
         .nav-link { 
@@ -121,28 +129,58 @@
         
         /* Dropdown trigger wrapper */
         .has-dropdown { position: relative; height: 100%; display: flex; align-items: center; } 
-        .has-dropdown:hover .mega-dropdown { 
-            opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); pointer-events: auto; 
-        }
         .has-dropdown:hover .nav-link .fa-chevron-down { transform: rotate(180deg); }
-        
-        /* ---- PORTFOLIO Mega Dropdown ---- */
-        .mega-dropdown { 
-            position: absolute; top: var(--header-height); left: 50%; 
-            transform: translateX(-50%) translateY(8px); 
-            width: 520px; background: #0A0A0A; border: 1px solid rgba(255,255,255,0.1); 
-            border-radius: 16px; padding: 1.25rem; box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
-            opacity: 0; visibility: hidden; pointer-events: none; transition: all 0.25s var(--ease-out); 
-        } 
-        [data-theme="light"] .mega-dropdown { background: #FFF; border: 1px solid rgba(0,0,0,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.1); }
-        
-        .mega-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem; } 
+
+        /* ========================================= 
+           MEGA PANEL (shared base — Advisory gold standard)
+           ========================================= */
+        .mega-panel {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            width: 520px;
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+            z-index: 100;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .mega-panel::before {
+            content: "";
+            position: absolute;
+            top: -20px;
+            left: 0;
+            right: 0;
+            height: 20px;
+        }
+        .has-dropdown:hover .mega-panel {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+        [data-theme="light"] .mega-panel {
+            background: #FFF;
+            border-color: rgba(0,0,0,0.1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+        }
+
+        /* Mega link rows */
         .mega-link { 
             display: flex; align-items: flex-start; gap: 0.875rem; padding: 0.875rem; 
-            border-radius: 10px; text-decoration: none; transition: background 0.2s; 
+            border-radius: 10px; text-decoration: none; transition: background 0.2s;
+            border: 1px solid transparent;
         } 
         .mega-link:hover { background: rgba(255,255,255,0.05); } 
         [data-theme="light"] .mega-link:hover { background: rgba(0,0,0,0.04); }
+        .mega-link.active {
+            border-color: rgba(249,111,110,0.55);
+            background: rgba(249,111,110,0.06);
+        }
 
         .mega-icon { 
             width: 32px; height: 32px; background: rgba(255,255,255,0.05); border-radius: 8px; 
@@ -150,120 +188,24 @@
             flex-shrink: 0; font-size: 0.85rem; transition: all 0.2s;
         } 
         [data-theme="light"] .mega-icon { background: rgba(0,0,0,0.04); color: #888; }
-        .mega-link:hover .mega-icon { background: var(--coral); color: #FFF; } 
+        .mega-link:hover .mega-icon,
+        .mega-link.active .mega-icon { background: var(--coral); color: #FFF; } 
         .mega-title { display: block; font-family: var(--font-orchestrator); font-weight: 600; font-size: 0.85rem; color: #FFF; margin-bottom: 0.15rem; } 
         [data-theme="light"] .mega-title { color: #111; }
-        .mega-desc { display: block; font-size: 0.72rem; color: #666; line-height: 1.4; } 
+        .mega-desc { display: block; font-size: 0.72rem; color: rgba(255,255,255,0.45); line-height: 1.4; } 
+        [data-theme="light"] .mega-desc { color: #666; }
 
-        /* ---- THE HUB Mega Dropdown ---- */
-        .hub-mega-dropdown {
-            position: absolute;
-            top: var(--header-height);
-            left: 50%;
-            transform: translateX(-50%) translateY(8px);
-            width: 520px;
-            background: #0A0A0A;
-            border: 1px solid rgba(255,255,255,0.10);
-            border-radius: 16px;
-            padding: 1.25rem;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.55);
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-            transition: all 0.25s var(--ease-out);
-        }
-        [data-theme="light"] .hub-mega-dropdown {
-            background: #FFF;
-            border-color: rgba(0,0,0,0.10);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.12);
-        }
-        .has-dropdown:hover .hub-mega-dropdown {
-            opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); pointer-events: auto;
-        }
-
-        .hub-mega-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.25rem;
-        }
-
-        .hub-mega-link {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.875rem;
-            padding: 0.875rem;
-            border-radius: 10px;
-            text-decoration: none;
-            transition: background 0.2s var(--ease-out), border-color 0.2s var(--ease-out);
-            border: 1px solid transparent;
-        }
-        .hub-mega-link:hover {
-            background: rgba(255,255,255,0.05);
-        }
-        [data-theme="light"] .hub-mega-link:hover {
-            background: rgba(0,0,0,0.04);
-        }
-        .hub-mega-link.active {
-            border-color: rgba(249,111,110,0.55);
-            background: rgba(249,111,110,0.06);
-        }
-
-        .hub-mega-icon {
-            width: 32px;
-            height: 32px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: rgba(255,255,255,0.55);
-            flex-shrink: 0;
-            font-size: 0.85rem;
-            transition: background 0.2s var(--ease-out), color 0.2s var(--ease-out);
-        }
-        [data-theme="light"] .hub-mega-icon {
-            background: rgba(0,0,0,0.04);
-            color: #888;
-        }
-        .hub-mega-link:hover .hub-mega-icon {
-            background: var(--coral);
-            color: #FFF;
-        }
-
-        .hub-mega-title {
-            display: block;
-            font-family: var(--font-orchestrator);
-            font-weight: 600;
-            font-size: 0.85rem;
-            color: #FFF;
-            margin-bottom: 0.15rem;
-        }
-        [data-theme="light"] .hub-mega-title {
-            color: #111;
-        }
-
-        .hub-mega-desc {
-            display: block;
-            font-size: 0.72rem;
-            color: rgba(255,255,255,0.45);
-            line-height: 1.4;
-        }
-        [data-theme="light"] .hub-mega-desc {
-            color: #666;
-        }
-
-        .hub-mega-footer {
+        /* Mega footer (for Insights "Browse All" + Hub "Portal" links) */
+        .mega-footer {
             margin-top: 0.75rem;
             padding-top: 0.75rem;
             border-top: 1px solid rgba(255,255,255,0.06);
             display: flex;
             justify-content: flex-end;
         }
-        [data-theme="light"] .hub-mega-footer {
-            border-top-color: rgba(0,0,0,0.08);
-        }
+        [data-theme="light"] .mega-footer { border-top-color: rgba(0,0,0,0.08); }
 
-        .hub-mega-portal-link {
+        .mega-footer-link {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
@@ -272,26 +214,17 @@
             font-weight: 600;
             color: var(--coral);
             text-decoration: none;
-            transition: color 0.2s var(--ease-out);
+            transition: color 0.2s;
         }
-        .hub-mega-portal-link i {
-            font-size: 0.65rem;
-            transition: transform 0.2s var(--ease-out);
-        }
-        .hub-mega-portal-link:hover {
-            color: #FFF;
-        }
-        [data-theme="light"] .hub-mega-portal-link:hover {
-            color: #111;
-        }
-        .hub-mega-portal-link:hover i {
-            transform: translateX(3px);
-        }
+        .mega-footer-link i { font-size: 0.65rem; transition: transform 0.2s; }
+        .mega-footer-link:hover { color: #FFF; }
+        .mega-footer-link:hover i { transform: translateX(3px); }
+        [data-theme="light"] .mega-footer-link:hover { color: #111; }
 
         /* ========================================= 
            3. NAV ACTIONS & MOBILE TOGGLE
            ========================================= */
-        .nav-actions { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; } 
+        .nav-actions { display: flex; align-items: center; gap: 0.5rem; justify-content: flex-end; } 
         .theme-toggle, .mobile-toggle { 
             background: none; border: none; cursor: pointer; color: rgba(255,255,255,0.6); 
             font-size: 1.1rem; display: flex; align-items: center; justify-content: center; 
@@ -349,16 +282,12 @@
             border-bottom: 1px solid rgba(255,255,255,0.06);
             position: relative;
         }
-        [data-theme="light"] .drawer-hub-section {
-            border-bottom: 1px solid rgba(0,0,0,0.06);
-        }
+        [data-theme="light"] .drawer-hub-section { border-bottom: 1px solid rgba(0,0,0,0.06); }
         .drawer-hub-section::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 2px;
-            height: 100%;
+            top: 0; left: 0;
+            width: 2px; height: 100%;
             background: rgba(249,111,110,0.75);
             border-radius: 0 2px 2px 0;
         }
@@ -371,9 +300,7 @@
         }
         .drawer-section-label i { font-size: 0.6rem; }
 
-        .drawer-hub-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 0.625rem;
-        }
+        .drawer-hub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.625rem; }
         .drawer-hub-card {
             display: flex; flex-direction: column; gap: 0.5rem;
             padding: 1rem; border-radius: 12px;
@@ -403,9 +330,7 @@
             text-transform: uppercase; color: #FFF; letter-spacing: 0.02em;
         }
         [data-theme="light"] .drawer-hub-card-title { color: #111; }
-        .drawer-hub-card-sub {
-            font-size: 0.7rem; color: rgba(255,255,255,0.4); line-height: 1.4;
-        }
+        .drawer-hub-card-sub { font-size: 0.7rem; color: rgba(255,255,255,0.4); line-height: 1.4; }
         [data-theme="light"] .drawer-hub-card-sub { color: #999; }
 
         /* Global Nav Section */
@@ -484,9 +409,7 @@
             max-width: 1100px;
             margin: 0 auto;
         }
-        .hero-content {
-            display: flex; flex-direction: column; align-items: flex-start;
-        }
+        .hero-content { display: flex; flex-direction: column; align-items: flex-start; }
         
         .hero-headline { 
             font-size: clamp(3rem, 5.5vw, 5rem); 
@@ -498,17 +421,38 @@
             max-width: 480px; line-height: 1.8; text-align: left;
         }
         [data-theme="light"] .hero-subhead { color: #666; }
-
-        /* Editorial emphasis: italic + slightly brighter, not colored */
         .hero-subhead em {
             font-family: var(--font-storyteller);
             font-style: italic;
             color: rgba(255,255,255,0.85);
             font-weight: 400;
         }
-        [data-theme="light"] .hero-subhead em {
-            color: #222;
+        [data-theme="light"] .hero-subhead em { color: #222; }
+
+        /* ---- .ra — Animated phrase highlights in hero subhead ---- */
+        .hero-subhead .ra {
+            position: relative;
+            display: inline;
+            color: rgba(255,255,255,0.9);
+            font-weight: 400;
+            white-space: nowrap;
         }
+        [data-theme="light"] .hero-subhead .ra { color: #111; }
+
+        .hero-subhead .ra::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -2px;
+            width: 0;
+            height: 1.5px;
+            background: var(--teal);
+            border-radius: 2px;
+            transition: width 0.6s var(--ease-out);
+        }
+        .hero-subhead.ra-animate .ra:nth-child(1)::after { width: 100%; transition-delay: 0.1s; }
+        .hero-subhead.ra-animate .ra:nth-child(2)::after { width: 100%; transition-delay: 0.45s; }
+        .hero-subhead.ra-animate .ra:nth-child(3)::after { width: 100%; transition-delay: 0.8s; }
 
         .cta-buttons-hero { display: flex; gap: 0.875rem; flex-wrap: wrap; margin-top: 2rem; align-items: center; }
         .btn-coral { 
@@ -748,17 +692,13 @@
             .nav-container { padding: 0 1rem; }
             .nav-logo img { height: 30px; }
 
-            /* Hero — single column, centered, touch-friendly */
             .hero-section { padding: 2rem 0 3rem; }
             .hero-visual img { max-width: 260px; }
             .hero-headline { 
                 font-size: clamp(2.25rem, 10vw, 3rem); 
                 margin-bottom: 1rem; line-height: 0.9;
             }
-            .hero-subhead { 
-                font-size: 0.95rem; line-height: 1.65; 
-                max-width: 400px;
-            }
+            .hero-subhead { font-size: 0.95rem; line-height: 1.65; max-width: 400px; }
             .cta-buttons-hero { 
                 flex-direction: column; align-items: center; 
                 gap: 0.75rem; margin-top: 1.75rem; width: 100%;
@@ -836,83 +776,103 @@
     <!-- ===================== HEADER ===================== -->
     <header class="site-header">
         <div class="nav-container">
-            <a href="/index.html" class="nav-logo">
-                <img src="/assets/images/AUg_logo_White.png" alt="Luis Gilberto">
+
+            <!-- Logo -->
+            <a href="/TheHub/index.html" class="nav-logo" style="gap: 12px;">
+                <img src="/assets/images/Logomark_White_a.png" alt="Luis Gilberto" style="height: 32px; width: auto; opacity: 0.9;">
+                <div style="width: 1px; height: 20px; background: rgba(255,255,255,0.2); flex-shrink: 0;"></div>
+                <span style="font-family: 'Big Shoulders Display', sans-serif; font-size: 20px; font-weight: 700; color: #FFF; letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap;">The Hub.</span>
             </a>
 
+            <!-- Desktop Nav — centered via grid -->
             <nav class="desktop-nav">
-                <!-- Portfolio Mega Dropdown -->
-                <div class="nav-item has-dropdown">
+
+                <!-- Portfolio Mega Menu -->
+                <div class="has-dropdown">
                     <button class="nav-link">Portfolio <i class="fas fa-chevron-down"></i></button>
-                    <div class="mega-dropdown">
-                        <div class="mega-grid">
-                            <a href="/index.html" class="mega-link">
-                                <div class="mega-icon"><i class="fas fa-home"></i></div>
-                                <div class="mega-text"><span class="mega-title">Home</span><span class="mega-desc">Return to the overview.</span></div>
-                            </a>
-                            <a href="/timeline.html" class="mega-link">
-                                <div class="mega-icon"><i class="fas fa-history"></i></div>
-                                <div class="mega-text"><span class="mega-title">Timeline</span><span class="mega-desc">15+ years of milestones.</span></div>
-                            </a>
+                    <div class="mega-panel">
+                        <div class="grid grid-cols-2 gap-1">
                             <a href="/myexperience.html" class="mega-link">
                                 <div class="mega-icon"><i class="fas fa-briefcase"></i></div>
-                                <div class="mega-text"><span class="mega-title">Experience</span><span class="mega-desc">Case studies & deep dives.</span></div>
+                                <div><span class="mega-title">Experience</span><span class="mega-desc">Case studies & deep dives.</span></div>
                             </a>
                             <a href="/about.html" class="mega-link">
                                 <div class="mega-icon"><i class="fas fa-user"></i></div>
-                                <div class="mega-text"><span class="mega-title">About Me</span><span class="mega-desc">The human behind the systems.</span></div>
+                                <div><span class="mega-title">About Me</span><span class="mega-desc">The human behind the systems.</span></div>
+                            </a>
+                            <a href="/identity.html" class="mega-link">
+                                <div class="mega-icon"><i class="fas fa-fingerprint"></i></div>
+                                <div><span class="mega-title">Identity</span><span class="mega-desc">Brand philosophy & design DNA.</span></div>
+                            </a>
+                            <a href="/contact.html" class="mega-link">
+                                <div class="mega-icon"><i class="fas fa-paper-plane"></i></div>
+                                <div><span class="mega-title">Contact</span><span class="mega-desc">Start a conversation.</span></div>
                             </a>
                         </div>
                     </div>
                 </div>
 
-                <a href="/insights/" class="nav-link">Insights</a>
+                <!-- Insights Mega Menu -->
+                <div class="has-dropdown">
+                    <button class="nav-link">Insights <i class="fas fa-chevron-down"></i></button>
+                    <div class="mega-panel">
+                        <div class="grid grid-cols-2 gap-1">
+                            <a href="/insights/series/building-the-hub/" class="mega-link">
+                                <div class="mega-icon"><i class="fas fa-hammer"></i></div>
+                                <div><span class="mega-title">Building Series</span><span class="mega-desc">How The Hub was built from scratch.</span></div>
+                            </a>
+                            <a href="/insights/series/use-cases/" class="mega-link">
+                                <div class="mega-icon"><i class="fas fa-flask"></i></div>
+                                <div><span class="mega-title">Use Cases</span><span class="mega-desc">Real-world strategic applications.</span></div>
+                            </a>
+                            <a href="/insights/series/reflections/" class="mega-link">
+                                <div class="mega-icon"><i class="fas fa-feather"></i></div>
+                                <div><span class="mega-title">Reflections</span><span class="mega-desc">Observations on craft & culture.</span></div>
+                            </a>
+                            <a href="/insights/" class="mega-link">
+                                <div class="mega-icon"><i class="fas fa-bolt"></i></div>
+                                <div><span class="mega-title">Latest Stories</span><span class="mega-desc">Most recent from the editorial.</span></div>
+                            </a>
+                        </div>
+                        <div class="mega-footer">
+                            <a href="/insights/" class="mega-footer-link">Browse All Series <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
 
-                <!-- THE HUB Mega Dropdown -->
-                <div class="nav-item has-dropdown">
+                <!-- The Hub Mega Menu — Hub Home is active -->
+                <div class="has-dropdown">
                     <button class="nav-link active">The Hub <i class="fas fa-chevron-down"></i></button>
-                    <div class="hub-mega-dropdown">
-                        <div class="hub-mega-grid">
-                            <a href="/TheHub/index.html" class="hub-mega-link active">
-                                <div class="hub-mega-icon"><i class="fas fa-house"></i></div>
-                                <div class="hub-mega-text">
-                                    <span class="hub-mega-title">Hub Home</span>
-                                    <span class="hub-mega-desc">System overview and entry point.</span>
-                                </div>
+                    <div class="mega-panel">
+                        <div class="grid grid-cols-2 gap-1">
+                            <a href="/TheHub/index.html" class="mega-link active">
+                                <div class="mega-icon"><i class="fas fa-house"></i></div>
+                                <div><span class="mega-title">Hub Home</span><span class="mega-desc">System overview and entry point.</span></div>
                             </a>
-                            <a href="/TheHub/strategy-iq.html" class="hub-mega-link">
-                                <div class="hub-mega-icon"><i class="fas fa-chart-line"></i></div>
-                                <div class="hub-mega-text">
-                                    <span class="hub-mega-title">StrategyIQ</span>
-                                    <span class="hub-mega-desc">Benchmark maturity and define the roadmap.</span>
-                                </div>
+                            <a href="/TheHub/strategy-iq/index.html" class="mega-link">
+                                <div class="mega-icon"><i class="fas fa-chart-line"></i></div>
+                                <div><span class="mega-title">StrategyIQ</span><span class="mega-desc">Benchmark maturity and define the roadmap.</span></div>
                             </a>
-                            <a href="/TheHub/advisory/" class="hub-mega-link">
-                                <div class="hub-mega-icon"><i class="fas fa-compass"></i></div>
-                                <div class="hub-mega-text">
-                                    <span class="hub-mega-title">Advisory</span>
-                                    <span class="hub-mega-desc">Leadership alignment and decision support.</span>
-                                </div>
+                            <a href="/TheHub/advisory/index.html" class="mega-link">
+                                <div class="mega-icon"><i class="fas fa-compass"></i></div>
+                                <div><span class="mega-title">Advisory</span><span class="mega-desc">Leadership alignment and decision support.</span></div>
                             </a>
-                            <a href="/TheHub/studio.html" class="hub-mega-link">
-                                <div class="hub-mega-icon"><i class="fas fa-palette"></i></div>
-                                <div class="hub-mega-text">
-                                    <span class="hub-mega-title">The Studio</span>
-                                    <span class="hub-mega-desc">Creative production and execution.</span>
-                                </div>
+                            <a href="/TheHub/studio.html" class="mega-link">
+                                <div class="mega-icon"><i class="fas fa-palette"></i></div>
+                                <div><span class="mega-title">The Studio</span><span class="mega-desc">Creative production and execution.</span></div>
                             </a>
                         </div>
-                        <div class="hub-mega-footer">
-                            <a href="https://portal.luis-gilberto.com" class="hub-mega-portal-link">
-                                Enter The Portal <i class="fas fa-arrow-right"></i>
-                            </a>
+                        <div class="mega-footer">
+                            <a href="https://portal.luis-gilberto.com" target="_blank" class="mega-footer-link">Enter The Portal <i class="fas fa-arrow-right"></i></a>
                         </div>
                     </div>
                 </div>
 
-                <a href="https://portal.luis-gilberto.com" class="nav-link">The Portal</a>
+                <a href="https://portal.luis-gilberto.com" target="_blank" class="nav-link">The Portal</a>
+
             </nav>
 
+            <!-- Nav Actions -->
             <div class="nav-actions">
                 <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
                     <i class="fa-regular fa-moon"></i>
@@ -921,6 +881,7 @@
                     <i class="fa-solid fa-bars"></i>
                 </button>
             </div>
+
         </div>
     </header>
 
@@ -947,12 +908,12 @@
                         <span class="drawer-hub-card-title">Home</span>
                         <span class="drawer-hub-card-sub">System overview</span>
                     </a>
-                    <a href="/TheHub/strategy-iq.html" class="drawer-hub-card">
+                    <a href="/TheHub/strategy-iq/index.html" class="drawer-hub-card">
                         <div class="drawer-hub-card-icon"><i class="fa-solid fa-chart-line"></i></div>
                         <span class="drawer-hub-card-title">StrategyIQ™</span>
                         <span class="drawer-hub-card-sub">Diagnostic engine</span>
                     </a>
-                    <a href="/TheHub/advisory/" class="drawer-hub-card">
+                    <a href="/TheHub/advisory/index.html" class="drawer-hub-card">
                         <div class="drawer-hub-card-icon"><i class="fa-solid fa-compass"></i></div>
                         <span class="drawer-hub-card-title">Advisory</span>
                         <span class="drawer-hub-card-sub">Strategic partnership</span>
@@ -976,11 +937,11 @@
                     <div class="drawer-global-icon"><i class="fa-solid fa-lightbulb"></i></div>
                     <span class="drawer-global-text">Insights</span>
                 </a>
-                <a href="/TheHub/" class="drawer-global-link active">
+                <a href="/TheHub/index.html" class="drawer-global-link active">
                     <div class="drawer-global-icon"><i class="fa-solid fa-diagram-project"></i></div>
                     <span class="drawer-global-text">The Hub</span>
                 </a>
-                <a href="https://portal.luis-gilberto.com" class="drawer-global-link">
+                <a href="https://portal.luis-gilberto.com" target="_blank" class="drawer-global-link">
                     <div class="drawer-global-icon"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
                     <span class="drawer-global-text">The Portal</span>
                 </a>
@@ -1006,7 +967,6 @@
                 <div class="hero-content">
                     <h1 class="hero-headline animate-in">STRATEGY,<br>OPERATIONALIZED.</h1>
                     <p class="hero-subhead animate-in delay-1">The Hub is the strategic system where <span class="ra">intent becomes intelligence</span>, <span class="ra">intelligence becomes decisions</span>, and <span class="ra">decisions become real outcomes</span>.</p>
-                    
                     <div class="cta-buttons-hero animate-in delay-2">
                         <a href="#how-it-works" class="btn-coral">See the Flow</a>
                         <a href="#pillars" class="btn-outline-teal">Explore Pillars</a>
@@ -1024,13 +984,13 @@
             <p class="section-subtitle">Four arms. One integrated system.</p>
             
             <div class="architecture-grid">
-                <a href="/TheHub/strategy-iq.html" class="arch-card">
+                <a href="/TheHub/strategy-iq/index.html" class="arch-card">
                     <div class="icon-circle"><img src="../assets/images/icons/strategyiq-icon-3d.png" alt="StrategyIQ"></div>
                     <h3 class="arch-title">StrategyIQ™</h3>
                     <span class="arch-role">Strategic Intelligence</span>
                     <p class="arch-desc">The diagnostic engine. We benchmark your maturity and define the roadmap before building a single asset.</p>
                 </a>
-                <a href="/TheHub/advisory/" class="arch-card">
+                <a href="/TheHub/advisory/index.html" class="arch-card">
                     <div class="icon-circle"><img src="../assets/images/Luis_portrait_circle.png" alt="Luis Gilberto"></div>
                     <h3 class="arch-title">Advisory</h3>
                     <span class="arch-role" style="color:var(--coral);">Partnership</span>
@@ -1042,7 +1002,7 @@
                     <span class="arch-role">Creative Production</span>
                     <p class="arch-desc">High-fidelity execution. From brand identity to full-stack web development and campaign assets.</p>
                 </a>
-                <a href="https://portal.luis-gilberto.com" class="arch-card">
+                <a href="https://portal.luis-gilberto.com" target="_blank" class="arch-card">
                     <div class="icon-circle"><img src="../assets/images/portal/The_Portal_round.png" alt="The Portal"></div>
                     <h3 class="arch-title">The Portal</h3>
                     <span class="arch-role" style="color:var(--coral);">Command Center</span>
@@ -1085,7 +1045,7 @@
         <div class="footer-container">
             <div class="footer-grid-layout">
                 <div class="footer-brand-col">
-                    <a href="/index.html" class="footer-logo-link">
+                <a href="/index.html" class="footer-logo-link">
                         <img src="/assets/images/Logomark_White_a.png" class="footer-logo-img" alt="Luis Gilberto">
                         <span class="footer-brand-name">Luis Gilberto</span>
                     </a>
@@ -1099,7 +1059,7 @@
                     <h3 class="footer-nav-heading">Ecosystem</h3>
                     <ul class="footer-nav-list">
                         <li><a href="/index.html" class="footer-nav-link">Portfolio</a></li>
-                        <li><a href="/insights/index.html" class="footer-nav-link">Insights</a></li>
+                        <li><a href="/insights/" class="footer-nav-link">Insights</a></li>
                         <li><a href="/TheHub/index.html" class="footer-nav-link">The Hub</a></li>
                         <li><a href="https://portal.luis-gilberto.com" target="_blank" class="footer-nav-link">The Portal</a></li>
                     </ul>
@@ -1133,8 +1093,10 @@
     </footer>
 
     <!-- ===================== SCRIPTS ===================== -->
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-        (function() {
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
             const html = document.documentElement;
 
             // ---- Theme Management ----
@@ -1194,16 +1156,33 @@
                 document.body.style.cursor = 'none';
                 let mx = 0, my = 0, cx = 0, cy = 0;
                 document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
-                function anim() { 
-                    cx += (mx - cx) * 0.15; cy += (my - cy) * 0.15; 
-                    cursor.style.left = cx + 'px'; cursor.style.top = cy + 'px'; 
-                    requestAnimationFrame(anim); 
+                function anim() {
+                    cx += (mx - cx) * 0.15;
+                    cy += (my - cy) * 0.15;
+                    cursor.style.left = cx + 'px';
+                    cursor.style.top = cy + 'px';
+                    requestAnimationFrame(anim);
                 }
                 anim();
                 document.querySelectorAll('a, button, .arch-card').forEach(el => {
                     el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
                     el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
                 });
+            }
+
+            // ---- .ra Underline Animation (hero subhead) ----
+            const heroSubhead = document.querySelector('.hero-subhead');
+            if (heroSubhead) {
+                const raObs = new IntersectionObserver(entries => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            // Small delay so the parent fadeInUp finishes first
+                            setTimeout(() => heroSubhead.classList.add('ra-animate'), 500);
+                            raObs.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.5 });
+                raObs.observe(heroSubhead);
             }
 
             // ---- Flow Animation Observer ----
@@ -1223,7 +1202,9 @@
             // ---- Footer Year ----
             const yearEl = document.getElementById('currentYear');
             if (yearEl) yearEl.textContent = new Date().getFullYear();
-        })();
+
+        });
     </script>
+
 </body>
 </html>

@@ -1,117 +1,111 @@
-(() => {
-    // Scroll Animations
-    const observerOptions = {
-        root: null,
-        rootMargin: '0px',
-        threshold: 0.1
-    };
+// Theme Toggle - Enhanced
+const html = document.documentElement;
+const themeToggleButtons = document.querySelectorAll('.theme-toggle');
 
-    const observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                observer.unobserve(entry.target); // Only animate once
-            }
-        });
-    }, observerOptions);
+// Load saved theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+html.setAttribute('data-theme', savedTheme);
+console.log('Initial theme loaded:', savedTheme);
 
+// Handle all theme toggle buttons
+themeToggleButtons.forEach((button, index) => {
+    console.log('Theme button found:', index);
+    button.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const currentTheme = html.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        
+        console.log('Toggling theme from', currentTheme, 'to', newTheme);
+        
+        html.setAttribute('data-theme', newTheme);
+        
+        try {
+            localStorage.setItem('theme', newTheme);
+            console.log('Theme saved successfully');
+        } catch (error) {
+            console.error('Failed to save theme:', error);
+        }
+    });
+});
+
+// Mobile Menu
+const mobileToggle = document.getElementById('mobileMenuToggle');
+const mobileOverlay = document.getElementById('mobileMenuOverlay');
+const drawerCloseBtn = document.getElementById('drawerCloseBtn');
+
+function openDrawer() {
+    if (mobileOverlay) {
+        mobileOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeDrawer() {
+    if (mobileOverlay) {
+        mobileOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}
+
+if (mobileToggle) mobileToggle.addEventListener('click', openDrawer);
+if (drawerCloseBtn) drawerCloseBtn.addEventListener('click', closeDrawer);
+
+// Close on escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeDrawer();
+});
+
+// Scroll Animations
+const observerOptions = {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0.1
+};
+
+const observer = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target); // Only animate once
+        }
+    });
+}, observerOptions);
+
+document.addEventListener('DOMContentLoaded', () => {
     const animatedElements = document.querySelectorAll('[data-animate]');
+    console.log('Found animated elements:', animatedElements.length);
     animatedElements.forEach(el => {
         observer.observe(el);
     });
 
-    /* =============================================
-     * Intent Gate: Phase 1 Infrastructure 🚪
-     * - Central config (LENS_CONFIG)
-     * - localStorage state helpers (get/set/clear)
-     * - Dynamic nav rendering driven by config
-     * ============================================= */
+    // Active State Logic for Mobile Menu
+    const currentPath = window.location.pathname;
+    const mobileLinks = document.querySelectorAll('.mobile-link');
 
-    const DEBUG_LENS = false;
+    mobileLinks.forEach(link => {
+        // Get the raw href
+        const linkHref = link.getAttribute('href');
+        if (!linkHref) return;
 
-    const LENS_CONFIG = {
-        hire: {
-            label: 'Hire',
-            navOrder: ['experience', 'portfolio', 'timeline', 'resume', 'insights', 'hub', 'login'],
-            hideElements: [],
-            heroHeadline: 'Luis Gilberto: Strategy & Execution.'
-        },
-        partner: {
-            label: 'Partner',
-            navOrder: ['hub', 'strategy-iq', 'insights', 'portfolio', 'case-studies', 'login'],
-            hideElements: [],
-            heroHeadline: 'Strategic Partnership & Systems.'
-        },
-        explore: {
-            label: 'Explore',
-            navOrder: ['portfolio', 'insights', 'hub', 'about', 'login'],
-            hideElements: [],
-            heroHeadline: 'Welcome to the Ecosystem.'
-        }
-    };
-
-    const ROUTE_MAP = {
-        experience: '/myexperience.html',
-        timeline: '/timeline.html',
-        resume: '/cv.html',
-        portfolio: '/index.html',
-        insights: '/insights/index.html',
-        hub: '/TheHub/index.html',
-        'strategy-iq': '/TheHub/strategy-iq.html',
-        'case-studies': '/case-studies/index.html',
-        about: '/about.html',
-        portal: 'https://portal.luis-gilberto.com',
-        login: 'https://portal.luis-gilberto.com/auth/signin'
-    };
-
-    function getLens() {
-        try {
-            const v = localStorage.getItem('user_intent');
-            return v && LENS_CONFIG[v] ? v : null;
-        } catch { return null; }
-    }
-
-    function setLens(lens) {
-        if (!LENS_CONFIG[lens]) {
-            try { localStorage.removeItem('user_intent'); } catch {}
-            renderNavForLens(null);
-            return;
-        }
-        try { localStorage.setItem('user_intent', lens); } catch {}
-        renderNavForLens(lens);
-    }
-
-    function clearLens() {
-        try { localStorage.removeItem('user_intent'); } catch {}
-        renderNavForLens(null);
-    }
-
-    window.LENS_CONFIG = LENS_CONFIG;
-    window.getLens = getLens;
-    window.setLens = setLens;
-    window.clearLens = clearLens;
-
-    function resolveGlobalNavContainer() {
-        const selectors = ['.desktop-nav', '.nav-links', '.desktop-links', '.lg-main-nav'];
-        for (const selector of selectors) {
-            const el = document.querySelector(selector);
-            if (el && !el.closest('[data-lens-ignore="true"]')) return el;
-        }
-        return null;
-    }
-
-    function renderNavForLens(lensOverride) {
-        const lens = lensOverride || getLens();
-        const container = resolveGlobalNavContainer();
-        if (!lens || !container) return;
-
-        const desired = LENS_CONFIG[lens].navOrder || [];
-        const links = Array.from(container.querySelectorAll('a, .nav-item'));
+        // Resolve relative paths to absolute for comparison if needed, 
+        // but simple string matching usually works if hrefs are root-relative (start with /)
         
-        // Simple reordering logic can be added here if needed
-        // For now, we focus on stability and core functionality
-    }
-
-    renderNavForLens();
-    document.addEventListener('DOMContentLoaded', () => renderNavForLens());
-})();
+        // Check for exact match
+        if (currentPath === linkHref) {
+            link.classList.add('active');
+        } 
+        // Handle /index.html vs /
+        else if (linkHref.endsWith('/index.html') && currentPath === linkHref.replace('/index.html', '/')) {
+            link.classList.add('active');
+        }
+        else if (currentPath.endsWith('/index.html') && linkHref === currentPath.replace('/index.html', '/')) {
+            link.classList.add('active');
+        }
+        // Handle specific case for root
+        else if (currentPath === '/' && linkHref === '/index.html') {
+            link.classList.add('active');
+        }
+    });
+});
