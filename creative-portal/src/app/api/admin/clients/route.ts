@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import bcrypt from 'bcryptjs';
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -31,24 +32,35 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { name, contact, email, company, status, projectType, budgetRange, timeline, companySize } = body;
+    const { 
+      name, 
+      contact, 
+      email, 
+      company, 
+      status, 
+      projectType, 
+      budgetRange, 
+      timeline, 
+      companySize,
+      password // Task 3: Temp Password
+    } = body;
 
     // Server-Side Validation
     if (!name || !email) {
       return NextResponse.json({ error: 'Name and Email are required' }, { status: 400 });
     }
 
-    // Check if client already exists to prevent unique constraint violation
-    const existingClient = await prisma.client.findUnique({
-      where: { email }
-    });
+    // Check if client/user already exists
+    const existingClient = await prisma.client.findUnique({ where: { email } });
+    const existingUser = await prisma.user.findUnique({ where: { email } });
 
-    if (existingClient) {
-      return NextResponse.json({ error: 'A client with this email already exists' }, { status: 400 });
+    if (existingClient || existingUser) {
+      return NextResponse.json({ error: 'A client or user with this email already exists' }, { status: 400 });
     }
 
-    // Use a transaction to ensure both client and project are created
+    // Task 1 & 2: Atomic Transaction for Unified Provisioning
     const result = await prisma.$transaction(async (tx) => {
+      // 1. Create Organization (Client)
       const newClient = await tx.client.create({
         data: {
           name,
@@ -63,11 +75,30 @@ export async function POST(req: Request) {
         }
       });
 
+      // 2. Create User (Identity)
+      const hashedPassword = await bcrypt.hash(password || 'portal123', 10);
+      const newUser = await tx.user.create({
+        data: {
+          name: contact || name,
+          email: email,
+          password: hashedPassword,
+          role: 'CLIENT',
+          client: { connect: { id: newClient.id } }, // Link to Org
+        }
+      });
+
+      // 3. Create Project (Discovery)
       const newProject = await tx.project.create({
         data: {
           title: `${company || name} - Strategic Discovery`,
           status: 'DISCOVERY',
-          userId: session.user.id,
+          userId: session.user.id, // Admin owns it initially (or maybe the new user?)
+          // Requirement says "Populate ownerId (Admin) and clientId (New User) immediately"
+          // Schema: userId (User relation), clientId (Client relation)
+          // Ideally, the Project should belong to the Admin (Consultant) but link to the Client Org.
+          // But wait, "clientId (New User)"? Schema Project has `clientId` pointing to `Client` model, not `User`.
+          // And `userId` points to `User`.
+          // If Admin is the owner (userId = Admin), then Client sees it via `clientId` matching their Org.
           clientId: newClient.id,
           brandStatus: 'PENDING',
           campaignStatus: 'PENDING',
@@ -76,15 +107,47 @@ export async function POST(req: Request) {
         }
       });
 
-      return { client: newClient, project: newProject };
+      // 4. Seed Assessment Sessions (The 4 Pillars)
+      const pillars = ['GTM', 'BRAND', 'CAMPAIGN', 'CREATIVE'];
+      for (const type of pillars) {
+        await tx.assessmentSession.create({
+          data: {
+            projectId: newProject.id,
+            clientId: newClient.id,
+            assessmentType: type,
+            status: 'NOT_STARTED', // Task 1: Seed as NOT_STARTED
+            consultantId: session.user.id,
+            isPublished: false
+          }
+        });
+      }
+
+      return { client: newClient, user: newUser, project: newProject };
     });
 
-    console.log("[DATA ACCESS] New Client/Project Created. ClientID:", result.client.id, "ProjectID:", result.project.id);
-    return NextResponse.json(result.client, { status: 201 });
+    console.log("[PROVISIONING] Complete. Client:", result.client.id, "User:", result.user.id, "Project:", result.project.id);
+    
+    return NextResponse.json({
+      success: true,
+      client: result.client,
+      user: { email: result.user.email, tempPassword: password || 'portal123' },
+      project: result.project
+    }, { status: 201 });
+
   } catch (error: any) {
-    console.error('Failed to create client:', error);
+    console.error('[PROVISIONING_ERROR]:', error);
+    
+    // Task 1: API Error Transparency (Prisma Unique Constraint)
+    if (error.code === 'P2002') {
+      const field = error.meta?.target?.[0] || 'email';
+      return NextResponse.json({ 
+        error: 'Identity Collision', 
+        message: `A user with this ${field} already exists in the identity vault.` 
+      }, { status: 400 });
+    }
+
     return NextResponse.json({ 
-      error: 'Failed to create client record',
+      error: 'Provisioning Failed',
       message: error.message || 'Internal Server Error'
     }, { status: 500 });
   }

@@ -17,27 +17,53 @@ export async function POST(req: NextRequest) {
     }
 
     // Verify user belongs to project or is admin
-    const project = await prisma.project.findUnique({
-      where: { id: projectId },
-      select: { userId: true }
+    // Lookup-First Logic: Try to find by UUID first. 
+    // Note: If customId existed in schema, we would check both: OR: [{ id: projectId }, { customId: projectId }]
+    let project = await prisma.project.findFirst({
+      where: {
+        id: projectId
+      },
+      select: { id: true, userId: true }
     })
 
+    // CRITICAL FIX: If project is missing (Ghost ID from reset), Auto-Initialize a new project logic was removed in favor of 404
     if (!project) {
-      return NextResponse.json({ error: 'Project not found' }, { status: 404 })
+      console.warn(`[MESSAGES_SEND] Project ${projectId} not found (Ghost ID).`)
+      
+      return NextResponse.json({ 
+        error: 'Project not found. Cannot attach message to a non-existent record.',
+        code: 'PROJECT_NOT_FOUND'
+      }, { status: 404 })
     }
 
     const isStrategist = session.user.role === 'ADMIN' || session.user.role === 'TEAM_MEMBER'
     const isOwner = project.userId === session.user.id
 
     if (!isStrategist && !isOwner) {
+      console.error('[MESSAGES_SEND] Forbidden:', { role: session.user.role, owner: project.userId, user: session.user.id })
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
+
+    // Lookup-Second Logic: Ensure sender exists (Ghost User from Stale Session)
+    const sender = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { id: true }
+    })
+
+    if (!sender) {
+      return NextResponse.json({ 
+        error: 'User identity lost. Please sign out and log in again.',
+        code: 'USER_NOT_FOUND' 
+      }, { status: 401 })
+    }
+
+    console.log('[MESSAGES_SEND] Creating message for project:', projectId)
 
     const message = await prisma.message.create({
       data: {
         content,
-        projectId,
-        senderId: session.user.id,
+        projectId: project.id, // Use verified project ID
+        senderId: sender.id,   // Use verified Sender ID
       },
       include: {
         sender: {
@@ -51,9 +77,12 @@ export async function POST(req: NextRequest) {
       }
     })
 
+    console.log('[MESSAGES_SEND] Success:', message.id)
     return NextResponse.json(message)
-  } catch (error) {
-    console.error('[MESSAGES_SEND_POST]', error)
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+  } catch (error: any) {
+    console.error('[MESSAGES_SEND_POST] Error:', error)
+    // Detailed error for debugging
+    const errorMessage = error?.message || 'Internal Server Error'
+    return NextResponse.json({ error: errorMessage }, { status: 500 })
   }
 }

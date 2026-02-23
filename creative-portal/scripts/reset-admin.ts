@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 async function main() {
   const email = 'admin@luis-gilberto.com';
-  const password = 'Admin123!';
+  const password = 'portal123';
   
   // 1. Generate hash using the EXACT library the app uses
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -17,18 +17,26 @@ async function main() {
     where: { email },
     update: {
       password: hashedPassword,
-      role: 'ADMIN' // Ensure role is correct
+      role: 'ADMIN', // Ensure role is correct
+      authorityLevel: 3 // Set authority level to 3
     },
     create: {
       email,
       password: hashedPassword,
       name: 'Luis Gilberto',
       role: 'ADMIN',
+      authorityLevel: 3,
       createdAt: new Date()
     },
   });
 
-  console.log('SUCCESS: User reset complete.', user);
+  // 3. Invalidate all active sessions for this user
+  const deletedSessions = await prisma.session.deleteMany({
+    where: { userId: user.id }
+  });
+
+  console.log(`SUCCESS: User reset complete. Invalidated ${deletedSessions.count} sessions.`);
+  console.log('Admin identity recovered. Password reset to portal123.');
 }
 
 main()

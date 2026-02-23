@@ -18,7 +18,8 @@ import {
   ShieldCheck,
   FileText,
   HelpCircle,
-  X
+  X,
+  RefreshCw
 } from 'lucide-react';
 import { StrategyCard, AssessmentStatus } from '@/components/strategy/StrategyCard';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -33,6 +34,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/providers/toast-provider';
 import { safeJsonParse } from '@/lib/json-utils';
 
+import { useProjectStatus } from '@/hooks/useProjectStatus';
 import { useSession } from 'next-auth/react';
 
 import { createClient } from '@supabase/supabase-js';
@@ -51,7 +53,7 @@ type AssessmentState = {
 
 const CLIENTS = [
   {
-    id: 'cml73ju300003vkikvhv32lit', // Real Acme Project ID
+    id: 'active',
     name: 'Acme Corp',
     email: 'client@acme.com',
     type: 'Brand Repositioning',
@@ -151,6 +153,14 @@ export default function StrategyIQPage() {
   const [educationModal, setEducationModal] = useState<any>(null);
   const [dbClients, setDbClients] = useState<any[]>([]);
 
+  // HOOK: Global Gating Logic
+  const { isCalibrated, isLocked, isAdmin } = useProjectStatus(activeProject);
+  
+  // DEBUG: Verify Gating
+  useEffect(() => {
+    console.log("[StrategyIQ] Gating Status:", { isCalibrated, isLocked, isAdmin, activeProject: activeProject?.id });
+  }, [isCalibrated, isLocked, isAdmin, activeProject]);
+
   // 1. Database-First State Management
   const [isMounted, setIsMounted] = useState(false);
   const [clientProgress, setClientProgress] = useState<Record<string, AssessmentState>>({ 
@@ -195,6 +205,12 @@ export default function StrategyIQPage() {
   // 2. Fetch Project Data for Partners or selected client (Priority)
   useEffect(() => {
     async function fetchProjectData() {
+      // 0. Bypass for Sandbox Mode
+      if (selectedClient.id === 'demo') {
+        setIsLoading(false);
+        return;
+      }
+
       const targetUserEmail = (role === 'CLIENT') ? session?.user?.email : selectedClient?.email;
       
       if (targetUserEmail) {
@@ -210,8 +226,8 @@ export default function StrategyIQPage() {
               .in('status', ['ACTIVE', 'DISCOVERY']);
             
             if (projects && projects.length > 0) {
-              // Task 2: Anchor to Acme Project VHV32LIT
-              const activeProj = projects.find((p: any) => p.id.endsWith('vhv32lit')) || projects[0];
+              // Task 2: Anchor to the most recently updated project
+              const activeProj = projects[0];
               setActiveProject(activeProj);
               
               if (role !== 'CLIENT') {
@@ -331,6 +347,12 @@ export default function StrategyIQPage() {
   }, [viewMode]);
 
   const handleAssessmentStart = (id: string) => {
+    // DEADBOLT: If locked, prevent entry
+    if (isLocked) {
+      toast("CALIBRATION REQUIRED", "You must complete the Strategic Charter before accessing intelligence modules.", "error");
+      return;
+    }
+
     const role = session?.user?.role || 'CLIENT';
     const isCompleted = clientProgress[id].status === 'completed';
     
@@ -339,7 +361,10 @@ export default function StrategyIQPage() {
       const projectId = activeProject?.id || (selectedClient.id !== 'c1' && selectedClient.id !== 'c2' ? selectedClient.id : 'default');
       
       if (role === 'ADMIN') {
-        router.push(`/admin/projects/${projectId}/strategy/${id}/results`);
+        // ADMIN BYPASS: Allow re-entry into assessment mode
+        setActiveAssessment(id as AssessmentCategory);
+        setViewMode('assessment');
+        return;
       } else {
         router.push(`/strategy-iq/${projectId}/${id}/results`);
       }
@@ -350,17 +375,73 @@ export default function StrategyIQPage() {
     setViewMode('assessment');
   };
 
+  const handleResetProject = async () => {
+    if (!activeProject?.id && selectedClient.id !== 'demo') return;
+    
+    if (!window.confirm("⚠️ MASTER RESET: Are you sure you want to wipe all assessment data for this project? This cannot be undone.")) return;
+
+    if (selectedClient.id === 'demo') {
+      setClientProgress({
+        gtm: { status: 'pending', score: 0, answers: {} },
+        brand: { status: 'pending', score: 0, answers: {} },
+        campaign: { status: 'pending', score: 0, answers: {} },
+        creative: { status: 'pending', score: 0, answers: {} },
+      });
+      toast("SANDBOX RESET", "Ghost Project state cleared.", "success");
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/strategy-iq/reset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectId: activeProject.id })
+      });
+      
+      if (res.ok) {
+        setClientProgress({
+          gtm: { status: 'pending', score: 0, answers: {} },
+          brand: { status: 'pending', score: 0, answers: {} },
+          campaign: { status: 'pending', score: 0, answers: {} },
+          creative: { status: 'pending', score: 0, answers: {} },
+        });
+        toast("PROJECT RESET", "Assessment data wiped from database.", "success");
+      } else {
+        throw new Error('Reset failed');
+      }
+    } catch (e) {
+      toast("RESET FAILED", "Could not clear project data.", "error");
+    }
+  };
+
   const handleAssessmentComplete = async (result: { score: number; answers: Record<string, number> }) => {
     if (!activeAssessment) return;
     
+    // DEMO MODE: Local Save Only
+    if (selectedClient.id === 'demo' || activeProject?.id === 'demo') {
+      console.log("[StrategyIQ] Saving DEMO assessment locally");
+      setClientProgress(prev => ({
+        ...prev,
+        [activeAssessment]: {
+          status: 'completed',
+          score: result.score,
+          answers: result.answers
+        }
+      }));
+      toast("SANDBOX SAVE", "Assessment completed (Ghost Mode). Results not saved to DB.", "success");
+      setTimeout(() => {
+        setViewMode('dashboard');
+        setActiveAssessment(null);
+      }, 500);
+      return;
+    }
+
     // Auto-Initialization Logic for Homeless Clients
     let projectId = activeProject?.id || (selectedClient.id !== 'c1' && selectedClient.id !== 'c2' ? selectedClient.id : null);
 
-    if (!projectId || projectId === 'default' || projectId === 'c1' || projectId === 'c2') {
+    if (!projectId || projectId === 'default' || projectId === 'active' || projectId === 'c1' || projectId === 'c2') {
+      console.log("[StrategyIQ] No valid project found, attempting auto-init...");
       try {
-        // We'll call a new auto-init API or just use the existing admin client creation logic
-        // For now, let's attempt to find or create a project via a new internal endpoint or direct prisma if we were server-side
-        // Since we are client-side, we should call an API.
         const initRes = await fetch('/api/strategy-iq/init', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -374,15 +455,24 @@ export default function StrategyIQPage() {
           const newProject = await initRes.json();
           projectId = newProject.id;
           setActiveProject(newProject);
+          console.log("[StrategyIQ] Auto-init successful:", projectId);
         } else {
-          throw new Error('Failed to auto-initialize project');
+          const errorData = await initRes.json().catch(() => ({ error: 'Unknown init error' }));
+          throw new Error(errorData.error || 'Failed to auto-initialize project');
         }
-      } catch (err) {
-        console.error('Auto-init failed:', err);
-        toast("INITIALIZATION FAILED", "No active project found and auto-initialization failed. Please contact support.", "error")
+      } catch (err: any) {
+        console.error('[StrategyIQ] Auto-init failed:', err);
+        toast("INITIALIZATION FAILED", err.message || "No active project found.", "error")
         throw err;
       }
     }
+
+    if (!projectId) {
+      toast("SYSTEM ERROR", "Project ID could not be resolved. Please refresh.", "error");
+      return;
+    }
+
+    console.log("[StrategyIQ] Saving assessment for project:", projectId);
 
     try {
       const response = await fetch('/api/strategy-iq/save', {
@@ -397,10 +487,13 @@ export default function StrategyIQPage() {
       });
 
       if (response.ok) {
+        const data = await response.json();
+        const savedProjectId = data.projectId || projectId; // Use server-confirmed ID if available
+
         setClientProgress(prev => ({
           ...prev,
           [activeAssessment]: {
-            status: 'completed',
+            status: 'submitted', // Use submitted status to trigger UNDER_REVIEW UI
             score: result.score,
             answers: result.answers
           }
@@ -409,9 +502,9 @@ export default function StrategyIQPage() {
         // Redirect logic: Admin goes to Workbench, Partner goes to Results
         setTimeout(() => {
           if (session?.user?.role === 'ADMIN') {
-            router.push(`/admin/projects/${projectId}/strategy/${activeAssessment}/results`);
+            router.push(`/admin/projects/${savedProjectId}/strategy/${activeAssessment}/results`);
           } else {
-            router.push(`/strategy-iq/${projectId}/${activeAssessment}/results`);
+            router.push(`/strategy-iq/${savedProjectId}/${activeAssessment}/results`);
           }
           
           setActiveAssessment(null);
@@ -426,8 +519,9 @@ export default function StrategyIQPage() {
         }
         throw new Error(errorData.error || `Server error: ${response.status}`);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving assessment:', error);
+      toast("SAVE FAILED", error.message || "The Strategy Engine encountered a network error.", "error")
       throw error;
     }
   };
@@ -521,11 +615,30 @@ export default function StrategyIQPage() {
                       </div>
                       
                       {/* DYNAMIC DROPDOWN (HTML Select Fallback) */}
-                      <div className="relative inline-block">
+                      <div className="relative inline-block flex items-center gap-4">
                         <select 
                           className="appearance-none bg-transparent border-none text-[10px] font-bold text-zinc-500 hover:text-teal transition-colors outline-none pr-6 cursor-pointer focus:ring-0 uppercase tracking-widest"
                           value={selectedClient.id}
                           onChange={(e) => {
+                            if (e.target.value === 'demo') {
+                              setSelectedClient({
+                                id: 'demo',
+                                name: 'DEMO / SANDBOX',
+                                email: 'demo@strategyiq.com',
+                                type: 'SANDBOX MODE',
+                                budget: 'UNLIMITED',
+                                timeline: 'IMMEDIATE',
+                                size: 'N/A'
+                              });
+                              setActiveProject({ id: 'demo', title: 'StrategyIQ Sandbox' });
+                              setClientProgress({
+                                gtm: { status: 'pending', score: 0, answers: {} },
+                                brand: { status: 'pending', score: 0, answers: {} },
+                                campaign: { status: 'pending', score: 0, answers: {} },
+                                creative: { status: 'pending', score: 0, answers: {} },
+                              });
+                              return;
+                            }
                             const found = dbClients.find(c => c.id === e.target.value);
                             if (found) {
                               setSelectedClient({
@@ -540,6 +653,7 @@ export default function StrategyIQPage() {
                             }
                           }}
                         >
+                          <option value="demo" className="bg-[#1A1A1A] text-coral font-bold">⚠️ DEMO / SANDBOX</option>
                           {dbClients.length > 0 ? (
                             dbClients.map(c => (
                               <option key={c.id} value={c.id} className="bg-[#1A1A1A] text-gray-200">
@@ -552,6 +666,13 @@ export default function StrategyIQPage() {
                         </select>
                         <ChevronRight size={14} className="rotate-90 absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400" />
                       </div>
+                      
+                      <button 
+                        onClick={handleResetProject}
+                        className="flex items-center gap-2 px-3 py-1.5 h-[24px] rounded-full border border-coral/30 bg-coral/10 hover:bg-coral/20 transition-all text-coral text-[9px] font-bold tracking-widest uppercase ml-4"
+                      >
+                        <RefreshCw size={10} /> Reset
+                      </button>
                     </div>
 
                     {/* DYNAMIC GRID */}
@@ -607,9 +728,8 @@ export default function StrategyIQPage() {
                      let status: AssessmentStatus = "NOT_STARTED"
                      
                      // 1. Check DB progress first
-                     if (p.isPublished) status = "PUBLISHED"
-                     else if (p.status === 'completed' || p.status === 'COMPLETED' || p.status === 'PUBLISHED') status = "PUBLISHED"
-                     else if (p.status === 'UNDER_REVIEW' || p.status === 'MANUAL_REVIEW') status = "UNDER_REVIEW"
+                     if (p.isPublished || p.status === 'PUBLISHED') status = "PUBLISHED"
+                     else if (p.status === 'completed' || p.status === 'COMPLETED' || p.status === 'submitted' || p.status === 'UNDER_REVIEW' || p.status === 'MANUAL_REVIEW') status = "UNDER_REVIEW"
                      else if (p.status === 'in-progress' || p.status === 'IN_PROGRESS') status = "IN_PROGRESS"
 
                      // 2. Check local completed state fallback
@@ -623,7 +743,7 @@ export default function StrategyIQPage() {
                          title={area.title}
                          description={area.description}
                          status={status}
-                         projectId={activeProject?.id || "cml73ju300003vkikvhv32lit"}
+                         projectId={activeProject?.id || "active"}
                          onClick={() => handleAssessmentStart(area.id)}
                        />
                      )

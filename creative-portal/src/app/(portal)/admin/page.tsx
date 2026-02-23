@@ -27,7 +27,7 @@ export default async function AdminPage() {
 
   const pendingTasks = await prisma.assessmentSession.count({
     where: {
-      status: { in: ['COMPLETED', 'MANUAL_REVIEW', 'UNDER_REVIEW'] },
+      status: { in: ['UNDER_REVIEW', 'MANUAL_REVIEW', 'submitted', 'SUBMITTED', 'COMPLETED'] },
     },
   })
 

@@ -9,6 +9,7 @@ import { safeJsonParse } from '@/lib/json-utils'
 
 export default function StrategyIQStartPage() {
   const { data: session, status } = useSession()
+  const isAdmin = session?.user?.role === 'ADMIN'
   const params = useParams()
   const router = useRouter()
   const [projectId, setProjectId] = useState<string | null>(null)
@@ -28,9 +29,10 @@ export default function StrategyIQStartPage() {
       const isReview = urlParams.get('review') === 'true'
       const isCompleted = localStorage.getItem(`${dim.toLowerCase()}_assessment_completed`) === 'true'
       
-      setIsReadOnly(isReview || isCompleted)
+      // ADMIN OVERRIDE: Never force read-only mode for admins
+      setIsReadOnly((isReview || isCompleted) && !isAdmin)
     }
-  }, [params])
+  }, [params, session, isAdmin])
 
   useEffect(() => {
     async function fetchExistingSession() {

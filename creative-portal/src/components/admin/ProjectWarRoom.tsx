@@ -31,7 +31,8 @@ import {
   Target,
   Flag,
   Library,
-  Printer
+  Printer,
+  Layers
 } from "lucide-react"
 import { format } from "date-fns"
 import { Badge } from "@/components/ui/badge"
@@ -69,42 +70,62 @@ const STRATEGY_MODULES = [
   { id: 'creative', title: 'Creative Dir', icon: FileCode, color: 'text-purple-400', bg: 'bg-purple-400/10' },
 ]
 
-type WorkspaceMode = 'INTELLIGENCE' | 'VAULT' | 'ROADMAP' | 'COMMS' | 'CONFIG'
+const STRATEGY_CHANNELS = [
+  "Paid Search (Google/Bing)",
+  "Paid Social (Meta/LinkedIn)",
+  "Organic Social",
+  "Email Marketing",
+  "Events & Field Marketing",
+  "Content Marketing",
+  "SEO / Organic Search",
+  "Influencer / Affiliate"
+]
+
+type WorkspaceMode = 'INTELLIGENCE' | 'VAULT' | 'ROADMAP' | 'COMMS' | 'CONTEXT'
 
 export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomProps) {
   const router = useRouter()
   const { toast } = useToast()
   const params = useParams()
-  const urlProjectId = params.id as string
+  const urlProjectId = (params.projectId || params.id) as string
 
   const getStatusColor = (status: string) => {
     if (!status) return "text-white/30 border-white/10 bg-white/5"
-    switch (status.toUpperCase()) {
-      case "COMPLETE":
-      case "APPROVED":
-      case "COMPLETED":
-      case "PUBLISHED":
-        return "text-teal border-teal/30 bg-teal/10"
-      case "PENDING":
-      case "IN_PROGRESS":
-      case "ACTIVE":
-        return "text-coral border-coral/30 bg-coral/10"
-      default:
-        return "text-white/30 border-white/10 bg-white/5"
-    }
+    const s = status.toUpperCase()
+    if (s === "CERTIFIED") return "text-teal border-teal/30 bg-teal/10"
+    if (s === "UNDER REVIEW") return "text-amber-500 border-amber-500/30 bg-amber-500/10"
+    if (s === "IN PROGRESS") return "text-zinc-500 border-zinc-500/30 bg-zinc-500/10"
+    if (s === "PENDING") return "text-coral border-coral/30 bg-coral/10"
+    return "text-white/30 border-white/10 bg-white/5"
   }
 
   const getAssessmentStatus = (moduleId: string) => {
-    const statusField = `${moduleId}Status`
-    const projectStatus = project[statusField]
-    const session = (project.assessmentSessions || project.client?.assessmentSessions)?.find(
-      (s: any) => s.assessmentType === moduleId && 
-      ['COMPLETED', 'PUBLISHED', 'MANUAL_REVIEW', 'UNDER_REVIEW'].includes(s.status?.toUpperCase())
-    )
-    if (projectStatus === 'COMPLETED') {
-      return session || { status: 'COMPLETED', assessmentType: moduleId }
+    // Priority 1: Check assessmentSessions for latest state
+    const sessions = project.assessmentSessions || project.client?.assessmentSessions || []
+    const session = sessions.find((s: any) => s.assessmentType.toLowerCase() === moduleId.toLowerCase())
+    
+    if (!session) return { status: 'PENDING' }
+
+    const s = session.status?.toLowerCase()
+    
+    // Logic: 
+    // IF brief.status === 'draft' -> UI Label: "IN PROGRESS" (Grey)
+    // IF brief.status === 'submitted' -> UI Label: "UNDER REVIEW" (Mustard)
+    // IF brief.status === 'certified' -> UI Label: "CERTIFIED" (Teal)
+    
+    if (session.isPublished || s === 'certified' || s === 'published') {
+      return { ...session, status: 'CERTIFIED' }
     }
-    return session
+    
+    if (s === 'submitted' || s === 'completed' || s === 'under_review' || s === 'manual_review') {
+      return { ...session, status: 'UNDER REVIEW' }
+    }
+    
+    if (s === 'draft' || s === 'in_progress' || s === 'in-progress') {
+      return { ...session, status: 'IN PROGRESS' }
+    }
+    
+    return { ...session, status: 'PENDING' }
   }
 
   const handleForceGenerate = (moduleId: string) => {
@@ -121,7 +142,7 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
     return null
   }
 
-  const [mode, setMode] = useState<WorkspaceMode>(currentUser.role === 'CLIENT' ? 'VAULT' : 'INTELLIGENCE')
+  const [mode, setMode] = useState<WorkspaceMode>('CONTEXT')
   const [message, setMessage] = useState("")
   const [messages, setMessages] = useState(project.messages || [])
   const [isSending, setIsSending] = useState(false)
@@ -143,8 +164,172 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
   const [businessOKRs, setBusinessOKRs] = useState(project.businessOKRs || "")
   const [strategicConstraints, setStrategicConstraints] = useState(project.strategicConstraints || "")
   const [primaryBusinessGoals, setPrimaryBusinessGoals] = useState(project.primaryBusinessGoals || "")
+  const [marketingHistory, setMarketingHistory] = useState(project.marketingHistory || "")
+  
+  // Layer I: The Business Mandate State
+  const [businessDriver, setBusinessDriver] = useState(project.businessDriver || "")
+  const [metricName, setMetricName] = useState(project.metricName || "")
+  const [metricTarget, setMetricTarget] = useState(project.metricTarget || "")
+  const [metricBaseline, setMetricBaseline] = useState(project.metricBaseline || "")
+
+  // Layer II: The Marketing Mandate State
+  const [operationalPriority, setOperationalPriority] = useState(project.operationalPriority || "")
+  const [cacCurrent, setCacCurrent] = useState(project.cacCurrent || "")
+  const [cacGoal, setCacGoal] = useState(project.cacGoal || "")
+  const [ltvCurrent, setLtvCurrent] = useState(project.ltvCurrent || "")
+  const [ltvGoal, setLtvGoal] = useState(project.ltvGoal || "")
+  const [conversionCurrent, setConversionCurrent] = useState(project.conversionCurrent || "")
+  const [conversionGoal, setConversionGoal] = useState(project.conversionGoal || "")
+  const [marketingSignal, setMarketingSignal] = useState(project.marketingSignal || "")
+  const [marketingNoise, setMarketingNoise] = useState(project.marketingNoise || "")
+  const [showMetricSelector, setShowMetricSelector] = useState(false)
+
+  const [selectedChannels, setSelectedChannels] = useState<string[]>(project.channels || [])
   const [isSavingConfig, setIsSavingConfig] = useState(false)
-  const [isConfigEditing, setIsConfigEditing] = useState(!project.primaryBusinessGoals && !project.businessOKRs && !project.strategicConstraints)
+  const [isConfigEditing, setIsConfigEditing] = useState(!project.primaryBusinessGoals && !project.businessOKRs && !project.strategicConstraints && !project.marketingHistory)
+  const [isResetting, setIsResetting] = useState(false)
+  const [showResetConfirm, setShowResetConfirm] = useState(false)
+
+  const BUSINESS_DRIVERS = [
+    { id: 'Market Capture', title: 'Market Capture', desc: 'Aggressive growth and acquisition.' },
+    { id: 'Margin Protection', title: 'Margin Protection', desc: 'Efficiency and cost optimization.' },
+    { id: 'Category Expansion', title: 'Category Expansion', desc: 'New markets or product lines.' },
+    { id: 'Systemic Stabilization', title: 'Systemic Stabilization', desc: 'Fixing foundational breaks.' },
+  ]
+
+  const OPERATIONAL_PRIORITIES = [
+    { id: 'Volume Generation', title: 'Volume Generation', desc: 'Increasing raw lead flow.' },
+    { id: 'Conversion Velocity', title: 'Conversion Velocity', desc: 'Moving leads through the funnel faster.' },
+    { id: 'Narrative Authority', title: 'Narrative Authority', desc: 'Re-establishing market leadership.' },
+    { id: 'Retention / LTV', title: 'Retention / LTV', desc: 'Extracting value from the existing base.' }
+  ]
+
+  const METRIC_CATEGORIES = [
+    {
+      name: "Financial Performance",
+      metrics: ["ARR (Annual Recurring Revenue)", "MRR (Monthly Recurring Revenue)", "Net Profit Margin", "Gross Revenue"]
+    },
+    {
+      name: "Unit Economics",
+      metrics: ["LTV (Customer Lifetime Value)", "CAC (Customer Acquisition Cost)", "LTV:CAC Ratio", "Payback Period (Months)"]
+    },
+    {
+      name: "Market Momentum",
+      metrics: ["Market Share %", "Active Users (MAU/WAU)", "Customer Retention Rate %", "Churn Rate %"]
+    },
+    {
+      name: "Sales & Pipeline",
+      metrics: ["Total Pipeline Value", "Sales Velocity", "Win Rate %", "Average Contract Value (ACV)"]
+    }
+  ]
+
+  const getLift = () => {
+    const t = parseFloat(metricTarget.toString().replace(/,/g, ''))
+    const b = parseFloat(metricBaseline.toString().replace(/,/g, ''))
+    if (isNaN(t) || isNaN(b) || b === 0) return null
+    const lift = ((t - b) / b) * 100
+    const prefix = lift > 0 ? "+" : ""
+    return `${prefix}${lift.toFixed(1)}% LIFT IN ${metricName ? metricName.split('(')[0].trim().toUpperCase() : 'METRIC'}`
+  }
+
+  const getGap = (current: string, goal: string, type: 'LOWER_BETTER' | 'HIGHER_BETTER') => {
+    const c = parseFloat(current.toString().replace(/,/g, ''))
+    const g = parseFloat(goal.toString().replace(/,/g, ''))
+    if (isNaN(c) || isNaN(g) || c === 0) return null
+    
+    const gap = ((g - c) / c) * 100
+    
+    if (type === 'LOWER_BETTER') {
+      // Goal < Current is GOOD (negative gap is improvement)
+      const isImprovement = g < c
+      return { val: `${gap > 0 ? '+' : ''}${gap.toFixed(1)}%`, isGood: isImprovement, label: isImprovement ? 'REDUCTION' : 'INCREASE' }
+    } else {
+      // Goal > Current is GOOD (positive gap is improvement)
+      const isImprovement = g > c
+      return { val: `${gap > 0 ? '+' : ''}${gap.toFixed(1)}%`, isGood: isImprovement, label: isImprovement ? 'LIFT' : 'DROP' }
+    }
+  }
+  
+  const calculatedLift = getLift()
+  
+  // Audit / Archive State
+  const [archivedMessages, setArchivedMessages] = useState<any[]>([])
+  const [showArchiveResetConfirm, setShowArchiveResetConfirm] = useState(false)
+  const [isArchiving, setIsArchiving] = useState(false)
+
+  const handleArchiveReset = async () => {
+    setIsArchiving(true)
+    try {
+      const response = await fetch('/api/messages/archive', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectId: project.id })
+      })
+      
+      if (response.ok) {
+        toast("STRATEGIC ARCHIVE SECURED", "Transmission log has been moved to the Vault.", "success")
+        setMessages([]) // Clear local active messages
+        setShowArchiveResetConfirm(false)
+        router.refresh()
+      } else {
+        toast("ARCHIVE FAILED", "Could not secure transmission logs.", "error")
+      }
+    } catch (error) {
+      console.error('Error archiving messages:', error)
+      toast("ERROR", "System failure during archival process.", "error")
+    } finally {
+      setIsArchiving(false)
+    }
+  }
+
+  useEffect(() => {
+    if (mode === 'VAULT' && currentUser.role === 'ADMIN') {
+      const fetchArchived = async () => {
+        try {
+          const res = await fetch(`/api/messages?projectId=${project.id}&archived=true`)
+          if (res.ok) {
+            const data = await res.json()
+            setArchivedMessages(data)
+          }
+        } catch (e) {
+          console.error("Failed to fetch audit logs", e)
+        }
+      }
+      fetchArchived()
+    }
+  }, [mode, currentUser.role, project.id])
+
+  const handleResetProject = async () => {
+    setIsResetting(true)
+    try {
+      const response = await fetch('/api/project/reset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectId: project.id })
+      })
+      if (response.ok) {
+        toast("PROJECT RESET", "All intelligence and configurations have been purged.", "success")
+        setShowResetConfirm(false)
+        router.refresh()
+        setMode('CONFIG')
+      } else {
+        toast("RESET FAILED", "Failed to reset project data.", "error")
+      }
+    } catch (error) {
+      console.error('Error resetting project:', error)
+      toast("ERROR", "A fatal error occurred during reset.", "error")
+    } finally {
+      setIsResetting(false)
+    }
+  }
+
+  const toggleChannel = (channel: string) => {
+    setSelectedChannels(prev => 
+      prev.includes(channel) 
+        ? prev.filter(c => c !== channel)
+        : [...prev, channel]
+    )
+  }
 
   const handleSaveConfig = async () => {
     setIsSavingConfig(true)
@@ -156,7 +341,22 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
           projectId: project.id,
           businessOKRs,
           strategicConstraints,
-          primaryBusinessGoals
+          primaryBusinessGoals,
+          marketingHistory,
+          channels: selectedChannels,
+          businessDriver,
+          metricName,
+          metricTarget,
+          metricBaseline,
+          operationalPriority,
+          cacCurrent,
+          cacGoal,
+          ltvCurrent,
+          ltvGoal,
+          conversionCurrent,
+          conversionGoal,
+          marketingSignal,
+          marketingNoise
         })
       })
       if (response.ok) {
@@ -256,8 +456,12 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
 
   const openReview = async (session: any, forceGenerate: boolean = false, readOnly: boolean = false) => {
     setReviewSession(session)
-    // Task 1: Initialize with certifiedNarrative, briefSummary, or empty string
-    setConsultantAnalysis(session.certifiedNarrative || session.briefSummary || "")
+    
+    // Logic: If UNDER REVIEW, commentary must be empty until certified
+    const isUnderReview = session.status?.toLowerCase() === 'submitted' || session.status?.toLowerCase() === 'under_review'
+    const initialNarrative = session.certifiedNarrative || (isUnderReview ? "" : session.briefSummary) || ""
+    
+    setConsultantAnalysis(initialNarrative)
     setViewModeOnly(readOnly)
     setIsRevisionMode(false) // Reset revision mode on open
     setIsReviewOpen(true)
@@ -441,9 +645,13 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
         // Task 2: Visual Feedback
         setShowPulse(true)
         setTimeout(() => setShowPulse(false), 1000)
+      } else {
+        const errorData = await response.json()
+        toast("TRANSMISSION FAILED", errorData.error || "Could not send message", "error")
       }
     } catch (error) {
       console.error('Error sending message:', error)
+      toast("SYSTEM ERROR", "Network or server failure", "error")
     } finally {
       setIsSending(false)
     }
@@ -451,60 +659,89 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
 
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)] bg-portal-bg overflow-hidden font-inter">
+      {/* Header */}
+      <header className="fixed top-0 left-0 right-0 h-20 bg-[#050505]/90 backdrop-blur-md border-b border-white/5 z-50 px-8 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Button 
+            variant="ghost" 
+            onClick={() => router.push('/admin/projects')}
+            className="text-white/40 hover:text-white uppercase tracking-widest text-[10px] font-bold"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back to projects
+          </Button>
+        </div>
+        
+        {/* CENTER LOGO */}
+        <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2">
+           <span className="text-xl font-big-shoulders font-black tracking-tight text-coral">LG</span>
+           <span className="text-xl font-big-shoulders font-black tracking-tight text-white">// PORTAL</span>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <div className={cn(
+            "px-3 py-1 rounded text-[9px] font-bold uppercase tracking-widest border",
+            getStatusColor(project.status)
+          )}>
+            Status: {project.status || 'Active'}
+          </div>
+          <Button 
+            variant="outline"
+            className="h-8 border-white/10 text-white/40 hover:text-white text-[9px] font-bold uppercase tracking-widest"
+          >
+            <Printer className="mr-2 h-3 w-3" /> Print Dossier
+          </Button>
+        </div>
+      </header>
+
       {/* Task 3: 2-Zone Layout (Stage 75%, Sidecar 25%) */}
-      <div className="flex-1 grid grid-cols-12 overflow-hidden h-full">
+      <div className="flex-1 grid grid-cols-12 overflow-hidden h-full pt-20">
         
         {/* --- THE STAGE (Cols 1-9, 75%) --- */}
         <div className="col-span-12 lg:col-span-9 flex flex-col overflow-hidden border-r border-white/10 bg-[#0A0A0A]">
           
           {/* V5.7 Simplified Header & TOC */}
-          <div className="pt-12 pb-8 px-8 flex flex-col items-center border-b border-white/5">
-            {/* Wayfinding (Top Left) */}
-            <div className="w-full max-w-5xl flex justify-between items-center mb-12">
-              <Link 
-                href="/dashboard" 
-                className="text-[10px] font-bold text-zinc-500 hover:text-coral tracking-[0.2em] uppercase transition-all flex items-center gap-2 group"
-              >
-                <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
-                Back to projects
-              </Link>
-
-              <Button 
-                onClick={() => window.print()}
-                className="bg-white/5 hover:bg-white/10 text-white/60 font-bold tracking-widest text-[10px] px-6 h-10 rounded-xl border border-white/10 group print:hidden"
-              >
-                <Printer size={14} className="mr-2 group-hover:scale-110 transition-transform" />
-                PRINT DOSSIER
-              </Button>
-            </div>
-
-            {/* Project Identity (Centered) */}
-            <div className="text-center mb-16">
-              <h1 className="text-2xl md:text-3xl font-medium text-zinc-400 tracking-tight font-inter">
-                {project.client?.name || 'Partner'} // {project.title}
-              </h1>
-            </div>
-
+          <div className="pt-6 md:pt-12 pb-4 md:pb-8 px-4 md:px-8 flex flex-col items-center border-b border-white/5">
             {/* Workspace TOC (Horizontal Switcher) */}
-            <nav className="flex items-center lg:justify-center justify-start gap-8 md:gap-12 overflow-x-auto no-scrollbar w-full pb-2 px-4 lg:px-0">
-              {(['INTELLIGENCE', 'VAULT', 'ROADMAP', ...(currentUser.role === 'ADMIN' ? ['CONFIG'] : [])] as WorkspaceMode[]).map((m) => (
-                <button
-                  key={m}
-                  onClick={() => setMode(m)}
-                  className={cn(
-                    "relative py-2 text-[10px] md:text-[11px] font-bold tracking-[0.2em] uppercase transition-all whitespace-nowrap flex-shrink-0",
-                    mode === m ? "text-white" : "text-zinc-600 hover:text-zinc-400"
-                  )}
-                >
-                  {m.charAt(0) + m.slice(1).toLowerCase()}
-                  {mode === m && (
-                    <motion.div 
-                      layoutId="toc-underline"
-                      className="absolute -bottom-[9px] left-0 right-0 h-[2px] bg-teal" 
-                    />
-                  )}
-                </button>
-              ))}
+            <nav className="flex items-center lg:justify-center justify-start gap-4 md:gap-12 overflow-x-auto no-scrollbar w-full pb-2 px-4 lg:px-0">
+              {(['CONTEXT', 'INTELLIGENCE', 'VAULT', 'ROADMAP'] as WorkspaceMode[]).map((m) => {
+                // Task 2: Reactive Unlocking Logic
+                // Unlock if project status is CALIBRATED, ACTIVE, CERTIFIED, or OPTIMIZING
+                // (Note: Default 'ACTIVE' might be legacy, 'CALIBRATED' is the new gate)
+                const isUnlocked = ['CALIBRATED', 'ACTIVE', 'CERTIFIED', 'OPTIMIZING'].includes(project.status) || m === 'CONTEXT';
+                
+                // Keep Vault/Roadmap restricted to Intelligence phase logic if needed, but per request:
+                // "IF status === 'CALIBRATED' ... Remove lock from Intelligence, Vault, and Roadmap"
+                // So if unlocked, all tabs are accessible.
+                
+                // If NOT unlocked, lock everything except CONTEXT
+                const isLocked = !isUnlocked && m !== 'CONTEXT';
+
+                return (
+                  <div key={m} className="flex flex-col items-center">
+                    <button
+                      onClick={() => !isLocked && setMode(m)}
+                      disabled={isLocked}
+                      className={cn(
+                        "relative py-2 text-[10px] md:text-[11px] font-bold tracking-[0.2em] uppercase transition-all whitespace-nowrap flex-shrink-0 flex items-center gap-2",
+                        mode === m ? "text-white" : "text-zinc-600 hover:text-zinc-400",
+                        isLocked && "opacity-40 cursor-not-allowed"
+                      )}
+                    >
+                      {isLocked && <Lock size={10} className="text-zinc-500" />}
+                      {m.charAt(0) + m.slice(1).toLowerCase()}
+                      {mode === m && (
+                        <motion.div 
+                          layoutId="toc-underline"
+                          className="absolute -bottom-[9px] left-0 right-0 h-[2px] bg-teal" 
+                        />
+                      )}
+                    </button>
+                    {isLocked && (
+                      <span className="text-[9px] text-coral/60 font-bold tracking-[0.1em] uppercase mt-1">Context Required</span>
+                    )}
+                  </div>
+                );
+              })}
             </nav>
           </div>
 
@@ -513,34 +750,45 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
               {/* Intelligence Mode */}
               {mode === 'INTELLIGENCE' && (
                 <div className="space-y-16 animate-in fade-in slide-in-from-bottom-1 duration-500">
-                  <div className="space-y-8">
+                  <div className="space-y-4 md:space-y-8">
                     <div className="flex items-center gap-3">
                       <div className="w-1.5 h-1.5 rounded-full bg-teal" />
                       <h2 className="text-[11px] font-bold tracking-widest text-white/40">
                         Strategic intelligence pillars
                       </h2>
                     </div>
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-4 md:gap-6 md:grid-cols-2">
                       {STRATEGY_MODULES.map((module) => {
                         const session = getAssessmentStatus(module.id)
-                        const isPublished = session?.status?.toUpperCase() === 'PUBLISHED'
-                        const isPending = !session
+                        const status = session.status?.toUpperCase()
+                        const isCertified = status === 'CERTIFIED'
+                        const isUnderReview = status === 'UNDER REVIEW'
+                        const isPending = status === 'PENDING'
                         
                         return (
                           <div key={module.id} className={cn(
-                            "p-8 rounded-xl border border-white/10 bg-white/[0.01] transition-all",
-                            isPending && "opacity-40 grayscale"
+                            "p-4 md:p-8 rounded-xl border transition-all",
+                            isPending ? "border-white/5 bg-white/[0.01] opacity-40 grayscale" : "border-white/10 bg-white/[0.02]",
+                            isCertified ? "border-teal/20 shadow-[0_0_30px_rgba(46,211,198,0.05)]" : ""
                           )}>
-                            <div className="flex justify-between items-start mb-8">
+                            <div className="flex justify-between items-start mb-4 md:mb-8">
                               <div className="flex items-center gap-4">
-                                <div className={cn("p-2.5 rounded border border-white/10 text-white/40", !isPending && "text-teal border-teal/20")}>
+                                <div className={cn(
+                                  "p-2 md:p-2.5 rounded border transition-colors",
+                                  isCertified ? "text-teal border-teal/20" : 
+                                  isUnderReview ? "text-amber-500 border-amber-500/20" : 
+                                  "text-white/40 border-white/10"
+                                )}>
                                   <module.icon size={18} />
                                 </div>
                                 <div>
                                   <h3 className="text-lg font-bold text-white tracking-tight">{module.title}</h3>
-                                  <span className="text-[10px] text-white/20 font-bold tracking-widest">
-                                    {session?.status || 'Pending'}
-                                  </span>
+                                  <Badge className={cn(
+                                    "text-[8px] font-bold tracking-widest uppercase h-5 px-2 mt-1",
+                                    getStatusColor(status)
+                                  )}>
+                                    {status}
+                                  </Badge>
                                 </div>
                               </div>
                             </div>
@@ -558,14 +806,34 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
                                 <>
                                   <Button 
                                     size="sm" 
-                                    onClick={() => openReview(session, true, currentUser.role !== 'ADMIN')}
-                                    className="flex-1 bg-white/5 hover:bg-white/10 text-white/60 border border-white/10 text-[9px] font-bold tracking-widest h-10"
+                                    disabled={isUnderReview && currentUser.role !== 'ADMIN'}
+                                    onClick={() => {
+                                      if (currentUser.role === 'ADMIN') {
+                                        // Redirect to the new Strategy Workbench v2.1
+                                        router.push(`/admin/projects/${project.id}/strategy/${module.id}/results`)
+                                        return
+                                      }
+
+                                      if (isUnderReview && currentUser.role !== 'ADMIN') {
+                                        // Redirect to loading/results page which handles pending state
+                                        router.push(`/strategy-iq/${project.id}/${module.id}/results`)
+                                        return
+                                      }
+                                      openReview(session, true, currentUser.role !== 'ADMIN')
+                                    }}
+                                    className={cn(
+                                      "flex-1 text-[9px] font-bold tracking-widest h-10",
+                                      isCertified ? "bg-teal/10 text-teal border border-teal/20 hover:bg-teal/20" : 
+                                      "bg-white/5 hover:bg-white/10 text-white/60 border border-white/10"
+                                    )}
                                   >
-                                    {isPublished ? (currentUser.role === 'ADMIN' ? "Manage brief" : "View brief") : "Review intelligence"}
+                                    {isCertified ? (currentUser.role === 'ADMIN' ? "Manage brief" : "View brief") : 
+                                     isUnderReview ? (currentUser.role === 'ADMIN' ? "Certify results" : "Review in progress") : 
+                                     "Review intelligence"}
                                   </Button>
                                   <Button 
                                     size="sm" 
-                                    onClick={() => openReview(session, false, true)}
+                                    onClick={() => router.push(`/strategy-iq/${project.id}/${module.id}/results`)}
                                     className="bg-white/5 hover:bg-white/10 text-white/40 border border-white/10 text-[9px] font-bold tracking-widest h-10 px-4"
                                   >
                                     <Eye size={14} />
@@ -579,8 +847,8 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
                     </div>
                   </div>
 
-                  <div className="pt-16 border-t border-white/10">
-                    <div className="flex items-center gap-3 mb-10">
+                  <div className="pt-8 md:pt-16 border-t border-white/10">
+                    <div className="flex items-center gap-3 mb-6 md:mb-10">
                       <div className={cn(
                         "w-1.5 h-1.5 rounded-full",
                         synthesisContent.state === 'GENERATED' ? "bg-teal" : "bg-coral"
@@ -591,12 +859,12 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
                     </div>
 
                     <div className={cn(
-                      "border border-white/10 p-10 rounded-2xl relative overflow-hidden transition-all duration-500",
+                      "border border-white/10 p-6 md:p-10 rounded-2xl relative overflow-hidden transition-all duration-500",
                       synthesisContent.state === 'PRE' && "opacity-40 grayscale"
                     )}>
-                      <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
-                        <div className="max-w-xl">
-                          <h3 className="text-2xl font-bold text-white mb-4 tracking-tight">
+                      <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12">
+                        <div className="max-w-xl text-center md:text-left">
+                          <h3 className="text-xl md:text-2xl font-bold text-white mb-2 md:mb-4 tracking-tight">
                             {synthesisContent.title}
                           </h3>
                           <p className="text-sm text-zinc-400 leading-relaxed font-serif italic">
@@ -608,7 +876,7 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
                           onClick={handleGenerateMaster}
                           disabled={(synthesisContent.state === 'PRE') || isGeneratingMaster || (currentUser.role !== 'ADMIN' && !project.masterPlan)}
                           className={cn(
-                            "h-14 px-10 rounded text-xs font-bold tracking-widest transition-all",
+                            "h-12 md:h-14 px-8 md:px-10 rounded text-xs font-bold tracking-widest transition-all w-full md:w-auto",
                             (synthesisContent.state !== 'PRE') 
                               ? "bg-coral text-white hover:translate-y-[-1px]" 
                               : "bg-white/5 text-white/20 border border-white/10"
@@ -633,6 +901,51 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
                   </div>
 
                   <div className="space-y-4">
+                    {/* AUDIT LOGS / ARCHIVED TRANSMISSIONS (ADMIN ONLY) */}
+                    {currentUser.role === 'ADMIN' && (
+                      <div className="mb-12 border border-white/5 rounded-2xl overflow-hidden">
+                        <div className="bg-white/[0.02] p-6 border-b border-white/5 flex items-center gap-3">
+                          <Lock size={14} className="text-coral" />
+                          <h3 className="text-[10px] font-bold tracking-[0.2em] text-coral uppercase">
+                            // STRATEGIC ARCHIVE / HISTORICAL TRANSMISSIONS
+                          </h3>
+                        </div>
+                        <div className="max-h-[400px] overflow-y-auto bg-black">
+                          {archivedMessages.length > 0 ? (
+                            <table className="w-full text-left border-collapse">
+                              <thead className="bg-white/[0.02] sticky top-0">
+                                <tr>
+                                  <th className="p-4 text-[9px] font-mono uppercase text-white/30 tracking-widest border-b border-white/5">Timestamp</th>
+                                  <th className="p-4 text-[9px] font-mono uppercase text-white/30 tracking-widest border-b border-white/5">Sender</th>
+                                  <th className="p-4 text-[9px] font-mono uppercase text-white/30 tracking-widest border-b border-white/5">Content</th>
+                                </tr>
+                              </thead>
+                              <tbody className="font-mono text-[11px]">
+                                {archivedMessages.map((msg) => (
+                                  <tr key={msg.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                                    <td className="p-4 text-zinc-500 whitespace-nowrap align-top">
+                                      {format(new Date(msg.createdAt), "yyyy-MM-dd HH:mm:ss")}
+                                    </td>
+                                    <td className="p-4 text-zinc-400 whitespace-nowrap align-top">
+                                      {msg.sender?.name || 'Unknown'} <span className="text-zinc-600">[{msg.sender?.role}]</span>
+                                    </td>
+                                    <td className="p-4 text-zinc-300 align-top">
+                                      {msg.content}
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          ) : (
+                            <div className="p-12 flex flex-col items-center justify-center text-white/20">
+                              <History size={24} className="mb-4 opacity-50" />
+                              <p className="text-[10px] font-mono tracking-widest uppercase">No archival records found</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
                     {project.deliverables && project.deliverables.length > 0 ? project.deliverables.map((asset: any) => {
                       const dimension = getDimensionFromTitle(asset.title)
                       const isStrategyBrief = asset.title.toLowerCase().includes('strategy brief') || asset.type?.toLowerCase().includes('brief')
@@ -642,6 +955,10 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
                           key={asset.id} 
                           className="group flex items-center justify-between p-8 rounded-2xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.02] hover:border-white/10 transition-all cursor-pointer"
                           onClick={() => {
+                            if (asset.fileUrl && asset.fileUrl.startsWith('/')) {
+                                router.push(asset.fileUrl)
+                                return
+                            }
                             if (isStrategyBrief && dimension) {
                               const session = getAssessmentStatus(dimension)
                               if (session) openReview(session, false, true)
@@ -867,175 +1184,633 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
                 </div>
               )}
 
-              {/* Strategic Configuration Mode (Admin Only) */}
-              {mode === 'CONFIG' && currentUser.role === 'ADMIN' && (
-                <div className="space-y-16 animate-in fade-in slide-in-from-bottom-1 duration-500 max-w-4xl">
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="w-1.5 h-1.5 rounded-full bg-coral" />
-                        <h2 className="text-[11px] font-bold tracking-widest text-white/40 uppercase">
-                          Discovery wrap-up
-                        </h2>
-                      </div>
-                      {!isConfigEditing && (
-                        <Button 
-                          variant="ghost" 
-                          onClick={() => setIsConfigEditing(true)}
-                          className="text-[10px] font-bold text-teal hover:text-teal/80 tracking-widest uppercase transition-all"
-                        >
-                          Edit Configuration
-                        </Button>
-                      )}
+              {/* Strategic Configuration Mode (Joint Alignment) */}
+              {mode === 'CONTEXT' && (
+                <div className="space-y-16 animate-in fade-in slide-in-from-bottom-1 duration-500 max-w-[900px] mx-auto border-l-[2px] border-coral pl-12">
+                  <div className="space-y-6">
+                    {/* Identity Wayfinding */}
+                    <div className="mb-2 flex items-baseline">
+                      <span className="font-big-shoulders font-bold text-[rgba(255,255,255,0.4)] uppercase tracking-[0.1em] text-[1.2rem]">
+                        {project.client?.name || "ACME"}
+                      </span>
+                      <span className="text-coral mx-[10px] text-[1.2rem] font-light">/</span>
+                      <span className="text-[rgba(255,255,255,0.6)] text-[1.2rem]" style={{ fontFamily: 'Playfair Display, serif', fontStyle: 'italic' }}>
+                        '{project.name || "Growth Plan"}'
+                      </span>
                     </div>
-                    <h3 className="text-3xl font-bold text-white font-big-shoulders tracking-widest italic">
-                      Strategic configuration
-                    </h3>
-                    <p className="text-zinc-500 text-sm font-inter leading-relaxed max-w-2xl">
-                      {isConfigEditing 
-                        ? "Operationalize the discovery intelligence by defining the primary constraints and targets. This configuration feeds the StrategyIQ™ synthesis engine."
-                        : "Strategic parameters locked for synthesis. These values drive the Master Strategic Roadmap and AI-driven diagnosis."
-                      }
+
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-6xl font-black text-white font-big-shoulders tracking-tight uppercase leading-none">
+                        Strategic Charter
+                      </h3>
+                    </div>
+                    <p className="text-zinc-400 text-lg font-light font-inter leading-[1.8] max-w-2xl opacity-60">
+                      Strategic intelligence is only as strong as the context it sits within. We are aligning our engine to the mandates you are already accountable to.
                     </p>
                   </div>
 
-                  {isConfigEditing ? (
-                    <div className="grid grid-cols-1 gap-12">
-                      {/* Primary Goals */}
-                      <div className="space-y-6 p-8 rounded-2xl border border-white/10 bg-white/[0.01]">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-4">
-                            <div className="p-2 rounded bg-white/5 text-white/40">
-                              <Flag size={20} />
-                            </div>
-                            <div>
-                              <h4 className="text-lg font-bold text-white">Primary Business Goals</h4>
-                              <p className="text-[10px] text-white/20 font-bold tracking-widest uppercase">Long-term vision</p>
-                            </div>
-                          </div>
-                          <span className="text-[10px] uppercase tracking-widest text-zinc-600">**bold** · *italic* · - bullet · 1. list</span>
-                        </div>
-                        <Textarea 
-                          value={primaryBusinessGoals}
-                          onChange={(e) => setPrimaryBusinessGoals(e.target.value)}
-                          placeholder="Define the 12-24 month objective..."
-                          className="bg-black/40 border-white/10 rounded-xl min-h-[120px] text-zinc-300 font-mono text-sm leading-relaxed focus:border-white/30 transition-all whitespace-pre-wrap"
-                        />
-                      </div>
-
-                      {/* OKRs */}
-                      <div className="space-y-6 p-8 rounded-2xl border border-white/10 bg-white/[0.01]">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-4">
-                            <div className="p-2 rounded bg-white/5 text-white/40">
-                              <Target size={20} />
-                            </div>
-                            <div>
-                              <h4 className="text-lg font-bold text-white">Business OKRs</h4>
-                              <p className="text-[10px] text-white/20 font-bold tracking-widest uppercase">Measurable targets</p>
-                            </div>
-                          </div>
-                          <span className="text-[10px] uppercase tracking-widest text-zinc-600">**bold** · *italic* · - bullet · 1. list</span>
-                        </div>
-                        <Textarea 
-                          value={businessOKRs}
-                          onChange={(e) => setBusinessOKRs(e.target.value)}
-                          placeholder="Key Results for the next 90 days (e.g., 20% increase in pipeline)..."
-                          className="bg-black/40 border-white/10 rounded-xl min-h-[120px] text-zinc-300 font-mono text-sm leading-relaxed focus:border-white/30 transition-all whitespace-pre-wrap"
-                        />
-                      </div>
-
-                      {/* Constraints */}
-                      <div className="space-y-6 p-8 rounded-2xl border border-white/10 bg-white/[0.01]">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-4">
-                            <div className="p-2 rounded bg-white/5 text-white/40">
-                              <AlertCircle size={20} />
-                            </div>
-                            <div>
-                              <h4 className="text-lg font-bold text-white">Strategic Constraints</h4>
-                              <p className="text-[10px] text-white/20 font-bold tracking-widest uppercase">The bottlenecks</p>
+                      {isConfigEditing ? (
+                        <div className="grid grid-cols-1 gap-12 pt-8">
+                          
+                          {/* COMPONENT: PRIMARY BUSINESS DRIVER */}
+                          <div className="space-y-6">
+                            <h4 className="text-[1.2rem] font-extrabold text-white uppercase font-big-shoulders">Primary business driver</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              {BUSINESS_DRIVERS.map((driver) => {
+                                const isSelected = businessDriver === driver.id
+                                return (
+                                  <div 
+                                    key={driver.id}
+                                    onClick={() => setBusinessDriver(driver.id)}
+                                    className={cn(
+                                      "p-6 rounded border cursor-pointer transition-all duration-300 relative overflow-hidden group",
+                                      isSelected 
+                                        ? "border-teal bg-teal/[0.05] shadow-[0_0_20px_rgba(46,211,198,0.1)]" 
+                                        : "border-white/10 bg-white/[0.01] hover:bg-white/[0.03] hover:border-white/20"
+                                    )}
+                                  >
+                                    <div className="space-y-2 relative z-10">
+                                      <h5 className={cn(
+                                        "text-lg font-bold font-big-shoulders tracking-wide uppercase",
+                                        isSelected ? "text-teal" : "text-white/60 group-hover:text-white"
+                                      )}>
+                                        {driver.title}
+                                      </h5>
+                                      <p className="text-sm text-zinc-500 font-inter leading-relaxed">
+                                        {driver.desc}
+                                      </p>
+                                    </div>
+                                    {isSelected && (
+                                      <div className="absolute top-0 right-0 p-3">
+                                        <div className="w-2 h-2 rounded-full bg-teal shadow-[0_0_10px_#2ED3C6]" />
+                                      </div>
+                                    )}
+                                  </div>
+                                )
+                              })}
                             </div>
                           </div>
-                          <span className="text-[10px] uppercase tracking-widest text-zinc-600">**bold** · *italic* · - bullet · 1. list</span>
+
+                          {/* COMPONENT: THE METRIC OF RECORD (LAYER I) */}
+                          <div className="space-y-6 relative">
+                            <h4 className="text-[1.2rem] font-extrabold text-white uppercase font-big-shoulders">The metric of record</h4>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+                              {/* Metric Selector */}
+                              <div className="space-y-3 relative">
+                                <Label className="text-zinc-500 text-xs font-bold tracking-widest uppercase">Metric Name</Label>
+                                <div 
+                                  onClick={() => setShowMetricSelector(!showMetricSelector)}
+                                  className="flex items-center justify-between border-b border-white/10 py-2 cursor-pointer group hover:border-teal/50 transition-colors"
+                                >
+                                  <span className={cn(
+                                    "text-xl font-serif italic",
+                                    metricName ? "text-white" : "text-white/20"
+                                  )}>
+                                    {metricName || "Select Metric..."}
+                                  </span>
+                                  <ChevronRight className={cn(
+                                    "text-zinc-500 transition-transform duration-300",
+                                    showMetricSelector ? "rotate-90 text-teal" : "group-hover:text-white"
+                                  )} size={16} />
+                                </div>
+                                
+                                {/* Dropdown */}
+                                {showMetricSelector && (
+                                  <div className="absolute top-full left-0 w-[300px] md:w-[400px] bg-[#0A0A0A] border border-white/10 z-50 shadow-2xl rounded-b-xl max-h-[400px] overflow-y-auto mt-2 p-4 animate-in fade-in zoom-in-95 duration-200">
+                                    <div className="grid gap-6">
+                                      {METRIC_CATEGORIES.map((cat) => (
+                                        <div key={cat.name} className="space-y-2">
+                                          <h5 className="font-big-shoulders font-bold text-[10px] text-white/40 uppercase tracking-widest border-b border-white/5 pb-1">
+                                            {cat.name}
+                                          </h5>
+                                          <div className="grid grid-cols-1 gap-1">
+                                            {cat.metrics.map(m => (
+                                              <button
+                                                key={m}
+                                                onClick={() => { setMetricName(m); setShowMetricSelector(false); }}
+                                                className={cn(
+                                                  "text-left text-sm font-inter px-3 py-1.5 rounded transition-all w-full",
+                                                  metricName === m 
+                                                    ? "bg-teal/10 text-teal font-bold" 
+                                                    : "text-zinc-400 hover:text-white hover:bg-white/5"
+                                                )}
+                                              >
+                                                {m}
+                                              </button>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      ))}
+                                      <div className="pt-2 border-t border-white/5">
+                                        <Input 
+                                           placeholder="Custom Metric..."
+                                           className="bg-transparent border border-white/10 text-sm text-white focus:border-teal px-3 h-9 rounded"
+                                           onKeyDown={(e) => {
+                                              if(e.key === 'Enter') {
+                                                 setMetricName(e.currentTarget.value);
+                                                 setShowMetricSelector(false);
+                                              }
+                                           }}
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Target & Baseline Inputs */}
+                              <div className="space-y-3">
+                                <Label className="text-zinc-500 text-xs font-bold tracking-widest uppercase">Target Value</Label>
+                                <Input 
+                                  value={metricTarget}
+                                  onChange={(e) => setMetricTarget(e.target.value)}
+                                  placeholder="0.00"
+                                  className="bg-transparent border-b border-white/10 border-t-0 border-x-0 rounded-none px-0 text-xl text-white font-serif italic placeholder:text-white/10 focus:border-teal focus:ring-0"
+                                />
+                              </div>
+                              <div className="space-y-3">
+                                <Label className="text-zinc-500 text-xs font-bold tracking-widest uppercase">Current Baseline</Label>
+                                <Input 
+                                  value={metricBaseline}
+                                  onChange={(e) => setMetricBaseline(e.target.value)}
+                                  placeholder="0.00"
+                                  className="bg-transparent border-b border-white/10 border-t-0 border-x-0 rounded-none px-0 text-xl text-white font-serif italic placeholder:text-white/10 focus:border-teal focus:ring-0"
+                                />
+                              </div>
+                            </div>
+
+                            {/* Live Math Logic (The "Lift" Indicator) */}
+                            {calculatedLift && (
+                              <div className="absolute -top-2 right-0 bg-teal/10 border border-teal/20 px-4 py-2 rounded flex items-center gap-3">
+                                <span className="text-[10px] font-bold text-teal/60 tracking-widest uppercase">Required Lift</span>
+                                <span className="text-xl font-bold text-teal font-mono">{calculatedLift}</span>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Constraints (Layer I) */}
+                          <div className="space-y-6">
+                            <div className="flex flex-col gap-2">
+                              <h4 className="text-[1.2rem] font-extrabold text-white uppercase font-big-shoulders">The Resistance // Constraints</h4>
+                            </div>
+                            <div className="space-y-3">
+                              <Textarea 
+                                value={strategicConstraints}
+                                onChange={(e) => setStrategicConstraints(e.target.value)}
+                                placeholder="*What is currently preventing these goals from being met?*"
+                                className="bg-transparent border-none p-0 min-h-[100px] text-[rgba(255,255,255,0.85)] font-inter font-light text-[1.1rem] leading-[1.8] focus:ring-0 resize-none placeholder:text-white/20 placeholder:italic"
+                              />
+                            </div>
+                          </div>
+
+                          {/* --- LAYER II: THE MARKETING MANDATE --- */}
+                          <div className="pt-12 border-t border-white/5 space-y-12">
+                            
+                            {/* COMPONENT: OPERATIONAL PRIORITY */}
+                            <div className="space-y-6">
+                              <div className="flex flex-col gap-1">
+                                <h4 className="text-[1.2rem] font-extrabold text-white uppercase font-big-shoulders">Operational priority</h4>
+                                <p className="text-zinc-500 text-sm font-inter">What is the primary job marketing has been asked to do right now?</p>
+                              </div>
+                              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                {OPERATIONAL_PRIORITIES.map((p) => {
+                                  const isSelected = operationalPriority === p.id
+                                  return (
+                                    <div 
+                                      key={p.id}
+                                      onClick={() => setOperationalPriority(p.id)}
+                                      className={cn(
+                                        "p-4 rounded border cursor-pointer transition-all duration-300 relative group h-full flex flex-col justify-between",
+                                        isSelected 
+                                          ? "border-teal bg-teal/[0.1] shadow-[0_0_15px_rgba(46,211,198,0.1)]" 
+                                          : "border-white/10 bg-white/[0.01] hover:bg-white/[0.03] hover:border-white/20"
+                                      )}
+                                    >
+                                      <div className="space-y-2">
+                                        <h5 className={cn(
+                                          "text-md font-bold font-big-shoulders tracking-wide uppercase",
+                                          isSelected ? "text-teal" : "text-white/60 group-hover:text-white"
+                                        )}>
+                                          {p.title}
+                                        </h5>
+                                        <p className="text-xs text-zinc-500 font-inter leading-relaxed">
+                                          {p.desc}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  )
+                                })}
+                              </div>
+                            </div>
+
+                            {/* COMPONENT: PERFORMANCE BENCHMARKS */}
+                            <div className="space-y-6">
+                              <h4 className="text-[1.2rem] font-extrabold text-white uppercase font-big-shoulders">Performance benchmarks</h4>
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                
+                                {/* Metric 1: CAC */}
+                                <div className="space-y-4">
+                                  <h5 className="text-[10px] font-bold text-zinc-500 tracking-[0.2em] uppercase border-b border-white/5 pb-2">
+                                    CAC (Cost Per Acquisition)
+                                  </h5>
+                                  <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-1">
+                                       <label className="text-[9px] text-zinc-600 uppercase font-bold">Current</label>
+                                       <Input 
+                                          value={cacCurrent}
+                                          onChange={(e) => setCacCurrent(e.target.value)}
+                                          placeholder="$0.00"
+                                          className="bg-transparent border-b border-white/10 border-t-0 border-x-0 rounded-none px-0 text-lg text-white font-mono placeholder:text-white/10 focus:border-teal focus:ring-0 h-8"
+                                       />
+                                    </div>
+                                    <div className="space-y-1">
+                                       <label className="text-[9px] text-zinc-600 uppercase font-bold">Goal</label>
+                                       <Input 
+                                          value={cacGoal}
+                                          onChange={(e) => setCacGoal(e.target.value)}
+                                          placeholder="$0.00"
+                                          className="bg-transparent border-b border-white/10 border-t-0 border-x-0 rounded-none px-0 text-lg text-white font-mono placeholder:text-white/10 focus:border-teal focus:ring-0 h-8"
+                                       />
+                                    </div>
+                                  </div>
+                                  {(() => {
+                                     const gap = getGap(cacCurrent, cacGoal, 'LOWER_BETTER')
+                                     if (!gap) return null
+                                     return (
+                                       <div className={cn("text-[10px] font-mono font-bold tracking-wider mt-2", gap.isGood ? "text-teal" : "text-coral")}>
+                                         {gap.val} CAC {gap.label} REQUIRED
+                                       </div>
+                                     )
+                                  })()}
+                                </div>
+
+                                {/* Metric 2: LTV */}
+                                <div className="space-y-4">
+                                  <h5 className="text-[10px] font-bold text-zinc-500 tracking-[0.2em] uppercase border-b border-white/5 pb-2">
+                                    LTV (Lifetime Value)
+                                  </h5>
+                                  <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-1">
+                                       <label className="text-[9px] text-zinc-600 uppercase font-bold">Current</label>
+                                       <Input 
+                                          value={ltvCurrent}
+                                          onChange={(e) => setLtvCurrent(e.target.value)}
+                                          placeholder="$0.00"
+                                          className="bg-transparent border-b border-white/10 border-t-0 border-x-0 rounded-none px-0 text-lg text-white font-mono placeholder:text-white/10 focus:border-teal focus:ring-0 h-8"
+                                       />
+                                    </div>
+                                    <div className="space-y-1">
+                                       <label className="text-[9px] text-zinc-600 uppercase font-bold">Goal</label>
+                                       <Input 
+                                          value={ltvGoal}
+                                          onChange={(e) => setLtvGoal(e.target.value)}
+                                          placeholder="$0.00"
+                                          className="bg-transparent border-b border-white/10 border-t-0 border-x-0 rounded-none px-0 text-lg text-white font-mono placeholder:text-white/10 focus:border-teal focus:ring-0 h-8"
+                                       />
+                                    </div>
+                                  </div>
+                                  {(() => {
+                                     const gap = getGap(ltvCurrent, ltvGoal, 'HIGHER_BETTER')
+                                     if (!gap) return null
+                                     return (
+                                       <div className={cn("text-[10px] font-mono font-bold tracking-wider mt-2", gap.isGood ? "text-teal" : "text-coral")}>
+                                         {gap.val} LTV {gap.label} REQUIRED
+                                       </div>
+                                     )
+                                  })()}
+                                </div>
+
+                                {/* Metric 3: Conversion Rate */}
+                                <div className="space-y-4">
+                                  <h5 className="text-[10px] font-bold text-zinc-500 tracking-[0.2em] uppercase border-b border-white/5 pb-2">
+                                    Conversion Rate
+                                  </h5>
+                                  <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-1">
+                                       <label className="text-[9px] text-zinc-600 uppercase font-bold">Current</label>
+                                       <Input 
+                                          value={conversionCurrent}
+                                          onChange={(e) => setConversionCurrent(e.target.value)}
+                                          placeholder="0.0%"
+                                          className="bg-transparent border-b border-white/10 border-t-0 border-x-0 rounded-none px-0 text-lg text-white font-mono placeholder:text-white/10 focus:border-teal focus:ring-0 h-8"
+                                       />
+                                    </div>
+                                    <div className="space-y-1">
+                                       <label className="text-[9px] text-zinc-600 uppercase font-bold">Goal</label>
+                                       <Input 
+                                          value={conversionGoal}
+                                          onChange={(e) => setConversionGoal(e.target.value)}
+                                          placeholder="0.0%"
+                                          className="bg-transparent border-b border-white/10 border-t-0 border-x-0 rounded-none px-0 text-lg text-white font-mono placeholder:text-white/10 focus:border-teal focus:ring-0 h-8"
+                                       />
+                                    </div>
+                                  </div>
+                                  {(() => {
+                                     const gap = getGap(conversionCurrent, conversionGoal, 'HIGHER_BETTER')
+                                     if (!gap) return null
+                                     return (
+                                       <div className={cn("text-[10px] font-mono font-bold tracking-wider mt-2", gap.isGood ? "text-teal" : "text-coral")}>
+                                         {gap.val} CONVERSION {gap.label} REQUIRED
+                                       </div>
+                                     )
+                                  })()}
+                                </div>
+
+                              </div>
+                            </div>
+
+                            {/* COMPONENT: OPERATIONAL HISTORY */}
+                            <div className="space-y-6">
+                              <h4 className="text-[1.2rem] font-extrabold text-white uppercase font-big-shoulders">Operational history</h4>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                                <div className="space-y-3">
+                                   <Label className="text-zinc-500 text-xs font-bold tracking-widest uppercase flex items-center gap-2">
+                                     <CheckCircle size={12} className="text-teal" /> Reliable Signal (What Works)
+                                   </Label>
+                                   <Textarea 
+                                     value={marketingSignal}
+                                     onChange={(e) => setMarketingSignal(e.target.value)}
+                                     placeholder="*Identify the tactics that are currently delivering results...*"
+                                     className="bg-transparent border-none p-0 min-h-[100px] text-[rgba(255,255,255,0.85)] font-serif italic text-xl leading-relaxed focus:ring-0 resize-none placeholder:text-white/10"
+                                   />
+                                </div>
+                                <div className="space-y-3">
+                                   <Label className="text-zinc-500 text-xs font-bold tracking-widest uppercase flex items-center gap-2">
+                                     <AlertCircle size={12} className="text-coral" /> Strategic Noise (What Failed)
+                                   </Label>
+                                   <Textarea 
+                                     value={marketingNoise}
+                                     onChange={(e) => setMarketingNoise(e.target.value)}
+                                     placeholder="*Identify recent failures or inefficiencies...*"
+                                     className="bg-transparent border-none p-0 min-h-[100px] text-[rgba(255,255,255,0.85)] font-serif italic text-xl leading-relaxed focus:ring-0 resize-none placeholder:text-white/10"
+                                   />
+                                </div>
+                              </div>
+                            </div>
+
+                          </div>
+
+                          {/* Channel Ecosystem */}
+                          <div className="space-y-8 pt-8 border-t border-white/5">
+                            <h4 className="text-[1.2rem] font-extrabold text-white uppercase font-big-shoulders">Channel Ecosystem</h4>
+                            
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4">
+                              {STRATEGY_CHANNELS.map((channel) => (
+                                <label 
+                                  key={channel}
+                                  className="flex items-center gap-3 group cursor-pointer"
+                                >
+                                  <div className="relative flex items-center justify-center">
+                                    <input 
+                                      type="checkbox"
+                                      checked={selectedChannels.includes(channel)}
+                                      onChange={() => toggleChannel(channel)}
+                                      className="peer appearance-none w-4 h-4 rounded-sm border border-white/20 bg-transparent checked:bg-teal checked:border-teal transition-all"
+                                    />
+                                    <CheckCircle2 size={10} className="absolute text-black opacity-0 peer-checked:opacity-100 transition-opacity" />
+                                  </div>
+                                  <span className="font-inter font-light text-sm text-zinc-400 group-hover:text-white transition-colors tracking-tight">
+                                    {channel}
+                                  </span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+
+                      {/* Floating Action Bar */}
+                      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-full max-w-[600px] px-8 z-50">
+                        <div className="flex items-center justify-between bg-[#0A0A0ACC] backdrop-blur-[10px] border-t border-white/10 p-3 rounded shadow-2xl shadow-black/50">
+                          
+                          {/* Button 1 (Left-align) */}
+                          <Button 
+                            variant="outline"
+                            onClick={() => setShowResetConfirm(true)}
+                            className="text-[10px] uppercase tracking-widest font-bold text-coral border-coral hover:bg-coral hover:text-black transition-colors h-9 px-6 rounded bg-transparent"
+                          >
+                            Reset project
+                          </Button>
+
+                          {/* Right Group */}
+                          <div className="flex items-center gap-4">
+                            {project.status === 'CALIBRATED' && currentUser.role !== 'ADMIN' ? (
+                              <Button 
+                                onClick={() => setMode('INTELLIGENCE')}
+                                className="h-9 px-6 rounded bg-teal text-[#050505] hover:bg-teal/90 text-[10px] font-bold uppercase tracking-[0.1em] transition-all"
+                              >
+                                <ShieldCheck className="mr-2" size={16} />
+                                CHARTER LOCKED // PROCEED TO INTELLIGENCE
+                              </Button>
+                            ) : currentUser.role === 'ADMIN' ? (
+                              <Button 
+                                onClick={async () => {
+                                  setIsSavingConfig(true)
+                                  try {
+                                    // 1. Save Config First
+                                    await handleSaveConfig()
+                                    
+                                    // 2. Trigger Generation
+                                    const response = await fetch('/api/strategy-iq/generate-synthesis', {
+                                      method: 'POST',
+                                      headers: { 'Content-Type': 'application/json' },
+                                      body: JSON.stringify({ projectId: project.id })
+                                    })
+                                    
+                                    if (response.ok) {
+                                      toast("SYNTHESIS COMPLETE", "Strategic narrative generated and vaulted.", "success")
+                                      router.refresh()
+                                    } else {
+                                      const error = await response.json()
+                                      toast("GENERATION FAILED", error.message || "Failed to generate synthesis.", "error")
+                                    }
+                                  } catch (error) {
+                                    console.error("Error generating synthesis:", error)
+                                    toast("ERROR", "System failure during synthesis.", "error")
+                                  } finally {
+                                    setIsSavingConfig(false)
+                                  }
+                                }}
+                                disabled={isSavingConfig || !businessDriver}
+                                className="h-9 px-6 rounded bg-coral text-white hover:bg-coral/90 text-[10px] font-bold uppercase tracking-[0.1em] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+                                {isSavingConfig ? <RefreshCw className="animate-spin mr-2" /> : <Bot className="mr-2" size={16} />}
+                                GENERATE STRATEGIC SYNTHESIS
+                              </Button>
+                            ) : (
+                              <Button 
+                                onClick={handleSaveConfig}
+                                disabled={isSavingConfig || !businessDriver}
+                                className="h-9 px-6 rounded bg-teal text-[#050505] hover:bg-teal/90 text-[10px] font-bold uppercase tracking-[0.1em] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+                                {isSavingConfig ? <RefreshCw className="animate-spin mr-2" /> : <ShieldCheck className="mr-2" />}
+                                Confirm Charter
+                              </Button>
+                            )}
+                          </div>
+
                         </div>
-                        <Textarea 
-                          value={strategicConstraints}
-                          onChange={(e) => setStrategicConstraints(e.target.value)}
-                          placeholder="What is currently preventing these goals from being met?"
-                          className="bg-black/40 border-white/10 rounded-xl min-h-[120px] text-zinc-300 font-mono text-sm leading-relaxed focus:border-white/30 transition-all whitespace-pre-wrap"
-                        />
                       </div>
 
-                      <div className="flex justify-between items-center pt-8 border-t border-white/5">
-                        <div className="text-[9px] text-white/10 font-mono tracking-widest uppercase">
-                          System Ref: {project.id.toUpperCase()}
-                        </div>
-                        <Button 
-                          onClick={handleSaveConfig}
-                          disabled={isSavingConfig}
-                          className="h-14 px-12 bg-coral hover:bg-coral/90 text-white font-bold tracking-widest rounded-xl transition-all shadow-xl"
-                        >
-                          {isSavingConfig ? <RefreshCw className="animate-spin mr-2" /> : <ShieldCheck className="mr-2" />}
-                          Save strategic configuration
-                        </Button>
-                      </div>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 gap-12">
-                      {/* Editorial Document View */}
-                      <div className="space-y-16 md:space-y-24">
-                        <section className="space-y-6 md:space-y-8">
-                          <div className="flex items-center gap-4">
-                            <Flag size={16} className="text-zinc-600" />
-                            <h4 className="text-[10px] font-bold text-white/20 tracking-[0.4em] uppercase">The Vision // Primary Goals</h4>
-                          </div>
-                          <div className="prose prose-invert max-w-none text-zinc-300 text-xl md:text-2xl leading-relaxed font-serif italic max-w-3xl whitespace-pre-wrap prose-strong:text-white prose-strong:font-bold prose-p:mb-4 prose-ul:list-disc prose-ul:ml-6 prose-ul:mb-4 prose-ul:space-y-2 prose-li:pl-2 prose-ol:list-decimal prose-ol:ml-6 prose-ol:mb-4 prose-ol:space-y-2 prose-li:marker:text-teal">
-                            <ReactMarkdown>
-                              {primaryBusinessGoals || "No goals defined."}
-                            </ReactMarkdown>
+                    <div className="grid grid-cols-1 gap-12 pt-8">
+                      {/* Read-Only View */}
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                         <section className="space-y-4">
+                           <h4 className="text-[12px] font-bold text-coral tracking-[0.2em] uppercase font-big-shoulders">Primary Driver</h4>
+                           <div className="p-6 border border-teal/20 bg-teal/[0.05] rounded shadow-[0_0_20px_rgba(46,211,198,0.05)] h-full">
+                              <h3 className="text-2xl font-bold font-big-shoulders text-teal uppercase tracking-wide mb-2">
+                                {BUSINESS_DRIVERS.find(d => d.id === businessDriver)?.title || businessDriver}
+                              </h3>
+                              <p className="text-sm text-zinc-400 font-inter">
+                                {BUSINESS_DRIVERS.find(d => d.id === businessDriver)?.desc}
+                              </p>
+                           </div>
+                         </section>
+
+                         <section className="space-y-4">
+                           <h4 className="text-[12px] font-bold text-coral tracking-[0.2em] uppercase font-big-shoulders">The Metric of Record</h4>
+                           <div className="flex flex-col gap-1 h-full justify-center">
+                              <span className="text-3xl font-serif italic text-white">{metricName}</span>
+                              <div className="flex items-center gap-4 text-sm font-mono text-zinc-500 mt-2">
+                                 <span>TARGET: <span className="text-white">{metricTarget}</span></span>
+                                 <span>//</span>
+                                 <span>BASE: <span className="text-white">{metricBaseline}</span></span>
+                              </div>
+                              {calculatedLift && (
+                                <div className="mt-4 inline-flex items-center gap-2 bg-teal/10 border border-teal/20 px-3 py-1 rounded self-start">
+                                  <span className="text-[9px] font-bold text-teal uppercase tracking-widest">Target Lift</span>
+                                  <span className="text-sm font-bold text-teal font-mono">{calculatedLift}</span>
+                                </div>
+                              )}
+                           </div>
+                         </section>
+
+                         <section className="space-y-4">
+                            <h4 className="text-[12px] font-bold text-coral tracking-[0.2em] uppercase font-big-shoulders">Operational Priority</h4>
+                            <div className="p-6 border border-white/10 bg-white/[0.02] rounded h-full">
+                               <h3 className="text-xl font-bold font-big-shoulders text-white uppercase tracking-wide mb-2">
+                                 {OPERATIONAL_PRIORITIES.find(p => p.id === operationalPriority)?.title || operationalPriority || "Not Set"}
+                               </h3>
+                               <p className="text-sm text-zinc-500 font-inter">
+                                 {OPERATIONAL_PRIORITIES.find(p => p.id === operationalPriority)?.desc}
+                               </p>
+                            </div>
+                         </section>
+                      </div>
+
+                      <div className="space-y-12">
+                        {/* COMPONENT: PERFORMANCE BENCHMARKS (READ-ONLY) */}
+                        <section className="space-y-6">
+                          <h4 className="text-[12px] font-bold text-coral tracking-[0.2em] uppercase font-big-shoulders">Performance Benchmarks</h4>
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                             {/* CAC */}
+                             <div className="space-y-2">
+                                <h5 className="text-[10px] font-bold text-zinc-500 tracking-[0.2em] uppercase border-b border-white/5 pb-2">CAC</h5>
+                                <div className="flex justify-between items-baseline">
+                                   <span className="text-xs text-zinc-500 font-mono">CURRENT: <span className="text-white text-base">{cacCurrent || "-"}</span></span>
+                                   <span className="text-xs text-zinc-500 font-mono">GOAL: <span className="text-teal text-base">{cacGoal || "-"}</span></span>
+                                </div>
+                             </div>
+                             {/* LTV */}
+                             <div className="space-y-2">
+                                <h5 className="text-[10px] font-bold text-zinc-500 tracking-[0.2em] uppercase border-b border-white/5 pb-2">LTV</h5>
+                                <div className="flex justify-between items-baseline">
+                                   <span className="text-xs text-zinc-500 font-mono">CURRENT: <span className="text-white text-base">{ltvCurrent || "-"}</span></span>
+                                   <span className="text-xs text-zinc-500 font-mono">GOAL: <span className="text-teal text-base">{ltvGoal || "-"}</span></span>
+                                </div>
+                             </div>
+                             {/* CONVERSION */}
+                             <div className="space-y-2">
+                                <h5 className="text-[10px] font-bold text-zinc-500 tracking-[0.2em] uppercase border-b border-white/5 pb-2">CONVERSION</h5>
+                                <div className="flex justify-between items-baseline">
+                                   <span className="text-xs text-zinc-500 font-mono">CURRENT: <span className="text-white text-base">{conversionCurrent || "-"}</span></span>
+                                   <span className="text-xs text-zinc-500 font-mono">GOAL: <span className="text-teal text-base">{conversionGoal || "-"}</span></span>
+                                </div>
+                             </div>
                           </div>
                         </section>
 
-                        <section className="space-y-6 md:space-y-8">
-                          <div className="flex items-center gap-4">
-                            <Target size={16} className="text-zinc-600" />
-                            <h4 className="text-[10px] font-bold text-white/20 tracking-[0.4em] uppercase">The Targets // OKRs</h4>
-                          </div>
-                          <div className="prose prose-invert max-w-none text-zinc-400 text-base md:text-lg leading-relaxed font-inter max-w-3xl whitespace-pre-wrap prose-strong:text-white prose-strong:font-bold prose-p:mb-4 prose-ul:list-disc prose-ul:ml-6 prose-ul:mb-4 prose-ul:space-y-2 prose-li:pl-2 prose-ol:list-decimal prose-ol:ml-6 prose-ol:mb-4 prose-ol:space-y-2 prose-li:marker:text-teal">
-                            <ReactMarkdown>
-                              {businessOKRs || "No OKRs defined."}
-                            </ReactMarkdown>
-                          </div>
-                        </section>
-
-                        <section className="space-y-6 md:space-y-8 p-8 md:p-12 rounded-2xl bg-white/[0.02] border border-white/5 relative overflow-hidden">
-                          <div className="absolute top-0 right-0 p-8 opacity-5">
-                            <AlertCircle size={120} className="hidden md:block" />
-                          </div>
-                          <div className="flex items-center gap-4">
-                            <AlertCircle size={16} className="text-coral/40" />
-                            <h4 className="text-[10px] font-bold text-coral/40 tracking-[0.4em] uppercase">The Resistance // Constraints</h4>
-                          </div>
-                          <div className="prose prose-invert max-w-none text-white text-lg md:text-xl font-bold leading-tight font-inter max-w-2xl relative z-10 prose-strong:text-white prose-p:mb-0">
+                        <section className="space-y-6">
+                          <h4 className="text-[12px] font-bold text-coral tracking-[0.2em] uppercase font-big-shoulders">The Resistance // Constraints</h4>
+                          <div className="prose prose-invert max-w-none text-[rgba(255,255,255,0.85)] text-[1.1rem] leading-[1.8] font-inter font-light whitespace-pre-wrap prose-strong:text-white prose-strong:font-bold prose-p:mb-4">
                             <ReactMarkdown>
                               {strategicConstraints || "No constraints identified."}
                             </ReactMarkdown>
                           </div>
                         </section>
+
+                        {/* COMPONENT: OPERATIONAL HISTORY (READ-ONLY) */}
+                        <section className="space-y-6">
+                          <h4 className="text-[12px] font-bold text-coral tracking-[0.2em] uppercase font-big-shoulders">Operational History</h4>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                             <div className="space-y-2">
+                                <Label className="text-zinc-500 text-[10px] font-bold tracking-widest uppercase flex items-center gap-2">
+                                  <CheckCircle size={12} className="text-teal" /> Reliable Signal (What Works)
+                                </Label>
+                                <div className="text-white/80 font-serif italic text-lg leading-relaxed border-l-2 border-teal/20 pl-4">
+                                   {marketingSignal || "No signal identified."}
+                                </div>
+                             </div>
+                             <div className="space-y-2">
+                                <Label className="text-zinc-500 text-[10px] font-bold tracking-widest uppercase flex items-center gap-2">
+                                  <AlertCircle size={12} className="text-coral" /> Strategic Noise (What Failed)
+                                </Label>
+                                <div className="text-white/80 font-serif italic text-lg leading-relaxed border-l-2 border-coral/20 pl-4">
+                                   {marketingNoise || "No noise identified."}
+                                </div>
+                             </div>
+                          </div>
+                        </section>
+
+                        {/* COMPONENT: CHANNEL ECOSYSTEM (READ-ONLY) */}
+                        <section className="space-y-6">
+                          <h4 className="text-[12px] font-bold text-coral tracking-[0.2em] uppercase font-big-shoulders">Channel Ecosystem</h4>
+                          <div className="flex flex-wrap gap-3">
+                             {selectedChannels.length > 0 ? selectedChannels.map(channel => (
+                                <div key={channel} className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-xs text-zinc-300 font-inter">
+                                   {channel}
+                                </div>
+                             )) : (
+                                <span className="text-zinc-600 text-sm italic">No channels selected.</span>
+                             )}
+                          </div>
+                        </section>
                       </div>
 
-                      <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row gap-6 justify-between items-center">
-                        <div className="text-[9px] text-white/10 font-mono tracking-widest uppercase text-center md:text-left">
-                          Last Updated: {format(new Date(project.updatedAt), "MMMM dd, yyyy")}
+                      {/* Floating Action Bar (View Mode) */}
+                      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-full max-w-[600px] px-8 z-50">
+                        <div className="flex items-center justify-between bg-[#0A0A0ACC] backdrop-blur-[10px] border-t border-white/10 p-3 rounded shadow-2xl shadow-black/50">
+                          
+                          {/* Button 1 (Left-align) */}
+                          <Button 
+                            variant="outline"
+                            onClick={() => setShowResetConfirm(true)}
+                            className="text-[10px] uppercase tracking-widest font-bold text-coral border-coral hover:bg-coral hover:text-black transition-colors h-9 px-6 rounded bg-transparent"
+                          >
+                            Reset project
+                          </Button>
+
+                          {/* Right Group */}
+                          <div className="flex items-center gap-4">
+                            {project.status === 'CALIBRATED' && currentUser.role !== 'ADMIN' ? (
+                               <div className="flex items-center gap-2 text-teal px-4">
+                                  <ShieldCheck size={16} />
+                                  <span className="text-[10px] font-bold uppercase tracking-widest">Certified Artifact</span>
+                               </div>
+                            ) : (
+                               <Button 
+                                 variant="outline"
+                                 onClick={() => setIsConfigEditing(true)}
+                                 className="h-9 px-6 rounded border-white/10 text-white/40 hover:text-white hover:border-white/20 transition-all text-[10px] font-bold uppercase tracking-[0.1em] bg-transparent"
+                               >
+                                 Modify Charter
+                               </Button>
+                            )}
+                          </div>
+
                         </div>
-                        <Button 
-                          variant="outline"
-                          onClick={() => setIsConfigEditing(true)}
-                          className="border-white/10 text-white/40 hover:text-white text-[10px] font-bold tracking-widest uppercase h-12 md:h-10 px-8 md:px-6 w-full md:w-auto rounded-xl"
-                        >
-                          Modify Brief
-                        </Button>
                       </div>
                     </div>
                   )}
@@ -1057,9 +1832,19 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
           
           {/* Messaging / Comm Link */}
           <div className="flex-1 flex flex-col overflow-hidden border-b border-white/10">
-            <div className="h-16 flex items-center px-6 border-b border-white/10 gap-3">
-              <MessageSquare size={16} className="text-white/20" />
-              <h3 className="text-[10px] font-bold tracking-widest text-white/40">Comm link</h3>
+            <div className="h-16 flex items-center justify-between px-6 border-b border-white/10">
+              <div className="flex items-center gap-3">
+                <MessageSquare size={16} className="text-white/20" />
+                <h3 className="text-[10px] font-bold tracking-widest text-white/40">Comm link</h3>
+              </div>
+              {currentUser.role === 'ADMIN' && (
+                <button 
+                  onClick={() => setShowArchiveResetConfirm(true)}
+                  className="text-[9px] font-bold uppercase tracking-widest text-white/20 hover:text-coral transition-colors"
+                >
+                  Reset Thread
+                </button>
+              )}
             </div>
             
             <ScrollArea ref={scrollRef} className="flex-1 px-6">
@@ -1161,6 +1946,73 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
         onOpenChange={setShowMasterRoadmap}
         project={project}
       />
+
+      {/* Reset Project Confirmation */}
+      <Dialog open={showResetConfirm} onOpenChange={setShowResetConfirm}>
+        <DialogContent className="bg-[#0A0A0A] border-white/10 text-white max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold font-big-shoulders tracking-widest uppercase italic text-coral">
+              Surgical Data Purge
+            </DialogTitle>
+            <DialogDescription className="text-zinc-500 font-inter pt-4 leading-relaxed">
+              This action will permanently delete all assessment sessions, strategic narratives, and configurations for this project. This is a clean slate operation.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-6 flex flex-col items-center gap-4 border-y border-white/5 my-4">
+            <AlertCircle size={48} className="text-coral opacity-20" />
+            <p className="text-[10px] font-bold tracking-[0.3em] text-zinc-600 uppercase">Warning: Irreversible</p>
+          </div>
+          <DialogFooter className="flex gap-4">
+            <Button 
+              variant="ghost" 
+              onClick={() => setShowResetConfirm(false)}
+              className="flex-1 border-white/5 text-zinc-500 hover:text-white"
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleResetProject}
+              disabled={isResetting}
+              className="flex-1 bg-coral hover:bg-coral/90 text-white font-bold tracking-widest"
+            >
+              {isResetting ? "Purging..." : "Confirm Purge"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      {/* Archive / Reset Thread Confirmation */}
+      <Dialog open={showArchiveResetConfirm} onOpenChange={setShowArchiveResetConfirm}>
+        <DialogContent className="bg-[#0A0A0A] border-white/10 text-white max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold font-big-shoulders tracking-widest uppercase italic text-coral">
+              Confirm Strategic Archive
+            </DialogTitle>
+            <DialogDescription className="text-zinc-500 font-inter pt-4 leading-relaxed">
+              This will move all current messages to the Strategic Archive. This action is permanent and legally logged. The active Comm Link will be cleared for a clean state.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-6 flex flex-col items-center gap-4 border-y border-white/5 my-4">
+             <History size={48} className="text-coral opacity-20" />
+             <p className="text-[10px] font-bold tracking-[0.3em] text-zinc-600 uppercase">Warning: Legal Audit Log</p>
+          </div>
+          <DialogFooter className="flex gap-4">
+            <Button 
+              variant="ghost" 
+              onClick={() => setShowArchiveResetConfirm(false)}
+              className="flex-1 border-white/5 text-zinc-500 hover:text-white"
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleArchiveReset}
+              disabled={isArchiving}
+              className="flex-1 bg-transparent border border-coral/30 text-coral hover:bg-coral hover:text-black font-bold tracking-widest uppercase transition-all"
+            >
+              {isArchiving ? "Archiving..." : "Secure & Reset"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

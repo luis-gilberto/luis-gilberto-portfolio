@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Building2, Globe, Mail, ArrowRight, Trash2, RefreshCw } from 'lucide-react';
 import { AddClientModal } from '@/components/admin/add-client-modal';
 import { useToast } from '@/components/providers/toast-provider';
+import { CopyId } from '@/components/shared/CopyId';
 
 export default function ClientsPage() {
   const [clients, setClients] = useState<any[]>([]);
@@ -80,16 +81,31 @@ export default function ClientsPage() {
           <RefreshCw size={32} className="animate-spin text-teal" />
         </div>
       ) : clients.length === 0 ? (
-        <div className="text-center py-20 border border-dashed border-white/10 rounded-2xl bg-white/5">
-          <p className="text-gray-500">No clients found in the directory.</p>
+        <div className="text-center py-20 border border-dashed border-white/10 rounded-2xl bg-white/5 flex flex-col items-center justify-center">
+          <p className="text-gray-500 mb-6">No clients found in the directory.</p>
+          {/* Task 2: Empty State Enhancement */}
+          <AddClientModal 
+            onClientAdded={fetchClients}
+            trigger={
+              <Button variant="outline" className="border-[#F96F6E] text-[#F96F6E] hover:bg-[#F96F6E] hover:text-[#050505] font-bold uppercase tracking-wider">
+                Create your first client record
+              </Button>
+            }
+          />
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {clients.map((client) => (
             <div key={client.id} className="group bg-[#0A0A0A] border border-white/5 p-6 rounded-xl hover:border-[#F96F6E]/50 transition-all">
               <div className="flex justify-between items-start mb-6">
-                <div className="w-12 h-12 rounded-lg bg-white/5 flex items-center justify-center text-[#F96F6E]">
-                  <Building2 size={24} strokeWidth={1.5} />
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-lg bg-white/5 flex items-center justify-center text-[#F96F6E]">
+                    <Building2 size={24} strokeWidth={1.5} />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold mb-1">{client.name}</h3>
+                    <CopyId id={client.id} label="ID" truncate />
+                  </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className={`text-[10px] uppercase font-bold px-2 py-1 rounded border ${
@@ -108,7 +124,6 @@ export default function ClientsPage() {
                 </div>
               </div>
               
-              <h3 className="text-xl font-semibold mb-1">{client.name}</h3>
               <p className="text-sm text-gray-500 mb-6">{client.company || 'No Company'}</p>
               
               <div className="space-y-3 border-t border-white/5 pt-4">
@@ -121,7 +136,12 @@ export default function ClientsPage() {
               </div>
 
               <div className="mt-6 flex justify-end">
-                <Button variant="ghost" size="sm" className="text-[#F96F6E] hover:bg-[#F96F6E]/10 p-0 h-auto group-hover:gap-2 transition-all">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-[#F96F6E] hover:bg-[#F96F6E]/10 p-0 h-auto group-hover:gap-2 transition-all"
+                  onClick={() => window.location.href = `/admin/clients/${client.id}`}
+                >
                   View Intelligence <ArrowRight size={14} className="ml-1" />
                 </Button>
               </div>

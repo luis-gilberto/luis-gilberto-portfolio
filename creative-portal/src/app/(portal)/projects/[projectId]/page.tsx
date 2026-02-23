@@ -24,30 +24,59 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
 
   let project = null;
   try {
-    project = await prisma.project.findUnique({
-      where: { id: projectId },
-      include: {
-        client: true,
-        assessmentSessions: {
-          orderBy: { updatedAt: 'desc' }
-        },
-        deliverables: {
-          orderBy: { createdAt: 'desc' }
-        },
-        milestones: {
-          orderBy: { date: 'asc' }
-        },
-        timelineEvents: {
-          orderBy: { date: 'desc' }
-        },
-        messages: {
-          include: {
-            sender: true
+    // Task 1: Source of Truth Fix - If projectId is 'active', get the latest project for the user
+    if (projectId === 'active' || projectId === 'latest') {
+      project = await prisma.project.findFirst({
+        where: { userId: session.user.id },
+        orderBy: { updatedAt: 'desc' },
+        include: {
+          client: true,
+          assessmentSessions: {
+            orderBy: { updatedAt: 'desc' }
           },
-          orderBy: { createdAt: 'asc' }
+          deliverables: {
+            orderBy: { createdAt: 'desc' }
+          },
+          milestones: {
+            orderBy: { date: 'asc' }
+          },
+          timelineEvents: {
+            orderBy: { date: 'desc' }
+          },
+          messages: {
+            include: {
+              sender: true
+            },
+            orderBy: { createdAt: 'asc' }
+          }
         }
-      }
-    })
+      })
+    } else {
+      project = await prisma.project.findUnique({
+        where: { id: projectId },
+        include: {
+          client: true,
+          assessmentSessions: {
+            orderBy: { updatedAt: 'desc' }
+          },
+          deliverables: {
+            orderBy: { createdAt: 'desc' }
+          },
+          milestones: {
+            orderBy: { date: 'asc' }
+          },
+          timelineEvents: {
+            orderBy: { date: 'desc' }
+          },
+          messages: {
+            include: {
+              sender: true
+            },
+            orderBy: { createdAt: 'asc' }
+          }
+        }
+      })
+    }
   } catch (error) {
     console.error("Failed to fetch project:", error);
   }

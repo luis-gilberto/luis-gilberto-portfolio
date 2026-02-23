@@ -101,11 +101,11 @@ export default function SettingsPage() {
             </h1>
             <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
               <span className="text-[11px] font-bold text-teal tracking-[0.3em] uppercase">
-                {profile.title || 'Strategic Partner'}
+                {profile.role === 'ADMIN' ? 'Level 3 - Master Certifier' : (profile.title || 'Strategic Partner')}
               </span>
               <div className="hidden md:block w-1 h-1 rounded-full bg-white/10" />
               <span className="text-[11px] font-bold text-white/40 tracking-[0.3em] uppercase">
-                {profile.company || 'Organization'}
+                {profile.role === 'ADMIN' ? 'Administrative Identity' : (profile.company || 'Organization')}
               </span>
             </div>
           </div>
@@ -113,38 +113,40 @@ export default function SettingsPage() {
       </div>
 
       <form onSubmit={handleSave} className="space-y-16">
-        {/* Task 2: System Connection Transparency */}
-        <div className="space-y-8">
-          <div className="flex items-center gap-3">
-            <div className="w-1.5 h-1.5 rounded-full bg-teal" />
-            <h2 className="text-[11px] font-bold tracking-[0.4em] uppercase text-white/40">System Connection</h2>
-          </div>
-          
-          <div className="p-8 rounded-2xl bg-white/[0.02] border border-white/5 space-y-6">
-            <div className="flex flex-col md:flex-row justify-between gap-6">
-              <div className="space-y-1">
-                <p className="text-[10px] font-bold text-white/20 tracking-[0.2em] uppercase">Active strategic ecosystem</p>
-                <p className="text-xl font-medium text-white tracking-tight">{profile.linkedProjectTitle || "No active project detected"}</p>
-              </div>
-              <div className="space-y-1 md:text-right">
-                <p className="text-[10px] font-bold text-white/20 tracking-[0.2em] uppercase">Project identifier</p>
-                <p className="text-sm font-mono text-zinc-500 tracking-widest">{profile.linkedProjectId || "DISCONNECTED"}</p>
-              </div>
+        {/* Task 2: System Connection Transparency (Client Only) */}
+        {profile.role !== 'ADMIN' && (
+          <div className="space-y-8">
+            <div className="flex items-center gap-3">
+              <div className="w-1.5 h-1.5 rounded-full bg-teal" />
+              <h2 className="text-[11px] font-bold tracking-[0.4em] uppercase text-white/40">System Connection</h2>
             </div>
             
-            {profile.linkedProjectId ? (
-              <div className="flex items-center gap-2 text-teal/60">
-                <ShieldCheck size={14} />
-                <span className="text-[9px] font-bold tracking-[0.2em] uppercase">Linkage Verified // Strategic Node Active</span>
+            <div className="p-8 rounded-2xl bg-white/[0.02] border border-white/5 space-y-6">
+              <div className="flex flex-col md:flex-row justify-between gap-6">
+                <div className="space-y-1">
+                  <p className="font-big-shoulders italic text-lg text-white/40 tracking-wider">Active strategic ecosystem</p>
+                  <p className="text-xl font-medium text-white tracking-tight">{profile.linkedProjectTitle || "No active project detected"}</p>
+                </div>
+                <div className="space-y-1 md:text-right">
+                  <p className="font-big-shoulders italic text-lg text-white/40 tracking-wider">Project identifier</p>
+                  <p className="text-sm font-mono text-zinc-500 tracking-widest">{profile.linkedProjectId || "DISCONNECTED"}</p>
+                </div>
               </div>
-            ) : (
-              <div className="flex items-center gap-2 text-coral animate-pulse">
-                <LinkIcon size={14} />
-                <span className="text-[9px] font-bold tracking-[0.2em] uppercase">Action Required // Reconnect to Ecosystem</span>
-              </div>
-            )}
+              
+              {profile.linkedProjectId ? (
+                <div className="flex items-center gap-2 text-[#2ED3C6]">
+                  <ShieldCheck size={14} />
+                  <span className="text-[9px] font-bold tracking-[0.2em] uppercase">Linkage Verified // Strategic Node Active</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 text-coral animate-pulse">
+                  <LinkIcon size={14} />
+                  <span className="text-[9px] font-bold tracking-[0.2em] uppercase">Action Required // Reconnect to Ecosystem</span>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Task 3: Editorial Form Styling */}
         <div className="space-y-12">

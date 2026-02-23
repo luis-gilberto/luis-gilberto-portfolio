@@ -1,4 +1,4 @@
-import { LayoutDashboard, FolderKanban, Users, BarChart3, Settings, ChevronLeft, ChevronRight, Rocket, Menu, LogOut, BookOpen, Briefcase, ShieldCheck, User } from 'lucide-react';
+import { LayoutDashboard, FolderKanban, Users, BarChart3, Settings, ChevronLeft, ChevronRight, Rocket, Menu, LogOut, BookOpen, Briefcase, ShieldCheck, User, Radio, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -17,12 +17,15 @@ interface SidebarProps {
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard', role: 'CLIENT' },
   { icon: LayoutDashboard, label: 'Dashboard', path: '/admin', role: 'ADMIN' },
-  { icon: Rocket, label: 'Strategy Engine', path: '/strategy-iq' },
+  { icon: Radio, label: 'Mission control', path: '/admin/mission-control', role: 'ADMIN_ONLY' }, 
+  { icon: Rocket, label: 'Strategy engine', path: '/strategy-iq' },
+  { icon: Briefcase, label: 'The war room', path: '/war-room' }, 
+  { icon: ShieldCheck, label: 'The vault', path: '/vault' },
   { icon: FolderKanban, label: 'Projects', path: '/admin/projects' },
   { icon: Users, label: 'Clients', path: '/admin/clients' },
   { icon: BarChart3, label: 'Analytics', path: '/admin/analytics' },
   { icon: Settings, label: 'Settings', path: '/settings' },
-  { icon: BookOpen, label: 'Knowledge Base', path: '/knowledge/pricing' },
+  { icon: BookOpen, label: 'Knowledge base', path: '/knowledge/pricing' },
 ];
 
 export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose, onMobileToggle }: SidebarProps) {
@@ -39,40 +42,70 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose
 
   useEffect(() => {
     async function fetchActiveProject() {
+      // Logic: If user is CLIENT, we MUST fetch their project ID to build valid links.
       if (role === 'CLIENT' && session?.user?.email) {
         try {
-          const response = await fetch('/api/strategy-iq/init', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: session.user.email })
-          });
+          // Use the dashboard data endpoint which is more robust
+          const response = await fetch('/api/dashboard/data');
           if (response.ok) {
-            const project = await response.json();
-            setActiveProjectId(project.id);
+            const data = await response.json();
+            // Fallback Logic:
+            // 1. Check for 'activeProject' directly
+            // 2. Check for the first project in the 'projects' array
+            const projectId = data.activeProject?.id || data.projects?.[0]?.id;
+            
+            if (projectId) {
+              setActiveProjectId(projectId);
+            } else {
+               console.warn("Sidebar: No active project found for client.");
+            }
           }
         } catch (error) {
-          // Silent fail for sidebar init
+          console.error("Sidebar: Failed to fetch active project context.", error);
         }
       }
     }
     fetchActiveProject();
   }, [role, session]);
 
-  const filteredNavItems = navItems.filter(item => {
+  const filteredNavItems = navItems.map(item => {
+    // Dynamic War Room Link for Clients
+    if (item.label === 'The war room' && role === 'CLIENT') {
+       // If we have an ID, link to it. If not, link to dashboard where they can select/init one.
+       return { ...item, path: activeProjectId ? `/projects/${activeProjectId}` : '/dashboard' };
+    }
+    // Dynamic Vault Link for Clients
+    if (item.label === 'The vault' && role === 'CLIENT') {
+       return { ...item, path: activeProjectId ? `/projects/${activeProjectId}/vault` : '/dashboard' };
+    }
+    return item;
+  }).filter(item => {
+    const userRole = role?.toUpperCase();
+
     // Role-specific filtering for Dashboard
     if (item.label === 'Dashboard') {
-      if (role === 'CLIENT') return item.path === '/dashboard';
+      if (userRole === 'CLIENT') return item.path === '/dashboard';
       return item.path === '/admin';
+    }
+
+    // NEW: Mission Control Logic
+    if (item.role === 'ADMIN_ONLY') {
+      return userRole === 'ADMIN' || userRole === 'CONSULTANT';
+    }
+
+    // Client-specific filtering
+    if (item.label === 'The war room' || item.label === 'The vault') {
+      return userRole === 'CLIENT';
     }
 
     // Pricing KB is strictly internal
     if (item.path === '/knowledge/pricing') {
-      return role === 'ADMIN' || role === 'TEAM_MEMBER';
+      return userRole === 'ADMIN' || userRole === 'TEAM_MEMBER';
     }
     
     // Admin routes are strictly internal
     if (item.path.startsWith('/admin')) {
-      return role === 'ADMIN' || role === 'TEAM_MEMBER';
+      return userRole === 'ADMIN' || userRole === 'TEAM_MEMBER';
     }
 
     return true;
@@ -97,63 +130,39 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose
         <nav className="flex flex-col h-full pt-4 px-6 pb-6">
           <ul className="space-y-3 flex-1">
             {filteredNavItems.map((item) => {
-              const isActive = pathname === item.path || (item.path !== '/admin' && pathname?.startsWith(item.path));
+              // Task 1: Strict Active State Logic
+              const isActive = pathname === item.path;
+              
               return (
                 <li key={item.label}>
                   <Link
                     href={item.path}
-                    className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg transition-all duration-200 ${
+                    className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg transition-all duration-200 group ${
                       isActive
-                        ? 'bg-white/5 text-white'
-                        : 'text-gray-400 hover:text-white hover:bg-transparent'
+                        ? 'bg-[#1A1A1A] text-white' // Active: Shaded background + White text
+                        : 'bg-transparent text-white/40 hover:bg-[#141414] hover:text-white' // Inactive: Transparent + Muted text | Hover: Subtle lift + White text
                     } ${collapsed ? 'justify-center' : ''}`}
                     onClick={mobileOpen ? onMobileClose : undefined}
                   >
-                    <item.icon className="w-5 h-5 flex-shrink-0" strokeWidth={1.5} />
+                    <item.icon 
+                      className={`w-5 h-5 flex-shrink-0 transition-colors ${
+                        isActive 
+                          ? 'text-[#F96F6E]' // Active Icon: Coral (#F96F6E) for ALL active items per Task 2
+                          : 'text-current' // Inactive Icon: Inherits text color
+                      }`} 
+                      strokeWidth={1.5} 
+                    />
                     {!collapsed && (
-                      <span className="text-[14px] font-normal">{item.label}</span>
+                      <span className="text-[14px] font-normal font-inter">{item.label}</span>
                     )}
                   </Link>
                 </li>
               );
             })}
 
-            {/* Partner Specific Links: The War Room & The Vault */}
+            {/* Partner Specific Links - REMOVED because they are now in main nav */}
             {role === 'CLIENT' && activeProjectId && (
-              <>
-                <li key="The War Room">
-                  <Link
-                    href={`/projects/${activeProjectId}`}
-                    className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg transition-all duration-200 ${
-                      pathname === `/projects/${activeProjectId}`
-                        ? 'bg-white/5 text-white'
-                        : 'text-gray-400 hover:text-white hover:bg-transparent'
-                    } ${collapsed ? 'justify-center' : ''}`}
-                    onClick={mobileOpen ? onMobileClose : undefined}
-                  >
-                    <Briefcase className="w-5 h-5 flex-shrink-0" strokeWidth={1.5} />
-                    {!collapsed && (
-                      <span className="text-[14px] font-normal">The War Room</span>
-                    )}
-                  </Link>
-                </li>
-                <li key="The Vault">
-                  <Link
-                    href={`/vault`}
-                    className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg transition-all duration-200 ${
-                      pathname === '/vault'
-                        ? 'bg-white/5 text-white'
-                        : 'text-gray-400 hover:text-white hover:bg-transparent'
-                    } ${collapsed ? 'justify-center' : ''}`}
-                    onClick={mobileOpen ? onMobileClose : undefined}
-                  >
-                    <ShieldCheck className="w-5 h-5 flex-shrink-0" strokeWidth={1.5} />
-                    {!collapsed && (
-                      <span className="text-[14px] font-normal">The Vault</span>
-                    )}
-                  </Link>
-                </li>
-              </>
+              <></>
             )}
           </ul>
 
@@ -172,7 +181,7 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose
           </Button>
 
           {/* Mobile Utility Section */}
-          <div className="lg:hidden flex flex-col gap-4 px-4 py-6 border-t border-white/5 mt-auto">
+          <div className="lg:hidden flex flex-col gap-4 px-4 py-6 border-t border-white/5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-gray-400">

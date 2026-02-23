@@ -12,7 +12,10 @@ import {
   CheckCircle,
   Send,
   Eye,
-  FileText
+  FileText,
+  Lightbulb,
+  AlertTriangle,
+  Download
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
@@ -49,8 +52,14 @@ export function StrategyWorkbench({
     (session.briefSummary ? session.briefSummary : "")
   )
   const [consultantAnalysis, setConsultantAnalysis] = useState(session.consultantAnalysis || "")
+  const [isEditing, setIsEditing] = useState(true) // Toggle between Edit (Inter) and Preview (Playfair)
+
+  // Deadbolt Validation: Require "Consultant's POV" string
+  const hasHumanPOV = editedNarrative.includes("Consultant's POV") || editedNarrative.includes("Consultant’s POV")
 
   const handleUpdate = async (publish: boolean = false) => {
+    if (publish && !hasHumanPOV) return // Prevent certification if POV missing
+    
     if (publish) setIsPublishing(true)
     else setIsSaving(true)
     
@@ -87,190 +96,262 @@ export function StrategyWorkbench({
     }
   }
 
+  const score = session.intelligenceScore;
+  const scoreColor = score <= 40 ? 'text-at-risk' : score <= 70 ? 'text-optimizing' : 'text-calibrated';
+  
+  // Engagement Card Logic
+  const getEngagementTier = (score: number) => {
+    if (score <= 40) return { range: '$3k - $8k', type: 'Rescue Sprint' }
+    if (score <= 70) return { range: '$8k - $15k', type: 'Growth Partnership' }
+    return { range: '$15k - $25k', type: 'Strategic Planning' }
+  }
+  
+  const engagement = getEngagementTier(score)
+
   return (
-    <div className="max-w-7xl mx-auto px-6 space-y-8 pb-20">
-      {/* Header / Command Bar */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-[#0F0F0F] border border-white/5 p-8 rounded-[32px] sticky top-24 z-30 backdrop-blur-xl">
-        <div className="flex items-center gap-6">
-          <Button 
-            variant="ghost" 
-            onClick={() => router.push(`/projects/${projectId}`)} 
-            className="flex items-center gap-3 px-4 h-12 text-white/40 hover:text-coral hover:bg-coral/5 transition-all border border-white/5 rounded-full group"
-          >
-            <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-            <span className="text-[10px] font-bold tracking-widest uppercase">Back to project overview</span>
-          </Button>
-          <div>
-            <div className="flex items-center gap-3 mb-1">
-              <Badge className="bg-coral/20 text-coral border-none text-[10px] uppercase tracking-widest px-3 py-1">
-                Strategy Workbench
-              </Badge>
-              <h1 className="text-3xl font-big-shoulders font-bold tracking-widest text-white uppercase italic">
-                {dimension.toUpperCase()} / {clientName}
-              </h1>
-            </div>
-            <p className="text-xs text-white/40 tracking-wider font-mono">
-              RAW INTELLIGENCE DRAFT // STATUS: {isPublished ? 'CERTIFIED' : 'UNVETTED'}
-              {saveStatus === 'success' && <span className="text-teal ml-4">✓ CHANGES SAVED</span>}
-              {saveStatus === 'error' && <span className="text-coral ml-4">⚠ SAVE FAILED</span>}
-            </p>
-          </div>
-        </div>
-
+    <div className="min-h-screen bg-[#050505] text-[#F4F1ED] font-sans selection:bg-teal/20">
+      
+      {/* 2. HEADER & ACTION BAR ALIGNMENT */}
+      <header className="fixed top-0 left-0 right-0 h-20 bg-[#050505]/90 backdrop-blur-md border-b border-white/5 z-50 px-8 flex items-center justify-between">
+        {/* Logo */}
         <div className="flex items-center gap-4">
-          <Button 
-            variant="outline"
-            className={cn(
-              "border-white/10 uppercase tracking-widest text-[10px] font-black h-12 px-8 rounded-full transition-all",
-              isPreviewMode ? "bg-white text-black hover:bg-white/90" : "text-white/60 hover:text-white"
-            )}
-            onClick={() => setIsPreviewMode(!isPreviewMode)}
-          >
-            {isPreviewMode ? (
-              <><ArrowLeft className="mr-2 h-4 w-4" /> Back to Workbench</>
-            ) : (
-              <><Eye className="mr-2 h-4 w-4" /> Preview Partner View</>
-            )}
-          </Button>
-
-          {!isPreviewMode && (
-            <>
-              <Button 
-                variant="outline"
-                disabled={isSaving || isPublishing}
-                onClick={() => handleUpdate(false)}
-                className="border-white/10 text-white/60 hover:text-white uppercase tracking-widest text-[10px] font-black h-12 px-8 rounded-full"
-              >
-                {isSaving ? <RefreshCw className="h-4 w-4 animate-spin mr-2" /> : <FileText className="mr-2 h-4 w-4" />}
-                Save Draft
-              </Button>
-
-              <Button 
-                onClick={() => handleUpdate(true)}
-                disabled={isPublishing || isPublished}
-                className={cn(
-                  "rounded-full px-10 py-6 uppercase tracking-[0.2em] text-[10px] font-black transition-all duration-500",
-                  isPublished 
-                    ? "bg-white/5 text-white/40 border border-white/10 cursor-not-allowed" 
-                    : "bg-teal text-black hover:bg-teal/80 shadow-[0_0_30px_rgba(46,211,198,0.3)]"
-                )}
-              >
-                {isPublishing ? (
-                  <RefreshCw className="h-4 w-4 animate-spin mr-2" />
-                ) : isPublished ? (
-                  <><ShieldCheck className="h-4 w-4 mr-2" /> Strategy Certified</>
-                ) : (
-                  <><Send className="h-4 w-4 mr-2" /> Certify & Publish Brief</>
-                )}
-              </Button>
-            </>
-          )}
+          <h1 className="text-xl font-big-shoulders font-bold tracking-widest text-white uppercase italic">
+            LG // PORTAL
+          </h1>
         </div>
-      </div>
 
-      {isPreviewMode ? (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-[#050505] min-h-screen pt-12 rounded-[40px] border border-white/5"
-        >
-          <ResultsView 
-            session={{
-              ...session,
-              certifiedNarrative: editedNarrative,
-              isPublished: isPublished
-            }}
-            projectId={projectId}
-            dimension={dimension}
-            userRole="CLIENT"
-            clientName={clientName}
-          />
-        </motion.div>
-      ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Left: Score & Metrics */}
-          <div className="lg:col-span-3 space-y-6">
-            <Card className="bg-white/5 border-white/10 rounded-3xl overflow-hidden">
-              <CardHeader className="p-6 border-b border-white/5">
-                <CardTitle className="text-xs font-bold text-white/40 uppercase tracking-[0.2em]">Intelligence Score</CardTitle>
-              </CardHeader>
-              <CardContent className="p-8 text-center">
-                <div className="text-7xl font-big-shoulders font-bold text-teal mb-2">
-                  {session.intelligenceScore}<span className="text-2xl text-white/20">/100</span>
-                </div>
-                <p className="text-[10px] text-white/40 uppercase tracking-widest font-bold">Aggregate Posture</p>
-              </CardContent>
-            </Card>
+        {/* Status Badge */}
+        <div className="flex items-center gap-3 h-8 px-4 rounded-full border border-white/5 bg-white/[0.02]">
+          <div className={cn(
+            "w-1.5 h-1.5 rounded-full",
+            isPublished ? "bg-teal" : "bg-amber-500 animate-pulse"
+          )} />
+          <span className={cn(
+            "text-[9px] font-bold tracking-widest uppercase",
+            isPublished ? "text-teal" : "text-amber-500"
+          )}>
+            {isPublished ? 'Certified' : 'Unvetted'}
+          </span>
+        </div>
+      </header>
 
-            <Card className="bg-white/5 border-white/10 rounded-3xl overflow-hidden">
-              <CardHeader className="p-6 border-b border-white/5">
-                <CardTitle className="text-xs font-bold text-white/40 uppercase tracking-[0.2em]">Rec. Engagement</CardTitle>
-              </CardHeader>
-              <CardContent className="p-8">
-                <div className="text-2xl font-bold text-white mb-1">$12,000 - $18,000</div>
-                <p className="text-[10px] text-coral uppercase tracking-widest font-bold flex items-center gap-2">
-                  <Zap size={12} /> High Service Match
-                </p>
-              </CardContent>
-            </Card>
-
-            <div className="p-6 rounded-3xl bg-teal/5 border border-teal-500/20">
-              <h4 className="text-[10px] font-bold text-teal uppercase tracking-[0.2em] mb-4">Internal Rationale</h4>
+      {/* Main Grid Layout */}
+      <div className="pt-32 pb-40 px-4 lg:px-8 max-w-[1800px] mx-auto">
+        <div className={cn(
+          "grid gap-8 lg:gap-12 items-start transition-all duration-500",
+          !isEditing ? "grid-cols-1 max-w-[900px] mx-auto" : "grid-cols-1 lg:grid-cols-[280px_1fr_320px]"
+        )}>
+          
+          {/* Column A (THE SIGNAL - Left) - Hidden in Preview */}
+          {isEditing && (
+            <div className="space-y-8 lg:sticky lg:top-32 animate-in fade-in slide-in-from-left-4 duration-500 order-2 lg:order-1">
               <div className="space-y-4">
-                <div className="flex gap-3 items-start">
-                  <Bot className="text-teal/40 shrink-0" size={16} />
-                  <p className="text-xs text-white/60 leading-relaxed italic">
-                    "AI Synthesis suggests a focus on operational scale over brand depth for this specific posture."
+                <Label className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.2em] font-big-shoulders">
+                  Intelligence Score
+                </Label>
+                
+                <div className="relative pt-2">
+                  <div className="flex items-end gap-2 mb-2">
+                    <span className={cn("text-6xl font-big-shoulders font-black leading-none tracking-tight", scoreColor)}>
+                      {score}
+                    </span>
+                    <span className="text-sm text-zinc-600 font-mono mb-1">/100</span>
+                  </div>
+                  
+                  {/* Horizontal Progress Bar */}
+                  <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ width: `${score}%` }}
+                      transition={{ duration: 1, ease: "easeOut" }}
+                      className={cn("h-full rounded-full", score <= 40 ? 'bg-at-risk' : score <= 70 ? 'bg-optimizing' : 'bg-calibrated')}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <Label className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.2em] font-big-shoulders">
+                  Recommended Fee
+                </Label>
+                <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5">
+                  <div className="text-xl font-medium text-zinc-200 mb-1 font-inter">{engagement.range}</div>
+                  <div className="text-[10px] text-calibrated font-mono uppercase tracking-widest">
+                    {engagement.type}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Column B (THE WORK - Center) */}
+          <div className="space-y-8 order-1 lg:order-2">
+            {/* The Header */}
+            <div className="flex items-center justify-between border-b border-white/5 pb-4">
+              <div className="flex items-center gap-2 text-[10px] text-zinc-600 font-mono uppercase tracking-widest">
+                <span>Admin Dashboard</span>
+                <span className="text-zinc-800">/</span>
+                <span>{clientName}</span>
+                <span className="text-zinc-800">/</span>
+                <span className="text-zinc-400">{dimension}</span>
+              </div>
+
+              <div className="flex items-center gap-6">
+                <button 
+                  onClick={() => setIsEditing(true)}
+                  className={cn(
+                    "text-[10px] font-bold uppercase tracking-[0.2em] transition-colors font-big-shoulders",
+                    isEditing ? "text-white" : "text-zinc-600 hover:text-zinc-400"
+                  )}
+                >
+                  Edit
+                </button>
+                <div className="w-px h-3 bg-white/10" />
+                <button 
+                  onClick={() => setIsEditing(false)}
+                  className={cn(
+                    "text-[10px] font-bold uppercase tracking-[0.2em] transition-colors font-big-shoulders",
+                    !isEditing ? "text-white" : "text-zinc-600 hover:text-zinc-400"
+                  )}
+                >
+                  Preview
+                </button>
+              </div>
+            </div>
+
+            {/* The Editor */}
+            {isEditing ? (
+              <div className="relative min-h-[60vh]">
+                <Textarea 
+                  value={editedNarrative}
+                  onChange={(e) => setEditedNarrative(e.target.value)}
+                  className="w-full h-full min-h-[60vh] bg-transparent border-none p-0 text-[1.1rem] leading-[1.8] font-inter font-light text-zinc-300 focus-visible:ring-0 resize-none placeholder:text-zinc-800 selection:bg-teal/20"
+                  placeholder="Begin strategic synthesis..."
+                  spellCheck={false}
+                />
+                
+                {/* AI Intelligence Assist */}
+                <div className="mt-8 pt-6 border-t border-teal/20">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Bot size={12} className="text-teal" />
+                    <span className="text-[9px] font-bold text-teal uppercase tracking-[0.2em] font-big-shoulders">
+                      AI Intelligence Assist
+                    </span>
+                  </div>
+                  <p className="text-xs text-zinc-500 font-inter leading-relaxed italic">
+                    "The intelligence score suggests a misalignment in GTM execution. Recommended focus on channel consolidation before scaling spend."
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="min-h-[60vh] prose prose-invert prose-p:text-[rgba(255,255,255,0.85)] prose-p:font-inter prose-p:font-light prose-p:leading-[1.8] prose-headings:font-big-shoulders prose-headings:uppercase prose-headings:tracking-wider prose-headings:font-black max-w-none">
+                <ResultsView 
+                  session={{
+                    ...session,
+                    certifiedNarrative: editedNarrative,
+                    isPublished: isPublished
+                  }}
+                  projectId={projectId}
+                  dimension={dimension}
+                  userRole="CLIENT"
+                  clientName={clientName}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Column C (THE CONTEXT - Right) - Hidden in Preview */}
+          {isEditing && (
+            <div className="space-y-8 lg:sticky lg:top-32 animate-in fade-in slide-in-from-right-4 duration-500 order-3 lg:order-3">
+              <div className="pl-0 lg:pl-6 border-l-0 lg:border-l-[3px] border-coral space-y-4">
+                <Label className="text-[9px] font-bold text-coral uppercase tracking-[0.2em] flex items-center gap-2 font-big-shoulders">
+                  <Users size={12} /> Consultant Secret Sauce
+                </Label>
+                
+                <Textarea 
+                  value={consultantAnalysis}
+                  onChange={(e) => setConsultantAnalysis(e.target.value)}
+                  className="w-full h-[400px] bg-transparent border-none p-0 text-sm leading-relaxed font-inter font-light text-[rgba(255,255,255,0.85)] focus-visible:ring-0 resize-none placeholder:text-zinc-800"
+                  placeholder="Internal strategist notes, pricing leverage, and sensitive context..."
+                />
+              </div>
+
+              <div className="pl-0 lg:pl-6">
+                <div className="p-0">
+                  <div className="flex items-center gap-2 mb-2 text-zinc-600">
+                    <ShieldCheck size={12} />
+                    <span className="text-[9px] font-bold uppercase tracking-widest font-big-shoulders">Privacy Protocol</span>
+                  </div>
+                  <p className="text-[10px] text-zinc-700 leading-relaxed font-inter">
+                    Content in this column is strictly internal and will never be visible to the client.
                   </p>
                 </div>
               </div>
             </div>
-          </div>
+          )}
 
-          {/* Center: The Narrative Workbench */}
-          <div className="lg:col-span-6 space-y-8">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <Label className="text-[10px] font-bold uppercase tracking-[0.3em] text-teal flex items-center gap-2">
-                  <FileText size={14} /> Certified Strategic Narrative
-                </Label>
-                <Badge variant="outline" className="text-[9px] border-white/10 text-white/20">
-                  MARKDOWN SUPPORTED
-                </Badge>
-              </div>
-              <Textarea 
-                value={editedNarrative}
-                onChange={(e) => setEditedNarrative(e.target.value)}
-                className="min-h-[600px] bg-white/2 border-white/5 focus:border-teal/50 transition-all p-10 text-lg leading-relaxed font-serif italic text-white/90 rounded-[32px] shadow-2xl"
-                placeholder="The raw AI intelligence is populated here. Edit, refine, and certify the final narrative..."
-              />
-            </div>
-          </div>
-
-          {/* Right: Secret Sauce / Internal Analysis */}
-          <div className="lg:col-span-3 space-y-8">
-            <div className="space-y-4">
-              <Label className="text-[10px] font-bold uppercase tracking-[0.3em] text-coral flex items-center gap-2">
-                <Users size={14} /> Consultant Secret Sauce
-              </Label>
-              <Textarea 
-                value={consultantAnalysis}
-                onChange={(e) => setConsultantAnalysis(e.target.value)}
-                className="min-h-[400px] bg-black/40 border-white/5 focus:border-coral/50 transition-all p-6 text-sm leading-relaxed font-inter text-white/60 rounded-3xl"
-                placeholder="Add internal reasoning, pricing strategies, or sensitive context not visible to the Partner's primary brief..."
-              />
-              <div className="p-6 rounded-2xl bg-white/5 border border-white/5">
-                <h5 className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-2 flex items-center gap-2">
-                  <ShieldCheck size={12} /> Privacy Protocol
-                </h5>
-                <p className="text-[9px] text-white/20 leading-relaxed">
-                  This field is strictly for internal strategist context. It will NOT be displayed in the Partner's Strategic Brief view.
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
-      )}
+      </div>
+
+      {/* The Control Bar (Sticky Bottom) */}
+      <div className="fixed bottom-0 lg:bottom-8 left-0 lg:left-1/2 lg:-translate-x-1/2 w-full lg:max-w-5xl px-0 lg:px-8 z-50">
+        <div className="flex items-center justify-between bg-[#0A0A0ACC] backdrop-blur-[10px] border-t border-white/10 p-4 rounded-none lg:rounded shadow-2xl shadow-black/50">
+          
+          {/* Button 1 (Left-align) */}
+          <Button 
+            variant="ghost"
+            onClick={() => handleUpdate(false)}
+            disabled={isSaving}
+            className="text-[10px] uppercase tracking-widest font-bold text-zinc-500 hover:text-white transition-colors h-10 px-6 rounded hover:bg-white/5"
+          >
+            {isSaving ? 'Saving...' : 'Save Draft'}
+          </Button>
+
+          {/* Right Group */}
+          <div className="flex items-center gap-4">
+            {/* Button 2 (Export) */}
+            <Button 
+              variant="outline"
+              className="h-10 px-6 rounded border-coral text-coral hover:bg-coral/10 hover:text-coral transition-all text-[10px] font-bold uppercase tracking-[0.1em] bg-transparent"
+            >
+              <Download size={14} className="mr-2" />
+              Export strategic dossier
+            </Button>
+
+            {/* Button 3 (Certify) - Deadbolt Validated */}
+            <div className="relative group">
+              <Button 
+                onClick={() => handleUpdate(true)}
+                disabled={isPublishing || isPublished || !hasHumanPOV}
+                className={cn(
+                  "h-10 px-6 rounded text-[10px] font-bold uppercase tracking-[0.1em] transition-all",
+                  isPublished 
+                    ? "bg-teal/10 text-teal cursor-default border border-teal/20" 
+                    : !hasHumanPOV 
+                      ? "bg-zinc-800 text-zinc-500 cursor-not-allowed border border-white/5" 
+                      : "bg-calibrated text-[#050505] hover:bg-calibrated/90"
+                )}
+              >
+                {isPublished ? (
+                  <><CheckCircle size={14} className="mr-2" /> Certified</>
+                ) : (
+                  <><Send size={14} className="mr-2" /> Certify & publish</>
+                )}
+              </Button>
+              
+              {/* Validation Tooltip */}
+              {!hasHumanPOV && !isPublished && (
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-48 p-3 bg-black border border-coral/50 text-coral text-[9px] font-bold uppercase tracking-widest rounded text-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                  Human POV required for certification
+                  <div className="absolute bottom-[-4px] left-1/2 -translate-x-1/2 w-2 h-2 bg-black border-r border-b border-coral/50 rotate-45" />
+                </div>
+              )}
+            </div>
+          </div>
+
+        </div>
+      </div>
+
     </div>
   )
 }

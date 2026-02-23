@@ -19,47 +19,65 @@ export default function TopNavBar({ onMenuToggle, projectStatus }: TopNavBarProp
 
   const getPhaseLabel = (status?: string) => {
     const s = status?.toUpperCase()
-    if (s === 'DISCOVERY') return 'PHASE 1: DISCOVERY'
-    if (s === 'PLANNING' || s === 'ACTIVE') return 'PHASE 2: STRATEGIC PLANNING'
-    if (s === 'EXECUTION') return 'PHASE 3: EXECUTION'
-    return 'PHASE: DISCOVERY' // Default
+    if (s === 'DISCOVERY') return 'Phase 1: Discovery'
+    if (s === 'PLANNING' || s === 'ACTIVE') return 'Phase 2: Strategic planning'
+    if (s === 'EXECUTION') return 'Phase 3: Execution'
+    return 'Phase: Discovery' // Default
   }
 
   const phaseLabel = getPhaseLabel(projectStatus)
 
   return (
-    <header className="portal-header fixed top-0 left-0 right-0 z-50 h-16 bg-[#0A0A0A]/95 backdrop-blur-md border-b border-white/10">
-      <div className="portal-header-inner flex items-center justify-between h-full px-6">
-        {/* 1. Hamburger (Left) - Visible only on Mobile */}
-        <button 
-          className="mobile-menu-toggle lg:hidden text-white p-2 -ml-2 hover:bg-white/10 rounded-md transition-colors"
-          id="portalMobileToggle"
-          onClick={onMenuToggle}
-        >
-          <Menu className="w-6 h-6" />
-        </button>
-
-        {/* 2. Logo (Centered on Mobile, Left on Desktop) */}
-        <div className="absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0 lg:flex items-center gap-6">
-          <Link href="/" className="brand-logo block">
-            <div className="flex items-center gap-3">
-              <span className="text-xl lg:text-2xl font-black tracking-tighter uppercase font-big-shoulders italic leading-none">
-                <span className="text-[#F96F6E]">LG</span> <span className="text-white">/ PORTAL</span>
+    <header id="primaryNav" className="portal-header fixed top-0 left-0 right-0 z-50 h-16 border-b border-white/10 bg-[#0A0A0A]">
+      <div className="flex items-center justify-between h-full px-6">
+        {/* 1. Left: LG // PORTAL Wordmark */}
+        <div className="flex items-center gap-4">
+          <button 
+            className="mobile-menu-toggle lg:hidden text-white p-2 -ml-2 hover:bg-white/10 rounded-md transition-colors"
+            id="portalMobileToggle"
+            onClick={onMenuToggle}
+          >
+            <Menu className="w-6 h-6" />
+          </button>
+          
+          <Link href="/dashboard" className="flex items-center gap-2">
+            <span className="text-xl font-black font-big-shoulders italic text-coral tracking-tighter">LG</span>
+            <span className="text-xl font-black font-big-shoulders italic text-white tracking-tighter opacity-20 text-lg mx-1">//</span>
+            <span className="text-xl font-black font-big-shoulders italic text-white tracking-tighter">PORTAL</span>
+            
+            {/* ADMIN INDICATOR */}
+            {session?.user?.role === 'ADMIN' && (
+              <span className="ml-2 px-2 py-0.5 rounded border border-white/15 text-[10px] font-mono tracking-widest uppercase text-[var(--teal)]">
+                ADMIN
               </span>
-            </div>
+            )}
           </Link>
         </div>
 
-        {/* 3. Phase Badge (Right) - Hidden on Mobile to prevent overlap */}
-        <div className="flex items-center gap-6 ml-auto">
+        {/* 2. Right: Phase Badge & Auth */}
+        <div className="flex items-center justify-end gap-4">
           {phaseLabel && (
-            <Badge variant="outline" className="hidden md:flex bg-white/[0.03] text-white/40 border-white/10 text-[9px] tracking-[0.2em] uppercase py-1 px-3 font-bold rounded-none border">
-              {phaseLabel}
-            </Badge>
+            <div className="hidden md:flex items-center justify-center px-4 h-[32px] rounded-full border border-white/10 bg-white/5 backdrop-blur-sm">
+              <span className="text-[11px] font-medium text-white/80 whitespace-nowrap">
+                {phaseLabel}
+              </span>
+            </div>
           )}
-          <AuthButton />
+          
+          {/* Sign Out Button (Custom Minimalist) */}
+          <button 
+            onClick={() => {
+              // Ensure we use the current origin to avoid port mismatches
+              const origin = typeof window !== 'undefined' ? window.location.origin : '';
+              signOut({ callbackUrl: origin + '/' })
+            }}
+            className="flex items-center justify-center px-4 h-[32px] rounded-full border border-white/10 bg-white/5 hover:bg-white/10 transition-all text-[11px] font-medium text-white/60 hover:text-white tracking-widest"
+          >
+            Sign out
+          </button>
         </div>
       </div>
     </header>
   )
 }
+

@@ -32,7 +32,7 @@ export async function generateStrategyNarrative(assessmentSession: any) {
     if (process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'mock-key') {
       try {
         const prompt = `
-          You are a Senior Strategic Consultant. Generate a concise, high-impact "Mini-Brief" synthesis for a ${currentDimension.toUpperCase()} diagnostic.
+          You are a Senior Strategic Consultant. Generate a high-impact, structured "Advisory Brief" synthesis for a ${currentDimension.toUpperCase()} diagnostic.
           
           Client: ${assessmentSession.client?.name || 'Acme Corp'}
           Project: ${assessmentSession.project?.title || 'Strategic Discovery'}
@@ -42,10 +42,26 @@ export async function generateStrategyNarrative(assessmentSession: any) {
           ${dataPoints.map(dp => `- ${dp.question}: ${dp.answer} (Insight: ${dp.insight})`).join('\n')}
           
           Requirements:
-          - Generate 5-7 punchy, "consultant-grade" insights.
+          - Generate an "executive_snapshot" (1-2 sentences) summarizing the project's current state.
+          - Generate EXACTLY 5 strategic sections.
+          - Section 1 MUST be titled "Market Positioning".
+          - Each section must have 1-2 punchy, "consultant-grade" advisory paragraphs in "content".
+          - Each section must include a "posture" label (AT_RISK, OPTIMIZING, or CALIBRATED) based on the postureScore (0-49: AT_RISK, 50-74: OPTIMIZING, 75-100: CALIBRATED).
+          - Each section must include 2-3 specific "key_insights" as an array of strings.
           - Use a bold, authoritative, yet advisory tone.
-          - Focus on specific opportunities and risks identified.
-          - Return the result as a JSON array of strings under the key "insights".
+          - Return the result as a JSON object with this EXACT structure:
+          {
+            "executive_snapshot": "Advisory summary...",
+            "sections": [
+              {
+                "id": 1,
+                "title": "Market Positioning",
+                "posture": "CALIBRATED",
+                "content": "Advisory narrative content...",
+                "key_insights": ["Insight A", "Insight B"]
+              }
+            ]
+          }
         `
 
         const completion = await openai.chat.completions.create({
@@ -61,11 +77,8 @@ export async function generateStrategyNarrative(assessmentSession: any) {
         
         if (content) {
           const parsed = safeJsonParse(content, {})
-          const insights = parsed.insights || parsed.summary || (Array.isArray(parsed) ? parsed : Object.values(parsed)[0])
-          if (Array.isArray(insights)) {
-            generatedSummary = JSON.stringify(insights)
-          } else if (typeof insights === 'string') {
-            generatedSummary = JSON.stringify([insights])
+          if (parsed.sections && Array.isArray(parsed.sections)) {
+            generatedSummary = JSON.stringify(parsed)
           }
         }
       } catch (aiError) {

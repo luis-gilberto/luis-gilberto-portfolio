@@ -64,7 +64,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(newProject)
 
   } catch (error: any) {
-    console.error('Auto-init error:', error)
-    return NextResponse.json({ error: 'Internal Server Error', message: error.message }, { status: 500 })
+    console.error('CRITICAL: Strategy-IQ Init Error:', error);
+    return NextResponse.json({ 
+      error: 'Internal Server Error', 
+      message: error.message || 'Unknown error during initialization' 
+    }, { status: 500 })
   }
 }

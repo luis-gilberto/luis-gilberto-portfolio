@@ -15,17 +15,31 @@ export default function AuthButton() {
     const handleSignOut = () => {
       localStorage.removeItem('currentUser');
       localStorage.removeItem('currentScope');
-      signOut({ callbackUrl: '/login' });
+      signOut({ callbackUrl: window.location.origin + '/login' });
     };
 
     return (
-      <button
-        onClick={handleSignOut}
-        className="flex items-center gap-2 px-3 py-2 lg:px-4 text-sm font-medium text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all"
-      >
-        <LogOut size={16} />
-        <span className="hidden lg:inline">Sign Out</span>
-      </button>
+      <div className="flex items-center gap-3">
+        {/* Task 4: Concurrent Session Testing Logic */}
+        {session.user?.role === 'ADMIN' && (
+           <Link 
+             href="/dashboard"
+             className="flex items-center gap-2 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-teal border border-teal/20 bg-teal/5 hover:bg-teal/10 rounded-lg transition-all"
+             title="Switch to Client View (Simulation)"
+           >
+             <div className="w-1.5 h-1.5 rounded-full bg-teal animate-pulse" />
+             Client View
+           </Link>
+        )}
+        
+        <button
+          onClick={handleSignOut}
+          className="flex items-center gap-2 px-3 py-2 lg:px-4 text-sm font-medium text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all"
+        >
+          <LogOut size={16} />
+          <span className="hidden lg:inline">Sign Out</span>
+        </button>
+      </div>
     );
   }
 

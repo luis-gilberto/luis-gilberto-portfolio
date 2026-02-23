@@ -6,30 +6,75 @@ import { prisma } from '@/lib/prisma'
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
-    if (!session || (session.user.role !== 'ADMIN' && session.user.role !== 'TEAM_MEMBER')) {
+    if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const body = await req.json()
-    const { projectId, businessOKRs, strategicConstraints, primaryBusinessGoals } = body
-
-    console.log("ATTEMPTING_CONFIG_SAVE:", { projectId, hasOKRs: !!businessOKRs, hasConstraints: !!strategicConstraints, hasGoals: !!primaryBusinessGoals })
+    // Map incoming frontend keys to DB schema keys
+    const { 
+      projectId, 
+      businessDriver,
+      operationalPriority,
+      // Mapping from Modal -> DB
+      metricOfRecord, metricName,
+      baseline, metricBaseline,
+      target, metricTarget,
+      cacCurrent,
+      cacTarget, cacGoal,
+      ltvCurrent,
+      ltvTarget, ltvGoal,
+      crCurrent, conversionCurrent,
+      crTarget, conversionGoal,
+      operationalHistorySignal, marketingSignal,
+      operationalHistoryNoise, marketingNoise,
+      channelEcosystem, channels
+    } = body
 
     if (!projectId) {
-      return NextResponse.json({ error: 'Missing projectId' }, { status: 400 })
+       console.error('[INTEGRITY_VIOLATION]: Attempted to update project config without ID.');
+       return NextResponse.json({ error: 'Missing Project Identifier: Cannot update configuration without a valid Project ID.' }, { status: 400 })
+    }
+    const targetProjectId = projectId;
+
+    // Verify ownership if not admin
+    if (session.user.role !== 'ADMIN' && session.user.role !== 'TEAM_MEMBER') {
+       const project = await prisma.project.findUnique({ where: { id: targetProjectId } })
+       if (!project) {
+           return NextResponse.json({ error: 'Project not found' }, { status: 404 })
+       }
+       if (project.userId !== session.user.id) {
+           return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+       }
     }
 
+    console.log("[DB_UPDATE_START]:", targetProjectId, "CALIBRATED")
+
+    // Strict Update Logic - Never Create
     const updatedProject = await prisma.project.update({
-      where: { id: projectId },
+      where: { id: targetProjectId },
       data: {
-        businessOKRs,
-        strategicConstraints,
-        primaryBusinessGoals,
+        status: 'CALIBRATED', // Force transition to CALIBRATED
+        businessDriver,
+        operationalPriority,
+        // Coalesce Mapped Fields
+        metricName: metricName || metricOfRecord,
+        metricBaseline: metricBaseline || baseline,
+        metricTarget: metricTarget || target,
+        cacCurrent: cacCurrent,
+        cacGoal: cacGoal || cacTarget,
+        ltvCurrent: ltvCurrent,
+        ltvGoal: ltvGoal || ltvTarget,
+        conversionCurrent: conversionCurrent || crCurrent,
+        conversionGoal: conversionGoal || crTarget,
+        marketingSignal: marketingSignal || operationalHistorySignal,
+        marketingNoise: marketingNoise || operationalHistoryNoise,
+        channels: channels || channelEcosystem || [],
         updatedAt: new Date()
       }
     })
 
-    console.log("CONFIG_SAVE_SUCCESS:", projectId)
+    console.log("[DB_UPDATE_SUCCESS]:", updatedProject.status)
 
     return NextResponse.json({ 
       success: true, 

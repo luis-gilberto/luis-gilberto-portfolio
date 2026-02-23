@@ -51,5 +51,16 @@ export const artifactLibrary: ArtifactTemplate[] = [
       'How would you describe the brand personality in three adjectives?'
     ],
     unitCost: 5500
+  },
+  {
+    id: 'motion-7-identity-quickstart',
+    title: 'Motion 7: Identity Quickstart',
+    type: 'BRAND',
+    requiredIntelligence: ['GTM Validation', 'Brand Narrative'],
+    clarificationQuestions: [
+      'What is the single most important message for the next 48 hours?',
+      'Who is the primary audience for this immediate narrative?'
+    ],
+    unitCost: 1500
   }
 ];

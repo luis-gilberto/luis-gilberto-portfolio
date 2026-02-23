@@ -57,25 +57,48 @@ export const authOptions: AuthOptions = {
 
         const email = credentials.email.toLowerCase();
 
-        // 1. Check hardcoded USERS first (as requested)
-        if (USERS[email]) {
-          const user = USERS[email];
-          if (credentials.password === user.password) {
-            return {
-              id: user.id,
-              email: email,
-              name: user.name,
-              role: user.role,
-              company: user.company
-            };
-          }
-          throw new Error("Invalid credentials");
-        }
-
-        // 2. Fallback to Prisma database
+        // 1. Database Check (Primary Source of Truth)
         const user = await prisma.user.findUnique({
           where: { email }
         });
+
+        // 2. Fallback to Hardcoded USERS only if DB user not found
+        // This ensures DB overrides local config
+        if (!user && USERS[email]) {
+          const hardcodedUser = USERS[email];
+          if (credentials.password === hardcodedUser.password) {
+            
+            // HYDRATION FIX: Ensure this hardcoded user exists in the DB for Foreign Key relations
+            // If the DB was reset, this auto-restores the user record so messages/projects can be attached.
+            console.log(`[AUTH] Hydrating hardcoded user into DB: ${email}`);
+            const hashedPassword = await bcrypt.hash(hardcodedUser.password, 10);
+            
+            try {
+              const dbUser = await prisma.user.upsert({
+                  where: { email },
+                  update: {}, // If it magically appeared, do nothing
+                  create: {
+                      id: hardcodedUser.id, // Persist the hardcoded ID
+                      email: email,
+                      name: hardcodedUser.name,
+                      role: hardcodedUser.role as any,
+                      password: hashedPassword
+                  }
+              });
+              return dbUser;
+            } catch (error) {
+              console.error("[AUTH] Hydration failed:", error);
+              // Fallback to memory-only session (will cause FK issues but allows login)
+              return {
+                id: hardcodedUser.id,
+                email: email,
+                name: hardcodedUser.name,
+                role: hardcodedUser.role,
+                company: hardcodedUser.company
+              };
+            }
+          }
+        }
 
         if (!user || !user.password) {
           throw new Error("Invalid credentials");

@@ -44,8 +44,8 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   return (
     <ToastContext.Provider value={{ toast }}>
       {children}
-      <div className="fixed bottom-8 right-8 z-[100] flex flex-col gap-4">
-        <AnimatePresence>
+      <div className="fixed bottom-8 right-8 z-[100] flex flex-col gap-4 pointer-events-none">
+        <AnimatePresence mode="popLayout">
           {toasts.map((t) => (
             <motion.div
               key={t.id}
@@ -53,7 +53,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: 20, scale: 0.95 }}
               className={cn(
-                "w-96 bg-[#0A0A0A]/90 backdrop-blur-md border border-white/10 rounded-xl overflow-hidden shadow-2xl flex items-stretch",
+                "w-96 bg-[#0A0A0A]/90 backdrop-blur-md border border-white/10 rounded-xl overflow-hidden shadow-2xl flex items-stretch pointer-events-auto",
                 "before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1",
                 t.type === "success" ? "before:bg-[#2ED3C6] border-l-0" : "before:bg-coral border-l-0"
               )}

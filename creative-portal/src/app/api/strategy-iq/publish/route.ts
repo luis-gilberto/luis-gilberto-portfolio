@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     }
 
     const finalDimension = dimension.toLowerCase()
-    const finalStatus = status || 'PUBLISHED'
+    const finalStatus = status || 'CERTIFIED' // Default to CERTIFIED as per new requirement
 
     // Task 2: The "Force-Update" API Route
     
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
         certifiedNarrative: certifiedNarrative,
         consultantAnalysis: consultantAnalysis,
         status: finalStatus,
-        isPublished: finalStatus === 'PUBLISHED',
+        isPublished: finalStatus === 'PUBLISHED' || finalStatus === 'CERTIFIED',
         updatedAt: new Date()
       }
     })
@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
     })
 
     // 2. Vault Deliverable Sync (Resilient Update)
-    if (finalStatus === 'PUBLISHED') {
+    if (finalStatus === 'PUBLISHED' || finalStatus === 'CERTIFIED') {
       try {
         const typeLabel = finalDimension.toUpperCase()
         const title = `${typeLabel} Strategic Mini-Brief`

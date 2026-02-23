@@ -15,6 +15,7 @@ model User {
   image         String?
   emailVerified DateTime?
   role          String    @default("CLIENT")
+  authorityLevel Int      @default(1)
   title         String?
   clientId      String?
   createdAt     DateTime  @default(now())
@@ -60,12 +61,29 @@ model Project {
   businessOKRs       String?             @db.Text
   strategicConstraints String?           @db.Text
   primaryBusinessGoals String?           @db.Text
+  customId           String?             @unique
+  businessDriver     String?             @default("")
+  metricName         String?             @default("")
+  metricTarget       String?             @default("")
+  metricBaseline     String?             @default("")
+  operationalPriority String?            @default("")
+  cacCurrent         String?             @default("")
+  cacGoal            String?             @default("")
+  ltvCurrent         String?             @default("")
+  ltvGoal            String?             @default("")
+  conversionCurrent  String?             @default("")
+  conversionGoal     String?             @default("")
+  marketingSignal    String?             @db.Text
+  marketingNoise     String?             @db.Text
+  channels           String[]
   masterRoadmap      String?             @db.Text
   masterPlan         Json?
   overallIntelligenceScore Int?
   quotedInvestment   String?
   roadmapStatus      String              @default("PENDING")
   updatedAt          DateTime            @default(now()) @updatedAt
+  pendingAuthorityRequest Boolean        @default(false) @map("pending_authority_request")
+  authorityGrantedAt DateTime?           @map("authority_granted_at")
   deliverables       Deliverable[]
   documents          Document[]
   messages           Message[]
@@ -122,12 +140,15 @@ model TimelineEvent {
 model Message {
   id        String   @id @default(cuid())
   content   String
-  senderId  String
-  projectId String
-  isRead    Boolean  @default(false)
-  createdAt DateTime @default(now())
+  senderId  String   @map("sender_id")
+  projectId String   @map("project_id")
+  isRead    Boolean  @default(false) @map("is_read")
+  createdAt DateTime @default(now()) @map("created_at")
+  archivedAt DateTime? @map("archived_at")
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   sender    User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@map("project_messages")
 }
 
 model AssessmentSession {
@@ -146,11 +167,31 @@ model AssessmentSession {
   projectId          String?  @map("project_id")
   consultantAnalysis String?  @map("consultant_analysis")
   certifiedNarrative String?  @map("certified_narrative")
+  currentState       Json?    @map("current_state")
+  authorityLock      AuthorityLock @default(CLIENT) @map("authority_lock")
   client             Client   @relation(fields: [clientId], references: [id])
   project            Project? @relation(fields: [projectId], references: [id])
+  auditLogs          SessionAuditLog[]
 
   @@unique([projectId, assessmentType])
   @@map("assessment_sessions")
+}
+
+model SessionAuditLog {
+  id        String   @id @default(cuid())
+  sessionId String   @map("session_id")
+  actorRole String   @map("actor_role")
+  eventType String   @map("event_type")
+  payload   Json?
+  createdAt DateTime @default(now()) @map("created_at")
+  session   AssessmentSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@map("session_audit_logs")
+}
+
+enum AuthorityLock {
+  CLIENT
+  CONSULTANT_AUTHORIZED
 }
 
 model Account {

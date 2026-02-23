@@ -1,12 +1,21 @@
 'use client'
 
-import { useSession } from "next-auth/react"
+import { useSession, SessionContext } from "next-auth/react"
+import { useContext } from "react"
 
 interface UserRoleBadgeProps {
   role?: string
 }
 
 export function UserRoleBadge({ role: propRole }: UserRoleBadgeProps = {}) {
+  // Safe check for SessionProvider to prevent runtime crashes
+  const sessionContext = useContext(SessionContext)
+  
+  // If no provider context exists, return null or fallback
+  if (!sessionContext) {
+    return null
+  }
+
   const { data: session } = useSession()
   const role = propRole || session?.user?.role
 

@@ -10,6 +10,7 @@ const config: Config = {
       fontFamily: {
         sans: ["var(--font-inter)", "sans-serif"],
         serif: ["var(--font-serif)", "serif"],
+        mono: ["var(--font-mono)", "monospace"],
         "big-shoulders": ["var(--font-big-shoulders)", "cursive"],
       },
       colors: {
@@ -60,10 +61,14 @@ const config: Config = {
         "warm-cream": "#D4C8B8",
         "warm-gold": "#C9B99A",
         "portal-bg": "#050505",
-        "portal-panel": "#121212",
-        "surface": "#141414",
+        "portal-panel": "#0A0A0A",
+        "portal-surface": "#141414",
         coral: "#F96F6E",
         teal: "#2ED3C6",
+        // Design System Status Tokens
+        calibrated: "#2ED3C6",
+        optimizing: "#F59E0B",
+        "at-risk": "#F96F6E",
       },
       borderRadius: {
         lg: "var(--radius)",

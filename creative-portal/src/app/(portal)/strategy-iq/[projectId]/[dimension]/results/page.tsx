@@ -16,10 +16,10 @@ interface PageProps {
 }
 
 export default async function StrategyIQResultsPage({ params }: PageProps) {
-  const { projectId, dimension: rawDimension } = await params
+  const { projectId: rawProjectId, dimension: rawDimension } = await params
   
   // Task 1: Server-Side X-Ray & Normalization
-  console.log("[DEBUG] Results Page Params:", { projectId, dimension: rawDimension });
+  console.log("[DEBUG] Results Page Params:", { projectId: rawProjectId, dimension: rawDimension });
   const dimension = rawDimension.toLowerCase();
   
   const session = await getServerSession(authOptions)
@@ -27,11 +27,27 @@ export default async function StrategyIQResultsPage({ params }: PageProps) {
 
   const role = session.user.role
 
+  // Handle "active" alias
+  let projectId = rawProjectId;
+  if (projectId === 'active') {
+    const userProject = await prisma.project.findFirst({
+      where: { userId: session.user.id, status: { in: ['ACTIVE', 'DISCOVERY'] } },
+      orderBy: { updatedAt: 'desc' }
+    });
+    if (userProject) projectId = userProject.id;
+  }
+
   // Handle project fetching - No more "default" ghost
   const project = await prisma.project.findUnique({
     where: { id: projectId },
     include: { client: true }
   });
+
+  // KILL SWITCH: Verify project status for non-admins
+  const isCalibrated = project?.status === 'CALIBRATED' || project?.status === 'ACTIVE' || project?.status === 'CERTIFIED';
+  if (role !== 'ADMIN' && !isCalibrated) {
+    redirect('/dashboard?error=calibration_required');
+  }
 
   if (!project || !project.clientId) {
     console.log(`[StrategyIQResultsPage] Project or Client missing for ID: ${projectId}`)
@@ -63,8 +79,8 @@ export default async function StrategyIQResultsPage({ params }: PageProps) {
       },
       status: {
         in: role === 'ADMIN' 
-          ? ['COMPLETED', 'PUBLISHED', 'UNDER_REVIEW', 'MANUAL_REVIEW', 'completed'] 
-          : ['COMPLETED', 'PUBLISHED', 'completed']
+          ? ['COMPLETED', 'PUBLISHED', 'UNDER_REVIEW', 'MANUAL_REVIEW', 'completed', 'submitted'] 
+          : ['COMPLETED', 'PUBLISHED', 'completed', 'submitted', 'under_review', 'manual_review', 'UNDER_REVIEW', 'MANUAL_REVIEW']
       }
     },
     include: {
@@ -117,16 +133,7 @@ export default async function StrategyIQResultsPage({ params }: PageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] pt-24 pb-12">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 mb-8">
-        <Breadcrumbs 
-          items={[
-            { label: 'Dashboard', href: '/dashboard' },
-            { label: 'StrategyIQ™ Engine', href: '/strategy-iq' },
-            { label: `${dimension.toUpperCase()} Results`, active: true }
-          ]} 
-        />
-      </div>
+    <div className="min-h-screen bg-[#0A0A0A] pt-12 pb-12">
       <ResultsView 
         session={assessmentSession}
         projectId={projectId}

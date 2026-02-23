@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { AlertTriangle, ArrowLeft } from "lucide-react"
+import { ToastProvider } from "@/components/providers/toast-provider"
 
 interface ProjectPageProps {
   params: Promise<{
@@ -41,6 +42,9 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
           orderBy: { date: 'desc' }
         },
         messages: {
+          where: {
+            archivedAt: null
+          },
           include: {
             sender: true
           },
@@ -79,7 +83,9 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
 
   return (
     <div className="min-h-screen bg-portal-bg">
-      <ProjectWarRoom project={project} currentUser={session.user} />
+      <ToastProvider>
+        <ProjectWarRoom project={project} currentUser={session.user} />
+      </ToastProvider>
     </div>
   )
 }

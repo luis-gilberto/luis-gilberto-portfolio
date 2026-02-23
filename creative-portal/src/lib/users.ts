@@ -1,23 +1,16 @@
 export const USERS: Record<string, any> = { 
-    'acme@portal.com': { 
+    'client@acme.com': { 
         name: 'Acme Executive', 
         company: 'Acme Corp', 
         password: 'password123', 
-        id: 'user_acme_01',
+        id: 'cml73jtjz0000vkikg0n33eg7',
         role: 'CLIENT'
     }, 
-    'lulu@lupito.com': { 
-        name: 'Lulu Sanchez', 
-        company: 'Lupito Inc.', 
-        password: 'marketinghero', 
-        id: 'user_lulu_02',
-        role: 'CLIENT'
-    },
-    'admin@portal.com': {
+    'admin@luis-gilberto.com': {
         name: 'Luis Gilberto',
         company: 'LG Ecosystem',
-        password: 'adminpassword',
-        id: 'user_admin_01',
+        password: 'password123',
+        id: 'cmk8fg1w60001vkbswiikccpt',
         role: 'ADMIN'
     }
 }; 

@@ -19,11 +19,13 @@ import { useToast } from "@/components/providers/toast-provider"
 export function AddClientModal({ 
   onClientAdded, 
   isOpen: externalOpen, 
-  onOpenChange: setExternalOpen 
+  onOpenChange: setExternalOpen,
+  trigger // New prop for custom trigger
 }: { 
   onClientAdded: () => void,
   isOpen?: boolean,
-  onOpenChange?: (open: boolean) => void
+  onOpenChange?: (open: boolean) => void,
+  trigger?: React.ReactNode
 }) {
   const { toast } = useToast()
   const [internalOpen, setInternalOpen] = useState(false)
@@ -43,7 +45,9 @@ export function AddClientModal({
     budgetRange: "$25K - $50K",
     timeline: "3-6 months",
     companySize: "50-200 employees",
+    password: "portal123" // Default temp password
   })
+  const [successData, setSuccessData] = useState<{ email: string, tempPassword: string } | null>(null)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -51,6 +55,11 @@ export function AddClientModal({
 
   const handleSelectChange = (name: string, value: string) => {
     setFormData({ ...formData, [name]: value })
+  }
+
+  const handleClose = () => {
+    setOpen(false)
+    setSuccessData(null)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -67,11 +76,17 @@ export function AddClientModal({
 
       const data = await response.json()
 
+      // Task 2: Frontend Error Capture
       if (!response.ok) {
-        throw new Error(data.error || data.message || "Failed to create client")
+         console.error("[PROVISIONING_ERROR_RESPONSE]", data);
+         throw new Error(data.message || data.error || "Failed to create client record")
       }
 
-      setOpen(false)
+      // Success - Show Credential Card (Task 3)
+      setSuccessData(data.user)
+      toast("PROVISIONING COMPLETE", "Client organization, user, and project created.", "success")
+      
+      // Clear form but don't close modal yet
       setFormData({
         name: "",
         contact: "",
@@ -82,8 +97,8 @@ export function AddClientModal({
         budgetRange: "$25K - $50K",
         timeline: "3-6 months",
         companySize: "50-200 employees",
+        password: "portal123"
       })
-      toast("CLIENT ADDED", "New lead record successfully created.", "success")
       onClientAdded()
     } catch (err: any) {
       console.error(err)
@@ -94,23 +109,64 @@ export function AddClientModal({
     }
   }
 
+  // Task 3: Credential Card View
+  if (successData) {
+     return (
+        <Dialog open={open} onOpenChange={handleClose}>
+          <DialogContent className="sm:max-w-[425px] bg-[#1a1a1a] border-teal/50 text-white">
+             <DialogHeader>
+                <DialogTitle className="text-teal font-display tracking-wider uppercase flex items-center gap-2">
+                   <div className="w-6 h-6 rounded-full bg-teal text-black flex items-center justify-center text-xs">✓</div>
+                   Provisioning Complete
+                </DialogTitle>
+                <DialogDescription className="text-gray-400">
+                   Secure credentials generated. Share these with the client securely.
+                </DialogDescription>
+             </DialogHeader>
+             
+             <div className="bg-black/50 border border-white/10 rounded-xl p-6 space-y-4 my-4">
+                <div>
+                   <Label className="text-[10px] uppercase tracking-widest text-white/40">Access Email</Label>
+                   <div className="font-mono text-white select-all">{successData.email}</div>
+                </div>
+                <div>
+                   <Label className="text-[10px] uppercase tracking-widest text-white/40">Temporary Password</Label>
+                   <div className="font-mono text-teal select-all">{successData.tempPassword}</div>
+                </div>
+             </div>
+
+             <DialogFooter>
+                <Button onClick={handleClose} className="w-full bg-teal text-black hover:bg-teal/90 font-bold">
+                   Done
+                </Button>
+             </DialogFooter>
+          </DialogContent>
+        </Dialog>
+     )
+  }
+
+  // Default Trigger Button if no custom trigger is provided
+  const defaultTrigger = (
+    <Button className="bg-white text-black hover:bg-gray-200">
+      Add Client
+    </Button>
+  )
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-[var(--coral)] hover:bg-[#e55a5a] text-white">
-          <i className="fas fa-plus mr-2"></i> Add New Lead
-        </Button>
+        {trigger ?? defaultTrigger}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] bg-[#1a1a1a] border-white/10 text-white">
-        <DialogHeader>
-          <DialogTitle>Add New Client/Lead</DialogTitle>
-          <DialogDescription className="text-gray-400">
+      <DialogContent className="sm:max-w-[550px] bg-[#1a1a1a] border-white/10 text-white p-8">
+        <DialogHeader className="mb-6">
+          <DialogTitle className="font-display text-2xl tracking-wider uppercase">Add New Client/Lead</DialogTitle>
+          <DialogDescription className="text-gray-400 font-inter">
             Create a new client record. This will be available in StrategyIQ.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="grid gap-4 py-4">
+        <form onSubmit={handleSubmit} className="grid gap-6">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">
+            <Label htmlFor="name" className="text-right font-inter text-gray-400">
               Name
             </Label>
             <Input
@@ -118,12 +174,12 @@ export function AddClientModal({
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className="col-span-3 bg-white/5 border-white/10 text-white"
+              className="col-span-3 bg-[#0A0A0A] border-white/10 text-white h-12 text-base px-4 focus:ring-[#F96F6E] focus:border-[#F96F6E]"
               required
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="company" className="text-right">
+            <Label htmlFor="company" className="text-right font-inter text-gray-400">
               Company
             </Label>
             <Input
@@ -131,23 +187,23 @@ export function AddClientModal({
               name="company"
               value={formData.company}
               onChange={handleChange}
-              className="col-span-3 bg-white/5 border-white/10 text-white"
+              className="col-span-3 bg-[#0A0A0A] border-white/10 text-white h-12 text-base px-4 focus:ring-[#F96F6E] focus:border-[#F96F6E]"
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="contact" className="text-right">
-              Contact Person
+            <Label htmlFor="contact" className="text-right font-inter text-gray-400">
+              Contact person
             </Label>
             <Input
               id="contact"
               name="contact"
               value={formData.contact}
               onChange={handleChange}
-              className="col-span-3 bg-white/5 border-white/10 text-white"
+              className="col-span-3 bg-[#0A0A0A] border-white/10 text-white h-12 text-base px-4 focus:ring-[#F96F6E] focus:border-[#F96F6E]"
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="email" className="text-right">
+            <Label htmlFor="email" className="text-right font-inter text-gray-400">
               Email
             </Label>
             <Input
@@ -156,16 +212,16 @@ export function AddClientModal({
               type="email"
               value={formData.email}
               onChange={handleChange}
-              className="col-span-3 bg-white/5 border-white/10 text-white"
+              className="col-span-3 bg-[#0A0A0A] border-white/10 text-white h-12 text-base px-4 focus:ring-[#F96F6E] focus:border-[#F96F6E]"
               required
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="status" className="text-right">
+            <Label htmlFor="status" className="text-right font-inter text-gray-400">
               Status
             </Label>
             <Select name="status" value={formData.status} onValueChange={(val) => handleSelectChange("status", val)}>
-              <SelectTrigger className="col-span-3 bg-white/5 border-white/10 text-white">
+              <SelectTrigger className="col-span-3 bg-[#0A0A0A] border-white/10 text-white h-12 text-base px-4 focus:ring-[#F96F6E] focus:border-[#F96F6E]">
                 <SelectValue placeholder="Select status" />
               </SelectTrigger>
               <SelectContent className="bg-[#1a1a1a] border-white/10 text-white">
@@ -177,13 +233,23 @@ export function AddClientModal({
           </div>
         </form>
         {error && (
-          <div className="px-4 py-2 mb-4 mx-6 bg-red-500/10 border border-red-500/20 rounded text-red-400 text-xs italic">
+          <div className="px-4 py-2 bg-red-500/10 border border-red-500/20 rounded text-red-400 text-xs italic">
             {error}
           </div>
         )}
-        <DialogFooter>
-          <Button type="submit" onClick={handleSubmit} disabled={isLoading} className="bg-[var(--coral)] hover:bg-[#e55a5a] text-white">
-            {isLoading ? "Saving..." : "Save Client"}
+        <DialogFooter className="mt-4">
+          <Button 
+            type="submit" 
+            onClick={handleSubmit} 
+            disabled={isLoading} 
+            className="w-full bg-[#F96F6E] hover:bg-[#F96F6E]/90 text-black font-bold font-display uppercase tracking-wider h-14 text-lg shadow-[0_0_20px_rgba(249,111,110,0.3)] transition-all"
+          >
+            {isLoading ? (
+               <div className="flex items-center justify-center gap-2">
+                 <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                 Provisioning...
+               </div>
+            ) : "Provision Client"}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -14,7 +14,14 @@ export async function GET() {
     const user = await prisma.user.findUnique({
       where: { email: session.user.email as string },
       include: {
-        client: true,
+        client: {
+          include: {
+            projects: {
+              where: { status: { in: ['ACTIVE', 'DISCOVERY'] } },
+              select: { id: true, title: true }
+            }
+          }
+        },
         projects: {
           where: { status: { in: ['ACTIVE', 'DISCOVERY'] } },
           select: { id: true, title: true }
@@ -26,14 +33,25 @@ export async function GET() {
       return NextResponse.json({ error: "User not found" }, { status: 404 })
     }
 
+    // 3. Fetch Active Project (Prioritize VHV32LIT / cmlu1efbz0004nkth4pn0w1lb)
+    const targetProjectId = 'cmlu1efbz0004nkth4pn0w1lb';
+    
+    // Determine the linked project (Client Org Project takes precedence for Clients)
+    let activeProject = user.client?.projects?.find(p => p.id === targetProjectId) || user.projects?.find(p => p.id === targetProjectId);
+    
+    // If specific target not found, fallback to any active
+    if (!activeProject) {
+        activeProject = user.client?.projects?.[0] || user.projects?.[0];
+    }
+
     return NextResponse.json({
       name: user.name || "",
       email: user.email || "",
       company: user.client?.company || "",
       title: (user as any).title || "", // Assuming title might exist in metadata or we add it
       role: user.role,
-      linkedProjectId: user.projects[0]?.id || "",
-      linkedProjectTitle: user.projects[0]?.title || ""
+      linkedProjectId: activeProject?.id || "",
+      linkedProjectTitle: activeProject?.title || ""
     })
   } catch (error) {
     console.error("[PROFILE GET ERROR]", error)

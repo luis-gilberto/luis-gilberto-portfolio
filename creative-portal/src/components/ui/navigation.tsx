@@ -31,7 +31,9 @@ export function Navigation() {
   ]
 
   const handleSignOut = async () => {
-    await signOut({ callbackUrl: "/login" })
+    // Ensure we use the current origin to avoid port mismatches
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+    await signOut({ callbackUrl: origin + "/login" })
   }
 
   const isActive = (path: string) => pathname === path
@@ -49,14 +51,9 @@ export function Navigation() {
           
           {/* Logo Area */}
           <div className="flex items-center gap-4">
-            <Link href="/" className="relative w-32 h-8">
-              <Image 
-                src="/brand/portal-full.png" 
-                alt="The Portal" 
-                fill 
-                className="object-contain object-left" 
-                priority 
-              />
+            <Link href="/" className="flex items-center gap-2">
+              <span className="text-xl font-black font-big-shoulders italic text-coral tracking-tighter">LG</span>
+              <span className="text-xl font-black font-big-shoulders italic text-white tracking-tighter">// PORTAL</span>
             </Link>
           </div>
 

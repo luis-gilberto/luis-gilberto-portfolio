@@ -12,6 +12,7 @@ export interface CopilotGuide {
   redFlags?: string[];
   upsellSignals?: string[];
   probes?: string[];
+  insight?: string;
 }
 
 export interface AssessmentQuestion {
@@ -145,10 +146,10 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       question: 'How clearly defined is your brand positioning?',
       type: 'single',
       consultantGuide: {
-        script: "The 'Elevator Pitch' test: If I asked five different employees what this company stands for, would I get the same answer, or five different versions?",
-        context: "Internal alignment is key. If the team isn't aligned, the market won't be either. Alignment work is recommended first.",
-        redFlags: ["'We try to be everything to everyone'", "Long, jargon-filled mission statements"],
-        probes: ["What is the one thing you want to be famous for?", "Who is your enemy?"]
+        script: "Let’s talk about how clearly your brand is positioned today. Not just what you say internally, but how clearly it shows up in decisions and execution. Can your team clearly explain who you are, who you’re for, and why you’re different?",
+        context: "Positioning is only real if it is operationalized. If it doesn't guide day-to-day work, it’s just a deck, not a strategy.",
+        redFlags: ["Brand means different things to different people", "Messaging shifts project to project", "Positioning is documented but ignored in reviews"],
+        insight: "Crystal-clear positioning allows teams to self-correct. When it’s enforced, the brand becomes a filter for what to do and—more importantly—what not to do."
       },
       options: [
         { label: 'Undefined / Vague', value: 'undefined', score: 0, insight: "Positioning observation: Alignment opportunity identified. Core Values & Positioning alignment is recommended." },
@@ -164,10 +165,10 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       question: 'How deep is your understanding of your target audience?',
       type: 'single',
       consultantGuide: {
-        script: "Who are we fighting for? Are we targeting broad demographics like 'Women 25-45', or do we have psychographic profiles that tell us what keeps them up at night?",
-        context: "Specificity is key for media spend efficiency. Audience research is recommended.",
-        redFlags: ["'Everyone is our customer'", "Relies solely on assumptions, no data"],
-        probes: ["Show me your customer avatar.", "What is their biggest fear?"]
+        script: "This is about how well you truly understand your audience beyond surface demographics. Do you know why people choose you, behave the way they do, and why they stay or leave?",
+        context: "Demographics are table stakes. Deep strategy requires psychographics—knowing the motivations, anxieties, and triggers that drive customer behavior.",
+        redFlags: ["Relying on broad demographics only (age/gender)", "Personas based on internal assumptions rather than external research"],
+        insight: "The ultimate proof of audience understanding is the \"Community Loop\"—when customers start echoing your specific brand language back to you."
       },
       options: [
         { label: 'Broad Demographics Only', value: 'broad', score: 10, insight: "Research opportunity: Demographic focus identified. Recommend deeper audience research." },
@@ -183,10 +184,10 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       question: 'Do you have a defined Tone of Voice?',
       type: 'single',
       consultantGuide: {
-        script: "Does the brand sound like a human being, or a corporation? Does the voice change depending on who is writing the social post that day?",
-        context: "Inconsistent voice affects trust. Guidelines are recommended to streamline review.",
-        redFlags: ["'We want to sound professional but fun' (Generic)", "Content sounds like different people wrote it"],
-        probes: ["If your brand walked into a bar, what would it drink?", "Do you have a 'Words We Don't Use' list?"]
+        script: "Let’s talk about how your brand sounds, not just how it looks. If I removed your logo, could someone recognize your brand by language alone?",
+        context: "Voice creates emotional memory. Without defined guardrails, your brand sounds like whoever happens to be writing the copy that day.",
+        redFlags: ["Tone changes by channel or writer", "Guidelines exist as a list of adjectives but have no examples or enforcement"],
+        insight: "An ownable brand character creates a defensible emotional moat. It makes the brand feel human and consistent, which accelerates trust."
       },
       options: [
         { label: 'No defined voice', value: 'none', score: 0, insight: "Voice alignment opportunity: Inconsistent voice identified. Recommend a Verbal Identity alignment." },
@@ -202,10 +203,10 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       question: 'How consistent is your visual identity across touchpoints?',
       type: 'single',
       consultantGuide: {
-        script: "The 'Thumb Test': If I covered your logo on your website and your Instagram, would I still know it's you? Or does it look like two different companies?",
-        context: "Visual fragmentation affects recognition. Visual unification is recommended.",
-        redFlags: ["Using different fonts on different decks", "Website looks 5 years older than social"],
-        probes: ["Do you use a master slide deck?", "Are social templates locked?"]
+        script: "This is about how recognizable and coherent your brand feels wherever it shows up. Do all your touchpoints feel like they belong to the same brand system?",
+        context: "Coherence signals operational maturity. A fragmented visual identity suggests a fragmented organization.",
+        redFlags: ["Conflicting colors, styles, or layouts across channels", "Same logo used but zero system or layout thinking", "Assets are scattered"],
+        insight: "Comprehensive design systems aren't just about \"looking good\"—they are velocity engines that allow designers and marketers to execute 2x faster."
       },
       options: [
         { label: 'Inconsistent / Messy', value: 'inconsistent', score: 10, insight: "Visual alignment gap: Fragmented identity identified. Visual system update is recommended." },
@@ -221,10 +222,10 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       question: 'Can you articulate your competitive advantage?',
       type: 'single',
       consultantGuide: {
-        script: "Why do you win? Is it price, speed, quality, or innovation? If you say 'we do all of them', that's a red flag. What is the one thing you do better than anyone else?",
-        context: "Differentiation is key to value. We focus on finding your 'Moat'.",
-        redFlags: ["'We offer better service'", "'We are a one-stop-shop'", "Can't name a competitor"],
-        probes: ["Why do you lose deals?", "What does your competitor say about you?"]
+        script: "Why should someone choose you over alternatives, in one sentence? This helps us understand how differentiated your brand truly is in the market.",
+        context: "Brands that cannot articulate their advantage become commodities. Differentiation must be rooted in unique methodology or IP to be defensible.",
+        redFlags: ["Differentiation sounds generic", "Competing primarily on price or availability", "The brand is easily replaceable by alternatives"],
+        insight: "Radical differentiation reframes the category entirely. It makes alternatives difficult to even compare, creating new expectations in the mind of the customer."
       },
       options: [
         { label: 'Unclear / Commodity', value: 'commodity', score: 0, insight: "Differentiation opportunity: Commodity focus identified. Recommend a strategic pivot." },
@@ -240,16 +241,16 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       question: 'What is the primary objective of this campaign?',
       type: 'single',
       consultantGuide: {
-        script: "Are we trying to make noise (Brand Awareness) or make money (Direct Response)? We can't optimize for both efficiently at the same time.",
-        context: "Unclear objectives lead to failed expectations. If they say 'Both', we must split the budget into separate 'Brand' and 'Performance' buckets.",
-        redFlags: ["'We want viral sales'", "Unrealistic ROAS targets on cold traffic"],
-        probes: ["What is the primary KPI?", "Is this top or bottom of funnel?"]
+        script: "Before we talk tactics, let’s get clear on the goal. If this campaign worked really well, what would success actually look like?",
+        context: "We’re choosing the one thing this campaign is meant to do best. Awareness, revenue, or keeping customers engaged. We can’t optimize for everything at once.",
+        redFlags: ["Answers like “everything” or “a bit of both”", "No clear distinction between awareness and revenue"],
+        insight: "Campaigns with a single, explicit objective perform better because every decision ladders up to one definition of success."
       },
       options: [
-        { value: 'unclear', label: 'Unclear / "Everything"', score: 0, insight: "Strategic gap: Alignment opportunity identified. Recommend a single-goal campaign structure." },
-        { value: 'awareness', label: 'Pure Awareness', score: 40, insight: "Long-term resonance: Focus on brand equity noted. ROI expectations should be calibrated for the long term." },
-        { value: 'lead_gen', label: 'Lead Gen / Sales', score: 80, insight: "Market traction: Performance focus observed. Ready for daily CPA and conversion optimization." },
-        { value: 'retention', label: 'Customer Retention / LTV', score: 100, insight: "Systemic strength: High-value retention focus observed. Ideal for profitable growth." }
+        { value: 'unclear', label: 'Unclear / "Everything"', score: 0, insight: "This usually means the campaign will struggle. When the goal isn’t clear, creative, channels, and budget all pull in different directions. Next: Pick one primary goal and treat everything else as secondary." },
+        { value: 'awareness', label: 'Pure Awareness', score: 40, insight: "This is about reach, recall, and message clarity, not immediate sales. Next: Align metrics to attention and memory, not conversions." },
+        { value: 'lead_gen', label: 'Lead Gen / Sales', score: 80, insight: "This is performance-driven. Every decision should support conversion efficiency. Next: Ensure landing pages, tracking, and follow-up are ready before launch." },
+        { value: 'retention', label: 'Customer Retention / LTV', score: 100, insight: "This is about deepening value with people who already know you. Next: Focus messaging on usage, outcomes, and long-term benefit, not introduction." }
       ]
     },
     {
@@ -257,16 +258,16 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       question: 'How integrated is the campaign across channels?',
       type: 'single',
       consultantGuide: {
-        script: "Does the email match the ad? Does the landing page match the email? Or are these 'Random Acts of Marketing' running in silos?",
-        context: "Disjointed campaigns affect conversion. Omnichannel alignment is recommended.",
-        redFlags: ["Social team doesn't talk to Email team", "Different offers on different channels"],
-        probes: ["Do you have a campaign calendar?", "Is the visual ID consistent?"]
+        script: "When someone moves from an ad to an email to a landing page, does it feel like one journey or a reset every time?",
+        context: "This is about whether the story continues as people move between channels, or if each channel is doing its own thing.",
+        redFlags: ["Each channel owned by a different team with no coordination", "Visual consistency without message continuity"],
+        insight: "Integration is not about being everywhere. It is about sequencing messages so each channel advances the same outcome."
       },
       options: [
-        { value: 'siloed', label: 'Siloed / Disconnected', score: 10, insight: "Systemic gap: Fragmented user experience identified. Recommend a channel integration audit." },
-        { value: 'visual', label: 'Visual Consistency only', score: 40, insight: "Foundational state: Visual alignment noted, but user journey may require deeper integration." },
-        { value: 'sequencing', label: 'Cross-channel sequencing', score: 80, insight: "Market resonance: Orchestrated narrative observed. Ready for high-conversion scaling." },
-        { value: 'omnichannel', label: 'Full Omnichannel Journey', score: 100, insight: "Design authority: Integrated ecosystem observed. Ideal for complex, high-value journeys." }
+        { value: 'siloed', label: 'Siloed / Disconnected', score: 10, insight: "Each channel works in isolation. This usually wastes spend and confuses customers. Next: Define a single narrative and decide how each channel advances it." },
+        { value: 'visual', label: 'Visual Consistency only', score: 40, insight: "It looks cohesive, but the message doesn’t evolve. Next: Map what someone should understand next at each touchpoint." },
+        { value: 'sequencing', label: 'Cross-channel sequencing', score: 80, insight: "Channels are intentionally ordered and connected. Next: Validate timing and handoffs between stages." },
+        { value: 'omnichannel', label: 'Full Omnichannel Journey', score: 100, insight: "This is strong. Messaging adapts based on behavior and stage. Next: Make sure measurement matches the complexity of the journey." }
       ]
     },
     {
@@ -274,16 +275,16 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       question: 'Do you have specific creative for each stage of the funnel?',
       type: 'single',
       consultantGuide: {
-        script: "Are we showing the same 'Buy Now' ad to cold traffic and warm leads? Or do we have a sequence: Educate -> Engage -> Convert?",
-        context: "Cold traffic sales focus is noted. Full-funnel content alignment is recommended.",
-        redFlags: ["One ad for everyone", "No retargeting strategy"],
-        probes: ["What is your retargeting hook?", "Do you use exclusions?"]
+        script: "Are we showing the same message to everyone, or are we intentionally changing the message as people get closer to deciding?",
+        context: "People need different information at different moments. This checks whether the creative reflects that.",
+        redFlags: ["The same ‘Buy Now’ message shown to cold and warm audiences", "Retargeting that only repeats the same creative"],
+        insight: "Funnel-aware creative increases efficiency because it meets customers where they are instead of forcing them to jump too far, too fast."
       },
       options: [
-        { value: 'one_message', label: 'One message for all', score: 0, insight: "Differentiation potential: Broad messaging identified. Recommend building a multi-layered content funnel." },
-        { value: 'retargeting', label: 'Basic Retargeting', score: 50, insight: "Standard state: Retargeting identified. Recommend diversifying creative to avoid frequency fatigue." },
-        { value: 'segmented', label: 'Segmented Funnel', score: 80, insight: "Strategic maturity: Optimized funnel observed. Ready for efficient spend scaling." },
-        { value: 'dynamic', label: 'Dynamic Personalization', score: 100, insight: "Market resonance: Advanced personalization observed. Highest conversion potential." }
+        { value: 'one_message', label: 'One message for all', score: 0, insight: "This usually underperforms because it asks too much, too soon. Next: Break the message into awareness, consideration, and conversion." },
+        { value: 'retargeting', label: 'Basic Retargeting', score: 50, insight: "You’re reacting, but not really teaching anything new. Next: Introduce new proof, clarity, or reassurance at each step." },
+        { value: 'segmented', label: 'Segmented Funnel', score: 80, insight: "Creative is aligned to funnel stages. Next: Ensure transitions between stages feel natural, not abrupt." },
+        { value: 'dynamic', label: 'Dynamic Personalization', score: 100, insight: "Very strong. Messaging adapts to behavior or context. Next: Confirm data quality and avoid overcomplication." }
       ]
     },
     {
@@ -291,16 +292,16 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       question: 'How will we track the results?',
       type: 'single',
       consultantGuide: {
-        script: "When a sale happens, will we know came from? Are we relying on Facebook's reported numbers, or do we have a source of truth?",
-        context: "Platform data dependency is noted. Establishing an independent source of truth is recommended.",
-        redFlags: ["'We just look at total sales'", "Blind trust in platform ROAS"],
-        probes: ["Is GA4 set up correctly?", "Do you use UTM parameters?"]
+        script: "When something works or doesn’t, will we actually know why?",
+        context: "This is about whether we’re learning from the campaign or just watching dashboards.",
+        redFlags: ["No tracking plan defined before launch", "Reliance on platform-reported metrics only"],
+        insight: "Good tracking turns marketing into a learning system, not a black box. It allows you to double down on what actually works."
       },
       options: [
-        { value: 'no_tracking', label: 'No tracking plan', score: 0, insight: "Operational gap: Tracking constraints identified. Recommend setting up infrastructure immediately." },
-        { value: 'platform', label: 'Platform Native only', score: 40, insight: "Data potential: Platform dependency noted. Recommend independent verification tools for accuracy." },
-        { value: 'ga4', label: 'Google Analytics / UTMs', score: 80, insight: "Foundational state: Reliable tracking identified. Ready for standard optimization." },
-        { value: 'multi_touch', label: 'Multi-touch Attribution', score: 100, insight: "Strategic maturity: Granular attribution observed. Ready for complex budget optimization." }
+        { value: 'no_tracking', label: 'No tracking plan', score: 0, insight: "This turns marketing into guesswork. Next: Define success metrics before spending a dollar." },
+        { value: 'platform', label: 'Platform Native only', score: 40, insight: "Easy, but incomplete. Platforms tend to over-credit themselves. Next: Add independent tracking to validate results." },
+        { value: 'ga4', label: 'Google Analytics / UTMs', score: 80, insight: "Solid foundation for learning and optimization. Next: Make sure naming conventions and goals are consistent." },
+        { value: 'multi_touch', label: 'Multi-touch Attribution', score: 100, insight: "Advanced setup that supports smarter decisions. Next: Keep insights actionable, not overwhelming." }
       ]
     },
     {
@@ -308,70 +309,35 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       question: 'Is the budget allocated based on testing or fixed assumption?',
       type: 'single',
       consultantGuide: {
-        script: "Is the budget set in stone, or is it fluid based on performance? If an ad is winning, can we double the spend tomorrow?",
-        context: "Fixed budgets may affect agility. A flexible allocation model is recommended.",
-        redFlags: ["'Use it or lose it' budget", "Annual fixed allocation"],
-        probes: ["What is the approval process to increase spend?", "Do you have a testing slush fund?"]
+        script: "If something starts working better than expected, can we move money toward it quickly?",
+        context: "This checks whether the budget can adapt to performance, or if it’s locked no matter what.",
+        redFlags: ["Budget fully committed before any performance data", "Decisions driven by habit rather than results"],
+        insight: "The strongest campaigns treat budget as a lever, not a constraint. Flexibility is often the difference between good and great results."
       },
       options: [
-        { value: 'fixed', label: 'Fixed / Rigid', score: 20, insight: "Strategic gap: Rigid budget identified. Recommend negotiating a flexible 'test and scale' fund." },
-        { value: 'buffers', label: 'Fixed with buffers', score: 50, insight: "Standard state: Workable structure identified, though upside scaling may be constrained." },
-        { value: 'fluid', label: 'Fluid / Performance based', score: 90, insight: "Growth alignment: Agile budget observed. Ready for performance-driven scaling." },
-        { value: 'uncapped', label: 'Uncapped (ROAS constraint)', score: 100, insight: "Market resonance: Performance-first model observed. Ideal for rapid market capture." }
+        { value: 'fixed', label: 'Fixed / Rigid', score: 20, insight: "Limits upside and increases risk. Next: Carve out a testing or optimization buffer." },
+        { value: 'buffers', label: 'Fixed with buffers', score: 50, insight: "Better, but still constrained. Next: Define clear rules for reallocating spend." },
+        { value: 'fluid', label: 'Fluid / Performance based', score: 90, insight: "Healthy setup that rewards what works. Next: Ensure decision-making cadence is fast enough." },
+        { value: 'uncapped', label: 'Uncapped (ROAS constraint)', score: 100, insight: "Very strong, but only if tracking and operations can support it. Next: Confirm fulfillment, support, and cash flow readiness." }
       ]
     }
   ],
   creative: [
     {
-      id: 'creative_audit',
-      question: 'What is the state of your existing creative assets?',
+      id: 'creative_performance',
+      question: 'How do you measure creative success?',
       type: 'single',
       consultantGuide: {
-        script: "Let's start with what you have. Do you have a centralized library of approved assets, or are we hunting for logos on hard drives?",
-        context: "Asset fragmentation affects velocity. Asset consolidation is recommended.",
-        redFlags: ["'I think our designer has them'", "Using screenshots of logos"],
-        probes: ["Do you have a Brand Guidelines PDF?", "Is there a DAM system?"]
+        script: "How do you know when creative is actually working? Not just that it looks good, but that it did its job.",
+        context: "This reveals whether creative is treated as subjective art or a performance-driven business lever.",
+        redFlags: ["“We just know when it works”", "Heavy focus on vanity metrics (likes/shares) with no downstream revenue connection"],
+        insight: "If creative success isn't measurable, it can't be optimized. We must shift the client from opinion-based feedback to outcome-based performance."
       },
       options: [
-        { value: 'scattered', label: 'Scattered / Non-existent', score: 0, insight: "Systemic gap: Fragmented assets identified. Immediate asset consolidation is recommended." },
-        { value: 'basic', label: 'Basic logo files only', score: 25, insight: "Foundational state: Limited standards identified. Recommend a visual identity alignment to improve efficiency." },
-        { value: 'outdated', label: 'Centralized but outdated', score: 50, insight: "Differentiation potential: Legacy assets identified. Recommend a refresh to align with market expectations." },
-        { value: 'guidelines', label: 'Brand Guidelines & Asset Library', score: 75, insight: "Visual maturity: Solid foundation observed. Ready for high-volume production." },
-        { value: 'system', label: 'Full Design System / DAM', score: 100, insight: "Design authority: Advanced maturity observed. Ready for dynamic creative optimization." }
-      ]
-    },
-    {
-      id: 'creative_velocity',
-      question: 'How often does your team ship new creative?',
-      type: 'single',
-      consultantGuide: {
-        script: "Are you running a few big 'hero' campaigns a year, or an always-on engine that ships fresh creative every week?",
-        context: "Velocity dictates the delivery model. Iterative testing is recommended to maintain momentum.",
-        redFlags: ["High ambition, low resources", "Bottlenecked by one person"],
-        probes: ["How long does it take to approve a post?", "Who is the bottleneck?"]
-      },
-      options: [
-        { value: 'adhoc', label: 'Ad-hoc / Rarely', score: 0, insight: "Alignment opportunity: Low momentum identified. Recommend establishing an iterative testing culture." },
-        { value: 'quarterly', label: 'Quarterly Campaigns', score: 30, insight: "Foundational state: Traditional cadence noted. Recommend transitioning to more frequent delivery cycles." },
-        { value: 'monthly', label: 'Monthly Updates', score: 60, insight: "Standard state: Healthy cadence observed. Ready for workflow optimization." },
-        { value: 'always_on', label: 'Weekly / Always-on Testing', score: 100, insight: "Market resonance: Performance-ready cadence observed. Ideal for high-volume retention models." }
-      ]
-    },
-    {
-      id: 'creative_approval',
-      question: 'Who provides final approval on creative work?',
-      type: 'single',
-      consultantGuide: {
-        script: "Walk me through the approval process. Does it go to a marketing lead, or does the CEO/Founder need to sign off on every pixel?",
-        context: "Complex approvals may cause delays. Streamlining the review process is recommended.",
-        redFlags: ["'Everyone weighs in'", "CEO changes colors personally"],
-        probes: ["Has a campaign ever died in approval?", "Do you trust your marketing lead?"]
-      },
-      options: [
-        { value: 'committee', label: 'Committee / Consensus', score: 20, insight: "Operational gap: Consensus-based review identified. Recommend a single point of contact for efficiency." },
-        { value: 'founder', label: 'CEO / Founder', score: 40, insight: "Strategic maturity: Founder-led review noted. Recommend pre-scheduled review cycles to maintain velocity." },
-        { value: 'director', label: 'Marketing Director', score: 80, insight: "Standard state: Professional review process observed. Ready for collaborative scaling." },
-        { value: 'autonomy', label: 'Creative Director / Autonomy', score: 100, insight: "Design authority: High autonomy observed. Ideal for rapid market testing." }
+        { value: 'subjective', label: 'Subjective ("Does it look good?")', score: 10, insight: "Education gap: Subjective focus identified. Recommend a data-driven creative methodology." },
+        { value: 'vanity', label: 'Vanity Metrics (Likes/Shares)', score: 40, insight: "Alignment opportunity: Awareness focus noted. Recommend shifting to business impact metrics." },
+        { value: 'conversion', label: 'Conversion / CPA', score: 80, insight: "Strategic maturity: Conversion focus observed. Ready for ROAS optimization." },
+        { value: 'attribution', label: 'Full Attribution / LTV', score: 100, insight: "Market resonance: Advanced attribution observed. Ready for high-level incrementality testing." }
       ]
     },
     {
@@ -379,10 +345,10 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       question: 'How is creative currently produced?',
       type: 'single',
       consultantGuide: {
-        script: "Who is actually making the files? Do you have an in-house team, freelancers, or are we inheriting this from another agency?",
-        context: "Resource model affects delivery. Partnership alignment is recommended.",
-        redFlags: ["'My nephew does it'", "Burned out in-house designer"],
-        probes: ["What is your current cost per asset?", "Are source files organized?"]
+        script: "Who’s actually making the work today? And how repeatable is that process?",
+        context: "Production structure (In-house vs. Freelance vs. Agency) determines your speed, quality floor, and ability to scale.",
+        redFlags: ["One person doing everything", "Heavy reliance on a single external vendor with no backup or internal knowledge retention"],
+        insight: "Creative bottlenecks are rarely talent problems—they are system problems. Scalability requires a repeatable production engine."
       },
       options: [
         { value: 'diy', label: 'No resources / DIY', score: 0, insight: "Alignment opportunity: Resource constraints identified. Full execution support is recommended." },
@@ -392,20 +358,55 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       ]
     },
     {
-      id: 'creative_performance',
-      question: 'How do you measure creative success?',
+      id: 'creative_approval',
+      question: 'Who provides final approval on creative work?',
       type: 'single',
       consultantGuide: {
-        script: "At the end of the month, how do you know if the creative worked? Are we looking at vanity metrics like 'Likes', or hard revenue data?",
-        context: "Metric alignment is key for ROI. Performance-based reporting is recommended.",
-        redFlags: ["'We just want it to look cool'", "No access to ad account data"],
-        probes: ["Do you tag your creatives?", "What is your CPA target?"]
+        script: "When it comes down to it, who has the final ‘yes’?",
+        context: "Approval flow determines velocity. Creative clarity is often lost in committees or late-stage founder feedback loops.",
+        redFlags: ["“Everyone needs to weigh in”", "Committee-based consensus", "Lack of a single designated decision-maker"],
+        insight: "Great creative dies in committees. Establishing clear ownership and autonomy is the fastest way to accelerate results."
       },
       options: [
-        { value: 'subjective', label: 'Subjective ("Does it look good?")', score: 10, insight: "Education gap: Subjective focus identified. Recommend a data-driven creative methodology." },
-        { value: 'vanity', label: 'Vanity Metrics (Likes/Shares)', score: 40, insight: "Alignment opportunity: Awareness focus noted. Recommend shifting to business impact metrics." },
-        { value: 'conversion', label: 'Conversion / CPA', score: 80, insight: "Strategic maturity: Conversion focus observed. Ready for ROAS optimization." },
-        { value: 'attribution', label: 'Full Attribution / LTV', score: 100, insight: "Market resonance: Advanced attribution observed. Ready for high-level incrementality testing." }
+        { value: 'committee', label: 'Committee / Consensus', score: 20, insight: "Operational gap: Consensus-based review identified. Recommend a single point of contact for efficiency." },
+        { value: 'founder', label: 'CEO / Founder', score: 40, insight: "Strategic maturity: Founder-led review noted. Recommend pre-scheduled review cycles to maintain velocity." },
+        { value: 'director', label: 'Marketing Director', score: 80, insight: "Standard state: Professional review process observed. Ready for collaborative scaling." },
+        { value: 'autonomy', label: 'Creative Director / Autonomy', score: 100, insight: "Design authority: High autonomy observed. Ideal for rapid market testing." }
+      ]
+    },
+    {
+      id: 'creative_velocity',
+      question: 'How often does your team ship new creative?',
+      type: 'single',
+      consultantGuide: {
+        script: "How frequently does new creative actually go live?",
+        context: "Creative fatigue kills campaign performance faster than bad targeting. Cadence equals learning velocity.",
+        redFlags: ["Ad-hoc/Reactive shipping", "Same ads running \"until they stop working\" with no testing rhythm"],
+        insight: "Frequency isn't about volume; it's about how fast your team can test a hypothesis and move to the next iteration."
+      },
+      options: [
+        { value: 'adhoc', label: 'Ad-hoc / Rarely', score: 0, insight: "Alignment opportunity: Low momentum identified. Recommend establishing an iterative testing culture." },
+        { value: 'quarterly', label: 'Quarterly Campaigns', score: 30, insight: "Foundational state: Traditional cadence noted. Recommend transitioning to more frequent delivery cycles." },
+        { value: 'monthly', label: 'Monthly Updates', score: 60, insight: "Standard state: Healthy cadence observed. Ready for workflow optimization." },
+        { value: 'always_on', label: 'Weekly / Always-on Testing', score: 100, insight: "Market resonance: Performance-ready cadence observed. Ideal for high-volume retention models." }
+      ]
+    },
+    {
+      id: 'creative_audit',
+      question: 'What is the state of your existing creative assets?',
+      type: 'single',
+      consultantGuide: {
+        script: "If I asked for everything right now, how easily could you find it?",
+        context: "Asset organization impacts speed and consistency. Disorganized assets lead to expensive, redundant work.",
+        redFlags: ["Assets living in Slack threads, email, or personal drives", "No single source of truth or centralized library"],
+        insight: "When assets aren't systemized, creative becomes expensive and slow. A centralized DAM (Digital Asset Manager) is a prerequisite for scale."
+      },
+      options: [
+        { value: 'scattered', label: 'Scattered / Non-existent', score: 0, insight: "Systemic gap: Fragmented assets identified. Immediate asset consolidation is recommended." },
+        { value: 'basic', label: 'Basic logo files only', score: 25, insight: "Foundational state: Limited standards identified. Recommend a visual identity alignment to improve efficiency." },
+        { value: 'outdated', label: 'Centralized but outdated', score: 50, insight: "Differentiation potential: Legacy assets identified. Recommend a refresh to align with market expectations." },
+        { value: 'guidelines', label: 'Brand Guidelines & Asset Library', score: 75, insight: "Visual maturity: Solid foundation observed. Ready for high-volume production." },
+        { value: 'system', label: 'Full Design System / DAM', score: 100, insight: "Design authority: Advanced maturity observed. Ready for dynamic creative optimization." }
       ]
     }
   ]
