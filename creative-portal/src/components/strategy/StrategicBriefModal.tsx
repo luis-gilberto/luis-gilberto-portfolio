@@ -4,6 +4,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Download, Printer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { SealOfAuthority } from '@/components/shared/SealOfAuthority';
 
 interface StrategicBriefData {
   clientName: string;
@@ -186,7 +187,15 @@ export default function StrategicBriefModal({ isOpen, onClose, data }: Strategic
             </div>
 
             {/* DOCUMENT CONTENT */}
-            <div id="strategic-brief-content" className="p-12 md:p-16 font-sans strategic-brief-content">
+            <div id="strategic-brief-content" className="p-12 md:p-16 font-sans strategic-brief-content relative overflow-hidden">
+              {/* Phase 92: Seal of Authority Watermark */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-10 pointer-events-none">
+                <SealOfAuthority size={600} opacity={1} rotate={15} />
+              </div>
+              
+              <div className="absolute top-20 right-20 opacity-5 pointer-events-none">
+                <SealOfAuthority size={300} opacity={1} rotate={-10} />
+              </div>
               
               {/* HEADER */}
               <div className="flex flex-col md:flex-row justify-between items-start md:items-end border-b-4 border-[#2ED3C6] pb-6 mb-12">

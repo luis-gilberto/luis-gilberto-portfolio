@@ -42,6 +42,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Session not found' }, { status: 404 })
     }
 
+    // 1.5. Prerequisite Check: Ensure assessment is COMPLETED before synthesis
+    const validStatuses = ['COMPLETED', 'PUBLISHED', 'UNDER_REVIEW', 'MANUAL_REVIEW', 'completed', 'submitted'];
+    if (!validStatuses.includes(assessmentSession.status?.toUpperCase())) {
+      console.log(`[API/generate-narrative] Assessment incomplete for session ${assessmentSession.id}. Blocking synthesis.`);
+      return NextResponse.json({ 
+        error: 'INCOMPLETE_ASSESSMENT', 
+        message: 'Assessment data incomplete. Redirecting to questions...' 
+      }, { status: 400 })
+    }
+
     // Auth check: Admin or the project owner
     if (session.user.role !== 'ADMIN') {
       const project = await prisma.project.findUnique({

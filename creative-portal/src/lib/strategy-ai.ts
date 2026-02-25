@@ -167,8 +167,8 @@ export async function generateMasterRoadmap(projectId: string) {
         2. Executive Synthesis: Write a 2-paragraph advisory narrative. 
            - Paragraph 1 (The Diagnosis): Summarize the project's current state based on the 4 assessment scores and the "Strategic Constraints" entered in the Config tab.
            - Paragraph 2 (The Path): Synthesize how the "Business OKRs" will be achieved through the proposed 3-phase roadmap.
-           - Tone: Board-level, authoritative, calm, and visionary. 
-           - Constraints: Do not use bullet points, technical labels, or markdown symbols (like ### or *). Use only plain text paragraphs.
+           - Tone: Advisory, calm, and boardroom-ready.
+           - Constraints: Do not use bullet points, technical labels, markdown symbols (like ### or *), or em-dashes. Use only plain text paragraphs.
         3. Critical Constraint: Identify the single biggest bottleneck identified from the briefs. IMPORTANT: If a manual constraint is provided in the STRATEGIC CONFIGURATION, prioritize and use that as the primary Critical Constraint.
         4. Organize these tactics into a 3-Phase Project Schedule (Month 1, 2, 3).
         5. For each phase, provide:
@@ -197,7 +197,7 @@ export async function generateMasterRoadmap(projectId: string) {
 
       const completion = await openai.chat.completions.create({
         messages: [
-          { role: "system", content: "You are a world-class Senior Full-Stack Architect and AI Specialist. You synthesize complex business data into boardroom-level strategic plans. You only respond with valid JSON." },
+          { role: "system", content: "You are the AI Strategist for Luis Gilberto. You synthesize complex business data into boardroom-level strategic plans. You only respond with valid JSON." },
           { role: "user", content: prompt }
         ],
         model: "gpt-4o",
@@ -254,6 +254,8 @@ export async function generateMasterRoadmap(projectId: string) {
       data: {
         masterPlan: masterPlan as any,
         masterRoadmap: JSON.stringify(masterPlan),
+        executiveSynthesis: masterPlan.executiveSynthesis,
+        criticalConstraint: masterPlan.criticalConstraint,
         overallIntelligenceScore: avgScore,
         quotedInvestment,
         roadmapStatus: 'GENERATED'

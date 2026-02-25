@@ -13,7 +13,7 @@ export async function GET() {
     // 1. Fetch User
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
-      select: { id: true, name: true, email: true }
+      select: { id: true, name: true, email: true, clientId: true }
     })
 
     if (!user) {
@@ -28,12 +28,12 @@ export async function GET() {
     })
 
     // If target doesn't exist or belong to user/client, fallback to latest active
-    if (!project || (project.userId !== user.id && project.clientId !== user.client?.id)) {
+    if (!project || (project.userId !== user.id && project.clientId !== user.clientId)) {
         project = await prisma.project.findFirst({
             where: { 
                 OR: [
                     { userId: user.id },
-                    { clientId: user.client?.id } // Include Client Org projects
+                    { clientId: user.clientId } // Include Client Org projects
                 ],
                 status: { in: ['ACTIVE', 'DISCOVERY', 'PLANNING'] }
             },

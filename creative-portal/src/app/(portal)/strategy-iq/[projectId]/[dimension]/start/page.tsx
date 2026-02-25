@@ -17,6 +17,7 @@ export default function StrategyIQStartPage() {
   const [initialAnswers, setInitialAnswers] = useState<Record<string, number>>({})
   const [isHydrating, setIsHydrating] = useState(true)
   const [isReadOnly, setIsReadOnly] = useState(false)
+  const [projectStatus, setProjectStatus] = useState<string | null>(null)
 
   useEffect(() => {
     if (params.projectId) setProjectId(params.projectId as string)
@@ -33,6 +34,33 @@ export default function StrategyIQStartPage() {
       setIsReadOnly((isReview || isCompleted) && !isAdmin)
     }
   }, [params, session, isAdmin])
+
+  useEffect(() => {
+    async function fetchProject() {
+      if (projectId) {
+        try {
+          const res = await fetch(`/api/strategy-iq/init`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ projectId })
+          })
+          if (res.ok) {
+            const project = await res.json()
+            setProjectStatus(project.status)
+            
+            // DEADBOLT: Non-admins must be CALIBRATED to access Stage 3
+            const isCalibrated = project.status === 'CALIBRATED' || project.status === 'ACTIVE' || project.status === 'CERTIFIED'
+            if (!isAdmin && !isCalibrated) {
+              router.push('/dashboard?error=calibration_required')
+            }
+          }
+        } catch (err) {
+          console.error("Failed to fetch project for deadbolt", err)
+        }
+      }
+    }
+    fetchProject()
+  }, [projectId, isAdmin, router])
 
   useEffect(() => {
     async function fetchExistingSession() {

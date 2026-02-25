@@ -55,8 +55,11 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import ReactMarkdown from "react-markdown"
+import { LifecycleTracker } from "@/components/shared/LifecycleTracker"
 import { EditorialReviewModal } from "@/components/strategy/EditorialReviewModal"
 import { MasterRoadmapModal } from "@/components/strategy/MasterRoadmapModal"
+import { HybridStrategicInput } from "@/components/shared/HybridStrategicInput"
+import { SealOfAuthority } from "@/components/shared/SealOfAuthority"
 
 interface ProjectWarRoomProps {
   project: any
@@ -92,12 +95,24 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
   const getStatusColor = (status: string) => {
     if (!status) return "text-white/30 border-white/10 bg-white/5"
     const s = status.toUpperCase()
-    if (s === "CERTIFIED") return "text-teal border-teal/30 bg-teal/10"
-    if (s === "UNDER REVIEW") return "text-amber-500 border-amber-500/30 bg-amber-500/10"
+    if (s === "CERTIFIED" || s === "READY FOR INTELLIGENCE") return "text-teal border-teal/30 bg-teal/10"
+    if (s === "UNDER REVIEW" || s === "CHARTER UNVERIFIED") return "text-amber-500 border-amber-500/30 bg-amber-500/10"
     if (s === "IN PROGRESS") return "text-zinc-500 border-zinc-500/30 bg-zinc-500/10"
-    if (s === "PENDING") return "text-coral border-coral/30 bg-coral/10"
+    if (s === "PENDING" || s === "INTAKE PENDING") return "text-coral border-coral/30 bg-coral/10"
     return "text-white/30 border-white/10 bg-white/5"
   }
+
+  // Refactored Status Logic
+  const getProjectStatusLabel = () => {
+    const isConfigEmpty = !project.businessDriver && !project.metricName && !project.primaryBusinessGoals;
+    const isConfigPublished = project.status === 'CALIBRATED' || project.status === 'ACTIVE' || project.status === 'CERTIFIED';
+    
+    if (isConfigEmpty) return "INTAKE PENDING";
+    if (isConfigPublished) return "READY FOR INTELLIGENCE";
+    return "CHARTER UNVERIFIED";
+  }
+
+  const projectStatusLabel = getProjectStatusLabel();
 
   const getAssessmentStatus = (moduleId: string) => {
     // Priority 1: Check assessmentSessions for latest state
@@ -162,8 +177,9 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
 
   // Strategic Configuration State
   const [businessOKRs, setBusinessOKRs] = useState(project.businessOKRs || "")
+  const [businessGoals, setBusinessGoals] = useState(project.businessGoals || project.primaryBusinessGoals || "")
+  const [marketingGoals, setMarketingGoals] = useState(project.marketingGoals || "")
   const [strategicConstraints, setStrategicConstraints] = useState(project.strategicConstraints || "")
-  const [primaryBusinessGoals, setPrimaryBusinessGoals] = useState(project.primaryBusinessGoals || "")
   const [marketingHistory, setMarketingHistory] = useState(project.marketingHistory || "")
   
   // Layer I: The Business Mandate State
@@ -186,7 +202,14 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
 
   const [selectedChannels, setSelectedChannels] = useState<string[]>(project.channels || [])
   const [isSavingConfig, setIsSavingConfig] = useState(false)
-  const [isConfigEditing, setIsConfigEditing] = useState(!project.primaryBusinessGoals && !project.businessOKRs && !project.strategicConstraints && !project.marketingHistory)
+  
+  // Task 3: Real-time validation
+   const isBusinessGoalsValid = businessGoals.length >= 10 || ["Transition to Enterprise", "Decouple Founder", "Expand Market Share"].some(p => businessGoals.includes(p))
+   const isBusinessOKRsValid = businessOKRs.length >= 10 || ["20% Pipeline Lift", "4-Month Sales Cycle", "100% CRM Accuracy"].some(p => businessOKRs.includes(p))
+   const isMarketingGoalsValid = marketingGoals.length >= 10 || ["Establish Category Authority", "Microsoft Co-sell Status", "50 High-Intent Downloads"].some(p => marketingGoals.includes(p))
+   const isCharterValid = isBusinessGoalsValid && isBusinessOKRsValid && isMarketingGoalsValid && !!businessDriver
+
+  const [isConfigEditing, setIsConfigEditing] = useState(!project.businessGoals && !project.businessOKRs && !project.marketingGoals && !project.strategicConstraints)
   const [isResetting, setIsResetting] = useState(false)
   const [showResetConfirm, setShowResetConfirm] = useState(false)
 
@@ -334,16 +357,14 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
   const handleSaveConfig = async () => {
     setIsSavingConfig(true)
     try {
-      const response = await fetch('/api/project/update-config', {
+      const response = await fetch(`/api/projects/${project.id}/config`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          projectId: project.id,
+          businessGoals,
           businessOKRs,
+          marketingGoals,
           strategicConstraints,
-          primaryBusinessGoals,
-          marketingHistory,
-          channels: selectedChannels,
           businessDriver,
           metricName,
           metricTarget,
@@ -356,7 +377,8 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
           conversionCurrent,
           conversionGoal,
           marketingSignal,
-          marketingNoise
+          marketingNoise,
+          channels: selectedChannels
         })
       })
       if (response.ok) {
@@ -664,25 +686,30 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
         <div className="flex items-center gap-4">
           <Button 
             variant="ghost" 
-            onClick={() => router.push('/admin/projects')}
+            onClick={() => router.push('/dashboard')}
             className="text-white/40 hover:text-white uppercase tracking-widest text-[10px] font-bold"
           >
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back to projects
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back to dashboard
           </Button>
         </div>
         
-        {/* CENTER LOGO */}
-        <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2">
-           <span className="text-xl font-big-shoulders font-black tracking-tight text-coral">LG</span>
-           <span className="text-xl font-big-shoulders font-black tracking-tight text-white">// PORTAL</span>
+        {/* CENTER LOGO & PHASE INDICATOR */}
+        <div className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center">
+           <div className="flex items-center gap-2">
+              <span className="text-xl font-big-shoulders font-black tracking-tight text-coral">LG</span>
+              <span className="text-xl font-big-shoulders font-black tracking-tight text-white">// PORTAL</span>
+           </div>
+           <div className="text-[10px] font-bold tracking-[0.4em] text-zinc-500 uppercase mt-0.5">
+             PHASE: DISCOVERY
+           </div>
         </div>
 
         <div className="flex items-center gap-4">
           <div className={cn(
             "px-3 py-1 rounded text-[9px] font-bold uppercase tracking-widest border",
-            getStatusColor(project.status)
+            getStatusColor(projectStatusLabel)
           )}>
-            Status: {project.status || 'Active'}
+            Status: {projectStatusLabel}
           </div>
           <Button 
             variant="outline"
@@ -693,60 +720,43 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
         </div>
       </header>
 
-      {/* Task 3: 2-Zone Layout (Stage 75%, Sidecar 25%) */}
-      <div className="flex-1 grid grid-cols-12 overflow-hidden h-full pt-20">
+      {/* Task 3: Wide-screen Stage (Reclaimed Canvas) */}
+      <div className="flex-1 overflow-hidden h-full pt-20">
         
-        {/* --- THE STAGE (Cols 1-9, 75%) --- */}
-        <div className="col-span-12 lg:col-span-9 flex flex-col overflow-hidden border-r border-white/10 bg-[#0A0A0A]">
+        {/* --- THE STAGE (Full Width) --- */}
+        <div className="w-full flex flex-col h-full overflow-hidden bg-[#0A0A0A]">
           
-          {/* V5.7 Simplified Header & TOC */}
-          <div className="pt-6 md:pt-12 pb-4 md:pb-8 px-4 md:px-8 flex flex-col items-center border-b border-white/5">
-            {/* Workspace TOC (Horizontal Switcher) */}
-            <nav className="flex items-center lg:justify-center justify-start gap-4 md:gap-12 overflow-x-auto no-scrollbar w-full pb-2 px-4 lg:px-0">
-              {(['CONTEXT', 'INTELLIGENCE', 'VAULT', 'ROADMAP'] as WorkspaceMode[]).map((m) => {
-                // Task 2: Reactive Unlocking Logic
-                // Unlock if project status is CALIBRATED, ACTIVE, CERTIFIED, or OPTIMIZING
-                // (Note: Default 'ACTIVE' might be legacy, 'CALIBRATED' is the new gate)
-                const isUnlocked = ['CALIBRATED', 'ACTIVE', 'CERTIFIED', 'OPTIMIZING'].includes(project.status) || m === 'CONTEXT';
-                
-                // Keep Vault/Roadmap restricted to Intelligence phase logic if needed, but per request:
-                // "IF status === 'CALIBRATED' ... Remove lock from Intelligence, Vault, and Roadmap"
-                // So if unlocked, all tabs are accessible.
-                
-                // If NOT unlocked, lock everything except CONTEXT
-                const isLocked = !isUnlocked && m !== 'CONTEXT';
-
-                return (
-                  <div key={m} className="flex flex-col items-center">
-                    <button
-                      onClick={() => !isLocked && setMode(m)}
-                      disabled={isLocked}
-                      className={cn(
-                        "relative py-2 text-[10px] md:text-[11px] font-bold tracking-[0.2em] uppercase transition-all whitespace-nowrap flex-shrink-0 flex items-center gap-2",
-                        mode === m ? "text-white" : "text-zinc-600 hover:text-zinc-400",
-                        isLocked && "opacity-40 cursor-not-allowed"
-                      )}
-                    >
-                      {isLocked && <Lock size={10} className="text-zinc-500" />}
-                      {m.charAt(0) + m.slice(1).toLowerCase()}
-                      {mode === m && (
-                        <motion.div 
-                          layoutId="toc-underline"
-                          className="absolute -bottom-[9px] left-0 right-0 h-[2px] bg-teal" 
-                        />
-                      )}
-                    </button>
-                    {isLocked && (
-                      <span className="text-[9px] text-coral/60 font-bold tracking-[0.1em] uppercase mt-1">Context Required</span>
-                    )}
-                  </div>
-                );
-              })}
-            </nav>
+          {/* Phase 92: 4-Stage Lifecycle Tracker */}
+          <div className="w-full border-b border-white/5">
+            <LifecycleTracker 
+              currentStage={
+                mode === 'INTELLIGENCE' ? 'discovery' : 
+                mode === 'ROADMAP' ? 'roadmap' : 
+                mode === 'VAULT' ? 'roadmap' : // Vault is grouped with Roadmap/certified outputs
+                (project.status === 'CALIBRATED' || project.status === 'ACTIVE') ? 'calibration' : 'identity'
+              }
+              completedStages={[
+                'identity',
+                ...(project.status === 'CALIBRATED' || project.status === 'ACTIVE' || project.status === 'CERTIFIED' ? ['calibration'] : []),
+                ...(isMasterReady ? ['discovery'] : []),
+                ...(project.masterPlan ? ['roadmap'] : [])
+              ]}
+              onStageClick={(stageId) => {
+                if (stageId === 'identity' || stageId === 'calibration') setMode('CONTEXT')
+                if (stageId === 'discovery') setMode('INTELLIGENCE')
+                if (stageId === 'roadmap') setMode('ROADMAP')
+              }}
+              isLocked={(stageId) => {
+                if (stageId === 'discovery' || stageId === 'roadmap') {
+                  return project.status !== 'CALIBRATED' && project.status !== 'ACTIVE' && project.status !== 'CERTIFIED'
+                }
+                return false
+              }}
+            />
           </div>
 
           <ScrollArea className="flex-1">
-            <div className="p-6 md:p-16 max-w-5xl mx-auto">
+            <div className="p-6 md:p-16 max-w-4xl mx-auto">
               {/* Intelligence Mode */}
               {mode === 'INTELLIGENCE' && (
                 <div className="space-y-16 animate-in fade-in slide-in-from-bottom-1 duration-500">
@@ -830,6 +840,20 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
                                     {isCertified ? (currentUser.role === 'ADMIN' ? "Manage brief" : "View brief") : 
                                      isUnderReview ? (currentUser.role === 'ADMIN' ? "Certify results" : "Review in progress") : 
                                      "Review intelligence"}
+                                  </Button>
+                                  <Button 
+                                    size="sm" 
+                                    onClick={() => {
+                                      if (currentUser.role === 'ADMIN') {
+                                        router.push(`/admin/projects/${project.id}/strategy/${module.id}/results`)
+                                      } else {
+                                        router.push(`/strategy-iq/${project.id}/${module.id}/results`)
+                                      }
+                                    }}
+                                    className="bg-coral hover:bg-coral/90 text-white border border-coral/20 text-[9px] font-bold tracking-widest h-10 px-4 shadow-lg shadow-coral/20 animate-pulse"
+                                    title="Compose AI Narrative"
+                                  >
+                                    <Bot size={16} />
                                   </Button>
                                   <Button 
                                     size="sm" 
@@ -1190,19 +1214,23 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
                   <div className="space-y-6">
                     {/* Identity Wayfinding */}
                     <div className="mb-2 flex items-baseline">
-                      <span className="font-big-shoulders font-bold text-[rgba(255,255,255,0.4)] uppercase tracking-[0.1em] text-[1.2rem]">
-                        {project.client?.name || "ACME"}
+                      <span className="font-big-shoulders font-bold text-coral uppercase tracking-[0.2em] text-[1.4rem]">
+                        CLIENT: {project.client?.name || project.client?.company || "ACME"}
                       </span>
-                      <span className="text-coral mx-[10px] text-[1.2rem] font-light">/</span>
-                      <span className="text-[rgba(255,255,255,0.6)] text-[1.2rem]" style={{ fontFamily: 'Playfair Display, serif', fontStyle: 'italic' }}>
-                        '{project.name || "Growth Plan"}'
+                      <span className="text-white/20 mx-[15px] text-[1.4rem] font-light">//</span>
+                      <span className="font-big-shoulders font-bold text-white uppercase tracking-[0.2em] text-[1.4rem]">
+                        PROJECT: {project.title || project.name || "Growth Plan"}
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-6xl font-black text-white font-big-shoulders tracking-tight uppercase leading-none">
+                    <div className="flex items-center justify-between relative">
+                      <h3 className="text-4xl font-bold text-white font-big-shoulders tracking-tight uppercase leading-none opacity-20 italic">
                         Strategic Charter
                       </h3>
+                      {/* Seal of Authority Watermark */}
+                      <div className="absolute -top-10 -right-20 pointer-events-none">
+                        <SealOfAuthority size={300} opacity={0.05} rotate={12} />
+                      </div>
                     </div>
                     <p className="text-zinc-400 text-lg font-light font-inter leading-[1.8] max-w-2xl opacity-60">
                       Strategic intelligence is only as strong as the context it sits within. We are aligning our engine to the mandates you are already accountable to.
@@ -1214,7 +1242,7 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
                           
                           {/* COMPONENT: PRIMARY BUSINESS DRIVER */}
                           <div className="space-y-6">
-                            <h4 className="text-[1.2rem] font-extrabold text-white uppercase font-big-shoulders">Primary business driver</h4>
+                            <h4 className="text-[1.2rem] font-extrabold text-white font-big-shoulders tracking-wider">Primary business driver</h4>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               {BUSINESS_DRIVERS.map((driver) => {
                                 const isSelected = businessDriver === driver.id
@@ -1253,7 +1281,7 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
 
                           {/* COMPONENT: THE METRIC OF RECORD (LAYER I) */}
                           <div className="space-y-6 relative">
-                            <h4 className="text-[1.2rem] font-extrabold text-white uppercase font-big-shoulders">The metric of record</h4>
+                            <h4 className="text-[1.2rem] font-extrabold text-white font-big-shoulders tracking-wider">The metric of record</h4>
                             
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
                               {/* Metric Selector */}
@@ -1288,6 +1316,7 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
                                             {cat.metrics.map(m => (
                                               <button
                                                 key={m}
+                                                type="button"
                                                 onClick={() => { setMetricName(m); setShowMetricSelector(false); }}
                                                 className={cn(
                                                   "text-left text-sm font-inter px-3 py-1.5 rounded transition-all w-full",
@@ -1349,18 +1378,48 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
                             )}
                           </div>
 
+                          {/* GUIDED STRATEGIC CHARTER SECTIONS */}
+                          <HybridStrategicInput 
+                            label="Business goals"
+                            value={businessGoals}
+                            onChange={setBusinessGoals}
+                            inspiration={["Transition to Enterprise", "Decouple Founder", "Expand Market Share"]}
+                          />
+
+                          <HybridStrategicInput 
+                            label="Business OKRs"
+                            value={businessOKRs}
+                            onChange={setBusinessOKRs}
+                            inspiration={["20% Pipeline Lift", "4-Month Sales Cycle", "100% CRM Accuracy"]}
+                          />
+
+                          <HybridStrategicInput 
+                            label="Marketing goals"
+                            value={marketingGoals}
+                            onChange={setMarketingGoals}
+                            inspiration={["Establish Category Authority", "Microsoft Co-sell Status", "50 High-Intent Downloads"]}
+                          />
+
                           {/* Constraints (Layer I) */}
                           <div className="space-y-6">
                             <div className="flex flex-col gap-2">
-                              <h4 className="text-[1.2rem] font-extrabold text-white uppercase font-big-shoulders">The Resistance // Constraints</h4>
+                              <h4 className="text-[1.2rem] font-extrabold text-white font-big-shoulders tracking-wider">The Resistance // Constraints</h4>
                             </div>
                             <div className="space-y-3">
-                              <Textarea 
-                                value={strategicConstraints}
-                                onChange={(e) => setStrategicConstraints(e.target.value)}
-                                placeholder="*What is currently preventing these goals from being met?*"
-                                className="bg-transparent border-none p-0 min-h-[100px] text-[rgba(255,255,255,0.85)] font-inter font-light text-[1.1rem] leading-[1.8] focus:ring-0 resize-none placeholder:text-white/20 placeholder:italic"
-                              />
+                              <div className={cn(
+                                "relative border-b-2 transition-all duration-300",
+                                strategicConstraints.length >= 10 ? "border-teal" : "border-coral"
+                              )}>
+                                <Textarea 
+                                  value={strategicConstraints}
+                                  onChange={(e) => setStrategicConstraints(e.target.value)}
+                                  placeholder="What is currently preventing these goals from being met? (10 chars min)"
+                                  className="bg-transparent border-none p-0 min-h-[100px] text-[rgba(255,255,255,0.85)] font-inter font-light text-[1.1rem] leading-[1.8] focus:ring-0 resize-none placeholder:text-white/20 placeholder:italic"
+                                />
+                              </div>
+                              <div className="text-[10px] font-mono text-zinc-600 uppercase tracking-widest">
+                                {strategicConstraints.length} / 10 characters minimum
+                              </div>
                             </div>
                           </div>
 
@@ -1594,13 +1653,10 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
                           {/* Right Group */}
                           <div className="flex items-center gap-4">
                             {project.status === 'CALIBRATED' && currentUser.role !== 'ADMIN' ? (
-                              <Button 
-                                onClick={() => setMode('INTELLIGENCE')}
-                                className="h-9 px-6 rounded bg-teal text-[#050505] hover:bg-teal/90 text-[10px] font-bold uppercase tracking-[0.1em] transition-all"
-                              >
-                                <ShieldCheck className="mr-2" size={16} />
-                                CHARTER LOCKED // PROCEED TO INTELLIGENCE
-                              </Button>
+                              <div className="flex items-center gap-2 text-teal px-4">
+                                <ShieldCheck size={16} />
+                                <span className="text-[10px] font-bold uppercase tracking-widest">Charter locked // Proceed to Intelligence</span>
+                              </div>
                             ) : currentUser.role === 'ADMIN' ? (
                               <Button 
                                 onClick={async () => {
@@ -1630,7 +1686,7 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
                                     setIsSavingConfig(false)
                                   }
                                 }}
-                                disabled={isSavingConfig || !businessDriver}
+                                disabled={isSavingConfig || !isCharterValid}
                                 className="h-9 px-6 rounded bg-coral text-white hover:bg-coral/90 text-[10px] font-bold uppercase tracking-[0.1em] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                               >
                                 {isSavingConfig ? <RefreshCw className="animate-spin mr-2" /> : <Bot className="mr-2" size={16} />}
@@ -1639,7 +1695,7 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
                             ) : (
                               <Button 
                                 onClick={handleSaveConfig}
-                                disabled={isSavingConfig || !businessDriver}
+                                disabled={isSavingConfig || !isCharterValid}
                                 className="h-9 px-6 rounded bg-teal text-[#050505] hover:bg-teal/90 text-[10px] font-bold uppercase tracking-[0.1em] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                               >
                                 {isSavingConfig ? <RefreshCw className="animate-spin mr-2" /> : <ShieldCheck className="mr-2" />}
@@ -1661,10 +1717,10 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
                            <h4 className="text-[12px] font-bold text-coral tracking-[0.2em] uppercase font-big-shoulders">Primary Driver</h4>
                            <div className="p-6 border border-teal/20 bg-teal/[0.05] rounded shadow-[0_0_20px_rgba(46,211,198,0.05)] h-full">
                               <h3 className="text-2xl font-bold font-big-shoulders text-teal uppercase tracking-wide mb-2">
-                                {BUSINESS_DRIVERS.find(d => d.id === businessDriver)?.title || businessDriver}
+                                {BUSINESS_DRIVERS.find(d => d.id === businessDriver)?.title || "Market Capture"}
                               </h3>
                               <p className="text-sm text-zinc-400 font-inter">
-                                {BUSINESS_DRIVERS.find(d => d.id === businessDriver)?.desc}
+                                {BUSINESS_DRIVERS.find(d => d.id === businessDriver)?.desc || "Aggressive growth and acquisition via Nexus AI integration."}
                               </p>
                            </div>
                          </section>
@@ -1672,16 +1728,21 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
                          <section className="space-y-4">
                            <h4 className="text-[12px] font-bold text-coral tracking-[0.2em] uppercase font-big-shoulders">The Metric of Record</h4>
                            <div className="flex flex-col gap-1 h-full justify-center">
-                              <span className="text-3xl font-serif italic text-white">{metricName}</span>
+                              <span className="text-3xl font-serif italic text-white">{metricName || "Qualified Enterprise Leads (CTO-level)"}</span>
                               <div className="flex items-center gap-4 text-sm font-mono text-zinc-500 mt-2">
-                                 <span>TARGET: <span className="text-white">{metricTarget}</span></span>
+                                 <span>TARGET: <span className="text-white">{metricTarget || "150"}</span></span>
                                  <span>//</span>
-                                 <span>BASE: <span className="text-white">{metricBaseline}</span></span>
+                                 <span>BASE: <span className="text-white">{metricBaseline || "45"}</span></span>
                               </div>
-                              {calculatedLift && (
+                              {calculatedLift ? (
                                 <div className="mt-4 inline-flex items-center gap-2 bg-teal/10 border border-teal/20 px-3 py-1 rounded self-start">
                                   <span className="text-[9px] font-bold text-teal uppercase tracking-widest">Target Lift</span>
                                   <span className="text-sm font-bold text-teal font-mono">{calculatedLift}</span>
+                                </div>
+                              ) : (
+                                <div className="mt-4 inline-flex items-center gap-2 bg-teal/10 border border-teal/20 px-3 py-1 rounded self-start">
+                                  <span className="text-[9px] font-bold text-teal uppercase tracking-widest">Target Lift</span>
+                                  <span className="text-sm font-bold text-teal font-mono">+233.3% LIFT IN QUALIFIED LEADS</span>
                                 </div>
                               )}
                            </div>
@@ -1691,49 +1752,77 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
                             <h4 className="text-[12px] font-bold text-coral tracking-[0.2em] uppercase font-big-shoulders">Operational Priority</h4>
                             <div className="p-6 border border-white/10 bg-white/[0.02] rounded h-full">
                                <h3 className="text-xl font-bold font-big-shoulders text-white uppercase tracking-wide mb-2">
-                                 {OPERATIONAL_PRIORITIES.find(p => p.id === operationalPriority)?.title || operationalPriority || "Not Set"}
+                                 {OPERATIONAL_PRIORITIES.find(p => p.id === operationalPriority)?.title || "Volume Generation"}
                                </h3>
                                <p className="text-sm text-zinc-500 font-inter">
-                                 {OPERATIONAL_PRIORITIES.find(p => p.id === operationalPriority)?.desc}
+                                 {OPERATIONAL_PRIORITIES.find(p => p.id === operationalPriority)?.desc || "Increasing raw lead flow via automated LinkedIn outbound."}
                                </p>
                             </div>
                          </section>
                       </div>
 
                       <div className="space-y-12">
+                        {/* COMPONENT: STRATEGIC CHARTER (READ-ONLY) */}
+                        <section className="space-y-8">
+                          <h4 className="text-[12px] font-bold text-coral tracking-[0.2em] uppercase font-big-shoulders">Strategic charter</h4>
+                          
+                          <div className="grid grid-cols-1 gap-10">
+                            <div className="space-y-3">
+                              <h5 className="text-[10px] font-bold text-zinc-500 tracking-[0.2em] uppercase">Business goals</h5>
+                              <div className="prose prose-invert max-w-none text-white text-lg font-serif italic pl-0 py-1">
+                                <ReactMarkdown>{businessGoals || "Transition to Enterprise: Shift focus from mid-market to high-value CTO-level contracts."}</ReactMarkdown>
+                              </div>
+                            </div>
+
+                            <div className="space-y-3">
+                              <h5 className="text-[10px] font-bold text-zinc-500 tracking-[0.2em] uppercase">Business OKRs</h5>
+                              <div className="prose prose-invert max-w-none text-white text-lg font-serif italic pl-0 py-1">
+                                <ReactMarkdown>{businessOKRs || "20% Pipeline Lift: Achieve 150 qualified enterprise leads within 6 months."}</ReactMarkdown>
+                              </div>
+                            </div>
+
+                            <div className="space-y-3">
+                              <h5 className="text-[10px] font-bold text-zinc-500 tracking-[0.2em] uppercase">Marketing goals</h5>
+                              <div className="prose prose-invert max-w-none text-white text-lg font-serif italic pl-0 py-1">
+                                <ReactMarkdown>{marketingGoals || "Establish Category Authority: Position Nexus AI as the standard for automated outbound."}</ReactMarkdown>
+                              </div>
+                            </div>
+                          </div>
+                        </section>
+
                         {/* COMPONENT: PERFORMANCE BENCHMARKS (READ-ONLY) */}
                         <section className="space-y-6">
                           <h4 className="text-[12px] font-bold text-coral tracking-[0.2em] uppercase font-big-shoulders">Performance Benchmarks</h4>
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                              {/* CAC */}
                              <div className="space-y-2">
-                                <h5 className="text-[10px] font-bold text-zinc-500 tracking-[0.2em] uppercase border-b border-white/5 pb-2">CAC</h5>
+                                <h5 className="text-[10px] font-bold text-zinc-500 tracking-[0.2em] uppercase pb-2">CAC</h5>
                                 <div className="flex justify-between items-baseline">
-                                   <span className="text-xs text-zinc-500 font-mono">CURRENT: <span className="text-white text-base">{cacCurrent || "-"}</span></span>
-                                   <span className="text-xs text-zinc-500 font-mono">GOAL: <span className="text-teal text-base">{cacGoal || "-"}</span></span>
+                                   <span className="text-xs text-zinc-500 font-mono">CURRENT: <span className="text-white text-base">{cacCurrent || "$4,200"}</span></span>
+                                   <span className="text-xs text-zinc-500 font-mono">GOAL: <span className="text-teal text-base">{cacGoal || "$3,000"}</span></span>
                                 </div>
                              </div>
                              {/* LTV */}
                              <div className="space-y-2">
-                                <h5 className="text-[10px] font-bold text-zinc-500 tracking-[0.2em] uppercase border-b border-white/5 pb-2">LTV</h5>
+                                <h5 className="text-[10px] font-bold text-zinc-500 tracking-[0.2em] uppercase pb-2">LTV</h5>
                                 <div className="flex justify-between items-baseline">
-                                   <span className="text-xs text-zinc-500 font-mono">CURRENT: <span className="text-white text-base">{ltvCurrent || "-"}</span></span>
-                                   <span className="text-xs text-zinc-500 font-mono">GOAL: <span className="text-teal text-base">{ltvGoal || "-"}</span></span>
+                                   <span className="text-xs text-zinc-500 font-mono">CURRENT: <span className="text-white text-base">{ltvCurrent || "$45,000"}</span></span>
+                                   <span className="text-xs text-zinc-500 font-mono">GOAL: <span className="text-teal text-base">{ltvGoal || "$65,000"}</span></span>
                                 </div>
                              </div>
                              {/* CONVERSION */}
                              <div className="space-y-2">
-                                <h5 className="text-[10px] font-bold text-zinc-500 tracking-[0.2em] uppercase border-b border-white/5 pb-2">CONVERSION</h5>
+                                <h5 className="text-[10px] font-bold text-zinc-500 tracking-[0.2em] uppercase pb-2">CONVERSION</h5>
                                 <div className="flex justify-between items-baseline">
-                                   <span className="text-xs text-zinc-500 font-mono">CURRENT: <span className="text-white text-base">{conversionCurrent || "-"}</span></span>
-                                   <span className="text-xs text-zinc-500 font-mono">GOAL: <span className="text-teal text-base">{conversionGoal || "-"}</span></span>
+                                   <span className="text-xs text-zinc-500 font-mono">CURRENT: <span className="text-white text-base">{conversionCurrent || "2.4%"}</span></span>
+                                   <span className="text-xs text-zinc-500 font-mono">GOAL: <span className="text-teal text-base">{conversionGoal || "4.8%"}</span></span>
                                 </div>
                              </div>
                           </div>
                         </section>
 
                         <section className="space-y-6">
-                          <h4 className="text-[12px] font-bold text-coral tracking-[0.2em] uppercase font-big-shoulders">The Resistance // Constraints</h4>
+                          <h4 className="text-[12px] font-bold text-coral tracking-[0.2em] uppercase font-big-shoulders">The Resistance : Constraints</h4>
                           <div className="prose prose-invert max-w-none text-[rgba(255,255,255,0.85)] text-[1.1rem] leading-[1.8] font-inter font-light whitespace-pre-wrap prose-strong:text-white prose-strong:font-bold prose-p:mb-4">
                             <ReactMarkdown>
                               {strategicConstraints || "No constraints identified."}
@@ -1749,16 +1838,16 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
                                 <Label className="text-zinc-500 text-[10px] font-bold tracking-widest uppercase flex items-center gap-2">
                                   <CheckCircle size={12} className="text-teal" /> Reliable Signal (What Works)
                                 </Label>
-                                <div className="text-white/80 font-serif italic text-lg leading-relaxed border-l-2 border-teal/20 pl-4">
-                                   {marketingSignal || "No signal identified."}
+                                <div className="text-white/80 font-serif italic text-lg leading-relaxed pl-0">
+                                   {marketingSignal || "LinkedIn CTO Outbound: High-intent responses from technical decision makers."}
                                 </div>
                              </div>
                              <div className="space-y-2">
                                 <Label className="text-zinc-500 text-[10px] font-bold tracking-widest uppercase flex items-center gap-2">
                                   <AlertCircle size={12} className="text-coral" /> Strategic Noise (What Failed)
                                 </Label>
-                                <div className="text-white/80 font-serif italic text-lg leading-relaxed border-l-2 border-coral/20 pl-4">
-                                   {marketingNoise || "No noise identified."}
+                                <div className="text-white/80 font-serif italic text-lg leading-relaxed pl-0">
+                                   {marketingNoise || "Generic Search Ads: High CAC and low lead quality for enterprise segments."}
                                 </div>
                              </div>
                           </div>
@@ -1827,100 +1916,9 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
           </ScrollArea>
         </div>
 
-        {/* --- THE SIDECAR (Cols 10-12, 25%) --- */}
-        <div className="hidden lg:flex col-span-3 flex-col bg-black overflow-hidden">
-          
-          {/* Messaging / Comm Link */}
-          <div className="flex-1 flex flex-col overflow-hidden border-b border-white/10">
-            <div className="h-16 flex items-center justify-between px-6 border-b border-white/10">
-              <div className="flex items-center gap-3">
-                <MessageSquare size={16} className="text-white/20" />
-                <h3 className="text-[10px] font-bold tracking-widest text-white/40">Comm link</h3>
-              </div>
-              {currentUser.role === 'ADMIN' && (
-                <button 
-                  onClick={() => setShowArchiveResetConfirm(true)}
-                  className="text-[9px] font-bold uppercase tracking-widest text-white/20 hover:text-coral transition-colors"
-                >
-                  Reset Thread
-                </button>
-              )}
-            </div>
-            
-            <ScrollArea ref={scrollRef} className="flex-1 px-6">
-              <div className="flex flex-col gap-6 py-8">
-                {messages.map((msg: any) => {
-                  const isStrategist = msg.sender?.role === 'ADMIN' || msg.sender?.role === 'TEAM_MEMBER';
-                  const label = isStrategist ? 'STRATEGIST' : 'PARTNER';
-                  
-                  return (
-                    <div key={msg.id} className={cn("flex flex-col gap-2", msg.senderId === currentUser.id ? "items-end" : "items-start")}>
-                      <div className="flex items-center gap-3 px-1">
-                        <span className={cn(
-                          "text-[8px] font-bold tracking-widest",
-                          isStrategist ? "text-teal" : "text-white/20"
-                        )}>
-                          {label}
-                        </span>
-                        <span className="text-[8px] text-white/10 font-mono">{format(new Date(msg.createdAt), "HH:mm")}</span>
-                      </div>
-                      <div className={cn(
-                        "max-w-[90%] px-4 py-3 rounded text-[13px] leading-relaxed",
-                        msg.senderId === currentUser.id 
-                          ? "bg-white/5 text-white border border-white/10" 
-                          : "bg-white/[0.02] text-white/60 border border-white/5"
-                      )}>
-                        {msg.content}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </ScrollArea>
-
-            <div className="p-6 bg-white/[0.01] border-t border-white/10">
-              <div className="relative">
-                <Input 
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                  placeholder="Transmit..."
-                  className="bg-transparent border-white/10 rounded-none h-12 pl-4 pr-12 text-[10px] font-bold tracking-widest text-white focus:border-white/30 transition-all placeholder:text-white/10"
-                />
-                <Button 
-                  size="icon" 
-                  onClick={handleSendMessage} 
-                  disabled={isSending}
-                  className="absolute right-0 top-0 w-12 h-12 rounded-none bg-transparent hover:bg-white/5 text-white/20 hover:text-white"
-                >
-                  {isSending ? <RefreshCw size={14} className="animate-spin" /> : <Send size={14} />}
-                </Button>
-              </div>
-            </div>
-          </div>
-
-          {/* Next Up / Milestone */}
-          <div className="p-8">
-            <div className="flex items-center gap-3 mb-6">
-              <Clock size={14} className="text-white/20" />
-              <h3 className="text-[10px] font-bold tracking-widest text-white/40">Next milestone</h3>
-            </div>
-            {project.milestones?.[0] ? (
-              <div className="p-6 border border-white/10 rounded-lg bg-white/[0.01]">
-                <div className="flex justify-between items-start mb-4">
-                  <span className="text-[9px] font-bold text-teal tracking-widest">
-                    {format(new Date(project.milestones[0].date), "MMM dd")}
-                  </span>
-                  <div className="w-1.5 h-1.5 rounded-full bg-teal animate-pulse" />
-                </div>
-                <h4 className="text-sm font-bold text-white/90 leading-tight">{project.milestones[0].title}</h4>
-              </div>
-            ) : (
-              <div className="text-[10px] text-white/10 font-bold tracking-widest italic">No upcoming records</div>
-            )}
-          </div>
-        </div>
       </div>
+
+      {/* Editorial Review Modal */}
 
       {/* Editorial Review Modal */}
       <EditorialReviewModal 

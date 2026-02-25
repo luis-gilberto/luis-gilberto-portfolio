@@ -17,729 +17,80 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="assets/css/ecosystem-core.v1.css">
     <style>
-        /* ═══════════════════════════════════════════════════════
-           ROOT VARIABLES — Trinity Design System (Standardized)
-           ═══════════════════════════════════════════════════════ */
-        :root {
-            /* Brand Colors */
-            --coral: #F96F6E;
-            --teal: #2ED3C6;
-            --mustard: #B87333;
-            --cloud-dancer: #F3EFE0;
-            --deep-blue: #1a2332;
-            --accent: var(--coral);
+/* Mega Menu System (Phase 117+118) */
+.desktop-nav .nav-item {
+  position: relative; /* Task 1: Positional Anchor */
+}
+
+.desktop-nav .mega-panel {
+  display: block;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  transition-delay: 100ms; /* Task 3: Hover Intent */
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px) translateZ(0); /* Task 1: Alignment & GPU */
+  backface-visibility: hidden;
+  width: 520px; /* Slightly wider for padding */
+  background: #0A0A0A; /* Task 2: Always Dark */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Task 2: Subtle Border */
+  padding: 1.5rem; /* Task 3: Spacing */
+  border-radius: 0.75rem;
+  z-index: 50;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  margin-top: 1rem;
+}
+
+/* Safe Tunnel */
+.desktop-nav .mega-panel::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: transparent;
+}
+
+.desktop-nav .nav-item:hover .mega-panel {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0) translateZ(0);
+}
+
+.desktop-nav .group\/item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Task 3: Icon Colors */
+.desktop-nav .group\/item .icon-teal { color: #2ED3C6; }
+.desktop-nav .group\/item .icon-coral { color: #F96F6E; }
+
+.desktop-nav .group\/item:hover .icon-teal,
+.desktop-nav .group\/item:hover .icon-coral {
+  filter: brightness(1.2);
+}
+
+/* Task 4: Typography & Case */
+.desktop-nav .mega-title-text {
+  font-family: 'Big Shoulders Display', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 1.1rem;
+  color: #F4F1ED; /* Task 2: White/Paper */
+}
+
+.desktop-nav .mega-desc-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  color: #A1A1AA; /* Task 2: Muted Zinc */
+  margin-top: 0.25rem;
+}
+
+</style>
 
-            /* Dark Mode (Default) */
-            --bg-primary: #0a0a0a;
-            --bg-secondary: #1a1a1a;
-            --bg-tertiary: #2a2a2a;
-            --bg-alt: #111216;
-            --text-primary: #ffffff;
-            --text-secondary: rgba(255, 255, 255, 0.7);
-            --text-tertiary: rgba(255, 255, 255, 0.5);
-            --border-color: rgba(255, 255, 255, 0.1);
-            --border-subtle: rgba(255, 255, 255, 0.06);
-            --border-strong: rgba(255, 255, 255, 0.12);
-            --card-bg: rgba(17, 18, 22, 0.8);
-            --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.3);
-
-            /* Typography */
-            --font-display: 'Playfair Display', serif;
-            --font-body: 'Inter', sans-serif;
-            --font-sans: 'Inter', sans-serif;
-            --font-headline: 'Big Shoulders Display', sans-serif;
-
-            /* Grid & Spacing */
-            --grid-color: var(--border-subtle);
-            --section-border: 1px solid var(--border-color);
-        }
-
-        /* Light Mode Override */
-        [data-theme="light"] {
-            --bg-primary: var(--cloud-dancer);
-            --bg-secondary: #ffffff;
-            --bg-tertiary: #f5f5f5;
-            --bg-alt: #F0EDEA;
-            --text-primary: #0a0a0a;
-            --text-secondary: rgba(0, 0, 0, 0.7);
-            --text-tertiary: rgba(0, 0, 0, 0.5);
-            --border-color: rgba(0, 0, 0, 0.1);
-            --border-subtle: rgba(0, 0, 0, 0.06);
-            --border-strong: rgba(0, 0, 0, 0.12);
-            --card-bg: rgba(255, 255, 255, 0.85);
-            --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.08);
-            --grid-color: rgba(0, 0, 0, 0.05);
-        }
-
-        /* === THE LENS CURSOR === */
-        #cursor-lens {
-            position: fixed;
-            pointer-events: none;
-            z-index: 200000;
-            width: 40px;
-            height: 40px;
-            transform: translate(-50%, -50%);
-            transition: all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-
-        .lens-outer {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 40px;
-            height: 40px;
-            border: 2px solid var(--coral);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            opacity: 0.4;
-            transition: all 0.2s ease;
-        }
-
-        .lens-middle {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 24px;
-            height: 24px;
-            border: 1.5px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            opacity: 0.6;
-        }
-
-        .lens-center {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 4px;
-            height: 4px;
-            background: var(--teal);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 0 10px var(--teal);
-        }
-
-        body.cursor-hover .lens-outer {
-            width: 56px;
-            height: 56px;
-            border-color: var(--teal);
-            opacity: 0.8;
-            background: rgba(46, 211, 198, 0.05);
-        }
-
-        body.cursor-hover .lens-middle {
-            width: 0;
-            height: 0;
-            opacity: 0;
-        }
-
-        body.cursor-hover .lens-center {
-            background: var(--coral);
-            box-shadow: 0 0 15px var(--coral);
-            transform: translate(-50%, -50%) scale(1.5);
-        }
-
-        @media (pointer: coarse) {
-            #cursor-lens {
-                display: none !important;
-            }
-            body {
-                cursor: auto !important;
-            }
-        }
-
-        /* ═══════════════════════════════════════════════════════
-           BASE RESET & GLOBAL
-           ═══════════════════════════════════════════════════════ */
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
-
-        body {
-            font-family: var(--font-body);
-            font-size: 1rem;
-            line-height: 1.6;
-            color: var(--text-primary);
-            background: var(--bg-primary);
-            background-image: radial-gradient(var(--grid-color) 1px, transparent 1px);
-            background-size: 24px 24px;
-            transition: background-color 0.3s ease, color 0.3s ease;
-            overflow-x: hidden;
-            padding-top: 96px; /* Adjusted for 64px header */
-        }
-
-        @media (max-width: 1023px) { body { padding-top: 80px; } }
-
-        /* ═══════════════════════════════════════════════════════
-           HEADER — Luxe System Standard (Always Dark)
-           ═══════════════════════════════════════════════════════ */
-        /* --- GOLD STANDARD HEADER POLISH --- */ 
-        .site-header, #primaryNav { 
-            height: 80px !important; /* Premium Height */ 
-            background: rgba(10, 10, 10, 0.98) !important; 
-            display: flex !important; 
-            align-items: center !important; 
-            position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        } 
-        
-        .nav-container { 
-            max-width: 1400px; 
-            margin: 0 auto; 
-            width: 100%; 
-            padding: 0 2rem; 
-            display: grid !important; 
-            /* Strict 3-Zone Grid: Logo (Left) | Nav (Center) | Actions (Right) */ 
-            grid-template-columns: 240px 1fr 240px !important; 
-            align-items: center; 
-            height: 100%;
-        } 
-        
-        /* Zone 1: The Logo (Slightly Bigger) */ 
-        .nav-logo { justify-self: start; display: inline-flex; align-items: center; min-height: 48px; }
-        .nav-logo img { 
-            height: 48px !important; /* Increased for better presence */ 
-            width: auto !important; 
-            transition: transform 0.2s ease; 
-        } 
-        
-        /* Zone 2: The Navigation (Centered) */ 
-        .desktop-nav { 
-            justify-self: center !important; 
-            display: flex !important; 
-            gap: 2.5rem !important; 
-            align-items: center;
-        } 
-        
-        /* Fix the "White Box" highlighting bug */ 
-        .nav-link, .nav-item, .nav-item--mega, button.nav-link { 
-            background: transparent !important; /* Removes the white/grey box */ 
-            border: none !important; 
-            box-shadow: none !important; 
-            color: rgba(255, 255, 255, 0.7) !important; 
-            text-transform: uppercase; 
-            font-weight: 600; 
-            font-size: 0.85rem; 
-            letter-spacing: 0.05em; 
-            padding: 0 !important; 
-            font-family: var(--font-body);
-            text-decoration: none;
-            transition: color 0.2s ease;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-        } 
-        
-        .nav-link:hover, .nav-link.active { 
-            color: #FFFFFF !important; 
-        } 
-        
-        .nav-link .chevron { font-size: 0.7em; margin-left: 6px; transition: transform 0.2s ease; }
-        .has-dropdown.is-open .chevron { transform: rotate(180deg); }
-
-        /* Zone 3: Actions (Pushed to the far right) */ 
-        .nav-actions { 
-            justify-self: end !important; 
-            display: flex !important; 
-            align-items: center; 
-            gap: 1.5rem; 
-        } 
-        
-        /* Clean Theme Toggle (No background) */ 
-        .theme-toggle { 
-            background: transparent !important; 
-            color: white !important; 
-            border: none !important; 
-            cursor: pointer; 
-            padding: 8px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            border-radius: 50%; 
-            transition: background 0.2s ease;
-        } 
-        .theme-toggle:hover { 
-            background: rgba(255, 255, 255, 0.1) !important; 
-        } 
-
-        .sun-icon, .moon-icon { display: none; }
-        [data-theme="dark"] .sun-icon { display: block; }
-        [data-theme="light"] .moon-icon { display: block; }
-
-        @media (max-width: 1023px) {
-            .nav-container { display: flex !important; justify-content: space-between; grid-template-columns: none !important; }
-            .desktop-nav, .nav-actions { display: none !important; }
-            .mobile-controls { display: flex !important; align-items: center; gap: 1rem; }
-            .nav-logo img { height: 32px !important; }
-        }
-
-        /* Mega Menu Fixes */
-        .nav-item.has-dropdown { position: relative; display: inline-flex; align-items: center; height: 100%; }
-
-        .mega-panel {
-            position: fixed; left: 0; right: 0; top: 80px;
-            z-index: 1400;
-            opacity: 0; pointer-events: none; transform: translateY(-10px);
-            transition: opacity 0.16s ease, transform 0.16s ease;
-        }
-
-        /* HOVER BRIDGE */
-        .mega-panel::before {
-            content: ""; position: absolute; inset: 0;
-            background: rgba(0, 0, 0, 0.40); backdrop-filter: blur(6px);
-        }
-
-        .mega-card-shell { position: relative; max-width: 980px; margin: 0 auto; padding: 18px; }
-        .mega-card-shell::before {
-            content: ""; position: absolute; top: -18px; left: 0; width: 100%; height: 18px;
-        }
-
-        .mega-card {
-            border-radius: 16px; background: #0A0A0A;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55); overflow: hidden;
-        }
-
-        .mega-card-top {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 16px 18px 10px;
-        }
-
-        .mega-chip {
-            display: inline-flex; align-items: center; gap: 10px;
-            font-family: var(--font-body); font-size: 0.72rem; font-weight: 700;
-            letter-spacing: 0.12em; text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.55);
-        }
-
-        .mega-chip-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
-
-        .mega-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 10px 18px 18px; }
-
-        .mega-item {
-            display: flex; align-items: center; gap: 14px; padding: 14px;
-            border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.08);
-            background: rgba(255, 255, 255, 0.03);
-            transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
-            text-decoration: none;
-        }
-        .mega-item:hover { transform: translateY(-2px); border-color: var(--accent); background: rgba(255, 255, 255, 0.05); }
-
-        .mega-icon {
-            width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
-            background: transparent; border: none; color: rgba(255, 255, 255, 0.7);
-            font-size: 1.2rem; margin-right: 1rem; transition: color 0.2s ease;
-        }
-        .mega-item:hover .mega-icon { color: var(--accent); }
-
-        .mega-meta { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-        .mega-title { font-family: var(--font-body); font-size: 0.98rem; font-weight: 700; color: rgba(255, 255, 255, 0.92); line-height: 1.15; }
-        .mega-desc { font-family: var(--font-body); font-size: 0.86rem; color: rgba(255, 255, 255, 0.52); line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .mega-item:hover .mega-desc { color: rgba(255, 255, 255, 0.7); }
-
-        .nav-item.has-dropdown.is-open .mega-panel {
-            opacity: 1; pointer-events: auto; transform: translateY(0);
-        }
-
-        @media (max-width: 1023px) { .mega-panel { display: none; } }
-
-        /* ═══════════════════════════════════════════════════════
-           MOBILE DRAWER
-           ═══════════════════════════════════════════════════════ */
-        .mobile-menu-overlay {
-            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.35);
-            z-index: 2000; opacity: 0; transition: opacity 0.3s ease; pointer-events: none;
-        }
-        .mobile-menu-overlay.active { opacity: 1; pointer-events: auto; }
-
-        .mobile-drawer {
-            position: absolute; top: 0; right: 0; height: 100vh;
-            width: 85vw; max-width: 400px; background: #000000;
-            box-shadow: -12px 0 30px rgba(0, 0, 0, 0.4);
-            transform: translateX(100%);
-            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-            overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch;
-        }
-        .mobile-menu-overlay.active .mobile-drawer { transform: translateX(0); }
-
-        .mobile-menu-close {
-            position: absolute; top: 1rem; right: 1rem; width: 44px; height: 44px;
-            border: none; border-radius: 8px; background: transparent;
-            color: #ffffff; font-size: 32px; line-height: 1; cursor: pointer;
-            transition: background 0.2s ease; z-index: 10;
-        }
-        .mobile-menu-close:hover { background: rgba(255, 255, 255, 0.1); }
-
-        .mobile-menu-content {
-            display: flex; flex-direction: column; gap: 0;
-            padding: 1.5rem 1.5rem 2rem;
-            padding-bottom: max(2rem, calc(2rem + env(safe-area-inset-bottom)));
-        }
-
-        .mobile-drawer-header { padding: 2rem 0 2rem 0.25rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 2rem; }
-        .mobile-drawer-brand { display: flex; flex-direction: column; gap: 0.25rem; }
-        .mobile-drawer-name { font-family: var(--font-display); font-size: 1.5rem; font-weight: 600; color: #ffffff; letter-spacing: -0.02em; }
-        .mobile-drawer-role { font-family: var(--font-body); font-size: 0.8125rem; font-weight: 400; color: rgba(255, 255, 255, 0.5); letter-spacing: 0.02em; }
-
-        .mobile-nav-section { display: flex; flex-direction: column; gap: 0; margin-bottom: 2.5rem; }
-        .mobile-nav-section:last-child { margin-bottom: 1rem; }
-        .mobile-nav-label { font-family: var(--font-body); font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255, 255, 255, 0.4); margin-bottom: 1.25rem; padding-left: 0.25rem; }
-
-        .mobile-nav-link-primary { font-family: var(--font-display); font-size: 1.75rem; font-weight: 500; line-height: 1.3; color: rgba(255, 255, 255, 0.85); padding: 0.5rem 0.25rem; transition: all 0.2s ease; text-decoration: none; letter-spacing: -0.01em; position: relative; }
-        .mobile-nav-link-primary:hover { color: #ffffff; transform: translateX(4px); }
-        .mobile-nav-link-primary.active { color: var(--coral); font-weight: 600; }
-        .mobile-nav-link-primary.active::before { content: ''; position: absolute; left: -0.5rem; top: 50%; transform: translateY(-50%); width: 3px; height: 24px; background: var(--coral); border-radius: 2px; }
-
-        .mobile-nav-link-secondary { font-family: var(--font-body); font-size: 1rem; font-weight: 400; line-height: 1.5; color: rgba(255, 255, 255, 0.65); padding: 0.625rem 0.25rem; transition: all 0.2s ease; text-decoration: none; position: relative; }
-        .mobile-nav-link-secondary:hover { color: rgba(255, 255, 255, 0.9); transform: translateX(4px); }
-        .mobile-nav-link-secondary.active { color: var(--coral); font-weight: 600; }
-        .mobile-nav-link-secondary.active::before { content: ''; position: absolute; left: -0.5rem; top: 50%; transform: translateY(-50%); width: 2px; height: 16px; background: var(--coral); border-radius: 2px; }
-
-        /* ========================================
-           PAGE CONTENT
-           ======================================== */
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-
-        /* Hero */
-        .hero-section {
-            padding: 60px 0 40px;
-            text-align: center;
-            border-bottom: var(--section-border);
-            margin-bottom: 60px;
-        }
-        .hero-title {
-            font-family: var(--font-headline); font-size: clamp(48px, 6vw, 80px);
-            font-weight: 800; line-height: 0.85; margin-bottom: 24px;
-            color: var(--text-primary); letter-spacing: -1px;
-            text-transform: none; /* Sentence case as per content */
-        }
-        .hero-title span { color: var(--coral); }
-        .hero-sub {
-            font-size: 18px; color: var(--text-secondary); max-width: 60ch; margin: 0 auto;
-        }
-
-        /* Methods Grid */
-        .methods-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px; margin-bottom: 80px;
-        }
-
-        .method-tile {
-            background: var(--bg-primary);
-            border: var(--section-border);
-            border-radius: 12px;
-            padding: 32px 24px;
-            text-align: center;
-            text-decoration: none;
-            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
-            display: flex; flex-direction: column; align-items: center;
-            /* Texture Blur */
-            backdrop-filter: blur(5px);
-            box-shadow: var(--shadow-hover);
-        }
-
-        .method-tile:hover {
-            transform: translateY(-4px);
-            border-color: var(--coral);
-            box-shadow: 0 12px 30px rgba(249, 111, 110, 0.15);
-        }
-
-        .method-icon {
-            width: 48px; height: 48px; margin-bottom: 20px;
-            color: var(--coral);
-        }
-
-        .method-tile h3 {
-            font-family: var(--font-sans); font-size: 18px; font-weight: 600;
-            color: var(--text-primary); margin-bottom: 8px;
-        }
-
-        .method-tile p {
-            font-size: 14px; color: var(--text-secondary);
-            margin-bottom: 0; line-height: 1.4;
-        }
-
-        /* The Intake Dossier (Form) */
-        .dossier-sheet {
-            background: var(--bg-secondary);
-            border: var(--section-border);
-            border-left: 4px solid var(--coral);
-            border-radius: 2px; padding: 40px; margin-bottom: 80px;
-            box-shadow: var(--shadow-hover); scroll-margin-top: 130px;
-        }
-
-        .dossier-header {
-            display: flex; justify-content: space-between; align-items: baseline;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 20px; margin-bottom: 30px;
-        }
-
-        .dossier-eyebrow {
-            font-family: var(--font-headline); font-weight: 700; letter-spacing: 1px;
-            font-size: 1.2rem; color: var(--coral); text-transform: uppercase;
-        }
-
-        .dossier-meta { font-family: monospace; font-size: 12px; color: var(--text-tertiary); }
-
-        /* Form Styling */
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-        .form-group { margin-bottom: 24px; }
-
-        label {
-            display: block; font-family: var(--font-sans); font-size: 11px; font-weight: 600;
-            color: var(--text-primary); margin-bottom: 8px;
-            text-transform: uppercase; letter-spacing: 0.1em;
-        }
-
-        input, select, textarea {
-            width: 100%; padding: 12px 16px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-color); border-radius: 6px;
-            font-family: var(--font-sans); font-size: 16px;
-            color: var(--text-primary); transition: all 0.2s;
-        }
-
-        [data-theme="light"] input, [data-theme="light"] select, [data-theme="light"] textarea {
-            background: rgba(0, 0, 0, 0.03);
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none; border-color: var(--teal);
-            box-shadow: 0 0 0 3px rgba(46, 211, 198, 0.1);
-        }
-
-        .submit-btn {
-            background: var(--coral); color: #000000; border: none;
-            padding: 14px 32px; border-radius: 4px;
-            font-weight: 700; font-size: 16px; cursor: pointer;
-            display: inline-flex; align-items: center; gap: 8px;
-            transition: all 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 14px rgba(249, 111, 110, 0.4);
-            background: #ff8584;
-        }
-
-        /* FAQ Section */
-        .faq-section { margin-bottom: 80px; }
-        .faq-title {
-            font-family: var(--font-headline); font-size: 3rem;
-            text-align: center; margin-bottom: 40px; color: var(--text-primary);
-            font-weight: 800;
-        }
-        
-        .faq-item {
-            border-bottom: 1px solid var(--border-color);
-            padding: 24px 0; cursor: pointer;
-        }
-        .faq-header {
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .faq-header h3 {
-            font-family: var(--font-sans); font-size: 18px; font-weight: 700; color: var(--text-primary); margin: 0;
-        }
-        .faq-toggle { font-size: 24px; color: var(--coral); transition: transform 0.3s; font-weight: 800; }
-        .faq-item.active .faq-toggle { transform: rotate(45deg); }
-        .faq-content {
-            max-height: 0; overflow: hidden; transition: max-height 0.3s ease;
-        }
-        .faq-item.active .faq-content { max-height: 1000px; margin-top: 16px; }
-        .faq-content p { color: var(--text-secondary); font-size: 15px; margin: 0; }
-
-        .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
-        .faq-column { display: flex; flex-direction: column; gap: 1.5rem; }
-        .faq-group-title { font-family: var(--font-headline); font-size: 2rem; color: var(--coral); margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-subtle); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 800; }
-        @media (max-width: 1023px) { .faq-grid { grid-template-columns: 1fr; gap: 3rem; } }
-
-        /* IMC Variant Styles */
-        .from-imcservices .dossier-sheet {
-            border-color: #2ED3C6;
-            box-shadow: 0 0 0 1px rgba(46, 211, 198, 0.2);
-        }
-        .imc-badge {
-            display: none;
-            background: linear-gradient(90deg, var(--coral), var(--teal));
-            color: #111; font-size: 11px; font-weight: 700;
-            padding: 4px 10px; border-radius: 99px;
-            text-transform: uppercase; margin-bottom: 12px;
-        }
-        .from-imcservices .imc-badge { display: inline-block; }
-
-        /* ═══════════════════════════════════════════════════════
-           FOOTER — Ecosystem Standard
-           ═══════════════════════════════════════════════════════ */
-        #ecosystemFooter { 
-            /* Handled by ecosystem-core.v1.css */
-            padding: 80px 0 30px; 
-            font-family: 'Inter', sans-serif; 
-        } 
-         
-        .footer-container { max-width: 1400px; margin: 0 auto; padding: 0 2rem; } 
-         
-        .footer-grid { 
-            display: grid; 
-            grid-template-columns: 2fr 1fr 1fr 1.5fr; 
-            gap: 4rem; 
-            margin-bottom: 60px; 
-            align-items: start; 
-        } 
-         
-        /* Brand Column */ 
-        .footer-logo {
-            display: flex;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .footer-brand-col, .brand-col { 
-            max-width: 320px;  /* Stop the column from stretching */ 
-            display: flex; 
-            flex-direction: column; 
-            align-items: flex-start; 
-        } 
-
-        .brand-name { 
-            font-family: 'Big Shoulders Display'; 
-            font-size: 1.5rem; 
-            font-weight: 800; 
-            letter-spacing: 0.05em; 
-            margin-left: 10px; 
-            color: white;
-        } 
-        .footer-tagline { 
-            color: rgba(255,255,255,0.5); 
-            font-size: 0.9rem; 
-            margin: 1.5rem 0; 
-            line-height: 1.6; 
-            max-width: 300px; 
-        } 
-        .social-icon { 
-            display: inline-flex; 
-            align-items: center; 
-            justify-content: center; 
-            width: 36px; 
-            height: 36px; 
-            border-radius: 50%; 
-            background: rgba(255,255,255,0.05); 
-            color: white; 
-            margin-right: 10px; 
-            transition: 0.3s; 
-            border: 1px solid rgba(255,255,255,0.1); 
-        } 
-        .social-icon:hover { background: var(--coral); border-color: var(--coral); } 
-         
-        /* Nav Columns */ 
-        .footer-col h4 { 
-            font-family: 'Big Shoulders Display'; 
-            font-size: 0.8rem; 
-            letter-spacing: 0.2em; 
-            color: rgba(255,255,255,0.3); 
-            margin-bottom: 2rem; 
-        } 
-        .footer-nav a { 
-            display: block; 
-            color: rgba(255,255,255,0.6); 
-            text-decoration: none; 
-            font-size: 0.95rem; 
-            margin-bottom: 0.8rem; 
-            transition: 0.2s; 
-        } 
-        .footer-nav a:hover { color: var(--coral); } 
-         
-        .footer-divider { 
-            height: 1px; 
-            background: rgba(255,255,255,0.1); 
-            margin: 1.5rem 0 1rem; 
-            width: 60px; 
-        } 
-        .connect-link { 
-            color: var(--coral) !important; 
-            font-style: italic; 
-            font-weight: 500; 
-        } 
-         
-        /* Status Card */ 
-        .status-card { 
-            background: rgba(255,255,255,0.03); 
-            border: 1px solid rgba(255,255,255,0.08); 
-            padding: 1.5rem; 
-            border-radius: 4px; 
-        } 
-        .status-header { display: flex; align-items: center; margin-bottom: 1rem; } 
-        .status-dot { 
-            width: 8px; 
-            height: 8px; 
-            background: var(--teal); 
-            border-radius: 50%; 
-            margin-right: 10px; 
-            box-shadow: 0 0 10px var(--teal); 
-        } 
-        .status-label { 
-            font-family: 'Big Shoulders Display'; 
-            font-size: 0.9rem; 
-            font-weight: 700; 
-            letter-spacing: 0.1em; 
-        } 
-        .status-card p { 
-            font-size: 0.85rem; 
-            color: rgba(255,255,255,0.5); 
-            margin-bottom: 1.5rem; 
-        } 
-        .status-cta { 
-            color: white; 
-            text-decoration: none; 
-            font-weight: 700; 
-            font-size: 0.9rem; 
-            transition: 0.2s; 
-        } 
-        .status-cta:hover { color: var(--coral); padding-left: 5px; } 
-         
-        /* Bottom Bar */ 
-        .footer-bottom { 
-            border-top: 1px solid rgba(255,255,255,0.05); 
-            padding-top: 30px; 
-            display: flex; 
-            justify-content: space-between; 
-            font-size: 0.75rem; 
-            color: rgba(255,255,255,0.3); 
-        } 
-        .footer-legal a { 
-            color: rgba(255,255,255,0.3); 
-            text-decoration: none; 
-            margin-left: 20px; 
-        } 
-         
-        @media (max-width: 1024px) { 
-            .footer-grid { grid-template-columns: 1fr 1fr; gap: 3rem; } 
-        } 
-        @media (max-width: 600px) { 
-            .footer-grid { grid-template-columns: 1fr; } 
-            .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; } 
-        }
-
-
-        /* Responsive */
-        @media (max-width: 1023px) {
-            .nav-links, .portfolio-subnav, .sub-navigation { display: none; }
-            body { padding-top: 64px; }
-            .mobile-menu-toggle { display: flex; }
-            .portfolio-subnav { 
-                position: static; background: var(--bg-primary); 
-                overflow-x: auto; 
-            }
-            .portfolio-subnav-container { padding: 0 1rem; width: 100%; gap: 1.5rem; }
-            
-            .hero-title { font-size: 48px; }
-            .form-row { grid-template-columns: 1fr; gap: 0; }
-            .dossier-sheet { padding: 24px; }
-            .dossier-header { flex-direction: column; gap: 8px; }
-        }
-        @media (min-width: 1024px) { .mobile-menu-toggle { display: none; } }
-    </style>
 </head>
 <body>
     <div id="cursor-lens"><div class="lens-outer"></div><div class="lens-middle"></div><div class="lens-center"></div></div>
@@ -755,72 +106,115 @@
             </a>
 
             <!-- Zone 2: Desktop Navigation -->
-            <nav class="desktop-nav">
-                <div class="nav-item has-dropdown" id="portfolioMega">
-                    <button class="nav-link">
-                        PORTFOLIO <i class="fas fa-chevron-down chevron"></i>
-                    </button>
-                    <div class="mega-panel" id="portfolioMegaPanel">
-                        <div class="mega-card-shell">
-                            <div class="mega-card">
-                                <div class="mega-card-top">
-                                    <div class="mega-chip">
-                                        <span class="mega-chip-dot"></span>
-                                        <span>Portfolio</span>
-                                    </div>
-                                </div>
-                                <div class="mega-grid">
-                                    <a class="mega-item" href="/index.html">
-                                        <div class="mega-icon"><i class="fa-solid fa-house"></i></div>
-                                        <div class="mega-meta">
-                                            <div class="mega-title">Home</div>
-                                            <div class="mega-desc">Return to the overview.</div>
-                                        </div>
-                                    </a>
-                                    <a class="mega-item" href="/timeline.html">
-                                        <div class="mega-icon"><i class="fa-solid fa-code-branch"></i></div>
-                                        <div class="mega-meta">
-                                            <div class="mega-title">Timeline</div>
-                                            <div class="mega-desc">15+ years of career milestones.</div>
-                                        </div>
-                                    </a>
-                                    <a class="mega-item" href="/myexperience.html">
-                                        <div class="mega-icon"><i class="fa-solid fa-briefcase"></i></div>
-                                        <div class="mega-meta">
-                                            <div class="mega-title">Experience</div>
-                                            <div class="mega-desc">Deep dives into key projects.</div>
-                                        </div>
-                                    </a>
-                                    <a class="mega-item" href="/about.html">
-                                        <div class="mega-icon"><i class="fa-solid fa-user"></i></div>
-                                        <div class="mega-meta">
-                                            <div class="mega-title">About Me</div>
-                                            <div class="mega-desc">The human behind the work.</div>
-                                        </div>
-                                    </a>
-                                    <a class="mega-item" href="/brand/index.html">
-                                        <div class="mega-icon"><i class="fa-solid fa-fingerprint"></i></div>
-                                        <div class="mega-meta">
-                                            <div class="mega-title">Identity</div>
-                                            <div class="mega-desc">Brand book and visual DNA.</div>
-                                        </div>
-                                    </a>
-                                    <a class="mega-item" href="/contact.html">
-                                        <div class="mega-icon"><i class="fa-solid fa-paper-plane"></i></div>
-                                        <div class="mega-meta">
-                                            <div class="mega-title">Contact</div>
-                                            <div class="mega-desc">Let's start a conversation.</div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <nav class="desktop-nav"> 
+              <!-- Portfolio Dropdown Trigger --> 
+              <div class="nav-item has-dropdown group relative" id="portfolioMega">
+    <button class="nav-link">
+        PORTFOLIO <i class="fas fa-chevron-down chevron"></i>
+    </button>
+    <div class="mega-panel">
+        <div class="grid grid-cols-2 gap-6" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <!-- Experience -->
+            <a href="/myexperience.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-teal" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-briefcase"></i>
                 </div>
-                <a href="/insights/" class="nav-link">INSIGHTS</a>
-                <a href="/TheHub/" class="nav-link">THE HUB</a>
-                <a href="https://portal.luis-gilberto.com" class="nav-link">THE PORTAL</a>
-            </nav>
+                <div>
+                    <div class="mega-title-text" style="font-weight: 700;">Experience</div>
+                    <div class="mega-desc-text">Deep dives into key projects.</div>
+                </div>
+            </a>
+            <!-- About Me -->
+            <a href="/about.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div>
+                    <div class="mega-title-text" style="font-weight: 700;">About me</div>
+                    <div class="mega-desc-text">The human behind the work.</div>
+                </div>
+            </a>
+            <!-- Identity -->
+            <a href="/brand/index.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-teal" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-fingerprint"></i>
+                </div>
+                <div>
+                    <div class="mega-title-text" style="font-weight: 700;">Identity</div>
+                    <div class="mega-desc-text">Brand book and visual DNA.</div>
+                </div>
+            </a>
+            <!-- Contact -->
+            <a href="/contact.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </div>
+                <div>
+                    <div class="mega-title-text" style="font-weight: 700;">Contact</div>
+                    <div class="mega-desc-text">Let's start a conversation.</div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+                  <div class="nav-item has-dropdown group relative" id="hubMega">
+    <a href="/TheHub/" class="nav-link">
+        THE HUB <i class="fas fa-chevron-down chevron"></i>
+    </a>
+    <div class="mega-panel">
+        <div class="grid grid-cols-2 gap-6" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <!-- Hub Home -->
+            <a href="/TheHub/index.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-teal" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-house"></i>
+                </div>
+                <div>
+                    <div class="mega-title-text" style="font-weight: 700;">Hub Home</div>
+                    <div class="mega-desc-text">System overview and entry point.</div>
+                </div>
+            </a>
+            <!-- StrategyIQ -->
+            <a href="/TheHub/strategy-iq.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <div>
+                    <div class="mega-title-text" style="font-weight: 700;">StrategyIQ</div>
+                    <div class="mega-desc-text">Benchmark maturity and define the roadmap.</div>
+                </div>
+            </a>
+            <!-- Advisory -->
+            <a href="/TheHub/advisory/" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-teal" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-compass"></i>
+                </div>
+                <div>
+                    <div class="mega-title-text" style="font-weight: 700;">Advisory</div>
+                    <div class="mega-desc-text">Leadership alignment and decision support.</div>
+                </div>
+            </a>
+            <!-- The Studio -->
+            <a href="/TheHub/studio.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-palette"></i>
+                </div>
+                <div>
+                    <div class="mega-title-text" style="font-weight: 700;">The Studio</div>
+                    <div class="mega-desc-text">Creative production and execution.</div>
+                </div>
+            </a>
+        </div>
+        <!-- Footer CTA -->
+        <div class="mt-6 pt-4 border-t border-white/10 flex justify-end" style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: flex-end;">
+            <a href="https://portal.luis-gilberto.com" class="text-xs font-bold text-coral flex items-center gap-1 hover:brightness-110" style="font-size: 0.75rem; font-weight: 700; color: var(--coral); display: flex; align-items: center; gap: 0.25rem;">
+                Enter The Portal <span class="text-lg" style="font-size: 1.125rem;">→</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+              <a href="https://portal.luis-gilberto.com" class="nav-link">THE PORTAL</a> 
+          </nav>
 
             <!-- Zone 3: Desktop Actions -->
             <div class="nav-actions">

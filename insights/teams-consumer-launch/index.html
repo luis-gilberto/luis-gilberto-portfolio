@@ -15,51 +15,81 @@
     <link rel="stylesheet" href="/insights/assets/css/article-theme.css">
     
     <style>
-        /* CUSTOM HERO: Teams Purple Gradient */
-        .hero-custom-teams {
-            position: relative;
-            padding: 8rem 0;
-            color: white;
-            overflow: hidden;
-            /* Microsoft Teams Brand Gradient */
-            background: linear-gradient(135deg, 
-                #464EB8 0%, 
-                #56246D 50%, 
-                #7B83EB 100%
-            );
-        }
-        .hero-custom-teams::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,0.1); /* Subtle dim for text readability */
-        }
-        .hero-custom-content {
-            position: relative;
-            z-index: 2;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            align-items: center;
-            text-align: left;
-        }
-        .hero-tag-pill {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            border: 1px solid rgba(255,255,255,0.4);
-            border-radius: 50px;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 1.5rem;
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(4px);
-        }
-        @media(max-width: 900px) {
-            .hero-custom-teams { padding: 6rem 0; }
-            .hero-custom-content { grid-template-columns: 1fr; text-align: center; }
-        }
-    </style>
+:root { --popover-bg: #FFFFFF; }
+[data-theme="dark"] { --popover-bg: #2A2420; }
+/* Mega Menu System (Phase 117+118) */
+.desktop-nav .nav-item {
+  position: relative; /* Task 1: Positional Anchor */
+}
+
+.desktop-nav .mega-panel {
+  display: block;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  transition-delay: 100ms; /* Task 3: Hover Intent */
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px) translateZ(0); /* Task 1: Alignment & GPU */
+  backface-visibility: hidden;
+  width: 520px; /* Slightly wider for padding */
+  background: #0A0A0A; /* Task 2: Always Dark */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Task 2: Subtle Border */
+  padding: 1.5rem; /* Task 3: Spacing */
+  border-radius: 0.75rem;
+  z-index: 50;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  margin-top: 1rem;
+}
+
+/* Safe Tunnel */
+.desktop-nav .mega-panel::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: transparent;
+}
+
+.desktop-nav .nav-item:hover .mega-panel {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0) translateZ(0);
+}
+
+.desktop-nav .group\/item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Task 3: Icon Colors */
+.desktop-nav .group\/item .icon-teal { color: #2ED3C6; }
+.desktop-nav .group\/item .icon-coral { color: #F96F6E; }
+
+.desktop-nav .group\/item:hover .icon-teal,
+.desktop-nav .group\/item:hover .icon-coral {
+  filter: brightness(1.2);
+}
+
+/* Task 4: Typography & Case */
+.desktop-nav .mega-title-text {
+  font-family: 'Big Shoulders Display', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 1.1rem;
+  color: #F4F1ED; /* Task 2: White/Paper */
+}
+
+.desktop-nav .mega-desc-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  color: #A1A1AA; /* Task 2: Muted Zinc */
+  margin-top: 0.25rem;
+}
+
+</style>
 </head>
 <body>
 
@@ -72,8 +102,14 @@
         <nav class="lg-main-nav">
           <a href="https://luis-gilberto.com" class="lg-nav-link">PORTFOLIO</a>
           <a href="/insights" class="lg-nav-link is-active">INSIGHTS</a>
-          <a href="/TheHub/" class="lg-nav-link">THE HUB</a>
-          <a href="https://portal.luis-gilberto.com/" class="lg-nav-link">PORTAL</a>
+          <div class="nav-item has-dropdown group relative" id="hubMega">
+    <a href="/TheHub/" class="nav-link">
+        THE HUB <i class="fas fa-chevron-down chevron"></i>
+    </a>
+    
+</div>
+
+              <a href="https://portal.luis-gilberto.com/" class="lg-nav-link">PORTAL</a>
         </nav>
         <button class="mobile-menu-toggle" id="mobileMenuToggle">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
@@ -101,7 +137,12 @@
         <nav class="mobile-global-nav">
             <a href="https://luis-gilberto.com" class="mobile-nav-link">PORTFOLIO</a>
             <a href="/insights" class="mobile-nav-link is-active">INSIGHTS</a>
-            <a href="/TheHub/" class="mobile-nav-link">THE HUB</a>
+            <div class="nav-item has-dropdown group relative" id="hubMega">
+    <a href="/TheHub/" class="nav-link">
+        THE HUB <i class="fas fa-chevron-down chevron"></i>
+    </a>
+    
+</div>
             <a href="https://portal.luis-gilberto.com/" class="mobile-nav-link">PORTAL</a>
         </nav>
     </div>
@@ -243,7 +284,7 @@
                     <h3 class="footer-nav-heading">Ecosystem</h3>
                     <ul class="footer-nav-list">
                         <li><a href="/index.html" class="footer-nav-link">Portfolio</a></li>
-                        <li><a href="/TheHub/" class="footer-nav-link">The Hub</a></li>
+                        <li><a href="/TheHub/index.html" class="footer-nav-link">The Hub</a></li>
                         <li><a href="/insights/" class="footer-nav-link">Insights</a></li>
                         <li><a href="https://portal.luis-gilberto.com" class="footer-nav-link footer-portal-link">The Portal</a></li>
                     </ul>

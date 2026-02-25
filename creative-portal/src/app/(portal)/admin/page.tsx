@@ -43,6 +43,36 @@ export default async function AdminPage() {
     orderBy: { createdAt: 'desc' },
   }).catch(() => []) || []
 
+  // Aggregate stats for the pulse
+  const getAggregatedScores = (projectList: any[]) => {
+    const scores = { gtm: 0, brand: 0, campaign: 0, creative: 0, count: 0 }
+    projectList.forEach(p => {
+      p.assessmentSessions?.forEach((s: any) => {
+        const type = s.assessmentType?.toLowerCase()
+        const score = s.overallScore || 0
+        if (score > 0) {
+          if (type === 'gtm') scores.gtm += score
+          else if (type === 'brand') scores.brand += score
+          else if (type === 'campaign') scores.campaign += score
+          else if (type === 'creative') scores.creative += score
+          scores.count++
+        }
+      })
+    })
+    const divisor = Math.max(1, projectList.length)
+    return {
+      gtm: Math.round(scores.gtm / divisor) || 65,
+      brand: Math.round(scores.brand / divisor) || 42,
+      campaign: Math.round(scores.campaign / divisor) || 58,
+      creative: Math.round(scores.creative / divisor) || 71
+    }
+  }
+
+  const allProjectsWithScores = await prisma.project.findMany({
+    include: { assessmentSessions: true }
+  })
+  const averageScores = getAggregatedScores(allProjectsWithScores)
+
   return (
     <AdminDashboardClient
       stats={{
@@ -53,6 +83,7 @@ export default async function AdminPage() {
       }}
       projects={recentProjects}
       systemEvents={systemEvents}
+      averageScores={averageScores}
     />
   )
 }

@@ -103,50 +103,50 @@ export function StrategyCard({
       case 'PUBLISHED':
         return { 
           label: 'PUBLISHED', 
-          cta: 'View intelligence', 
-          color: 'text-[#2ED3C6]', 
-          dot: 'bg-[#2ED3C6]',
+          cta: 'View Intelligence', 
+          color: 'text-teal', 
+          dot: 'bg-teal',
           bg: 'bg-transparent', 
-          border: 'border-[#2ED3C6]', 
-          ctaColor: 'bg-[#2ED3C6] text-black hover:bg-[#2ED3C6]/90 transition-colors border-none',
-          isOutlined: false,
+          border: 'border-white/10', 
+          ctaColor: 'bg-teal text-black hover:bg-teal/90 transition-colors border-none',
+          step: 4,
           icon: ShieldCheck
         }
       case 'COMPLETED':
       case 'UNDER_REVIEW':
         return { 
-          label: 'AWAITING LG REVIEW', 
-          cta: 'Under review', 
+          label: 'IN REVIEW', 
+          cta: 'Review Status', 
           color: 'text-amber-400', 
           dot: 'bg-amber-400',
           bg: 'bg-transparent', 
-          border: 'border-amber-400', 
+          border: 'border-white/10', 
           ctaColor: 'border-amber-400 text-amber-400 bg-transparent border cursor-not-allowed opacity-80',
-          isOutlined: true,
+          step: 3,
           icon: Activity
         }
       case 'IN_PROGRESS':
         return { 
           label: 'IN PROGRESS', 
-          cta: 'Resume', 
+          cta: 'Continue Assessment', 
           color: 'text-coral', 
           dot: 'bg-coral',
-          bg: 'bg-coral/10', 
+          bg: 'bg-coral/5', 
           border: 'border-coral/20', 
           ctaColor: 'bg-coral text-black hover:bg-coral/90',
-          isOutlined: false,
+          step: 2,
           icon: Zap
         }
       default:
         return { 
-          label: 'NOT STARTED', 
-          cta: 'Begin assessment', 
+          label: 'INITIALIZE', 
+          cta: 'Begin Assessment', 
           color: 'text-zinc-500', 
-          dot: 'bg-coral',
-          bg: 'bg-white/5', 
+          dot: 'bg-zinc-800',
+          bg: 'bg-white/[0.02]', 
           border: 'border-white/10', 
           ctaColor: 'border border-coral text-coral hover:bg-coral/10 bg-transparent',
-          isOutlined: false,
+          step: 1,
           icon: ArrowRight
         }
     }
@@ -178,13 +178,39 @@ export function StrategyCard({
         </div>
       )}
       
-      {/* Header Row: Title + Status Dot */}
-      <div className="flex items-center justify-between w-full">
+      {/* Status Indicators Row - Page 5/8 Wireframe Alignment */}
+      <div className="flex items-center justify-between w-full mb-6">
+        <div className="flex items-center gap-1.5">
+          {[1, 2, 3, 4].map((s) => (
+            <div 
+              key={s} 
+              className={cn(
+                "h-1.5 w-6 rounded-full transition-all duration-500",
+                s <= (styles.step || 1) 
+                  ? styles.dot 
+                  : "bg-white/5"
+              )} 
+            />
+          ))}
+          <span className={cn("text-[9px] font-bold tracking-[0.2em] ml-2 uppercase", styles.color)}>
+            Status 0{styles.step}
+          </span>
+        </div>
+        
+        <Badge variant="outline" className={cn("border-white/5 text-[8px] tracking-[0.2em] uppercase px-2 h-5 font-bold", styles.color)}>
+          {styles.label}
+        </Badge>
+      </div>
+
+      {/* Header Row: Title + Icon */}
+      <div className="flex items-center justify-between w-full mb-2">
         <div className="flex items-center gap-3">
-          <h3 className="text-xl font-medium text-white tracking-wide font-inter">
+          <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 bg-white/[0.02] text-white/40 group-hover:text-white group-hover:border-white/10 transition-all", styles.color && "group-hover:text-current")}>
+            <Icon size={18} />
+          </div>
+          <h3 className="text-xl font-black font-big-shoulders italic uppercase tracking-wider text-white">
             {title}
           </h3>
-          <div className={cn("w-2 h-2 rounded-full animate-pulse", styles.dot)} />
         </div>
         
         {/* Tooltip */}

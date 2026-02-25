@@ -2,9 +2,7 @@ import type { Metadata } from "next"
 import { Inter, Playfair_Display, JetBrains_Mono } from "next/font/google"
 import Image from "next/image"
 import "./globals.css"
-import { AuthSessionProvider } from "@/components/providers/session-provider"
-import { ThemeProvider } from "@/components/providers/theme-provider"
-import { ToastProvider } from "@/components/providers/toast-provider"
+import { AppProviders } from "@/components/providers/app-providers"
 import { Navigation } from "@/components/ui/navigation"
 import { Footer } from "@/components/ui/footer"
 
@@ -52,18 +50,9 @@ export default function RootLayout({
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-transparent via-[#050505]/60 to-[#050505]" />
         </div>
 
-        <AuthSessionProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <ToastProvider>
-              {children}
-            </ToastProvider>
-          </ThemeProvider>
-        </AuthSessionProvider>
+        <AppProviders>
+          {children}
+        </AppProviders>
       </body>
     </html>
   )

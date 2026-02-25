@@ -29,7 +29,7 @@ import { UserRoleBadge } from '@/components/ui/UserRoleBadge'
 import ReactMarkdown from 'react-markdown'
 import { safeJsonParse } from '@/lib/json-utils'
 import { cn } from '@/lib/utils'
-import { SealOfAuthority } from './SealOfAuthority'
+import { SealOfAuthority } from '@/components/shared/SealOfAuthority'
 import { 
   Accordion, 
   AccordionContent, 
@@ -250,10 +250,12 @@ export function ResultsView({
       {/* Wayfinding */}
       <div className="mb-12 space-y-4">
         <Breadcrumbs 
+          showBack={true}
+          backHref={userRole === 'ADMIN' ? `/admin/projects/${projectId}` : `/strategy-iq`}
           items={[
-            { label: 'Dashboard', href: '/dashboard' },
-            { label: 'Strategy Engine', href: '/strategy-iq' },
-            { label: `${dimension.toUpperCase()} Analysis`, active: true }
+            { label: 'DASHBOARD', href: '/dashboard' },
+            { label: clientName.toUpperCase(), href: userRole === 'ADMIN' ? `/admin/projects/${projectId}` : `/strategy-iq` },
+            { label: `${dimension.toUpperCase()} STRATEGY`, active: true }
           ]} 
         />
       </div>
@@ -276,7 +278,7 @@ export function ResultsView({
         </div>
       )}
 
-      {status === 'CERTIFIED' ? (
+      {(status === 'CERTIFIED' || userRole === 'ADMIN') ? (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           {/* Main Content Area */}
           <div className="lg:col-span-8 space-y-12">
@@ -298,10 +300,11 @@ export function ResultsView({
                 )}
               </div>
 
-              {/* Seal of Authority */}
-              <div className="hidden md:block absolute -top-4 -right-4 lg:relative lg:top-0 lg:right-0">
-                <SealOfAuthority size={140} className="opacity-80 hover:opacity-100 transition-opacity duration-500 drop-shadow-[0_0_15px_rgba(46,211,198,0.2)]" />
-              </div>
+              {/* Seal of Authority Watermark - Page 12 Alignment */}
+              <SealOfAuthority 
+                size={280} 
+                className="absolute top-10 right-10 rotate-12 opacity-[0.05] text-teal z-0" 
+              />
             </div>
 
             {/* Tactical Accordions */}
@@ -473,10 +476,10 @@ export function ResultsView({
           
           <div className="space-y-4 max-w-lg">
             <h2 className="text-4xl font-bold text-white font-big-shoulders tracking-[0.2em] uppercase italic">
-              Synthesis in progress
+              Finalizing Discovery Data
             </h2>
             <p className="text-zinc-500 font-inter text-lg italic leading-relaxed">
-              StrategyIQ™ is synthesizing your results. Certification in progress.
+              StrategyIQ™ is verifying your inputs. If this takes longer than 10 seconds, please ensure all assessment questions were submitted.
             </p>
           </div>
 

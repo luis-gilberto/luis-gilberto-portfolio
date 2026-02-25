@@ -10,1085 +10,79 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap" rel="stylesheet">
   
   <style>
-    /* ═══════════════════════════════════════════════════════
-       ROOT VARIABLES & DESIGN SYSTEM
-       ═══════════════════════════════════════════════════════ */
-    
-    :root {
-      /* Brand Colors */
-      --coral: #F96F6E;
-      --teal: #2ED3C6;
-      --cloud-dancer: #F3EFE0;
-      --deep-blue: #1a2332;
-      
-      /* Dark Mode (Default) */
-      --bg-primary: #0a0a0a;
-      --bg-secondary: #1a1a1a;
-      --bg-tertiary: #2a2a2a;
-      --text-primary: #ffffff;
-      --text-secondary: rgba(255, 255, 255, 0.7);
-      --text-tertiary: rgba(255, 255, 255, 0.5);
-      --border-color: rgba(255, 255, 255, 0.1);
-      
-      /* Typography */
-      --font-display: 'Playfair Display', serif;
-      --font-body: 'Inter', sans-serif;
-    }
-    
-    /* Light Mode Override */
-    [data-theme="light"] {
-      --bg-primary: var(--cloud-dancer);
-      --bg-secondary: #ffffff;
-      --bg-tertiary: #f5f5f5;
-      --text-primary: #0a0a0a;
-      --text-secondary: rgba(0, 0, 0, 0.7);
-      --text-tertiary: rgba(0, 0, 0, 0.5);
-      --border-color: rgba(0, 0, 0, 0.1);
-    }
-    
-    /* ═══════════════════════════════════════════════════════
-       BASE RESET & TYPOGRAPHY
-       ═══════════════════════════════════════════════════════ */
-    
-    *, *::before, *::after {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    html {
-      scroll-behavior: smooth;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-    
-    body {
-      font-family: var(--font-body);
-      font-size: 1rem;
-      line-height: 1.6;
-      color: var(--text-primary);
-      background: var(--bg-primary);
-      transition: background-color 0.3s ease, color 0.3s ease;
-    }
-    
-    h1, h2, h3, h4, h5, h6 {
-      font-family: var(--font-display);
-      font-weight: 600;
-      line-height: 1.2;
-      letter-spacing: -0.02em;
-    }
-    
-    h1 { font-size: 3.75rem; }
-    h2 { font-size: 2.25rem; }
-    h3 { font-size: 1.5rem; }
-    
-    p {
-      font-size: 1.125rem;
-      color: var(--text-secondary);
-      line-height: 1.7;
-    }
-    
-    a {
-      color: inherit;
-      text-decoration: none;
-      transition: all 0.15s ease;
-    }
-    
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 0 2rem;
-    }
-    
-    /* ═══════════════════════════════════════════════════════
-       NAVIGATION
-       ═══════════════════════════════════════════════════════ */
-    
-    .primary-nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 1000;
-      background: rgba(10, 10, 10, 0.8);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border-color);
-    }
-    
-    [data-theme="light"] .primary-nav {
-      background: rgba(243, 239, 224, 0.8);
-    }
-    
-    .nav-container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 1.5rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    
-    .nav-logo img {
-      height: 32px;
-      filter: brightness(1.2);
-    }
-    
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 2rem;
-    }
-    
-    .nav-link {
-      font-size: 0.875rem;
-      font-weight: 500;
-      letter-spacing: 0.02em;
-      opacity: 0.7;
-      transition: opacity 0.15s ease;
-    }
-    
-    .nav-link:hover,
-    .nav-link.active {
-      opacity: 1;
-      color: var(--coral);
-    }
-    
-    .theme-toggle {
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      padding: 0.75rem;
-      color: var(--text-primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 8px;
-      transition: background 0.15s ease;
-    }
-    
-    .theme-toggle:hover {
-      background: var(--bg-tertiary);
-    }
-    
-    .sun-icon, .moon-icon {
-      width: 20px;
-      height: 20px;
-    }
-    
-    [data-theme="dark"] .sun-icon { display: block; }
-    [data-theme="dark"] .moon-icon { display: none; }
-    [data-theme="light"] .sun-icon { display: none; }
-    [data-theme="light"] .moon-icon { display: block; }
-    
-    .mobile-controls {
-      display: none;
-      align-items: center;
-      gap: 1rem;
-    }
-    
-    .mobile-menu-toggle {
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      padding: 0.75rem;
-      color: var(--text-primary);
-    }
-    
-    .portfolio-subnav {
-      position: fixed;
-      top: 80px;
-      left: 0;
-      right: 0;
-      z-index: 999;
-      background: rgba(26, 26, 26, 0.6);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--border-color);
-    }
-    
-    [data-theme="light"] .portfolio-subnav {
-      background: rgba(255, 255, 255, 0.6);
-    }
-    
-    .portfolio-subnav-container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 1rem 2rem;
-      display: flex;
-      gap: 2rem;
-      overflow-x: auto;
-    }
-    
-    .subnav-link {
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      opacity: 0.6;
-      white-space: nowrap;
-      transition: opacity 0.15s ease;
-    }
-    
-    .subnav-link:hover {
-      opacity: 1;
-    }
-    
-    .mobile-menu-overlay {
-      position: fixed;
-      inset: 0;
-      background: var(--bg-primary);
-      z-index: 2000;
-      display: none;
-      padding: 4rem;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-    
-    .mobile-menu-overlay.active {
-      display: flex;
-      opacity: 1;
-    }
-    
-    .mobile-menu-content {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-    
-    .mobile-nav-link {
-      font-size: 1.875rem;
-      font-family: var(--font-display);
-      opacity: 0.7;
-      transition: opacity 0.15s ease;
-    }
-    
-    .mobile-nav-link:hover {
-      opacity: 1;
-      color: var(--coral);
-    }
-    
-    /* ═══════════════════════════════════════════════════════
-       HERO SECTION WITH WORKING TILES
-       ═══════════════════════════════════════════════════════ */
-    
-    .hero-section {
-      position: relative;
-      min-height: 100vh;
-      padding: 160px 2rem 4rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-    
-    .hero-content {
-      max-width: 1400px;
-      margin: 0 auto;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4rem;
-    }
-    
-    .hero-tiles {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
-      max-width: 1200px;
-      width: 100%;
-    }
-    
-    .hero-tile {
-      position: relative;
-      cursor: grab;
-      border-radius: 16px;
-      overflow: visible;
-      transform: rotate(var(--rotation, 0deg)) translate(var(--offset-x, 0), var(--offset-y, 0));
-      transition: transform 0.3s ease;
-    }
-    
-    .hero-tile:active {
-      cursor: grabbing;
-    }
-    
-    .hero-tile.tile-levitating {
-      cursor: default;
-      animation: tileLevitate 4s ease-in-out infinite;
-    }
-    
-    @keyframes tileLevitate {
-      0%, 100% {
-        transform: translateY(0) rotate(var(--rotation, 0deg)) translate(var(--offset-x, 0), var(--offset-y, 0));
-      }
-      50% {
-        transform: translateY(-12px) rotate(calc(var(--rotation, 0deg) + 1.5deg)) translate(var(--offset-x, 0), var(--offset-y, 0));
-      }
-    }
-    
-    .hero-tile.tile-levitating::before {
-      content: '';
-      position: absolute;
-      inset: -4px;
-      background: linear-gradient(135deg, rgba(249, 111, 110, 0.3) 0%, rgba(46, 211, 198, 0.3) 100%);
-      border-radius: 20px;
-      opacity: 0;
-      animation: tileGlow 4s ease-in-out infinite;
-      pointer-events: none;
-      z-index: -1;
-      filter: blur(12px);
-    }
-    
-    @keyframes tileGlow {
-      0%, 100% {
-        opacity: 0;
-        transform: scale(0.95);
-      }
-      50% {
-        opacity: 0.6;
-        transform: scale(1);
-      }
-    }
-    
-    .hero-tile.tile-levitating:hover {
-      animation: tileLevitateHover 2s ease-in-out infinite;
-    }
-    
-    @keyframes tileLevitateHover {
-      0%, 100% {
-        transform: translateY(-6px) rotate(var(--rotation, 0deg)) translate(var(--offset-x, 0), var(--offset-y, 0)) scale(1.02);
-      }
-      50% {
-        transform: translateY(-16px) rotate(calc(var(--rotation, 0deg) + 2deg)) translate(var(--offset-x, 0), var(--offset-y, 0)) scale(1.02);
-      }
-    }
-    
-    .tile-inner {
-      position: relative;
-      width: 100%;
-      height: 280px;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-    }
-    
-    .tile-image {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: opacity 0.3s ease;
-      pointer-events: none;
-    }
-    
-    .tile-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.8) 100%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-end;
-      padding: 2rem;
-      pointer-events: none;
-    }
-    
-    .tile-hint {
-      position: absolute;
-      bottom: 1.5rem;
-      left: 50%;
-      transform: translateX(-50%);
-      color: rgba(255, 255, 255, 0.9);
-      font-size: 0.8125rem;
-      font-weight: 400;
-      letter-spacing: 0.02em;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      pointer-events: none;
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-    }
-    
-    .hero-tile:hover .tile-hint {
-      opacity: 0.7;
-    }
-    
-    .tile-cta {
-      display: none;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 1rem 2rem;
-      background: white;
-      color: #0a0a0a;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 1rem;
-      pointer-events: auto;
-      position: absolute;
-      bottom: 2rem;
-      left: 50%;
-      transform: translateX(-50%) translateY(20px);
-      opacity: 0;
-      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-      z-index: 10;
-    }
-    
-    .tile-cta:hover {
-      background: var(--coral);
-      color: white;
-      transform: translateX(-50%) translateY(-5px) scale(1.05);
-      box-shadow: 0 12px 32px rgba(249, 111, 110, 0.4);
-    }
-    
-    .tile-cta svg {
-      width: 18px;
-      height: 18px;
-      transition: transform 0.3s ease;
-    }
-    
-    .tile-cta:hover svg {
-      transform: translateX(4px);
-    }
-    
-    /* Prevent text selection during drag */
-    .hero-tile * {
-      user-select: none;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-    }
-    
-    .hero-tile .tile-cta * {
-      user-select: auto;
-      -webkit-user-select: auto;
-    }
-    
-    .hero-text {
-      text-align: center;
-      max-width: 900px;
-    }
-    
-    .hero-text h1 {
-      font-size: clamp(2.25rem, 6vw, 3.75rem);
-      margin-bottom: 1.5rem;
-      line-height: 1.1;
-      font-weight: 600;
-      letter-spacing: -0.03em;
-    }
-    
-    .hero-text em {
-      font-style: italic;
-      color: var(--coral);
-      font-weight: 600;
-      animation: breathe 3s ease-in-out infinite;
-    }
-    
-    @keyframes breathe {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.7; }
-    }
-    
-    .hero-text .period {
-      color: var(--coral);
-    }
-    
-    .hero-subhead {
-      font-size: 1.25rem;
-      color: var(--text-secondary);
-      margin-bottom: 2rem;
-    }
-    
-    .hero-button {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 1rem 2.5rem;
-      background: var(--coral);
-      color: white;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 1.125rem;
-      transition: all 0.3s ease;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    }
-    
-    .hero-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 15px 40px rgba(249, 111, 110, 0.3);
-    }
-    
-    .hero-button svg {
-      width: 20px;
-      height: 20px;
-      transition: transform 0.3s ease;
-    }
-    
-    .hero-button:hover svg {
-      transform: translateX(4px);
-    }
-    
-    /* ═══════════════════════════════════════════════════════
-       BANNER ROTATOR - CLOUD DANCER BACKGROUND (FIXED!)
-       ═══════════════════════════════════════════════════════ */
-    
-    .banner-rotator {
-      background: var(--cloud-dancer);
-      padding: 3rem 0;
-      overflow: hidden;
-      position: relative;
-    }
-    
-    [data-theme="dark"] .banner-rotator {
-      background: #2a2a2a;
-    }
-    
-    .banner-content {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 0 2rem;
-      text-align: center;
-      position: relative;
-      height: 80px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .banner-text {
-      position: absolute;
-      font-size: 3rem;
-      font-weight: 600;
-      color: #1a1a1a;
-      opacity: 0;
-      transition: opacity 0.8s ease;
-      font-family: var(--font-display);
-    }
-    
-    [data-theme="dark"] .banner-text {
-      color: rgba(255, 255, 255, 0.9);
-    }
-    
-    .banner-text.active {
-      opacity: 1;
-    }
-    
-    .banner-text[data-font="sans"] {
-      font-family: var(--font-body);
-    }
-    
-    .banner-text[data-font="serif"] {
-      font-family: var(--font-display);
-      font-style: italic;
-    }
-    
-    .banner-text[data-font="accent"] {
-      font-family: var(--font-display);
-      font-weight: 700;
-      letter-spacing: -0.03em;
-    }
-    
-    .banner-text .period {
-      color: var(--coral);
-    }
-    
-    /* ═══════════════════════════════════════════════════════
-       QUICK TOUR SECTION WITH ANIMATED CARDS
-       ═══════════════════════════════════════════════════════ */
-    
-    .quick-tour-section {
-      padding: 5rem 2rem;
-      background: var(--bg-secondary);
-    }
-    
-    .section-header {
-      text-align: center;
-      margin-bottom: 3rem;
-    }
-    
-    .section-header h2 {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      font-family: var(--font-display);
-      font-weight: 600;
-      letter-spacing: -0.02em;
-    }
-    
-    .section-header h2 .period {
-      color: var(--coral);
-    }
-    
-    .section-header p {
-      font-size: 1.25rem;
-      color: var(--text-secondary);
-    }
-    
-    .cards-group {
-      margin-bottom: 4rem;
-    }
-    
-    .cards-group h3 {
-      font-size: 1.5rem;
-      margin-bottom: 1.5rem;
-      text-align: center;
-      font-weight: 500;
-      letter-spacing: -0.01em;
-      font-family: var(--font-display);
-      opacity: 0.85;
-    }
-    
-    .start-here-helper,
-    .card-discovery-helper {
-      text-align: center;
-      font-size: 0.875rem;
-      color: var(--text-tertiary);
-      margin-top: 1.5rem;
-    }
-    
-    .cards-grid {
-      display: grid;
-      gap: 2rem;
-    }
-    
-    .cards-grid-4 {
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    }
-    
-    .cards-grid-3 {
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    }
-    
-    /* Card with Flip Animation & Hover Effects */
-    .tour-card {
-      perspective: 1000px;
-      height: 400px;
-      cursor: pointer;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      position: relative;
-    }
-    
-    .tour-card:hover {
-      transform: translateY(-8px);
-    }
-    
-    .card-inner {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      transition: transform 0.6s;
-      transform-style: preserve-3d;
-    }
-    
-    .tour-card.flipped .card-inner {
-      transform: rotateY(180deg);
-    }
-    
-    .card-front,
-    .card-back {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      backface-visibility: hidden;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    }
-    
-    [data-theme="dark"] .card-front,
-    [data-theme="dark"] .card-back {
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    }
-    
-    .card-front {
-      background: var(--bg-tertiary);
-      position: relative;
-    }
-    
-    .card-front img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.5s ease;
-    }
-    
-    .tour-card:hover .card-front img {
-      transform: scale(1.08);
-    }
-    
-    .card-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.8) 100%);
-    }
-    
-    .card-icon {
-      position: absolute;
-      top: 1.5rem;
-      left: 1.5rem;
-      color: white;
-      transition: transform 0.3s ease;
-      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
-    }
-    
-    .card-icon-teal {
-      color: var(--teal);
-    }
-    
-    .tour-card:hover .card-icon {
-      transform: scale(1.1) rotate(5deg);
-    }
-    
-    .card-front h3 {
-      position: absolute;
-      bottom: 1.5rem;
-      left: 1.5rem;
-      right: 1.5rem;
-      color: white;
-      font-size: 1.5rem;
-      font-family: var(--font-display);
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-      transition: transform 0.3s ease;
-    }
-    
-    .tour-card:hover .card-front h3 {
-      transform: translateX(4px);
-    }
-    
-    .card-back {
-      transform: rotateY(180deg);
-      padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      color: white;
-    }
-    
-    .card-back-coral {
-      background: var(--coral);
-    }
-    
-    .card-back-teal {
-      background: var(--teal);
-    }
-    
-    .card-back-deep-blue {
-      background: var(--deep-blue);
-    }
-    
-    .card-icon-large {
-      width: 40px;
-      height: 40px;
-      margin-bottom: 1rem;
-    }
-    
-    .card-back p {
-      font-size: 1rem;
-      line-height: 1.7;
-      color: rgba(255, 255, 255, 0.9);
-      flex-grow: 1;
-    }
-    
-    .card-cta,
-    .card-cta-coral,
-    .card-cta-teal,
-    .card-cta-deep-blue {
-      display: inline-flex;
-      align-items: center;
-      font-weight: 600;
-      font-size: 1.125rem;
-      color: white;
-      transition: transform 0.3s ease;
-      text-decoration: none;
-    }
-    
-    .card-cta:hover,
-    .card-cta-coral:hover,
-    .card-cta-teal:hover,
-    .card-cta-deep-blue:hover {
-      transform: translateX(6px);
-    }
-    
-    /* Subtle glow on card hover */
-    .tour-card::before {
-      content: '';
-      position: absolute;
-      inset: -2px;
-      background: linear-gradient(135deg, rgba(249, 111, 110, 0.2), rgba(46, 211, 198, 0.2));
-      border-radius: 18px;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      z-index: -1;
-      filter: blur(8px);
-      pointer-events: none;
-    }
-    
-    .tour-card:hover::before {
-      opacity: 1;
-    }
-    
-    .shuffle-container {
-      text-align: center;
-      margin-top: 3rem;
-    }
-    
-    .shuffle-container p {
-      margin-bottom: 1rem;
-      color: var(--text-tertiary);
-    }
-    
-    .shuffle-button {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 1rem 2rem;
-      background: var(--bg-tertiary);
-      color: var(--text-primary);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    
-    .shuffle-button:hover {
-      background: var(--teal);
-      color: white;
-      border-color: var(--teal);
-      transform: translateY(-2px);
-    }
-    
-    .shuffle-button svg {
-      width: 20px;
-      height: 20px;
-    }
-    
-    /* ═══════════════════════════════════════════════════════
-       WHAT'S NEXT SECTION
-       ═══════════════════════════════════════════════════════ */
-    
-    .whats-next-section {
-      position: relative;
-      padding: 5rem 2rem;
-      text-align: center;
-      background: var(--bg-primary);
-      overflow: hidden;
-    }
-    
-    #constellationCanvas {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      opacity: 0.3;
-    }
-    
-    .whats-next-section .container {
-      position: relative;
-      z-index: 1;
-    }
-    
-    .whats-next-section h2 {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-    }
-    
-    .whats-next-section p {
-      font-size: 1.25rem;
-      margin-bottom: 2rem;
-    }
-    
-    .text-accent {
-      color: var(--coral);
-      font-style: italic;
-    }
-    
-    .cta-button {
-      display: inline-flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 1.25rem 2.5rem;
-      background: var(--coral);
-      color: white;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 1.125rem;
-      transition: all 0.3s ease;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-      text-decoration: none;
-    }
-    
-    .cta-button:hover {
-      transform: translateY(-4px) scale(1.02);
-      box-shadow: 0 20px 40px rgba(249, 111, 110, 0.4);
-    }
-    
-    .cta-button svg {
-      width: 24px;
-      height: 24px;
-      transition: transform 0.3s ease;
-    }
-    
-    .cta-button:hover svg {
-      transform: translateX(6px);
-    }
-    
-    /* ═══════════════════════════════════════════════════════
-       FOOTER
-       ═══════════════════════════════════════════════════════ */
-    
-    .footer {
-      background: var(--bg-secondary);
-      border-top: 1px solid var(--border-color);
-      padding: 4rem 2rem 2rem;
-    }
-    
-    .footer-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 3rem;
-      margin-bottom: 3rem;
-    }
-    
-    .footer-brand h3 {
-      margin-bottom: 1rem;
-      color: var(--coral);
-      font-family: var(--font-display);
-    }
-    
-    .footer-brand p {
-      font-size: 0.875rem;
-      line-height: 1.7;
-      color: var(--text-secondary);
-    }
-    
-    .footer-links h4 {
-      font-size: 1rem;
-      font-family: var(--font-body);
-      font-weight: 600;
-      margin-bottom: 1rem;
-    }
-    
-    .footer-links a {
-      display: block;
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-      margin-bottom: 0.75rem;
-      transition: color 0.2s ease;
-      text-decoration: none;
-    }
-    
-    .footer-links a:hover {
-      color: var(--coral);
-    }
-    
-    .footer-bottom {
-      padding-top: 2rem;
-      border-top: 1px solid var(--border-color);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    
-    .footer-social {
-      display: flex;
-      gap: 1rem;
-    }
-    
-    .footer-social a {
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 8px;
-      background: var(--bg-tertiary);
-      color: var(--text-secondary);
-      transition: all 0.3s ease;
-    }
-    
-    .footer-social a:hover {
-      background: var(--coral);
-      color: white;
-      transform: translateY(-2px);
-    }
-    
-    .footer-bottom p {
-      font-size: 0.75rem;
-      color: var(--text-tertiary);
-    }
-    
-    /* ═══════════════════════════════════════════════════════
-       RESPONSIVE DESIGN
-       ═══════════════════════════════════════════════════════ */
-    
-    @media (max-width: 1200px) {
-      .hero-tiles {
-        grid-template-columns: repeat(2, 1fr);
-        max-width: 700px;
-      }
-    }
-    
-    @media (max-width: 768px) {
-      h1 { font-size: 2.5rem; }
-      h2 { font-size: 2rem; }
-      
-      .nav-links {
-        display: none;
-      }
-      
-      .mobile-controls {
-        display: flex;
-      }
-      
-      .hero-section {
-        padding: 120px 1rem 2rem;
-      }
-      
-      .hero-tiles {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-      }
-      
-      .tile-inner {
-        height: 220px;
-      }
-      
-      .banner-text {
-        font-size: 1.75rem;
-      }
-      
-      .section-header h2 {
-        font-size: 2rem;
-      }
-      
-      .whats-next-section h2 {
-        font-size: 2rem;
-      }
-      
-      .cards-grid-4,
-      .cards-grid-3 {
-        grid-template-columns: 1fr;
-      }
-      
-      .tour-card {
-        height: 350px;
-      }
-      
-      .footer-bottom {
-        flex-direction: column;
-        gap: 1.5rem;
-        text-align: center;
-      }
-    }
-    
-    @media (max-width: 480px) {
-      .hero-tiles {
-        grid-template-columns: 1fr;
-      }
-      
-      .tile-inner {
-        height: 280px;
-      }
-    }
-  </style>
+/* Mega Menu System (Phase 117+118) */
+.desktop-nav .nav-item {
+  position: relative; /* Task 1: Positional Anchor */
+}
+
+.desktop-nav .mega-panel {
+  display: block;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  transition-delay: 100ms; /* Task 3: Hover Intent */
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px) translateZ(0); /* Task 1: Alignment & GPU */
+  backface-visibility: hidden;
+  width: 520px; /* Slightly wider for padding */
+  background: #0A0A0A; /* Task 2: Always Dark */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Task 2: Subtle Border */
+  padding: 1.5rem; /* Task 3: Spacing */
+  border-radius: 0.75rem;
+  z-index: 50;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  margin-top: 1rem;
+}
+
+/* Safe Tunnel */
+.desktop-nav .mega-panel::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: transparent;
+}
+
+.desktop-nav .nav-item:hover .mega-panel {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0) translateZ(0);
+}
+
+.desktop-nav .group\/item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Task 3: Icon Colors */
+.desktop-nav .group\/item .icon-teal { color: #2ED3C6; }
+.desktop-nav .group\/item .icon-coral { color: #F96F6E; }
+
+.desktop-nav .group\/item:hover .icon-teal,
+.desktop-nav .group\/item:hover .icon-coral {
+  filter: brightness(1.2);
+}
+
+/* Task 4: Typography & Case */
+.desktop-nav .mega-title-text {
+  font-family: 'Big Shoulders Display', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 1.1rem;
+  color: #F4F1ED; /* Task 2: White/Paper */
+}
+
+.desktop-nav .mega-desc-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  color: #A1A1AA; /* Task 2: Muted Zinc */
+  margin-top: 0.25rem;
+}
+
+</style>
 </head>
 <body>
   <!-- Primary Navigation -->
@@ -1102,8 +96,63 @@
       <div class="nav-links">
         <a href="#portfolio" class="nav-link active">Portfolio</a>
         <a href="/insights/" class="nav-link">Insights</a>
-        <a href="/TheHub/" class="nav-link">The Hub</a>
-        <a href="https://portal.luis-gilberto.com" class="nav-link">The Portal</a>
+        <div class="nav-item has-dropdown group relative" id="hubMega">
+    <a href="/TheHub/" class="nav-link">
+        THE HUB <i class="fas fa-chevron-down chevron"></i>
+    </a>
+    <div class="mega-panel">
+        <div class="grid grid-cols-2 gap-6" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <!-- Hub Home -->
+            <a href="/TheHub/index.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-teal" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-house"></i>
+                </div>
+                <div>
+                    <div class="mega-title-text" style="font-weight: 700;">Hub Home</div>
+                    <div class="mega-desc-text">System overview and entry point.</div>
+                </div>
+            </a>
+            <!-- StrategyIQ -->
+            <a href="/TheHub/strategy-iq.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <div>
+                    <div class="mega-title-text" style="font-weight: 700;">StrategyIQ</div>
+                    <div class="mega-desc-text">Benchmark maturity and define the roadmap.</div>
+                </div>
+            </a>
+            <!-- Advisory -->
+            <a href="/TheHub/advisory/" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-teal" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-compass"></i>
+                </div>
+                <div>
+                    <div class="mega-title-text" style="font-weight: 700;">Advisory</div>
+                    <div class="mega-desc-text">Leadership alignment and decision support.</div>
+                </div>
+            </a>
+            <!-- The Studio -->
+            <a href="/TheHub/studio.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-palette"></i>
+                </div>
+                <div>
+                    <div class="mega-title-text" style="font-weight: 700;">The Studio</div>
+                    <div class="mega-desc-text">Creative production and execution.</div>
+                </div>
+            </a>
+        </div>
+        <!-- Footer CTA -->
+        <div class="mt-6 pt-4 border-t border-white/10 flex justify-end" style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: flex-end;">
+            <a href="https://portal.luis-gilberto.com" class="text-xs font-bold text-coral flex items-center gap-1 hover:brightness-110" style="font-size: 0.75rem; font-weight: 700; color: var(--coral); display: flex; align-items: center; gap: 0.25rem;">
+                Enter The Portal <span class="text-lg" style="font-size: 1.125rem;">→</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+              <a href="https://portal.luis-gilberto.com" class="nav-link">The Portal</a>
         
         <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
           <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1168,7 +217,61 @@
     <div class="mobile-menu-content">
       <a href="#portfolio" class="mobile-nav-link active">Portfolio</a>
       <a href="/insights/" class="mobile-nav-link">Insights</a>
-      <a href="/TheHub/" class="mobile-nav-link">The Hub</a>
+      <div class="nav-item has-dropdown group relative" id="hubMega">
+    <a href="/TheHub/" class="nav-link">
+        THE HUB <i class="fas fa-chevron-down chevron"></i>
+    </a>
+    <div class="mega-panel">
+        <div class="grid grid-cols-2 gap-6" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <!-- Hub Home -->
+            <a href="/TheHub/index.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center text-zinc-400 group-hover/item:text-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-house"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-white tracking-tight" style="font-weight: 700; color: white;">Hub Home</div>
+                    <div class="text-xs text-zinc-500 leading-tight mt-1" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.25rem;">System overview and entry point.</div>
+                </div>
+            </a>
+            <!-- StrategyIQ -->
+            <a href="/TheHub/strategy-iq.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center text-zinc-400 group-hover/item:text-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-white tracking-tight" style="font-weight: 700; color: white;">StrategyIQ</div>
+                    <div class="text-xs text-zinc-500 leading-tight mt-1" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.25rem;">Benchmark maturity and define the roadmap.</div>
+                </div>
+            </a>
+            <!-- Advisory -->
+            <a href="/TheHub/advisory/" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center text-zinc-400 group-hover/item:text-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-compass"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-white tracking-tight" style="font-weight: 700; color: white;">Advisory</div>
+                    <div class="text-xs text-zinc-500 leading-tight mt-1" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.25rem;">Leadership alignment and decision support.</div>
+                </div>
+            </a>
+            <!-- The Studio -->
+            <a href="/TheHub/studio.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center text-zinc-400 group-hover/item:text-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-palette"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-white tracking-tight" style="font-weight: 700; color: white;">The Studio</div>
+                    <div class="text-xs text-zinc-500 leading-tight mt-1" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.25rem;">Creative production and execution.</div>
+                </div>
+            </a>
+        </div>
+        <!-- Footer CTA -->
+        <div class="mt-6 pt-4 border-t border-white/10 flex justify-end" style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: flex-end;">
+            <a href="https://portal.luis-gilberto.com" class="text-xs font-bold text-coral flex items-center gap-1 hover:brightness-110" style="font-size: 0.75rem; font-weight: 700; color: var(--coral); display: flex; align-items: center; gap: 0.25rem;">
+                Enter The Portal <span class="text-lg" style="font-size: 1.125rem;">→</span>
+            </a>
+        </div>
+    </div>
+</div>
       <a href="https://portal.luis-gilberto.com" class="mobile-nav-link">The Portal</a>
     </div>
   </div>
@@ -1499,7 +602,61 @@
           <h4>Explore</h4>
           <a href="#portfolio">Portfolio</a>
           <a href="/insights/">Insights</a>
-          <a href="/TheHub/">The Hub</a>
+          <div class="nav-item has-dropdown group relative" id="hubMega">
+    <a href="/TheHub/" class="nav-link">
+        THE HUB <i class="fas fa-chevron-down chevron"></i>
+    </a>
+    <div class="mega-panel">
+        <div class="grid grid-cols-2 gap-6" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <!-- Hub Home -->
+            <a href="/TheHub/index.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center text-zinc-400 group-hover/item:text-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-house"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-white tracking-tight" style="font-weight: 700; color: white;">Hub Home</div>
+                    <div class="text-xs text-zinc-500 leading-tight mt-1" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.25rem;">System overview and entry point.</div>
+                </div>
+            </a>
+            <!-- StrategyIQ -->
+            <a href="/TheHub/strategy-iq.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center text-zinc-400 group-hover/item:text-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-white tracking-tight" style="font-weight: 700; color: white;">StrategyIQ</div>
+                    <div class="text-xs text-zinc-500 leading-tight mt-1" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.25rem;">Benchmark maturity and define the roadmap.</div>
+                </div>
+            </a>
+            <!-- Advisory -->
+            <a href="/TheHub/advisory/" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center text-zinc-400 group-hover/item:text-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-compass"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-white tracking-tight" style="font-weight: 700; color: white;">Advisory</div>
+                    <div class="text-xs text-zinc-500 leading-tight mt-1" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.25rem;">Leadership alignment and decision support.</div>
+                </div>
+            </a>
+            <!-- The Studio -->
+            <a href="/TheHub/studio.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center text-zinc-400 group-hover/item:text-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-palette"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-white tracking-tight" style="font-weight: 700; color: white;">The Studio</div>
+                    <div class="text-xs text-zinc-500 leading-tight mt-1" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.25rem;">Creative production and execution.</div>
+                </div>
+            </a>
+        </div>
+        <!-- Footer CTA -->
+        <div class="mt-6 pt-4 border-t border-white/10 flex justify-end" style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: flex-end;">
+            <a href="https://portal.luis-gilberto.com" class="text-xs font-bold text-coral flex items-center gap-1 hover:brightness-110" style="font-size: 0.75rem; font-weight: 700; color: var(--coral); display: flex; align-items: center; gap: 0.25rem;">
+                Enter The Portal <span class="text-lg" style="font-size: 1.125rem;">→</span>
+            </a>
+        </div>
+    </div>
+</div>
         </div>
         
         <div class="footer-links">

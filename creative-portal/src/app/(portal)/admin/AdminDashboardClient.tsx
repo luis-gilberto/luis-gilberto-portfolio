@@ -8,6 +8,7 @@ import QuickActions from '@/components/dashboard-ui/QuickActions'
 import RecentProjects from '@/components/dashboard-ui/RecentProjects'
 import SystemFeed from '@/components/dashboard-ui/SystemFeed'
 import { AddClientModal } from '@/components/admin/add-client-modal'
+import { PortfolioPulse } from '@/components/admin/PortfolioPulse'
 import { useState } from 'react'
 
 interface AdminDashboardProps {
@@ -19,9 +20,15 @@ interface AdminDashboardProps {
   }
   projects: any[]
   systemEvents: any[]
+  averageScores: {
+    gtm: number
+    brand: number
+    campaign: number
+    creative: number
+  }
 }
 
-export default function AdminDashboardClient({ stats, projects, systemEvents }: AdminDashboardProps) {
+export default function AdminDashboardClient({ stats, projects, systemEvents, averageScores }: AdminDashboardProps) {
   const contentRef = useRef<HTMLDivElement>(null)
   const [isNewProjectModalOpen, setIsNewProjectModalOpen] = useState(false)
 
@@ -36,9 +43,17 @@ export default function AdminDashboardClient({ stats, projects, systemEvents }: 
   }, [])
 
   return (
-    <div ref={contentRef} className="max-w-[1600px] mx-auto py-6">
+    <div ref={contentRef} className="max-w-[1600px] mx-auto py-6 space-y-12">
       <PageHeader />
-      <StatsRow className="mt-8" stats={stats} />
+      
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="lg:col-span-8">
+          <StatsRow stats={stats} />
+        </div>
+        <div className="lg:col-span-4">
+          <PortfolioPulse averageScores={averageScores} />
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-12">
         <div className="lg:col-span-8">

@@ -1,1398 +1,777 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advisory | Strategic Clarity & Direction</title>
+    <title>Advisory | Strategic Direction</title>
     
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
     
     <!-- Ecosystem Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Big+Shoulders+Display:wght@600;700;800&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Big+Shoulders+Display:wght@600;700;800&display=swap" rel="stylesheet">
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="../assets/css/logo-system.css">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
+    <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
         /* ==========================================
-           ECOSYSTEM VARIABLES
+           THEME VARIABLES
            ========================================== */
         :root {
             --coral: #F96F6E;
             --teal: #2ED3C6;
-            
-            /* Light Mode Palette - UPDATED */
-            --bg-primary: #FAF9F6;  /* Cloud Dancer */
-            --bg-alt: #F5F3EE;      /* Slightly darker for contrast */
-            --bg-tertiary: #EBE8E3;
-            
+            --bg-primary: #FAF9F6;
+            --bg-alt: #F5F3EE;
             --text-primary: #0E0E0F;
-            --text-secondary: #4A4A4A;  /* Darker for better readability */
-            --text-muted: rgba(0, 0, 0, 0.6);  /* Increased opacity */
-            
-            --border-subtle: rgba(0, 0, 0, 0.08);
-            --border-strong: rgba(0, 0, 0, 0.15);
-            
-            /* The "Thread" Color */
-            --thread-line: rgba(0, 0, 0, 0.08);
-            
-            /* Fonts */
-            --font-sans: 'Inter', sans-serif;
-            --font-display: 'Big Shoulders Display', sans-serif;
-            --font-serif: 'Playfair Display', serif;
-            
-            /* UI */
-            --card-bg: #FFFFFF;  /* Pure white cards on Cloud Dancer background */
-            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.06);
-            --shadow-hover: 0 12px 30px rgba(0, 0, 0, 0.12);
-            --hero-headline-size: clamp(2.625rem, 5vw, 4.125rem);
+            --text-secondary: #4A4A4A;
+            --text-muted: #888888;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --font-strategist: 'Big Shoulders Display', sans-serif;
+            --font-orchestrator: 'Inter', sans-serif;
+            --ease-out: cubic-bezier(0.4, 0, 0.2, 1);
+            --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Dark Mode Palette */
         [data-theme="dark"] {
-            --bg-primary: #0E0E0F;
-            --bg-alt: #161617;
-            --bg-tertiary: #222224;
-            
-            --text-primary: #F5F5F5;
+            --bg-primary: #050505;
+            --bg-alt: #0E0E0F;
+            --text-primary: #FFFFFF;
             --text-secondary: #A0A0A0;
-            --text-muted: rgba(255, 255, 255, 0.4);
-            
-            --border-subtle: rgba(255, 255, 255, 0.05);
-            --border-strong: rgba(255, 255, 255, 0.15);
-            
-            --thread-line: rgba(255, 255, 255, 0.08);
-            
-            --card-bg: rgba(255, 255, 255, 0.03);
-            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.4);
-            --shadow-hover: 0 12px 30px rgba(0, 0, 0, 0.5);
+            --text-muted: #666666;
+            --border-color: rgba(255, 255, 255, 0.1);
         }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: var(--font-sans);
             background-color: var(--bg-primary);
             color: var(--text-primary);
-            /* Ecosystem Texture */
-            background-image: radial-gradient(var(--border-subtle) 1px, transparent 1px);
-            background-size: 24px 24px;
-            line-height: 1.6;
-            padding-top: 112px; 
-            transition: background-color 0.3s ease, color 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            transition: background 0.3s, color 0.3s;
             overflow-x: hidden;
         }
 
-        /* ========================================
-           GLOBAL PRIMARY NAVIGATION (Level 1)
-           ======================================== */
-        .primary-nav {
-            position: fixed; top: 0; left: 0; width: 100%; height: 64px;
-            background: transparent;
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            z-index: 10000;
+        /* ==========================================
+           THE "DARK FRAME" (Header/Footer Lock)
+           ========================================== */
+        .fixed-dark { 
+            background-color: #050505 !important; 
+            color: #ffffff !important; 
+            border-color: rgba(255,255,255,0.1) !important; 
         }
-
-        .nav-container {
-            max-width: 1400px; margin: 0 auto; padding: 0 1rem;
-            height: 64px; display: flex; align-items: center; justify-content: space-between;
-            position: relative;
-        }
-
-        .nav-logo img { height: 64px; width: auto; }
-        .nav-logo .desktop-logo { display: block; }
-        .nav-logo .mobile-logo { display: none; }
-        @media (max-width: 1024px) {
-            .nav-logo .desktop-logo { display: none; }
-            .nav-logo .mobile-logo { display: block; }
-        }
-
-        .nav-links { display: flex; gap: 24px; align-items: center; justify-content: flex-end; margin-left: auto; }
-        @media (max-width: 768px) { .nav-links { gap: 16px; } }
-        
-        .nav-link {
-            color: rgba(255, 255, 255, 0.7); text-decoration: none;
-            font-size: 13px; font-weight: 600; text-transform: uppercase;
-            letter-spacing: 0.08em; position: relative; transition: color 0.2s ease;
-        }
-        
-        .nav-link:hover, .nav-link.active { color: #ffffff; }
-        
-        .nav-link.active::after {
-            content: ''; position: absolute; bottom: -23px; left: 0; right: 0;
-            height: 3px; background: var(--coral);
-        }
-
-        /* ========================================
-           HUB SUB-NAVIGATION (Level 2)
-           ======================================== */
-        .portfolio-subnav {
-            position: fixed; top: 64px; left: 0; width: 100%;
-            background: var(--bg-primary);
-            border-bottom: 1px solid var(--border-subtle);
-            z-index: 9999; transition: background 0.3s ease;
-        }
-
-        .portfolio-subnav-container {
-            max-width: 1400px; margin: 0 auto; padding: 0 2rem;
-            height: 48px; display: flex; align-items: center; gap: 2rem;
-        }
-
-        .subnav-link {
-            color: var(--text-secondary); text-decoration: none;
-            font-size: 14px; font-weight: 500; transition: color 0.2s ease;
-            padding: 0.5rem 0; position: relative;
-        }
-        .subnav-link:hover { color: var(--coral); }
-        .subnav-link.active { color: var(--text-primary); font-weight: 700; }
-        
-        @media (max-width: 1024px) {
-            .desktop-links { display: none !important; }
-            .mobile-menu-toggle { display: block !important; }
-            nav { padding: 0 1.5rem !important; }
-        }
-
-        /* Theme Toggle */
-        .theme-toggle {
-            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 50%; width: 36px; height: 36px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; margin-left: 1.5rem; color: #ffffff;
-            transition: all 0.3s ease;
-        }
-        .theme-toggle:hover { background: var(--coral); border-color: var(--coral); }
-        
-        /* Theme Toggle Logic */
-        [data-theme="dark"] .sun-icon, body.dark .sun-icon { display: block !important; }
-        [data-theme="dark"] .moon-icon, body.dark .moon-icon { display: none !important; }
-        :not([data-theme="dark"]):not(.dark) .sun-icon, body:not(.dark) .sun-icon { display: none !important; }
-        :not([data-theme="dark"]):not(.dark) .moon-icon, body:not(.dark) .moon-icon { display: block !important; }
-
-        /* Mobile Menu */
-        .mobile-menu-toggle { display: none; flex-direction: column; justify-content:center; align-items:center; gap: 8px; background-color: transparent; border: none; padding: 12px; z-index: 10001; cursor: pointer; }
-        .mobile-menu-toggle span { width: 24px; height: 2px; background: #FFFFFF; opacity: 1; display: block; transition: transform 0.3s ease, opacity 0.3s ease; }
-        .mobile-menu-toggle.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
-        .mobile-menu-toggle.open span:nth-child(2) { opacity: 0; }
-        .mobile-menu-toggle.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
-        .nav-actions { display: flex; align-items: center; gap: 12px; }
-        
-        .mobile-menu-overlay {
-            position: fixed; inset: 0; background: var(--bg-primary);
-            z-index: 9998; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            padding: 8rem 2rem; display: flex; flex-direction: column; gap: 2rem; overflow-y: auto;
-        }
-        .mobile-menu-overlay.active { transform: translateX(0); }
-        .mobile-drawer-header { display: flex; justify-content: space-between; align-items: center; padding: 0 24px; height: 80px; border-bottom: 1px solid var(--border-subtle); }
-        .mobile-drawer-logo { height: auto; width: 120px; max-width: 180px; object-fit: contain; }
-        @media (max-width: 480px) { .mobile-drawer-logo { width: 80px; } }
-        @media (min-width: 481px) and (max-width: 768px) { .mobile-drawer-logo { width: 100px; } }
-        @media (min-width: 769px) and (max-width: 1024px) { .mobile-drawer-logo { width: 120px; } }
-        .mobile-drawer-content { padding: 40px 32px; overflow-y: auto; display: flex; flex-direction: column; gap: 32px; }
-        .mobile-link-group { display: flex; flex-direction: column; gap: 1rem; }
-        .mobile-label { font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.1em; margin-bottom: 0.5rem; }
-        .mobile-link { display: block; text-decoration: none; color: var(--text-primary); transition: color 0.2s; }
-        .mobile-link.main { font-family: var(--font-display); font-size: 2.5rem; font-weight: 700; line-height: 1.1; margin-bottom: 8px; }
-        .mobile-link.sub { font-family: var(--font-sans); font-size: 1.1rem; font-weight: 500; margin-bottom: 12px; color: var(--text-secondary); padding-left: 0; transition: all 0.2s; }
-        .mobile-link:hover { color: #F96F6E; }
-        .mobile-link.active-parent { color: #F96F6E; }
-        .mobile-link.sub.active { color: #F96F6E; font-weight: 700; padding-left: 12px; border-left: 3px solid #F96F6E; }
-        .mobile-divider { height: 1px; width: 100%; background: var(--border-subtle); }
-        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
-        .mobile-controls { display: flex; align-items: center; gap: 16px; }
-        .drawer-close-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.1); border-radius: 50%; color: var(--text-primary); cursor: pointer; transition: all 0.2s ease; }
-        [data-theme="dark"] .drawer-close-btn { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); color: #fff; }
-        .drawer-close-btn:hover { background: #F96F6E; color: #fff; border-color: #F96F6E; transform: rotate(90deg); }
-
-        @media (max-width: 1024px) {
-            .primary-nav-container { padding: 0 1rem; }
-            .nav-logo { flex-shrink: 0; margin-right: auto; }
-            .mobile-menu-toggle { flex-shrink: 0; margin-left: auto; position: relative; right: 0; }
-            .nav-links, .portfolio-subnav { display: none; }
-            .mobile-menu-toggle { display: flex; }
-            .nav-actions { display: flex; }
-            body { padding-top: 64px; }
-        }
+        .fixed-dark a { color: #888888; transition: 0.2s; }
+        .fixed-dark a:hover { color: #ffffff; }
+        .fixed-dark .active-link { color: #ffffff !important; font-weight: 700; }
+        .fixed-dark .highlight-text { color: #F96F6E !important; }
 
         /* ==========================================
-           LAYOUT & TYPOGRAPHY
+           TYPOGRAPHY & UTILS
            ========================================== */
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 1; }
-        .center-axis { text-align: center; display: flex; flex-direction: column; align-items: center; max-width: 800px; margin: 0 auto; }
-        h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.01em; line-height: 1.1; }
+        h1, h2, h3 { font-family: 'Big Shoulders Display', sans-serif; letter-spacing: -0.01em; line-height: 1.1; }
         
-        .section-title {
-            font-size: var(--hero-headline-size); margin-bottom: 1.5rem; color: var(--text-primary);
-            background: var(--bg-primary); display: inline-block; padding: 0 1rem;
-        }
-        .section-alt { background-color: var(--bg-alt); border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); }
-        .section-alt .section-title { background: var(--bg-alt); }
-
-        /* Light mode section backgrounds for better contrast */
-        [data-theme="light"] .section-alt {
-            background-color: #F5F3EE;
-        }
-        
-        [data-theme="light"] .section-alt .section-title {
-            background: #F5F3EE;
-        }
-        
-        .text-gradient { background: linear-gradient(135deg, var(--coral), var(--teal)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .text-coral { color: var(--coral); }
-
-        /* The Spine */
-        .spine-container { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-        .central-spine { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: var(--thread-line); transform: translateX(-50%); }
-        .spine-node { width: 8px; height: 8px; background: var(--bg-primary); border: 1px solid var(--coral); border-radius: 50%; position: absolute; left: 50%; transform: translateX(-50%); z-index: 1; }
-
-        /* Buttons */
-        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 14px 36px; border-radius: 99px; font-weight: 600; font-size: 16px; text-decoration: none; transition: all 0.3s; border: none; cursor: pointer; }
-        .btn-primary { background: var(--text-primary); color: var(--bg-primary); }
-        .btn-primary:hover { background: var(--coral); color: white; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(249,111,110,0.3); }
-        .btn-ghost { background: transparent; border: 1px solid var(--border-strong); color: var(--text-primary); }
-        .btn-ghost:hover { border-color: var(--coral); color: var(--coral); transform: translateY(-2px); }
-
-        /* Light mode button improvements */
-        [data-theme="light"] .btn-primary {
-            background: #0E0E0F;
-            color: #FAF9F6;
-        }
-        
-        [data-theme="light"] .btn-primary:hover {
-            background: var(--coral);
-        }
-        
-        [data-theme="light"] .btn-ghost {
-            border: 2px solid rgba(0, 0, 0, 0.2);
-            color: #0E0E0F;
-        }
-        
-        [data-theme="light"] .btn-ghost:hover {
-            border-color: var(--coral);
-            background: rgba(249, 111, 110, 0.05);
-        }
-
-        /* ==========================================
-           ADVISORY SPECIFIC SECTIONS
-           ========================================== */
-        
-        /* Hero */
-        .hero-section { padding: 8rem 0 6rem; position: relative; text-align: center; }
-        .hero-icon-wrapper { width: 150px; height: 150px; margin: 0 auto 2rem; background: var(--bg-alt); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-strong); position: relative; z-index: 2; box-shadow: var(--shadow-soft); }
-        .hero-icon { width: 150px; height: 150px; object-fit: cover; border-radius: 50%; }
-        
-        .eyebrow { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.15em; color: var(--coral); text-transform: uppercase; margin-bottom: 1.5rem; background: var(--bg-primary); display: inline-block; padding: 0 10px; }
-        
-        .hero-description { font-size: 1.25rem; color: var(--text-secondary); max-width: 640px; margin: 0 auto 2.5rem; }
-        .hero-note { font-size: 0.9rem; color: var(--text-muted); font-style: italic; margin-top: 1.5rem; }
-        .bench-link { color: var(--text-primary); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--coral); }
-
-        /* Light mode text improvements */
-        [data-theme="light"] .hero-description,
-        [data-theme="light"] .roadmap-desc,
-        [data-theme="light"] .cap-list li,
-        [data-theme="light"] .process-item p {
-            color: #4A4A4A;
-        }
-        
-        [data-theme="light"] .eyebrow {
-            color: var(--coral);
-            font-weight: 700;
-        }
-        
-        [data-theme="light"] .process-num {
-            color: rgba(0, 0, 0, 0.15);
-        }
-
-        /* Capability Cards */
-        .capabilities-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 4rem; }
-        .capability-card { background: var(--card-bg); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 2.5rem; transition: transform 0.3s ease, box-shadow 0.3s ease; box-shadow: var(--shadow-soft); position: relative; overflow: hidden; }
-        .capability-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-hover); border-color: var(--border-strong); }
-
-        /* Light mode card improvements */
-        [data-theme="light"] .capability-card,
-        [data-theme="light"] .tier-card {
-            background: #FFFFFF;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-        }
-        
-        [data-theme="light"] .capability-card:hover,
-        [data-theme="light"] .tier-card:hover {
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-            border-color: rgba(0, 0, 0, 0.15);
-        }
-        
-        [data-theme="light"] .cap-icon {
-            background: #F5F3EE;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-        }
-        
-        .cap-icon { width: 60px; height: 60px; background: var(--bg-alt); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; color: var(--coral); border: 1px solid var(--border-strong); }
-        .cap-icon svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2; }
-        
-        .cap-title { font-family: var(--font-display); font-size: 1.75rem; margin-bottom: 1rem; color: var(--text-primary); }
-        .cap-list { list-style: none; margin: 1.5rem 0; padding: 0; }
-        .cap-list li { padding: 0.5rem 0; color: var(--text-secondary); display: flex; align-items: center; gap: 10px; font-size: 0.95rem; }
-        .cap-list li::before { content: ''; width: 6px; height: 6px; background: var(--teal); border-radius: 50%; }
-        
-        .case-link { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--coral); text-decoration: none; font-weight: 600; font-size: 0.9rem; margin-top: 1rem; }
-        .case-link:hover { text-decoration: underline; }
-
-        /* Process Steps */
-        .process-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 4rem; }
-        .process-item { text-align: center; padding: 2rem; }
-        .process-num { font-family: var(--font-display); font-size: 4rem; color: var(--border-strong); line-height: 1; margin-bottom: 1rem; opacity: 0.5; }
-        
-        /* Pricing Lock */
-        .price-lock { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 1rem; background: var(--card-bg); border: 1px solid var(--border-strong); border-radius: 12px; padding: 1rem; margin: 2rem auto; max-width: 600px; }
-        .price-input { padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border-strong); background: var(--bg-alt); color: var(--text-primary); outline: none; }
-
-        /* Light mode price lock */
-        [data-theme="light"] .price-lock {
-            background: #FFFFFF;
-            border: 2px solid rgba(0, 0, 0, 0.15);
-        }
-        
-        [data-theme="light"] .price-input {
-            background: #F5F3EE;
-            border: 1px solid rgba(0, 0, 0, 0.2);
-            color: #0E0E0F;
-        }
-        .tier-price { filter: blur(8px); transition: filter 0.3s ease; user-select: none; font-size: 1.75rem; font-weight: 700; color: var(--coral); margin: 1rem 0; }
-        .tier-price.revealed { filter: blur(0); }
-        
-        .investment-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem; }
-        .tier-card { background: var(--card-bg); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 2.5rem; text-align: center; transition: transform 0.3s; position: relative; }
-        .tier-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-soft); }
-        .tier-featured { border: 2px solid var(--coral); }
-        .tier-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--coral); color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
-
-        /* Legacy Logo Rotator */
-        .logo-display { height: 80px; display: flex; align-items: center; justify-content: center; background: var(--card-bg); border: 1px solid var(--border-strong); border-radius: 12px; margin-bottom: 1rem; position: relative; overflow: hidden; }
-        .logo-item { display: none; width: 100%; height: 100%; align-items: center; justify-content: center; padding: 1rem; }
-        .logo-item.active { display: flex; animation: fadeIn 0.5s ease; }
-        .logo-item img { max-height: 100%; max-width: 100%; object-fit: contain; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .legacy-stats { display: flex; justify-content: center; gap: 2rem; margin-top: 2rem; }
-        .stat-box { text-align: center; }
-        .stat-val { font-family: var(--font-display); font-size: 2.5rem; font-weight: 700; color: var(--text-primary); line-height: 1; }
-        .stat-lbl { font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); }
-
-        /* Footer styles - FIXED: Always Dark Mode */
-    .hub-footer {
-      background: #050505; /* Hardcoded dark background */
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      padding: clamp(3rem, 8vw, 5rem) clamp(1.5rem, 5vw, 3rem) clamp(2rem, 4vw, 3rem);
-      margin-top: clamp(4rem, 10vw, 8rem);
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      color: #FFFFFF;
-    }
-
-    .hub-footer .footer-container { max-width: 1400px; margin: 0 auto; width: 100%; display: block; }
-
-    .footer-main {
-      display: grid;
-      grid-template-columns: minmax(280px, 1fr) minmax(200px, 1fr) minmax(250px, 1fr);
-      gap: clamp(2rem, 5vw, 4rem);
-      padding-bottom: clamp(2rem, 4vw, 3rem);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      align-items: start;
-    }
-
-    .footer-brand { display: flex; flex-direction: column; gap: clamp(1rem, 2.5vw, 1.5rem); }
-    .footer-logo { margin-bottom: 0.5rem; }
-    .footer-logo a { display: inline-block; transition: opacity 0.3s ease, transform 0.3s ease; }
-    .footer-logo a:hover { opacity: 0.8; transform: translateY(-2px); }
-    .footer-logo img { height: auto; max-height: clamp(56px, 8vw, 72px); opacity: 0.95; object-fit: contain; }
-
-    .footer-tagline { color: rgba(255, 255, 255, 0.6); font-size: clamp(0.875rem, 1.8vw, 1rem); line-height: 1.6; font-weight: 400; margin: 0; max-width: 320px; }
-
-    .footer-nav, .footer-connect { display: flex; flex-direction: column; gap: clamp(1rem, 2vw, 1.5rem); }
-    .footer-nav-title { font-size: clamp(0.7rem, 1.4vw, 0.75rem); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255, 255, 255, 0.35); margin: 0 0 clamp(1rem, 2vw, 1.25rem) 0; }
-    .footer-nav-links { display: flex; flex-direction: column; gap: clamp(0.625rem, 1.5vw, 0.875rem); }
-
-    .footer-link, .footer-social a {
-      display: flex; align-items: center; gap: clamp(0.625rem, 1.5vw, 0.875rem);
-      padding: clamp(0.75rem, 1.8vw, 1rem) clamp(0.875rem, 2vw, 1.25rem);
-      text-decoration: none; color: #FFFFFF; font-size: clamp(0.875rem, 1.6vw, 0.95rem);
-      font-weight: 500; transition: all 0.3s ease; position: relative; border-radius: 8px; background: transparent;
-    }
-
-    .footer-link svg, .footer-social a svg { width: clamp(18px, 3vw, 20px); height: clamp(18px, 3vw, 20px); color: rgba(255, 255, 255, 0.6); transition: all 0.3s ease; flex-shrink: 0; }
-
-    .footer-link::before, .footer-social a::before {
-      content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
-      width: 0; height: 2px; background: linear-gradient(90deg, var(--coral), var(--teal)); transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 2px;
-    }
-
-    .footer-link:hover, .footer-social a:hover { color: var(--coral); background: rgba(255, 255, 255, 0.05); padding-left: clamp(1.25rem, 2.5vw, 1.5rem); }
-    .footer-link:hover::before, .footer-social a:hover::before { width: 4px; }
-    .footer-link:hover svg, .footer-social a:hover svg { color: var(--coral); transform: scale(1.1); }
-
-    .footer-link:focus-visible, .footer-social a:focus-visible { outline: 2px solid var(--coral); outline-offset: 2px; }
-
-    .footer-bottom { padding-top: clamp(1.5rem, 3vw, 2rem); }
-    .footer-bottom-content { display: flex; align-items: center; justify-content: center; gap: clamp(1rem, 3vw, 2rem); flex-wrap: wrap; }
-    .footer-copyright { color: rgba(255, 255, 255, 0.35); font-size: clamp(0.8rem, 1.5vw, 0.85rem); font-weight: 400; margin: 0; }
-    .footer-accent-line { width: 1px; height: 16px; background: linear-gradient(180deg, var(--coral), var(--teal)); opacity: 0.4; }
-    .footer-tagline-mini { color: rgba(255, 255, 255, 0.35); font-size: clamp(0.8rem, 1.5vw, 0.85rem); font-weight: 400; font-style: italic; margin: 0; }
-
-    @media (max-width: 1024px) { .footer-main { grid-template-columns: 1fr; gap: clamp(2.5rem, 5vw, 3rem); } .footer-tagline { max-width: 100%; } }
-
-    @media (max-width: 768px) {
-      .hub-footer { padding: clamp(2.5rem, 6vw, 3rem) clamp(1rem, 5vw, 2rem) clamp(1.5rem, 4vw, 2rem); }
-      .footer-main { gap: clamp(2rem, 6vw, 2.5rem); }
-      .footer-bottom-content { flex-direction: column; gap: 1rem; }
-      .footer-accent-line { width: 64px; height: 1px; }
-      .hub-footer .footer-logo img { width: 100%; max-width: 240px; height: auto; max-height: 56px; }
-      .footer-tagline { font-size: 0.875rem; }
-      .footer-link, .footer-social a { padding: 0.75rem 0.875rem; font-size: 0.875rem; }
-    }
-
-    @media (max-width: 480px) {
-      .footer-social a { padding: 0.75rem 0.875rem; font-size: 0.875rem; }
-      .footer-link svg, .footer-social a svg { width: 18px; height: 18px; }
-      .footer-nav-title { font-size: 0.7rem; }
-      .footer-copyright, .footer-tagline-mini { font-size: 0.75rem; }
-      .footer-link:hover, .footer-social a:hover { padding-left: 1rem; }
-    }
-
-    @media (max-width: 320px) { .hub-footer { padding: 2rem 1rem 1.5rem; } .hub-footer .footer-logo img { max-width: 200px; height: auto; max-height: 48px; } .footer-link, .footer-social a { padding: 0.625rem 0.75rem; font-size: 0.8125rem; } }
-
-    @media print { .hub-footer { border-top: 1px solid #000; padding: 2rem 1rem; color: #000; } .footer-link:hover, .footer-social a:hover { background: none; color: inherit; } .footer-accent-line { background: #000; } }
-
-    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; } }
-    @media (prefers-contrast: high) { .footer-link, .footer-social a { border: 1px solid currentColor; } .footer-accent-line { opacity: 1; } }
-
-    /* Mobile Menu Optimization - Always Dark */
-    .mobile-menu-overlay {
-        background-color: #050505 !important;
-        color: #FFFFFF !important;
-    }
-    .mobile-link {
-        color: #CCCCCC !important;
-    }
-    .mobile-link.active, .mobile-link:hover {
-        color: #FFFFFF !important;
-    }
-    .drawer-close-btn {
-        color: #FFFFFF !important;
-    }
-
-    /* ===== COMPREHENSIVE LIGHT MODE TEXT FIXES ===== */ 
- 
- /* All headings should be dark in light mode */ 
- [data-theme="light"] h1, 
- [data-theme="light"] h2, 
- [data-theme="light"] h3, 
- [data-theme="light"] .section-title, 
- [data-theme="light"] .cap-title, 
- [data-theme="light"] .stat-val, 
- [data-theme="light"] .process-item h3 { 
-     color: #0E0E0F !important; 
- } 
- 
- /* Section titles that have white backgrounds */ 
- [data-theme="light"] .section-title { 
-     background: transparent !important; 
- } 
- 
- [data-theme="light"] .section-alt .section-title { 
-     background: transparent !important; 
- } 
- 
- /* Body text improvements */ 
- [data-theme="light"] p, 
- [data-theme="light"] .hero-description, 
- [data-theme="light"] .hero-note, 
- [data-theme="light"] .capability-card p, 
- [data-theme="light"] .process-item p, 
- [data-theme="light"] .tier-card p { 
-     color: #4A4A4A !important; 
- } 
- 
- /* List items */ 
- [data-theme="light"] .cap-list li { 
-     color: #4A4A4A !important; 
- } 
- 
- /* Stats and labels */ 
- [data-theme="light"] .stat-lbl { 
-     color: #666666 !important; 
- } 
- 
- /* Process numbers */ 
- [data-theme="light"] .process-num { 
-     color: rgba(0, 0, 0, 0.12) !important; 
- } 
- 
- /* Links */ 
- [data-theme="light"] .bench-link, 
- [data-theme="light"] .case-link { 
-     color: var(--coral) !important; 
-     text-decoration-color: var(--coral) !important; 
- } 
- 
- /* Methodology section white text fix */ 
- [data-theme="light"] .section-alt h2, 
- [data-theme="light"] .section-alt h3, 
- [data-theme="light"] .section-alt p { 
-     color: #0E0E0F !important; 
- } 
- 
- [data-theme="light"] .section-alt .process-item p { 
-     color: #4A4A4A !important; 
- } 
- 
- /* Investment section fixes */ 
- [data-theme="light"] .tier-card h3 { 
-     color: #0E0E0F !important; 
- } 
- 
- [data-theme="light"] .tier-price { 
-     color: var(--coral) !important; 
- } 
- 
- [data-theme="light"] .tier-badge { 
-     background: var(--coral) !important; 
-     color: white !important; 
- } 
- 
- /* Legacy section text */ 
- [data-theme="light"] .logo-display { 
-     background: #FFFFFF !important; 
-     border: 1px solid rgba(0, 0, 0, 0.1) !important; 
- }
-
-    /* ===== MOBILE OPTIMIZATION ===== */
-
-    /* Tablets and below */
-    @media (max-width: 1024px) {
-        body {
-            padding-top: 120px;
-        }
-        
-        .hero-section {
-            padding: 4rem 0 3rem;
-        }
-        
-        .section-title {
-            font-size: clamp(2rem, 6vw, 3rem);
-        }
-        
-        .capabilities-grid {
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-        }
-        
-        .process-grid {
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-        }
-        
-        .investment-grid {
-            grid-template-columns: 1fr;
-            gap: 2rem;
-        }
-        
-        .hero-icon-wrapper {
-            width: 120px;
-            height: 120px;
-        }
-        
-        .hero-icon {
-            width: 120px;
-            height: 120px;
-        }
-    }
-
-    /* Mobile phones */
-    @media (max-width: 768px) {
-        .container {
-            padding: 0 1.5rem;
-        }
-        
-        .hero-section {
-            padding: 3rem 0 2rem;
-        }
-        
-        .section-title {
-            font-size: clamp(1.75rem, 5vw, 2.5rem);
-            margin-bottom: 1rem;
-        }
-        
-        .hero-description {
-            font-size: 1rem;
-            margin-bottom: 2rem;
-        }
-        
-        .hero-actions {
-            flex-direction: column;
-            width: 100%;
-        }
-        
-        .btn {
-            width: 100%;
-            padding: 12px 24px;
-            font-size: 14px;
-        }
-        
-        .capability-card,
-        .tier-card {
-            padding: 2rem 1.5rem;
-        }
-        
-        .cap-title {
-            font-size: 1.5rem;
-        }
-        
-        .process-num {
-            font-size: 3rem;
-        }
-        
-        .process-item h3 {
-            font-size: 1.25rem;
-        }
-        
-        .legacy-stats {
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-        
-        .stat-val {
-            font-size: 2rem;
-        }
-        
-        .price-lock {
-            flex-direction: column;
-            padding: 1.5rem;
-        }
-        
-        .price-input {
-            width: 100%;
-        }
-        
-        .hero-icon-wrapper {
-            width: 100px;
-            height: 100px;
-        }
-        
-        .hero-icon {
-            width: 100px;
-            height: 100px;
-        }
-        
-        section {
-            padding: 4rem 0 !important;
-        }
-    }
-
-    /* Small mobile */
-    @media (max-width: 480px) {
-        body {
-            padding-top: 100px;
-        }
-        
-        .section-title {
-            font-size: 1.5rem;
-        }
-        
-        .hero-description {
-            font-size: 0.95rem;
+        .text-gradient { 
+            background: linear-gradient(135deg, var(--coral), var(--teal)); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
         }
         
         .eyebrow {
-            font-size: 0.7rem;
+            font-size: 0.8rem; font-weight: 700; letter-spacing: 0.15em; color: var(--coral); 
+            text-transform: uppercase; margin-bottom: 1.5rem;
         }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+        .section-alt { background-color: var(--bg-alt); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); }
+
+        /* BUTTONS */
+        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 14px 36px; border-radius: 99px; font-weight: 600; font-size: 14px; text-decoration: none; transition: all 0.3s; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em; }
+        .btn-primary { background: var(--text-primary); color: var(--bg-primary); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); opacity: 0.9; }
+        .btn-ghost { background: transparent; border: 1px solid var(--border-color); color: var(--text-primary); }
+        .btn-ghost:hover { border-color: var(--coral); color: var(--coral); }
+
+        /* CARDS */
+        .card { 
+            background: var(--bg-primary); 
+            border: 1px solid var(--border-color); 
+            border-radius: 12px; 
+            padding: 2.5rem; 
+            transition: transform 0.3s, box-shadow 0.3s; 
+        }
+        .card:hover { 
+            transform: translateY(-4px); 
+            border-color: var(--coral); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        /* SPINE */
+        .spine-container { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: -1; overflow: hidden; }
+        .central-spine { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: var(--border-color); transform: translateX(-50%); opacity: 0.5; }
+
+        /* ==========================================
+           PRICE LOCK & LEGACY UI
+           ========================================== */
+        .price-lock { 
+            display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 1rem; 
+            background: var(--bg-primary); border: 1px solid var(--border-color); 
+            border-radius: 12px; padding: 1rem; margin: 2rem auto; max-width: 600px; 
+        }
+        .price-input { 
+            padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border-color); 
+            background: var(--bg-alt); color: var(--text-primary); outline: none; width: 200px;
+        }
+        .tier-price { 
+            filter: blur(8px); transition: filter 0.5s ease; user-select: none; 
+            font-size: 1.75rem; font-weight: 700; color: var(--coral); margin: 1rem 0; 
+        }
+        .tier-price.revealed { filter: blur(0); }
+
+        /* LEGACY STATS */
+        .logo-display { height: 120px; display: flex; align-items: center; justify-content: center; background: var(--bg-alt); border: 1px solid var(--border-color); border-radius: 16px; margin-bottom: 2rem; overflow: hidden; position: relative; }
+        .logo-item { display: none; width: 100%; height: 100%; align-items: center; justify-content: center; padding: 2rem; }
+        .logo-item.active { display: flex; animation: fadeIn 0.5s ease; }
+        .logo-item img { max-height: 100%; max-width: 100%; object-fit: contain; filter: none; opacity: 1; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
-        .capability-card,
-        .tier-card {
-            padding: 1.5rem;
+        .legacy-stats { display: flex; justify-content: center; gap: 4rem; }
+        .stat-val { font-family: 'Big Shoulders Display'; font-size: 3rem; font-weight: 700; color: var(--text-primary); line-height: 1; }
+        .stat-lbl { font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.1em; }
+
+        /* ==========================================
+           HEADER: 3-COLUMN CENTERED NAV
+           ========================================== */
+        .header-bar {
+            position: fixed; top: 0; left: 0; width: 100%; height: 72px;
+            background-color: #050505; border-bottom: 1px solid rgba(255,255,255,0.1);
+            z-index: 10000;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            padding: 0 2rem;
         }
-        
-        .cap-icon {
-            width: 48px;
-            height: 48px;
+
+        .header-logo { display: flex; align-items: center; gap: 16px; text-decoration: none; }
+        .header-logo img { height: 32px; width: auto; }
+
+        /* MEGA MENU SYSTEM */
+        .desktop-nav { 
+            display: flex; gap: 24px; align-items: center;
+            justify-self: center;
         }
-        
-        .cap-icon i {
-            font-size: 20px;
+        .desktop-nav .nav-item { position: relative; }
+        .desktop-nav .nav-link {
+            background: none; border: none; color: #888; font-size: 11px; font-weight: 600;
+            letter-spacing: 1px; cursor: pointer; text-transform: uppercase; text-decoration: none;
+            display: flex; align-items: center; gap: 4px;
         }
-        
-        .btn {
-            font-size: 13px;
-            padding: 10px 20px;
+        .desktop-nav .nav-link:hover { color: #fff; }
+        .desktop-nav .nav-link.active-link { color: #fff; }
+
+        .desktop-nav .mega-panel {
+            display: block; opacity: 0; visibility: hidden;
+            transition: all 0.2s ease; transition-delay: 100ms;
+            position: absolute; top: 100%; left: 50%;
+            transform: translateX(-50%) translateY(10px) translateZ(0);
+            backface-visibility: hidden; width: 520px;
+            background: #0A0A0A; border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.5rem; border-radius: 0.75rem; z-index: 50;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); margin-top: 1rem;
         }
-    }
+        .desktop-nav .mega-panel::before { content: ""; position: absolute; top: -20px; left: 0; right: 0; height: 20px; background: transparent; }
+        .desktop-nav .nav-item:hover .mega-panel { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0) translateZ(0); }
+        .desktop-nav .group\/item:hover { background-color: rgba(255, 255, 255, 0.05); }
+        .desktop-nav .group\/item .icon-teal { color: #2ED3C6; }
+        .desktop-nav .group\/item .icon-coral { color: #F96F6E; }
+        .desktop-nav .group\/item:hover .icon-teal,
+        .desktop-nav .group\/item:hover .icon-coral { filter: brightness(1.2); }
+        .desktop-nav .mega-title-text { font-family: 'Big Shoulders Display', sans-serif; text-transform: uppercase; letter-spacing: 0.05em; font-size: 1.1rem; color: #F4F1ED; }
+        .desktop-nav .mega-desc-text { font-family: 'Inter', sans-serif; font-size: 0.75rem; color: #A1A1AA; margin-top: 0.25rem; }
 
-    /* ===== SPECIFIC SECTION FIXES ===== */
+        .nav-actions { 
+            display: flex; align-items: center; gap: 12px;
+            justify-self: end;
+        }
+        .nav-actions .theme-btn {
+            width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.1);
+            border: none; color: white; cursor: pointer; display: flex; align-items: center;
+            justify-content: center; transition: 0.2s;
+        }
+        .nav-actions .theme-btn:hover { background: rgba(255,255,255,0.2); }
+        .nav-actions .mobile-menu-toggle {
+            display: none; background: none; border: none; font-size: 20px;
+            cursor: pointer; color: white;
+        }
 
-    /* Methodology section in light mode */
-    [data-theme="light"] .section-alt {
-        background-color: #F5F3EE;
-    }
+        /* ==========================================
+           MOBILE DRAWER (Standardized)
+           ========================================== */
+        .drawer-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px); z-index: 19999;
+            opacity: 0; visibility: hidden; transition: all 0.3s ease;
+        }
+        .drawer-overlay.active { opacity: 1; visibility: visible; }
 
-    [data-theme="light"] .section-alt * {
-        color: inherit;
-    }
+        .mobile-drawer {
+            position: fixed; top: 0; right: 0; width: 100%; max-width: 420px; height: 100dvh;
+            background: #0A0A0A; z-index: 20000; transform: translateX(100%);
+            transition: transform 0.45s var(--ease-spring);
+            display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden;
+        }
+        .mobile-drawer.active { transform: translateX(0); }
 
-    [data-theme="light"] .section-alt h2 {
-        color: #0E0E0F !important;
-    }
+        .drawer-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); flex-shrink: 0;
+        }
+        .drawer-header img { height: 28px; }
+        .drawer-close {
+            background: none; border: none; color: rgba(255,255,255,0.5);
+            font-size: 1.25rem; cursor: pointer; width: 40px; height: 40px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+        }
+        .drawer-close:hover { background: rgba(255,255,255,0.06); color: #FFF; }
 
-    [data-theme="light"] .section-alt .process-num {
-        color: rgba(0, 0, 0, 0.15) !important;
-    }
+        .drawer-content { flex: 1; padding: 0; display: flex; flex-direction: column; }
 
-    /* Hero section gradient text */
-    [data-theme="light"] .text-gradient {
-        background: linear-gradient(135deg, var(--coral), var(--teal));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
+        .drawer-hub-section {
+            padding: 1.5rem; background: transparent;
+            border-bottom: 1px solid rgba(255,255,255,0.06); position: relative;
+        }
+        .drawer-hub-section::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 2px; height: 100%;
+            background: rgba(249,111,110,0.75); border-radius: 0 2px 2px 0;
+        }
+        .drawer-section-label {
+            display: flex; align-items: center; gap: 0.5rem;
+            font-family: var(--font-strategist); font-size: 0.7rem;
+            text-transform: uppercase; letter-spacing: 0.12em;
+            color: var(--coral); margin-bottom: 1.25rem; font-weight: 800;
+        }
+        .drawer-section-label i { font-size: 0.6rem; }
+        .drawer-hub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.625rem; }
+        .drawer-hub-card {
+            display: flex; flex-direction: column; gap: 0.5rem;
+            padding: 1rem; border-radius: 12px;
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+            text-decoration: none; transition: all 0.25s;
+        }
+        .drawer-hub-card:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); }
+        .drawer-hub-card.active { border-color: var(--coral); background: rgba(249,111,110,0.06); }
+        .drawer-hub-card-icon {
+            width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.05);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; color: rgba(255,255,255,0.4); transition: all 0.2s;
+        }
+        .drawer-hub-card.active .drawer-hub-card-icon { background: var(--coral); color: #FFF; }
+        .drawer-hub-card-title { font-family: var(--font-strategist); font-size: 1rem; text-transform: uppercase; color: #FFF; letter-spacing: 0.02em; }
+        .drawer-hub-card-sub { font-size: 0.7rem; color: rgba(255,255,255,0.4); line-height: 1.4; }
 
-    /* Ensure eyebrow is visible */
-    [data-theme="light"] .eyebrow {
-        color: var(--coral) !important;
-        background: transparent !important;
-    }
+        .drawer-global-section { padding: 1.5rem; flex: 1; }
+        .drawer-global-section .drawer-section-label { color: rgba(255,255,255,0.3); }
+        .drawer-global-link {
+            display: flex; align-items: center; gap: 0.875rem; padding: 0.875rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04); text-decoration: none; transition: all 0.2s;
+        }
+        .drawer-global-link:last-child { border-bottom: none; }
+        .drawer-global-link:hover .drawer-global-text { color: #FFF; }
+        .drawer-global-icon {
+            width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,0.04);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem; color: rgba(255,255,255,0.3); flex-shrink: 0; transition: all 0.2s;
+        }
+        .drawer-global-link:hover .drawer-global-icon { color: var(--teal); }
+        .drawer-global-text { font-family: var(--font-orchestrator); font-size: 0.9rem; font-weight: 500; color: rgba(255,255,255,0.6); transition: color 0.2s; }
+        .drawer-global-link.active .drawer-global-text { color: var(--coral); font-weight: 600; }
 
-    </style>
-    <style>
+        .drawer-footer {
+            padding: 1.25rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.06);
+            display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+        }
+        .drawer-footer-status { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: rgba(255,255,255,0.4); }
+        .drawer-status-dot { width: 6px; height: 6px; background: var(--teal); border-radius: 50%; box-shadow: 0 0 6px rgba(46,211,198,0.4); }
+        .drawer-theme-toggle {
+            background: none; border: 1px solid rgba(255,255,255,0.08); cursor: pointer;
+            color: rgba(255,255,255,0.4); font-size: 0.9rem; width: 36px; height: 36px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+        }
+        .drawer-theme-toggle:hover { background: rgba(255,255,255,0.06); color: #FFF; }
+
+        /* MOBILE OVERRIDES */
         @media (max-width: 1024px) {
-            .desktop-links { display: none !important; }
-            .mobile-menu-toggle { display: block !important; }
-            nav { padding: 0 1.5rem !important; }
+            .desktop-nav { display: none !important; }
+            .nav-actions .mobile-menu-toggle { display: block !important; }
+            .header-bar { display: flex; justify-content: space-between; }
+            .legacy-stats { gap: 2rem; }
+            .price-lock { flex-direction: column; }
         }
-        /* Theme Toggle Logic */
-        body.dark .sun-icon { display: block !important; }
-        body.dark .moon-icon { display: none !important; }
-        body:not(.dark) .sun-icon { display: none !important; }
-        body:not(.dark) .moon-icon { display: block !important; }
-
-        /* ===== FOOTER MOBILE OPTIMIZATION ===== */ 
- .footer-grid { 
-     display: grid; 
-     grid-template-columns: 1.5fr 1fr 1fr 1.5fr; 
-     gap: 3rem; 
-     align-items: start; 
- } 
- 
- @media (max-width: 768px) { 
-     .footer-grid { 
-         display: flex !important; 
-         flex-direction: column !important; 
-         align-items: center !important; 
-         text-align: center !important; 
-         gap: 3rem !important; 
-     } 
- } 
- 
- /* Desktop footer - stays as grid */ 
- @media (min-width: 769px) { 
-     footer > div { 
-         display: grid !important; 
-         grid-template-columns: 1.5fr 1fr 1fr 1.5fr !important; 
-         gap: 3rem !important; 
-         align-items: start !important; 
-     } 
- } 
- 
- /* Tablet and Mobile footer - stacks vertically */ 
- @media (max-width: 768px) { 
-     footer { 
-         padding: 3rem 1.5rem 2rem !important; 
-     } 
-     
-     footer > div { 
-         display: flex !important; 
-         flex-direction: column !important; 
-         gap: 3rem !important; 
-         align-items: center !important; 
-         text-align: center !important; 
-     } 
-     
-     /* Brand section */ 
-     footer > div > div:first-child { 
-         display: flex; 
-         flex-direction: column; 
-         align-items: center; 
-         text-align: center; 
-     } 
-     
-     footer > div > div:first-child a { 
-         justify-content: center; 
-     } 
-     
-     footer > div > div:first-child p { 
-         max-width: 100% !important; 
-         text-align: center; 
-     } 
-     
-     /* Ecosystem section */ 
-     footer > div > div:nth-child(2) { 
-         width: 100%; 
-     } 
-     
-     footer > div > div:nth-child(2) h4 { 
-         text-align: center; 
-         margin-bottom: 1rem !important; 
-     } 
-     
-     footer > div > div:nth-child(2) ul { 
-         align-items: center; 
-     } 
-     
-     /* Connect section */ 
-     footer > div > div:nth-child(3) { 
-         width: 100%; 
-     } 
-     
-     footer > div > div:nth-child(3) h4 { 
-         text-align: center; 
-         margin-bottom: 1rem !important; 
-     } 
-     
-     footer > div > div:nth-child(3) ul { 
-         align-items: center; 
-     } 
-     
-     /* Status box */ 
-     footer > div > div:nth-child(4) { 
-         width: 100%; 
-         max-width: 400px; 
-     } 
-     
-     footer > div > div:nth-child(4) > div { 
-         width: 100%; 
-     } 
- } 
- 
- /* Small mobile adjustments */ 
- @media (max-width: 480px) { 
-     footer { 
-         padding: 2rem 1rem 1.5rem !important; 
-     } 
-     
-     footer > div { 
-         gap: 2.5rem !important; 
-     } 
-     
-     footer > div > div:first-child a img { 
-         height: 24px !important; 
-     } 
-     
-     footer > div > div:first-child a span { 
-         font-size: 16px !important; 
-     } 
-     
-     footer ul { 
-         gap: 8px !important; 
-     } 
-     
-     footer ul li a { 
-         font-size: 13px !important; 
-     } 
-     
-     footer h4 { 
-         font-size: 12px !important; 
-     } 
- }
+        @media (max-width: 767px) {
+            .mobile-drawer { max-width: 100%; }
+        }
     </style>
-
 </head>
-<body>
+<body class="antialiased">
 
-<!-- GOLDEN MASTER HEADER -->
-<nav style="position: fixed; top: 0; left: 0; width: 100%; height: 72px; background: #050505; border-bottom: 1px solid rgba(255,255,255,0.1); z-index: 10000; display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; box-sizing: border-box;">
-     
-    <!-- LEFT: BRAND LOCKUP -->
-    <a href="/index.html" style="display: flex; align-items: center; gap: 16px; text-decoration: none;">
-        <img src="/assets/images/Logomark_White_a.png" alt="LG" style="height: 32px; width: auto; display: block;">
-        <div style="width: 1px; height: 24px; background: rgba(255,255,255,0.3);"></div>
-        <span style="font-family: 'Big Shoulders Display', sans-serif; font-size: 24px; font-weight: 700; color: white; letter-spacing: 0.5px; line-height: 1;">The Hub.</span>
+<!-- ==================== HEADER (Centered Nav, No Client Login) ==================== -->
+<nav class="header-bar">
+    <a href="/_deploy_v2/TheHub/index.html" class="header-logo nav-logo" style="gap: 12px;">
+        <img src="/assets/images/Logomark_White_a.png" alt="Luis Gilberto" style="height: 32px; width: auto; opacity: 0.9;">
+        <div style="width: 1px; height: 20px; background: rgba(255,255,255,0.2); flex-shrink: 0;"></div>
+        <span style="font-family: 'Big Shoulders Display', sans-serif; font-size: 20px; font-weight: 700; color: #FFF; letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap;">The Hub.</span>
     </a>
- 
-    <!-- RIGHT: GLOBAL LINKS & CONTROLS -->
-    <div style="display: flex; align-items: center; gap: 24px;">
-        <!-- Desktop Links (Hidden on Tablet/Mobile) -->
-        <div class="desktop-links" style="display: flex; gap: 24px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">
-            <a href="/index.html" style="color: #888; text-decoration: none; transition: 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#888'">Portfolio</a>
-            <a href="/insights/index.html" style="color: #888; text-decoration: none; transition: 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#888'">Insights</a>
-            <a href="/TheHub/index.html" style="color: #fff; text-decoration: none;">The Hub</a>
-            <a href="https://portal.luis-gilberto.com" style="color: #888; text-decoration: none; transition: 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#888'">Portal</a>
-        </div>
- 
-        <!-- Controls Group -->
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <!-- Theme Toggle -->
-            <button class="theme-toggle" id="themeToggle" style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white;">
-                <i class="fas fa-sun sun-icon" style="display: none;"></i>
-                <i class="fas fa-moon moon-icon"></i>
+
+    <!-- CENTERED MEGA MENU NAVIGATION -->
+    <nav class="desktop-nav">
+        <!-- Portfolio -->
+        <div class="nav-item has-dropdown group relative">
+            <button class="nav-link">
+                PORTFOLIO <i class="fas fa-chevron-down ml-1 text-[10px]"></i>
             </button>
-             
-            <!-- Mobile Toggle (Visible on Tablet/Mobile) -->
-            <button class="mobile-menu-toggle" id="mobileToggle" style="display: none; background: none; border: none; color: white; font-size: 24px; cursor: pointer;">
-                <i class="fas fa-bars"></i>
-            </button>
+            <div class="mega-panel">
+                <div class="grid grid-cols-2 gap-6">
+                    <a href="/_deploy_v2/myexperience.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all">
+                        <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-teal"><i class="fa-solid fa-briefcase"></i></div>
+                        <div><div class="mega-title-text font-bold">Experience</div><div class="mega-desc-text">Deep dives into key projects.</div></div>
+                    </a>
+                    <a href="/_deploy_v2/about.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all">
+                        <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-coral"><i class="fa-solid fa-user"></i></div>
+                        <div><div class="mega-title-text font-bold">About me</div><div class="mega-desc-text">The human behind the work.</div></div>
+                    </a>
+                    <a href="/_deploy_v2/identity.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all">
+                        <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-teal"><i class="fa-solid fa-fingerprint"></i></div>
+                        <div><div class="mega-title-text font-bold">Identity</div><div class="mega-desc-text">Brand book and visual DNA.</div></div>
+                    </a>
+                    <a href="/_deploy_v2/contact.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all">
+                        <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-coral"><i class="fa-solid fa-paper-plane"></i></div>
+                        <div><div class="mega-title-text font-bold">Contact</div><div class="mega-desc-text">Let's start a conversation.</div></div>
+                    </a>
+                </div>
+            </div>
         </div>
+
+        <!-- Insights -->
+        <div class="nav-item has-dropdown group relative">
+            <a href="/_deploy_v2/insights/" class="nav-link">
+                INSIGHTS <i class="fas fa-chevron-down ml-1 text-[10px]"></i>
+            </a>
+            <div class="mega-panel">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <a href="/insights/series/#building" class="group/item" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                        <div style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;" class="icon-teal"><i class="fa-solid fa-layer-group"></i></div>
+                        <div><div class="mega-title-text" style="font-weight: 700;">Building Series</div><div class="mega-desc-text">Structural decisions behind the work.</div></div>
+                    </a>
+                    <a href="/insights/series/#use-cases" class="group/item" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                        <div style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;" class="icon-coral"><i class="fa-solid fa-rocket"></i></div>
+                        <div><div class="mega-title-text" style="font-weight: 700;">Use Cases</div><div class="mega-desc-text">Real-world applications & launches.</div></div>
+                    </a>
+                    <a href="/insights/series/#reflections" class="group/item" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                        <div style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;" class="icon-teal"><i class="fa-solid fa-lightbulb"></i></div>
+                        <div><div class="mega-title-text" style="font-weight: 700;">Reflections</div><div class="mega-desc-text">Creativity, pace, and momentum.</div></div>
+                    </a>
+                    <a href="/_deploy_v2/insights/" class="group/item" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                        <div style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;" class="icon-coral"><i class="fa-solid fa-newspaper"></i></div>
+                        <div><div class="mega-title-text" style="font-weight: 700;">Latest Stories</div><div class="mega-desc-text">Read the newest articles.</div></div>
+                    </a>
+                </div>
+                <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: flex-end;">
+                    <a href="/_deploy_v2/insights/series/" style="font-size: 0.75rem; font-weight: 700; color: #F96F6E; display: flex; align-items: center; gap: 0.25rem;">
+                        Browse All Series <span style="font-size: 1.125rem;">→</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- The Hub -->
+        <div class="nav-item has-dropdown group relative">
+            <a href="/_deploy_v2/TheHub/index.html" class="nav-link active-link">
+                THE HUB <i class="fas fa-chevron-down ml-1 text-[10px]"></i>
+            </a>
+            <div class="mega-panel">
+                <div class="grid grid-cols-2 gap-6">
+                    <a href="/_deploy_v2/TheHub/index.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all">
+                        <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-teal"><i class="fa-solid fa-house"></i></div>
+                        <div><div class="mega-title-text font-bold">Hub Home</div><div class="mega-desc-text">System overview.</div></div>
+                    </a>
+                    <a href="/_deploy_v2/TheHub/strategy-iq/index.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all">
+                        <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-coral"><i class="fa-solid fa-chart-line"></i></div>
+                        <div><div class="mega-title-text font-bold">StrategyIQ</div><div class="mega-desc-text">Benchmark maturity.</div></div>
+                    </a>
+                    <a href="/_deploy_v2/TheHub/advisory/index.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="border: 1px solid rgba(249,111,110,0.55); background: rgba(249,111,110,0.06); border-radius: 0.5rem;">
+                        <div class="w-10 h-10 rounded flex items-center justify-center" style="background: var(--coral); color: #FFF;"><i class="fa-solid fa-compass"></i></div>
+                        <div><div class="mega-title-text font-bold">Advisory</div><div class="mega-desc-text">Strategic partnership.</div></div>
+                    </a>
+                    <a href="/_deploy_v2/TheHub/studio.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all">
+                        <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-coral"><i class="fa-solid fa-palette"></i></div>
+                        <div><div class="mega-title-text font-bold">The Studio</div><div class="mega-desc-text">Creative execution.</div></div>
+                    </a>
+                </div>
+                <div class="mt-6 pt-4 border-t border-white/10 flex justify-end">
+                    <a href="https://portal.luis-gilberto.com" target="_blank" class="text-xs font-bold text-coral flex items-center gap-1 hover:brightness-110">
+                        Enter The Portal <span class="text-lg">→</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <a href="https://portal.luis-gilberto.com" target="_blank" class="nav-link">PORTAL</a>
+    </nav>
+
+    <!-- RIGHT: Theme + Mobile Toggle (NO Client Login) -->
+    <div class="nav-actions">
+        <button id="themeToggle" class="theme-btn"><i class="fa-solid fa-moon"></i></button>
+        <button class="mobile-menu-toggle" id="mobileMenuToggle"><i class="fa-solid fa-bars"></i></button>
     </div>
 </nav>
 
-<!-- SUB-NAVIGATION (Fixed below header) -->
-<div style="position: fixed; top: 72px; left: 0; width: 100%; height: 48px; background-color: rgba(5,5,5,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.05); z-index: 40; display: flex; align-items: center; justify-content: center;">
-    <div style="display: flex; gap: 32px;">
-        <a href="/TheHub/index.html" style="font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: #FFFFFF; text-decoration: none; opacity: 0.6; transition: all 0.3s;">Home</a>
-        <a href="/TheHub/strategy-iq.html" style="font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: #FFFFFF; text-decoration: none; opacity: 0.6; transition: all 0.3s;">StrategyIQ</a>
-        <a href="/TheHub/advisory/index.html" style="font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; color: #F96F6E; text-decoration: none; opacity: 1; transition: all 0.3s;">Advisory</a>
-        <a href="/TheHub/studio.html" style="font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: #FFFFFF; text-decoration: none; opacity: 0.6; transition: all 0.3s;">The Studio</a>
+<!-- ==================== MOBILE DRAWER (Standardized) ==================== -->
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<div class="mobile-drawer" id="mobileDrawer">
+    <div class="drawer-header">
+        <img src="/assets/images/Logomark_White_a.png" alt="Luis Gilberto">
+        <button class="drawer-close" id="drawerClose" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="drawer-content">
+        <div class="drawer-hub-section">
+            <div class="drawer-section-label"><i class="fa-solid fa-diagram-project"></i> The Hub</div>
+            <div class="drawer-hub-grid">
+                <a href="/_deploy_v2/TheHub/index.html" class="drawer-hub-card"><div class="drawer-hub-card-icon"><i class="fa-solid fa-house"></i></div><span class="drawer-hub-card-title">Home</span><span class="drawer-hub-card-sub">System overview</span></a>
+                <a href="/_deploy_v2/TheHub/strategy-iq/index.html" class="drawer-hub-card"><div class="drawer-hub-card-icon"><i class="fa-solid fa-chart-line"></i></div><span class="drawer-hub-card-title">StrategyIQ</span><span class="drawer-hub-card-sub">Diagnostic engine</span></a>
+                <a href="/_deploy_v2/TheHub/advisory/index.html" class="drawer-hub-card active"><div class="drawer-hub-card-icon"><i class="fa-solid fa-compass"></i></div><span class="drawer-hub-card-title">Advisory</span><span class="drawer-hub-card-sub">Strategic partnership</span></a>
+                <a href="/_deploy_v2/TheHub/studio.html" class="drawer-hub-card"><div class="drawer-hub-card-icon"><i class="fa-solid fa-palette"></i></div><span class="drawer-hub-card-title">The Studio</span><span class="drawer-hub-card-sub">Creative production</span></a>
+            </div>
+        </div>
+        <div class="drawer-global-section">
+            <div class="drawer-section-label">Ecosystem</div>
+            <a href="/_deploy_v2/index.html" class="drawer-global-link"><div class="drawer-global-icon"><i class="fa-solid fa-layer-group"></i></div><span class="drawer-global-text">Portfolio</span></a>
+            <a href="/_deploy_v2/insights/" class="drawer-global-link"><div class="drawer-global-icon"><i class="fa-solid fa-lightbulb"></i></div><span class="drawer-global-text">Insights</span></a>
+            <a href="/_deploy_v2/TheHub/index.html" class="drawer-global-link active"><div class="drawer-global-icon"><i class="fa-solid fa-diagram-project"></i></div><span class="drawer-global-text">The Hub</span></a>
+            <a href="https://portal.luis-gilberto.com" target="_blank" class="drawer-global-link"><div class="drawer-global-icon"><i class="fa-solid fa-arrow-up-right-from-square"></i></div><span class="drawer-global-text">The Portal</span></a>
+        </div>
+    </div>
+    <div class="drawer-footer">
+        <div class="drawer-footer-status"><span class="drawer-status-dot"></span> Accepting Projects</div>
+        <button class="drawer-theme-toggle" id="drawerThemeToggle" aria-label="Toggle theme"><i class="fa-regular fa-moon"></i></button>
     </div>
 </div>
-<!-- END GOLDEN MASTER HEADER --> 
-     
-    <!-- SPACER (Prevents content from hiding behind fixed headers) --> 
-    <div class="h-[128px]"></div>
 
-    
+<!-- SPACER -->
+<div style="height: 80px;"></div>
 
-    <!-- THE SPINE -->
-    <div class="spine-container">
-        <div class="central-spine"></div>
-        <div class="spine-node" style="top: 15%;"></div>
-        <div class="spine-node" style="top: 50%;"></div>
-        <div class="spine-node" style="top: 85%;"></div>
-    </div>
+<!-- ==================== MAIN CONTENT (Preserved) ==================== -->
+<main class="relative">
+    <div class="spine-container"><div class="central-spine"></div></div>
 
-    <!-- MAIN CONTENT -->
-    <div id="publicMode">
-        
-        <!-- HERO -->
-        <section class="hero-section">
-            <div class="container center-axis">
-                <div class="hero-icon-wrapper">
-                    <img src="/TheHub/assets/images/Luis_portrait_circle.png" alt="Luis Gilberto" class="hero-icon" onerror="this.onerror=null; this.src='/TheHub/assets/images/Luis_portrait_circle.png';">
-                </div>
-                <div class="eyebrow">ADVISORY</div>
-                <h1 class="section-title" style="background:transparent;">Clarity You Need.<br><span class="text-gradient">Strategy You Deserve.</span></h1>
-                <p class="hero-description">
-                    Forget generic frameworks. I look at where you are and what you've got… then chart the strategy you actually deserve.
-                </p>
-                <div class="hero-actions" style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
-                    <a href="/contact.html?from=advisory" class="btn btn-primary">Start Strategy Discussion</a>
-                    <a href="#capabilities" class="btn btn-ghost">Explore Services</a>
-                </div>
-                <p class="hero-note">
-                    <a href="#investment" class="bench-link">Creative bench strength available</a> for full-spectrum execution
-                </p>
+    <!-- HERO -->
+    <section style="padding: 8rem 0 6rem; text-align: center;">
+        <div class="container" style="max-width: 800px;">
+            <div style="width: 150px; height: 150px; margin: 0 auto 2rem; border-radius: 50%; overflow: hidden; border: 1px solid var(--border-color); box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                <img src="/TheHub/assets/images/Luis_portrait_circle.png" alt="Luis Gilberto" style="width: 100%; height: 100%; object-fit: cover;">
             </div>
-        </section>
+            <div class="eyebrow">STRATEGIC PARTNERSHIP</div>
+            <h1 style="font-size: clamp(2.5rem, 5vw, 4.5rem); line-height: 1; margin-bottom: 1.5rem; color: var(--text-primary);">
+                From Insight to <span class="text-gradient">Action.</span>
+            </h1>
+            <p style="font-size: 1.25rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 2.5rem;">
+                Advisory is where signals are interpreted, options are pressure-tested, and leadership aligns on what to do next.
+            </p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="/_deploy_v2/contact.html?from=advisory" class="btn btn-primary">Book Strategy Session</a>
+                <a href="#capabilities" class="btn btn-ghost">How It Works</a>
+            </div>
+        </div>
+    </section>
 
-        <!-- CAPABILITIES -->
-        <section style="padding: 6rem 0;" id="capabilities">
-            <div class="container">
-                <div class="center-axis">
-                    <div class="eyebrow">CORE CAPABILITIES</div>
-                    <h2 class="section-title">Strategic Services.</h2>
+    <!-- CAPABILITIES -->
+    <section id="capabilities" style="padding: 6rem 0;">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 4rem;">
+                <h2 style="font-size: 3rem; color: var(--text-primary);">Decision Support.</h2>
+                <p style="color: var(--text-secondary);">Moving from "What is happening?" to "What do we do?"</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="card">
+                    <i class="fa-solid fa-chess-king text-2xl mb-6" style="color: var(--coral);"></i>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--text-primary);">Executive Counsel</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem;">Strategy often survives the market but dies in the boardroom. I act as a sounding board to navigate internal tradeoffs and align stakeholders.</p>
+                    <ul style="list-style: none; padding: 0; font-size: 0.9rem; color: var(--text-secondary);">
+                        <li style="margin-bottom: 8px;"><i class="fas fa-check text-xs" style="color: var(--teal); margin-right: 8px;"></i> Political alignment</li>
+                        <li style="margin-bottom: 8px;"><i class="fas fa-check text-xs" style="color: var(--teal); margin-right: 8px;"></i> Resource prioritization</li>
+                    </ul>
                 </div>
-                
-                <div class="capabilities-grid">
-                    <!-- Strategy Card -->
-                    <div class="capability-card">
-                        <div class="cap-icon"><i class="fa-solid fa-bullseye"></i></div>
-                        <h3 class="cap-title">Strategic Leadership</h3>
-                        <p style="color:var(--text-secondary);">Microsoft-proven strategy that transforms brands. From AI launches to global rebrands.</p>
-                        <ul class="cap-list">
-                            <li>Go-to-market strategy</li>
-                            <li>Brand transformation</li>
-                            <li>Campaign architecture</li>
-                        </ul>
-                        <a href="/case-study-teams-final-dm.html" class="case-link">See Teams Case Study <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-
-                    <!-- Creative Card -->
-                    <div class="capability-card">
-                        <div class="cap-icon" style="color:var(--teal);"><i class="fa-solid fa-pen-nib"></i></div>
-                        <h3 class="cap-title">Creative Amplification</h3>
-                        <p style="color:var(--text-secondary);">World-class creative partners on demand. No compromise on creativity, no gaps in strategy.</p>
-                        <ul class="cap-list">
-                            <li>Visual systems</li>
-                            <li>Campaign creative</li>
-                            <li>Digital experience</li>
-                        </ul>
-                        <a href="/case-study-fsa.html" class="case-link">View FSA Launch <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-
-                    <!-- Execution Card -->
-                    <div class="capability-card">
-                        <div class="cap-icon" style="color:var(--text-primary);"><i class="fa-solid fa-layer-group"></i></div>
-                        <h3 class="cap-title">End-to-End Execution</h3>
-                        <p style="color:var(--text-secondary);">Strategic insight meets creative brilliance with seamless delivery. I orchestrate the full spectrum.</p>
-                        <ul class="cap-list">
-                            <li>Integrated management</li>
-                            <li>Cross-channel coordination</li>
-                            <li>Real-time optimization</li>
-                        </ul>
-                    </div>
+                <div class="card">
+                    <i class="fa-solid fa-compass-drafting text-2xl mb-6" style="color: var(--teal);"></i>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--text-primary);">Narrative Authority</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem;">Data is useless without a story. We translate complex strategic decisions into a clear, compelling narrative that mobilizes teams.</p>
+                    <ul style="list-style: none; padding: 0; font-size: 0.9rem; color: var(--text-secondary);">
+                        <li style="margin-bottom: 8px;"><i class="fa-solid fa-check text-xs" style="color: var(--teal); margin-right: 8px;"></i> Positioning clarity</li>
+                        <li style="margin-bottom: 8px;"><i class="fa-solid fa-check text-xs" style="color: var(--teal); margin-right: 8px;"></i> Internal comms</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <i class="fa-solid fa-forward text-2xl mb-6 text-gradient"></i>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--text-primary);">Operational Momentum</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem;">The gap between strategy and execution is where value leaks. I ensure the decision gets made and the machine starts moving.</p>
+                    <ul style="list-style: none; padding: 0; font-size: 0.9rem; color: var(--text-secondary);">
+                        <li style="margin-bottom: 8px;"><i class="fa-solid fa-check text-xs" style="color: var(--teal); margin-right: 8px;"></i> Unblocking execution</li>
+                        <li style="margin-bottom: 8px;"><i class="fa-solid fa-check text-xs" style="color: var(--teal); margin-right: 8px;"></i> Vendor selection</li>
+                    </ul>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- PROCESS (Alt Background) -->
-        <section class="section-alt" style="padding: 6rem 0;">
-            <div class="container">
-                <div class="center-axis">
-                    <h2 class="section-title">The Methodology.</h2>
+    <!-- PROCESS -->
+    <section class="section-alt" style="padding: 6rem 0;">
+        <div class="container">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <div>
+                    <div style="font-family: 'Big Shoulders Display'; font-size: 4rem; color: var(--coral); margin-bottom: 0.5rem;">01</div>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text-primary);">Interpret</h3>
+                    <p style="color: var(--text-secondary);">Separating signal from noise.</p>
                 </div>
-                
-                <div class="process-grid">
-                    <div class="process-item">
-                        <div class="process-num">01</div>
-                        <h3 style="font-size:1.5rem; margin-bottom:0.5rem;">Discover</h3>
-                        <p style="color:var(--text-secondary);">Deep strategic discovery meets creative exploration.</p>
-                    </div>
-                    <div class="process-item">
-                        <div class="process-num">02</div>
-                        <h3 style="font-size:1.5rem; margin-bottom:0.5rem;">Design</h3>
-                        <p style="color:var(--text-secondary);">Strategic architecture meets creative ideation.</p>
-                    </div>
-                    <div class="process-item">
-                        <div class="process-num">03</div>
-                        <h3 style="font-size:1.5rem; margin-bottom:0.5rem;">Deliver</h3>
-                        <p style="color:var(--text-secondary);">Strategy and creative work as one execution.</p>
-                    </div>
+                <div>
+                    <div style="font-family: 'Big Shoulders Display'; font-size: 4rem; color: var(--coral); margin-bottom: 0.5rem;">02</div>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text-primary);">Decide</h3>
+                    <p style="color: var(--text-secondary);">Committing to a defensible path.</p>
+                </div>
+                <div>
+                    <div style="font-family: 'Big Shoulders Display'; font-size: 4rem; color: var(--coral); margin-bottom: 0.5rem;">03</div>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text-primary);">Direct</h3>
+                    <p style="color: var(--text-secondary);">Guiding The Studio to execute.</p>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- LEGACY (New Section for this page) -->
-        <section style="padding: 6rem 0;">
-            <div class="container center-axis">
-                <div class="eyebrow">LEGACY</div>
-                <h2 class="section-title">15+ Years in Motion</h2>
-                <p class="hero-description">From Windows to Copilot, shaping brands and products across Microsoft.</p>
-                
-                <!-- Logo Rotator Area -->
-                <div style="width: 100%; max-width: 500px; margin: 2rem 0;">
-                    <div class="logo-display">
-                        <!-- Logos inserted by JS -->
-                    </div>
-                    <div class="legacy-stats">
-                        <div class="stat-box">
-                            <div class="stat-val text-coral">10+</div>
-                            <div class="stat-lbl">Global Products</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-val text-teal">50M+</div>
-                            <div class="stat-lbl">Users Reached</div>
-                        </div>
-                    </div>
+    <!-- LEGACY -->
+    <section style="padding: 6rem 0;">
+        <div class="container" style="text-align: center; max-width: 800px;">
+            <div class="eyebrow">LEGACY</div>
+            <h2 style="font-size: 3rem; margin-bottom: 1rem; color: var(--text-primary);">15+ Years in Motion</h2>
+            <p style="color: var(--text-secondary); font-size: 1.2rem; margin-bottom: 3rem;">From Windows to Copilot, shaping brands and products across Microsoft.</p>
+            <div style="max-width: 500px; margin: 0 auto;">
+                <div class="logo-display"></div>
+                <div class="legacy-stats">
+                    <div style="text-align: center;"><div class="stat-val" style="color: var(--coral);">10+</div><div class="stat-lbl">Global Launches</div></div>
+                    <div style="text-align: center;"><div class="stat-val" style="color: var(--teal);">50M+</div><div class="stat-lbl">Users Reached</div></div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- INVESTMENT LEVELS -->
-        <section class="section-alt" style="padding: 6rem 0;" id="investment">
-            <div class="container">
-                <div class="center-axis">
-                    <h2 class="section-title">Investment Levels</h2>
-                    
-                    <!-- Price Lock UI -->
-                    <div class="price-lock" id="priceLock">
-                        <span style="font-weight:600; color:var(--text-secondary);"><i class="fa-solid fa-lock"></i> Pricing Locked</span>
-                        <input type="password" class="price-input" id="pricePassword" placeholder="Enter password (LG100)">
-                        <button class="btn btn-ghost" id="revealPriceBtn" style="padding: 8px 16px; font-size: 14px;">Reveal</button>
-                        <div id="priceStatus" style="font-size:0.85rem; color:var(--coral);"></div>
-                    </div>
-                </div>
-
-                <div class="investment-grid">
-                    <div class="tier-card">
-                        <h3 style="font-size:1.5rem; margin-bottom:0.5rem;">Quick-Start Sprint</h3>
-                        <div class="tier-price">$3K–$8K</div>
-                        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1.5rem;">2-4 week engagement</p>
-                        <ul class="cap-list" style="text-align:left;">
-                            <li>Rapid assessment</li>
-                            <li>Priority roadmap</li>
-                            <li>Tactical recommendations</li>
-                        </ul>
-                        <a href="/contact.html?from=advisory" class="btn btn-ghost" style="width:100%;">Get Started</a>
-                    </div>
-
-                    <div class="tier-card tier-featured">
-                        <div class="tier-badge">Most Popular</div>
-                        <h3 style="font-size:1.5rem; margin-bottom:0.5rem;">Strategic Planning</h3>
-                        <div class="tier-price">$8K–$18K</div>
-                        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1.5rem;">6-10 week engagement</p>
-                        <ul class="cap-list" style="text-align:left;">
-                            <li>Comprehensive strategy</li>
-                            <li>Implementation roadmap</li>
-                            <li>Performance framework</li>
-                        </ul>
-                        <a href="/contact.html?from=advisory" class="btn btn-primary" style="width:100%;">Get Started</a>
-                    </div>
-
-                    <div class="tier-card">
-                        <h3 style="font-size:1.5rem; margin-bottom:0.5rem;">Strategic Intelligence</h3>
-                        <div class="tier-price">$15K–$30K</div>
-                        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1.5rem;">4-8 week audit</p>
-                        <ul class="cap-list" style="text-align:left;">
-                            <li>Ecosystem & asset audit</li>
-                            <li>Channel intelligence</li>
-                            <li>Optimization playbooks</li>
-                        </ul>
-                        <a href="/contact.html?from=advisory" class="btn btn-ghost" style="width:100%;">Contact Us</a>
-                    </div>
+    <!-- INVESTMENT -->
+    <section class="section-alt" style="padding: 6rem 0;" id="investment">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 3rem;">
+                <h2 style="font-size: 3rem; color: var(--text-primary);">Engagement Models</h2>
+                <p style="color: var(--text-secondary);">Flexible partnership tiers based on your stage.</p>
+                <div class="price-lock" id="priceLock">
+                    <span style="font-weight:600; color:var(--text-secondary); font-size: 0.9rem;"><i class="fa-solid fa-lock" style="margin-right: 6px;"></i> Pricing Locked</span>
+                    <input type="password" class="price-input" id="pricePassword" placeholder="Enter password (LG100)">
+                    <button class="btn btn-ghost" id="revealPriceBtn" style="padding: 8px 20px; font-size: 12px; min-height: 38px;">Reveal</button>
+                    <div id="priceStatus" style="font-size:0.85rem; color:var(--coral); width: 100%; text-align: center; display: none;">Incorrect Password</div>
                 </div>
             </div>
-        </section>
-
-        <!-- FOOTER CTA -->
-        <section style="padding: 6rem 0; text-align: center;">
-            <div class="container center-axis">
-                <h2 class="section-title">Ready to Transform?</h2>
-                <p class="hero-description">Let's discuss how strategic clarity can accelerate your growth.</p>
-                <a href="/contact.html?from=advisory" class="btn btn-primary" style="font-size:1.2rem; padding:1rem 3rem;">Schedule Strategy Session</a>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="card" style="text-align: center;">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text-primary);">Calibration</h3>
+                    <div class="tier-price">$3K – $8K</div>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">Focused Decision Sprint</p>
+                    <hr style="border: 0; border-top: 1px solid var(--border-color); margin-bottom: 1.5rem;">
+                    <ul style="text-align: left; list-style: none; padding: 0; margin-bottom: 2rem; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.8;">
+                        <li><i class="fa-solid fa-check text-xs" style="color: var(--teal); width: 20px;"></i> Resolve one critical blocker</li>
+                        <li><i class="fa-solid fa-check text-xs" style="color: var(--teal); width: 20px;"></i> Review StrategyIQ results</li>
+                        <li><i class="fa-solid fa-check text-xs" style="color: var(--teal); width: 20px;"></i> Immediate next steps</li>
+                    </ul>
+                    <a href="/_deploy_v2/contact.html?from=advisory_calibration" class="btn btn-ghost" style="width: 100%;">Book Session</a>
+                </div>
+                <div class="card" style="text-align: center; border-color: var(--coral); position: relative;">
+                    <div style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--coral); color: white; padding: 4px 12px; border-radius: 99px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">Most Common</div>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text-primary);">Direction</h3>
+                    <div class="tier-price">$8K – $18K</div>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">Strategic Roadmap</p>
+                    <hr style="border: 0; border-top: 1px solid var(--border-color); margin-bottom: 1.5rem;">
+                    <ul style="text-align: left; list-style: none; padding: 0; margin-bottom: 2rem; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.8;">
+                        <li><i class="fa-solid fa-check text-xs" style="color: var(--teal); width: 20px;"></i> 6-week engagement</li>
+                        <li><i class="fa-solid fa-check text-xs" style="color: var(--teal); width: 20px;"></i> Full GTM/Brand definition</li>
+                        <li><i class="fa-solid fa-check text-xs" style="color: var(--teal); width: 20px;"></i> Stakeholder alignment</li>
+                    </ul>
+                    <a href="/_deploy_v2/contact.html?from=advisory_direction" class="btn btn-primary" style="width: 100%;">Get Started</a>
+                </div>
+                <div class="card" style="text-align: center;">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text-primary);">Partnership</h3>
+                    <div class="tier-price">$15K+ / mo</div>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">Fractional Leadership</p>
+                    <hr style="border: 0; border-top: 1px solid var(--border-color); margin-bottom: 1.5rem;">
+                    <ul style="text-align: left; list-style: none; padding: 0; margin-bottom: 2rem; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.8;">
+                        <li><i class="fa-solid fa-check text-xs" style="color: var(--teal); width: 20px;"></i> Embedded executive role</li>
+                        <li><i class="fa-solid fa-check text-xs" style="color: var(--teal); width: 20px;"></i> Weekly steering</li>
+                        <li><i class="fa-solid fa-check text-xs" style="color: var(--teal); width: 20px;"></i> Direct Studio oversight</li>
+                    </ul>
+                    <a href="/_deploy_v2/contact.html?from=advisory_partnership" class="btn btn-ghost" style="width: 100%;">Inquire</a>
+                </div>
             </div>
-        </section>
+        </div>
+    </section>
+</main>
 
-    </div>
-
-<!-- Footer --> 
-<footer style="background: #050505; border-top: 1px solid rgba(255,255,255,0.1); padding: 4rem 2rem; margin-top: auto; color: white; font-family: 'Inter', sans-serif;"> 
-    <div class="footer-grid" style="max-width: 1200px; margin: 0 auto;"> 
+<!-- ==================== FOOTER (Nothing after this) ==================== -->
+<footer class="fixed-dark" style="border-top: 1px solid rgba(255,255,255,0.1); padding: 4rem 2rem; margin-top: auto; font-family: 'Inter', sans-serif;"> 
+    <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.5fr; gap: 3rem; align-items: start;"> 
         <div> 
-            <a href="/index.html" style="display: flex; align-items: center; gap: 12px; text-decoration: none; margin-bottom: 1.5rem;"> 
+            <a href="/_deploy_v2/index.html" style="display: flex; align-items: center; gap: 12px; text-decoration: none; margin-bottom: 1.5rem;"> 
                 <img src="/assets/images/Logomark_White_a.png" alt="Luis Gilberto" style="height: 32px; width: auto; opacity: 0.9;"> 
                 <span style="font-family: 'Big Shoulders Display', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: white;">LUIS GILBERTO</span> 
             </a> 
-            <p style="color: #888; font-size: 14px; line-height: 1.6; max-width: 280px;">Making technology feel human through clarity, beautiful execution, and systems that scale.</p> 
-            <div style="margin-top: 1.5rem; color: #555; font-size: 12px;">&copy; <span id="year">2025</span> Luis Gilberto Ecosystem.</div> 
+            <p style="font-size: 14px; line-height: 1.6; max-width: 280px; color: #888;">Making technology feel human through clarity, beautiful execution, and systems that scale.</p> 
+            <div style="margin-top: 1.5rem; font-size: 12px; color: #555;">&copy; <span id="year"></span> Luis Gilberto Ecosystem.</div> 
         </div> 
-        <div> 
-            <h4 style="font-family: 'Big Shoulders Display'; font-size: 14px; color: #555; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 1.5rem;">Ecosystem</h4> 
-            <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px;"> 
-                <li><a href="/TheHub/index.html" style="color: #ccc; text-decoration: none; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#ccc'">The Hub</a></li> 
-                <li><a href="/TheHub/strategy-iq.html" style="color: #ccc; text-decoration: none; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#ccc'">StrategyIQ</a></li> 
-                <li><a href="/TheHub/studio.html" style="color: #ccc; text-decoration: none; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#ccc'">The Studio</a></li> 
-                <li><a href="https://portal.luis-gilberto.com" style="color: #F96F6E; text-decoration: none; font-size: 14px; font-weight: 600;">The Portal &rarr;</a></li> 
-            </ul> 
-        </div> 
-        <div> 
-            <h4 style="font-family: 'Big Shoulders Display'; font-size: 14px; color: #555; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 1.5rem;">Connect</h4> 
-            <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px;"> 
-                <li><a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" style="color: #ccc; text-decoration: none; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#ccc'">LinkedIn</a></li> 
-                <li><a href="/contact.html" style="color: #ccc; text-decoration: none; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#ccc'">Contact</a></li> 
-                <li><a href="/about.html" style="color: #ccc; text-decoration: none; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#ccc'">About Me</a></li> 
-            </ul> 
-        </div> 
+        <div>
+            <h4 style="font-family: 'Big Shoulders Display'; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 1.5rem; color: #555;">Ecosystem</h4>
+            <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px;">
+                <li><a href="/_deploy_v2/TheHub/index.html">The Hub</a></li>
+                <li><a href="/_deploy_v2/TheHub/strategy-iq/index.html">StrategyIQ</a></li>
+                <li><a href="/_deploy_v2/TheHub/studio.html">The Studio</a></li>
+                <li><a href="https://portal.luis-gilberto.com" target="_blank" class="highlight-text">The Portal &rarr;</a></li>
+            </ul>
+        </div>
+        <div>
+            <h4 style="font-family: 'Big Shoulders Display'; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 1.5rem; color: #555;">Connect</h4>
+            <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px;">
+                <li><a href="https://www.linkedin.com/in/luisgilberto00" target="_blank">LinkedIn</a></li>
+                <li><a href="/_deploy_v2/contact.html">Contact</a></li>
+                <li><a href="/_deploy_v2/about.html">About Me</a></li>
+            </ul>
+        </div>
         <div> 
             <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 1.25rem;"> 
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;"> 
                     <div style="width: 8px; height: 8px; background: #2ED3C6; border-radius: 50%; box-shadow: 0 0 8px rgba(46, 211, 198, 0.5);"></div> 
                     <span style="font-size: 12px; font-weight: 700; color: white; letter-spacing: 0.5px; text-transform: uppercase;">Accepting Projects</span> 
                 </div> 
-                <p style="color: #888; font-size: 13px; line-height: 1.4; margin: 0;">Currently available for strategic consulting and creative direction.</p> 
+                <p style="font-size: 13px; line-height: 1.4; margin: 0; color: #888;">Currently available for strategic consulting and creative direction.</p> 
             </div> 
         </div> 
-    </div> 
-    <script>try{document.getElementById('year').textContent=new Date().getFullYear();}catch(e){}</script> 
+    </div>
+    <div style="border-top: 1px solid rgba(255,255,255,0.05); margin-top: 2rem; padding-top: 2rem; text-align: center;">
+        <p style="color: #666; font-size: 10px; line-height: 1.5; max-width: 600px; margin: 0 auto; font-family: 'Inter', sans-serif;">
+            <strong>INTELLECTUAL PROPERTY NOTICE:</strong> StrategyIQ™, The Hub™, and the associated diagnostic methodologies are proprietary intellectual property of Luis Gilberto. 
+            Unauthorized reproduction, reverse engineering, or distribution of the assessment logic is strictly prohibited. All rights reserved.
+        </p>
+    </div>
 </footer>
 
-    <!-- SCRIPTS -->
-    <script>
-        // Theme Logic
-        const themeToggle = document.querySelectorAll('.theme-toggle');
-        const html = document.documentElement;
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        html.setAttribute('data-theme', savedTheme);
-
-        themeToggle.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                const currentTheme = html.getAttribute('data-theme');
-                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-                html.setAttribute('data-theme', newTheme);
-                localStorage.setItem('theme', newTheme);
-            });
-        });
-
-        // Mobile Menu Logic - Handled by Golden Master Script
-        /*
-        const mobileToggle = document.getElementById('mobileToggle');
-        const mobileOverlay = document.getElementById('mobileOverlay');
-        const drawerCloseBtn = document.getElementById('drawerCloseBtn');
-        
-        if(mobileToggle) {
-            const updateAria = () => {
-                const expanded = mobileOverlay.classList.contains('active');
-                mobileToggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-            };
-            mobileToggle.addEventListener('click', () => {
-                mobileOverlay.classList.toggle('active');
-                mobileToggle.classList.toggle('open');
-                updateAria();
-            });
-            
-            mobileOverlay.addEventListener('click', (e) => {
-                if(e.target === mobileOverlay) {
-                    mobileOverlay.classList.remove('active');
-                    mobileToggle.classList.remove('open');
-                    updateAria();
-                }
-            });
-            if (drawerCloseBtn) {
-                drawerCloseBtn.addEventListener('click', () => {
-                    mobileOverlay.classList.remove('active');
-                    mobileToggle.classList.remove('open');
-                    updateAria();
-                });
-            }
-            document.addEventListener('keydown', (e) => {
-                if(e.key === 'Escape' && mobileOverlay.classList.contains('active')) {
-                    mobileOverlay.classList.remove('active');
-                    mobileToggle.classList.remove('open');
-                    updateAria();
-                }
-            });
-        }
-        */
-
-        // Password Reveal Logic
-        const revealBtn = document.getElementById('revealPriceBtn');
-        const passwordInput = document.getElementById('pricePassword');
-        const statusDiv = document.getElementById('priceStatus');
-        const prices = document.querySelectorAll('.tier-price');
-
-        if(revealBtn) {
-            revealBtn.addEventListener('click', () => {
-                if(passwordInput.value === 'LG100') {
-                    prices.forEach(p => p.classList.add('revealed'));
-                    statusDiv.textContent = 'Pricing Revealed';
-                    statusDiv.style.color = 'var(--teal)';
-                } else {
-                    statusDiv.textContent = 'Incorrect Password';
-                    statusDiv.style.color = 'var(--coral)';
-                }
-            });
-        }
-
-        // Legacy Logo Rotator
-        const logos = [
-            { name: 'Copilot in Edge', path: '/TheHub/assets/images/Copilot_in_Edge.png' },
-            { name: 'Microsoft Copilot', path: '/TheHub/assets/images/Copilot.png' },
-            { name: 'Microsoft Edge', path: '/TheHub/assets/images/Edge.png' },
-            { name: 'Teams', path: '/TheHub/assets/images/Teams.png' }
-        ];
-        const logoContainer = document.querySelector('.logo-display');
-        
-        if(logoContainer) {
-            let currentIdx = 0;
-            
-            // Init logos
-            logos.forEach((logo, index) => {
-                const img = document.createElement('div');
-                img.className = `logo-item ${index === 0 ? 'active' : ''}`;
-                img.innerHTML = `<img src="${logo.path}" alt="${logo.name}">`;
-                logoContainer.appendChild(img);
-            });
-
-            setInterval(() => {
-                const items = document.querySelectorAll('.logo-item');
-                items[currentIdx].classList.remove('active');
-                currentIdx = (currentIdx + 1) % items.length;
-                items[currentIdx].classList.add('active');
-            }, 3000);
-        }
-    </script>
-    <!-- Mobile Menu Overlay -->
-    <div class="mobile-menu-overlay" id="mobileOverlay">
-        <div class="mobile-drawer-header">
-            <div class="nav-logo">
-                <img src="/assets/images/Logomark_White_a.png" alt="Luis Gilberto" style="height: 32px; width: auto; opacity: 0.9;">
-            </div>
-            <button class="drawer-close-btn" id="drawerCloseBtn">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="mobile-drawer-content">
-            <div class="mobile-link-group">
-            <span class="mobile-label">Ecosystem</span>
-            <a href="/index.html" class="mobile-link main">Portfolio</a>
-            <a href="/insights/index.html" class="mobile-link main">Insights</a>
-            <a href="/TheHub/index.html" class="mobile-link main">The Hub</a>
-            <a href="https://portal.luis-gilberto.com" class="mobile-link main" target="_blank" rel="noopener noreferrer" aria-label="The Portal (opens in a new tab)">Portal</a>
-        </div>
-            <div class="mobile-link-group">
-                <span class="mobile-label">Hub Access</span>
-                <a href="/TheHub/strategy-iq.html" class="mobile-link sub">StrategyIQ</a>
-                <a href="/TheHub/advisory/index.html" class="mobile-link sub">Advisory</a>
-                <a href="/TheHub/studio.html" class="mobile-link sub">The Studio</a>
-                <a href="https://portal.luis-gilberto.com" class="mobile-link sub">Client Portal</a>
-            </div>
-        </div>
-    </div>
-
-
+<!-- ==================== ALL SCRIPTS (Inside body, nothing after footer visually) ==================== -->
 <script>
-    // Golden Master Nav Logic
-    document.addEventListener('DOMContentLoaded', () => {
-        const themeToggle = document.getElementById('themeToggle');
-        const mobileToggle = document.getElementById('mobileToggle');
-        const mobileOverlay = document.getElementById('mobileOverlay');
-        const body = document.body;
+document.addEventListener('DOMContentLoaded', function() {
+    // Theme System
+    var htmlEl = document.documentElement;
+    var themeToggle = document.getElementById('themeToggle');
+    var drawerThemeToggle = document.getElementById('drawerThemeToggle');
+    var initTheme = localStorage.getItem('theme') || 'dark';
+    htmlEl.setAttribute('data-theme', initTheme);
+    updateIcon(initTheme);
 
-        // Theme Toggle
-        if (themeToggle) {
-            themeToggle.addEventListener('click', () => {
-                body.classList.toggle('dark');
-                const isDark = body.classList.contains('dark');
-                localStorage.setItem('theme', isDark ? 'dark' : 'light');
-            });
+    function updateIcon(theme) {
+        if (themeToggle) themeToggle.querySelector('i').className = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        if (drawerThemeToggle) drawerThemeToggle.querySelector('i').className = theme === 'dark' ? 'fa-regular fa-sun' : 'fa-regular fa-moon';
+    }
+    function toggle() {
+        var next = htmlEl.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        htmlEl.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+        updateIcon(next);
+    }
+    if (themeToggle) themeToggle.addEventListener('click', toggle);
+    if (drawerThemeToggle) drawerThemeToggle.addEventListener('click', toggle);
 
-            // Init theme from storage
-            if (localStorage.getItem('theme') === 'dark') {
-                body.classList.add('dark');
-            }
-        }
+    // Mobile Drawer
+    var mobileToggle = document.getElementById('mobileMenuToggle');
+    var mobileDrawer = document.getElementById('mobileDrawer');
+    var drawerOverlay = document.getElementById('drawerOverlay');
+    var drawerClose = document.getElementById('drawerClose');
 
-        // Mobile Menu Toggle
-        if (mobileToggle && mobileOverlay) {
-            mobileToggle.addEventListener('click', () => {
-                mobileToggle.classList.toggle('open');
-                mobileOverlay.classList.toggle('active');
-                
-                // Toggle icon
-                const icon = mobileToggle.querySelector('i');
-                if (icon) {
-                    if (mobileToggle.classList.contains('open')) {
-                        icon.classList.remove('fa-bars');
-                        icon.classList.add('fa-times');
-                    } else {
-                        icon.classList.remove('fa-times');
-                        icon.classList.add('fa-bars');
-                    }
-                }
-            });
-            
-            // Close button inside overlay (if exists)
-            const closeBtn = mobileOverlay.querySelector('.drawer-close-btn');
-            if (closeBtn) {
-                closeBtn.addEventListener('click', () => {
-                    mobileToggle.classList.remove('open');
-                    mobileOverlay.classList.remove('active');
-                    const icon = mobileToggle.querySelector('i');
-                    if (icon) {
-                        icon.classList.remove('fa-times');
-                        icon.classList.add('fa-bars');
-                    }
-                });
-            }
-        }
+    function openDrawer() {
+        mobileDrawer.classList.add('active');
+        drawerOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        mobileToggle.querySelector('i').className = 'fa-solid fa-xmark';
+    }
+    function closeDrawer() {
+        mobileDrawer.classList.remove('active');
+        drawerOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+        mobileToggle.querySelector('i').className = 'fa-solid fa-bars';
+    }
+
+    if (mobileToggle) {
+        mobileToggle.addEventListener('click', function() {
+            mobileDrawer.classList.contains('active') ? closeDrawer() : openDrawer();
+        });
+    }
+    if (drawerClose) drawerClose.addEventListener('click', closeDrawer);
+    if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && mobileDrawer && mobileDrawer.classList.contains('active')) closeDrawer();
     });
+
+    // Footer Year
+    var yearEl = document.getElementById('year');
+    if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+    // Password Reveal
+    var revealBtn = document.getElementById('revealPriceBtn');
+    var passwordInput = document.getElementById('pricePassword');
+    var statusDiv = document.getElementById('priceStatus');
+    var prices = document.querySelectorAll('.tier-price');
+
+    if (revealBtn) {
+        revealBtn.addEventListener('click', function() {
+            if (passwordInput.value === 'LG100') {
+                prices.forEach(function(p) { p.classList.add('revealed'); });
+                statusDiv.style.display = 'block';
+                statusDiv.textContent = 'Pricing Revealed';
+                statusDiv.style.color = 'var(--teal)';
+                document.getElementById('priceLock').style.borderColor = 'var(--teal)';
+            } else {
+                statusDiv.style.display = 'block';
+                statusDiv.textContent = 'Incorrect Password';
+                statusDiv.style.color = 'var(--coral)';
+                document.getElementById('priceLock').style.borderColor = 'var(--coral)';
+            }
+        });
+    }
+
+    // Logo Rotator
+    var logos = [
+        { name: 'Microsoft Copilot', path: '../../assets/images/logo-rotator/Copilot.png' },
+        { name: 'Copilot in Edge',   path: '../../assets/images/logo-rotator/Copilot_in_Edge.png' },
+        { name: 'Family Safety',     path: '../../assets/images/logo-rotator/familysafety.png' },
+        { name: 'M365 Free Apps',    path: '../../assets/images/logo-rotator/M365_Free_apps.png' },
+        { name: 'Microsoft Band',    path: '../../assets/images/logo-rotator/MicrosoftBand.png' },
+        { name: 'Microsoft 365',     path: '../../assets/images/logo-rotator/Microsoft365.png' },
+        { name: 'Office 365',        path: '../../assets/images/logo-rotator/O365.png' },
+        { name: 'Office 365 Legacy', path: '../../assets/images/logo-rotator/Office365.png' },
+        { name: 'Office 2016-19',    path: '../../assets/images/logo-rotator/Office2016-19.png' },
+        { name: 'Surface Pro',       path: '../../assets/images/logo-rotator/Surface-Pro.png' },
+        { name: 'Microsoft Teams',   path: '../../assets/images/logo-rotator/Teams.png' }
+    ];
+    var logoContainer = document.querySelector('.logo-display');
+    if (logoContainer) {
+        var currentIdx = 0;
+        logos.forEach(function(logo, index) {
+            var item = document.createElement('div');
+            item.className = 'logo-item' + (index === 0 ? ' active' : '');
+            item.innerHTML = '<img src="' + logo.path + '" alt="' + logo.name + '">';
+            logoContainer.appendChild(item);
+        });
+        setInterval(function() {
+            var items = document.querySelectorAll('.logo-item');
+            items[currentIdx].classList.remove('active');
+            currentIdx = (currentIdx + 1) % items.length;
+            items[currentIdx].classList.add('active');
+        }, 3000);
+    }
+});
 </script>
-    <script src="../hub-script.js"></script>
 </body>
 </html>

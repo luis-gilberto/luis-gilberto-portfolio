@@ -1,0 +1,1811 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Peace of Mind in Your Palm — Luis Gilberto · Insights</title>
+  <meta name="description" content="The director's commentary on reframing Microsoft Family Safety from a surveillance tool into a philosophy of connection and trust.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Big+Shoulders+Display:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Design tokens — exact match to landing page ── */
+    :root {
+      --bg:         #F5F0EB;
+      --ink:        #1A1714;
+      --ink-soft:   #6B6560;
+      --coral:      #F96F6E;
+      --teal:       #4BADA8;
+      --cream:      #FAF7F4;
+      --rule:       #D9D2CB;
+      --card-bg:    #FFFFFF;
+      --popover-bg: #FFFFFF;
+      --accent-bg:  rgba(26,23,20,0.05);
+
+      --display: 'Cormorant Garamond', Georgia, serif;
+      --ui:      'Inter', sans-serif;
+      --body:    'Cormorant Garamond', Georgia, serif;
+    }
+
+    [data-theme="dark"] {
+      --bg:        #1A1714;
+      --ink:       #FAF7F4;
+      --ink-soft:  #A09890;
+      --cream:     #221E1B;
+      --card-bg:   #2A2420;
+      --rule:      #3A3430;
+      --popover-bg: #2A2420;
+      --accent-bg: rgba(250,247,244,0.06);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--body);
+      font-size: 20px;
+      line-height: 1.75;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    /* ══════════════════════════════════════
+       HEADER — exact match to landing page
+    ══════════════════════════════════════ */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      width: 100%;
+      transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+      border-bottom: 1px solid transparent;
+    }
+    header.scrolled {
+      background: rgba(245,240,235,0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom-color: var(--rule);
+      box-shadow: 0 1px 0 var(--rule);
+    }
+    [data-theme="dark"] header.scrolled {
+      background: rgba(26,23,20,0.95);
+      border-bottom-color: var(--rule);
+      box-shadow: 0 1px 0 var(--rule);
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+    .logo {
+      font-family: 'Big Shoulders Display', sans-serif;
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      color: var(--ink);
+      text-decoration: none;
+      padding: 6px 8px;
+      border-radius: 6px;
+      transition: background 0.15s;
+    }
+    .logo:hover { background: var(--accent-bg); }
+    .logo span { color: var(--coral); }
+    #logo-desktop { display: block; }
+    #logo-mark    { display: none; }
+    @media (max-width: 1024px) {
+      html[data-theme="light"] #logo-desktop { display: none !important; }
+      html[data-theme="light"] #logo-mark    { display: block !important; }
+      html[data-theme="dark"]  #logo-desktop { display: none !important; }
+      html[data-theme="dark"]  #logo-mark    { display: block !important; }
+    }
+
+    /* ── Desktop Nav ── */
+    .desktop-nav {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      position: relative;
+    }
+    .nav-link {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      color: var(--ink-soft);
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      transition: color 0.15s, background 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .nav-link:hover { color: var(--ink); background: var(--accent-bg); }
+    .nav-link.active { color: var(--coral); }
+    .nav-link .chevron {
+      width: 12px; height: 12px;
+      transition: transform 300ms ease;
+      flex-shrink: 0;
+    }
+    .nav-link[aria-expanded="true"] { color: var(--ink); background: var(--accent-bg); }
+    .nav-link[aria-expanded="true"] .chevron { transform: rotate(180deg); }
+
+    /* ── Header CTAs ── */
+    .header-ctas { display: flex; align-items: center; gap: 8px; }
+    .mobile-toggle {
+      display: none;
+      background: none;
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      width: 36px; height: 36px;
+      align-items: center; justify-content: center;
+      cursor: pointer;
+      color: var(--ink-soft);
+    }
+
+    /* ── Dropdown Viewport (Radix-style) ── */
+    .nav-viewport {
+      position: absolute;
+      left: 50%;
+      top: calc(100% + 8px);
+      transform: translateX(-50%);
+      pointer-events: none;
+      z-index: 200;
+    }
+    .nav-viewport-inner {
+      background: var(--popover-bg);
+      border: 1px solid var(--rule);
+      border-radius: 10px;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.28), 0 4px 12px rgba(0,0,0,0.16);
+      transform-origin: top center;
+      opacity: 0;
+      transform: scale(0.96) translateY(-6px);
+      pointer-events: none;
+      transition: opacity 180ms ease, transform 180ms ease;
+      overflow: hidden;
+    }
+    .nav-viewport-inner.open {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
+    }
+    .nav-content { display: none; }
+    .nav-content.active { display: block; }
+
+    /* ── Insights dropdown panel ── */
+    .insights-panel { width: 560px; padding: 6px; }
+    .panel-header {
+      padding: 16px 16px 10px;
+      border-bottom: 1px solid var(--rule);
+      margin-bottom: 6px;
+    }
+    .panel-header-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--coral);
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 4px;
+    }
+    .panel-header-label::before {
+      content: ''; display: block;
+      width: 20px; height: 1px;
+      background: var(--coral);
+    }
+    .panel-header-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px; font-weight: 500;
+      color: var(--ink); line-height: 1.2;
+    }
+    .panel-grid { display: grid; grid-template-columns: 1fr; gap: 4px; padding: 4px; }
+    .panel-item {
+      display: flex; flex-direction: row;
+      align-items: flex-start; gap: 12px;
+      padding: 12px; border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .panel-item:hover { background: var(--accent-bg); }
+    .panel-item:hover .item-icon { border-color: var(--coral); color: var(--coral); }
+    .item-icon {
+      flex-shrink: 0;
+      width: 40px; height: 40px;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--ink-soft);
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .item-icon svg { width: 18px; height: 18px; }
+    .item-text { flex: 1; min-width: 0; }
+    .item-title {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px; font-weight: 600;
+      color: var(--ink); margin-bottom: 2px;
+    }
+    .item-desc {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px; color: var(--ink-soft); line-height: 1.5;
+    }
+    .panel-footer {
+      border-top: 1px solid var(--rule);
+      padding: 12px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .panel-footer-text { font-family: 'Inter', sans-serif; font-size: 12px; color: var(--ink-soft); }
+    .panel-footer-link {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px; font-weight: 600;
+      color: var(--coral); text-decoration: none;
+      display: flex; align-items: center; gap: 4px;
+      transition: gap 0.15s;
+    }
+    .panel-footer-link:hover { gap: 8px; }
+
+    /* ── Mobile menu ── */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0; top: 64px;
+      z-index: 99;
+      background: rgba(245,240,235,0.97);
+      backdrop-filter: blur(12px);
+      flex-direction: column;
+      border-top: 1px solid var(--rule);
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu nav {
+      flex: 1; display: flex; flex-direction: column;
+      gap: 4px; padding: 20px 24px;
+    }
+    .mobile-menu nav a {
+      font-family: 'Inter', sans-serif;
+      font-size: 15px; font-weight: 500;
+      color: var(--ink-soft); text-decoration: none;
+      padding: 12px 16px; border-radius: 8px;
+      transition: all 0.15s;
+    }
+    .mobile-menu nav a:hover { color: var(--ink); background: var(--accent-bg); }
+
+    /* Breadcrumb (inside hero) */
+    .breadcrumb {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px; color: var(--ink-soft);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb a { color: var(--ink-soft); text-decoration: none; transition: color 0.15s; }
+    .breadcrumb a:hover { color: var(--coral); }
+    .breadcrumb-sep { opacity: 0.4; }
+    .breadcrumb-current { color: var(--ink); }
+
+    /* ══════════════════════════════════════
+       HERO — cinematic, full-width
+    ══════════════════════════════════════ */
+    .article-hero {
+      position: relative;
+      min-height: 88vh;
+      display: flex;
+      align-items: flex-end;
+      overflow: hidden;
+    }
+    .hero-media {
+      position: absolute;
+      inset: 0;
+    }
+    .hero-media img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center top;
+    }
+    /* layered gradient: image fades into dark at bottom for text legibility */
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to bottom,
+          rgba(10,8,6,0.72) 0%,
+          rgba(10,8,6,0.55) 25%,
+          rgba(10,8,6,0.78) 60%,
+          rgba(10,8,6,0.97) 100%
+        );
+    }
+    .hero-glow {
+      position: absolute;
+      top: -80px; right: -80px;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(249,111,110,0.18) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 1280px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 0 48px 96px;
+    }
+    .hero-series {
+      font-family: var(--ui);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--coral);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.1s forwards;
+    }
+    .hero-series::before {
+      content: '';
+      display: block;
+      width: 28px; height: 1px;
+      background: var(--coral);
+    }
+    .hero-title {
+      font-family: var(--display);
+      font-size: clamp(52px, 7vw, 100px);
+      font-weight: 300;
+      line-height: 0.93;
+      color: #FAF7F4;
+      letter-spacing: -0.025em;
+      margin-bottom: 28px;
+      max-width: 900px;
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.22s forwards;
+    }
+    .hero-title em { font-style: italic; color: var(--coral); }
+    .hero-dek {
+      font-family: var(--display);
+      font-size: 20px;
+      font-weight: 300;
+      font-style: italic;
+      color: rgba(250,247,244,0.65);
+      max-width: 560px;
+      line-height: 1.6;
+      margin-bottom: 36px;
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.34s forwards;
+    }
+    .hero-byline {
+      font-family: var(--ui);
+      font-size: 12px;
+      color: rgba(250,247,244,0.5);
+      letter-spacing: 0.08em;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.44s forwards;
+    }
+    .hero-byline strong { color: rgba(250,247,244,0.85); font-weight: 500; }
+    .byline-dot { width: 3px; height: 3px; background: rgba(250,247,244,0.3); border-radius: 50%; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Scroll hint */
+    .hero-scroll {
+      position: absolute;
+      bottom: 32px; right: 48px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--ui);
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(250,247,244,0.3);
+    }
+    .scroll-line {
+      width: 1px; height: 44px;
+      background: linear-gradient(to bottom, rgba(250,247,244,0.3), transparent);
+      animation: pulse 2.2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+
+    /* ══════════════════════════════════════
+       ARTICLE LAYOUT — sidebar + main
+    ══════════════════════════════════════ */
+    .article-wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 88px 48px 120px;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+
+    /* ── Sidebar ── */
+    .article-sidebar {
+      position: sticky;
+      top: 88px;
+    }
+    .toc-label {
+      font-family: var(--ui);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--rule);
+      margin-bottom: 16px;
+    }
+    .toc-list { list-style: none; }
+    .toc-list li { margin-bottom: 2px; }
+    .toc-list a {
+      font-family: var(--ui);
+      font-size: 13px;
+      color: var(--ink-soft);
+      text-decoration: none;
+      padding: 6px 12px;
+      border-left: 2px solid transparent;
+      display: block;
+      transition: all 0.15s;
+      line-height: 1.4;
+    }
+    .toc-list a:hover,
+    .toc-list a.active { color: var(--ink); border-left-color: var(--coral); }
+
+    .sidebar-card {
+      margin-top: 40px;
+      padding: 24px;
+      background: var(--card-bg);
+      border: 1px solid var(--rule);
+      border-radius: 2px;
+      border-top: 3px solid var(--coral);
+    }
+    .sidebar-card-label {
+      font-family: var(--ui);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--coral);
+      margin-bottom: 14px;
+    }
+    .sidebar-stat {
+      margin-bottom: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--rule);
+    }
+    .sidebar-stat:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .stat-num {
+      font-family: var(--display);
+      font-size: 32px;
+      font-weight: 300;
+      color: var(--teal);
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+    .stat-lbl {
+      font-family: var(--ui);
+      font-size: 11px;
+      color: var(--ink-soft);
+      letter-spacing: 0.06em;
+      margin-top: 2px;
+    }
+
+    /* ── Main prose ── */
+    .article-body { min-width: 0; }
+
+    .section-anchor { padding-top: 16px; }
+
+    .section-num {
+      font-family: var(--ui);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--coral);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .section-num::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--rule);
+    }
+
+    .article-body h2 {
+      font-family: var(--display);
+      font-size: clamp(32px, 3.5vw, 48px);
+      font-weight: 400;
+      line-height: 1.1;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+      margin-bottom: 28px;
+    }
+    .article-body h2 em { font-style: italic; color: var(--coral); }
+
+    .article-body h3 {
+      font-family: var(--display);
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--ink);
+      line-height: 1.2;
+      margin: 48px 0 20px;
+      letter-spacing: -0.01em;
+    }
+
+    .article-body p {
+      font-family: var(--display);
+      font-size: 20px;
+      font-weight: 300;
+      color: var(--ink);
+      line-height: 1.8;
+      margin-bottom: 24px;
+      max-width: 68ch;
+    }
+
+    .article-body p.lead {
+      font-size: 24px;
+      font-weight: 400;
+      color: var(--ink);
+      line-height: 1.65;
+      margin-bottom: 32px;
+    }
+    .article-body p strong { font-weight: 600; }
+
+    /* Inset card — insight box */
+    .inset-card {
+      background: var(--card-bg);
+      border: 1px solid var(--rule);
+      border-left: 4px solid var(--coral);
+      border-radius: 2px;
+      padding: 32px 36px;
+      margin: 40px 0;
+    }
+    .inset-card h4 {
+      font-family: var(--ui);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--coral);
+      margin-bottom: 12px;
+    }
+    .inset-card p {
+      font-family: var(--display);
+      font-size: 18px;
+      font-weight: 300;
+      color: var(--ink);
+      line-height: 1.7;
+      margin: 0;
+      max-width: none;
+    }
+    .inset-card p em { font-style: italic; }
+
+    /* Pull quote */
+    .pull-quote {
+      margin: 56px 0;
+      padding: 48px 0;
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      position: relative;
+    }
+    .pull-quote::before {
+      content: '"';
+      font-family: var(--display);
+      font-size: 160px;
+      line-height: 0.7;
+      color: var(--coral);
+      opacity: 0.15;
+      position: absolute;
+      top: 32px;
+      left: -16px;
+      pointer-events: none;
+      font-weight: 300;
+    }
+    .pull-quote p {
+      font-family: var(--display);
+      font-size: clamp(24px, 3vw, 36px);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--ink);
+      line-height: 1.4;
+      letter-spacing: -0.01em;
+      margin: 0;
+      max-width: none;
+      position: relative;
+    }
+
+    /* Visual break — full-width image inside article */
+    .visual-break {
+      margin: 56px -40px;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .visual-break img {
+      width: 100%;
+      display: block;
+    }
+    .visual-caption {
+      font-family: var(--ui);
+      font-size: 11px;
+      color: var(--ink-soft);
+      letter-spacing: 0.06em;
+      text-align: center;
+      padding: 12px 0 0;
+    }
+
+    /* ════════════════════════════════════════
+       ARTIFACT MOMENT — Cinematic Heart Reveal
+       Timeline: 6s video → 1.2s crossfade → icon holds → caption → replay
+    ════════════════════════════════════════ */
+
+    .artifact-pause {
+      margin: 96px auto;
+      max-width: 560px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Museum frame — outer container */
+    .artifact-frame {
+      width: 100%;
+      background: var(--card-bg);
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      padding: 28px;
+      box-shadow:
+        0 2px 8px rgba(26,23,20,0.06),
+        0 16px 48px rgba(26,23,20,0.10);
+      position: relative;
+    }
+
+    /* Inner double-rule inset — the museum effect */
+    .artifact-frame::before {
+      content: '';
+      position: absolute;
+      inset: 7px;
+      border: 1px solid var(--rule);
+      border-radius: 2px;
+      opacity: 0.45;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    /* The cinematic stage */
+    .heart-stage {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 2px;
+      overflow: hidden;
+      background: #0a0a0a; /* safe fallback while video loads */
+    }
+
+    /* ── Layer 1: Video (Ken Burns zoom) ── */
+    .heart-layer-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+      z-index: 1;
+      opacity: 1;
+      /* Fade out handled by .is-playing animation */
+    }
+
+    /* ── Layer 2: App icon ── */
+    .heart-layer-icon {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #FAF7F4; /* matches --cream in light mode */
+      z-index: 2;
+      opacity: 0;
+    }
+    [data-theme="dark"] .heart-layer-icon {
+      background: #1A1714;
+    }
+    .heart-icon-img {
+      width: 52%;
+      height: auto;
+      display: block;
+      /* Crisp rendering — no blur */
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
+    }
+
+    /* ── Replay button ── */
+    .artifact-replay {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      z-index: 30;
+      /* Glassmorphism */
+      background: rgba(10, 8, 6, 0.52);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(250,247,244,0.18);
+      border-radius: 5px;
+      color: rgba(250,247,244,0.82);
+      font-family: var(--ui);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 5px 11px;
+      cursor: pointer;
+      /* Hidden until animation completes */
+      opacity: 0;
+      transform: translateY(5px);
+      transition: opacity 0.4s ease, transform 0.4s ease,
+                  background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+      pointer-events: none;
+    }
+    .artifact-replay.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    .artifact-replay:hover {
+      background: rgba(249,111,110,0.82);
+      border-color: transparent;
+      color: #fff;
+    }
+
+    /* ── Whisper caption ── */
+    .artifact-whisper {
+      margin-top: 28px;
+      font-family: var(--serif);
+      font-size: 15px;
+      font-style: italic;
+      font-weight: 300;
+      color: var(--ink-soft);
+      text-align: center;
+      line-height: 1.75;
+      max-width: 340px;
+      letter-spacing: 0.01em;
+      /* Starts hidden — JS animates it in */
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .artifact-whisper.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── CSS Keyframes ── */
+
+    /* Video fades out at 3.8s mark (called via JS class) */
+    @keyframes videoFadeOut {
+      0%   { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    /* Icon fades in simultaneously */
+    @keyframes iconFadeIn {
+      0%   { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    .heart-layer-video.fading {
+      animation: videoFadeOut 1.2s ease forwards;
+    }
+
+    .heart-layer-icon.fading {
+      animation: iconFadeIn 1.2s ease forwards;
+    }
+
+    /* Stats band */
+    .stats-band {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--rule);
+      border: 1px solid var(--rule);
+      border-radius: 2px;
+      margin: 48px 0;
+      overflow: hidden;
+    }
+    .stat-cell {
+      background: var(--card-bg);
+      padding: 40px 32px;
+      text-align: center;
+      transition: background 0.25s;
+    }
+    .stat-cell:hover { background: var(--ink); }
+    .stat-cell:hover .stat-big,
+    .stat-cell:hover .stat-sub { color: var(--cream); }
+    .stat-big {
+      font-family: var(--display);
+      font-size: 56px;
+      font-weight: 300;
+      color: var(--teal);
+      line-height: 1;
+      letter-spacing: -0.03em;
+      transition: color 0.25s;
+    }
+    .stat-big sup { font-size: 28px; color: var(--coral); }
+    .stat-sub {
+      font-family: var(--ui);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin-top: 10px;
+      transition: color 0.25s;
+    }
+
+    /* Editorial note */
+    .editorial-note {
+      margin-top: 64px;
+      padding: 28px 32px;
+      background: var(--accent-bg);
+      border-radius: 2px;
+      border: 1px solid var(--rule);
+    }
+    .editorial-label {
+      font-family: var(--ui);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      display: block;
+      margin-bottom: 10px;
+    }
+    .editorial-note p {
+      font-family: var(--ui);
+      font-size: 13px;
+      color: var(--ink-soft);
+      line-height: 1.7;
+      margin: 0;
+      max-width: none;
+    }
+
+    /* ══════════════════════════════════════
+       PROJECT BRIDGE
+    ══════════════════════════════════════ */
+    .bridge-section {
+      background: var(--ink);
+      padding: 96px 48px;
+    }
+    .bridge-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .bridge-eyebrow {
+      font-family: var(--ui);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--coral);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .bridge-eyebrow::before {
+      content: '';
+      display: block;
+      width: 20px; height: 1px;
+      background: var(--coral);
+    }
+    .bridge-title {
+      font-family: var(--display);
+      font-size: clamp(36px, 4vw, 56px);
+      font-weight: 300;
+      color: #FAF7F4;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+    }
+    .bridge-title em { font-style: italic; color: var(--coral); }
+    .bridge-desc {
+      font-family: var(--display);
+      font-size: 18px;
+      font-weight: 300;
+      color: rgba(250,247,244,0.55);
+      line-height: 1.75;
+      margin-bottom: 36px;
+      max-width: none;
+    }
+    .bridge-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--ui);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink);
+      background: var(--coral);
+      padding: 13px 26px;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: all 0.25s;
+    }
+    .bridge-cta:hover { background: #FAF7F4; transform: translateY(-2px); }
+    .bridge-cta svg { width: 14px; height: 14px; transition: transform 0.2s; }
+    .bridge-cta:hover svg { transform: translateX(3px); }
+    .bridge-image {
+      aspect-ratio: 4/3;
+      border-radius: 2px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+    .bridge-image img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* ══════════════════════════════════════
+       KEEP READING
+    ══════════════════════════════════════ */
+    .keep-reading {
+      background: var(--cream);
+      border-top: 1px solid var(--rule);
+      padding: 88px 48px;
+      text-align: center;
+    }
+    .keep-reading-eyebrow {
+      font-family: var(--ui);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--coral);
+      margin-bottom: 16px;
+    }
+    .keep-reading h2 {
+      font-family: var(--display);
+      font-size: 48px;
+      font-weight: 300;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+    .keep-reading p {
+      font-family: var(--display);
+      font-size: 18px;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--ink-soft);
+      margin-bottom: 36px;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--ui);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-decoration: none;
+      border-bottom: 1px solid var(--ink);
+      padding-bottom: 2px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .back-link:hover { color: var(--coral); border-color: var(--coral); }
+    .back-link svg { width: 13px; transition: transform 0.2s; }
+    .back-link:hover svg { transform: translateX(-3px); }
+
+    /* ══════════════════════════════════════
+       FOOTER — matches landing page
+    ══════════════════════════════════════ */
+    footer {
+      background: var(--cream);
+      border-top: 1px solid var(--rule);
+      padding: 80px 48px 48px;
+    }
+    .footer-inner { max-width: 1280px; margin: 0 auto; }
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 64px;
+      padding-bottom: 56px;
+      border-bottom: 1px solid var(--rule);
+      margin-bottom: 36px;
+    }
+    .footer-tagline {
+      font-family: var(--display);
+      font-size: 15px;
+      font-style: italic;
+      color: var(--ink-soft);
+      margin: 10px 0 24px;
+      line-height: 1.6;
+    }
+    .social-row { display: flex; gap: 10px; }
+    .social-btn {
+      width: 34px; height: 34px;
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--ink-soft);
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+    .social-btn:hover { border-color: var(--coral); color: var(--coral); }
+    .social-btn svg { width: 14px; height: 14px; }
+    .footer-col h4 {
+      font-family: var(--ui);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin-bottom: 18px;
+    }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 8px; }
+    .footer-col ul li a {
+      font-family: var(--display);
+      font-size: 16px;
+      color: var(--ink-soft);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .footer-col ul li a:hover { color: var(--coral); }
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer-copy {
+      font-family: var(--ui);
+      font-size: 11px;
+      color: var(--ink-soft);
+    }
+    .footer-copy span { color: var(--coral); }
+    .dot-green { width: 7px; height: 7px; background: #4CAF6E; border-radius: 50%; display: inline-block; animation: blink 2s infinite; margin-right: 6px; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    /* ══════════════════════════════════════
+       SCROLL FADE ANIMATIONS
+    ══════════════════════════════════════ */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+    /* ══════════════════════════════════════
+       READING PROGRESS BAR
+    ══════════════════════════════════════ */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      background: var(--coral);
+      z-index: 200;
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+
+    /* ══════════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════════ */
+    @media (max-width: 1024px) {
+      .article-wrap { grid-template-columns: 1fr; gap: 0; }
+      .article-sidebar { position: static; margin-bottom: 48px; display: flex; gap: 32px; align-items: flex-start; }
+      .toc-list { display: none; }
+      .stats-band { grid-template-columns: repeat(3, 1fr); }
+      .bridge-inner { grid-template-columns: 1fr; gap: 48px; }
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 40px; }
+    }
+    @media (max-width: 768px) {
+      .header-inner { padding: 0 24px; }
+      .header-nav { display: none; }
+      .article-wrap { padding: 56px 24px 80px; }
+      .hero-content { padding: 0 24px 72px; }
+      .bridge-section { padding: 64px 24px; }
+      .keep-reading { padding: 64px 24px; }
+      footer { padding: 56px 24px 32px; }
+      .footer-top { grid-template-columns: 1fr; gap: 36px; }
+      .stats-band { grid-template-columns: 1fr; }
+      .visual-break { margin: 40px 0; }
+
+      /* Section 04 — restore margins at narrow widths */
+      .article-body p      { max-width: 100%; }
+      .pull-quote          { margin: 40px 0; padding: 36px 0; }
+      .pull-quote::before  { font-size: 100px; left: 0; }
+      .pull-quote p        { font-size: clamp(20px, 5vw, 28px); max-width: 100%; }
+      .editorial-note      { padding: 20px; }
+      .editorial-note p    { max-width: 100%; }
+      .stats-band          { margin: 36px 0; }
+      .stat-cell           { padding: 28px 16px; }
+      .stat-big            { font-size: 42px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Reading Progress -->
+<div class="progress-bar" id="progress"></div>
+
+<!-- ══════════════════════════════════════════
+     HEADER
+══════════════════════════════════════════ -->
+<header id="site-header">
+  <div class="header-inner">
+
+    <!-- Logo — dual (wordmark desktop / mark mobile), theme-aware -->
+    <a href="https://www.luis-gilberto.com/insights/" class="logo">
+      <img id="logo-desktop"
+           src="/_deploy_v2/insights/assets/images/Insights_logo_black.png"
+           alt="Insights by Luis Gilberto"
+           style="height:32px; width:auto;">
+      <img id="logo-mark"
+           src="/_deploy_v2/insights/assets/images/LG-logomark-BlackCoral.png"
+           alt="Insights"
+           style="height:32px; width:auto;">
+    </a>
+
+    <!-- Desktop Nav -->
+    <nav class="desktop-nav" id="desktop-nav" aria-label="Main navigation">
+
+      <a href="https://www.luis-gilberto.com/" class="nav-link">Portfolio</a>
+
+      <!-- Insights trigger -->
+      <button
+        id="trigger-insights"
+        class="nav-link active"
+        aria-haspopup="true"
+        aria-expanded="false"
+        aria-controls="content-insights"
+        data-trigger
+      >
+        Insights
+        <svg class="chevron" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+          <path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"/>
+        </svg>
+      </button>
+
+      <a href="https://www.luis-gilberto.com/TheHub/" class="nav-link">The Hub</a>
+      <a href="https://portal.luis-gilberto.com" class="nav-link">Portal</a>
+
+      <!-- Dropdown Viewport -->
+      <div class="nav-viewport" id="nav-viewport" role="presentation">
+        <div class="nav-viewport-inner" id="nav-viewport-inner">
+          <div id="content-insights" class="nav-content" role="region" aria-labelledby="trigger-insights">
+            <div class="insights-panel">
+              <div class="panel-header">
+                <p class="panel-header-label">Insights</p>
+                <p class="panel-header-title">Browse by Series</p>
+              </div>
+              <div class="panel-grid">
+
+                <a href="/insights/series/#building" class="panel-item">
+                  <div class="item-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                      <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                    </svg>
+                  </div>
+                  <div class="item-text">
+                    <p class="item-title">The Building Series</p>
+                    <p class="item-desc">Building in public — the structural decisions behind the work</p>
+                  </div>
+                </a>
+
+                <a href="/insights/series/#use-cases" class="panel-item">
+                  <div class="item-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                    </svg>
+                  </div>
+                  <div class="item-text">
+                    <p class="item-title">Use Cases</p>
+                    <p class="item-desc">Real-world launches and product strategies</p>
+                  </div>
+                </a>
+
+                <a href="/insights/series/#reflections" class="panel-item">
+                  <div class="item-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                    </svg>
+                  </div>
+                  <div class="item-text">
+                    <p class="item-title">Reflections</p>
+                    <p class="item-desc">Personal thoughts on creativity, pace, and momentum</p>
+                  </div>
+                </a>
+
+              </div>
+              <div class="panel-footer">
+                <span class="panel-footer-text">3 series · 12 articles</span>
+                <a href="/insights/series/" class="panel-footer-link">
+                  Browse all series
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- CTAs -->
+    <div class="header-ctas">
+      <button id="theme-toggle" aria-label="Toggle light/dark mode" style="background:none; border:1px solid var(--rule); border-radius:6px; width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink-soft); transition:all 0.15s; flex-shrink:0;">
+        <svg id="theme-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg id="theme-icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <svg id="menu-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+
+  </div>
+</header>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobile-menu">
+  <nav>
+    <a href="https://www.luis-gilberto.com/">Portfolio</a>
+    <a href="https://www.luis-gilberto.com/insights/">Insights</a>
+    <a href="https://www.luis-gilberto.com/TheHub/">The Hub</a>
+    <a href="https://portal.luis-gilberto.com">Portal</a>
+  </nav>
+</div>
+
+<!-- ══════════════════════════════════════════
+     HERO
+══════════════════════════════════════════ -->
+<section class="article-hero">
+  <div class="hero-media">
+    <!-- IMAGE PATH → /_deploy_v2/assets/images/fsa4.png -->
+    <img src="/_deploy_v2/assets/images/fsa4.png" alt="Microsoft Family Safety Launch" onerror="this.src='/_deploy_v2/assets/images/01_FSA.png'">
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-glow"></div>
+
+  <div class="hero-content">
+    <!-- Breadcrumb inside hero -->
+    <div class="breadcrumb" style="margin-bottom: 32px; opacity:0; animation: fadeUp 0.6s ease 0.05s forwards;">
+      <a href="https://www.luis-gilberto.com/insights/">Insights</a>
+      <span class="breadcrumb-sep">/</span>
+      <a href="/insights/series/">Director's Commentary</a>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current" style="color:rgba(250,247,244,0.6);">Family Safety</span>
+    </div>
+
+    <p class="hero-series">Director's Commentary</p>
+    <h1 class="hero-title">Peace of Mind<br><em>in Your Palm</em></h1>
+    <p class="hero-dek">The director's commentary on reframing Microsoft Family Safety from a surveillance tool into a philosophy of connection and trust.</p>
+    <div class="hero-byline">
+      <strong>By Luis Gilberto</strong>
+      <div class="byline-dot"></div>
+      <span>2020</span>
+      <div class="byline-dot"></div>
+      <span>5 min read</span>
+    </div>
+  </div>
+
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span>Read</span>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     ARTICLE BODY
+══════════════════════════════════════════ -->
+<div class="article-wrap">
+
+  <!-- Sidebar -->
+  <aside class="article-sidebar">
+    <div>
+      <p class="toc-label">Contents</p>
+      <ul class="toc-list">
+        <li><a href="#tension" class="active">The Tension</a></li>
+        <li><a href="#reframe">The Reframe</a></li>
+        <li><a href="#humanity">Motion & Humanity</a></li>
+        <li><a href="#trust">Earning Trust</a></li>
+      </ul>
+    </div>
+    <div class="sidebar-card">
+      <p class="sidebar-card-label">At a Glance</p>
+      <div class="sidebar-stat">
+        <div class="stat-num">100M+</div>
+        <div class="stat-lbl">Impressions</div>
+      </div>
+      <div class="sidebar-stat">
+        <div class="stat-num">85%</div>
+        <div class="stat-lbl">Sentiment Lift</div>
+      </div>
+      <div class="sidebar-stat">
+        <div class="stat-num">2020</div>
+        <div class="stat-lbl">Global Launch</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main article -->
+  <main class="article-body">
+
+    <!-- 01 THE TENSION -->
+    <div class="section-anchor fade-up" id="tension">
+      <p class="section-num">01 · The Tension</p>
+      <h2>Safety as <em>Surveillance</em></h2>
+      <p class="lead"><strong>In 2020, the word "safety" had baggage.</strong> Especially for parents. Especially for kids. The category was built on fear — location tracking, screen time limits, content filters. The message was always some version of: we're watching you.</p>
+      <p>Microsoft Family Safety entered a market that had trained families to see digital protection as a form of control. The product had genuine warmth built into it — shared location that felt like care, not monitoring; screen time that opened conversations instead of closing them. But none of that mattered if the story led with the wrong emotion.</p>
+
+      <div class="inset-card">
+        <h4>The Core Tension</h4>
+        <p>Parents wanted visibility. Kids needed autonomy. Any campaign that solved for one at the expense of the other would ring false. The brief wasn't to pick a side — it was to find the third thing both could agree on.</p>
+      </div>
+    </div>
+
+    <!-- 02 THE REFRAME -->
+    <div class="section-anchor fade-up" id="reframe">
+      <p class="section-num">02 · The Reframe</p>
+      <h2>From Control<em> to</em> Clarity</h2>
+      <p>The insight that changed everything was deceptively simple: <strong>safety isn't about knowing where your kids are. It's about knowing they feel safe enough to reach out.</strong> That reframe shifted the entire campaign from surveillance language to connection language.</p>
+      <p>We didn't lead with the features. We led with the feeling. The campaign wasn't built around screen time limits or content filters — it was built around the shared exhale a family feels when they know everyone is okay. The features became proof points, not the headline.</p>
+
+      <div class="pull-quote">
+        <p>We didn't lead with control. We led with clarity. And clarity, it turns out, is what modern families were starving for.</p>
+      </div>
+
+      <p>This required real courage from the product and marketing teams. Surveillance messaging performs well in short-term acquisition because fear converts. Choosing connection over fear meant accepting a slower, more earned kind of trust — one that would compound over time rather than spike and fade.</p>
+    </div>
+
+    <!-- 03 MOTION & HUMANITY -->
+    <div class="section-anchor fade-up" id="humanity">
+      <p class="section-num">03 · Motion & Humanity</p>
+      <h2>The Campaign That <em>Felt Human</em></h2>
+      <p>The narrative reframe shaped every executional decision. The hero film was deliberately non-verbal — not a single line of product copy. Just moments. A teenager arriving home. A parent's phone lighting up. The quiet relief of a notification that says: she's here. We're okay.</p>
+      <p>We called the character Vanessa. Not because she was a spokesperson, but because she was a container for the story we were trying to tell about autonomy and trust growing alongside each other. Her journey across the campaign gave the product a human arc — not just a feature list.</p>
+
+      <div class="visual-break" style="display:none;"></div>
+
+    </div><!-- end section 03 -->
+
+    <!-- ════════════════════════════════════════
+         ARTIFACT PAUSE — Cinematic Heart Reveal
+         Video (Ken Burns) → crossfade → App Icon
+    ════════════════════════════════════════ -->
+    <div class="artifact-pause fade-up" id="heartArtifact">
+      <div class="artifact-frame">
+        <div class="heart-stage" id="heartStage">
+
+          <!-- Layer 1: Video (The Zoom) -->
+          <video 
+            class="heart-layer-video" 
+            id="heartVideo" 
+            muted 
+            playsinline 
+            autoplay 
+            loop="false" 
+            style="object-fit: cover; width: 100%; height: 100%;">
+            <source src="/_deploy_v2/assets/videos/fsa-heart-zoom.mp4" type="video/mp4"> 
+          </video>
+
+          <!-- Layer 2: Icon (The Reveal) -->
+          <div class="heart-layer-icon" id="heartIcon" style="background-color: white;"> 
+            <img 
+              class="heart-icon-img" 
+              src="/_deploy_v2/assets/images/FSA_Icon.png" 
+              alt="Microsoft Family Safety" 
+              style="width: 100%; height: 100%; object-fit: cover; display: block;"> 
+          </div>
+
+          <!-- Replay button — glass aesthetic, coral on hover -->
+          <button
+            class="artifact-replay"
+            id="heartReplay"
+            aria-label="Replay animation">
+            ↺ &nbsp;Replay
+          </button>
+
+        </div><!-- /heart-stage -->
+      </div><!-- /artifact-frame -->
+
+      <!-- Whisper caption — fades in after icon resolves -->
+      <p class="artifact-whisper" id="heartWhisper">
+        A symbol of safety that feels human.<br>Not watched. Held.
+      </p>
+
+    </div><!-- /artifact-pause -->
+
+      <p>The visual system followed the same logic. The stylized heart. The soft gradients. The teal palette chosen specifically because it sits between trust and calm — not the corporate blues of enterprise software, not the alarming reds of warning systems. A color that said: you're going to be okay.</p>
+    </div>
+
+    <!-- 04 EARNING TRUST -->
+    <div class="section-anchor fade-up" id="trust">
+      <p class="section-num">04 · Earning Trust</p>
+      <h2>When Story Becomes <em>Safety</em></h2>
+      <p>Families told us they traded "Where are you?" texts for a collective exhale. That sentence is worth more than any metric. It means the story landed where we aimed it — not in the head, but in the chest. Not in the rational evaluation of features, but in the felt sense of being understood.</p>
+
+      <div class="stats-band">
+        <div class="stat-cell">
+          <div class="stat-big">100<sup>M+</sup></div>
+          <div class="stat-sub">Impressions</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-big">85<sup>%</sup></div>
+          <div class="stat-sub">Sentiment Lift</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-big">3<sup>x</sup></div>
+          <div class="stat-sub">Engagement Rate</div>
+        </div>
+      </div>
+
+      <p>The numbers validated the strategy. But the more durable result was a proof of concept about the category itself: when you stop leading with fear and start leading with trust, families don't just download the app — they advocate for it. The campaign didn't just launch a product. It launched a philosophy.</p>
+
+      <div class="pull-quote">
+        <p>This is how we earned trust during a global crisis. Not by promising control — by offering connection.</p>
+      </div>
+
+      <div class="editorial-note">
+        <span class="editorial-label">Perspective & Sourcing</span>
+        <p>This article reflects professional experience and strategic opinion from firsthand involvement in the launch. Specific metrics reflect reported campaign outcomes. It draws primarily from real-world practice rather than universal rules.</p>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PROJECT BRIDGE
+══════════════════════════════════════════ -->
+<section class="bridge-section fade-up">
+  <div class="bridge-inner">
+    <div>
+      <p class="bridge-eyebrow">The Execution</p>
+      <h2 class="bridge-title">See the Full<br><em>Case Study</em></h2>
+      <p class="bridge-desc">You've read the philosophy. Now see the production. Explore the hero film, Vanessa's character journey, the visual system, and the full campaign KPIs.</p>
+      <a href="/case-study-family-safety.html" class="bridge-cta">
+        View Project Portfolio
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+    <div class="bridge-image">
+      <!-- IMAGE PATH → /assets/images/fsa7.png -->
+      <img src="/assets/images/fsa7.png" alt="Microsoft Family Safety — Vanessa screen time UI">
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     KEEP READING
+══════════════════════════════════════════ -->
+<section class="keep-reading">
+  <p class="keep-reading-eyebrow">Continue Reading</p>
+  <h2>More from Insights</h2>
+  <p>Explore more on creative strategy, brand systems, and the ideas behind the work.</p>
+  <a href="https://www.luis-gilberto.com/insights/" class="back-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Back to Insights
+  </a>
+</section>
+
+<!-- ══════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <a href="https://www.luis-gilberto.com/insights/" class="logo"><img src="/insights/assets/images/insights_logo_light.svg" alt="Insights" style="height:28px;width:auto;" id="footer-logo"></a>
+        <p class="footer-tagline">Exploring the intersection of design,<br>technology, and human experience.</p>
+        <div class="social-row">
+          <a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" class="social-btn" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          </a>
+          <a href="https://luisgilberto00.link" target="_blank" class="social-btn" aria-label="Website">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Ecosystem</h4>
+        <ul>
+          <li><a href="https://www.luis-gilberto.com/">Portfolio</a></li>
+          <li><a href="https://www.luis-gilberto.com/insights/">Insights</a></li>
+          <li><a href="https://www.luis-gilberto.com/TheHub/">The Hub</a></li>
+          <li><a href="https://portal.luis-gilberto.com">Portal</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="https://luisgilberto00.link/contact">Contact</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="/insights/insights-brand.html" style="opacity:0.6; font-size:14px;">Brand Guidelines</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Status</h4>
+        <p style="font-family:var(--ui); font-size:12px; color:#4CAF6E; margin-bottom:8px;"><span class="dot-green"></span>Available for projects</p>
+        <p class="footer-tagline" style="font-size:13px; margin:0;">Seattle, WA — Open to select engagements worldwide.</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 <span>Luis Gilberto</span>. All rights reserved.</p>
+      <p class="footer-copy">Crafted with intention · Caracas meets Cascadia</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  // ── Reading progress ─────────────────────────────────────────
+  const bar = document.getElementById('progress');
+  window.addEventListener('scroll', () => {
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = (window.scrollY / total * 100) + '%';
+  }, { passive: true });
+
+  // ── Header scroll state ──────────────────────────────────────
+  const header = document.getElementById('site-header');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 10);
+  }, { passive: true });
+  if (window.scrollY > 10) header.classList.add('scrolled');
+
+  // ── DROPDOWN NAV (Radix-style) ───────────────────────────────
+  const viewport   = document.getElementById('nav-viewport-inner');
+  const triggers   = document.querySelectorAll('[data-trigger]');
+  const desktopNav = document.getElementById('desktop-nav');
+  let activeId   = null;
+  let closeTimer = null;
+
+  function openDropdown(trigger) {
+    clearTimeout(closeTimer);
+    const contentId = trigger.id.replace('trigger-', 'content-');
+    const panel = document.getElementById(contentId);
+    if (!panel) return;
+    document.querySelectorAll('.nav-content').forEach(p => p.classList.remove('active'));
+    panel.classList.add('active');
+    viewport.classList.add('open');
+    triggers.forEach(t => t.setAttribute('aria-expanded', 'false'));
+    trigger.setAttribute('aria-expanded', 'true');
+    activeId = trigger.id;
+  }
+
+  function closeDropdown() {
+    closeTimer = setTimeout(() => {
+      viewport.classList.remove('open');
+      document.querySelectorAll('.nav-content').forEach(p => p.classList.remove('active'));
+      triggers.forEach(t => t.setAttribute('aria-expanded', 'false'));
+      activeId = null;
+    }, 120);
+  }
+
+  triggers.forEach(trigger => {
+    trigger.addEventListener('mouseenter', () => openDropdown(trigger));
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      activeId === trigger.id ? closeDropdown() : openDropdown(trigger);
+    });
+  });
+
+  desktopNav.addEventListener('mouseleave', closeDropdown);
+  viewport.addEventListener('mouseenter', () => clearTimeout(closeTimer));
+  viewport.addEventListener('mouseleave', closeDropdown);
+  document.addEventListener('click', (e) => {
+    if (!desktopNav.contains(e.target)) closeDropdown();
+  });
+  desktopNav.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeDropdown();
+      document.getElementById(activeId)?.focus();
+    }
+  });
+
+  // ── Theme toggle ─────────────────────────────────────────────
+  const themeToggle = document.getElementById('theme-toggle');
+  const iconSun     = document.getElementById('theme-icon-sun');
+  const iconMoon    = document.getElementById('theme-icon-moon');
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('insights-theme', theme);
+    if (iconSun && iconMoon) {
+      iconSun.style.display  = theme === 'dark' ? 'none'  : 'block';
+      iconMoon.style.display = theme === 'dark' ? 'block' : 'none';
+    }
+    const logoDesktop = document.getElementById('logo-desktop');
+    if (logoDesktop) {
+      logoDesktop.src = theme === 'dark'
+        ? '/_deploy_v2/insights/assets/images/Insights_logo_white.png'
+        : '/_deploy_v2/insights/assets/images/Insights_logo_black.png';
+    }
+    const logoMark = document.getElementById('logo-mark');
+    if (logoMark) {
+      logoMark.src = theme === 'dark'
+        ? '/_deploy_v2/insights/assets/images/Symbol_mobile.png'
+        : '/_deploy_v2/insights/assets/images/LG-logomark-BlackCoral.png';
+    }
+    const footerLogo = document.getElementById('footer-logo');
+    if (footerLogo) {
+      footerLogo.src = theme === 'dark'
+        ? '/_deploy_v2/insights/assets/images/Insights_logo_white.png'
+        : '/_deploy_v2/insights/assets/images/Insights_logo_black.png';
+    }
+  }
+
+  applyTheme(localStorage.getItem('insights-theme') || 'light');
+  themeToggle?.addEventListener('click', () => {
+    const curr = document.documentElement.getAttribute('data-theme');
+    applyTheme(curr === 'dark' ? 'light' : 'dark');
+  });
+
+  // ── Mobile menu ──────────────────────────────────────────────
+  const mobileToggle = document.getElementById('mobile-toggle');
+  const mobileMenu   = document.getElementById('mobile-menu');
+  const menuIcon     = document.getElementById('menu-icon');
+  let menuOpen = false;
+
+  mobileToggle?.addEventListener('click', () => {
+    menuOpen = !menuOpen;
+    mobileMenu.classList.toggle('open', menuOpen);
+    mobileToggle.setAttribute('aria-expanded', menuOpen);
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    menuIcon.innerHTML = menuOpen
+      ? '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>'
+      : '<line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>';
+  });
+  window.addEventListener('resize', () => {
+    if (window.innerWidth >= 1024 && menuOpen) {
+      menuOpen = false;
+      mobileMenu.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  });
+
+  // ── Scroll fade-up ───────────────────────────────────────────
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+
+  // ── Active TOC link ──────────────────────────────────────────
+  const sections = document.querySelectorAll('.section-anchor');
+  const links    = document.querySelectorAll('.toc-list a');
+  const tocObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const a = document.querySelector(`.toc-list a[href="#${e.target.id}"]`);
+        if (a) a.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => tocObs.observe(s));
+
+  // ════════════════════════════════════════
+  // HEART CINEMATIC REVEAL
+  // Timeline:
+  //   0s      → video plays (Ken Burns zoom)
+  //   ~3.8s   → crossfade begins (video out, icon in, 1.2s)
+  //   ~5.0s   → caption fades in
+  //   ~5.2s   → replay button appears
+  // ════════════════════════════════════════
+
+  const heartStage   = document.getElementById('heartStage');
+  const heartVideo   = document.getElementById('heartVideo');
+  const heartIcon    = document.getElementById('heartIcon');
+  const heartReplay  = document.getElementById('heartReplay');
+  const heartWhisper = document.getElementById('heartWhisper');
+
+  // Animation timing constants (ms)
+  const CROSSFADE_START    = 3800;  // when video starts fading out
+  const CAPTION_START      = 5000;  // when whisper fades in
+  const REPLAY_BTN_START   = 5200;  // when replay button appears
+
+  let animTimers = [];
+
+  function clearTimers() {
+    animTimers.forEach(t => clearTimeout(t));
+    animTimers = [];
+  }
+
+  function resetLayers() {
+    // Video
+    if (heartVideo) {
+      heartVideo.pause();
+      heartVideo.currentTime = 0;
+      heartVideo.classList.remove('fading');
+      heartVideo.style.opacity = '1';
+    }
+    // Icon
+    if (heartIcon) {
+      heartIcon.classList.remove('fading');
+      heartIcon.style.opacity = '0';
+    }
+    // Caption
+    if (heartWhisper) heartWhisper.classList.remove('visible');
+    // Replay
+    if (heartReplay)  heartReplay.classList.remove('visible');
+  }
+
+  function playSequence() {
+    clearTimers();
+    resetLayers();
+
+    // Small tick to ensure reset has applied
+    requestAnimationFrame(() => {
+      // 1. Play video
+      if (heartVideo) heartVideo.play().catch(() => {});
+
+      // 2. At 3.8s — start crossfade
+      animTimers.push(setTimeout(() => {
+        if (heartVideo) heartVideo.classList.add('fading');
+        if (heartIcon)  heartIcon.classList.add('fading');
+      }, CROSSFADE_START));
+
+      // 3. At 5.0s — show caption
+      animTimers.push(setTimeout(() => {
+        if (heartWhisper) heartWhisper.classList.add('visible');
+      }, CAPTION_START));
+
+      // 4. At 5.2s — show replay
+      animTimers.push(setTimeout(() => {
+        if (heartReplay) heartReplay.classList.add('visible');
+      }, REPLAY_BTN_START));
+    });
+  }
+
+  // Trigger once when artifact scrolls 40% into viewport
+  if (heartStage) {
+    const heartObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          // Wait for fade-up to complete before playing
+          setTimeout(playSequence, 350);
+          heartObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.4 });
+
+    heartObs.observe(heartStage);
+  }
+
+  // Replay button
+  if (heartReplay) {
+    heartReplay.addEventListener('click', playSequence);
+  }
+
+})();
+</script>
+
+</body>
+</html>

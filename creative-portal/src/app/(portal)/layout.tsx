@@ -3,7 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '@/components/dashboard-ui/Sidebar';
 import TopNavBar from '@/components/TopNavBar';
+import { FloatingCommLink } from '@/components/portal/comm-link/FloatingCommLink';
 import { useSession } from 'next-auth/react';
+import { ToastProvider } from '@/components/providers/toast-provider';
 
 export default function PortalLayout({
   children,
@@ -37,30 +39,33 @@ export default function PortalLayout({
   }, [session]);
 
   return (
-    <div className="min-h-full bg-[#0A0A0A] text-white">
-      <TopNavBar 
-        onMenuToggle={() => setMobileOpen(!mobileOpen)}
-        mobileMenuOpen={mobileOpen}
-        projectStatus={projectStatus}
-      />
-      
-      <Sidebar
-        collapsed={collapsed}
-        onToggle={() => setCollapsed(!collapsed)}
-        mobileOpen={mobileOpen}
-        onMobileClose={() => setMobileOpen(false)}
-        onMobileToggle={() => setMobileOpen(!mobileOpen)}
-      />
-      
-      <div 
-        className={`transition-all duration-300 ease-in-out pt-16 ${
-          collapsed ? 'lg:ml-[72px]' : 'lg:ml-[256px]'
-        }`}
-      >
-        <main className="min-h-[calc(100vh-4rem)] p-6">
-          {children}
-        </main>
+    <ToastProvider>
+      <div className="min-h-full bg-[#0A0A0A] text-white">
+        <TopNavBar 
+          onMenuToggle={() => setMobileOpen(!mobileOpen)}
+          mobileMenuOpen={mobileOpen}
+          projectStatus={projectStatus}
+        />
+        
+        <Sidebar
+          collapsed={collapsed}
+          onToggle={() => setCollapsed(!collapsed)}
+          mobileOpen={mobileOpen}
+          onMobileClose={() => setMobileOpen(false)}
+          onMobileToggle={() => setMobileOpen(!mobileOpen)}
+        />
+        
+        <div 
+          className={`transition-all duration-300 ease-in-out pt-16 ${
+            collapsed ? 'lg:ml-[72px]' : 'lg:ml-[256px]'
+          }`}
+        >
+          <main className="min-h-[calc(100vh-4rem)] p-6">
+            {children}
+          </main>
+        </div>
+        <FloatingCommLink />
       </div>
-    </div>
+    </ToastProvider>
   );
 }

@@ -438,7 +438,7 @@ export default function Dashboard() {
                     projectId={activeProject?.id || "cml73ju300003vkikvhv32lit"}
                     onClick={() => handleAssessmentClick(a.id)}
                     isDashboard={true}
-                    ctaOverride={!isCalibrated ? "INITIALIZE (REQUIRES CALIBRATION)" : "BEGIN ASSESSMENT"}
+                    ctaOverride={!isCalibrated ? "INITIALIZE (REQUIRES CALIBRATION)" : "CONTINUE ASSESSMENT"}
                     isUnlocked={isCalibrated}
                     dataUrl={`assessments/${a.id.toLowerCase()}.html`}
                   />

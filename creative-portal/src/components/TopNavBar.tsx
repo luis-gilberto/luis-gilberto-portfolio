@@ -42,12 +42,12 @@ export default function TopNavBar({ onMenuToggle, projectStatus }: TopNavBarProp
           
           <Link href="/dashboard" className="flex items-center gap-2">
             <span className="text-xl font-black font-big-shoulders italic text-coral tracking-tighter">LG</span>
-            <span className="text-xl font-black font-big-shoulders italic text-white tracking-tighter opacity-20 text-lg mx-1">//</span>
+            <span className="text-xl font-black font-big-shoulders italic text-white/20 tracking-tighter mx-1">/</span>
             <span className="text-xl font-black font-big-shoulders italic text-white tracking-tighter">PORTAL</span>
             
             {/* ADMIN INDICATOR */}
             {session?.user?.role === 'ADMIN' && (
-              <span className="ml-2 px-2 py-0.5 rounded border border-white/15 text-[10px] font-mono tracking-widest uppercase text-[var(--teal)]">
+              <span className="ml-2 px-2 py-0.5 rounded border border-white/15 text-[10px] font-mono tracking-widest uppercase text-teal">
                 ADMIN
               </span>
             )}
@@ -57,8 +57,8 @@ export default function TopNavBar({ onMenuToggle, projectStatus }: TopNavBarProp
         {/* 2. Right: Phase Badge & Auth */}
         <div className="flex items-center justify-end gap-4">
           {phaseLabel && (
-            <div className="hidden md:flex items-center justify-center px-4 h-[32px] rounded-full border border-white/10 bg-white/5 backdrop-blur-sm">
-              <span className="text-[11px] font-medium text-white/80 whitespace-nowrap">
+            <div className="flex items-center justify-center px-4 h-[32px] rounded-full border border-white/10 bg-white/5 backdrop-blur-sm">
+              <span className="text-[10px] font-bold text-white/80 whitespace-nowrap uppercase tracking-widest">
                 {phaseLabel}
               </span>
             </div>

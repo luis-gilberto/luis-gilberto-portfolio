@@ -14,135 +14,79 @@
 
     <link rel="stylesheet" href="/insights/assets/css/article-theme.css">
     <style>
-        /* ========================================= 
-           CORE VARIABLES (v2.1) 
-           ========================================= */ 
-        :root { 
-            --coral: #F96F6E; 
-            --teal: #2ED3C6; 
-            --ink: #0A0A0A; 
-            --cloud: #F4F1ED; 
-            --bg-body: #0A0A0A; 
-            --surface-dark: #111216; 
-            --border-light: 1px solid rgba(255,255,255,0.08); 
-            --radius: 16px; 
-            --header-height: 80px; 
-            --container-width: 1400px; 
-        } 
+/* Mega Menu System (Phase 117+118) */
+.desktop-nav .nav-item {
+  position: relative; /* Task 1: Positional Anchor */
+}
 
-        /* Theme safety: enforce single image/signature per theme */
-        html[data-theme="light"] .theme-img-dark, html[data-theme="light"] .sig-sticker.theme-img-dark { display: none !important; }
-        html[data-theme="dark"] .theme-img-light, html[data-theme="dark"] .sig-sticker.theme-img-light { display: none !important; }
+.desktop-nav .mega-panel {
+  display: block;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  transition-delay: 100ms; /* Task 3: Hover Intent */
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px) translateZ(0); /* Task 1: Alignment & GPU */
+  backface-visibility: hidden;
+  width: 520px; /* Slightly wider for padding */
+  background: #0A0A0A; /* Task 2: Always Dark */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Task 2: Subtle Border */
+  padding: 1.5rem; /* Task 3: Spacing */
+  border-radius: 0.75rem;
+  z-index: 50;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  margin-top: 1rem;
+}
 
-        /* ========================================= 
-           1. MEGA HEADER (Fixed) 
-           ========================================= */ 
-        .site-header { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 80px; 
-            background: rgba(10,10,10,0.95); backdrop-filter: blur(12px); 
-            border-bottom: 1px solid rgba(255,255,255,0.1); z-index: 1000; 
-        } 
-        [data-theme="light"] .site-header {
-            background: rgba(244,241,237,0.95);
-            border-bottom: 1px solid rgba(0,0,0,0.1);
-        }
+/* Safe Tunnel */
+.desktop-nav .mega-panel::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: transparent;
+}
 
-        .nav-container { 
-            max-width: 1400px; margin: 0 auto; padding: 0 2rem; height: 100%; 
-            display: grid; 
-            grid-template-columns: 200px 1fr 200px; 
-            align-items: center; 
-        } 
+.desktop-nav .nav-item:hover .mega-panel {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0) translateZ(0);
+}
 
-        .nav-logo { justify-self: start; }
-        .nav-logo img { height: 32px; width: auto; } 
+.desktop-nav .group\/item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
 
-        /* Desktop Nav */ 
-        .desktop-nav { justify-self: center; display: flex; align-items: center; gap: 1rem; height: 100%; } 
+/* Task 3: Icon Colors */
+.desktop-nav .group\/item .icon-teal { color: #2ED3C6; }
+.desktop-nav .group\/item .icon-coral { color: #F96F6E; }
 
-        .nav-link { 
-            font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600; 
-            text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255,255,255,0.7); 
-            text-decoration: none; padding: 0.5rem 1rem; border-radius: 6px; 
-            transition: all 0.2s; display: flex; align-items: center; gap: 6px; 
-            background: transparent; border: none; cursor: pointer; 
-        } 
-        [data-theme="light"] .nav-link { color: #555; }
+.desktop-nav .group\/item:hover .icon-teal,
+.desktop-nav .group\/item:hover .icon-coral {
+  filter: brightness(1.2);
+}
 
-        .nav-link:hover, .nav-link:focus, .nav-link.active { color: #FFF; background: rgba(255,255,255,0.05); } 
-        [data-theme="light"] .nav-link:hover { background: rgba(0,0,0,0.05); color: #000; }
-        
-        /* Mega Dropdown Logic */ 
-        .has-dropdown { position: relative; height: 100%; display: flex; align-items: center; } 
-        .has-dropdown:hover .mega-dropdown { 
-            opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); pointer-events: auto; 
-        } 
-        
-        .mega-dropdown { 
-            position: absolute; top: 80px; left: 50%; transform: translateX(-50%) translateY(10px); 
-            width: 600px; background: #0A0A0A; border: 1px solid rgba(255,255,255,0.1); 
-            border-radius: 16px; padding: 1.5rem; box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
-            opacity: 0; visibility: hidden; pointer-events: none; transition: all 0.2s ease; 
-        } 
-        [data-theme="light"] .mega-dropdown {
-            background: #FFFFFF;
-            border: 1px solid rgba(0,0,0,0.1);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
-        }
-        
-        .mega-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; } 
-        .mega-link { 
-            display: flex; align-items: flex-start; gap: 1rem; padding: 1rem; 
-            border-radius: 8px; text-decoration: none; transition: background 0.2s; 
-        } 
-        .mega-link:hover { background: rgba(255,255,255,0.05); } 
-        [data-theme="light"] .mega-link:hover { background: rgba(0,0,0,0.05); }
+/* Task 4: Typography & Case */
+.desktop-nav .mega-title-text {
+  font-family: 'Big Shoulders Display', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 1.1rem;
+  color: #F4F1ED; /* Task 2: White/Paper */
+}
 
-        .mega-icon { width: 32px; height: 32px; background: rgba(255,255,255,0.05); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #FFF; flex-shrink: 0; } 
-        [data-theme="light"] .mega-icon { background: rgba(0,0,0,0.05); color: #333; }
+.desktop-nav .mega-desc-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  color: #A1A1AA; /* Task 2: Muted Zinc */
+  margin-top: 0.25rem;
+}
 
-        .mega-link:hover .mega-icon { background: var(--coral); color: #FFF; } 
-        .mega-title { display: block; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.9rem; color: #FFF; margin-bottom: 0.2rem; } 
-        .mega-desc { display: block; font-size: 0.8rem; color: #888; line-height: 1.4; } 
- 
-        /* Controls */ 
-        .nav-actions { justify-self: end; display: flex; align-items: center; gap: 1rem; } 
-        .theme-toggle { background: none; border: none; cursor: pointer; color: #FFF; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; transition: background 0.2s; } 
-        .theme-toggle:hover { background: rgba(255,255,255,0.05); }
-        [data-theme="light"] .theme-toggle:hover { background: rgba(0,0,0,0.05); }
-
-        /* Hamburger */ 
-        .mobile-toggle { display: none; background: none; border: none; color: #FFF; font-size: 1.5rem; cursor: pointer; } 
-
-        /* Custom Cursor */ 
-        #cursor-lens { position: fixed; top: 0; left: 0; width: 40px; height: 40px; pointer-events: none; z-index: 99999; transform: translate(-50%, -50%); opacity: 0; } 
-        .lens-outer { position: absolute; inset: 0; border: 1px solid rgba(255,255,255,0.3); border-radius: 50%; } 
-        .lens-center { position: absolute; top: 50%; left: 50%; width: 6px; height: 6px; background: var(--coral); border-radius: 50%; transform: translate(-50%, -50%); } 
-        body.cursor-hover .lens-outer { width: 60px; height: 60px; border-color: var(--teal); background: rgba(46,211,198,0.1); } 
-        @media (pointer: coarse) { #cursor-lens { display: none; } body { cursor: auto; } } 
-
-        /* MOBILE DRAWER (v2.1) */
-        .mobile-drawer {
-            position: fixed; top: 0; right: 0; width: 300px; height: 100%;
-            background: #0A0A0A; border-left: 1px solid rgba(255,255,255,0.1);
-            z-index: 2000; transform: translateX(100%);
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            padding: 2rem; display: flex; flex-direction: column; gap: 2rem;
-        }
-        [data-theme="light"] .mobile-drawer { background: #F4F1ED; border-left: 1px solid rgba(0,0,0,0.1); }
-        .mobile-drawer.active { transform: translateX(0); }
-        .drawer-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(4px); z-index: 1999; opacity: 0; pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-        .drawer-overlay.active { opacity: 1; pointer-events: auto; }
-        .drawer-close { background: none; border: none; color: var(--text-primary); font-size: 1.5rem; cursor: pointer; align-self: flex-end; }
-        .drawer-links { display: flex; flex-direction: column; gap: 1.5rem; }
-        .drawer-link { font-family: 'Big Shoulders Display'; font-size: 2rem; text-transform: uppercase; color: var(--text-primary); text-decoration: none; }
-        .drawer-link:hover { color: var(--coral); }
-        .drawer-link.active { color: var(--teal); }
-    </style>
+</style>
 </head>
 <body>
 
@@ -158,63 +102,64 @@
         <a href="/myexperience.html" class="drawer-link">Experience</a>
         <a href="/brand/index.html" class="drawer-link">Identity</a>
         <a href="/insights/" class="drawer-link active">Insights</a>
-        <a href="/TheHub/" class="drawer-link">The Hub</a>
-        <a href="https://portal.luis-gilberto.com" class="drawer-link">Portal</a>
-      </nav>
+        <div class="nav-item has-dropdown group relative" id="hubMega">
+    <a href="/TheHub/" class="nav-link">
+        THE HUB <i class="fas fa-chevron-down chevron"></i>
+    </a>
+    <div class="mega-panel">
+        <div class="grid grid-cols-2 gap-6" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <!-- Hub Home -->
+            <a href="/TheHub/index.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-teal" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-house"></i>
+                </div>
+                <div>
+                    <div class="mega-title-text" style="font-weight: 700;">Hub Home</div>
+                    <div class="mega-desc-text">System overview and entry point.</div>
+                </div>
+            </a>
+            <!-- StrategyIQ -->
+            <a href="/TheHub/strategy-iq.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <div>
+                    <div class="mega-title-text" style="font-weight: 700;">StrategyIQ</div>
+                    <div class="mega-desc-text">Benchmark maturity and define the roadmap.</div>
+                </div>
+            </a>
+            <!-- Advisory -->
+            <a href="/TheHub/advisory/" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-teal" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-compass"></i>
+                </div>
+                <div>
+                    <div class="mega-title-text" style="font-weight: 700;">Advisory</div>
+                    <div class="mega-desc-text">Leadership alignment and decision support.</div>
+                </div>
+            </a>
+            <!-- The Studio -->
+            <a href="/TheHub/studio.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-palette"></i>
+                </div>
+                <div>
+                    <div class="mega-title-text" style="font-weight: 700;">The Studio</div>
+                    <div class="mega-desc-text">Creative production and execution.</div>
+                </div>
+            </a>
+        </div>
+        <!-- Footer CTA -->
+        <div class="mt-6 pt-4 border-t border-white/10 flex justify-end" style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: flex-end;">
+            <a href="https://portal.luis-gilberto.com" class="text-xs font-bold text-coral flex items-center gap-1 hover:brightness-110" style="font-size: 0.75rem; font-weight: 700; color: var(--coral); display: flex; align-items: center; gap: 0.25rem;">
+                Enter The Portal <span class="text-lg" style="font-size: 1.125rem;">→</span>
+            </a>
+        </div>
     </div>
+</div>
 
-    <!-- HEADER --> 
-    <header class="site-header">
-       <div class="nav-container">
-         <!-- Left: Logo -->
-         <div class="nav-logo">
-           <a href="/index.html">
-             <img src="/assets/images/AUg_logo_White.png" alt="Luis Gilberto" class="theme-img-dark">
-             <img src="/assets/images/AUg_logo_Black.png" alt="Luis Gilberto" class="theme-img-light">
-           </a>
-         </div>
-   
-         <!-- Center: Navigation -->
-         <nav class="desktop-nav">
-           <div class="has-dropdown">
-             <button class="nav-link">Portfolio <i class="fa-solid fa-chevron-down" style="font-size: 0.7rem; opacity: 0.5;"></i></button>
-             <div class="mega-dropdown">
-               <div class="mega-grid">
-                 <a href="/index.html" class="mega-link">
-                   <div class="mega-icon"><i class="fa-solid fa-house"></i></div>
-                   <div>
-                     <span class="mega-title">Home</span>
-                     <span class="mega-desc">Return to the overview.</span>
-                   </div>
-                 </a>
-                 <a href="/timeline.html" class="mega-link">
-                   <div class="mega-icon"><i class="fa-solid fa-timeline"></i></div>
-                   <div>
-                     <span class="mega-title">Timeline</span>
-                     <span class="mega-desc">15+ years of career milestones.</span>
-                   </div>
-                 </a>
-                 <a href="/myexperience.html" class="mega-link">
-                   <div class="mega-icon"><i class="fa-solid fa-briefcase"></i></div>
-                   <div>
-                     <span class="mega-title">Experience</span>
-                     <span class="mega-desc">Deep dives into key projects.</span>
-                   </div>
-                 </a>
-                 <a href="/brand/index.html" class="mega-link">
-                   <div class="mega-icon"><i class="fa-solid fa-fingerprint"></i></div>
-                   <div>
-                     <span class="mega-title">Identity</span>
-                     <span class="mega-desc">Personal ethos and visual language.</span>
-                   </div>
-                 </a>
-               </div>
-             </div>
-           </div>
-           <a href="/insights/" class="nav-link active">Insights</a>
-           <a href="/TheHub/" class="nav-link">The Hub</a>
-           <a href="https://portal.luis-gilberto.com" class="nav-link">The Portal</a>
-         </nav>
+              <a href="https://portal.luis-gilberto.com" class="nav-link">THE PORTAL</a> 
+          </nav>
    
          <!-- Right: Actions -->
          <div class="nav-actions">
@@ -316,7 +261,61 @@
             <a href="https://linkedin.com" class="pf-link">LinkedIn</a>
             <a href="https://twitter.com" class="pf-link">Twitter</a>
             <a href="mailto:hello@luis-gilberto.com" class="pf-link">Email</a>
-            <a href="/TheHub/" class="pf-link">The Hub</a>
+            <div class="nav-item has-dropdown group relative" id="hubMega">
+    <a href="/TheHub/" class="nav-link">
+        THE HUB <i class="fas fa-chevron-down chevron"></i>
+    </a>
+    <div class="mega-panel">
+        <div class="grid grid-cols-2 gap-6" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <!-- Hub Home -->
+            <a href="/TheHub/index.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center text-zinc-400 group-hover/item:text-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-house"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-white tracking-tight" style="font-weight: 700; color: white;">Hub Home</div>
+                    <div class="text-xs text-zinc-500 leading-tight mt-1" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.25rem;">System overview and entry point.</div>
+                </div>
+            </a>
+            <!-- StrategyIQ -->
+            <a href="/TheHub/strategy-iq.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center text-zinc-400 group-hover/item:text-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-white tracking-tight" style="font-weight: 700; color: white;">StrategyIQ</div>
+                    <div class="text-xs text-zinc-500 leading-tight mt-1" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.25rem;">Benchmark maturity and define the roadmap.</div>
+                </div>
+            </a>
+            <!-- Advisory -->
+            <a href="/TheHub/advisory/" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center text-zinc-400 group-hover/item:text-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-compass"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-white tracking-tight" style="font-weight: 700; color: white;">Advisory</div>
+                    <div class="text-xs text-zinc-500 leading-tight mt-1" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.25rem;">Leadership alignment and decision support.</div>
+                </div>
+            </a>
+            <!-- The Studio -->
+            <a href="/TheHub/studio.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center text-zinc-400 group-hover/item:text-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-palette"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-white tracking-tight" style="font-weight: 700; color: white;">The Studio</div>
+                    <div class="text-xs text-zinc-500 leading-tight mt-1" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.25rem;">Creative production and execution.</div>
+                </div>
+            </a>
+        </div>
+        <!-- Footer CTA -->
+        <div class="mt-6 pt-4 border-t border-white/10 flex justify-end" style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: flex-end;">
+            <a href="https://portal.luis-gilberto.com" class="text-xs font-bold text-coral flex items-center gap-1 hover:brightness-110" style="font-size: 0.75rem; font-weight: 700; color: var(--coral); display: flex; align-items: center; gap: 0.25rem;">
+                Enter The Portal <span class="text-lg" style="font-size: 1.125rem;">→</span>
+            </a>
+        </div>
+    </div>
+</div>
           </div>
           
           <div>

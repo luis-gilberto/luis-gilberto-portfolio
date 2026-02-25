@@ -16,642 +16,79 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous"></script>
 
     <style>
-        /* ==========================================
-           ECOSYSTEM VARIABLES
-           ========================================== */
-        :root {
-            --coral: #F96F6E;
-            --teal: #2ED3C6;
-            
-            /* Light Mode Palette */
-            --bg-primary: #FFFFFF;
-            --bg-alt: #F4F5F7; 
-            --text-primary: #111111;
-            --text-secondary: #555555;
-            --text-muted: rgba(0, 0, 0, 0.5);
-            --border-subtle: rgba(0, 0, 0, 0.06);
-            --border-strong: rgba(0, 0, 0, 0.12);
-            --thread-line: rgba(0, 0, 0, 0.06);
-            
-            /* Fonts */
-            --font-sans: 'Inter', sans-serif;
-            --font-display: 'Big Shoulders Display', sans-serif;
-            
-            /* UI */
-            --card-bg: #FFFFFF;
-            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.04);
-            --shadow-hover: 0 12px 30px rgba(0, 0, 0, 0.08);
-        }
+/* Mega Menu System (Phase 117+118) */
+.desktop-nav .nav-item {
+  position: relative; /* Task 1: Positional Anchor */
+}
 
-        /* Dark Mode Palette */
-        [data-theme="dark"] {
-            --bg-primary: #0E0E0F;
-            --bg-alt: #161617;
-            --text-primary: #F5F5F5;
-            --text-secondary: #A0A0A0;
-            --text-muted: rgba(255, 255, 255, 0.4);
-            --border-subtle: rgba(255, 255, 255, 0.05);
-            --border-strong: rgba(255, 255, 255, 0.15);
-            --thread-line: rgba(255, 255, 255, 0.08);
-            --card-bg: rgba(255, 255, 255, 0.03);
-            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.4);
-            --shadow-hover: 0 12px 30px rgba(0, 0, 0, 0.5);
-        }
+.desktop-nav .mega-panel {
+  display: block;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  transition-delay: 100ms; /* Task 3: Hover Intent */
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px) translateZ(0); /* Task 1: Alignment & GPU */
+  backface-visibility: hidden;
+  width: 520px; /* Slightly wider for padding */
+  background: #0A0A0A; /* Task 2: Always Dark */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Task 2: Subtle Border */
+  padding: 1.5rem; /* Task 3: Spacing */
+  border-radius: 0.75rem;
+  z-index: 50;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  margin-top: 1rem;
+}
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+/* Safe Tunnel */
+.desktop-nav .mega-panel::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: transparent;
+}
 
-        body {
-            font-family: var(--font-sans);
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            background-image: radial-gradient(var(--border-subtle) 1px, transparent 1px);
-            background-size: 24px 24px;
-            line-height: 1.6;
-            padding-top: 112px; 
-            transition: background-color 0.3s ease, color 0.3s ease;
-            overflow-x: hidden;
-        }
+.desktop-nav .nav-item:hover .mega-panel {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0) translateZ(0);
+}
 
-        /* Mobile adjustments */
-        @media (max-width: 768px) {
-            body {
-                padding-top: 64px; /* Single nav height on mobile */
-                background-size: 16px 16px;
-            }
-        }
+.desktop-nav .group\/item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
 
-        /* ========================================
-           NAVIGATION
-           ======================================== */
-        .primary-nav {
-            position: fixed; top: 0; left: 0; width: 100%; height: 64px;
-            background: rgba(26, 26, 26, 0.98); 
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            z-index: 10000;
-        }
-        .primary-nav-container {
-            max-width: 1400px; margin: 0 auto; padding: 0 2rem;
-            height: 64px; display: flex; align-items: center; justify-content: space-between;
-        }
-        .nav-logo img { height: 55px; width: auto; }
-        .nav-links { display: flex; gap: 2rem; align-items: center; }
-        .nav-link {
-            color: rgba(255, 255, 255, 0.7); text-decoration: none;
-            font-size: 13px; font-weight: 600; text-transform: uppercase;
-            letter-spacing: 0.08em; position: relative; transition: color 0.2s ease;
-        }
-        .nav-link:hover, .nav-link.active { color: #ffffff; }
-        
-        /* Sub Nav */
-        .portfolio-subnav {
-            position: fixed; top: 64px; left: 0; width: 100%;
-            background: var(--bg-primary); border-bottom: 1px solid var(--border-subtle);
-            z-index: 9999; transition: background 0.3s ease;
-        }
-        .portfolio-subnav-container {
-            max-width: 1400px; margin: 0 auto; padding: 0 2rem;
-            height: 48px; display: flex; align-items: center; gap: 2rem;
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
-        .portfolio-subnav-container::-webkit-scrollbar {
-            display: none;
-        }
-        .subnav-link {
-            color: var(--text-secondary); text-decoration: none;
-            font-size: 14px; font-weight: 500; transition: color 0.2s ease;
-            padding: 0.5rem 0; white-space: nowrap;
-        }
-        .subnav-link:hover { color: var(--coral); }
-        .subnav-link.active { color: var(--text-primary); font-weight: 700; }
+/* Task 3: Icon Colors */
+.desktop-nav .group\/item .icon-teal { color: #2ED3C6; }
+.desktop-nav .group\/item .icon-coral { color: #F96F6E; }
 
-        /* Theme Toggle */
-        .theme-toggle {
-            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 50%; width: 36px; height: 36px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; margin-left: 1.5rem; color: #ffffff; transition: all 0.3s ease;
-        }
-        .sun-icon { display: none; }
-        [data-theme="dark"] .sun-icon { display: block; }
-        [data-theme="dark"] .moon-icon { display: none; }
+.desktop-nav .group\/item:hover .icon-teal,
+.desktop-nav .group\/item:hover .icon-coral {
+  filter: brightness(1.2);
+}
 
-        /* Mobile Menu - FIXED */
-        .mobile-menu-toggle { 
-            display: none; 
-            flex-direction: column; 
-            gap: 5px; 
-            background: none; 
-            border: none; 
-            padding: 8px; 
-            cursor: pointer;
-            z-index: 10001;
-        }
-        .mobile-menu-toggle span { 
-            width: 24px; 
-            height: 2px; 
-            background: #ffffff;
-            display: block;
-            transition: all 0.3s ease;
-        }
-        
-        .mobile-menu-overlay {
-            position: fixed; 
-            inset: 0; 
-            background: var(--bg-primary);
-            z-index: 9998; 
-            transform: translateX(100%); 
-            transition: transform 0.3s ease;
-            padding: 8rem 2rem; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 2rem; 
-            overflow-y: auto;
-        }
-        .mobile-menu-overlay.active { 
-            transform: translateX(0); 
-        }
-        
-        .mobile-link-group { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 1rem; 
-        }
-        .mobile-label { 
-            font-size: 0.7rem; 
-            text-transform: uppercase; 
-            color: var(--text-secondary); 
-            letter-spacing: 0.1em; 
-            margin-bottom: 0.5rem;
-            font-weight: 700;
-        }
-        .mobile-link { 
-            font-size: 1.5rem; 
-            font-family: var(--font-display); 
-            color: var(--text-primary); 
-            text-decoration: none; 
-            font-weight: 700;
-            transition: color 0.2s ease, transform 0.2s ease;
-            padding: 0.5rem 0;
-        }
-        .mobile-link:hover {
-            color: var(--coral);
-            transform: translateX(8px);
-        }
-        .mobile-link.active {
-            color: var(--coral);
-        }
-        
-        /* Sub-level links in mobile menu */
-        .mobile-link.sub {
-            font-size: 1.2rem;
-            font-family: var(--font-sans);
-            font-weight: 500;
-            padding-left: 1rem;
-            border-left: 2px solid var(--border-subtle);
-        }
+/* Task 4: Typography & Case */
+.desktop-nav .mega-title-text {
+  font-family: 'Big Shoulders Display', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 1.1rem;
+  color: #F4F1ED; /* Task 2: White/Paper */
+}
 
-        @media (max-width: 1023px) {
-            .nav-links, .portfolio-subnav { display: none; }
-            .mobile-menu-toggle { display: flex; }
-            body { padding-top: 64px; }
-            .primary-nav-container { padding: 0 1.5rem; }
-        }
+.desktop-nav .mega-desc-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  color: #A1A1AA; /* Task 2: Muted Zinc */
+  margin-top: 0.25rem;
+}
 
-        /* ==========================================
-           EXECUTIVE LAYOUT
-           ========================================== */
-        .container { 
-            max-width: 1200px; 
-            margin: 0 auto; 
-            padding: 0 2rem; 
-            position: relative; 
-            z-index: 1; 
-        }
-        
-        @media (max-width: 768px) {
-            .container {
-                padding: 0 1.5rem;
-            }
-        }
-        
-        .cv-layout {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 3rem;
-            padding: 3rem 0;
-        }
-
-        @media (min-width: 768px) {
-            .cv-layout {
-                gap: 4rem;
-                padding: 4rem 0;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .cv-layout {
-                grid-template-columns: 360px 1fr;
-                align-items: start;
-            }
-            /* Sticky Sidebar */
-            .cv-sidebar {
-                position: sticky;
-                top: 140px;
-            }
-        }
-
-        /* --- SIDEBAR (The Dossier) --- */
-        .profile-header h1 {
-            font-family: var(--font-display);
-            font-size: clamp(2.5rem, 8vw, 4rem);
-            line-height: 0.9;
-            margin-bottom: 0.5rem;
-            color: var(--text-primary);
-            text-transform: uppercase;
-        }
-        
-        .profile-role {
-            font-family: var(--font-sans);
-            font-size: clamp(0.95rem, 2.5vw, 1.1rem);
-            color: var(--coral);
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            letter-spacing: 0.05em;
-        }
-
-        .profile-contact {
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-            margin-bottom: 2rem;
-            font-size: 0.95rem;
-            color: var(--text-secondary);
-        }
-        .profile-contact div { 
-            display: flex; 
-            align-items: center; 
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .profile-contact i { 
-            color: var(--teal); 
-            width: 20px; 
-            text-align: center;
-            flex-shrink: 0;
-        }
-        .profile-contact a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: color 0.2s ease;
-            word-break: break-word;
-        }
-        .profile-contact a:hover {
-            color: var(--coral);
-        }
-
-        .cv-cta-group {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border-strong);
-        }
-
-        /* Buttons */
-        .btn { 
-            display: inline-flex; 
-            align-items: center; 
-            justify-content: center; 
-            padding: 14px 24px; 
-            border-radius: 12px; 
-            font-weight: 600; 
-            font-size: 1rem; 
-            text-decoration: none; 
-            transition: all 0.3s; 
-            border: none; 
-            cursor: pointer; 
-            width: 100%;
-            text-align: center;
-        }
-        .btn-primary { 
-            background: var(--text-primary); 
-            color: var(--bg-primary); 
-        }
-        .btn-primary:hover { 
-            background: var(--coral); 
-            color: white; 
-            transform: translateY(-2px); 
-            box-shadow: 0 10px 20px rgba(249,111,110,0.3); 
-        }
-        .btn-outline { 
-            background: transparent; 
-            border: 1px solid var(--border-strong); 
-            color: var(--text-primary); 
-        }
-        .btn-outline:hover { 
-            border-color: var(--coral); 
-            color: var(--coral); 
-        }
-
-        /* --- MAIN FEED (Experience) --- */
-        .section-label {
-            font-size: 0.85rem;
-            font-weight: 700;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin: 3rem 0 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        .section-label::after { 
-            content: ""; 
-            flex: 1; 
-            height: 1px; 
-            background: var(--border-strong); 
-        }
-        .section-label:first-child { 
-            margin-top: 0; 
-        }
-
-        @media (max-width: 768px) {
-            .section-label {
-                font-size: 0.75rem;
-                margin: 2rem 0 1rem;
-                gap: 0.75rem;
-            }
-        }
-
-        /* Job Card (System Style) */
-        .job-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-strong);
-            border-left: 4px solid var(--text-primary);
-            padding: 2rem;
-            border-radius: 0 16px 16px 0;
-            transition: all 0.3s ease;
-            margin-bottom: 2rem;
-        }
-        
-        .job-card:hover {
-            transform: translateX(5px);
-            border-left-color: var(--coral);
-            box-shadow: var(--shadow-hover);
-            background: var(--bg-alt);
-        }
-
-        @media (max-width: 768px) {
-            .job-card {
-                padding: 1.5rem;
-                border-left-width: 3px;
-                margin-bottom: 1.5rem;
-            }
-            
-            .job-card:hover {
-                transform: translateX(3px);
-            }
-        }
-
-        .job-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            margin-bottom: 0.5rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .job-title {
-            font-family: var(--font-display);
-            font-size: clamp(1.35rem, 3vw, 1.75rem);
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .job-meta {
-            font-family: var(--font-sans);
-            font-size: clamp(0.85rem, 2vw, 0.95rem);
-            color: var(--teal);
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-        }
-
-        .job-details { 
-            list-style: none; 
-            padding: 0; 
-            margin: 0; 
-        }
-        .job-details li {
-            color: var(--text-secondary);
-            margin-bottom: 0.75rem;
-            font-size: clamp(0.9rem, 2vw, 1rem);
-            padding-left: 1.5rem;
-            position: relative;
-            line-height: 1.6;
-        }
-        .job-details li::before {
-            content: "→";
-            position: absolute;
-            left: 0;
-            color: var(--coral);
-            font-weight: bold;
-        }
-
-        /* Skills Grid (Tech Spec) */
-        .specs-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-        }
-
-        @media (max-width: 768px) {
-            .specs-grid {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-        }
-
-        .spec-card {
-            background: var(--bg-alt);
-            border: 1px solid var(--border-subtle);
-            padding: 1.5rem;
-            border-radius: 12px;
-        }
-
-        .spec-title {
-            color: var(--coral);
-            font-family: var(--font-display);
-            font-size: 1.25rem;
-            margin-bottom: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .spec-list {
-            list-style: none;
-            padding: 0;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            line-height: 1.8;
-        }
-        .spec-list li { 
-            border-bottom: 1px dashed var(--border-subtle); 
-            padding: 4px 0; 
-        }
-        .spec-list li:last-child { 
-            border-bottom: none; 
-        }
-
-        /* Parallax Skills Strip - Responsive */
-        .skills-parallax {
-            padding: 60px 0;
-            background: var(--bg-alt);
-            overflow: hidden;
-            position: relative;
-            margin: 4rem 0;
-            border-radius: 0;
-            width: 100%;
-            z-index: 1;
-            border-top: 1px solid var(--border-subtle);
-            border-bottom: 1px solid var(--border-subtle);
-        }
-        
-        @media (max-width: 768px) {
-            .skills-parallax {
-                padding: 40px 0;
-                margin: 3rem 0;
-            }
-        }
-        
-        .skills-text {
-            display: flex; 
-            gap: 40px;
-            font-family: var(--font-display); 
-            font-size: clamp(2.5rem, 6vw, 4rem);
-            font-weight: 900;
-            color: var(--border-strong); 
-            text-transform: uppercase;
-            white-space: nowrap; 
-            animation: slideLeft 40s linear infinite;
-            opacity: 0.4;
-        }
-        .skills-dot { 
-            color: var(--coral); 
-            font-size: 0.5em; 
-            vertical-align: middle; 
-        }
-        @keyframes slideLeft { 
-            0% { transform: translateX(0); } 
-            100% { transform: translateX(-50%); } 
-        }
-
-        /* Footer - Responsive */
-        .footer { 
-            background: var(--bg-primary); 
-            color: var(--text-secondary); 
-            padding: 60px 0 40px 0; 
-            border-top: 1px solid var(--border-subtle); 
-        }
-        .footer-content { 
-            max-width: 1200px; 
-            margin: 0 auto; 
-            padding: 0 20px; 
-        }
-        .footer-main { 
-            display: grid; 
-            grid-template-columns: 1fr 2fr; 
-            gap: 60px; 
-            margin-bottom: 60px; 
-        }
-        .footer-brand h3 { 
-            font-family: var(--font-display); 
-            font-size: 1.6rem; 
-            color: var(--text-primary); 
-        }
-        .footer-links { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 40px; 
-        }
-        .footer-column h4 { 
-            font-family: var(--font-display); 
-            font-size: 1rem; 
-            font-weight: 600; 
-            color: var(--coral); 
-            margin-bottom: 16px; 
-            text-transform: uppercase; 
-        }
-        .footer-column a { 
-            color: var(--text-secondary); 
-            text-decoration: none; 
-            display: block; 
-            margin-bottom: 8px; 
-            transition: color 0.2s; 
-        }
-        .footer-column a:hover { 
-            color: var(--coral); 
-        }
-        .footer-bottom { 
-            display: flex; 
-            justify-content: space-between; 
-            border-top: 1px solid var(--border-subtle); 
-            padding-top: 40px; 
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-        .footer-social a { 
-            color: var(--text-secondary); 
-            margin-right: 16px; 
-            font-size: 1.2rem; 
-        }
-        .footer-logo { 
-            height: 40px; 
-            width: auto; 
-            margin-bottom: 1rem; 
-            filter: invert(1); 
-        }
-        [data-theme="dark"] .footer-logo { 
-            filter: invert(1) brightness(0.9); 
-        }
-        [data-theme="light"] .footer-logo { 
-            filter: none; 
-        }
-
-        @media (max-width: 1023px) {
-            .footer-main { 
-                grid-template-columns: 1fr; 
-                gap: 40px; 
-            }
-            .footer-links { 
-                grid-template-columns: 1fr; 
-                gap: 30px; 
-            }
-            .footer-bottom { 
-                flex-direction: column; 
-                text-align: center; 
-            }
-        }
-
-        /* Mobile specific footer adjustments */
-        @media (max-width: 768px) {
-            .footer {
-                padding: 40px 0 30px 0;
-            }
-            .footer-main {
-                margin-bottom: 40px;
-            }
-            .footer-social a {
-                margin: 0 12px;
-            }
-        }
-    </style>
+</style>
 </head>
 <body>
 
@@ -665,10 +102,63 @@
             <div class="nav-links">
                 <a href="/index.html" class="nav-link">Portfolio</a>
                 <a href="/insights/index.html" class="nav-link">Insights</a>
-                <a href="/TheHub/" class="nav-link">The Hub</a>
-                <a href="https://portal.luis-gilberto.com" class="nav-link" target="_blank" rel="noopener noreferrer" aria-label="Access The Portal (opens in new tab)">Portal</a>
-                <a href="/about" class="nav-link">About</a>
-                <a href="/contact.html" class="nav-link">Contact</a>
+                <div class="nav-item has-dropdown group relative" id="hubMega">
+    <a href="/TheHub/" class="nav-link">
+        THE HUB <i class="fas fa-chevron-down chevron"></i>
+    </a>
+    <div class="mega-panel">
+        <div class="grid grid-cols-2 gap-6" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <!-- Hub Home -->
+            <a href="/TheHub/index.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-teal" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-house"></i>
+                </div>
+                <div>
+                    <div class="mega-title-text" style="font-weight: 700;">Hub Home</div>
+                    <div class="mega-desc-text">System overview and entry point.</div>
+                </div>
+            </a>
+            <!-- StrategyIQ -->
+            <a href="/TheHub/strategy-iq.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <div>
+                    <div class="mega-title-text" style="font-weight: 700;">StrategyIQ</div>
+                    <div class="mega-desc-text">Benchmark maturity and define the roadmap.</div>
+                </div>
+            </a>
+            <!-- Advisory -->
+            <a href="/TheHub/advisory/" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-teal" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-compass"></i>
+                </div>
+                <div>
+                    <div class="mega-title-text" style="font-weight: 700;">Advisory</div>
+                    <div class="mega-desc-text">Leadership alignment and decision support.</div>
+                </div>
+            </a>
+            <!-- The Studio -->
+            <a href="/TheHub/studio.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-palette"></i>
+                </div>
+                <div>
+                    <div class="mega-title-text" style="font-weight: 700;">The Studio</div>
+                    <div class="mega-desc-text">Creative production and execution.</div>
+                </div>
+            </a>
+        </div>
+        <!-- Footer CTA -->
+        <div class="mt-6 pt-4 border-t border-white/10 flex justify-end" style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: flex-end;">
+            <a href="https://portal.luis-gilberto.com" class="text-xs font-bold text-coral flex items-center gap-1 hover:brightness-110" style="font-size: 0.75rem; font-weight: 700; color: var(--coral); display: flex; align-items: center; gap: 0.25rem;">
+                Enter The Portal <span class="text-lg" style="font-size: 1.125rem;">→</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+              <a href="/contact.html" class="nav-link">Contact</a>
                 
                 <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" aria-pressed="false">
                     <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
@@ -709,7 +199,61 @@
             <div class="mobile-label">Global</div>
             <a href="/index.html" class="mobile-link active-parent">Portfolio</a>
             <a href="/insights" class="mobile-link">Insights</a>
-            <a href="/TheHub/index.html" class="mobile-link">The Hub</a>
+            <div class="nav-item has-dropdown group relative" id="hubMega">
+    <a href="/TheHub/" class="nav-link">
+        THE HUB <i class="fas fa-chevron-down chevron"></i>
+    </a>
+    <div class="mega-panel">
+        <div class="grid grid-cols-2 gap-6" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <!-- Hub Home -->
+            <a href="/TheHub/index.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center text-zinc-400 group-hover/item:text-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-house"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-white tracking-tight" style="font-weight: 700; color: white;">Hub Home</div>
+                    <div class="text-xs text-zinc-500 leading-tight mt-1" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.25rem;">System overview and entry point.</div>
+                </div>
+            </a>
+            <!-- StrategyIQ -->
+            <a href="/TheHub/strategy-iq.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center text-zinc-400 group-hover/item:text-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-white tracking-tight" style="font-weight: 700; color: white;">StrategyIQ</div>
+                    <div class="text-xs text-zinc-500 leading-tight mt-1" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.25rem;">Benchmark maturity and define the roadmap.</div>
+                </div>
+            </a>
+            <!-- Advisory -->
+            <a href="/TheHub/advisory/" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center text-zinc-400 group-hover/item:text-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-compass"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-white tracking-tight" style="font-weight: 700; color: white;">Advisory</div>
+                    <div class="text-xs text-zinc-500 leading-tight mt-1" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.25rem;">Leadership alignment and decision support.</div>
+                </div>
+            </a>
+            <!-- The Studio -->
+            <a href="/TheHub/studio.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center text-zinc-400 group-hover/item:text-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-palette"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-white tracking-tight" style="font-weight: 700; color: white;">The Studio</div>
+                    <div class="text-xs text-zinc-500 leading-tight mt-1" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.25rem;">Creative production and execution.</div>
+                </div>
+            </a>
+        </div>
+        <!-- Footer CTA -->
+        <div class="mt-6 pt-4 border-t border-white/10 flex justify-end" style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: flex-end;">
+            <a href="https://portal.luis-gilberto.com" class="text-xs font-bold text-coral flex items-center gap-1 hover:brightness-110" style="font-size: 0.75rem; font-weight: 700; color: var(--coral); display: flex; align-items: center; gap: 0.25rem;">
+                Enter The Portal <span class="text-lg" style="font-size: 1.125rem;">→</span>
+            </a>
+        </div>
+    </div>
+</div>
             <a href="https://portal.luis-gilberto.com" class="mobile-link" target="_blank" rel="noopener noreferrer" aria-label="The Portal (opens in a new tab)">The Portal</a>
             <a href="/about.html" class="mobile-link">About</a>
             <a href="/contact.html" class="mobile-link">Contact</a>
@@ -1014,7 +558,61 @@
                 ">Ecosystem</h3>
                 <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.75rem;">
                     <li><a href="/index.html" style="color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9375rem; transition: color 0.2s;" onmouseover="this.style.color='#F96F6E'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">Portfolio</a></li>
-                    <li><a href="/TheHub/index.html" style="color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9375rem; transition: color 0.2s;" onmouseover="this.style.color='#F96F6E'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">The Hub</a></li>
+                    <li><div class="nav-item has-dropdown group relative" id="hubMega">
+    <a href="/TheHub/" class="nav-link">
+        THE HUB <i class="fas fa-chevron-down chevron"></i>
+    </a>
+    <div class="mega-panel">
+        <div class="grid grid-cols-2 gap-6" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <!-- Hub Home -->
+            <a href="/TheHub/index.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center text-zinc-400 group-hover/item:text-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-house"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-white tracking-tight" style="font-weight: 700; color: white;">Hub Home</div>
+                    <div class="text-xs text-zinc-500 leading-tight mt-1" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.25rem;">System overview and entry point.</div>
+                </div>
+            </a>
+            <!-- StrategyIQ -->
+            <a href="/TheHub/strategy-iq.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center text-zinc-400 group-hover/item:text-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-white tracking-tight" style="font-weight: 700; color: white;">StrategyIQ</div>
+                    <div class="text-xs text-zinc-500 leading-tight mt-1" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.25rem;">Benchmark maturity and define the roadmap.</div>
+                </div>
+            </a>
+            <!-- Advisory -->
+            <a href="/TheHub/advisory/" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center text-zinc-400 group-hover/item:text-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-compass"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-white tracking-tight" style="font-weight: 700; color: white;">Advisory</div>
+                    <div class="text-xs text-zinc-500 leading-tight mt-1" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.25rem;">Leadership alignment and decision support.</div>
+                </div>
+            </a>
+            <!-- The Studio -->
+            <a href="/TheHub/studio.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center text-zinc-400 group-hover/item:text-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
+                    <i class="fa-solid fa-palette"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-white tracking-tight" style="font-weight: 700; color: white;">The Studio</div>
+                    <div class="text-xs text-zinc-500 leading-tight mt-1" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.25rem;">Creative production and execution.</div>
+                </div>
+            </a>
+        </div>
+        <!-- Footer CTA -->
+        <div class="mt-6 pt-4 border-t border-white/10 flex justify-end" style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: flex-end;">
+            <a href="https://portal.luis-gilberto.com" class="text-xs font-bold text-coral flex items-center gap-1 hover:brightness-110" style="font-size: 0.75rem; font-weight: 700; color: var(--coral); display: flex; align-items: center; gap: 0.25rem;">
+                Enter The Portal <span class="text-lg" style="font-size: 1.125rem;">→</span>
+            </a>
+        </div>
+    </div>
+</div></li>
                     <li><a href="/insights/index.html" style="color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9375rem; transition: color 0.2s;" onmouseover="this.style.color='#F96F6E'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">Insights</a></li>
                     <li><a href="https://portal.luis-gilberto.com" target="_blank" rel="noopener noreferrer" aria-label="Access The Portal (opens in new tab)" style="color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9375rem; transition: color 0.2s; display: inline-flex; align-items: center; gap: 0.25rem;" onmouseover="this.style.color='#2ED3C6'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">The Portal <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a></li>
                     <li style="margin-top: 0.5rem; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.15);">

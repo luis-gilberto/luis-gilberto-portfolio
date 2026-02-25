@@ -6,7 +6,15 @@ import {
   Lock, 
   Unlock, 
   CheckCircle,
-  Eye
+  Eye,
+  Bold,
+  Italic,
+  Underline,
+  List,
+  Type,
+  AlignLeft,
+  AlignCenter,
+  AlignRight
 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -61,8 +69,8 @@ export function EditorialReviewModal({
 }: EditorialReviewModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl h-[100vh] md:h-auto bg-[#0F0F0F] border-white/10 text-white p-0 overflow-hidden font-inter">
-        <DialogHeader className="p-6 md:p-8 border-b border-white/5">
+      <DialogContent className="max-w-[1200px] w-[95vw] h-[90vh] bg-[#0A0A0A] border-white/10 text-white p-0 overflow-hidden font-inter flex flex-col shadow-[0_0_100px_rgba(0,0,0,0.8)]">
+        <DialogHeader className="p-6 md:p-8 border-b border-white/5 bg-black/40">
           <div className="flex items-center justify-between w-full">
             <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3 mb-2">
               <span className="md:hidden text-[10px] font-bold text-white/20 tracking-[0.2em]">Editorial review</span>
@@ -101,30 +109,25 @@ export function EditorialReviewModal({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex flex-col md:flex-row h-[calc(100vh-140px)] md:h-[550px] overflow-y-auto md:overflow-hidden pb-[120px] md:pb-0">
-          {/* Certified Narrative Side */}
-          <div className="order-1 md:order-2 w-full md:w-1/2 p-6 md:p-8 flex flex-col border-b md:border-b-0 md:border-l border-white/5">
-            <div className="flex items-center justify-between mb-4">
-              <Label className={cn(
-                "text-[10px] font-bold tracking-[0.2em]",
-                isRevisionMode ? "text-coral" : "text-teal"
-              )}>
-                {isRevisionMode ? 'Revising narrative' : (viewOnly ? 'Certified strategy' : 'Certified narrative')}
-              </Label>
-              {(viewOnly && !isRevisionMode) && (
-                <Badge className="bg-teal/10 text-teal border-teal/20 text-[8px] tracking-widest px-2 h-5">
-                  Final asset
-                </Badge>
-              )}
+        <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+          {/* LEFT COLUMN (65%): AI GENERATED STRATEGY NARRATIVE */}
+          <div className="w-full md:w-[65%] h-full flex flex-col p-6 md:p-10 overflow-y-auto border-r border-white/5 bg-black/20">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex flex-col gap-1">
+                <span className="text-[9px] font-bold text-teal tracking-[0.3em] uppercase">Document Container</span>
+                <h4 className="text-sm font-bold text-white/60 tracking-widest uppercase italic font-big-shoulders">AI Generated Strategy Narrative</h4>
+              </div>
+              <Badge variant="outline" className="border-white/10 text-white/20 text-[8px] tracking-widest uppercase px-2">
+                Artifact Mode
+              </Badge>
             </div>
+
             <div className={cn(
-              "flex-1 rounded-2xl p-6 transition-all min-h-[300px] md:min-h-0 overflow-y-auto",
-              isRevisionMode ? "bg-coral/[0.02] border border-coral/30 shadow-[0_0_20px_rgba(249,111,110,0.05)]" : (
-                viewOnly ? "bg-teal/[0.02] border border-teal/10" : "bg-white/[0.03] border-white/10 focus-within:border-teal/50"
-              )
+              "flex-1 rounded-xl p-8 transition-all min-h-[400px] border border-white/5",
+              isRevisionMode ? "bg-coral/[0.02] border-coral/20 shadow-[0_0_40px_rgba(249,111,110,0.03)]" : "bg-white/[0.01]"
             )}>
               {viewOnly && !isRevisionMode ? (
-                <div className="prose prose-invert max-w-none whitespace-pre-wrap text-zinc-300 text-lg leading-relaxed prose-strong:text-white prose-strong:font-bold prose-p:mb-4 prose-ul:list-disc prose-ul:ml-6 prose-ul:mb-4 prose-ul:space-y-2 prose-li:pl-2 prose-ol:list-decimal prose-ol:ml-6 prose-ol:mb-4 prose-ol:space-y-2 prose-li:marker:text-teal">
+                <div className="prose prose-invert max-w-none whitespace-pre-wrap text-zinc-300 text-lg leading-relaxed prose-strong:text-white prose-strong:font-bold prose-p:mb-6 prose-ul:list-disc prose-ul:ml-6 prose-ul:mb-6 prose-ul:space-y-3 prose-li:pl-2 prose-ol:list-decimal prose-ol:ml-6 prose-ol:mb-6 prose-ol:space-y-3 prose-li:marker:text-teal font-inter">
                   <ReactMarkdown>
                     {consultantAnalysis}
                   </ReactMarkdown>
@@ -136,40 +139,89 @@ export function EditorialReviewModal({
                   onChange={(e) => setConsultantAnalysis(e.target.value)}
                   readOnly={viewOnly && !isRevisionMode}
                   className={cn(
-                    "w-full h-full bg-transparent border-none focus-visible:ring-0 p-0 text-sm md:text-base leading-[1.75] font-sans resize-none whitespace-pre-wrap",
+                    "w-full h-full bg-transparent border-none focus-visible:ring-0 p-0 text-base md:text-lg leading-[1.8] font-inter resize-none whitespace-pre-wrap",
                     (viewOnly && !isRevisionMode) ? "text-white/90" : "text-white/70"
                   )}
-                  placeholder="Finalize the narrative for the Partner Vault..."
+                  placeholder="Synthesizing strategic intelligence..."
                 />
               )}
             </div>
           </div>
 
-          {/* AI Draft / Reference Side */}
-          <div className="order-2 md:order-1 w-full md:w-1/2 border-r border-white/5 p-6 md:p-8 overflow-y-auto bg-black/20 opacity-60 md:opacity-100">
-            <div className="space-y-6">
-              <div>
-                <h4 className="text-[9px] md:text-[10px] font-bold text-white/20 tracking-[0.2em] mb-4">AI draft intelligence (Reference)</h4>
-                <div className="space-y-4">
-                  {isGenerating ? (
-                    <div className="space-y-3 animate-pulse">
-                      {[1,2,3,4].map(i => <div key={i} className="h-4 bg-white/5 rounded w-full" />)}
-                    </div>
-                  ) : (
-                    <div className="text-xs md:text-sm text-white/50 md:text-white/70 leading-relaxed font-inter italic space-y-4 prose prose-invert max-w-none text-zinc-300 prose-p:mb-4 prose-strong:text-white prose-strong:font-bold prose-ul:list-disc prose-ul:ml-6 prose-ul:mb-4 prose-ul:space-y-2 prose-li:pl-2 prose-ol:list-decimal prose-ol:ml-6 prose-ol:mb-4 prose-ol:space-y-2 prose-li:marker:text-teal">
-                      {reviewSession?.briefSummary ? (
-                        <ReactMarkdown>
-                          {(() => {
-                            const parsed = safeJsonParse(reviewSession.briefSummary)
-                            if (Array.isArray(parsed)) return parsed.join('\n\n')
-                            if (typeof parsed === 'object' && parsed !== null) return Object.values(parsed).join('\n\n')
-                            return parsed || ""
-                          })()}
-                        </ReactMarkdown>
-                      ) : "Initializing intelligence..."}
-                    </div>
-                  )}
+          {/* RIGHT COLUMN (35%): EDIT PANEL */}
+          <div className="w-full md:w-[35%] h-full flex flex-col bg-[#0A0A0A] overflow-y-auto border-l border-white/5">
+            <div className="p-6 md:p-8 space-y-10">
+              {/* Formatting Tools Section — NOW AT THE TOP */}
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-1 h-1 rounded-full bg-teal" />
+                    <h4 className="text-[10px] font-bold text-white/40 tracking-[0.2em] uppercase">Edit Panel // Tools</h4>
+                  </div>
+                  <Badge variant="outline" className="border-white/5 text-[8px] text-zinc-600 uppercase tracking-widest">v1.0</Badge>
                 </div>
+
+                <div className="grid grid-cols-4 gap-2">
+                  {[
+                    { icon: Bold, label: 'Bold' },
+                    { icon: Italic, label: 'Italic' },
+                    { icon: Underline, label: 'Under' },
+                    { icon: List, label: 'List' },
+                    { icon: Type, label: 'H1' },
+                    { icon: AlignLeft, label: 'Left' },
+                    { icon: AlignCenter, label: 'Center' },
+                    { icon: AlignRight, label: 'Right' }
+                  ].map((tool) => (
+                    <Button 
+                      key={tool.label}
+                      variant="outline" 
+                      size="sm"
+                      className="h-12 border-white/5 bg-white/[0.02] hover:bg-white/10 hover:border-teal/30 text-white/40 hover:text-teal flex flex-col items-center justify-center gap-1 transition-all group"
+                    >
+                      <tool.icon size={14} className="group-hover:scale-110 transition-transform" />
+                      <span className="text-[7px] font-bold tracking-widest uppercase">{tool.label}</span>
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Strategy Context Section */}
+              <div className="space-y-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-1 h-1 rounded-full bg-coral" />
+                  <h4 className="text-[10px] font-bold text-white/40 tracking-[0.2em] uppercase">Strategic Context</h4>
+                </div>
+                
+                <div className="p-6 rounded-xl border border-white/5 bg-white/[0.02] space-y-4">
+                  <div className="space-y-1">
+                    <span className="text-[8px] font-bold text-zinc-600 uppercase tracking-widest">Active Client</span>
+                    <p className="text-xs text-white/80 font-medium uppercase tracking-wider">{project.client?.name || project.client?.company || 'Partner'}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <span className="text-[8px] font-bold text-zinc-600 uppercase tracking-widest">Dimension</span>
+                    <p className="text-xs text-white/80 font-medium uppercase tracking-wider">{reviewSession?.assessmentType} Strategy</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Protocol Section */}
+              <div className="space-y-4 pt-10 mt-10 border-t border-white/5">
+                <div className="flex items-center justify-between text-[8px] font-mono text-zinc-700 tracking-widest uppercase">
+                  <span>Protocol</span>
+                  <span className="text-white/20">StrategyIQ v1.0 Standard</span>
+                </div>
+                <div className="flex items-center justify-between text-[8px] font-mono text-zinc-700 tracking-widest uppercase">
+                  <span>Status</span>
+                  <span className="text-teal/40">Editorial Review</span>
+                </div>
+              </div>
+              
+              {/* Note about Floating Comm Link */}
+              <div className="pt-20 opacity-20 border-t border-white/5">
+                <p className="text-[9px] text-zinc-600 font-inter italic leading-relaxed text-center uppercase tracking-widest">
+                  Canvas De-obstruction Protocol Active.<br/>
+                  Floating Comm Link localized to bottom-right.
+                </p>
               </div>
             </div>
           </div>

@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('--- DIAGNOSTIC START ---');
   const email = 'admin@luis-gilberto.com';
-  const password = 'Admin123!';
+  const password = 'password123'; // Updated to correct password
 
   console.log(`Checking user: ${email}`);
   

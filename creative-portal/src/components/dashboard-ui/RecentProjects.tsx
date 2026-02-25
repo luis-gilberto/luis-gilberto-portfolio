@@ -2,6 +2,7 @@ import { MoreVertical, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Link from 'next/link';
+import { CopyId } from '@/components/shared/CopyId';
 
 interface RecentProjectsProps { data: any[] }
 
@@ -46,6 +47,9 @@ export default function RecentProjects({ data }: RecentProjectsProps) {
                           {project.isPriority && <span className="px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.08em] bg-primary/10 text-primary rounded">Priority</span>}
                         </div>
                         <p className="text-[13px] text-text-tertiary">{project.client?.name || project.client || 'Unknown'}</p>
+                        <div className="mt-2">
+                          <CopyId id={project.id} />
+                        </div>
                       </div>
                     </div>
                     <div className="flex items-center gap-4 mb-5">

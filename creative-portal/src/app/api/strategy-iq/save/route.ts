@@ -28,16 +28,27 @@ export async function POST(req: NextRequest) {
     });
 
     if (projectId === 'active' || projectId === 'latest' || !project) {
+      // Find the latest project for the user OR their associated client (Duplicate-Proofing V6.2)
       const latestProject = await prisma.project.findFirst({
-        where: { userId: session.user.id },
+        where: { 
+          OR: [
+            { userId: session.user.id },
+            { clientId: session.user.clientId }
+          ]
+        },
         orderBy: { updatedAt: 'desc' },
         select: { id: true, clientId: true }
       });
       
       if (!latestProject) {
-        // Fallback: Check if there is ANY project for the user
+        // Fallback: Final check if there is ANY project for the user or client
         const anyProject = await prisma.project.findFirst({
-           where: { userId: session.user.id },
+           where: { 
+             OR: [
+               { userId: session.user.id },
+               { clientId: session.user.clientId }
+             ]
+           },
            orderBy: { updatedAt: 'desc' },
            select: { id: true, clientId: true }
         });

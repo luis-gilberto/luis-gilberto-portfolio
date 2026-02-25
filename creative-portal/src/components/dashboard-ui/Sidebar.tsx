@@ -23,7 +23,7 @@ const navItems = [
   { icon: ShieldCheck, label: 'The vault', path: '/vault' },
   { icon: FolderKanban, label: 'Projects', path: '/admin/projects' },
   { icon: Users, label: 'Clients', path: '/admin/clients' },
-  { icon: BarChart3, label: 'Analytics', path: '/admin/analytics' },
+  {icon: BarChart3, label: 'Analytics', path: '/analytics' },
   { icon: Settings, label: 'Settings', path: '/settings' },
   { icon: BookOpen, label: 'Knowledge base', path: '/knowledge/pricing' },
 ];
@@ -78,6 +78,17 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose
     if (item.label === 'The vault' && role === 'CLIENT') {
        return { ...item, path: activeProjectId ? `/projects/${activeProjectId}/vault` : '/dashboard' };
     }
+    // Dynamic Analytics Link for Clients & Admin
+    if (item.label === 'Analytics') {
+       if (role === 'CLIENT') {
+         return { ...item, path: activeProjectId ? `/projects/${activeProjectId}/analytics` : '/dashboard' };
+       }
+       if (role === 'ADMIN') {
+         const match = pathname.match(/\/admin\/projects\/([^\/]+)/);
+         const projectId = match ? match[1] : null;
+         return { ...item, path: projectId ? `/admin/projects/${projectId}/analytics` : '/admin' };
+       }
+    }
     return item;
   }).filter(item => {
     const userRole = role?.toUpperCase();
@@ -86,6 +97,16 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose
     if (item.label === 'Dashboard') {
       if (userRole === 'CLIENT') return item.path === '/dashboard';
       return item.path === '/admin';
+    }
+
+    // NEW: Analytics Visibility
+    if (item.label === 'Analytics') {
+      // For Admin, only show if we are in a project view context (handled by the path or state)
+      // Actually, the prompt says: "If the user is an Admin, the sidebar link should be hidden unless they are currently inside a specific project view."
+      // We can check if the current pathname contains /admin/projects/[id]
+      const isInProjectContext = pathname.includes('/admin/projects/') && !pathname.endsWith('/projects');
+      if (userRole === 'ADMIN') return isInProjectContext;
+      return userRole === 'CLIENT';
     }
 
     // NEW: Mission Control Logic

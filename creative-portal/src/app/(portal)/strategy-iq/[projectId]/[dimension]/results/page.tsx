@@ -76,11 +76,6 @@ export default async function StrategyIQResultsPage({ params }: PageProps) {
       assessmentType: {
         equals: dimension,
         mode: 'insensitive'
-      },
-      status: {
-        in: role === 'ADMIN' 
-          ? ['COMPLETED', 'PUBLISHED', 'UNDER_REVIEW', 'MANUAL_REVIEW', 'completed', 'submitted'] 
-          : ['COMPLETED', 'PUBLISHED', 'completed', 'submitted', 'under_review', 'manual_review', 'UNDER_REVIEW', 'MANUAL_REVIEW']
       }
     },
     include: {
@@ -92,14 +87,22 @@ export default async function StrategyIQResultsPage({ params }: PageProps) {
     }
   })
 
-  // --- TASK 2: HARD FORCE GENERATION LOGIC ---
-  if (assessmentSession && !assessmentSession.briefSummary && !assessmentSession.certifiedNarrative) {
+  // RULE 1: If no session exists OR assessment status is NOT COMPLETED, redirect back to assessment form
+  const validStatuses = ['COMPLETED', 'PUBLISHED', 'UNDER_REVIEW', 'MANUAL_REVIEW', 'completed', 'submitted'];
+  const isComplete = assessmentSession && validStatuses.includes(assessmentSession.status?.toUpperCase());
+
+  if (!assessmentSession || !isComplete) {
+    console.log(`[StrategyIQResultsPage] Assessment incomplete or missing. Redirecting to questions.`);
+    redirect(`/strategy-iq/${projectId}/${dimension}`);
+  }
+
+  // RULE 2: If the assessment IS COMPLETED but the briefSummary (AI Synthesis) is missing, ONLY THEN show the "Synthesis in Progress" screen
+  if (!assessmentSession.briefSummary && !assessmentSession.certifiedNarrative) {
     console.log(`[DEBUG] Force Generating Narrative for Session: ${assessmentSession.id}`);
     
     // Check API Key
     const hasApiKey = !!process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'mock-key';
-    console.log("[DEBUG] AI Config Check:", { hasApiKey });
-
+    
     try {
       // Explicitly call the generation utility
       const updatedSession = await generateStrategyNarrative(assessmentSession);
@@ -113,25 +116,56 @@ export default async function StrategyIQResultsPage({ params }: PageProps) {
     }
   }
 
-  if (!assessmentSession) {
+  // If after generation attempt we still don't have a summary, show the processing screen
+  if (!assessmentSession.briefSummary && !assessmentSession.certifiedNarrative) {
     return (
-      <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center p-6">
-        <div className="text-center space-y-6 max-w-md">
-          <div className="w-16 h-16 rounded-full bg-teal/10 flex items-center justify-center text-teal mx-auto animate-bounce">
-            <Bot size={32} />
+      <div className="min-h-screen bg-[#0A0A0A] flex flex-col items-center justify-center p-6">
+        {/* Global Chrome: Logo & Phase Badge Only */}
+        <div className="fixed top-0 left-0 right-0 h-16 px-8 flex items-center justify-between border-b border-white/5 bg-[#050505]">
+          <div className="flex items-center gap-4">
+            <span className="text-white font-big-shoulders font-black tracking-widest text-xl uppercase italic">LG // PORTAL ADMIN</span>
           </div>
-          <h2 className="text-2xl font-bold text-white uppercase tracking-widest font-big-shoulders italic">Processing Results</h2>
-          <p className="text-zinc-400 text-sm leading-relaxed">
-            Our AI is currently synthesizing your narrative. This process usually takes 5-10 seconds. 
-          </p>
-          <div className="pt-4">
+          <div className="flex items-center gap-3">
+             <div className="px-3 py-1 rounded-full border border-teal/20 bg-teal/5 text-teal text-[9px] font-bold tracking-[0.2em] uppercase">Phase 8.1 // Discovery Synthesis</div>
+          </div>
+        </div>
+
+        <div className="text-center space-y-8 max-w-md animate-in fade-in zoom-in duration-700">
+          <div className="relative">
+            <div className="w-24 h-24 rounded-full bg-teal/5 border border-teal/20 flex items-center justify-center text-teal mx-auto">
+              <Bot size={40} className="animate-pulse" />
+            </div>
+            <div className="absolute inset-0 border-t-2 border-teal rounded-full animate-spin duration-[2000ms]" />
+          </div>
+
+          <div className="space-y-4">
+            <h2 className="text-3xl font-bold text-white uppercase tracking-[0.2em] font-big-shoulders italic">Finalizing Discovery Data</h2>
+            <p className="text-zinc-400 text-sm leading-relaxed font-inter italic">
+              StrategyIQ™ is verifying your inputs. If this takes longer than 10 seconds, please ensure all assessment questions were submitted.
+            </p>
+          </div>
+
+          <div className="pt-4 flex flex-col items-center gap-6">
              <RefreshButton projectId={projectId} dimension={dimension} autoRefresh={true} />
+             
+             {/* Standard Breadcrumb Only */}
+             <div className="pt-8 border-t border-white/5 w-full">
+               <Breadcrumbs 
+                  showBack={false}
+                  items={[
+                    { label: 'DASHBOARD', href: '/dashboard' },
+                    { label: (project.client?.name || project.client?.company || 'ACME CORP').toUpperCase(), href: `/admin/projects/${project.id}` },
+                    { label: `${dimension.toUpperCase()} STRATEGY`, active: true }
+                  ]} 
+                />
+             </div>
           </div>
         </div>
       </div>
     )
   }
 
+  // RULE 3: If completed and summary exists, show ResultsView
   return (
     <div className="min-h-screen bg-[#0A0A0A] pt-12 pb-12">
       <ResultsView 

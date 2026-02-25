@@ -37,12 +37,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Client record not found' }, { status: 404 })
     }
 
-    // Check if they already have a Discovery or Active project
+    // Check if they already have ANY project in the system (Duplicate-Proofing V6.2)
     const existingProject = await prisma.project.findFirst({
       where: {
-        clientId: client.id,
-        status: { in: ['ACTIVE', 'DISCOVERY'] }
-      }
+        clientId: client.id
+      },
+      orderBy: { updatedAt: 'desc' }
     })
 
     if (existingProject) {

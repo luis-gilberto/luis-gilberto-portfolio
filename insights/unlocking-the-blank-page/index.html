@@ -1,244 +1,1650 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unlocking the Blank Page | Luis Gilberto – Insights</title>
-    <meta name="description" content="How I used AI to remember my own voice. A human reflection on creative paralysis, momentum, and the tools that helped me begin again.">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unlocking the Blank Page — Luis Gilberto · Insights</title>
+  <meta name="description" content="How I used AI to remember my own voice. A human reflection on creative paralysis, momentum, and the tools that helped me begin again.">
+  <link rel="canonical" href="https://www.luis-gilberto.com/insights/unlocking-the-blank-page/">
 
-    <link rel="icon" type="image/png" href="/insights/assets/icons/favicon-32x32.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous"></script>
+  <link rel="icon" type="image/png" href="/insights/assets/icons/favicon-32x32.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Big+Shoulders+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="/insights/assets/css/article-theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Design tokens ── */
+    :root {
+      --bg:         #F5F0EB;
+      --ink:        #1A1714;
+      --ink-soft:   #6B6560;
+      --coral:      #F96F6E;
+      --teal:       #4BADA8;
+      --cream:      #FAF7F4;
+      --rule:       #D9D2CB;
+      --card-bg:    #FFFFFF;
+      --popover-bg: #FFFFFF;
+      --accent-bg:  rgba(26,23,20,0.06);
+      --header-h:   64px;
+    }
+    [data-theme="dark"] {
+      --bg:         #1A1714;
+      --ink:        #FAF7F4;
+      --ink-soft:   #A09890;
+      --cream:      #221E1B;
+      --card-bg:    #2A2420;
+      --rule:       #3A3430;
+      --popover-bg: #2A2420;
+      --accent-bg:  rgba(250,247,244,0.06);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 18px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    /* ═══════════════════════════════════════
+       HEADER
+    ═══════════════════════════════════════ */
+    header.site-header {
+      position: sticky; top: 0; z-index: 100;
+      width: 100%;
+      transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+      border-bottom: 1px solid transparent;
+    }
+    header.site-header.scrolled {
+      background: rgba(245,240,235,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom-color: var(--rule);
+      box-shadow: 0 1px 0 var(--rule);
+    }
+    [data-theme="dark"] header.site-header.scrolled {
+      background: rgba(26,23,20,0.95);
+    }
+    .header-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      height: var(--header-h);
+      max-width: 1280px; margin: 0 auto; padding: 0 48px;
+    }
+    .logo-link { text-decoration: none; display: flex; align-items: center; }
+    #logo-desktop { display: block; height: 32px; width: auto; }
+    #logo-mark    { display: none;  height: 32px; width: auto; }
+
+    /* Desktop nav */
+    .desktop-nav {
+      display: flex; align-items: center; gap: 2px; position: relative;
+    }
+    .nav-link {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px; font-weight: 500; letter-spacing: 0.04em;
+      color: var(--ink-soft); text-decoration: none;
+      padding: 8px 14px; border-radius: 6px;
+      transition: color 0.15s, background 0.15s;
+      display: inline-flex; align-items: center; gap: 4px;
+      background: none; border: none; cursor: pointer; white-space: nowrap;
+    }
+    .nav-link:hover { color: var(--ink); background: var(--accent-bg); }
+    .nav-link.active { color: var(--coral); }
+    .nav-link .chevron {
+      width: 12px; height: 12px;
+      transition: transform 300ms ease; flex-shrink: 0;
+    }
+    .nav-link[aria-expanded="true"] { color: var(--ink); background: var(--accent-bg); }
+    .nav-link[aria-expanded="true"] .chevron { transform: rotate(180deg); }
+
+    /* Dropdown viewport */
+    .nav-viewport {
+      position: absolute; left: 50%; top: calc(100% + 8px);
+      transform: translateX(-50%);
+      pointer-events: none; z-index: 200;
+    }
+    .nav-viewport-inner {
+      background: var(--popover-bg);
+      border: 1px solid var(--rule);
+      border-radius: 10px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
+      transform-origin: top center;
+      opacity: 0; transform: scale(0.96) translateY(-6px);
+      pointer-events: none;
+      transition: opacity 180ms ease, transform 180ms ease;
+      overflow: hidden;
+    }
+    .nav-viewport-inner.open {
+      opacity: 1; transform: scale(1) translateY(0);
+      pointer-events: auto;
+    }
+    .nav-content { display: none; }
+    .nav-content.active { display: block; }
+
+    /* ── Dropdown panels — shared shell ── */
+    .panel-wrap { padding: 6px; }
+
+    /* Per-channel accent colour */
+    .panel-wrap[data-channel="insights"] { --ch: var(--coral); width: 520px; }
+    .panel-wrap[data-channel="hub"]      { --ch: var(--teal);  width: 560px; }
+    .panel-wrap[data-channel="portfolio"]{ --ch: var(--coral); width: 480px; }
+    .panel-wrap[data-channel="portal"]   { --ch: var(--teal);  width: 400px; }
+
+    .panel-header {
+      padding: 16px 16px 10px;
+      border-bottom: 1px solid var(--rule); margin-bottom: 6px;
+    }
+    .panel-header-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--ch);
+      display: flex; align-items: center; gap: 8px; margin-bottom: 4px;
+    }
+    .panel-header-label::before {
+      content: ''; display: block; width: 20px; height: 1px; background: var(--ch);
+    }
+    .panel-header-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px; font-weight: 500; color: var(--ink); line-height: 1.2;
+    }
+    .panel-grid      { display: grid; grid-template-columns: 1fr;     gap: 4px; padding: 4px; }
+    .panel-grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; }
+    .panel-item {
+      display: flex; align-items: flex-start;
+      gap: 12px; padding: 12px; border-radius: 8px;
+      text-decoration: none; transition: background 0.15s;
+    }
+    .panel-item:hover { background: var(--accent-bg); }
+    .panel-item:hover .item-icon { border-color: var(--ch); color: var(--ch); }
+    .item-icon {
+      flex-shrink: 0; width: 40px; height: 40px;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid var(--rule); border-radius: 8px;
+      background: var(--bg); color: var(--ink-soft);
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+    .item-icon svg { width: 18px; height: 18px; }
+    .panel-item:hover .item-icon.hub-brain    { background: rgba(249,111,110,0.08); border-color: var(--coral); color: var(--coral); }
+    .panel-item:hover .item-icon.hub-advisory { background: rgba(75,173,168,0.08);  border-color: var(--teal);  color: var(--teal);  }
+    .panel-item:hover .item-icon.hub-studio   { background: rgba(249,111,110,0.08); border-color: var(--coral); color: var(--coral); }
+    .panel-item:hover .item-icon.hub-portal   { background: rgba(75,173,168,0.08);  border-color: var(--teal);  color: var(--teal);  }
+    .item-text { flex: 1; min-width: 0; }
+    .item-title {
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+      color: var(--ink); margin-bottom: 2px;
+    }
+    .item-desc {
+      font-family: 'Inter', sans-serif; font-size: 11px;
+      color: var(--ink-soft); line-height: 1.5;
+    }
+    .item-role {
+      display: inline-block; margin-top: 4px;
+      font-family: 'Inter', sans-serif; font-size: 9px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--ch); opacity: 0.8;
+    }
+    .panel-footer {
+      border-top: 1px solid var(--rule); padding: 12px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .panel-footer-text { font-family: 'Inter', sans-serif; font-size: 12px; color: var(--ink-soft); }
+    .panel-footer-link {
+      font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600;
+      color: var(--ch); text-decoration: none;
+      display: flex; align-items: center; gap: 4px; transition: gap 0.15s;
+    }
+    .panel-footer-link:hover { gap: 8px; }
+    /* Portal panel */
+    .portal-features { padding: 12px 16px 8px; display: flex; flex-direction: column; gap: 2px; }
+    .portal-feature {
+      display: flex; align-items: center; gap: 10px; padding: 9px 6px; border-radius: 6px;
+      font-family: 'Inter', sans-serif; font-size: 12px; color: var(--ink-soft);
+      transition: background 0.15s;
+    }
+    .portal-feature:hover { background: var(--accent-bg); color: var(--ink); }
+    .portal-feature-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--teal); flex-shrink: 0; }
+    .portal-cta-strip {
+      margin: 8px 10px 10px; background: var(--ink); border-radius: 6px;
+      padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    [data-theme="dark"] .portal-cta-strip { background: rgba(250,247,244,0.08); border: 1px solid var(--rule); }
+    .portal-cta-label { font-family: 'Cormorant Garamond', serif; font-size: 16px; font-style: italic; color: var(--cream); line-height: 1.2; }
+    .portal-cta-btn {
+      font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--ink); background: var(--teal);
+      padding: 8px 14px; border-radius: 4px; text-decoration: none;
+      white-space: nowrap; transition: background 0.15s;
+    }
+    .portal-cta-btn:hover { background: #3d9e9a; }
+
+    /* Header CTAs */
+    .header-ctas { display: flex; align-items: center; gap: 8px; }
+    .theme-btn {
+      background: none; border: 1px solid var(--rule); border-radius: 6px;
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--ink-soft); transition: all 0.15s; flex-shrink: 0;
+    }
+    .theme-btn:hover { border-color: var(--ink-soft); color: var(--ink); }
+    .mobile-toggle {
+      display: none; background: none; border: 1px solid var(--rule);
+      border-radius: 6px; width: 36px; height: 36px;
+      align-items: center; justify-content: center;
+      cursor: pointer; color: var(--ink-soft);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .desktop-nav { display: none; }
+      .header-ctas .mobile-toggle { display: flex; }
+      #logo-desktop { display: none; }
+      #logo-mark    { display: block; }
+    }
+    @media (max-width: 768px) { .header-inner { padding: 0 24px; } }
+
+    /* ═══════════════════════════════════════
+       MOBILE DRAWER
+    ═══════════════════════════════════════ */
+    .mobile-menu {
+      display: none; position: fixed;
+      inset: 0; top: var(--header-h); z-index: 99;
+      background: rgba(245,240,235,0.97);
+      backdrop-filter: blur(12px);
+      flex-direction: column;
+      border-top: 1px solid var(--rule);
+    }
+    [data-theme="dark"] .mobile-menu { background: rgba(26,23,20,0.97); }
+    .mobile-menu.open { display: flex; }
+
+    .drawer-series-section {
+      padding: 20px 24px; border-bottom: 1px solid var(--rule); position: relative;
+    }
+    .drawer-series-section::before {
+      content: ''; position: absolute; top: 0; left: 0;
+      width: 2px; height: 100%; background: var(--coral);
+      border-radius: 0 2px 2px 0;
+    }
+    .drawer-section-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 9px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--coral); margin-bottom: 14px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .drawer-section-label::before {
+      content: ''; display: block; width: 14px; height: 1px; background: var(--coral);
+    }
+    .drawer-series-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .drawer-series-card {
+      background: var(--card-bg); border: 1px solid var(--rule);
+      border-radius: 10px; padding: 14px 12px;
+      text-decoration: none; display: flex; flex-direction: column; gap: 10px;
+      transition: all 0.2s; position: relative; overflow: hidden;
+    }
+    .drawer-series-card::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+      height: 2px; background: var(--coral);
+      transform: scaleX(0); transform-origin: left; transition: transform 0.2s ease;
+    }
+    .drawer-series-card:hover, .drawer-series-card.active {
+      border-color: rgba(249,111,110,0.4);
+      box-shadow: 0 4px 16px rgba(249,111,110,0.1);
+      transform: translateY(-2px);
+    }
+    .drawer-series-card:hover::after, .drawer-series-card.active::after { transform: scaleX(1); }
+    .drawer-series-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: var(--bg); border: 1px solid var(--rule);
+      display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+    }
+    .drawer-series-icon svg {
+      width: 15px; height: 15px; stroke: var(--ink-soft); fill: none;
+      stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; transition: stroke 0.2s;
+    }
+    .drawer-series-card:hover .drawer-series-icon,
+    .drawer-series-card.active .drawer-series-icon { background: var(--coral); border-color: var(--coral); }
+    .drawer-series-card:hover .drawer-series-icon svg,
+    .drawer-series-card.active .drawer-series-icon svg { stroke: #fff; }
+    .drawer-series-title { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; color: var(--ink); line-height: 1.3; }
+    .drawer-series-desc { font-family: 'Inter', sans-serif; font-size: 10px; color: var(--ink-soft); line-height: 1.4; margin-top: -4px; }
+    .drawer-global-section { padding: 16px 24px; }
+    .drawer-global-label {
+      font-family: 'Inter', sans-serif; font-size: 9px; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--ink-soft); opacity: 0.6; margin-bottom: 8px;
+    }
+    .drawer-global-link {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 0; border-bottom: 1px solid rgba(217,210,203,0.5);
+      text-decoration: none; transition: all 0.15s;
+    }
+    .drawer-global-link:last-child { border-bottom: none; }
+    .drawer-global-icon {
+      width: 34px; height: 34px; border-radius: 8px;
+      background: rgba(26,23,20,0.04);
+      display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+    }
+    .drawer-global-icon svg {
+      width: 15px; height: 15px; stroke: var(--ink-soft); fill: none;
+      stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; transition: stroke 0.15s;
+    }
+    .drawer-global-link:hover .drawer-global-icon svg { stroke: var(--teal); }
+    .drawer-global-link.drawer-active .drawer-global-icon svg { stroke: var(--coral); }
+    .drawer-global-text {
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
+      color: var(--ink-soft); transition: color 0.15s;
+    }
+    .drawer-global-link:hover .drawer-global-text { color: var(--ink); }
+    .drawer-global-link.drawer-active .drawer-global-text { color: var(--coral); font-weight: 600; }
+    .drawer-footer-strip {
+      padding: 14px 24px; border-top: 1px solid var(--rule);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0; margin-top: auto;
+    }
+    .drawer-status { display: flex; align-items: center; gap: 8px; }
+    .drawer-status-dot {
+      width: 6px; height: 6px; background: var(--teal); border-radius: 50%;
+      box-shadow: 0 0 6px rgba(75,173,168,0.5); animation: pulse 2s infinite;
+    }
+    .drawer-status-label {
+      font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 600;
+      letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft);
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    /* ═══════════════════════════════════════
+       BREADCRUMB
+    ═══════════════════════════════════════ */
+    .context-bar {
+      background: var(--cream); border-bottom: 1px solid var(--rule); padding: 0 48px;
+    }
+    .context-bar-inner {
+      max-width: 1280px; margin: 0 auto; height: 40px;
+      display: flex; align-items: center; gap: 8px;
+      font-family: 'Inter', sans-serif; font-size: 11px; color: var(--ink-soft);
+    }
+    .crumb-link { color: var(--ink-soft); text-decoration: none; transition: color 0.15s; letter-spacing: 0.04em; }
+    .crumb-link:hover { color: var(--coral); }
+    .crumb-sep { opacity: 0.4; font-size: 10px; }
+    .crumb-current { color: var(--ink); font-weight: 500; }
+    @media (max-width: 768px) { .context-bar { padding: 0 24px; } }
+
+    /* ═══════════════════════════════════════
+       ARTICLE HERO
+    ═══════════════════════════════════════ */
+    .article-hero {
+      background: var(--bg); padding: 72px 48px 0;
+      max-width: 1280px; margin: 0 auto;
+    }
+    .article-eyebrow {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 28px;
+      opacity: 0; animation: fadeUp 0.6s ease 0.1s forwards;
+    }
+    .category-tag {
+      font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 600;
+      letter-spacing: 0.15em; text-transform: uppercase; color: var(--coral);
+      background: rgba(249,111,110,0.1); padding: 5px 11px; border-radius: 3px;
+    }
+    .series-tag {
+      font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 600;
+      letter-spacing: 0.15em; text-transform: uppercase; color: var(--teal);
+      background: rgba(75,173,168,0.1); padding: 5px 11px; border-radius: 3px;
+    }
+    .eyebrow-dot { width: 3px; height: 3px; background: var(--rule); border-radius: 50%; }
+    .article-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(48px, 6vw, 80px); font-weight: 300;
+      line-height: 0.96; color: var(--ink); letter-spacing: -0.025em;
+      margin-bottom: 24px; max-width: 780px;
+      opacity: 0; animation: fadeUp 0.6s ease 0.2s forwards;
+    }
+    .article-title em { font-style: italic; color: var(--coral); }
+    .article-subtitle {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px; font-weight: 300; font-style: italic;
+      color: var(--ink-soft); max-width: 560px; line-height: 1.6; margin-bottom: 32px;
+      opacity: 0; animation: fadeUp 0.6s ease 0.28s forwards;
+    }
+    .article-byline {
+      display: flex; align-items: center; gap: 10px;
+      font-family: 'Inter', sans-serif; font-size: 11px; color: var(--ink-soft);
+      letter-spacing: 0.04em; padding-top: 24px;
+      border-top: 1px solid var(--rule); margin-bottom: 56px;
+      opacity: 0; animation: fadeUp 0.6s ease 0.36s forwards;
+    }
+    .byline-dot { width: 3px; height: 3px; background: var(--rule); border-radius: 50%; }
+    .byline-series {
+      color: var(--coral); font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase; font-size: 10px;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @media (max-width: 768px) {
+      .article-hero { padding: 48px 24px 0; }
+      .article-title { font-size: clamp(40px, 10vw, 60px); }
+    }
+
+    /* ═══════════════════════════════════════
+       HERO ILLUSTRATION — contained, no crop
+    ═══════════════════════════════════════ */
+
+    /* Outer band: full-width, cream bg so illustration sits naturally */
+    .hero-illustration-band {
+      width: 100%;
+      background: var(--bg);
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      padding: 0 48px 48px;
+    }
+    /* Inner container: constrained to article width, centered */
+    .hero-illustration-wrap {
+      position: relative;          /* sticker anchors here */
+      max-width: 860px;
+      margin: 0 auto;
+      /* sticker needs to overflow the image frame, so NO overflow:hidden here */
+    }
+    /* The image: full width of its container, natural aspect ratio */
+    .hero-theme-img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 4px;
+      /* subtle lift so it reads as a "piece" on the page */
+      box-shadow: 0 8px 40px rgba(26,23,20,0.08), 0 2px 8px rgba(26,23,20,0.04);
+      opacity: 0; animation: fadeUp 0.8s ease 0.5s forwards;
+    }
+    /* Unlocking has no dark variant — show the single image always */
+    .hero-theme-img { display: block !important; }
+
+    /* ── Signature sticker — INSIDE the image frame ── */
+    .sig-sticker-wrap {
+      position: absolute;
+      bottom: 5%;
+      right: 4%;
+      z-index: 10;
+      cursor: help;
+    }
+    .sig-sticker-wrap img {
+      /* Responsive: large enough to read, small enough not to dominate */
+      width: clamp(72px, 11%, 130px);
+      transform: rotate(-3deg);
+      opacity: 0.88;
+      display: block;
+      transition: opacity 0.2s, transform 0.2s;
+      /* blend with illustration — multiply works on cream/white bg */
+      mix-blend-mode: multiply;
+      filter: drop-shadow(0 1px 4px rgba(0,0,0,0.1));
+    }
+    .sig-sticker-wrap:hover img { opacity: 1; transform: rotate(-1.5deg) scale(1.06); }
+    /* Unlocking has no dark mode illustrations — always use light sticker */
+    .sig-sticker-wrap .sticker-dark  { display: none !important; }
+    .sig-sticker-wrap .sticker-light { display: block !important; mix-blend-mode: multiply; }
+
+    /* Hero caption — sits below the illustration */
+    .hero-caption {
+      text-align: center;
+      font-family: 'Inter', sans-serif;
+      font-size: 11px; font-style: italic; letter-spacing: 0.06em;
+      color: var(--ink-soft);
+      margin-top: 20px;
+      padding-top: 8px;
+    }
+
+    /* Tooltip */
+    .sig-tooltip {
+      position: absolute; bottom: calc(100% + 10px); right: 0;
+      background: rgba(0,0,0,0.88);
+      color: #fff; border: 1px solid rgba(255,255,255,0.15);
+      padding: 8px 12px; border-radius: 6px;
+      font-family: 'Inter', sans-serif; font-size: 11px; line-height: 1.4;
+      width: max-content; max-width: 220px;
+      opacity: 0; transform: translateY(6px);
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none; white-space: normal;
+    }
+    .sig-sticker-wrap:hover .sig-tooltip { opacity: 1; transform: translateY(0); }
+
+    /* ── Responsive sticker sizing ── */
+    /* Tablet */
+    @media (max-width: 1024px) {
+      .sig-sticker-wrap img  { width: clamp(64px, 10%, 110px); }
+      .break-sig img         { width: clamp(50px, 9%, 90px); }
+    }
+    /* Mobile */
+    @media (max-width: 768px) {
+      .hero-illustration-band { padding: 0 20px 36px; }
+      .hero-caption { margin-top: 16px; }
+      /* On small screens keep sticker proportional but never tiny */
+      .sig-sticker-wrap img  { width: clamp(60px, 15%, 90px); }
+      .break-sig img         { width: clamp(48px, 13%, 76px); }
+      /* Slightly more inset on mobile so it doesn't clip */
+      .sig-sticker-wrap { bottom: 4%; right: 3%; }
+      .break-sig        { bottom: 4%; right: 3%; }
+    }
+    /* Small mobile */
+    @media (max-width: 480px) {
+      .sig-sticker-wrap img  { width: 56px; }
+      .break-sig img         { width: 44px; }
+    }
+
+    /* ═══════════════════════════════════════
+       ARTICLE LAYOUT
+    ═══════════════════════════════════════ */
+    .article-layout {
+      display: grid; grid-template-columns: 240px 1fr; gap: 64px;
+      max-width: 1280px; margin: 0 auto; padding: 72px 48px 96px;
+      align-items: start;
+    }
+    @media (max-width: 1024px) {
+      .article-layout { grid-template-columns: 1fr; gap: 40px; padding: 48px 24px 72px; }
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      position: sticky; top: calc(var(--header-h) + 24px);
+      display: flex; flex-direction: column; gap: 20px;
+    }
+    @media (max-width: 1024px) { .sidebar { position: static; } }
+
+    .toc-card {
+      background: var(--card-bg); border: 1px solid var(--rule); border-radius: 2px; padding: 20px;
+    }
+    .toc-label {
+      font-family: 'Inter', sans-serif; font-size: 9px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--coral);
+      display: flex; align-items: center; gap: 8px; margin-bottom: 16px;
+    }
+    .toc-label::before { content: ''; display: block; width: 16px; height: 1px; background: var(--coral); }
+    .toc-link {
+      display: flex; align-items: center; gap: 10px;
+      font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500;
+      color: var(--ink-soft); text-decoration: none;
+      padding: 8px 0; border-bottom: 1px solid rgba(217,210,203,0.4); transition: color 0.15s;
+    }
+    .toc-link:last-child { border-bottom: none; }
+    .toc-link::before {
+      content: ''; width: 4px; height: 4px; border-radius: 50%;
+      background: var(--rule); flex-shrink: 0; transition: background 0.15s;
+    }
+    .toc-link:hover { color: var(--ink); }
+    .toc-link:hover::before { background: var(--coral); }
+    .toc-link.active { color: var(--coral); font-weight: 600; }
+    .toc-link.active::before { background: var(--coral); }
+
+    /* Reading meta card */
+    .reading-meta {
+      background: var(--card-bg); border: 1px solid var(--rule); border-radius: 2px; padding: 20px;
+    }
+    .reading-meta-label {
+      font-family: 'Inter', sans-serif; font-size: 9px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-soft);
+      opacity: 0.6; margin-bottom: 10px;
+    }
+    .reading-meta-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 48px; font-weight: 300; color: var(--teal); line-height: 1;
+    }
+    .reading-meta-sub {
+      font-family: 'Inter', sans-serif; font-size: 11px; color: var(--ink-soft); margin-top: 4px;
+    }
+
+    /* Status inset */
+    .sidebar-status {
+      background: var(--card-bg); border: 1px solid var(--rule);
+      border-left: 3px solid var(--teal); border-radius: 0 2px 2px 0; padding: 18px 20px;
+    }
+    .sidebar-status strong {
+      font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink);
+    }
+    .sidebar-status p {
+      font-family: 'Inter', sans-serif; font-size: 12px; color: var(--ink-soft);
+      margin-top: 6px; margin-bottom: 0; line-height: 1.5;
+    }
+    .back-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--ink-soft); text-decoration: none; padding: 10px 0;
+      transition: color 0.15s, gap 0.15s;
+    }
+    .back-link:hover { color: var(--coral); gap: 12px; }
+    .back-link svg { width: 12px; height: 12px; }
+
+    /* ── Main content typography ── */
+    .main-content { min-width: 0; }
+    .reading-section { margin-bottom: 64px; }
+    .reading-section:last-child { margin-bottom: 0; }
+
+    .section-heading {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 34px; font-weight: 500; line-height: 1.15;
+      color: var(--ink); letter-spacing: -0.015em;
+      margin-bottom: 24px; margin-top: 56px;
+      padding-top: 56px; border-top: 1px solid var(--rule);
+    }
+    .section-heading:first-child { margin-top: 0; padding-top: 0; border-top: none; }
+
+    .section-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px; font-weight: 500; color: var(--ink);
+      margin: 36px 0 16px; line-height: 1.2;
+    }
+
+    p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px; font-weight: 300; line-height: 1.8;
+      color: var(--ink); margin-bottom: 24px;
+    }
+    p:last-child { margin-bottom: 0; }
+    .lead { font-size: 24px; font-weight: 400; }
+    strong { font-weight: 600; }
+
+    /* ── Links ── */
+    .main-content a {
+      color: var(--teal); text-decoration: none;
+      border-bottom: 1px solid rgba(75,173,168,0.25);
+      padding-bottom: 1px; transition: color 0.15s, border-color 0.15s;
+    }
+    .main-content a:hover { color: var(--coral); border-bottom-color: rgba(249,111,110,0.5); }
+    .main-content a:visited { color: var(--teal); }
+
+    /* ── Visual breaks ── */
+    .visual-break {
+      margin: 56px 0; position: relative;
+    }
+    /* NO overflow:hidden — sticker needs to spill outside */
+    .visual-break-frame {
+      position: relative;
+      display: block; line-height: 0;
+      border-radius: 4px; border: 1px solid var(--rule);
+    }
+    .visual-break-frame img.break-img {
+      width: 100%; height: auto; display: block; border-radius: 4px;
+      transition: filter 0.3s ease;
+    }
+    .visual-break-frame:hover img.break-img { filter: brightness(0.97); }
+    /* Unlocking: no dark variants — always show light images */
+    .break-img.light { display: block !important; }
+    .break-img.dark  { display: none !important; }
+
+    /* Break sticker: inside the image, bottom-right */
+    .break-sig {
+      position: absolute;
+      bottom: 5%;
+      right: 4%;
+      z-index: 5; cursor: help;
+    }
+    .break-sig img {
+      width: clamp(56px, 10%, 110px);
+      transform: rotate(-3deg);
+      opacity: 0.88; display: block;
+      transition: opacity 0.2s, transform 0.2s;
+      mix-blend-mode: multiply;
+      filter: drop-shadow(0 1px 4px rgba(0,0,0,0.08));
+    }
+    .break-sig:hover img { opacity: 1; transform: rotate(-1.5deg) scale(1.06); }
+    /* Unlocking: always light sticker, no dark variant */
+    .break-sig .sticker-dark  { display: none !important; }
+    .break-sig .sticker-light { display: block !important; mix-blend-mode: multiply; }
+    .break-tooltip {
+      position: absolute; bottom: calc(100% + 8px); right: 0;
+      background: rgba(0,0,0,0.88); color: #fff;
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 7px 11px; border-radius: 6px;
+      font-family: 'Inter', sans-serif; font-size: 10px; line-height: 1.4;
+      width: max-content; max-width: 200px;
+      opacity: 0; transform: translateY(5px);
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none;
+    }
+    .break-sig:hover .break-tooltip { opacity: 1; transform: translateY(0); }
+
+    .visual-break figcaption {
+      font-family: 'Inter', sans-serif; font-size: 11px;
+      color: var(--ink-soft); text-align: center;
+      margin-top: 14px;
+      letter-spacing: 0.04em; font-style: italic;
+    }
+
+    /* Portal screenshot — no sticker, different treatment */
+    .portal-frame {
+      border-radius: 8px; overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.2);
+    }
+    .portal-frame img { width: 100%; display: block; }
+
+    /* ── Inset cards ── */
+    .inset-card {
+      margin: 40px 0; padding: 28px 32px;
+      background: var(--cream); border: 1px solid var(--rule);
+      border-left: 3px solid var(--teal);
+      border-radius: 0 4px 4px 0;
+    }
+    .inset-card.coral { border-left-color: var(--coral); }
+    .inset-card strong {
+      font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink);
+      display: block; margin-bottom: 8px;
+    }
+    .inset-card p { font-size: 17px; color: var(--ink-soft); margin-bottom: 0; }
+
+    /* ── Ecosystem explore row ── */
+    .ecosystem-explore {
+      margin: 24px 0;
+      padding: 16px 20px;
+      background: var(--accent-bg);
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px; color: var(--ink-soft);
+      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    }
+    .ecosystem-explore span { font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; font-size: 10px; }
+    .ecosystem-explore a {
+      color: var(--teal) !important; border-bottom: none !important;
+      font-weight: 500;
+      padding: 3px 8px; border-radius: 4px;
+      background: rgba(75,173,168,0.1);
+      transition: background 0.15s;
+    }
+    .ecosystem-explore a:hover { background: rgba(75,173,168,0.2) !important; color: var(--teal) !important; }
+    .eco-sep { opacity: 0.3; }
+
+    /* ── Pull quote ── */
+    .pull-quote {
+      margin: 56px 0; padding: 40px 48px;
+      background: var(--ink); border-radius: 2px; position: relative; overflow: hidden;
+    }
+    .pull-quote::before {
+      content: '"'; position: absolute; top: -20px; left: 32px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 160px; font-weight: 300;
+      color: rgba(249,111,110,0.15); line-height: 1; pointer-events: none;
+    }
+    .pull-quote p {
+      font-family: 'Big Shoulders Display', sans-serif;
+      font-size: clamp(22px, 3vw, 32px); font-weight: 700;
+      line-height: 1.2; color: var(--cream);
+      position: relative; z-index: 1; margin-bottom: 0; letter-spacing: -0.01em;
+    }
+    .pull-quote p em { color: var(--coral); font-style: normal; }
+
+    /* ── CTA button ── */
+    .request-cta-wrap { margin-top: 48px; text-align: center; }
+    .request-cta {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--cream); background: var(--ink);
+      border: 1px solid var(--ink);
+      padding: 14px 32px; border-radius: 4px;
+      text-decoration: none; transition: all 0.25s;
+    }
+    .request-cta:hover {
+      background: var(--coral); border-color: var(--coral);
+      color: #fff; transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.18);
+    }
+    .request-cta svg { width: 13px; height: 13px; transition: transform 0.2s; }
+    .request-cta:hover svg { transform: translateX(3px); }
+
+    /* ── Closing text ── */
+    .closing-para { font-style: italic; color: var(--ink-soft); font-size: 19px; }
+
+    /* ═══════════════════════════════════════
+       KEEP READING
+    ═══════════════════════════════════════ */
+    .keep-reading {
+      background: var(--cream); border-top: 1px solid var(--rule); padding: 72px 48px;
+    }
+    .keep-reading-inner {
+      max-width: 1280px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between; gap: 32px;
+    }
+    .keep-reading h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 42px; font-weight: 300; color: var(--ink); line-height: 1.1; letter-spacing: -0.02em;
+    }
+    .keep-reading h2 em { font-style: italic; color: var(--coral); }
+    .keep-reading p {
+      font-family: 'Inter', sans-serif; font-size: 13px; color: var(--ink-soft);
+      margin-top: 8px; margin-bottom: 0;
+    }
+    .back-cta {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--ink); background: var(--coral);
+      padding: 13px 26px; border-radius: 4px;
+      text-decoration: none; transition: all 0.25s; flex-shrink: 0;
+    }
+    .back-cta:hover { background: var(--ink); color: var(--cream); transform: translateY(-2px); }
+    .back-cta svg { width: 13px; height: 13px; transition: transform 0.2s; }
+    .back-cta:hover svg { transform: translateX(3px); }
+    @media (max-width: 768px) {
+      .keep-reading { padding: 56px 24px; }
+      .keep-reading-inner { flex-direction: column; align-items: flex-start; }
+    }
+
+    /* ═══════════════════════════════════════
+       FOOTER
+    ═══════════════════════════════════════ */
+    footer {
+      background: var(--cream); border-top: 1px solid var(--rule); padding: 80px 48px 48px;
+    }
+    .footer-inner { max-width: 1280px; margin: 0 auto; }
+    .footer-top {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 64px; padding-bottom: 56px;
+      border-bottom: 1px solid var(--rule); margin-bottom: 36px;
+    }
+    .footer-logo-text {
+      font-family: 'Big Shoulders Display', sans-serif;
+      font-size: 28px; font-weight: 900; letter-spacing: 0.04em;
+      color: var(--ink); text-decoration: none;
+    }
+    .footer-logo-text span { color: var(--coral); }
+    .footer-tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15px; font-style: italic; color: var(--ink-soft);
+      margin: 10px 0 24px; line-height: 1.6;
+    }
+    .social-row { display: flex; gap: 10px; }
+    .social-btn {
+      width: 34px; height: 34px; border: 1px solid var(--rule); border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--ink-soft); text-decoration: none; transition: all 0.15s;
+    }
+    .social-btn:hover { border-color: var(--coral); color: var(--coral); }
+    .social-btn svg { width: 14px; height: 14px; }
+    .footer-col h4 {
+      font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink); margin-bottom: 18px;
+    }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 8px; }
+    .footer-col ul li a {
+      font-family: 'Cormorant Garamond', serif; font-size: 16px;
+      color: var(--ink-soft); text-decoration: none; transition: color 0.15s;
+      border-bottom: none;
+    }
+    .footer-col ul li a:hover { color: var(--coral); border-bottom: none; }
+    .status-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .dot-green { width: 7px; height: 7px; background: #4CAF6E; border-radius: 50%; animation: pulse 2s infinite; }
+    .status-txt { font-family: 'Inter', sans-serif; font-size: 12px; color: #4CAF6E; letter-spacing: 0.04em; }
+    .footer-bottom { display: flex; align-items: center; justify-content: space-between; }
+    .footer-copy { font-family: 'Inter', sans-serif; font-size: 11px; color: var(--ink-soft); }
+    .footer-copy span { color: var(--coral); }
+    @media (max-width: 1024px) { .footer-top { grid-template-columns: 1fr 1fr; gap: 40px; } }
+    @media (max-width: 768px) {
+      footer { padding: 56px 24px 32px; }
+      .footer-top { grid-template-columns: 1fr; gap: 36px; }
+      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+    }
+
+    /* ═══════════════════════════════════════
+       AI COLLABORATION MODAL
+    ═══════════════════════════════════════ */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 9999;
+      align-items: center; justify-content: center;
+      background: rgba(26,23,20,0.75);
+      backdrop-filter: blur(6px); padding: 24px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: var(--cream); border: 1px solid var(--rule); border-radius: 4px;
+      max-width: 560px; width: 100%; padding: 56px 52px 52px;
+      position: relative; box-shadow: 0 32px 80px rgba(0,0,0,0.18);
+    }
+    .modal-close {
+      position: absolute; top: 20px; right: 20px;
+      background: none; border: 1px solid var(--rule); border-radius: 4px;
+      width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--ink-soft); transition: all 0.15s;
+    }
+    .modal-close:hover { border-color: var(--coral); color: var(--coral); }
+    .modal-eyebrow {
+      font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--coral);
+      display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+    }
+    .modal-eyebrow::before { content: ''; display: block; width: 20px; height: 1px; background: var(--coral); }
+    .modal-title {
+      font-family: 'Big Shoulders Display', sans-serif;
+      font-size: 36px; font-weight: 900; color: var(--ink);
+      line-height: 1.05; letter-spacing: -0.01em; margin-bottom: 24px;
+    }
+    .modal-rule { width: 40px; height: 2px; background: var(--coral); margin-bottom: 28px; }
+    .modal-body {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px; font-weight: 300; color: var(--ink); line-height: 1.8;
+    }
+
+    /* ── Scroll fade-up ── */
+    .fade-up {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+  </style>
 </head>
 <body>
 
-    <!-- Global Header -->
-    <header class="lg-site-header" role="banner">
-      <div class="lg-site-header-inner">
-        <a href="/insights" class="lg-logo" title="Luis Gilberto's Insights" aria-label="Insights">
-            <img src="/insights/assets/images/insights_logo_light.svg" alt="Luis Gilberto's Insights" style="height: 32px; width: auto;">
-        </a>
-        <nav class="lg-main-nav">
-          <a href="https://luis-gilberto.com" class="lg-nav-link">PORTFOLIO</a>
-          <a href="/insights" class="lg-nav-link is-active">INSIGHTS</a>
-          <a href="/TheHub/" class="lg-nav-link">THE HUB</a>
-          <a href="https://portal.luis-gilberto.com/" class="lg-nav-link">THE PORTAL</a>
-        </nav>
+<!-- ═══════════════════════════════════════════
+     HEADER
+═══════════════════════════════════════════ -->
+<header class="site-header" id="site-header">
+  <div class="header-inner">
 
-        <button class="mobile-menu-toggle" aria-label="Menu" id="mobileMenuToggle">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="3" y1="12" x2="21" y2="12"></line>
-                <line x1="3" y1="6" x2="21" y2="6"></line>
-                <line x1="3" y1="18" x2="21" y2="18"></line>
-            </svg>
-        </button>
-      </div>
-    </header>
+    <a href="https://www.luis-gilberto.com/insights/" class="logo-link">
+      <img id="logo-desktop" src="/insights/assets/images/Insights_logo_black.png" alt="Insights by Luis Gilberto">
+      <img id="logo-mark"    src="/insights/assets/images/LG-logomark-BlackCoral.png" alt="Insights">
+    </a>
 
-    <!-- Context Bar -->
-    <nav class="lg-context-bar">
-        <div class="container">
-            <a href="/insights" class="breadcrumb-link">Insights</a>
-            <span class="breadcrumb-separator">/</span>
-            <a href="/insights/series" class="breadcrumb-link">Reflections</a>
-            <span class="breadcrumb-separator">/</span>
-            <span class="breadcrumb-current">Unlocking the Blank Page</span>
-        </div>
+    <!-- Desktop Nav — all four channels have mega menu panels -->
+    <nav class="desktop-nav" id="desktop-nav" aria-label="Main navigation">
+
+      <!-- Portfolio trigger -->
+      <button id="trigger-portfolio" class="nav-link"
+        aria-haspopup="true" aria-expanded="false"
+        aria-controls="content-portfolio" data-trigger>
+        Portfolio
+        <svg class="chevron" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+          <path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"/>
+        </svg>
+      </button>
+
+      <!-- Insights trigger -->
+      <button id="trigger-insights" class="nav-link active"
+        aria-haspopup="true" aria-expanded="false"
+        aria-controls="content-insights" data-trigger>
+        Insights
+        <svg class="chevron" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+          <path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"/>
+        </svg>
+      </button>
+
+      <!-- Hub trigger -->
+      <button id="trigger-hub" class="nav-link"
+        aria-haspopup="true" aria-expanded="false"
+        aria-controls="content-hub" data-trigger>
+        The Hub
+        <svg class="chevron" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+          <path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"/>
+        </svg>
+      </button>
+
+      <!-- Portal trigger -->
+      <button id="trigger-portal" class="nav-link"
+        aria-haspopup="true" aria-expanded="false"
+        aria-controls="content-portal" data-trigger>
+        Portal
+        <svg class="chevron" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+          <path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"/>
+        </svg>
+      </button>
+
+      <!-- ── Single shared dropdown viewport ── -->
+      <div class="nav-viewport" id="nav-viewport">
+        <div class="nav-viewport-inner" id="nav-viewport-inner">
+
+          <!-- PORTFOLIO panel -->
+          <div id="content-portfolio" class="nav-content">
+            <div class="panel-wrap" data-channel="portfolio">
+              <div class="panel-header">
+                <p class="panel-header-label">Portfolio</p>
+                <p class="panel-header-title">Work, story &amp; process</p>
+              </div>
+              <div class="panel-grid">
+                <a href="https://www.luis-gilberto.com/myexperience.html" class="panel-item">
+                  <div class="item-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                  </div>
+                  <div class="item-text">
+                    <p class="item-title">Work &amp; Experience</p>
+                    <p class="item-desc">15+ years across Microsoft, startups, and beyond</p>
+                  </div>
+                </a>
+                <a href="https://www.luis-gilberto.com/timeline.html" class="panel-item">
+                  <div class="item-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="4"/><polyline points="6 10 12 4 18 10"/></svg>
+                  </div>
+                  <div class="item-text">
+                    <p class="item-title">Career Timeline</p>
+                    <p class="item-desc">The eras, pivots, and moments that shaped the work</p>
+                  </div>
+                </a>
+                <a href="https://www.luis-gilberto.com/about.html" class="panel-item">
+                  <div class="item-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                  </div>
+                  <div class="item-text">
+                    <p class="item-title">About Luis</p>
+                    <p class="item-desc">From Caracas to Cascadia — the full story</p>
+                  </div>
+                </a>
+                <a href="https://www.luis-gilberto.com/contact.html" class="panel-item">
+                  <div class="item-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  </div>
+                  <div class="item-text">
+                    <p class="item-title">Contact</p>
+                    <p class="item-desc">Start a conversation or collaboration</p>
+                  </div>
+                </a>
+              </div>
+              <div class="panel-footer">
+                <span class="panel-footer-text">Caracas meets Cascadia</span>
+                <a href="https://www.luis-gilberto.com/" class="panel-footer-link">
+                  Visit portfolio
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- INSIGHTS panel -->
+          <div id="content-insights" class="nav-content">
+            <div class="panel-wrap" data-channel="insights">
+              <div class="panel-header">
+                <p class="panel-header-label">Insights</p>
+                <p class="panel-header-title">Browse by Series</p>
+              </div>
+              <div class="panel-grid">
+                <a href="https://www.luis-gilberto.com/insights/series/#building" class="panel-item">
+                  <div class="item-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                  </div>
+                  <div class="item-text">
+                    <p class="item-title">The Building Series</p>
+                    <p class="item-desc">Building in public — structural decisions behind the work</p>
+                  </div>
+                </a>
+                <a href="https://www.luis-gilberto.com/insights/series/#use-cases" class="panel-item">
+                  <div class="item-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                  </div>
+                  <div class="item-text">
+                    <p class="item-title">Use Cases</p>
+                    <p class="item-desc">Real-world launches and product strategies</p>
+                  </div>
+                </a>
+                <a href="https://www.luis-gilberto.com/insights/series/#reflections" class="panel-item">
+                  <div class="item-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                  </div>
+                  <div class="item-text">
+                    <p class="item-title">Reflections</p>
+                    <p class="item-desc">Personal thoughts on creativity, pace, and momentum</p>
+                  </div>
+                </a>
+              </div>
+              <div class="panel-footer">
+                <span class="panel-footer-text">3 series · 12 articles</span>
+                <a href="https://www.luis-gilberto.com/insights/series/" class="panel-footer-link">
+                  Browse all series
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- THE HUB panel — 2-col grid for the four arms -->
+          <div id="content-hub" class="nav-content">
+            <div class="panel-wrap" data-channel="hub">
+              <div class="panel-header">
+                <p class="panel-header-label">The Hub</p>
+                <p class="panel-header-title">Four arms. One system.</p>
+              </div>
+              <div class="panel-grid-2col">
+                <a href="https://www.luis-gilberto.com/TheHub/strategy-iq.html" class="panel-item">
+                  <div class="item-icon hub-brain">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+                  </div>
+                  <div class="item-text">
+                    <p class="item-title">StrategyIQ™</p>
+                    <p class="item-desc">Diagnostic engine — maturity benchmarking and roadmap</p>
+                    <span class="item-role">Strategic Intelligence</span>
+                  </div>
+                </a>
+                <a href="https://www.luis-gilberto.com/TheHub/advisory/" class="panel-item">
+                  <div class="item-icon hub-advisory">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  </div>
+                  <div class="item-text">
+                    <p class="item-title">Advisory</p>
+                    <p class="item-desc">Direct access to Luis — leadership alignment and clarity</p>
+                    <span class="item-role">Partnership</span>
+                  </div>
+                </a>
+                <a href="https://www.luis-gilberto.com/TheHub/studio.html" class="panel-item">
+                  <div class="item-icon hub-studio">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  </div>
+                  <div class="item-text">
+                    <p class="item-title">The Studio</p>
+                    <p class="item-desc">High-fidelity execution — ideas into tangible assets</p>
+                    <span class="item-role">Creative Production</span>
+                  </div>
+                </a>
+                <a href="https://portal.luis-gilberto.com/" target="_blank" rel="noopener" class="panel-item">
+                  <div class="item-icon hub-portal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  </div>
+                  <div class="item-text">
+                    <p class="item-title">The Portal ↗</p>
+                    <p class="item-desc">Secure command center — where client work lives</p>
+                    <span class="item-role">Client Access</span>
+                  </div>
+                </a>
+              </div>
+              <div class="panel-footer">
+                <span class="panel-footer-text">Intelligence over intuition</span>
+                <a href="https://www.luis-gilberto.com/TheHub/" class="panel-footer-link">
+                  Explore The Hub
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- PORTAL panel — compact with CTA strip -->
+          <div id="content-portal" class="nav-content">
+            <div class="panel-wrap" data-channel="portal">
+              <div class="panel-header">
+                <p class="panel-header-label">The Portal</p>
+                <p class="panel-header-title">Your command center</p>
+              </div>
+              <div class="portal-features">
+                <div class="portal-feature"><div class="portal-feature-dot"></div>Strategy tools &amp; StrategyIQ engine</div>
+                <div class="portal-feature"><div class="portal-feature-dot"></div>Shared project workspaces</div>
+                <div class="portal-feature"><div class="portal-feature-dot"></div>Direct access to Luis &amp; Advisory</div>
+                <div class="portal-feature"><div class="portal-feature-dot"></div>Progress tracking &amp; deliverables</div>
+              </div>
+              <div class="portal-cta-strip">
+                <p class="portal-cta-label">Ready to enter<br>the ecosystem?</p>
+                <a href="https://portal.luis-gilberto.com/auth/signup" target="_blank" rel="noopener" class="portal-cta-btn">Request Access</a>
+              </div>
+              <div class="panel-footer">
+                <span class="panel-footer-text">Existing client?</span>
+                <a href="https://portal.luis-gilberto.com/auth/signin" target="_blank" rel="noopener" class="panel-footer-link">
+                  Sign in
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /nav-viewport-inner -->
+      </div><!-- /nav-viewport -->
     </nav>
 
-    <!-- Mobile Menu -->
-    <div class="mobile-menu-overlay" id="mobileMenuOverlay">
-        <div class="mobile-menu-header">
-            <img src="/insights/assets/images/insights_logo_light.svg" alt="Luis Gilberto's Insights" style="height: 28px; width: auto;">
-            <button class="mobile-close-btn" id="mobileMenuClose">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
-        </div>
-        <nav class="mobile-global-nav">
-            <a href="https://luis-gilberto.com" class="mobile-nav-link">PORTFOLIO</a>
-            <a href="/insights" class="mobile-nav-link is-active">INSIGHTS</a>
-            <a href="/TheHub/" class="mobile-nav-link">THE HUB</a>
-            <a href="https://portal.luis-gilberto.com/" class="mobile-nav-link">THE PORTAL</a>
-        </nav>
-        <div class="mobile-sub-nav">
-            <span class="mobile-sub-label">Current Context:</span>
-            <a href="/insights" class="mobile-sub-link">Insights</a>
-            <a href="/insights/series" class="mobile-sub-link">Reflections</a>
-            <span class="mobile-sub-current">Unlocking the Blank Page</span>
-        </div>
+    <div class="header-ctas">
+      <button class="theme-btn" id="theme-toggle" aria-label="Toggle light/dark mode">
+        <svg id="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg id="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <svg id="menu-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile Drawer -->
+<div class="mobile-menu" id="mobile-menu">
+  <div class="drawer-series-section">
+    <div class="drawer-section-label">Browse Series</div>
+    <div class="drawer-series-grid">
+      <a href="https://www.luis-gilberto.com/insights/series/#building" class="drawer-series-card">
+        <div class="drawer-series-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
+        <div><div class="drawer-series-title">The Building Series</div><div class="drawer-series-desc">Structural decisions</div></div>
+      </a>
+      <a href="https://www.luis-gilberto.com/insights/series/#use-cases" class="drawer-series-card">
+        <div class="drawer-series-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <div><div class="drawer-series-title">Use Cases</div><div class="drawer-series-desc">Launches & strategy</div></div>
+      </a>
+      <a href="https://www.luis-gilberto.com/insights/series/#reflections" class="drawer-series-card active">
+        <div class="drawer-series-icon"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+        <div><div class="drawer-series-title">Reflections</div><div class="drawer-series-desc">Creativity & pace</div></div>
+      </a>
+      <a href="https://www.luis-gilberto.com/insights/" class="drawer-series-card">
+        <div class="drawer-series-icon"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+        <div><div class="drawer-series-title">All Stories</div><div class="drawer-series-desc">Browse everything</div></div>
+      </a>
+    </div>
+  </div>
+  <div class="drawer-global-section">
+    <div class="drawer-global-label">Ecosystem</div>
+    <a href="https://www.luis-gilberto.com/" class="drawer-global-link">
+      <div class="drawer-global-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      <span class="drawer-global-text">Portfolio</span>
+    </a>
+    <a href="https://www.luis-gilberto.com/insights/" class="drawer-global-link drawer-active">
+      <div class="drawer-global-icon"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+      <span class="drawer-global-text">Insights</span>
+    </a>
+    <a href="https://www.luis-gilberto.com/TheHub/" class="drawer-global-link">
+      <div class="drawer-global-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
+      <span class="drawer-global-text">The Hub</span>
+    </a>
+    <a href="https://portal.luis-gilberto.com/" class="drawer-global-link" target="_blank" rel="noopener">
+      <div class="drawer-global-icon"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+      <span class="drawer-global-text">The Portal ↗</span>
+    </a>
+  </div>
+  <div class="drawer-footer-strip">
+    <div class="drawer-status">
+      <div class="drawer-status-dot"></div>
+      <span class="drawer-status-label">Accepting Projects</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     BREADCRUMB
+═══════════════════════════════════════════ -->
+<nav class="context-bar" aria-label="Breadcrumb">
+  <div class="context-bar-inner">
+    <a href="https://www.luis-gilberto.com/insights/" class="crumb-link">Insights</a>
+    <span class="crumb-sep">›</span>
+    <a href="https://www.luis-gilberto.com/insights/series/#reflections" class="crumb-link">Reflections</a>
+    <span class="crumb-sep">›</span>
+    <span class="crumb-current">Unlocking the Blank Page</span>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════
+     ARTICLE HERO
+═══════════════════════════════════════════ -->
+<div class="article-hero">
+  <div class="article-eyebrow">
+    <span class="category-tag">Creative Process</span>
+    <div class="eyebrow-dot"></div>
+    <span class="series-tag">Reflections</span>
+  </div>
+  <h1 class="article-title">Unlocking the<br><em>Blank Page</em></h1>
+  <p class="article-subtitle">How I used AI to remember my own voice.</p>
+  <div class="article-byline">
+    <span>By Luis Gilberto</span>
+    <div class="byline-dot"></div>
+    <span>September 2025</span>
+    <div class="byline-dot"></div>
+    <span class="byline-series">Reflections Series</span>
+    <div class="byline-dot"></div>
+    <span>7 min read</span>
+  </div>
+</div>
+
+<!-- Hero illustration — contained, full natural dimensions, no crop -->
+<div class="hero-illustration-band">
+  <div class="hero-illustration-wrap">
+    <img class="hero-theme-img light fade-up"
+         src="/insights/assets/images/Unlocking_The_blank_Page_Illustration.png"
+         alt="Illustration: stepping through an archway of ideas — you want to say.">
+
+    <div class="sig-sticker-wrap" id="hero-sig">
+      <img class="sticker-light" src="/insights/assets/images/signature-AI.png" alt="Luis Gilberto / AI">
+      <img class="sticker-dark"  src="/insights/assets/images/signature-AI-dark.png" alt="Luis Gilberto / AI">
+      <div class="sig-tooltip">Visuals conceptualized by Luis Gilberto, refined via AI partnership.</div>
+    </div>
+  </div>
+  <p class="hero-caption">The illustration that started it all — conceptualized by Luis Gilberto, refined with AI.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     ARTICLE BODY
+═══════════════════════════════════════════ -->
+<div class="article-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <a href="https://www.luis-gilberto.com/insights/" class="back-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      All Stories
+    </a>
+
+    <div class="toc-card">
+      <div class="toc-label">Contents</div>
+      <a href="#intro" class="toc-link active">The Silence</a>
+      <a href="#key"   class="toc-link">The Key</a>
+      <a href="#soul"  class="toc-link">AI With Soul</a>
+      <a href="#truth" class="toc-link">Why It Matters</a>
     </div>
 
-    <button class="theme-toggle" id="themeToggle">
-        <svg class="sun-icon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="5"></circle></svg>
-        <svg class="moon-icon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    <div class="reading-meta">
+      <div class="reading-meta-label">Reading Time</div>
+      <div class="reading-meta-value">7</div>
+      <div class="reading-meta-sub">minutes</div>
+    </div>
+
+    <div class="sidebar-status">
+      <strong>Series</strong>
+      <p>Reflections — personal thoughts on creativity, pace, and momentum.</p>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <article class="main-content">
+
+    <!-- The Silence -->
+    <div class="reading-section fade-up" id="intro">
+      <p class="lead"><strong>It started with panic.</strong></p>
+      <p>The realization that my résumé hadn't been updated in years, and that every artifact of my work was scattered across time, platforms, and tools, hit me like a wave. I had memory, sure. But memory is slippery.</p>
+      <p>And there I was, facing the most intimidating creative opponent of all: a blinking cursor.</p>
+      <p>This wasn't just about updating a résumé. I wanted something bigger, maybe even audacious: a living time capsule. Something that didn't just list jobs and dates but captured the rollercoaster of campaigns, launches, late nights, and reinventions that shaped me.</p>
+      <p>But ambition has a way of making the blank page feel even heavier.</p>
+
+      <figure class="visual-break fade-up">
+        <div class="visual-break-frame">
+          <img class="break-img light"
+               src="/insights/assets/images/decorative-break-2.png"
+               alt="Staring out the window — ambition and isolation">
+          <div class="break-sig">
+            <img class="sticker-light" src="/insights/assets/images/signature-AI.png" alt="Luis Gilberto / AI">
+            <img class="sticker-dark"  src="/insights/assets/images/signature-AI-dark.png" alt="Luis Gilberto / AI">
+            <div class="break-tooltip">Visuals conceptualized by Luis Gilberto, refined via AI partnership.</div>
+          </div>
+        </div>
+        <figcaption>Ambition creates its own kind of isolation.</figcaption>
+      </figure>
+    </div>
+
+    <!-- The Key -->
+    <div class="reading-section fade-up" id="key">
+      <h2 class="section-heading">The Key</h2>
+      <p>My memories and stories pressed at the edges of my mind like prisoners gripping the bars of a cell, waiting to break free. I wasn't afraid of silence. I was afraid of not knowing how to begin.</p>
+      <p>That's when AI stepped in. Not as a ghostwriter. Not as a stand-in. <strong>As a key.</strong></p>
+      <p>It gave me the scaffolding I needed. A frame to build on. A nudge to move past the paralysis of the first line. It wasn't about perfection. It was about momentum. And momentum brought freedom.</p>
+
+      <figure class="visual-break fade-up">
+        <div class="visual-break-frame">
+          <img class="break-img light"
+               src="/insights/assets/images/decorative-break-1.png"
+               alt="Crushing the paper — the friction of beginning">
+          <div class="break-sig">
+            <img class="sticker-light" src="/insights/assets/images/signature-AI.png" alt="Luis Gilberto / AI">
+            <img class="sticker-dark"  src="/insights/assets/images/signature-AI-dark.png" alt="Luis Gilberto / AI">
+            <div class="break-tooltip">Visuals conceptualized by Luis Gilberto, refined via AI partnership.</div>
+          </div>
+        </div>
+        <figcaption>The friction isn't a bug. It's the process.</figcaption>
+      </figure>
+    </div>
+
+    <!-- AI With Soul -->
+    <div class="reading-section fade-up" id="soul">
+      <h2 class="section-heading">AI With Soul</h2>
+      <p>Suddenly, the stories began to pour. Not because AI wrote them, but because it caught them as I poured them out.</p>
+      <p>It helped me shape fragments I'd neglected, amplify sparks I'd left dormant. It unlocked more than words. It unlocked my passion for writing again.</p>
+
+      <div class="inset-card fade-up">
+        <strong>What people get wrong</strong>
+        <p>They think using AI means handing over authorship. But that's not how it works — at least not when you use it right.</p>
+      </div>
+
+      <p>I didn't feed AI a prompt and walk away. I gave it pieces of me — fragments, memories, half-formed ideas — and watched it help me see patterns I couldn't see on my own. It was like having a thought partner who never gets tired, never judges, and always says, <em>"What if you tried this?"</em></p>
+
+      <figure class="visual-break fade-up">
+        <div class="visual-break-frame">
+          <img class="break-img light"
+               src="/insights/assets/images/decorative-break-3.png"
+               alt="From chaos to clarity">
+          <div class="break-sig">
+            <img class="sticker-light" src="/insights/assets/images/signature-AI.png" alt="Luis Gilberto / AI">
+            <img class="sticker-dark"  src="/insights/assets/images/signature-AI-dark.png" alt="Luis Gilberto / AI">
+            <div class="break-tooltip">Visuals conceptualized by Luis Gilberto, refined via AI partnership.</div>
+          </div>
+        </div>
+        <figcaption>From chaos to clarity. The path isn't straight, but it connects.</figcaption>
+      </figure>
+    </div>
+
+    <!-- Why It Matters -->
+    <div class="reading-section fade-up" id="truth">
+      <h2 class="section-heading">Why It Matters</h2>
+      <p>We're living through a moment where AI feels both revolutionary and terrifying. Some people see it as a shortcut. Others see it as a threat. I see it as a tool — one that amplifies intention.</p>
+      <p>The blank page isn't scary because we lack ideas. It's scary because we lack permission to be imperfect. AI gave me that permission. It let me write badly first, then refine. It let me think out loud without judgment. It let me remember that creation is messy, nonlinear, and deeply human.</p>
+
+      <div class="pull-quote fade-up">
+        <p>AI didn't replace my voice.<br>It forced me to <em>find it</em> again.</p>
+      </div>
+
+      <p>It's not about replacing the human touch. It's about using technology to amplify it. To make space for curiosity. To unlock what was already there, waiting.</p>
+
+      <p class="closing-para">I didn't need AI to write for me. I needed it to sit with me. To help me get the first word out. To loosen whatever had calcified between my mind and my hands.</p>
+      <p class="closing-para">It didn't replace my voice. It reminded me I still had one.</p>
+    </div>
+
+  </article>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     KEEP READING
+═══════════════════════════════════════════ -->
+<section class="keep-reading">
+  <div class="keep-reading-inner">
+    <div>
+      <h2>Keep<br><em>Reading</em></h2>
+      <p>Explore more from the Reflections series.</p>
+    </div>
+    <a href="https://www.luis-gilberto.com/insights/" class="back-cta">
+      Back to Insights
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <a href="https://www.luis-gilberto.com/insights/" class="footer-logo-text">LG<span>.</span></a>
+        <p class="footer-tagline">Exploring the intersection of design,<br>technology, and human experience.</p>
+        <div class="social-row">
+          <a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" class="social-btn" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          </a>
+          <a href="https://luisgilberto00.link" target="_blank" class="social-btn" aria-label="Website">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Ecosystem</h4>
+        <ul>
+          <li><a href="https://www.luis-gilberto.com/">Portfolio</a></li>
+          <li><a href="https://www.luis-gilberto.com/insights/">Insights</a></li>
+          <li><a href="https://www.luis-gilberto.com/TheHub/">The Hub</a></li>
+          <li><a href="https://www.luis-gilberto.com/TheHub/strategy-iq.html">StrategyIQ</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="https://luisgilberto00.link/contact">Contact</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="/insights/insights-brand.html">Brand Guidelines</a></li>
+          <li><a href="#" id="open-ai-modal">About AI Collaboration</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Status</h4>
+        <div class="status-row">
+          <div class="dot-green"></div>
+          <span class="status-txt">Available for projects</span>
+        </div>
+        <p class="footer-tagline" style="font-size:13px; margin:0;">Seattle, WA — Open to select engagements worldwide.</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 <span>Luis Gilberto</span>. All rights reserved.</p>
+      <p class="footer-copy">Crafted with intention · Caracas meets Cascadia</p>
+    </div>
+  </div>
+</footer>
+
+<!-- AI Collaboration Modal -->
+<div class="modal-overlay" id="ai-modal">
+  <div class="modal-box">
+    <button class="modal-close" id="modal-close" aria-label="Close">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
-    <div class="top-accent"></div>
-
-    <!-- Hero Section -->
-    <header class="article-hero-modular">
-        <div class="container">
-            <div class="article-eyebrow">
-                <span class="category-tag">Creative Process</span>
-                <span class="eyebrow-sep">•</span>
-                <span class="series-tag">Reflections</span>
-            </div>
-
-            <h1>Unlocking the Blank Page</h1>
-            <p class="article-subtitle">How I used AI to remember my own voice.</p>
-
-            <div class="article-byline-row">
-                <span>By Luis Gilberto</span>
-                <span class="byline-sep">/</span>
-                <span class="publish-date">September 2025</span>
-            </div>
-        </div>
-        
-        <div class="hero-illustration">
-            <img src="/insights/assets/images/Unlocking_The_blank_Page_Illustration.png" alt="Illustration of stepping through an archway of ideas" style="width:100%; height:auto; border-radius:12px;">
-        </div>
-    </header>
-
-    <!-- Article Body -->
-    <div class="article-layout">
-        
-        <aside class="sidebar">
-            <div class="principles-nav">
-                <span class="principles-title">Table of Contents</span>
-                <a href="#intro" class="principle-link active">The Silence</a>
-                <a href="#key" class="principle-link">The Key</a>
-                <a href="#soul" class="principle-link">AI With Soul</a>
-                <a href="#truth" class="principle-link">Why It Matters</a>
-            </div>
-
-            <div class="inset-card" style="margin: 0; padding: 1.5rem; font-size: 0.9rem; border-color: var(--teal-accent);">
-                <strong>Reading Time</strong>
-                <p style="margin-top: 0.5rem; opacity: 0.8;">7 min read</p>
-            </div>
-        </aside>
-
-        <article class="main-content">
-            
-            <div class="reading-content" id="intro">
-                <p class="lead"><strong>It started with panic.</strong></p>
-                <p>The realization that my résumé hadn't been updated in years, and that every artifact of my work was scattered across time, platforms, and tools, hit me like a wave. I had memory, sure. But memory is slippery.</p>
-                <p>And there I was, facing the most intimidating creative opponent of all: a blinking cursor.</p>
-                <p>This wasn't just about updating a résumé. I wanted something bigger, maybe even audacious: a living time capsule. Something that didn't just list jobs and dates but captured the rollercoaster of campaigns, launches, late nights, and reinventions that shaped me.</p>
-                <p>But ambition has a way of making the blank page feel even heavier.</p>
-                
-                <div class="visual-break">
-                    <img src="/insights/assets/images/decorative-break-2.png" 
-                         alt="Staring out the window" 
-                         style="width: 100%; max-width: 600px; margin: 0 auto; display: block; border-radius: 12px;">
-                    <p class="caption">Ambition creates its own kind of isolation.</p>
-                </div>
-            </div>
-
-            <div class="reading-content" id="key">
-                <h3>The Key</h3>
-                <p>My memories and stories pressed at the edges of my mind like prisoners gripping the bars of a cell, waiting to break free. I wasn't afraid of silence. I was afraid of not knowing how to begin.</p>
-                <p>That's when AI stepped in. Not as a ghostwriter. Not as a stand-in. <strong>As a key.</strong></p>
-                <p>It gave me the scaffolding I needed. A frame to build on. A nudge to move past the paralysis of the first line. It wasn't about perfection. It was about momentum. And momentum brought freedom.</p>
-
-                <div class="visual-break">
-                    <img src="/insights/assets/images/decorative-break-1.png" 
-                         alt="Crushing the paper" 
-                         style="width: 100%; max-width: 400px; margin: 0 auto; display: block; border-radius: 12px;">
-                    <p class="caption">The friction isn't a bug. It's the process.</p>
-                </div>
-            </div>
-
-            <div class="reading-content" id="soul">
-                <h3>AI With Soul</h3>
-                <p>Suddenly, the stories began to pour. Not because AI wrote them, but because it caught them as I poured them out.</p>
-                <p>It helped me shape fragments I'd neglected, amplify sparks I'd left dormant. It unlocked more than words. It unlocked my passion for writing again.</p>
-                <p>Here's what people get wrong: they think using AI means handing over authorship. But that's not how it works, at least not when you use it right.</p>
-                <p>I didn't feed AI a prompt and walk away. I gave it pieces of me - fragments, memories, half-formed ideas - and watched it help me see patterns I couldn't see on my own. It was like having a thought partner who never gets tired, never judges, and always says, "What if you tried this?"</p>
-
-                <div class="visual-break">
-                    <img src="/insights/assets/images/decorative-break-3.png" 
-                         alt="From chaos to clarity" 
-                         style="width: 100%; max-width: 600px; margin: 0 auto; display: block; border-radius: 12px;">
-                    <p class="caption">From chaos to clarity. The path isn't straight, but it connects.</p>
-                </div>
-            </div>
-
-            <div class="reading-content" id="truth">
-                <h3>Why It Matters</h3>
-                <p>We're living through a moment where AI feels both revolutionary and terrifying. Some people see it as a shortcut. Others see it as a threat. I see it as a tool, one that amplifies intention.</p>
-                <p>The blank page isn't scary because we lack ideas. It's scary because we lack permission to be imperfect. AI gave me that permission. It let me write badly first, then refine. It let me think out loud without judgment. It let me remember that creation is messy, nonlinear, and deeply human.</p>
-                <p><strong>That's what I mean by "AI with soul."</strong></p>
-                <p>It's not about replacing the human touch. It's about using technology to amplify it. To make space for curiosity. To unlock what was already there, waiting.</p>
-
-                <div class="quote-card" style="margin-top: 4rem; padding: 2.5rem; background: var(--bg-secondary); border-radius: 12px; text-align: center;">
-                    <p style="font-family: 'Big Shoulders Display'; font-size: 2rem; line-height: 1.2; color: var(--text-primary); margin-bottom: 1rem;">The Truth: AI didn't replace my voice. It forced me to find it again.</p>
-                </div>
-                
-                <p class="closing-paragraph" style="margin-top: 2.5rem; font-style: italic; color: var(--text-secondary);">I didn't need AI to write for me. I needed it to sit with me. To help me get the first word out. To loosen whatever had calcified between my mind and my hands.</p>
-                <p class="closing-paragraph" style="font-style: italic; color: var(--text-secondary);">It didn't replace my voice. It reminded me I still had one.</p>
-            </div>
-
-        </article>
+    <div class="modal-eyebrow">Creative Process</div>
+    <h2 class="modal-title">About AI<br>Collaboration</h2>
+    <div class="modal-rule"></div>
+    <div class="modal-body">
+      <p>The illustrations on this site are a testament to creative partnership. Each visual is meticulously conceptualized, art-directed, and refined by Luis Gilberto. Advanced AI tools are then leveraged to translate these precise artistic visions into high-fidelity, polished illustrations that enhance the visual narrative and elevate the overall aesthetic.</p>
+      <p style="margin-top:1.2rem;">Beyond image-making, AI plays a vital role in synthesizing complex ideas, narratives, and systems into forms that are easier to absorb, faster to understand, and ready for action. The goal is not automation for its own sake, but a more fluid path from concept to comprehension to execution.</p>
     </div>
+  </div>
+</div>
 
-    <section class="keep-reading-section">
-        <div class="container">
-            <h2>Keep Reading</h2>
-            <p>Explore more insights on creative strategy and intention.</p>
-            <a href="/insights" class="back-link-cta">Back to Insights</a>
-        </div>
-    </section>
+<!-- ═══════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════ -->
+<script>
+(() => {
+  // ── Header scroll ─────────────────────────────────────────────
+  const header  = document.getElementById('site-header');
+  const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 10);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
 
-    <!-- Standard Portfolio Footer -->
-    <footer class="site-footer" role="contentinfo">
-        <div class="footer-container">
-            <div class="footer-grid-layout">
-                <div class="footer-brand-col">
-                    <a href="/index.html" class="footer-logo-link">
-                        <img src="/assets/images/Logomark_White_a.png" alt="Luis Gilberto" class="footer-logo-img">
-                        <span class="footer-brand-name">Luis Gilberto</span>
-                    </a>
-                    <p class="footer-tagline">Making technology feel human through clarity, beautiful execution, and systems that scale.</p>
-                    <div class="footer-social">
-                        <a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="mailto:hello@luis-gilberto.com" class="social-icon"><i class="far fa-envelope"></i></a>
-                    </div>
-                </div>
-                <nav class="footer-nav-col">
-                    <h3 class="footer-nav-heading">Ecosystem</h3>
-                    <ul class="footer-nav-list">
-                        <li><a href="/index.html" class="footer-nav-link">Portfolio</a></li>
-                        <li><a href="/TheHub/" class="footer-nav-link">The Hub</a></li>
-                        <li><a href="/insights/" class="footer-nav-link">Insights</a></li>
-                        <li><a href="https://portal.luis-gilberto.com" class="footer-nav-link footer-portal-link">The Portal</a></li>
-                    </ul>
-                </nav>
-                <nav class="footer-nav-col">
-                    <h3 class="footer-nav-heading">Connect</h3>
-                    <ul class="footer-nav-list">
-                        <li><a href="/contact.html" class="footer-nav-link">Contact</a></li>
-                        <li><a href="/about.html" class="footer-nav-link">About Me</a></li>
-                        <li><a href="https://www.linkedin.com/in/luisgilberto00" class="footer-nav-link">LinkedIn</a></li>
-                    </ul>
-                </nav>
-                <div class="footer-status-col">
-                    <div class="footer-status-card">
-                        <div class="status-indicator"><span class="status-dot"></span><span class="status-text">Accepting Projects</span></div>
-                        <a href="/contact.html" class="status-cta">Start a Conversation &rarr;</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="footer-bottom-bar">
-            <div class="footer-bottom-container">
-                <p class="footer-copyright">© 2026 Luis Gilberto. All Rights Reserved.</p>
-            </div>
-        </div>
-    </footer>
+  // ── Theme toggle ──────────────────────────────────────────────
+  const themeToggle = document.getElementById('theme-toggle');
+  const iconSun     = document.getElementById('icon-sun');
+  const iconMoon    = document.getElementById('icon-moon');
 
-    <script src="/insights/assets/js/article-interactions.js"></script>
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('insights-theme', theme);
+    iconSun.style.display  = theme === 'dark' ? 'none'  : 'block';
+    iconMoon.style.display = theme === 'dark' ? 'block' : 'none';
+    const ld = document.getElementById('logo-desktop');
+    if (ld) ld.src = theme === 'dark' ? '/insights/assets/images/Insights_logo_white.png' : '/insights/assets/images/Insights_logo_black.png';
+    const lm = document.getElementById('logo-mark');
+    if (lm) lm.src = theme === 'dark' ? '/insights/assets/images/Symbol_mobile.png' : '/insights/assets/images/LG-logomark-BlackCoral.png';
+  }
+  applyTheme('light');
+  localStorage.removeItem('insights-theme');
+  themeToggle?.addEventListener('click', () =>
+    applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark')
+  );
+
+  // ── Mega menu — four channels ─────────────────────────────────
+  const viewportWrap  = document.getElementById('nav-viewport');
+  const viewportInner = document.getElementById('nav-viewport-inner');
+  const triggers      = document.querySelectorAll('[data-trigger]');
+  const desktopNav    = document.getElementById('desktop-nav');
+  let   activeId = null, closeTimer = null;
+
+  function openDropdown(trigger) {
+    clearTimeout(closeTimer);
+    const panelId = trigger.id.replace('trigger-', 'content-');
+    const panel   = document.getElementById(panelId);
+    if (!panel) return;
+
+    // Swap panel content
+    document.querySelectorAll('.nav-content').forEach(p => p.classList.remove('active'));
+    panel.classList.add('active');
+
+    // Re-centre viewport under the trigger that opened it
+    const triggerRect = trigger.getBoundingClientRect();
+    const navRect     = desktopNav.getBoundingClientRect();
+    const triggerMid  = triggerRect.left + triggerRect.width / 2 - navRect.left;
+    viewportWrap.style.left = triggerMid + 'px';
+
+    viewportInner.classList.add('open');
+    triggers.forEach(t => t.setAttribute('aria-expanded', 'false'));
+    trigger.setAttribute('aria-expanded', 'true');
+    activeId = trigger.id;
+  }
+
+  function closeDropdown() {
+    closeTimer = setTimeout(() => {
+      viewportInner.classList.remove('open');
+      document.querySelectorAll('.nav-content').forEach(p => p.classList.remove('active'));
+      triggers.forEach(t => t.setAttribute('aria-expanded', 'false'));
+      activeId = null;
+    }, 120);
+  }
+
+  triggers.forEach(t => {
+    t.addEventListener('mouseenter', () => openDropdown(t));
+    t.addEventListener('click', e => {
+      e.stopPropagation();
+      activeId === t.id ? closeDropdown() : openDropdown(t);
+    });
+  });
+  desktopNav.addEventListener('mouseleave', closeDropdown);
+  viewportInner.addEventListener('mouseenter', () => clearTimeout(closeTimer));
+  viewportInner.addEventListener('mouseleave', closeDropdown);
+  document.addEventListener('click', e => { if (!desktopNav.contains(e.target)) closeDropdown(); });
+  desktopNav.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { closeDropdown(); document.getElementById(activeId)?.focus(); }
+  });
+
+  // ── Mobile menu ───────────────────────────────────────────────
+  const mobileToggle = document.getElementById('mobile-toggle');
+  const mobileMenu   = document.getElementById('mobile-menu');
+  const menuIcon     = document.getElementById('menu-icon');
+  let menuOpen = false;
+  mobileToggle?.addEventListener('click', () => {
+    menuOpen = !menuOpen;
+    mobileMenu.classList.toggle('open', menuOpen);
+    mobileToggle.setAttribute('aria-expanded', menuOpen);
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    menuIcon.innerHTML = menuOpen
+      ? '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>'
+      : '<line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>';
+  });
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 1024 && menuOpen) { menuOpen = false; mobileMenu.classList.remove('open'); document.body.style.overflow = ''; }
+  });
+
+  // ── TOC scroll tracking ───────────────────────────────────────
+  const tocLinks = document.querySelectorAll('.toc-link');
+  const sections = ['intro','key','soul','truth'].map(id => document.getElementById(id));
+  const tocObs   = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        tocLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === `#${id}`));
+      }
+    });
+  }, { threshold: 0.25 });
+  sections.forEach(s => s && tocObs.observe(s));
+
+  // ── Scroll fade-up ────────────────────────────────────────────
+  const fadeObs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.fade-up').forEach(el => fadeObs.observe(el));
+
+  // ── AI modal ──────────────────────────────────────────────────
+  const aiModal  = document.getElementById('ai-modal');
+  const openBtn  = document.getElementById('open-ai-modal');
+  const closeBtn = document.getElementById('modal-close');
+  openBtn?.addEventListener('click', e => { e.preventDefault(); aiModal.classList.add('open'); });
+  closeBtn?.addEventListener('click', () => aiModal.classList.remove('open'));
+  aiModal?.addEventListener('click', e => { if (e.target === aiModal) aiModal.classList.remove('open'); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') aiModal.classList.remove('open'); });
+
+})();
+</script>
+
 </body>
 </html>

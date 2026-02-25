@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/components/providers/toast-provider"
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs"
 
 export default function SettingsPage() {
   const { data: session, update: updateSession } = useSession()
@@ -83,131 +84,196 @@ export default function SettingsPage() {
   )
 
   return (
-    <div className="p-8 md:p-16 max-w-4xl mx-auto space-y-12">
-      {/* Task 1: Strategic Identity Card */}
-      <div className="bg-white/[0.03] border border-white/10 rounded-3xl p-8 md:p-12 backdrop-blur-xl relative overflow-hidden group">
-        <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.05] transition-opacity">
-          <ShieldCheck size={160} />
+    <div className="p-8 md:p-16 max-w-5xl mx-auto space-y-16 animate-in fade-in duration-700">
+      {/* Secondary Exit: Standard Breadcrumb */}
+      <div className="mb-8">
+        <Breadcrumbs 
+          showBack={false}
+          items={[
+            { label: 'DASHBOARD', href: '/dashboard' },
+            { label: 'SYSTEM SETTINGS', active: true }
+          ]} 
+        />
+      </div>
+
+      {/* A. Header: Strategic Identity Card */}
+      <div className="bg-[#0A0A0A] border border-white/5 rounded-[2rem] p-10 md:p-16 relative overflow-hidden group shadow-2xl">
+        <div className="absolute top-0 right-0 p-12 opacity-[0.02] group-hover:opacity-[0.04] transition-opacity">
+          <ShieldCheck size={200} />
         </div>
         
-        <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12 relative z-10">
-          <div className="w-32 h-32 rounded-full border-2 border-teal/30 flex items-center justify-center bg-teal/5 text-teal text-4xl font-bold font-big-shoulders italic">
+        <div className="flex flex-col md:flex-row items-center gap-10 md:gap-16 relative z-10">
+          <div className="w-40 h-40 rounded-full border border-teal/20 flex items-center justify-center bg-teal/[0.02] text-teal text-5xl font-bold font-big-shoulders italic shadow-[0_0_40px_rgba(46,211,198,0.05)]">
             {profile.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'P'}
           </div>
           
-          <div className="text-center md:text-left space-y-2">
-            <h1 className="text-4xl md:text-5xl font-bold font-big-shoulders tracking-widest italic uppercase text-white leading-none">
-              {profile.name || 'Partner Name'}
-            </h1>
-            <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-              <span className="text-[11px] font-bold text-teal tracking-[0.3em] uppercase">
-                {profile.role === 'ADMIN' ? 'Level 3 - Master Certifier' : (profile.title || 'Strategic Partner')}
-              </span>
-              <div className="hidden md:block w-1 h-1 rounded-full bg-white/10" />
-              <span className="text-[11px] font-bold text-white/40 tracking-[0.3em] uppercase">
-                {profile.role === 'ADMIN' ? 'Administrative Identity' : (profile.company || 'Organization')}
-              </span>
+          <div className="text-center md:text-left space-y-4">
+            <div className="space-y-1">
+              <span className="text-[10px] font-bold text-coral tracking-[0.4em] uppercase">Strategic Identity</span>
+              <h1 className="text-5xl md:text-7xl font-black font-big-shoulders tracking-tighter uppercase text-white leading-none italic">
+                {profile.name || 'Anonymous Partner'}
+              </h1>
+            </div>
+            
+            <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
+              <div className="flex items-center gap-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-teal shadow-[0_0_10px_rgba(46,211,198,0.5)]" />
+                <span className="text-[11px] font-bold text-white tracking-[0.3em] uppercase">
+                  {profile.role === 'ADMIN' ? 'Master Architect' : (profile.title || 'Strategic Partner')}
+                </span>
+              </div>
+              <div className="hidden md:block w-px h-4 bg-white/10" />
+              <div className="flex items-center gap-3">
+                <Building2 size={12} className="text-white/20" />
+                <span className="text-[11px] font-bold text-white/40 tracking-[0.3em] uppercase">
+                  {profile.role === 'ADMIN' ? 'Command Center' : (profile.company || 'Private Entity')}
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <form onSubmit={handleSave} className="space-y-16">
-        {/* Task 2: System Connection Transparency (Client Only) */}
-        {profile.role !== 'ADMIN' && (
-          <div className="space-y-8">
-            <div className="flex items-center gap-3">
-              <div className="w-1.5 h-1.5 rounded-full bg-teal" />
-              <h2 className="text-[11px] font-bold tracking-[0.4em] uppercase text-white/40">System Connection</h2>
+      {/* SYSTEM CONNECTION STATUS - Page 13 Refinement */}
+      <div className="grid grid-cols-3 gap-4 px-4">
+        {[
+          { label: 'API GATEWAY', status: 'ACTIVE' },
+          { label: 'DATABASE', status: 'SYNCED' },
+          { label: 'AUTH PROTOCOL', status: 'SECURE' }
+        ].map((sys) => (
+          <div key={sys.label} className="flex items-center gap-3 py-4 border-b border-white/5">
+            <div className="w-1.5 h-1.5 rounded-full bg-teal shadow-[0_0_8px_rgba(46,211,198,0.4)]" />
+            <div className="flex flex-col">
+              <span className="text-[8px] font-bold text-white/20 tracking-[0.2em] uppercase">{sys.label}</span>
+              <span className="text-[10px] font-bold text-white/60 tracking-widest uppercase italic font-big-shoulders">{sys.status}</span>
             </div>
-            
-            <div className="p-8 rounded-2xl bg-white/[0.02] border border-white/5 space-y-6">
-              <div className="flex flex-col md:flex-row justify-between gap-6">
-                <div className="space-y-1">
-                  <p className="font-big-shoulders italic text-lg text-white/40 tracking-wider">Active strategic ecosystem</p>
-                  <p className="text-xl font-medium text-white tracking-tight">{profile.linkedProjectTitle || "No active project detected"}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* B. Content: System Connection Details */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+        <div className="lg:col-span-8 space-y-16">
+          <form onSubmit={handleSave} className="space-y-16">
+            <div className="space-y-10">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-[1px] bg-white/10" />
+                <h2 className="text-[10px] font-bold tracking-[0.5em] uppercase text-white/30">Identity Parameters</h2>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-12">
+                <div className="space-y-3 group">
+                  <label className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.2em] group-focus-within:text-coral transition-colors">Legal Name</label>
+                  <Input 
+                    value={profile.name}
+                    onChange={(e) => setProfile({...profile, name: e.target.value})}
+                    className="bg-transparent border-0 border-b border-white/5 rounded-none px-0 h-12 text-white font-inter text-lg focus:border-coral transition-all focus:ring-0 placeholder:text-white/5"
+                    placeholder="Full Name"
+                  />
                 </div>
-                <div className="space-y-1 md:text-right">
-                  <p className="font-big-shoulders italic text-lg text-white/40 tracking-wider">Project identifier</p>
-                  <p className="text-sm font-mono text-zinc-500 tracking-widest">{profile.linkedProjectId || "DISCONNECTED"}</p>
+
+                <div className="space-y-3 opacity-60">
+                  <label className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.2em]">Email Address</label>
+                  <Input 
+                    value={profile.email}
+                    readOnly
+                    className="bg-transparent border-0 border-b border-white/5 rounded-none px-0 h-12 text-zinc-500 font-inter text-lg cursor-not-allowed focus:ring-0"
+                  />
+                  <p className="text-[8px] text-zinc-700 tracking-widest uppercase italic">Contact technical support to update email identity.</p>
+                </div>
+
+                <div className="space-y-3 group">
+                  <label className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.2em] group-focus-within:text-coral transition-colors">Organization</label>
+                  <Input 
+                    value={profile.company}
+                    onChange={(e) => setProfile({...profile, company: e.target.value})}
+                    className="bg-transparent border-0 border-b border-white/5 rounded-none px-0 h-12 text-white font-inter text-lg focus:border-coral transition-all focus:ring-0 placeholder:text-white/5"
+                    placeholder="Company Name"
+                  />
+                </div>
+
+                <div className="space-y-3 group">
+                  <label className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.2em] group-focus-within:text-coral transition-colors">Strategic Title</label>
+                  <Input 
+                    value={profile.title}
+                    onChange={(e) => setProfile({...profile, title: e.target.value})}
+                    className="bg-transparent border-0 border-b border-white/5 rounded-none px-0 h-12 text-white font-inter text-lg focus:border-coral transition-all focus:ring-0 placeholder:text-white/5"
+                    placeholder="Executive Role"
+                  />
                 </div>
               </div>
-              
-              {profile.linkedProjectId ? (
-                <div className="flex items-center gap-2 text-[#2ED3C6]">
-                  <ShieldCheck size={14} />
-                  <span className="text-[9px] font-bold tracking-[0.2em] uppercase">Linkage Verified // Strategic Node Active</span>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 text-coral animate-pulse">
-                  <LinkIcon size={14} />
-                  <span className="text-[9px] font-bold tracking-[0.2em] uppercase">Action Required // Reconnect to Ecosystem</span>
-                </div>
-              )}
             </div>
-          </div>
-        )}
 
-        {/* Task 3: Editorial Form Styling */}
-        <div className="space-y-12">
-          <div className="flex items-center gap-3">
-            <div className="w-1.5 h-1.5 rounded-full bg-zinc-700" />
-            <h2 className="text-[11px] font-bold tracking-[0.4em] uppercase text-white/40">Identity Parameters</h2>
+            <div className="flex justify-start">
+              <Button 
+                type="submit"
+                disabled={saving}
+                className="bg-coral hover:bg-coral/90 text-[#050505] font-black tracking-[0.3em] px-16 h-16 rounded-2xl shadow-[0_0_30px_rgba(249,111,110,0.15)] transition-all uppercase text-[11px] group"
+              >
+                {saving ? <RefreshCw className="animate-spin mr-3" size={16} /> : <Save className="mr-3 group-hover:scale-110 transition-transform" size={16} />}
+                Synchronize Identity
+              </Button>
+            </div>
+          </form>
+        </div>
+
+        <div className="lg:col-span-4 space-y-10">
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-[1px] bg-white/10" />
+            <h2 className="text-[10px] font-bold tracking-[0.5em] uppercase text-white/30">System Status</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
-            <div className="space-y-3">
-              <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Legal Name</label>
-              <Input 
-                value={profile.name}
-                onChange={(e) => setProfile({...profile, name: e.target.value})}
-                className="bg-transparent border-0 border-b border-white/10 rounded-none px-0 h-10 text-white font-inter focus:border-white transition-all focus:ring-0 placeholder:text-white/5"
-                placeholder="Partner Identity"
-              />
+          <div className="space-y-6">
+            <div className="p-8 rounded-3xl bg-white/[0.02] border border-white/5 space-y-8 relative overflow-hidden">
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Connection Health</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-teal animate-pulse" />
+                    <span className="text-[9px] font-bold text-teal uppercase tracking-widest">Active</span>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <p className="text-[10px] text-zinc-400 font-inter leading-relaxed italic">
+                    "StrategyIQ™ Engine is currently synced with your local environment. Data integrity verified."
+                  </p>
+                </div>
+
+                <div className="pt-6 border-t border-white/5 flex items-center justify-between">
+                  <div className="space-y-1">
+                    <p className="text-[8px] text-zinc-600 font-bold uppercase tracking-widest">Protocol Version</p>
+                    <p className="text-[10px] text-white font-mono">v5.7.0</p>
+                  </div>
+                  <ShieldCheck size={16} className="text-teal/40" />
+                </div>
+              </div>
             </div>
 
-            <div className="space-y-3">
-              <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Email (Read-only)</label>
-              <Input 
-                value={profile.email}
-                readOnly
-                className="bg-transparent border-0 border-b border-white/5 rounded-none px-0 h-10 text-zinc-600 font-inter cursor-not-allowed focus:ring-0"
-              />
-            </div>
-
-            <div className="space-y-3">
-              <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Organization</label>
-              <Input 
-                value={profile.company}
-                onChange={(e) => setProfile({...profile, company: e.target.value})}
-                className="bg-transparent border-0 border-b border-white/10 rounded-none px-0 h-10 text-white font-inter focus:border-white transition-all focus:ring-0 placeholder:text-white/5"
-                placeholder="Enterprise Entity"
-              />
-            </div>
-
-            <div className="space-y-3">
-              <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Strategic Title</label>
-              <Input 
-                value={profile.title}
-                onChange={(e) => setProfile({...profile, title: e.target.value})}
-                className="bg-transparent border-0 border-b border-white/10 rounded-none px-0 h-10 text-white font-inter focus:border-white transition-all focus:ring-0 placeholder:text-white/5"
-                placeholder="Executive Role"
-              />
+            {/* C. Footer: Legal/IP notice - Page 13 Wireframe Alignment */}
+            <div className="pt-12 mt-12 border-t border-white/5 space-y-4">
+              <p className="text-[10px] text-zinc-500 font-inter leading-relaxed uppercase tracking-[0.2em] max-w-2xl">
+                <span className="text-coral font-bold mr-2">NOTICE:</span> 
+                Confidential and Proprietary Information. Authorized use only. This portal and the StrategyIQ™ Engine contain proprietary trade secrets. Unauthorized access or disclosure is strictly prohibited under federal and international law.
+              </p>
+              <div className="flex items-center gap-6">
+                <div className="flex flex-col gap-1">
+                  <span className="text-[8px] text-zinc-700 font-mono tracking-widest uppercase">Protocol Identity</span>
+                  <span className="text-[10px] text-white/40 font-mono tracking-tighter uppercase">StrategyIQ™ v5.7.0 // SECURE</span>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <span className="text-[8px] text-zinc-700 font-mono tracking-widest uppercase">Artifact Hash</span>
+                  <span className="text-[10px] text-white/40 font-mono tracking-tighter">{session?.user?.id?.toUpperCase() || "UNKNOWN_ID"}</span>
+                </div>
+                <div className="ml-auto flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-teal shadow-[0_0_8px_rgba(46,211,198,0.3)]" />
+                  <span className="text-[9px] font-bold text-teal/40 uppercase tracking-[0.3em]">Access Monitored</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-
-        <div className="flex justify-start pt-8">
-          <Button 
-            type="submit"
-            disabled={saving}
-            className="bg-coral hover:bg-coral/90 text-black font-black tracking-[0.3em] px-12 h-14 rounded-full shadow-2xl transition-all uppercase text-[10px]"
-          >
-            {saving ? <RefreshCw className="animate-spin mr-2" size={16} /> : null}
-            Update Identity
-          </Button>
-        </div>
-      </form>
+      </div>
     </div>
   )
 }

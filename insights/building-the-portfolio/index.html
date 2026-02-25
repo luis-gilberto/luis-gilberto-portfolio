@@ -1,663 +1,911 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Building the Portfolio | Luis Gilberto – Insights</title>
-    <meta name="description" content="A portfolio is a portrait. This is the story of how I rebuilt the site and, quietly, myself.">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Building the Portfolio | Luis Gilberto &ndash; Insights</title>
+  <meta name="description" content="A portfolio is a portrait. This is the story of how I rebuilt the site and, quietly, myself.">
+  <link rel="icon" type="image/png" href="/insights/assets/icons/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/icons/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/insights/assets/css/insights-article.css">
+  
+  <style>
+    /* === ROOT & VARIABLES === */
+    :root {
+      --coral: #FF6B6B;
+      --teal: #4ECDC4;
+      --dark-bg: #0a0a0a;
+      --darker-bg: #050505;
+      --card-bg: #111111;
+      --text-primary: #ffffff;
+      --text-secondary: #a0a0a0;
+      --text-muted: #666666;
+      --border-subtle: rgba(255, 255, 255, 0.1);
+      --accent-gradient: linear-gradient(135deg, var(--coral) 0%, #ff8787 100%);
+    }
 
-    <link rel="icon" type="image/png" href="/insights/assets/icons/favicon-32x32.png">
+    [data-theme="light"] {
+      --dark-bg: #ffffff;
+      --darker-bg: #f8f8f8;
+      --card-bg: #f5f5f5;
+      --text-primary: #0a0a0a;
+      --text-secondary: #4a4a4a;
+      --text-muted: #999999;
+      --border-subtle: rgba(0, 0, 0, 0.1);
+    }
+
+    /* === RESET & BASE === */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--dark-bg);
+      color: var(--text-primary);
+      line-height: 1.7;
+      font-size: 16px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* === THEME TOGGLE === */
+    .theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      background: var(--nav-bg);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: var(--font-base);
+      font-size: 14px;
+      color: var(--text-primary);
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.1);
+      background: var(--coral-accent);
+      border-color: var(--coral-accent);
+    }
+
+    .theme-toggle svg {
+      width: 20px;
+      height: 20px;
+      fill: var(--text-primary);
+    }
+
+    [data-theme="light"] .moon-icon,
+    [data-theme="dark"] .sun-icon {
+      display: none;
+    }
+
+    /* === TOP ACCENT === */
+    .top-accent {
+      height: 4px;
+      background: var(--accent-gradient);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1001;
+    }
+
+    /* === BREADCRUMB NAV === */
+    .nav-breadcrumb {
+      padding: 2rem 0 1rem;
+      margin-top: 4px;
+    }
+
+    .nav-breadcrumb .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .breadcrumb-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .breadcrumb-link:hover {
+      color: var(--coral);
+    }
+
+    .breadcrumb-separator {
+      color: var(--text-muted);
+    }
+
+    .breadcrumb-current {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    /* === HERO === */
+    .article-hero-modular {
+      padding: 3rem 0 4rem;
+    }
+
+    .article-hero-modular .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      text-align: center;
+    }
+
+    .article-category {
+      display: inline-block;
+      color: var(--coral);
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+    }
+
+    .article-hero-modular h1 {
+      font-family: 'Big Shoulders Display', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .article-subtitle {
+      font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+      color: var(--text-secondary);
+      font-weight: 300;
+      margin-bottom: 1.5rem;
+    }
+
+    .article-hero-modular .article-byline {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--text-secondary);
+      margin: 1rem 0;
+      opacity: 0.8;
+    }
+
+    .article-hero-modular .series-badge {
+      display: inline-block;
+      background: var(--teal);
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+    }
+
+    .article-meta {
+      display: flex;
+      gap: 0.75rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      justify-content: center;
+      margin-bottom: 3rem;
+    }
+
+    .hero-illustration {
+      margin-top: 3rem;
+      border-radius: 16px;
+      overflow: hidden;
+      background: var(--card-bg);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .hero-illustration img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* === MODULAR LAYOUT === */
+    .article-modular {
+      padding: 4rem 0;
+    }
+
+    .container-modular {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: 280px 1fr 320px;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    @media (max-width: 1200px) {
+      .container-modular {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+      
+      .column-left,
+      .column-right {
+        display: none;
+      }
+    }
+
+    /* === COLUMN CARDS === */
+    .hero-card,
+    .quote-card,
+    .statement-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
     
-    <!-- FONTS -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous"></script>
+    /* Remove sticky positioning entirely - let cards flow naturally */
 
-    <!-- CORE CSS -->
-    <link rel="stylesheet" href="/insights/assets/css/article-theme.css">
-    
-    <style>
-        /* PAGE SPECIFIC EDITORIAL STYLES */
-        :root {
-            --accent-color: #FF6B6B; /* Coral */
-        }
+    .hero-card-content h2 {
+      font-family: 'Big Shoulders Display', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      line-height: 1.2;
+    }
 
-        /* Fix double underline in global nav active state */
-        .lg-nav-link,
-        .mobile-nav-link {
-            text-decoration: none;
-        }
+    .hero-card-content p {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      line-height: 1.6;
+    }
 
-        .lg-nav-link.is-active {
-            box-shadow: none;
-        }
+    .quote-card {
+      background: var(--accent-gradient);
+      border: none;
+    }
 
-        /* Dark Mode Logo Fix (if needed) */
-        html[data-theme="dark"] .lg-logo img,
-        html[data-theme="dark"] .mobile-menu-header img {
-            filter: invert(1) hue-rotate(180deg);
-            opacity: 0.92;
-        }
+    .large-quote {
+      font-family: 'Big Shoulders Display', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 600;
+      line-height: 1.3;
+      color: white;
+    }
 
-        .hero-illustration {
-            margin-top: 3rem;
-            border-radius: 4px;
-            overflow: hidden;
-            background: var(--surface);
-            border: 1px solid var(--border);
-        }
-        .hero-illustration img { width: 100%; display: block; }
+    .statement-card-primary {
+      background: var(--card-bg);
+      border-left: 4px solid var(--coral);
+    }
 
-        .date-label {
-            font-family: 'Inter', sans-serif;
-            font-size: 0.72rem;
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-            font-weight: 700;
-            opacity: 0.65;
-            margin-right: 0.4rem;
-        }
+    .statement-card-emphasis {
+      background: linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(255, 107, 107, 0.05) 100%);
+      border: 1px solid rgba(255, 107, 107, 0.2);
+    }
 
-        /* --- EDITORIAL HIERARCHY --- */
-        
-        /* The Dek */
-        .article-dek {
-            margin-top: 0.75rem;
-            max-width: 55ch;
-            font-family: 'Inter', sans-serif;
-            font-size: 1rem;
-            line-height: 1.6;
-            opacity: 0.82;
-            margin-left: auto;
-            margin-right: auto;
-        }
+    .statement-card-final {
+      background: var(--darker-bg);
+      border: 1px solid var(--border-subtle);
+      text-align: center;
+    }
 
-        /* Signature Pull Quote */
-        .pull-quote-block {
-            margin: 2.25rem 0 2.5rem;
-            padding: 1.5rem 1.5rem;
-            border-left: 3px solid var(--accent-color);
-            background: var(--soft);
-            border-radius: 8px;
-        }
-        .pull-quote-kicker {
-            font-family: 'Inter', sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-            font-size: 0.72rem;
-            font-weight: 700;
-            color: var(--accent-color);
-            margin: 0 0 0.5rem;
-        }
-        .pull-quote-text {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.45rem;
-            line-height: 1.35;
-            margin: 0;
-            font-style: italic;
-        }
+    .statement-text {
+      font-size: 1.1rem;
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
 
-        /* Quote Card (Reinvention) */
-        .quote-card {
-            margin: 2.5rem 0;
-            padding: 2rem;
-            background: var(--bg-secondary);
-            border-radius: 8px;
-            text-align: center;
-        }
-        .large-quote {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.6rem;
-            font-style: italic;
-            color: var(--text-primary);
-        }
+    .statement-text-large {
+      font-family: 'Big Shoulders Display', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.5rem;
+    }
 
-        /* Editorial Note (Reflection) */
-        .editorial-note {
-            margin-top: 2rem;
-            padding: 1.5rem;
-            background: var(--soft);
-            border-radius: 8px;
-            border-left: 4px solid var(--text-primary);
-        }
-        .editorial-label {
-            display: block;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            opacity: 0.6;
-        }
-        .editorial-text {
-            font-style: italic;
-            opacity: 0.9;
-        }
+    .statement-subtext {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      margin-top: 1rem;
+    }
 
-        /* Narrative Dividers */
-        .section-divider-label {
-          margin-top: 2rem;
-          font-family: 'Inter', sans-serif;
-          font-size: 0.85rem;
-          letter-spacing: 0.02em;
-          color: var(--muted);
-          border-left: 2px solid var(--border);
-          padding-left: 0.9rem;
-        }
-        
-        .closing-line {
-          margin-top: 2rem;
-          font-family: 'Inter', sans-serif;
-          font-size: 1rem;
-          color: var(--muted);
-        }
+    .final-statement {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      font-style: italic;
+    }
 
-        /* Closing Section */
-        .closing-section {
-            margin-top: 3rem;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border-color);
-        }
-        .closing-section h3 {
-            font-family: 'Big Shoulders Display', sans-serif;
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
-        }
+    .checklist-title {
+      font-family: 'Big Shoulders Display', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
 
-        /* Quiet Sidebar TOC */
-        .principles-nav {
-            position: sticky;
-            top: 6rem;
-        }
-        .principles-title { opacity: 0.75; display: block; margin-bottom: 1rem; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; }
-        .principle-link { opacity: 0.6; display: block; margin-bottom: 0.5rem; text-decoration: none; color: inherit; font-size: 0.9rem; transition: opacity 0.2s; }
-        .principle-link:hover { opacity: 1; }
-        .principle-link.active { opacity: 1; color: var(--text-primary); font-weight: 600; border-left: 2px solid var(--accent-color); padding-left: 0.75rem; margin-left: -0.85rem; }
+    .principle-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
 
-        /* Nav Link Fix */
-        .lg-nav-link {
-            font-family: 'Inter', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #666;
-            text-decoration: none;
-            padding-bottom: 4px;
-            border-bottom: 2px solid transparent;
-            transition: all 0.2s;
-        }
-        .lg-nav-link:hover { color: var(--text-primary); }
-        .lg-nav-link.is-active { color: var(--text-primary); border-bottom-color: var(--accent-color); }
+    .principle-list li {
+      padding-left: 0;
+    }
 
-        /* Dark Mode Overrides for Page Specifics */
-        [data-theme="dark"] .lg-nav-link { color: #aaa; }
-        [data-theme="dark"] .lg-nav-link:hover,
-        [data-theme="dark"] .lg-nav-link.is-active { color: #fff; }
-        [data-theme="dark"] .hero-illustration { background: #1a1a1a; border-color: rgba(255,255,255,0.1); }
-        [data-theme="dark"] .pull-quote-block { background: rgba(255,255,255,0.05); }
-        [data-theme="dark"] .editorial-note { background: rgba(255,255,255,0.05); border-left-color: #fff; }
-        [data-theme="dark"] .quote-card { background: rgba(255,255,255,0.05); }
+    .principle-list strong {
+      color: var(--coral);
+      display: block;
+      margin-bottom: 0.25rem;
+    }
 
-        /* Responsive Logic */
-        @media (max-width: 968px) {
-            .sidebar { display: none !important; }
-            .article-layout { grid-template-columns: 1fr; display: block; }
-            .pull-quote-text { font-size: 1.4rem; }
-            .header-container { padding: 0 1rem; }
-            
-            .main-content { max-width: 68ch; margin: 0 auto; }
-            .pull-quote-block { padding: 1.15rem; }
-            .pull-quote-text { font-size: 1.22rem; }
-            .section-divider-label { margin-top: 1.75rem; }
+    /* === CENTER READING COLUMN === */
+    .column-center {
+      min-width: 0;
+    }
 
-            .article-byline-row {
-                flex-wrap: wrap;
-                gap: 0.4rem 0.6rem;
-            }
+    .reading-content {
+      max-width: 720px;
+      margin: 0 auto;
+    }
 
-            .byline-sep {
-                opacity: 0.35;
-            }
-        }
+    .reading-content p {
+      margin-bottom: 1.5rem;
+      line-height: 1.8;
+      color: var(--text-primary);
+    }
 
-        /* Signature placement fix for hero image */
-        .article-hero-modular .img-sig-wrapper .sig-sticker {
-            bottom: 12px !important;
-            right: 12px !important;
-            width: 110px !important;
-            transform: rotate(-2deg) !important;
-        }
+    .lead {
+      font-size: 1.3rem;
+      font-weight: 400;
+      line-height: 1.7;
+      color: var(--text-primary);
+      margin-bottom: 2rem;
+    }
 
-        /* --- Sticker Positioning for Article Body Images --- */
-        .img-sig-wrapper { 
-            position: relative; 
-            display: block; 
-            width: 100%; 
-            height: 100%; 
-        }
+    .reading-content h2 {
+      font-family: 'Big Shoulders Display', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-top: 3rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.2;
+    }
 
-        /* --- FIX FOR VISUAL BREAK WRAPPER --- */ 
-        .visual-break .img-sig-wrapper { 
-            width: fit-content !important; /* Shrink wrapper to image width */ 
-            margin: 0 auto; /* Keep the image centered */ 
-            line-height: 0; /* Remove ghost space below image */ 
-        }
+    .reading-content h3 {
+      font-family: 'Big Shoulders Display', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--coral);
+    }
 
-        .visual-break .sig-sticker {
-            position: absolute !important;
-            bottom: 10px !important;
-            right: 10px !important;
-            width: 100px !important;
-            z-index: 20;
-            transform: rotate(-3deg) !important;
-            opacity: 0.9;
-            pointer-events: auto !important;
-            cursor: help;
-        }
+    .reading-content a {
+      color: var(--coral);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s ease;
+    }
 
-        /* Ensure Dark/Light toggling works in the body */
-        [data-theme="light"] .visual-break .sig-sticker.theme-img-dark { display: none !important; }
-        [data-theme="dark"] .visual-break .sig-sticker.theme-img-light { display: none !important; }
+    .reading-content a:hover {
+      border-bottom-color: var(--coral);
+    }
 
-        /* --- HEADER DARK MODE FIX --- */ 
-        html[data-theme="dark"] .lg-site-header { 
-            background-color: #111111 !important; /* Force dark background */ 
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important; 
-        } 
-        
-        /* Improve Link Contrast in Dark Mode */ 
-        html[data-theme="dark"] .lg-nav-link { 
-            color: #b0b0b0 !important; /* Light grey for inactive links */ 
-        } 
-        
-        html[data-theme="dark"] .lg-nav-link:hover, 
-        html[data-theme="dark"] .lg-nav-link.is-active { 
-            color: #ffffff !important; /* Pure white for active/hover */ 
-            border-bottom-color: var(--accent-color) !important; 
-        }
+    .section-spacer {
+      height: 3rem;
+    }
 
-        /* --- AI ATTRIBUTION TOOLTIP --- */ 
-        .ai-tooltip { 
-            visibility: hidden; 
-            opacity: 0; 
-            position: absolute; 
-            bottom: 45px; /* Sits right above the sticker */ 
-            right: 0; 
-            background-color: rgba(0, 0, 0, 0.9); 
-            color: #fff; 
-            padding: 8px 12px; 
-            border-radius: 6px; 
-            font-family: 'Inter', sans-serif; 
-            font-size: 0.75rem; 
-            line-height: 1.3; 
-            width: max-content; 
-            max-width: 220px; 
-            z-index: 100; 
-            transition: opacity 0.2s ease, transform 0.2s ease; 
-            transform: translateY(5px); 
-            pointer-events: none; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2); 
-            border: 1px solid rgba(255,255,255,0.1); 
-        } 
-        
-        /* Show tooltip on hover */ 
-        .img-sig-wrapper .sig-sticker:hover ~ .ai-tooltip { 
-            visibility: visible !important; 
-            opacity: 1 !important; 
-            transform: translateY(0) !important; 
-            z-index: 999 !important; 
-        } 
-        
-        /* Also ensure the hero container doesn't clip the tooltip */ 
-        .hero-illustration, .visual-break { 
-            overflow: visible !important; 
-        } 
-        
-        /* Main Image Hover Effect (Subtle) */ 
-        .hero-illustration img:not(.sig-sticker), 
-        .visual-break img:not(.sig-sticker) { 
-            transition: filter 0.3s ease; 
-        } 
-        .hero-illustration:hover img:not(.sig-sticker), 
-        .visual-break:hover img:not(.sig-sticker) { 
-            filter: brightness(0.98); /* Tiny feedback on hover */ 
-        } 
+    .closing-paragraph {
+      font-size: 1.1rem;
+      margin-top: 2rem;
+    }
 
-        /* FORCE STICKER INTERACTIVITY */ 
-        .sig-sticker, 
-        .visual-break .sig-sticker { 
-            pointer-events: auto !important; /* Allows the mouse to trigger the hover */ 
-            cursor: help; /* Changes cursor to a question mark to indicate interactivity */ 
-        } 
-    </style>
+    /* === DECORATIVE BREAKS === */
+    .decorative-break {
+      margin: 3rem 0;
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--card-bg);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .decorative-break img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* === FOOTER === */
+    .article-footer {
+      background: var(--card-bg);
+      border-top: 1px solid var(--border-subtle);
+      padding: 4rem 0;
+      text-align: center;
+    }
+
+    .article-footer .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .article-footer h2 {
+      font-family: 'Big Shoulders Display', sans-serif;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .article-footer p {
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+    }
+
+    .article-footer .footer-actions {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .article-footer .cta-primary {
+      display: inline-block;
+      padding: 1rem 2rem;
+      background: var(--coral);
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .article-footer .cta-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+    }
+
+    .article-footer .cta-secondary {
+      display: inline-block;
+      padding: 1rem 2rem;
+      background: transparent;
+      color: var(--coral);
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      border: 1px solid var(--coral);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    }
+
+    .article-footer .cta-secondary:hover {
+      background: rgba(255, 107, 107, 0.1);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(255, 107, 107, 0.2);
+    }
+
+    .back-link {
+      display: inline-block;
+      padding: 1rem 2rem;
+      background: var(--coral);
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .back-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+    }
+
+    footer {
+      background: var(--darker-bg);
+      border-top: 1px solid var(--border-subtle);
+      padding: 3rem 0;
+    }
+
+    footer .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-text {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .footer-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s ease;
+    }
+
+    .footer-link:hover {
+      color: var(--coral);
+    }
+
+    /* === MOBILE RESPONSIVE === */
+    @media (max-width: 768px) {
+      .article-hero-modular .container,
+      .container-modular,
+      .article-footer .container,
+      footer .container {
+        padding: 0 1.5rem;
+      }
+
+      .theme-toggle {
+        top: auto;
+        right: 1rem;
+        bottom: 1rem;
+        width: 44px;
+        height: 44px;
+      }
+
+      .nav-breadcrumb .container {
+        padding: 0 1.5rem;
+        font-size: 0.85rem;
+      }
+
+      footer .container {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .footer-links {
+        justify-content: center;
+      }
+    }
+  </style>
 </head>
-
 <body>
+  <header class="lg-site-header" role="banner">
+    <div class="lg-site-header-inner">
+      <a href="/insights" class="lg-logo" aria-label="Insights">
+        <picture class="theme-picture lg-logo-picture">
+          <source type="image/svg+xml" data-role="light" media="(prefers-color-scheme: light)" srcset="/insights/assets/images/insights_logo_light.svg">
+          <source type="image/svg+xml" data-role="dark" media="(prefers-color-scheme: dark)" srcset="/insights/assets/images/insights_logo_light.svg">
+          <img src="/insights/assets/images/insights_logo_light.svg" alt="Insights logo" class="lg-logo-img" loading="eager" decoding="async">
+        </picture>
+      </a>
+      <nav class="lg-main-nav" id="lgMainNav" aria-label="Main navigation">
+        <button class="lg-nav-close" aria-label="Close menu" type="button"></button>
+        <a href="/portfolio" class="lg-nav-link">Portfolio</a>
+        <a href="/TheHub/" class="lg-nav-link">The Hub</a>
+        <a href="/insights" class="lg-nav-link is-active">Insights</a>
+        <a href="/about" class="lg-nav-link">About</a>
+        <a href="/contact" class="lg-nav-link">Contact</a>
+      </nav>
+      <div class="lg-nav-backdrop" aria-hidden="true" tabindex="-1"></div>
+      <button class="lg-nav-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="lgMainNav">
+        <span class="lg-nav-toggle-bar"></span>
+        <span class="lg-nav-toggle-bar"></span>
+        <span class="lg-nav-toggle-bar"></span>
+      </button>
+    </div>
+  </header>
+  <!-- Theme Toggle -->
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+    <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+    <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+    </svg>
+  </button>
 
-    <!-- 1. HEADER -->
-    <header class="lg-site-header" role="banner">
-      <div class="lg-site-header-inner">
-        <a href="/insights" class="lg-logo" title="Luis Gilberto's Insights" aria-label="Insights">
-            <img src="/insights/assets/images/insights_logo_light.svg" alt="Luis Gilberto's Insights" style="height: 32px; width: auto;">
-        </a>
-        <nav class="lg-main-nav">
-          <a href="https://luis-gilberto.com" class="lg-nav-link">PORTFOLIO</a>
-          <a href="/insights" class="lg-nav-link is-active">INSIGHTS</a>
-          <a href="/TheHub/" class="lg-nav-link">THE HUB</a>
-          <a href="https://portal.luis-gilberto.com/" class="lg-nav-link">THE PORTAL</a>
-        </nav>
+  <div class="top-accent"></div>
 
-        <button class="mobile-menu-toggle" aria-label="Menu" id="mobileMenuToggle">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="3" y1="12" x2="21" y2="12"></line>
-                <line x1="3" y1="6" x2="21" y2="6"></line>
-                <line x1="3" y1="18" x2="21" y2="18"></line>
-            </svg>
-        </button>
+  <nav class="nav-breadcrumb">
+    <div class="container">
+      <a href="/" class="breadcrumb-link">Home</a>
+      <span class="breadcrumb-separator">&rarr;</span>
+      <a href="/insights" class="breadcrumb-link">Insights</a>
+      <span class="breadcrumb-separator">&rarr;</span>
+      <span class="breadcrumb-current">Building the Portfolio</span>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="article-hero-modular">
+    <div class="container">
+      <span class="article-category">Human x Tech</span>
+      <h1>Building the Portfolio</h1>
+      <p class="article-subtitle">The Work Was Never the Work. I Was.</p>
+      <div class="article-byline">By Luis Gilberto</div>
+      <div class="series-badge">Building Series</div>
+      <div class="article-meta">
+        <span>August 2025</span><span>&bull;</span><span>7 min read</span>
       </div>
-    </header>
 
-    <!-- 2. CONTEXT BAR -->
-    <nav class="lg-context-bar">
-        <div class="container">
-            <a href="/insights" class="breadcrumb-link">Insights</a>
-            <span class="breadcrumb-separator">/</span>
-            <a href="/insights/series" class="breadcrumb-link">Building Series</a>
-            <span class="breadcrumb-separator">/</span>
-            <span class="breadcrumb-current">Building the Portfolio</span>
-        </div>
-    </nav>
-    
-    <!-- MOBILE DRAWER -->
-    <div class="mobile-menu-overlay" id="mobileMenuOverlay">
-        <div class="mobile-menu-header">
-            <img src="/insights/assets/images/insights_logo_light.svg" alt="Luis Gilberto's Insights" style="height: 28px; width: auto;">
-            <button class="mobile-close-btn" id="mobileMenuClose">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-            </button>
-        </div>
-
-        <nav class="mobile-global-nav">
-            <a href="https://luis-gilberto.com" class="mobile-nav-link">PORTFOLIO</a>
-            <a href="/insights" class="mobile-nav-link is-active">INSIGHTS</a>
-            <a href="/TheHub/" class="mobile-nav-link">THE HUB</a>
-            <a href="https://portal.luis-gilberto.com/" class="mobile-nav-link">THE PORTAL</a>
-        </nav>
-
-        <div class="mobile-sub-nav">
-            <span class="mobile-sub-label">Current Context:</span>
-            <a href="/insights" class="mobile-sub-link">Insights</a>
-            <a href="/insights/series" class="mobile-sub-link">Series</a>
-            <span class="mobile-sub-current">Building the Portfolio</span>
-        </div>
+      <div class="hero-illustration">
+        <img src="/insights/assets/images/Hero_illustration_Building_Portfolio.png" alt="A quiet room. A figure faces a mirror; the reflection appears more awake.">
+      </div>
     </div>
+  </header>
 
-    <button class="theme-toggle" id="themeToggle">
-        <svg class="sun-icon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="5"></circle></svg>
-        <svg class="moon-icon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-    </button>
-    <div class="top-accent"></div>
+  <!-- MAIN -->
+  <article class="article-modular">
+    <div class="container-modular">
 
-    <!-- 3. HERO SECTION -->
-    <header class="article-hero-modular">
-        <div class="container">
-            <div class="article-eyebrow">
-                <span class="category-tag" style="color: var(--accent-color);">Human x Tech</span>
-                <span class="eyebrow-sep">•</span>
-                <span class="series-tag">Building Series</span>
-            </div>
-
-            <h1>Building the Portfolio</h1>
-            <p class="article-subtitle">The work was never the work. I was.</p>
-            <!-- DEK -->
-            <p class="article-dek">What I thought was a rebuild of a site turned out to be a rebuild of me.</p>
-
-            <div class="article-byline-row">
-                <span>By Luis Gilberto</span>
-                <span class="byline-sep">/</span>
-                <span class="publish-date">
-                    <span class="date-label">Published</span> Aug 2025
-                </span>
-                <span class="byline-sep">/</span>
-                <span class="publish-date">
-                    <span class="date-label">Updated</span> Jan 2026
-                </span>
-            </div>
-            
-            <div class="hero-illustration">
-                <div class="img-sig-wrapper"> 
-                    <img src="/insights/assets/images/signature-AI.png" class="sig-sticker theme-img-light" alt="Luis Gilberto / AI"> 
-                    <img src="/insights/assets/images/signature-AI-dark.png" class="sig-sticker theme-img-dark" alt="Luis Gilberto / AI"> 
-                    
-                    <!-- The Short Disclaimer Tooltip --> 
-                    <span class="ai-tooltip">Visuals conceptualized by Luis Gilberto, refined via AI partnership.</span> 
-                
-                    <!-- Main Image with SEO Title --> 
-                    <img src="/insights/assets/images/Hero_illustration_Building_Portfolio.png" 
-                         alt="A figure facing a mirror; reflection appears more awake." 
-                         title="Self-Reflection: Seeing the artist behind the corporate badge."> 
-                </div> 
-            </div>
+      <!-- LEFT COLUMN -->
+      <div class="column-left">
+        <!-- Card 1 -->
+        <div class="hero-card">
+          <div class="hero-card-content">
+            <h2>A portfolio is a portrait</h2>
+            <p>Not proof. Not performance. A declaration of self.</p>
+          </div>
         </div>
-    </header>
 
-    <!-- 4. MAIN LAYOUT -->
-    <div class="article-layout">
-        
-        <!-- SIDEBAR (Desktop Only) -->
-        <aside class="sidebar">
-            <div class="principles-nav">
-                <span class="principles-title">Table of Contents</span>
-                <a href="#portrait" class="principle-link active">The Portrait</a>
-                <a href="#badge" class="principle-link">Leaving the Badge</a>
-                <a href="#craft" class="principle-link">The Craft</a>
-                <a href="#system" class="principle-link">The Self</a>
-            </div>
+        <div class="column-spacer" style="height:18rem;"></div>
 
-            <div class="inset-card" style="margin-top: 2rem; padding: 1.5rem; font-size: 0.9rem; border-color: var(--accent-color);">
-                <strong style="color: var(--accent-color);">Status</strong>
-                <p style="margin-top: 0.5rem; opacity: 0.8;">Live v3.0<br>Systematized<br>Human-First</p>
-            </div>
-        </aside>
+        <!-- Card 2 -->
+        <div class="quote-card">
+          <p class="large-quote">Reinvention is not redesign. It is repair.</p>
+        </div>
 
-        <!-- CONTENT -->
-        <article class="main-content">
-            
-            <!-- SECTION 1: THE PORTRAIT -->
-            <div class="reading-content" id="portrait">
-              <p class="lead">A portfolio is not a website. It is not a gallery of screenshots or a collection of deliverables. A portfolio is your portrait.</p>
-            
-              <section class="pull-quote-block" aria-label="Signature pull quote">
-                <p class="pull-quote-kicker">Signature line</p>
-                <p class="pull-quote-text">I care about the idea. Of course I do. But more than that, I care about the delivery.</p>
-              </section>
-            
-              <p>I did not realize that for a long time. For years, I believed my value lived inside the company badge hanging from my desk. I borrowed identity from the places I worked. From the logos I wore. From the teams I belonged to.</p>
-            
-              <p>You can do that when your career lives inside a machine built for momentum. Swap logos, swap titles, and eventually you convince yourself the fleece and the lanyard are you. I lived that version of existence for years, building portfolios that could survive the system instead of challenging it.</p>
-            
-              <p>When I stepped away, it felt like jumping off a moving train. Everything was loud at first. Then it went quiet.</p>
-            
-              <p>Quieter than I expected. But the quiet stayed. And the quiet did something important. It made room.</p>
-            
-              <p>I was left with a blank page. No brief. No stakeholders. No need to refresh something that already existed. I could finally decide what I wanted to say and how I wanted it to feel.</p>
-            
-              <p class="section-divider-label">A portfolio is your space to show up as you actually are.</p>
-            </div>
+        <div class="column-spacer" style="height:18rem;"></div>
 
-            <!-- SECTION 2: LEAVING THE BADGE -->
-            <div class="reading-content" id="badge">
-              <p>The old version of this site was safe. Helpful. Polite. It showed the work clearly, but it left me out. I still have screenshots where my face never appears.</p>
+        <!-- Card 3 (optional reflection) -->
+        <div class="statement-card">
+          <h3 class="checklist-title">The quiet was useful</h3>
+          <ul class="principle-list">
+            <li><strong>Less noise</strong><br>Enough space to listen to intent.</li>
+            <li><strong>Clearer choices</strong><br>Keep only what serves the story.</li>
+            <li><strong>Calmer motion</strong><br>Movement that follows meaning.</li>
+          </ul>
+        </div>
+      </div>
 
-              <p>That is when I finally asked the question that started the entire rebuild. <strong>How do I build a portfolio that feels alive?</strong></p>
+      <!-- CENTER COLUMN -->
+      <div class="column-center">
+        <div class="reading-content">
 
-              <p>If the site was going to feel alive, I had to be alive in it. I had to show up.</p>
+          <!-- Lead -->
+          <p class="lead">A portfolio is not a website. It is not a gallery of screenshots or a collection of deliverables. A portfolio is a portrait. It reveals who you are when the titles, roles, and corporate shields fall away.</p>
 
-              <p>I used to think the work said everything that needed to be said. The badges were my voice. Proof I was trusted. Proof I belonged. But muted smiles and tidy case studies do not make a person. Logos are not your voice.</p>
+          <p>For a long time, I didn't understand that. I thought my value lived inside the company badge I wore. My identity was borrowed. It was defined by the places I worked, the logos I supported, the teams I belonged to.</p>
 
-              <p>Your portfolio will not feel alive until the human behind the work stops hiding.</p>
+          <p>Stepping away from that world felt like stepping off a moving train. Disorienting. Quiet. Uncomfortable. But that quiet gave me something I had not had in years: a blank page. From that blank page, I began to rebuild. Not just a website. Myself.</p>
 
-              <div class="visual-break"> 
-                  <div class="img-sig-wrapper"> 
-                    <img src="/insights/assets/images/signature-AI.png" class="sig-sticker theme-img-light" alt="Luis Gilberto / AI"> 
-                    <img src="/insights/assets/images/signature-AI-dark.png" class="sig-sticker theme-img-dark" alt="Luis Gilberto / AI"> 
-                    
-                    <!-- The Short Disclaimer Tooltip --> 
-                    <span class="ai-tooltip">Visuals conceptualized by Luis Gilberto, refined via AI partnership.</span> 
-              
-                    <!-- Main Image with SEO Title --> 
-                    <img src="/insights/assets/images/BTP_Decorative_break_1.png" 
-                         alt="A figure stepping off a conveyor belt of identical workers." 
-                         title="Breaking Momentum: Stepping off the corporate assembly line." 
-                         style="border-radius: 4px;"> 
-                  </div> 
-                  <p class="caption">Stepping off the machine designed for momentum.</p> 
-              </div>
-            </div>
+          <div class="section-spacer"></div>
 
-            <!-- SECTION 3: THE CRAFT -->
-            <div class="reading-content" id="craft">
-              <h3>The Rebuild</h3>
+          <h2>Leaving the Badge</h2>
+          <p>The old version of my portfolio was functional and polite. It showed the work, but not the person who made it. So I asked one question that changed everything: how do I create a portfolio that feels alive?</p>
+          <p>Not overwhelming. Not performative. Alive. I wanted people to feel entertained by the story, impressed by the craft, and inspired by the reinvention without ever feeling lectured or confused.</p>
 
-              <p>Once I faced that truth, I rebuilt from the inside out. I did not start with pages or sections. I started with mood.</p>
+          <!-- Decorative Break #1 (identity mask) -->
+          <div class="decorative-break">
+            <img src="/insights/assets/images/BTP_Decorative_break_1.png" alt="A calm figure whose head is a giant ID badge. A quiet satire of identity borrowed from the workplace.">
+          </div>
 
-              <p>I wanted the site to feel like walking through a city at night with headphones on. Quiet intensity. Gentle confidence. The sense that something is happening even if nothing is shouting.</p>
+          <div class="section-spacer"></div>
 
-              <p>Typography came first. Headlines that speak with authority without yelling. Body copy that feels warm instead of corporate. Familiar enough to trust because it is not rushing you.</p>
+          <h2>Rebuilding the Site, Rebuilding the Self</h2>
+          <p>I built toward a specific emotional tone: the feeling of walking through a city at night with headphones on. Quiet intensity. Soft confidence. A sense of becoming.</p>
+          <p>Deep black as the grounding layer. Movement that feels like breath. Coral placed with purpose. A visual identity that communicates intention.</p>
 
-              <p>Color followed naturally. Black is my visual home, so I anchored there. Coral is the punctuation, the rhythm of curiosity throughout the site. And plenty of space so the words can do the heavy lifting. When a layout slows down, the message can breathe.</p>
+          <h3>The Craft</h3>
+          <p><strong>Typography.</strong> A type system that speaks clearly and calmly. Headlines with presence. Body text that reads warm.</p>
+          <p><strong>Color and contrast.</strong> Black is home. Coral is the pulse. Negative space does half the work because clarity does not hurry.</p>
+          <p><strong>Motion.</strong> Movement is subtle and responsive. The site feels like it is with you rather than performing at you.</p>
+          <p><strong>Layout.</strong> Structured like an editorial feature. Your eye knows where to go next. You never feel lost.</p>
+            <!-- Decorative Break #2 (conveyor belt) -->             <div class="decorative-break">
+            <img src="/insights/assets/images/BTP_Decorative_break_2.png" alt="A conveyor belt stamping identical silhouettes; one calmly steps off and walks away.">
+          </div>
 
-              <div class="quote-card">
-                <p class="large-quote">Reinventing yourself is not a redesign. It is repair.</p>
-              </div>
+          <div class="section-spacer"></div>
 
-              <p>Each decision became a quiet yes. Yes to trusting what I like because I like it. Yes to letting contradictions exist.</p>
+          <h2>What I Chose to Cut</h2>
+          <p>Over-explanation. Layered process breakdowns. Design that exists purely to impress. Cleverness without meaning. If it did not serve clarity and emotional resonance, it did not stay.</p>
 
-              <p>The old version of this site was built to prove I could fit into certain spaces. This one is built to show who I am when I stop trying to fit.</p>
+          <!-- Decorative Break #4 (sewing the self) -->
+          <div class="decorative-break">
+            <img src="/insights/assets/images/BTP_Decorative_break_4.png" alt="Hands gently sewing together a paper self-portrait with visible thread.">
+          </div>
 
-              <p class="section-divider-label">And yes, you are the one holding the reset button.</p>
-            </div>
+          <div class="section-spacer"></div>
 
-            <!-- SECTION 4: THE SYSTEM (SELF) -->
-            <div class="reading-content" id="system">
-              <h3>The New Self</h3>
+          <h2>The Self Behind the System</h2>
+          <p>This site represents a version of me that did not exist before. Someone self-defined, not job-defined. Someone who carries both triumphs and scars without sanding them down. Someone who can build with strategy and with heart.</p>
 
-              <p>Had I known building a portfolio could give back this much, I would have started sooner.</p>
+          <!-- Decorative Break #3 (recycling bin) -->
+          <div class="decorative-break">
+            <img src="/insights/assets/images/BTP_Decorative_break_3.png" alt="A tidy recycling bin labeled Over-Explanation, Trying Too Hard, and Design for Impressing.">
+          </div>
 
-              <p>What I thought would be an exercise in documentation gave me something far more valuable. Trust. Trust in my taste. Trust in my pace. Trust in my ability to create work that feels true without a badge validating it.</p>
+          <div class="section-spacer"></div>
 
-              <p>The site you see today is not the lesson. This is.</p>
+          <h2>What Comes Next</h2>
+          <p>This is the beginning of the part I get to write with intention. I am continuing to build, explore, and collaborate. I want to work with teams and companies who value clarity, narrative depth, and systems that feel human.</p>
+          <p class="closing-paragraph">If any part of this resonated, explore the work. Not just to see what I have done, but to see what might be possible.</p>
+          <p class="closing-paragraph"><a href="https://luis-gilberto.com" target="_blank" rel="noopener noreferrer">View the portfolio</a> &middot; <a href="https://luis-gilberto.com/contact" target="_blank" rel="noopener noreferrer">Contact Page</a></p>
+            <!-- Decorative Break #5 (blank page) -->             <div class="decorative-break">
+            <img src="/insights/assets/images/BTP_Decorative_break_5.png" alt="A tiny desk and lamp resting against an absurdly large blank page. The space is the point.">
+          </div>
 
-              <div class="editorial-note">
-                  <span class="editorial-label">Takeaway</span>
-                  <p class="editorial-text">
-                  Stop spending your life proving you are good enough. Start showing who you actually are. Build beautiful things on purpose. A portfolio is your portrait. More than that, it is your permission slip.
-                  </p>
-              </div>
+        </div>
+      </div>
 
-              <p class="closing-line">If you are in a rebuild season too, take your time. Make it beautiful on purpose.</p>
-            </div>
+      <!-- RIGHT COLUMN -->
+      <div class="column-right">
 
-        </article>
+        <div class="statement-card statement-card-primary">
+          <h2>What a Portfolio Really Is</h2>
+          <p class="statement-text">Not proof. Not performance. A declaration of self.</p>
+        </div>
+
+        <div class="column-spacer" style="height:18rem;"></div>
+
+        <div class="statement-card">
+          <h3 class="checklist-title">How to Keep It Alive</h3>
+          <ul class="principle-list">
+            <li><strong>Start with feeling</strong><br>Design for the mood you want people to leave with.</li>
+            <li><strong>Cut to clarity</strong><br>Keep what carries meaning. Remove the rest.</li>
+            <li><strong>Move with intent</strong><br>Motion should support reading, not distract from it.</li>
+          </ul>
+        </div>
+
+        <div class="column-spacer" style="height:22rem;"></div>
+
+        <div class="statement-card statement-card-emphasis">
+          <h2>The Point</h2>
+          <p class="statement-text-large">This is not a rebrand.</p>
+          <p class="statement-text-large">This is a <strong>return</strong>.</p>
+          <p class="statement-subtext">A portfolio that feels like a person.</p>
+        </div>
+
+        <div class="statement-card statement-card-final">
+          <p class="final-statement">Thanks for being here. It took time to arrive.</p>
+        </div>
+
+      </div>
+
     </div>
+  </article>
 
-    <!-- 5. BRIDGE -->
-    <section class="container" style="margin-top: 6rem; margin-bottom: 6rem;">
-        <div class="project-bridge">
-            <div class="bridge-content">
-                <span class="bridge-label">See the Result</span>
-                <h2 class="bridge-title">Explore the Portfolio</h2>
-                <p class="bridge-desc">
-                    You've read the story of the build. Now explore the finished system, the case studies, and the work itself.
-                </p>
-                <!-- UPDATED CTA -->
-                <a href="/" class="bridge-cta">
-                    Enter the Portfolio
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                </a>
-            </div>
-            <div class="bridge-image" style="background-image: url('/assets/images/Hero_banner.png');"></div>
-        </div>
-    </section>
+  <!-- Footer CTA -->
+  <section class="article-footer">
+    <div class="container">
+      <h2>Keep Reading</h2>
+      <p>Explore more insights on creative strategy, leadership, and building with intention.</p>
+      <div class="footer-actions">
+        <a href="https://luis-gilberto.com" class="cta-primary" target="_blank" rel="noopener noreferrer">View the portfolio</a>
+        <a href="https://luis-gilberto.com/contact" class="cta-secondary" target="_blank" rel="noopener noreferrer">Contact Page</a>
+      </div>
+    </div>
+  </section>
 
-    <section class="keep-reading-section">
-        <div class="container">
-            <h2>Keep Reading</h2>
-            <p>Explore more insights on creative strategy and intention.</p>
-            <a href="/insights" class="back-link-cta">Back to Insights</a>
-        </div>
-    </section>
+  <footer>
+    <div class="container">
+      <p class="footer-text">&copy; 2025 Luis Gilberto. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="/" class="footer-link">Home</a>
+        <a href="/about-integrated-marketing-expert" class="footer-link">About</a>
+        <a href="/contact" class="footer-link">Contact</a>
+      </div>
+    </div>
+  </footer>
 
-    <!-- 6. FOOTER -->
-    <footer class="site-footer">
-        <div class="footer-container">
-            <div class="footer-grid-layout">
-                <div class="footer-brand-col">
-                    <a href="/" class="footer-logo-link"><img src="/assets/images/Logomark_White_a.png" alt="LG" class="footer-logo-img"></a>
-                    <p class="footer-tagline">Making technology feel human through clarity, beautiful execution, and systems that scale.</p>
-                </div>
-                <nav class="footer-nav-col">
-                    <h3 class="footer-nav-heading">Ecosystem</h3>
-                    <ul class="footer-nav-list">
-                        <li><a href="/" class="footer-nav-link">Portfolio</a></li>
-                        <li><a href="/insights" class="footer-nav-link">Insights</a></li>
-                        <li><a href="/TheHub/" class="footer-nav-link">The Hub</a></li>
-                    </ul>
-                </nav>
-                <nav class="footer-nav-col">
-                    <h3 class="footer-nav-heading">Connect</h3>
-                    <ul class="footer-nav-list">
-                        <li><a href="/contact.html" class="footer-nav-link">Contact</a></li>
-                        <li><a href="https://linkedin.com/in/luisgilberto00" class="footer-nav-link">LinkedIn</a></li>
-                    </ul>
-                </nav>
-                <div class="footer-status-col">
-                    <div class="footer-status-card">
-                        <div class="status-indicator"><span class="status-dot"></span><span class="status-text">Accepting Projects</span></div>
-                        <a href="/contact.html" class="status-cta">Start a Conversation &rarr;</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="footer-bottom-bar">
-            <div class="footer-bottom-container">
-                <p class="footer-copyright">© 2026 Luis Gilberto. All Rights Reserved.</p> 
-                <a href="#ai-collaboration-info" id="openAiModalLink" style="display: inline-block; margin-left: 15px; font-size: 0.8rem; color: #888; text-decoration: underline; cursor: pointer; opacity: 1;">About AI Collaboration</a> 
-            </div>
-        </div>
-    </footer>
-
-    <!-- AI Modal --> 
-    <div id="aiCollaborationModal" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(4px);"> 
-        <div class="modal-content" style="background: #111; color: #fff; padding: 40px; max-width: 500px; border-radius: 8px; position: relative; border: 1px solid #333; line-height: 1.6;"> 
-            <span class="modal-close-button" style="position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; opacity: 0.7;">&times;</span> 
-            <h2 style="color: var(--accent-color); margin-top: 0;">About AI Collaboration</h2> 
-            <p style="font-size: 0.95rem; opacity: 0.9;"> 
-                The illustrations on this site are a testament to creative partnership. Each visual is meticulously conceptualized, art-directed, and refined by Luis Gilberto. Advanced AI tools are then leveraged to translate these precise artistic visions into high-fidelity, polished illustrations, enhancing the visual narrative and achieving an elevated aesthetic. 
-            </p> 
-        </div> 
-    </div> 
+  <script>
+    // Theme Toggle
+    const themeToggle = document.getElementById('themeToggle');
+    const html = document.documentElement;
     
-    <script> 
-        // Modal Logic 
-        document.addEventListener('DOMContentLoaded', () => { 
-            const modal = document.getElementById('aiCollaborationModal'); 
-            const link = document.getElementById('openAiModalLink'); 
-            const close = document.querySelector('.modal-close-button'); 
+    // Check for saved theme preference or default to 'light'
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    html.setAttribute('data-theme', currentTheme);
     
-            if(link) link.onclick = (e) => { e.preventDefault(); modal.style.display = 'flex'; }; 
-            if(close) close.onclick = () => { modal.style.display = 'none'; }; 
-            window.onclick = (e) => { if(e.target == modal) modal.style.display = 'none'; }; 
-        }); 
-    </script>
-
-    <!-- Safe Script Loading -->
-    <script src="/insights/assets/js/article-interactions.js"></script>
+    themeToggle.addEventListener('click', function() {
+      const currentTheme = html.getAttribute('data-theme');
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      
+      html.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const header = document.querySelector(".lg-site-header");
+      const toggle = document.querySelector(".lg-nav-toggle");
+      const nav = document.querySelector(".lg-main-nav");
+      const backdrop = document.querySelector(".lg-nav-backdrop");
+      const closeBtn = document.querySelector(".lg-nav-close");
+      if (!header) return;
+      let previousFocus = null;
+      function getFocusable(container) {
+        return Array.from(container.querySelectorAll('a[href], button:not([disabled]), [tabindex="0"], input, select, textarea'));
+      }
+      function trapFocusKeydown(e) {
+        if (!header.classList.contains('is-open')) return;
+        if (e.key === 'Escape') { e.preventDefault(); closeNav(); return; }
+        if (e.key !== 'Tab') return;
+        const focusables = getFocusable(nav);
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        const active = document.activeElement;
+        if (e.shiftKey) { if (active === first) { e.preventDefault(); last.focus(); } }
+        else { if (active === last) { e.preventDefault(); first.focus(); } }
+      }
+      function openNav() {
+        previousFocus = document.activeElement;
+        header.classList.add('is-open');
+        toggle.setAttribute('aria-expanded', 'true');
+        nav.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        if (closeBtn) closeBtn.focus();
+        document.addEventListener('keydown', trapFocusKeydown);
+      }
+      function closeNav() {
+        header.classList.remove('is-open');
+        toggle.setAttribute('aria-expanded', 'false');
+        nav.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = 'auto';
+        document.removeEventListener('keydown', trapFocusKeydown);
+        if (previousFocus) previousFocus.focus();
+      }
+      if (toggle && nav) {
+        toggle.addEventListener('click', function () { if (header.classList.contains('is-open')) { closeNav(); } else { openNav(); } });
+      }
+      if (backdrop) { backdrop.addEventListener('click', function () { if (header.classList.contains('is-open')) closeNav(); }); }
+      if (closeBtn) { closeBtn.addEventListener('click', function () { closeNav(); }); }
+    });
+  </script>
+  <script src="/assets/js/mobile-menu-loader.js"></script>
 </body>
 </html>
+
+
+
+
+
+
+
+
