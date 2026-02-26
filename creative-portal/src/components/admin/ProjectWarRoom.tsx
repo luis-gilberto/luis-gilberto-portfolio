@@ -53,6 +53,7 @@ import {
 } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
+import StrategicCharter from "@/components/portal/strategy/StrategicCharter"
 import { cn } from "@/lib/utils"
 import ReactMarkdown from "react-markdown"
 import { LifecycleTracker } from "@/components/shared/LifecycleTracker"
@@ -697,7 +698,7 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
         <div className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center">
            <div className="flex items-center gap-2">
               <span className="text-xl font-big-shoulders font-black tracking-tight text-coral">LG</span>
-              <span className="text-xl font-big-shoulders font-black tracking-tight text-white">// PORTAL</span>
+              <span className="text-xl font-big-shoulders font-black tracking-tight text-white">&sol;&sol; PORTAL</span>
            </div>
            <div className="text-[10px] font-bold tracking-[0.4em] text-zinc-500 uppercase mt-0.5">
              PHASE: DISCOVERY
@@ -1217,20 +1218,16 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
                       <span className="font-big-shoulders font-bold text-coral uppercase tracking-[0.2em] text-[1.4rem]">
                         CLIENT: {project.client?.name || project.client?.company || "ACME"}
                       </span>
-                      <span className="text-white/20 mx-[15px] text-[1.4rem] font-light">//</span>
+                  <span className="text-white/20 mx-[15px] text-[1.4rem] font-light">&sol;&sol;</span>
                       <span className="font-big-shoulders font-bold text-white uppercase tracking-[0.2em] text-[1.4rem]">
                         PROJECT: {project.title || project.name || "Growth Plan"}
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between relative">
-                      <h3 className="text-4xl font-bold text-white font-big-shoulders tracking-tight uppercase leading-none opacity-20 italic">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-4xl font-bold text-white font-big-shoulders tracking-tight uppercase leading-none">
                         Strategic Charter
                       </h3>
-                      {/* Seal of Authority Watermark */}
-                      <div className="absolute -top-10 -right-20 pointer-events-none">
-                        <SealOfAuthority size={300} opacity={0.05} rotate={12} />
-                      </div>
                     </div>
                     <p className="text-zinc-400 text-lg font-light font-inter leading-[1.8] max-w-2xl opacity-60">
                       Strategic intelligence is only as strong as the context it sits within. We are aligning our engine to the mandates you are already accountable to.
@@ -1403,7 +1400,7 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
                           {/* Constraints (Layer I) */}
                           <div className="space-y-6">
                             <div className="flex flex-col gap-2">
-                              <h4 className="text-[1.2rem] font-extrabold text-white font-big-shoulders tracking-wider">The Resistance // Constraints</h4>
+                              <h4 className="text-[1.2rem] font-extrabold text-white font-big-shoulders tracking-wider">The Resistance &sol;&sol; Constraints</h4>
                             </div>
                             <div className="space-y-3">
                               <div className={cn(
@@ -1655,7 +1652,7 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
                             {project.status === 'CALIBRATED' && currentUser.role !== 'ADMIN' ? (
                               <div className="flex items-center gap-2 text-teal px-4">
                                 <ShieldCheck size={16} />
-                                <span className="text-[10px] font-bold uppercase tracking-widest">Charter locked // Proceed to Intelligence</span>
+                                <span className="text-[10px] font-bold uppercase tracking-widest">Charter locked &sol;&sol; Proceed to Intelligence</span>
                               </div>
                             ) : currentUser.role === 'ADMIN' ? (
                               <Button 
@@ -1709,199 +1706,30 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
 
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 gap-12 pt-8">
-                      {/* Read-Only View */}
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-                         <section className="space-y-4">
-                           <h4 className="text-[12px] font-bold text-coral tracking-[0.2em] uppercase font-big-shoulders">Primary Driver</h4>
-                           <div className="p-6 border border-teal/20 bg-teal/[0.05] rounded shadow-[0_0_20px_rgba(46,211,198,0.05)] h-full">
-                              <h3 className="text-2xl font-bold font-big-shoulders text-teal uppercase tracking-wide mb-2">
-                                {BUSINESS_DRIVERS.find(d => d.id === businessDriver)?.title || "Market Capture"}
-                              </h3>
-                              <p className="text-sm text-zinc-400 font-inter">
-                                {BUSINESS_DRIVERS.find(d => d.id === businessDriver)?.desc || "Aggressive growth and acquisition via Nexus AI integration."}
-                              </p>
-                           </div>
-                         </section>
-
-                         <section className="space-y-4">
-                           <h4 className="text-[12px] font-bold text-coral tracking-[0.2em] uppercase font-big-shoulders">The Metric of Record</h4>
-                           <div className="flex flex-col gap-1 h-full justify-center">
-                              <span className="text-3xl font-serif italic text-white">{metricName || "Qualified Enterprise Leads (CTO-level)"}</span>
-                              <div className="flex items-center gap-4 text-sm font-mono text-zinc-500 mt-2">
-                                 <span>TARGET: <span className="text-white">{metricTarget || "150"}</span></span>
-                                 <span>//</span>
-                                 <span>BASE: <span className="text-white">{metricBaseline || "45"}</span></span>
-                              </div>
-                              {calculatedLift ? (
-                                <div className="mt-4 inline-flex items-center gap-2 bg-teal/10 border border-teal/20 px-3 py-1 rounded self-start">
-                                  <span className="text-[9px] font-bold text-teal uppercase tracking-widest">Target Lift</span>
-                                  <span className="text-sm font-bold text-teal font-mono">{calculatedLift}</span>
-                                </div>
-                              ) : (
-                                <div className="mt-4 inline-flex items-center gap-2 bg-teal/10 border border-teal/20 px-3 py-1 rounded self-start">
-                                  <span className="text-[9px] font-bold text-teal uppercase tracking-widest">Target Lift</span>
-                                  <span className="text-sm font-bold text-teal font-mono">+233.3% LIFT IN QUALIFIED LEADS</span>
-                                </div>
-                              )}
-                           </div>
-                         </section>
-
-                         <section className="space-y-4">
-                            <h4 className="text-[12px] font-bold text-coral tracking-[0.2em] uppercase font-big-shoulders">Operational Priority</h4>
-                            <div className="p-6 border border-white/10 bg-white/[0.02] rounded h-full">
-                               <h3 className="text-xl font-bold font-big-shoulders text-white uppercase tracking-wide mb-2">
-                                 {OPERATIONAL_PRIORITIES.find(p => p.id === operationalPriority)?.title || "Volume Generation"}
-                               </h3>
-                               <p className="text-sm text-zinc-500 font-inter">
-                                 {OPERATIONAL_PRIORITIES.find(p => p.id === operationalPriority)?.desc || "Increasing raw lead flow via automated LinkedIn outbound."}
-                               </p>
-                            </div>
-                         </section>
-                      </div>
-
-                      <div className="space-y-12">
-                        {/* COMPONENT: STRATEGIC CHARTER (READ-ONLY) */}
-                        <section className="space-y-8">
-                          <h4 className="text-[12px] font-bold text-coral tracking-[0.2em] uppercase font-big-shoulders">Strategic charter</h4>
-                          
-                          <div className="grid grid-cols-1 gap-10">
-                            <div className="space-y-3">
-                              <h5 className="text-[10px] font-bold text-zinc-500 tracking-[0.2em] uppercase">Business goals</h5>
-                              <div className="prose prose-invert max-w-none text-white text-lg font-serif italic pl-0 py-1">
-                                <ReactMarkdown>{businessGoals || "Transition to Enterprise: Shift focus from mid-market to high-value CTO-level contracts."}</ReactMarkdown>
-                              </div>
-                            </div>
-
-                            <div className="space-y-3">
-                              <h5 className="text-[10px] font-bold text-zinc-500 tracking-[0.2em] uppercase">Business OKRs</h5>
-                              <div className="prose prose-invert max-w-none text-white text-lg font-serif italic pl-0 py-1">
-                                <ReactMarkdown>{businessOKRs || "20% Pipeline Lift: Achieve 150 qualified enterprise leads within 6 months."}</ReactMarkdown>
-                              </div>
-                            </div>
-
-                            <div className="space-y-3">
-                              <h5 className="text-[10px] font-bold text-zinc-500 tracking-[0.2em] uppercase">Marketing goals</h5>
-                              <div className="prose prose-invert max-w-none text-white text-lg font-serif italic pl-0 py-1">
-                                <ReactMarkdown>{marketingGoals || "Establish Category Authority: Position Nexus AI as the standard for automated outbound."}</ReactMarkdown>
-                              </div>
-                            </div>
-                          </div>
-                        </section>
-
-                        {/* COMPONENT: PERFORMANCE BENCHMARKS (READ-ONLY) */}
-                        <section className="space-y-6">
-                          <h4 className="text-[12px] font-bold text-coral tracking-[0.2em] uppercase font-big-shoulders">Performance Benchmarks</h4>
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                             {/* CAC */}
-                             <div className="space-y-2">
-                                <h5 className="text-[10px] font-bold text-zinc-500 tracking-[0.2em] uppercase pb-2">CAC</h5>
-                                <div className="flex justify-between items-baseline">
-                                   <span className="text-xs text-zinc-500 font-mono">CURRENT: <span className="text-white text-base">{cacCurrent || "$4,200"}</span></span>
-                                   <span className="text-xs text-zinc-500 font-mono">GOAL: <span className="text-teal text-base">{cacGoal || "$3,000"}</span></span>
-                                </div>
-                             </div>
-                             {/* LTV */}
-                             <div className="space-y-2">
-                                <h5 className="text-[10px] font-bold text-zinc-500 tracking-[0.2em] uppercase pb-2">LTV</h5>
-                                <div className="flex justify-between items-baseline">
-                                   <span className="text-xs text-zinc-500 font-mono">CURRENT: <span className="text-white text-base">{ltvCurrent || "$45,000"}</span></span>
-                                   <span className="text-xs text-zinc-500 font-mono">GOAL: <span className="text-teal text-base">{ltvGoal || "$65,000"}</span></span>
-                                </div>
-                             </div>
-                             {/* CONVERSION */}
-                             <div className="space-y-2">
-                                <h5 className="text-[10px] font-bold text-zinc-500 tracking-[0.2em] uppercase pb-2">CONVERSION</h5>
-                                <div className="flex justify-between items-baseline">
-                                   <span className="text-xs text-zinc-500 font-mono">CURRENT: <span className="text-white text-base">{conversionCurrent || "2.4%"}</span></span>
-                                   <span className="text-xs text-zinc-500 font-mono">GOAL: <span className="text-teal text-base">{conversionGoal || "4.8%"}</span></span>
-                                </div>
-                             </div>
-                          </div>
-                        </section>
-
-                        <section className="space-y-6">
-                          <h4 className="text-[12px] font-bold text-coral tracking-[0.2em] uppercase font-big-shoulders">The Resistance : Constraints</h4>
-                          <div className="prose prose-invert max-w-none text-[rgba(255,255,255,0.85)] text-[1.1rem] leading-[1.8] font-inter font-light whitespace-pre-wrap prose-strong:text-white prose-strong:font-bold prose-p:mb-4">
-                            <ReactMarkdown>
-                              {strategicConstraints || "No constraints identified."}
-                            </ReactMarkdown>
-                          </div>
-                        </section>
-
-                        {/* COMPONENT: OPERATIONAL HISTORY (READ-ONLY) */}
-                        <section className="space-y-6">
-                          <h4 className="text-[12px] font-bold text-coral tracking-[0.2em] uppercase font-big-shoulders">Operational History</h4>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                             <div className="space-y-2">
-                                <Label className="text-zinc-500 text-[10px] font-bold tracking-widest uppercase flex items-center gap-2">
-                                  <CheckCircle size={12} className="text-teal" /> Reliable Signal (What Works)
-                                </Label>
-                                <div className="text-white/80 font-serif italic text-lg leading-relaxed pl-0">
-                                   {marketingSignal || "LinkedIn CTO Outbound: High-intent responses from technical decision makers."}
-                                </div>
-                             </div>
-                             <div className="space-y-2">
-                                <Label className="text-zinc-500 text-[10px] font-bold tracking-widest uppercase flex items-center gap-2">
-                                  <AlertCircle size={12} className="text-coral" /> Strategic Noise (What Failed)
-                                </Label>
-                                <div className="text-white/80 font-serif italic text-lg leading-relaxed pl-0">
-                                   {marketingNoise || "Generic Search Ads: High CAC and low lead quality for enterprise segments."}
-                                </div>
-                             </div>
-                          </div>
-                        </section>
-
-                        {/* COMPONENT: CHANNEL ECOSYSTEM (READ-ONLY) */}
-                        <section className="space-y-6">
-                          <h4 className="text-[12px] font-bold text-coral tracking-[0.2em] uppercase font-big-shoulders">Channel Ecosystem</h4>
-                          <div className="flex flex-wrap gap-3">
-                             {selectedChannels.length > 0 ? selectedChannels.map(channel => (
-                                <div key={channel} className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-xs text-zinc-300 font-inter">
-                                   {channel}
-                                </div>
-                             )) : (
-                                <span className="text-zinc-600 text-sm italic">No channels selected.</span>
-                             )}
-                          </div>
-                        </section>
-                      </div>
-
-                      {/* Floating Action Bar (View Mode) */}
-                      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-full max-w-[600px] px-8 z-50">
-                        <div className="flex items-center justify-between bg-[#0A0A0ACC] backdrop-blur-[10px] border-t border-white/10 p-3 rounded shadow-2xl shadow-black/50">
-                          
-                          {/* Button 1 (Left-align) */}
-                          <Button 
-                            variant="outline"
-                            onClick={() => setShowResetConfirm(true)}
-                            className="text-[10px] uppercase tracking-widest font-bold text-coral border-coral hover:bg-coral hover:text-black transition-colors h-9 px-6 rounded bg-transparent"
-                          >
-                            Reset project
-                          </Button>
-
-                          {/* Right Group */}
-                          <div className="flex items-center gap-4">
-                            {project.status === 'CALIBRATED' && currentUser.role !== 'ADMIN' ? (
-                               <div className="flex items-center gap-2 text-teal px-4">
-                                  <ShieldCheck size={16} />
-                                  <span className="text-[10px] font-bold uppercase tracking-widest">Certified Artifact</span>
-                               </div>
-                            ) : (
-                               <Button 
-                                 variant="outline"
-                                 onClick={() => setIsConfigEditing(true)}
-                                 className="h-9 px-6 rounded border-white/10 text-white/40 hover:text-white hover:border-white/20 transition-all text-[10px] font-bold uppercase tracking-[0.1em] bg-transparent"
-                               >
-                                 Modify Charter
-                               </Button>
-                            )}
-                          </div>
-
-                        </div>
-                      </div>
-                    </div>
+                    <StrategicCharter
+                      clientName={project.client?.name || project.client?.company || "ACME"}
+                      projectTitle={project.title || project.name || "Growth Plan"}
+                      calculatedLift={calculatedLift}
+                      metricName={metricName}
+                      metricTarget={metricTarget}
+                      metricBaseline={metricBaseline}
+                      primaryDriverTitle={BUSINESS_DRIVERS.find(d => d.id === businessDriver)?.title}
+                      primaryDriverDesc={BUSINESS_DRIVERS.find(d => d.id === businessDriver)?.desc}
+                      operationalPriorityTitle={OPERATIONAL_PRIORITIES.find(p => p.id === operationalPriority)?.title}
+                      operationalPriorityDesc={OPERATIONAL_PRIORITIES.find(p => p.id === operationalPriority)?.desc}
+                      businessGoals={businessGoals}
+                      businessOKRs={businessOKRs}
+                      cacCurrent={cacCurrent}
+                      cacGoal={cacGoal}
+                      ltvCurrent={ltvCurrent}
+                      ltvGoal={ltvGoal}
+                      conversionCurrent={conversionCurrent}
+                      conversionGoal={conversionGoal}
+                      strategicConstraints={strategicConstraints}
+                      marketingSignal={marketingSignal}
+                      marketingNoise={marketingNoise}
+                      selectedChannels={selectedChannels}
+                    />
                   )}
                 </div>
               )}
@@ -1909,7 +1737,7 @@ export default function ProjectWarRoom({ project, currentUser }: ProjectWarRoomP
               {/* Technical Footer (Global to Stage) */}
               <div className="mt-32 pt-8 border-t border-white/5 flex justify-center">
                 <span className="text-[9px] text-white/5 font-mono tracking-[0.3em] uppercase">
-                  Project System ID: {project.id.toUpperCase()} // V5.7 Standard Active
+                  Project System ID: {project.id.toUpperCase()} &sol;&sol; V5.7 Standard Active
                 </span>
               </div>
             </div>

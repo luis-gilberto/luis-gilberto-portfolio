@@ -1,6 +1,7 @@
 'use client'
 
-import { Menu } from 'lucide-react'
+import React from 'react'
+import { Menu, Sun, Moon } from 'lucide-react'
 import Link from 'next/link'
 import { useSession, signOut } from 'next-auth/react'
 import Image from 'next/image'
@@ -16,6 +17,18 @@ interface TopNavBarProps {
 
 export default function TopNavBar({ onMenuToggle, projectStatus }: TopNavBarProps) {
   const { data: session } = useSession()
+  const [theme, setTheme] = React.useState<'light' | 'dark'>(() => {
+    if (typeof window === 'undefined') return 'dark'
+    return (localStorage.getItem('theme') as 'light' | 'dark') || 'dark'
+  })
+
+  React.useEffect(() => {
+    if (typeof document === 'undefined') return
+    document.documentElement.setAttribute('data-theme', theme)
+    localStorage.setItem('theme', theme)
+  }, [theme])
+
+  const toggleTheme = () => setTheme(prev => (prev === 'dark' ? 'light' : 'dark'))
 
   const getPhaseLabel = (status?: string) => {
     const s = status?.toUpperCase()
@@ -54,8 +67,17 @@ export default function TopNavBar({ onMenuToggle, projectStatus }: TopNavBarProp
           </Link>
         </div>
 
-        {/* 2. Right: Phase Badge & Auth */}
+        {/* 2. Right: Theme Toggle, Phase Badge & Auth */}
         <div className="flex items-center justify-end gap-4">
+          <button
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+            className="flex items-center justify-center w-[32px] h-[32px] rounded-full border border-white/10 bg-white/5 hover:bg-white/10 transition-colors text-white/70"
+            title="Toggle light/dark"
+          >
+            {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
+
           {phaseLabel && (
             <div className="flex items-center justify-center px-4 h-[32px] rounded-full border border-white/10 bg-white/5 backdrop-blur-sm">
               <span className="text-[10px] font-bold text-white/80 whitespace-nowrap uppercase tracking-widest">
@@ -80,4 +102,3 @@ export default function TopNavBar({ onMenuToggle, projectStatus }: TopNavBarProp
     </header>
   )
 }
-

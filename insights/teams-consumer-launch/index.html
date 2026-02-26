@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>When Work Apps Get a Life — Luis Gilberto · Insights</title>
   <meta name="description" content="The director's commentary on repositioning Microsoft Teams from a corporate utility to a consumer essential.">
+  <link rel="canonical" href="https://www.luis-gilberto.com/insights/teams-consumer-launch/">
+  <link rel="icon" type="image/png" href="/insights/assets/icons/favicon-32x32.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,7 +15,7 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* ── Design tokens — exact match to landing page ── */
+    /* ── Design tokens ── */
     :root {
       --bg:         #F5F0EB;
       --ink:        #1A1714;
@@ -23,376 +25,412 @@
       --cream:      #FAF7F4;
       --rule:       #D9D2CB;
       --card-bg:    #FFFFFF;
-      --accent-bg:  rgba(26,23,20,0.05);
       --popover-bg: #FFFFFF;
-
-      --display: 'Cormorant Garamond', Georgia, serif;
-      --ui:      'Inter', sans-serif;
-      --body:    'Cormorant Garamond', Georgia, serif;
+      --accent-bg:  rgba(26,23,20,0.05);
+      --header-h:   64px;
     }
-
     [data-theme="dark"] {
-      --bg:        #1A1714;
-      --ink:       #FAF7F4;
-      --ink-soft:  #A09890;
-      --cream:     #221E1B;
-      --card-bg:   #2A2420;
-      --rule:      #3A3430;
-      --accent-bg: rgba(250,247,244,0.06);
+      --bg:         #1A1714;
+      --ink:        #FAF7F4;
+      --ink-soft:   #A09890;
+      --cream:      #221E1B;
+      --card-bg:    #2A2420;
+      --rule:       #3A3430;
+      --accent-bg:  rgba(250,247,244,0.06);
       --popover-bg: #2A2420;
     }
 
     html { scroll-behavior: smooth; }
-
     body {
       background: var(--bg);
       color: var(--ink);
-      font-family: var(--body);
+      font-family: 'Cormorant Garamond', Georgia, serif;
       font-size: 20px;
       line-height: 1.75;
       -webkit-font-smoothing: antialiased;
       transition: background 0.3s, color 0.3s;
     }
 
-    /* ══════════════════════════════════════
-       HEADER — exact match to landing page
-    ══════════════════════════════════════ */
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
+    /* ═══════════════════════════════════════
+       READING PROGRESS BAR
+    ═══════════════════════════════════════ */
+    #progress {
+      position: fixed; top: 0; left: 0;
+      height: 2px; background: var(--coral);
+      width: 0%; z-index: 9999;
+      transition: width 0.1s linear;
+    }
+
+    /* ═══════════════════════════════════════
+       HEADER
+    ═══════════════════════════════════════ */
+    header.site-header {
+      position: sticky; top: 0; z-index: 100;
       width: 100%;
       transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
       border-bottom: 1px solid transparent;
     }
-    header.scrolled {
+    header.site-header.scrolled {
       background: rgba(245,240,235,0.95);
       backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
       border-bottom-color: var(--rule);
       box-shadow: 0 1px 0 var(--rule);
     }
-    [data-theme="dark"] header.scrolled {
+    [data-theme="dark"] header.site-header.scrolled {
       background: rgba(26,23,20,0.95);
-      border-bottom-color: var(--rule);
-      box-shadow: 0 1px 0 var(--rule);
     }
     .header-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 64px;
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 0 48px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: var(--header-h);
+      max-width: 1280px; margin: 0 auto; padding: 0 48px;
     }
-    .logo {
-      font-family: 'Big Shoulders Display', sans-serif;
-      font-size: 22px;
-      font-weight: 900;
-      letter-spacing: 0.04em;
-      color: var(--ink);
-      text-decoration: none;
-      padding: 6px 8px;
-      border-radius: 6px;
-      transition: background 0.15s;
-    }
-    .logo:hover { background: var(--accent-bg); }
-    .logo span { color: var(--coral); }
-    #logo-desktop { display: block; }
-    #logo-mark    { display: none; }
-    @media (max-width: 1024px) {
-      html[data-theme="light"] #logo-desktop { display: none !important; }
-      html[data-theme="light"] #logo-mark    { display: block !important; }
-      html[data-theme="dark"]  #logo-desktop { display: none !important; }
-      html[data-theme="dark"]  #logo-mark    { display: block !important; }
-    }
+    .logo-link { text-decoration: none; display: flex; align-items: center; }
+    #logo-desktop { display: block; height: 32px; width: auto; }
+    #logo-mark    { display: none;  height: 32px; width: auto; }
 
-    /* ── Desktop Nav ── */
+    /* Desktop nav */
     .desktop-nav {
-      display: flex;
-      align-items: center;
-      gap: 2px;
-      position: relative;
+      display: flex; align-items: center; gap: 2px; position: relative;
     }
     .nav-link {
       font-family: 'Inter', sans-serif;
-      font-size: 13px;
-      font-weight: 500;
-      letter-spacing: 0.04em;
-      color: var(--ink-soft);
-      text-decoration: none;
-      padding: 8px 14px;
-      border-radius: 6px;
+      font-size: 13px; font-weight: 500; letter-spacing: 0.04em;
+      color: var(--ink-soft); text-decoration: none;
+      padding: 8px 14px; border-radius: 6px;
       transition: color 0.15s, background 0.15s;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      white-space: nowrap;
+      display: inline-flex; align-items: center; gap: 4px;
+      background: none; border: none; cursor: pointer; white-space: nowrap;
     }
     .nav-link:hover { color: var(--ink); background: var(--accent-bg); }
     .nav-link.active { color: var(--coral); }
     .nav-link .chevron {
       width: 12px; height: 12px;
-      transition: transform 300ms ease;
-      flex-shrink: 0;
+      transition: transform 300ms ease; flex-shrink: 0;
     }
     .nav-link[aria-expanded="true"] { color: var(--ink); background: var(--accent-bg); }
     .nav-link[aria-expanded="true"] .chevron { transform: rotate(180deg); }
 
-    /* ── Header CTAs ── */
-    .header-ctas { display: flex; align-items: center; gap: 8px; }
-    .mobile-toggle {
-      display: none;
-      background: none;
-      border: 1px solid var(--rule);
-      border-radius: 6px;
-      width: 36px; height: 36px;
-      align-items: center; justify-content: center;
-      cursor: pointer;
-      color: var(--ink-soft);
-    }
-
-    /* ── Dropdown Viewport (Radix-style) ── */
+    /* Dropdown viewport */
     .nav-viewport {
-      position: absolute;
-      left: 50%;
-      top: calc(100% + 8px);
+      position: absolute; left: 50%; top: calc(100% + 8px);
       transform: translateX(-50%);
-      pointer-events: none;
-      z-index: 200;
+      pointer-events: none; z-index: 200;
     }
     .nav-viewport-inner {
       background: var(--popover-bg);
       border: 1px solid var(--rule);
       border-radius: 10px;
-      box-shadow: 0 16px 48px rgba(0,0,0,0.28), 0 4px 12px rgba(0,0,0,0.16);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
       transform-origin: top center;
-      opacity: 0;
-      transform: scale(0.96) translateY(-6px);
+      opacity: 0; transform: scale(0.96) translateY(-6px);
       pointer-events: none;
       transition: opacity 180ms ease, transform 180ms ease;
       overflow: hidden;
     }
     .nav-viewport-inner.open {
-      opacity: 1;
-      transform: scale(1) translateY(0);
+      opacity: 1; transform: scale(1) translateY(0);
       pointer-events: auto;
     }
     .nav-content { display: none; }
     .nav-content.active { display: block; }
 
-    /* ── Insights dropdown panel ── */
-    .insights-panel { width: 560px; padding: 6px; }
+    /* Dropdown panels */
+    .panel-wrap { padding: 6px; }
+    .panel-wrap[data-channel="insights"]  { --ch: var(--coral); width: 520px; }
+    .panel-wrap[data-channel="hub"]       { --ch: var(--teal);  width: 560px; }
+    .panel-wrap[data-channel="portfolio"] { --ch: var(--coral); width: 480px; }
+    .panel-wrap[data-channel="portal"]    { --ch: var(--teal);  width: 400px; }
+
     .panel-header {
       padding: 16px 16px 10px;
-      border-bottom: 1px solid var(--rule);
-      margin-bottom: 6px;
+      border-bottom: 1px solid var(--rule); margin-bottom: 6px;
     }
     .panel-header-label {
       font-family: 'Inter', sans-serif;
-      font-size: 10px; font-weight: 600;
-      letter-spacing: 0.15em; text-transform: uppercase;
-      color: var(--coral);
-      display: flex; align-items: center; gap: 8px;
-      margin-bottom: 4px;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--ch);
+      display: flex; align-items: center; gap: 8px; margin-bottom: 4px;
     }
     .panel-header-label::before {
-      content: ''; display: block;
-      width: 20px; height: 1px;
-      background: var(--coral);
+      content: ''; display: block; width: 20px; height: 1px; background: var(--ch);
     }
     .panel-header-title {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 22px; font-weight: 500;
-      color: var(--ink); line-height: 1.2;
+      font-size: 22px; font-weight: 500; color: var(--ink); line-height: 1.2;
     }
-    .panel-grid { display: grid; grid-template-columns: 1fr; gap: 4px; padding: 4px; }
+    .panel-grid      { display: grid; grid-template-columns: 1fr;     gap: 4px; padding: 4px; }
+    .panel-grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; }
     .panel-item {
-      display: flex; flex-direction: row;
-      align-items: flex-start; gap: 12px;
-      padding: 12px; border-radius: 8px;
-      text-decoration: none;
-      transition: background 0.15s;
+      display: flex; align-items: flex-start;
+      gap: 12px; padding: 12px; border-radius: 8px;
+      text-decoration: none; transition: background 0.15s;
     }
     .panel-item:hover { background: var(--accent-bg); }
-    .panel-item:hover .item-icon { border-color: var(--coral); color: var(--coral); }
+    .panel-item:hover .item-icon { border-color: var(--ch); color: var(--ch); }
     .item-icon {
-      flex-shrink: 0;
-      width: 40px; height: 40px;
+      flex-shrink: 0; width: 40px; height: 40px;
       display: flex; align-items: center; justify-content: center;
-      border: 1px solid var(--rule);
-      border-radius: 8px;
-      background: var(--bg);
-      color: var(--ink-soft);
+      border: 1px solid var(--rule); border-radius: 8px;
+      background: var(--bg); color: var(--ink-soft);
       transition: border-color 0.15s, color 0.15s;
     }
     .item-icon svg { width: 18px; height: 18px; }
+    .panel-item:hover .item-icon.hub-brain    { background: rgba(249,111,110,0.08); border-color: var(--coral); color: var(--coral); }
+    .panel-item:hover .item-icon.hub-advisory { background: rgba(75,173,168,0.08);  border-color: var(--teal);  color: var(--teal);  }
+    .panel-item:hover .item-icon.hub-studio   { background: rgba(249,111,110,0.08); border-color: var(--coral); color: var(--coral); }
+    .panel-item:hover .item-icon.hub-portal   { background: rgba(75,173,168,0.08);  border-color: var(--teal);  color: var(--teal);  }
     .item-text { flex: 1; min-width: 0; }
     .item-title {
-      font-family: 'Inter', sans-serif;
-      font-size: 13px; font-weight: 600;
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
       color: var(--ink); margin-bottom: 2px;
     }
     .item-desc {
-      font-family: 'Inter', sans-serif;
-      font-size: 11px; color: var(--ink-soft); line-height: 1.5;
+      font-family: 'Inter', sans-serif; font-size: 11px;
+      color: var(--ink-soft); line-height: 1.5;
+    }
+    .item-role {
+      display: inline-block; margin-top: 4px;
+      font-family: 'Inter', sans-serif; font-size: 9px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--ch); opacity: 0.8;
     }
     .panel-footer {
-      border-top: 1px solid var(--rule);
-      padding: 12px 16px;
+      border-top: 1px solid var(--rule); padding: 12px 16px;
       display: flex; align-items: center; justify-content: space-between;
     }
     .panel-footer-text { font-family: 'Inter', sans-serif; font-size: 12px; color: var(--ink-soft); }
     .panel-footer-link {
-      font-family: 'Inter', sans-serif;
-      font-size: 12px; font-weight: 600;
-      color: var(--coral); text-decoration: none;
-      display: flex; align-items: center; gap: 4px;
-      transition: gap 0.15s;
+      font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600;
+      color: var(--ch); text-decoration: none;
+      display: flex; align-items: center; gap: 4px; transition: gap 0.15s;
     }
     .panel-footer-link:hover { gap: 8px; }
 
-    /* ── Mobile menu ── */
+    /* Portal panel */
+    .portal-features { padding: 12px 16px 8px; display: flex; flex-direction: column; gap: 2px; }
+    .portal-feature {
+      display: flex; align-items: center; gap: 10px; padding: 9px 6px; border-radius: 6px;
+      font-family: 'Inter', sans-serif; font-size: 12px; color: var(--ink-soft);
+      transition: background 0.15s;
+    }
+    .portal-feature:hover { background: var(--accent-bg); color: var(--ink); }
+    .portal-feature-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--teal); flex-shrink: 0; }
+    .portal-cta-strip {
+      margin: 8px 10px 10px;
+      background: var(--ink); border-radius: 6px;
+      padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    [data-theme="dark"] .portal-cta-strip { background: rgba(250,247,244,0.08); border: 1px solid var(--rule); }
+    .portal-cta-label {
+      font-family: 'Cormorant Garamond', serif; font-size: 16px; font-style: italic;
+      color: #FAF7F4; line-height: 1.2;
+    }
+    [data-theme="dark"] .portal-cta-label { color: var(--ink); }
+    .portal-cta-btn {
+      font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: #1A1714; background: var(--teal);
+      padding: 8px 14px; border-radius: 4px; text-decoration: none;
+      white-space: nowrap; transition: background 0.15s;
+    }
+    .portal-cta-btn:hover { background: #3d9e9a; }
+
+    /* Header CTAs */
+    .header-ctas { display: flex; align-items: center; gap: 8px; }
+    .theme-btn {
+      background: none; border: 1px solid var(--rule); border-radius: 6px;
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--ink-soft); transition: all 0.15s; flex-shrink: 0;
+    }
+    .theme-btn:hover { border-color: var(--ink-soft); color: var(--ink); }
+    .mobile-toggle {
+      display: none; background: none; border: 1px solid var(--rule);
+      border-radius: 6px; width: 36px; height: 36px;
+      align-items: center; justify-content: center;
+      cursor: pointer; color: var(--ink-soft);
+    }
+
+    @media (max-width: 1024px) {
+      .desktop-nav { display: none; }
+      .header-ctas .mobile-toggle { display: flex; }
+      #logo-desktop { display: none; }
+      #logo-mark    { display: block; }
+    }
+    @media (max-width: 768px) { .header-inner { padding: 0 24px; } }
+
+    /* ═══════════════════════════════════════
+       MOBILE DRAWER
+    ═══════════════════════════════════════ */
     .mobile-menu {
-      display: none;
-      position: fixed;
-      inset: 0; top: 64px;
-      z-index: 99;
+      display: none; position: fixed;
+      inset: 0; top: var(--header-h); z-index: 99;
       background: rgba(245,240,235,0.97);
       backdrop-filter: blur(12px);
       flex-direction: column;
       border-top: 1px solid var(--rule);
+      overflow-y: auto;
     }
+    [data-theme="dark"] .mobile-menu { background: rgba(26,23,20,0.97); }
     .mobile-menu.open { display: flex; }
-    .mobile-menu nav {
-      flex: 1; display: flex; flex-direction: column;
-      gap: 4px; padding: 20px 24px;
-    }
-    .mobile-menu nav a {
-      font-family: 'Inter', sans-serif;
-      font-size: 15px; font-weight: 500;
-      color: var(--ink-soft); text-decoration: none;
-      padding: 12px 16px; border-radius: 8px;
-      transition: all 0.15s;
-    }
-    .mobile-menu nav a:hover { color: var(--ink); background: var(--accent-bg); }
 
-    /* Breadcrumb (inside hero) */
-    .breadcrumb {
+    .drawer-series-section {
+      padding: 20px 24px; border-bottom: 1px solid var(--rule); position: relative;
+    }
+    .drawer-series-section::before {
+      content: ''; position: absolute; top: 0; left: 0;
+      width: 2px; height: 100%; background: var(--coral);
+      border-radius: 0 2px 2px 0;
+    }
+    .drawer-section-label {
       font-family: 'Inter', sans-serif;
-      font-size: 11px; color: var(--ink-soft);
+      font-size: 9px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--coral); margin-bottom: 14px;
       display: flex; align-items: center; gap: 8px;
     }
-    .breadcrumb a { color: var(--ink-soft); text-decoration: none; transition: color 0.15s; }
-    .breadcrumb a:hover { color: var(--coral); }
-    .breadcrumb-sep { opacity: 0.4; }
-    .breadcrumb-current { color: var(--ink); }
+    .drawer-section-label::before {
+      content: ''; display: block; width: 14px; height: 1px; background: var(--coral);
+    }
+    .drawer-series-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .drawer-series-card {
+      background: var(--card-bg); border: 1px solid var(--rule);
+      border-radius: 10px; padding: 14px 12px;
+      text-decoration: none; display: flex; flex-direction: column; gap: 10px;
+      transition: all 0.2s; position: relative; overflow: hidden;
+    }
+    .drawer-series-card::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+      height: 2px; background: var(--coral);
+      transform: scaleX(0); transform-origin: left; transition: transform 0.2s ease;
+    }
+    .drawer-series-card:hover { border-color: rgba(249,111,110,0.4); transform: translateY(-2px); }
+    .drawer-series-card:hover::after { transform: scaleX(1); }
+    .drawer-series-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: var(--bg); border: 1px solid var(--rule);
+      display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+    }
+    .drawer-series-icon svg {
+      width: 15px; height: 15px; stroke: var(--ink-soft); fill: none;
+      stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; transition: stroke 0.2s;
+    }
+    .drawer-series-card:hover .drawer-series-icon { background: var(--coral); border-color: var(--coral); }
+    .drawer-series-card:hover .drawer-series-icon svg { stroke: #fff; }
+    .drawer-series-title { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; color: var(--ink); line-height: 1.3; }
+    .drawer-series-desc  { font-family: 'Inter', sans-serif; font-size: 10px; color: var(--ink-soft); line-height: 1.4; margin-top: -4px; }
+    .drawer-global-section { padding: 16px 24px; }
+    .drawer-global-label {
+      font-family: 'Inter', sans-serif; font-size: 9px; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--ink-soft); opacity: 0.6; margin-bottom: 8px;
+    }
+    .drawer-global-link {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 0; border-bottom: 1px solid rgba(217,210,203,0.5);
+      text-decoration: none; transition: all 0.15s;
+    }
+    [data-theme="dark"] .drawer-global-link { border-bottom-color: rgba(58,52,48,0.5); }
+    .drawer-global-link:last-child { border-bottom: none; }
+    .drawer-global-icon {
+      width: 34px; height: 34px; border-radius: 8px;
+      background: rgba(26,23,20,0.04);
+      display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+    }
+    [data-theme="dark"] .drawer-global-icon { background: rgba(250,247,244,0.04); }
+    .drawer-global-icon svg {
+      width: 15px; height: 15px; stroke: var(--ink-soft); fill: none;
+      stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; transition: stroke 0.15s;
+    }
+    .drawer-global-link:hover .drawer-global-icon svg { stroke: var(--teal); }
+    .drawer-global-link.drawer-active .drawer-global-icon svg { stroke: var(--coral); }
+    .drawer-global-text {
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
+      color: var(--ink-soft); transition: color 0.15s;
+    }
+    .drawer-global-link:hover .drawer-global-text { color: var(--ink); }
+    .drawer-global-link.drawer-active .drawer-global-text { color: var(--coral); font-weight: 600; }
+    .drawer-footer-strip {
+      padding: 14px 24px; border-top: 1px solid var(--rule);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0; margin-top: auto;
+    }
+    .drawer-status { display: flex; align-items: center; gap: 8px; }
+    .drawer-status-dot {
+      width: 6px; height: 6px; background: var(--teal); border-radius: 50%;
+      box-shadow: 0 0 6px rgba(75,173,168,0.5); animation: pulse 2s infinite;
+    }
+    .drawer-status-label {
+      font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 600;
+      letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft);
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
-    /* ══════════════════════════════════════
-       HERO — cinematic, full-width
-    ══════════════════════════════════════ */
+    /* ═══════════════════════════════════════
+       HERO — cinematic full-width
+    ═══════════════════════════════════════ */
     .article-hero {
-      position: relative;
-      min-height: 88vh;
-      display: flex;
-      align-items: flex-end;
-      overflow: hidden;
+      position: relative; min-height: 88vh;
+      display: flex; align-items: flex-end; overflow: hidden;
     }
-    .hero-media {
-      position: absolute;
-      inset: 0;
-    }
-    .hero-media img {
-      width: 100%; height: 100%;
-      object-fit: cover;
-      object-position: center top;
-    }
-    /* layered gradient: image fades into dark at bottom for text legibility */
+    .hero-media { position: absolute; inset: 0; }
+    .hero-media img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
     .hero-overlay {
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(to bottom,
-          rgba(26,23,20,0.65) 0%,
-          rgba(26,23,20,0.45) 30%,
-          rgba(26,23,20,0.75) 60%,
-          rgba(26,23,20,0.98) 100%
-        );
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom,
+        rgba(26,23,20,0.65) 0%,
+        rgba(26,23,20,0.45) 30%,
+        rgba(26,23,20,0.75) 60%,
+        rgba(26,23,20,0.98) 100%
+      );
     }
     .hero-glow {
-      position: absolute;
-      top: -80px; right: -80px;
+      position: absolute; top: -80px; right: -80px;
       width: 500px; height: 500px;
       background: radial-gradient(circle, rgba(249,111,110,0.18) 0%, transparent 65%);
       pointer-events: none;
     }
     .hero-content {
-      position: relative;
-      z-index: 2;
-      max-width: 1280px;
-      width: 100%;
-      margin: 0 auto;
+      position: relative; z-index: 2;
+      max-width: 1280px; width: 100%; margin: 0 auto;
       padding: 0 48px 96px;
     }
+    .breadcrumb {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px; color: rgba(250,247,244,0.5);
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 32px;
+      opacity: 0; animation: fadeUp 0.6s ease 0.05s forwards;
+    }
+    .breadcrumb a { color: rgba(250,247,244,0.5); text-decoration: none; transition: color 0.15s; }
+    .breadcrumb a:hover { color: var(--coral); }
+    .breadcrumb-sep { opacity: 0.4; }
     .hero-series {
-      font-family: var(--ui);
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--coral);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 20px;
-      opacity: 0;
-      animation: fadeUp 0.7s ease 0.1s forwards;
+      font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--coral);
+      display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+      opacity: 0; animation: fadeUp 0.7s ease 0.1s forwards;
     }
     .hero-series::before {
-      content: '';
-      display: block;
-      width: 28px; height: 1px;
-      background: var(--coral);
+      content: ''; display: block; width: 28px; height: 1px; background: var(--coral);
     }
     .hero-title {
-      font-family: var(--display);
-      font-size: clamp(52px, 7vw, 100px);
-      font-weight: 300;
-      line-height: 0.93;
-      color: #FAF7F4;
-      letter-spacing: -0.025em;
-      margin-bottom: 28px;
-      max-width: 900px;
-      opacity: 0;
-      animation: fadeUp 0.7s ease 0.22s forwards;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(52px, 7vw, 100px); font-weight: 300; line-height: 0.93;
+      color: #FAF7F4; letter-spacing: -0.025em;
+      margin-bottom: 28px; max-width: 900px;
+      opacity: 0; animation: fadeUp 0.7s ease 0.22s forwards;
     }
     .hero-title em { font-style: italic; color: var(--coral); }
     .hero-dek {
-      font-family: var(--display);
-      font-size: 20px;
-      font-weight: 300;
-      font-style: italic;
-      color: rgba(250,247,244,0.65);
-      max-width: 560px;
-      line-height: 1.6;
-      margin-bottom: 36px;
-      opacity: 0;
-      animation: fadeUp 0.7s ease 0.34s forwards;
+      font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 300; font-style: italic;
+      color: rgba(250,247,244,0.65); max-width: 560px; line-height: 1.6; margin-bottom: 36px;
+      opacity: 0; animation: fadeUp 0.7s ease 0.34s forwards;
     }
     .hero-byline {
-      font-family: var(--ui);
-      font-size: 12px;
-      color: rgba(250,247,244,0.5);
-      letter-spacing: 0.08em;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      opacity: 0;
-      animation: fadeUp 0.7s ease 0.44s forwards;
+      font-family: 'Inter', sans-serif; font-size: 12px;
+      color: rgba(250,247,244,0.5); letter-spacing: 0.08em;
+      display: flex; align-items: center; gap: 16px;
+      opacity: 0; animation: fadeUp 0.7s ease 0.44s forwards;
     }
     .hero-byline strong { color: rgba(250,247,244,0.85); font-weight: 500; }
     .byline-dot { width: 3px; height: 3px; background: rgba(250,247,244,0.3); border-radius: 50%; }
@@ -402,553 +440,274 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* Scroll hint */
     .hero-scroll {
-      position: absolute;
-      bottom: 32px; right: 48px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      font-family: var(--ui);
-      font-size: 9px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
+      position: absolute; bottom: 32px; right: 48px;
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      font-family: 'Inter', sans-serif; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
       color: rgba(250,247,244,0.3);
     }
     .scroll-line {
       width: 1px; height: 44px;
       background: linear-gradient(to bottom, rgba(250,247,244,0.3), transparent);
-      animation: pulse 2.2s ease-in-out infinite;
+      animation: scrollPulse 2.2s ease-in-out infinite;
     }
-    @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+    @keyframes scrollPulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
 
-    /* ══════════════════════════════════════
-       ARTICLE LAYOUT — sidebar + main
-    ══════════════════════════════════════ */
+    /* ═══════════════════════════════════════
+       ARTICLE LAYOUT
+    ═══════════════════════════════════════ */
     .article-wrap {
-      max-width: 1280px;
-      margin: 0 auto;
+      max-width: 1280px; margin: 0 auto;
       padding: 88px 48px 120px;
-      display: grid;
-      grid-template-columns: 220px 1fr;
-      gap: 80px;
-      align-items: start;
+      display: grid; grid-template-columns: 220px 1fr;
+      gap: 80px; align-items: start;
     }
 
-    /* ── Sidebar ── */
-    .article-sidebar {
-      position: sticky;
-      top: 88px;
-    }
+    /* Sidebar */
+    .article-sidebar { position: sticky; top: 88px; }
     .toc-label {
-      font-family: var(--ui);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--ink-soft);
-      padding-bottom: 14px;
-      border-bottom: 1px solid var(--rule);
-      margin-bottom: 16px;
+      font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-soft);
+      padding-bottom: 14px; border-bottom: 1px solid var(--rule); margin-bottom: 16px;
     }
     .toc-list { list-style: none; }
     .toc-list li { margin-bottom: 2px; }
     .toc-list a {
-      font-family: var(--ui);
-      font-size: 13px;
-      color: var(--ink-soft);
-      text-decoration: none;
-      padding: 6px 12px;
-      border-left: 2px solid transparent;
-      display: block;
-      transition: all 0.15s;
-      line-height: 1.4;
+      font-family: 'Inter', sans-serif; font-size: 13px;
+      color: var(--ink-soft); text-decoration: none;
+      padding: 6px 12px; border-left: 2px solid transparent;
+      display: block; transition: all 0.15s; line-height: 1.4;
     }
-    .toc-list a:hover,
-    .toc-list a.active { color: var(--ink); border-left-color: var(--coral); }
-
+    .toc-list a:hover, .toc-list a.active { color: var(--ink); border-left-color: var(--coral); }
     .sidebar-card {
-      margin-top: 40px;
-      padding: 24px;
-      background: var(--card-bg);
-      border: 1px solid var(--rule);
-      border-radius: 2px;
-      border-top: 3px solid var(--coral);
+      margin-top: 40px; padding: 24px;
+      background: var(--card-bg); border: 1px solid var(--rule);
+      border-radius: 2px; border-top: 3px solid var(--coral);
     }
     .sidebar-card-label {
-      font-family: var(--ui);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--coral);
-      margin-bottom: 14px;
+      font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase; color: var(--coral); margin-bottom: 14px;
     }
-    .sidebar-stat {
-      margin-bottom: 12px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--rule);
-    }
+    .sidebar-stat { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--rule); }
     .sidebar-stat:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
     .stat-num {
-      font-family: var(--display);
-      font-size: 32px;
-      font-weight: 300;
-      color: var(--teal);
-      line-height: 1;
-      letter-spacing: -0.02em;
+      font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 300;
+      color: var(--teal); line-height: 1; letter-spacing: -0.02em;
     }
-    .stat-lbl {
-      font-family: var(--ui);
-      font-size: 11px;
-      color: var(--ink-soft);
-      letter-spacing: 0.06em;
-      margin-top: 2px;
-    }
+    .stat-lbl { font-family: 'Inter', sans-serif; font-size: 11px; color: var(--ink-soft); margin-top: 2px; }
 
-    /* ── Main prose ── */
+    /* Article body */
     .article-body { min-width: 0; }
-
     .section-anchor { padding-top: 16px; }
-
     .section-num {
-      font-family: var(--ui);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--coral);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 24px;
+      font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--coral);
+      display: flex; align-items: center; gap: 12px; margin-bottom: 24px;
     }
-    .section-num::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--rule);
-    }
-
+    .section-num::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
     .article-body h2 {
-      font-family: var(--display);
-      font-size: clamp(32px, 3.5vw, 48px);
-      font-weight: 400;
-      line-height: 1.1;
-      color: var(--ink);
-      letter-spacing: -0.02em;
-      margin-bottom: 28px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(32px, 3.5vw, 48px); font-weight: 400; line-height: 1.1;
+      color: var(--ink); letter-spacing: -0.02em; margin-bottom: 28px;
     }
     .article-body h2 em { font-style: italic; color: var(--coral); }
-
-    .article-body h3 {
-      font-family: var(--display);
-      font-size: 28px;
-      font-weight: 500;
-      color: var(--ink);
-      line-height: 1.2;
-      margin: 48px 0 20px;
-      letter-spacing: -0.01em;
-    }
-
     .article-body p {
-      font-family: var(--display);
-      font-size: 20px;
-      font-weight: 300;
-      color: var(--ink);
-      line-height: 1.8;
-      margin-bottom: 24px;
-      max-width: 68ch;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px; font-weight: 300; color: var(--ink);
+      line-height: 1.8; margin-bottom: 24px; max-width: 68ch;
     }
-
-    .article-body p.lead {
-      font-size: 24px;
-      font-weight: 400;
-      color: var(--ink);
-      line-height: 1.65;
-      margin-bottom: 32px;
-    }
+    .article-body p.lead { font-size: 24px; font-weight: 400; line-height: 1.65; margin-bottom: 32px; }
     .article-body p strong { font-weight: 600; }
 
-    /* Inset card — insight box */
     .inset-card {
-      background: var(--card-bg);
-      border: 1px solid var(--rule);
-      border-left: 4px solid var(--coral);
-      border-radius: 2px;
-      padding: 32px 36px;
-      margin: 40px 0;
+      background: var(--card-bg); border: 1px solid var(--rule);
+      border-left: 4px solid var(--coral); border-radius: 2px;
+      padding: 32px 36px; margin: 40px 0;
     }
     .inset-card h4 {
-      font-family: var(--ui);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--coral);
-      margin-bottom: 12px;
+      font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase; color: var(--coral); margin-bottom: 12px;
     }
     .inset-card p {
-      font-family: var(--display);
-      font-size: 18px;
-      font-weight: 300;
-      color: var(--ink);
-      line-height: 1.7;
-      margin: 0;
-      max-width: none;
+      font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 300;
+      color: var(--ink); line-height: 1.7; margin: 0; max-width: none;
     }
-    .inset-card p em { font-style: italic; }
 
-    /* Pull quote */
     .pull-quote {
-      margin: 56px 0;
-      padding: 48px 0;
-      border-top: 1px solid var(--rule);
-      border-bottom: 1px solid var(--rule);
+      margin: 56px 0; padding: 48px 0;
+      border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
       position: relative;
     }
     .pull-quote::before {
-      content: '"';
-      font-family: var(--display);
-      font-size: 160px;
-      line-height: 0.7;
-      color: var(--coral);
-      opacity: 0.15;
-      position: absolute;
-      top: 32px;
-      left: -16px;
-      pointer-events: none;
-      font-weight: 300;
+      content: '"'; font-family: 'Cormorant Garamond', serif;
+      font-size: 160px; line-height: 0.7; color: var(--coral); opacity: 0.15;
+      position: absolute; top: 32px; left: -16px; pointer-events: none; font-weight: 300;
     }
     .pull-quote p {
-      font-family: var(--display);
-      font-size: clamp(24px, 3vw, 36px);
-      font-weight: 300;
-      font-style: italic;
-      color: var(--ink);
-      line-height: 1.4;
-      letter-spacing: -0.01em;
-      margin: 0;
-      max-width: none;
-      position: relative;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(24px, 3vw, 36px); font-weight: 300; font-style: italic;
+      color: var(--ink); line-height: 1.4; letter-spacing: -0.01em;
+      margin: 0; max-width: none; position: relative;
     }
 
-    /* Visual break — full-width image inside article */
-    .visual-break {
-      margin: 56px -40px;
-      border-radius: 2px;
-      overflow: hidden;
-    }
-    .visual-break img {
-      width: 100%;
-      display: block;
-    }
+    .visual-break { margin: 56px -40px; border-radius: 2px; overflow: hidden; }
+    .visual-break img { width: 100%; display: block; }
     .visual-caption {
-      font-family: var(--ui);
-      font-size: 11px;
-      color: var(--ink-soft);
-      letter-spacing: 0.06em;
-      text-align: center;
-      padding: 12px 0 0;
+      font-family: 'Inter', sans-serif; font-size: 11px; color: var(--ink-soft);
+      letter-spacing: 0.06em; text-align: center; padding: 12px 0 0;
     }
 
-    /* Stats band */
     .stats-band {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1px;
-      background: var(--rule);
-      border: 1px solid var(--rule);
-      border-radius: 2px;
-      margin: 48px 0;
-      overflow: hidden;
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1px; background: var(--rule); border: 1px solid var(--rule);
+      border-radius: 2px; margin: 48px 0; overflow: hidden;
     }
     .stat-cell {
-      background: var(--card-bg);
-      padding: 40px 32px;
-      text-align: center;
-      transition: background 0.25s;
+      background: var(--card-bg); padding: 40px 32px; text-align: center; transition: background 0.25s;
     }
     .stat-cell:hover { background: var(--ink); }
-    .stat-cell:hover .stat-big,
-    .stat-cell:hover .stat-sub { color: var(--cream); }
+    .stat-cell:hover .stat-big, .stat-cell:hover .stat-sub { color: var(--cream); }
     .stat-big {
-      font-family: var(--display);
-      font-size: 56px;
-      font-weight: 300;
-      color: var(--teal);
-      line-height: 1;
-      letter-spacing: -0.03em;
-      transition: color 0.25s;
+      font-family: 'Cormorant Garamond', serif; font-size: 56px; font-weight: 300;
+      color: var(--teal); line-height: 1; letter-spacing: -0.03em; transition: color 0.25s;
     }
     .stat-big sup { font-size: 28px; color: var(--coral); }
     .stat-sub {
-      font-family: var(--ui);
-      font-size: 11px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--ink-soft);
-      margin-top: 10px;
-      transition: color 0.25s;
+      font-family: 'Inter', sans-serif; font-size: 11px; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--ink-soft); margin-top: 10px; transition: color 0.25s;
     }
 
-    /* Editorial note */
     .editorial-note {
-      margin-top: 64px;
-      padding: 28px 32px;
-      background: var(--accent-bg);
-      border-radius: 2px;
-      border: 1px solid var(--rule);
+      margin-top: 64px; padding: 28px 32px;
+      background: var(--accent-bg); border-radius: 2px; border: 1px solid var(--rule);
     }
     .editorial-label {
-      font-family: var(--ui);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--ink-soft);
-      display: block;
-      margin-bottom: 10px;
+      font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-soft);
+      display: block; margin-bottom: 10px;
     }
     .editorial-note p {
-      font-family: var(--ui);
-      font-size: 13px;
-      color: var(--ink-soft);
-      line-height: 1.7;
-      margin: 0;
-      max-width: none;
+      font-family: 'Inter', sans-serif; font-size: 13px;
+      color: var(--ink-soft); line-height: 1.7; margin: 0; max-width: none;
     }
 
-    /* ══════════════════════════════════════
+    /* ═══════════════════════════════════════
        PROJECT BRIDGE
-    ══════════════════════════════════════ */
-    .bridge-section {
-      background: var(--ink);
-      padding: 96px 48px;
-    }
+    ═══════════════════════════════════════ */
+    .bridge-section { background: var(--ink); padding: 96px 48px; }
     .bridge-inner {
-      max-width: 1280px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 80px;
-      align-items: center;
+      max-width: 1280px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
     }
     .bridge-eyebrow {
-      font-family: var(--ui);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--coral);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 20px;
+      font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--coral);
+      display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
     }
-    .bridge-eyebrow::before {
-      content: '';
-      display: block;
-      width: 20px; height: 1px;
-      background: var(--coral);
-    }
+    .bridge-eyebrow::before { content: ''; display: block; width: 20px; height: 1px; background: var(--coral); }
     .bridge-title {
-      font-family: var(--display);
-      font-size: clamp(36px, 4vw, 56px);
-      font-weight: 300;
-      color: #FAF7F4;
-      line-height: 1.05;
-      letter-spacing: -0.02em;
-      margin-bottom: 20px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(36px, 4vw, 56px); font-weight: 300;
+      color: #FAF7F4; line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 20px;
     }
     .bridge-title em { font-style: italic; color: var(--coral); }
     .bridge-desc {
-      font-family: var(--display);
-      font-size: 18px;
-      font-weight: 300;
-      color: rgba(250,247,244,0.55);
-      line-height: 1.75;
-      margin-bottom: 36px;
-      max-width: none;
+      font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 300;
+      color: rgba(250,247,244,0.55); line-height: 1.75; margin-bottom: 36px; max-width: none;
     }
     .bridge-cta {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      font-family: var(--ui);
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--ink);
-      background: var(--coral);
-      padding: 13px 26px;
-      border-radius: 4px;
-      text-decoration: none;
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--ink); background: var(--coral);
+      padding: 13px 26px; border-radius: 4px; text-decoration: none;
       transition: all 0.25s;
     }
     .bridge-cta:hover { background: #FAF7F4; transform: translateY(-2px); }
     .bridge-cta svg { width: 14px; height: 14px; transition: transform 0.2s; }
     .bridge-cta:hover svg { transform: translateX(3px); }
     .bridge-image {
-      aspect-ratio: 4/3;
-      border-radius: 2px;
-      overflow: hidden;
+      aspect-ratio: 4/3; border-radius: 2px; overflow: hidden;
       border: 1px solid rgba(255,255,255,0.07);
     }
     .bridge-image img { width: 100%; height: 100%; object-fit: cover; }
 
-    /* ══════════════════════════════════════
+    /* ═══════════════════════════════════════
        KEEP READING
-    ══════════════════════════════════════ */
+    ═══════════════════════════════════════ */
     .keep-reading {
-      background: var(--cream);
-      border-top: 1px solid var(--rule);
-      padding: 88px 48px;
-      text-align: center;
+      background: var(--cream); border-top: 1px solid var(--rule);
+      padding: 88px 48px; text-align: center;
     }
     .keep-reading-eyebrow {
-      font-family: var(--ui);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--coral);
-      margin-bottom: 16px;
+      font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--coral); margin-bottom: 16px;
     }
     .keep-reading h2 {
-      font-family: var(--display);
-      font-size: 48px;
-      font-weight: 300;
-      color: var(--ink);
-      letter-spacing: -0.02em;
-      margin-bottom: 12px;
+      font-family: 'Cormorant Garamond', serif; font-size: 48px; font-weight: 300;
+      color: var(--ink); letter-spacing: -0.02em; margin-bottom: 12px;
     }
     .keep-reading p {
-      font-family: var(--display);
-      font-size: 18px;
-      font-weight: 300;
-      font-style: italic;
-      color: var(--ink-soft);
-      margin-bottom: 36px;
+      font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 300;
+      font-style: italic; color: var(--ink-soft); margin-bottom: 36px;
     }
     .back-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-family: var(--ui);
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--ink);
-      text-decoration: none;
-      border-bottom: 1px solid var(--ink);
-      padding-bottom: 2px;
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--ink); text-decoration: none;
+      border-bottom: 1px solid var(--ink); padding-bottom: 2px;
       transition: color 0.2s, border-color 0.2s;
     }
     .back-link:hover { color: var(--coral); border-color: var(--coral); }
     .back-link svg { width: 13px; transition: transform 0.2s; }
     .back-link:hover svg { transform: translateX(-3px); }
 
-    /* ══════════════════════════════════════
-       FOOTER — matches landing page
-    ══════════════════════════════════════ */
-    footer {
-      background: var(--cream);
-      border-top: 1px solid var(--rule);
-      padding: 80px 48px 48px;
-    }
+    /* ═══════════════════════════════════════
+       FOOTER
+    ═══════════════════════════════════════ */
+    footer { background: var(--cream); border-top: 1px solid var(--rule); padding: 80px 48px 48px; }
     .footer-inner { max-width: 1280px; margin: 0 auto; }
     .footer-top {
-      display: grid;
-      grid-template-columns: 2fr 1fr 1fr 1fr;
-      gap: 64px;
-      padding-bottom: 56px;
-      border-bottom: 1px solid var(--rule);
-      margin-bottom: 36px;
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 64px;
+      padding-bottom: 56px; border-bottom: 1px solid var(--rule); margin-bottom: 36px;
     }
     .footer-tagline {
-      font-family: var(--display);
-      font-size: 15px;
-      font-style: italic;
-      color: var(--ink-soft);
-      margin: 10px 0 24px;
-      line-height: 1.6;
+      font-family: 'Cormorant Garamond', serif; font-size: 15px; font-style: italic;
+      color: var(--ink-soft); margin: 10px 0 24px; line-height: 1.6;
     }
     .social-row { display: flex; gap: 10px; }
     .social-btn {
-      width: 34px; height: 34px;
-      border: 1px solid var(--rule);
-      border-radius: 4px;
+      width: 34px; height: 34px; border: 1px solid var(--rule); border-radius: 4px;
       display: flex; align-items: center; justify-content: center;
-      color: var(--ink-soft);
-      text-decoration: none;
-      transition: all 0.15s;
+      color: var(--ink-soft); text-decoration: none; transition: all 0.15s;
     }
     .social-btn:hover { border-color: var(--coral); color: var(--coral); }
     .social-btn svg { width: 14px; height: 14px; }
     .footer-col h4 {
-      font-family: var(--ui);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--ink);
-      margin-bottom: 18px;
+      font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink); margin-bottom: 18px;
     }
     .footer-col ul { list-style: none; }
     .footer-col ul li { margin-bottom: 8px; }
     .footer-col ul li a {
-      font-family: var(--display);
-      font-size: 16px;
-      color: var(--ink-soft);
-      text-decoration: none;
-      transition: color 0.15s;
+      font-family: 'Cormorant Garamond', serif; font-size: 16px;
+      color: var(--ink-soft); text-decoration: none; transition: color 0.15s;
     }
     .footer-col ul li a:hover { color: var(--coral); }
-    .footer-bottom {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .footer-copy {
-      font-family: var(--ui);
-      font-size: 11px;
-      color: var(--ink-soft);
-    }
+    .footer-bottom { display: flex; align-items: center; justify-content: space-between; }
+    .footer-copy { font-family: 'Inter', sans-serif; font-size: 11px; color: var(--ink-soft); }
     .footer-copy span { color: var(--coral); }
-    .dot-green { width: 7px; height: 7px; background: #4CAF6E; border-radius: 50%; display: inline-block; animation: blink 2s infinite; margin-right: 6px; }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    .dot-green { width: 7px; height: 7px; background: #4CAF6E; border-radius: 50%; display: inline-block; animation: pulse 2s infinite; margin-right: 6px; }
 
-    /* ══════════════════════════════════════
-       SCROLL FADE ANIMATIONS
-    ══════════════════════════════════════ */
+    /* Scroll fade */
     .fade-up {
-      opacity: 0;
-      transform: translateY(24px);
+      opacity: 0; transform: translateY(24px);
       transition: opacity 0.6s ease, transform 0.6s ease;
     }
     .fade-up.visible { opacity: 1; transform: translateY(0); }
 
-    /* ══════════════════════════════════════
-       READING PROGRESS BAR
-    ══════════════════════════════════════ */
-    .progress-bar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 2px;
-      background: var(--coral);
-      z-index: 200;
-      width: 0%;
-      transition: width 0.1s linear;
-    }
-
-    /* ══════════════════════════════════════
-       RESPONSIVE
-    ══════════════════════════════════════ */
+    /* Responsive */
     @media (max-width: 1024px) {
       .article-wrap { grid-template-columns: 1fr; gap: 0; }
       .article-sidebar { position: static; margin-bottom: 48px; display: flex; gap: 32px; align-items: flex-start; }
@@ -959,7 +718,6 @@
     }
     @media (max-width: 768px) {
       .header-inner { padding: 0 24px; }
-      .header-nav { display: none; }
       .article-wrap { padding: 56px 24px 80px; }
       .hero-content { padding: 0 24px 72px; }
       .bridge-section { padding: 64px 24px; }
@@ -968,164 +726,270 @@
       .footer-top { grid-template-columns: 1fr; gap: 36px; }
       .stats-band { grid-template-columns: 1fr; }
       .visual-break { margin: 40px 0; }
+      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
     }
   </style>
 </head>
 <body>
 
-<!-- Reading Progress -->
-<div class="progress-bar" id="progress"></div>
+<!-- READING PROGRESS -->
+<div id="progress"></div>
 
-<!-- ══════════════════════════════════════════
-     HEADER
-══════════════════════════════════════════ -->
-<header id="site-header">
+<!-- ═══════════════════════════════════════════
+     HEADER — canonical four-channel megamenu
+═══════════════════════════════════════════ -->
+<header class="site-header" id="site-header">
   <div class="header-inner">
 
-    <!-- Logo — dual (wordmark desktop / mark mobile), theme-aware -->
-    <a href="../index.html" class="logo">
-      <img id="logo-desktop"
-           src="../assets/images/insights_logo_light.svg"
-           alt="Insights by Luis Gilberto"
-           style="height:32px; width:auto;">
-      <img id="logo-mark"
-           src="../assets/images/LG-logomark-BlackCoral.png"
-           alt="Insights"
-           style="height:32px; width:auto;">
+    <a href="https://www.luis-gilberto.com/insights/" class="logo-link">
+      <img id="logo-desktop" src="/insights/assets/images/Insights_logo_black.png" alt="Insights by Luis Gilberto">
+      <img id="logo-mark"    src="/insights/assets/images/LG-logomark-BlackCoral.png" alt="Insights">
     </a>
 
-    <!-- Desktop Nav -->
     <nav class="desktop-nav" id="desktop-nav" aria-label="Main navigation">
 
-      <a href="https://luis-gilberto.com" class="nav-link">Portfolio</a>
+      <button id="trigger-portfolio" class="nav-link"
+        aria-haspopup="true" aria-expanded="false"
+        aria-controls="content-portfolio" data-trigger>
+        Portfolio
+        <svg class="chevron" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+          <path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"/>
+        </svg>
+      </button>
 
-      <!-- Insights trigger -->
-      <button
-        id="trigger-insights"
-        class="nav-link active"
-        aria-haspopup="true"
-        aria-expanded="false"
-        aria-controls="content-insights"
-        data-trigger
-      >
+      <!-- Insights — ACTIVE on this page -->
+      <button id="trigger-insights" class="nav-link active"
+        aria-haspopup="true" aria-expanded="false"
+        aria-controls="content-insights" data-trigger>
         Insights
         <svg class="chevron" viewBox="0 0 15 15" fill="none" aria-hidden="true">
           <path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"/>
         </svg>
       </button>
 
-      <a href="/TheHub/" class="nav-link">The Hub</a>
-      <a href="https://portal.luis-gilberto.com/" class="nav-link">Portal</a>
+      <button id="trigger-hub" class="nav-link"
+        aria-haspopup="true" aria-expanded="false"
+        aria-controls="content-hub" data-trigger>
+        The Hub
+        <svg class="chevron" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+          <path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"/>
+        </svg>
+      </button>
 
-      <!-- Dropdown Viewport -->
-      <div class="nav-viewport" id="nav-viewport" role="presentation">
+      <button id="trigger-portal" class="nav-link"
+        aria-haspopup="true" aria-expanded="false"
+        aria-controls="content-portal" data-trigger>
+        Portal
+        <svg class="chevron" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+          <path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"/>
+        </svg>
+      </button>
+
+      <!-- Single shared dropdown viewport -->
+      <div class="nav-viewport" id="nav-viewport">
         <div class="nav-viewport-inner" id="nav-viewport-inner">
-          <div id="content-insights" class="nav-content" role="region" aria-labelledby="trigger-insights">
-            <div class="insights-panel">
+
+          <!-- PORTFOLIO panel -->
+          <div id="content-portfolio" class="nav-content">
+            <div class="panel-wrap" data-channel="portfolio">
+              <div class="panel-header">
+                <p class="panel-header-label">Portfolio</p>
+                <p class="panel-header-title">Work, story &amp; process</p>
+              </div>
+              <div class="panel-grid">
+                <a href="https://www.luis-gilberto.com/myexperience.html" class="panel-item">
+                  <div class="item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></div>
+                  <div class="item-text"><p class="item-title">Work &amp; Experience</p><p class="item-desc">15+ years across Microsoft, startups, and beyond</p></div>
+                </a>
+                <a href="https://www.luis-gilberto.com/timeline.html" class="panel-item">
+                  <div class="item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="4"/><polyline points="6 10 12 4 18 10"/></svg></div>
+                  <div class="item-text"><p class="item-title">Career Timeline</p><p class="item-desc">The eras, pivots, and moments that shaped the work</p></div>
+                </a>
+                <a href="https://www.luis-gilberto.com/about.html" class="panel-item">
+                  <div class="item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
+                  <div class="item-text"><p class="item-title">About Luis</p><p class="item-desc">From Caracas to Cascadia — the full story</p></div>
+                </a>
+                <a href="https://www.luis-gilberto.com/contact.html" class="panel-item">
+                  <div class="item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+                  <div class="item-text"><p class="item-title">Contact</p><p class="item-desc">Start a conversation or collaboration</p></div>
+                </a>
+              </div>
+              <div class="panel-footer">
+                <span class="panel-footer-text">Caracas meets Cascadia</span>
+                <a href="https://www.luis-gilberto.com/" class="panel-footer-link">Visit portfolio <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+              </div>
+            </div>
+          </div>
+
+          <!-- INSIGHTS panel -->
+          <div id="content-insights" class="nav-content">
+            <div class="panel-wrap" data-channel="insights">
               <div class="panel-header">
                 <p class="panel-header-label">Insights</p>
                 <p class="panel-header-title">Browse by Series</p>
               </div>
               <div class="panel-grid">
-
-                <a href="/insights/series/#building" class="panel-item">
-                  <div class="item-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                      <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-                      <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
-                    </svg>
-                  </div>
-                  <div class="item-text">
-                    <p class="item-title">The Building Series</p>
-                    <p class="item-desc">Building in public — the structural decisions behind the work</p>
-                  </div>
+                <a href="https://www.luis-gilberto.com/insights/series/#building" class="panel-item">
+                  <div class="item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
+                  <div class="item-text"><p class="item-title">The Building Series</p><p class="item-desc">Building in public — structural decisions behind the work</p></div>
                 </a>
-
-                <a href="/insights/series/#use-cases" class="panel-item">
-                  <div class="item-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-                    </svg>
-                  </div>
-                  <div class="item-text">
-                    <p class="item-title">Use Cases</p>
-                    <p class="item-desc">Real-world launches and product strategies</p>
-                  </div>
+                <a href="https://www.luis-gilberto.com/insights/series/#use-cases" class="panel-item">
+                  <div class="item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+                  <div class="item-text"><p class="item-title">Use Cases</p><p class="item-desc">Real-world launches and product strategies</p></div>
                 </a>
-
-                <a href="/insights/series/#reflections" class="panel-item">
-                  <div class="item-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-                      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-                    </svg>
-                  </div>
-                  <div class="item-text">
-                    <p class="item-title">Reflections</p>
-                    <p class="item-desc">Personal thoughts on creativity, pace, and momentum</p>
-                  </div>
+                <a href="https://www.luis-gilberto.com/insights/series/#reflections" class="panel-item">
+                  <div class="item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+                  <div class="item-text"><p class="item-title">Reflections</p><p class="item-desc">Personal thoughts on creativity, pace, and momentum</p></div>
                 </a>
-
               </div>
               <div class="panel-footer">
                 <span class="panel-footer-text">3 series · 12 articles</span>
-                <a href="/insights/series/" class="panel-footer-link">
-                  Browse all series
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                </a>
+                <a href="https://www.luis-gilberto.com/insights/series/" class="panel-footer-link">Browse all series <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
               </div>
             </div>
           </div>
-        </div>
-      </div>
+
+          <!-- HUB panel -->
+          <div id="content-hub" class="nav-content">
+            <div class="panel-wrap" data-channel="hub">
+              <div class="panel-header">
+                <p class="panel-header-label">The Hub</p>
+                <p class="panel-header-title">Four arms. One system.</p>
+              </div>
+              <div class="panel-grid-2col">
+                <a href="https://www.luis-gilberto.com/TheHub/strategy-iq.html" class="panel-item">
+                  <div class="item-icon hub-brain"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg></div>
+                  <div class="item-text"><p class="item-title">StrategyIQ™</p><p class="item-desc">Diagnostic engine — maturity benchmarking and roadmap</p><span class="item-role">Strategic Intelligence</span></div>
+                </a>
+                <a href="https://www.luis-gilberto.com/TheHub/advisory/" class="panel-item">
+                  <div class="item-icon hub-advisory"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+                  <div class="item-text"><p class="item-title">Advisory</p><p class="item-desc">Direct access to Luis — leadership alignment and clarity</p><span class="item-role">Partnership</span></div>
+                </a>
+                <a href="https://www.luis-gilberto.com/TheHub/studio.html" class="panel-item">
+                  <div class="item-icon hub-studio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+                  <div class="item-text"><p class="item-title">The Studio</p><p class="item-desc">High-fidelity execution — ideas into tangible assets</p><span class="item-role">Creative Production</span></div>
+                </a>
+                <a href="https://portal.luis-gilberto.com/" target="_blank" rel="noopener" class="panel-item">
+                  <div class="item-icon hub-portal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+                  <div class="item-text"><p class="item-title">The Portal ↗</p><p class="item-desc">Secure command center — where client work lives</p><span class="item-role">Client Access</span></div>
+                </a>
+              </div>
+              <div class="panel-footer">
+                <span class="panel-footer-text">Intelligence over intuition</span>
+                <a href="https://www.luis-gilberto.com/TheHub/" class="panel-footer-link">Explore The Hub <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+              </div>
+            </div>
+          </div>
+
+          <!-- PORTAL panel -->
+          <div id="content-portal" class="nav-content">
+            <div class="panel-wrap" data-channel="portal">
+              <div class="panel-header">
+                <p class="panel-header-label">The Portal</p>
+                <p class="panel-header-title">Your command center</p>
+              </div>
+              <div class="portal-features">
+                <div class="portal-feature"><div class="portal-feature-dot"></div>Strategy tools &amp; StrategyIQ engine</div>
+                <div class="portal-feature"><div class="portal-feature-dot"></div>Shared project workspaces</div>
+                <div class="portal-feature"><div class="portal-feature-dot"></div>Direct access to Luis &amp; Advisory</div>
+                <div class="portal-feature"><div class="portal-feature-dot"></div>Progress tracking &amp; deliverables</div>
+              </div>
+              <div class="portal-cta-strip">
+                <p class="portal-cta-label">Ready to enter<br>the ecosystem?</p>
+                <a href="https://portal.luis-gilberto.com/auth/signup" target="_blank" rel="noopener" class="portal-cta-btn">Request Access</a>
+              </div>
+              <div class="panel-footer">
+                <span class="panel-footer-text">Existing client?</span>
+                <a href="https://portal.luis-gilberto.com/auth/signin" target="_blank" rel="noopener" class="panel-footer-link">Sign in <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /nav-viewport-inner -->
+      </div><!-- /nav-viewport -->
     </nav>
 
-    <!-- CTAs -->
     <div class="header-ctas">
-      <button id="theme-toggle" aria-label="Toggle light/dark mode" style="background:none; border:1px solid var(--rule); border-radius:6px; width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink-soft); transition:all 0.15s; flex-shrink:0;">
-        <svg id="theme-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-        <svg id="theme-icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <button class="theme-btn" id="theme-toggle" aria-label="Toggle light/dark mode">
+        <svg id="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg id="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       </button>
       <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle menu" aria-expanded="false">
         <svg id="menu-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </button>
     </div>
-
   </div>
 </header>
 
-<!-- Mobile Menu -->
+<!-- Mobile Drawer — Insights active -->
 <div class="mobile-menu" id="mobile-menu">
-  <nav>
-    <a href="https://luis-gilberto.com">Portfolio</a>
-    <a href="/insights/">Insights</a>
-    <a href="/TheHub/">The Hub</a>
-    <a href="https://portal.luis-gilberto.com/">Portal</a>
-  </nav>
+  <div class="drawer-series-section">
+    <div class="drawer-section-label">Browse Insights</div>
+    <div class="drawer-series-grid">
+      <a href="https://www.luis-gilberto.com/insights/series/#building" class="drawer-series-card">
+        <div class="drawer-series-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
+        <div><div class="drawer-series-title">Building Series</div><div class="drawer-series-desc">Structural decisions</div></div>
+      </a>
+      <a href="https://www.luis-gilberto.com/insights/series/#use-cases" class="drawer-series-card">
+        <div class="drawer-series-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <div><div class="drawer-series-title">Use Cases</div><div class="drawer-series-desc">Launches &amp; strategy</div></div>
+      </a>
+      <a href="https://www.luis-gilberto.com/insights/series/#reflections" class="drawer-series-card">
+        <div class="drawer-series-icon"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+        <div><div class="drawer-series-title">Reflections</div><div class="drawer-series-desc">Creativity &amp; pace</div></div>
+      </a>
+      <a href="https://www.luis-gilberto.com/insights/" class="drawer-series-card">
+        <div class="drawer-series-icon"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+        <div><div class="drawer-series-title">All Stories</div><div class="drawer-series-desc">Browse everything</div></div>
+      </a>
+    </div>
+  </div>
+  <div class="drawer-global-section">
+    <div class="drawer-global-label">Ecosystem</div>
+    <a href="https://www.luis-gilberto.com/" class="drawer-global-link">
+      <div class="drawer-global-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      <span class="drawer-global-text">Portfolio</span>
+    </a>
+    <!-- Insights is active — this is an Insights article -->
+    <a href="https://www.luis-gilberto.com/insights/" class="drawer-global-link drawer-active">
+      <div class="drawer-global-icon"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+      <span class="drawer-global-text">Insights</span>
+    </a>
+    <a href="https://www.luis-gilberto.com/TheHub/" class="drawer-global-link">
+      <div class="drawer-global-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
+      <span class="drawer-global-text">The Hub</span>
+    </a>
+    <a href="https://portal.luis-gilberto.com/" class="drawer-global-link" target="_blank" rel="noopener">
+      <div class="drawer-global-icon"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+      <span class="drawer-global-text">The Portal ↗</span>
+    </a>
+  </div>
+  <div class="drawer-footer-strip">
+    <div class="drawer-status">
+      <div class="drawer-status-dot"></div>
+      <span class="drawer-status-label">Accepting Projects</span>
+    </div>
+  </div>
 </div>
 
-<!-- ══════════════════════════════════════════
+<!-- ═══════════════════════════════════════════
      HERO
-══════════════════════════════════════════ -->
+═══════════════════════════════════════════ -->
 <section class="article-hero">
   <div class="hero-media">
-    <!-- IMAGE PATH → /insights/assets/images/For_background_hero.png -->
-    <img src="../assets/images/For_background_hero.png" alt="Teams Consumer Launch">
+    <img src="/insights/assets/images/For_background_hero.png" alt="Teams Consumer Launch">
   </div>
   <div class="hero-overlay"></div>
   <div class="hero-glow"></div>
-
   <div class="hero-content">
-    <!-- Breadcrumb inside hero -->
-    <div class="breadcrumb" style="margin-bottom: 32px; opacity:0; animation: fadeUp 0.6s ease 0.05s forwards;">
-      <a href="../index.html">Insights</a>
+    <div class="breadcrumb">
+      <a href="https://www.luis-gilberto.com/insights/">Insights</a>
       <span class="breadcrumb-sep">/</span>
-      <a href="../series/">Strategic Architecture</a>
+      <a href="https://www.luis-gilberto.com/insights/series/#use-cases">Use Cases</a>
       <span class="breadcrumb-sep">/</span>
-      <span class="breadcrumb-current" style="color:rgba(250,247,244,0.6);">Teams Consumer</span>
+      <span style="color:rgba(250,247,244,0.6);">Teams Consumer</span>
     </div>
-
-    <p class="hero-series">Strategic Architecture</p>
+    <p class="hero-series">Director's Commentary</p>
     <h1 class="hero-title">When Work Apps<br><em>Get a Life</em></h1>
     <p class="hero-dek">The director's commentary on repositioning Microsoft Teams from a corporate utility to a consumer essential.</p>
     <div class="hero-byline">
@@ -1136,19 +1000,17 @@
       <span>6 min read</span>
     </div>
   </div>
-
   <div class="hero-scroll">
     <div class="scroll-line"></div>
     <span>Read</span>
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════
+<!-- ═══════════════════════════════════════════
      ARTICLE BODY
-══════════════════════════════════════════ -->
+═══════════════════════════════════════════ -->
 <div class="article-wrap">
 
-  <!-- Sidebar -->
   <aside class="article-sidebar">
     <div>
       <p class="toc-label">Contents</p>
@@ -1176,58 +1038,46 @@
     </div>
   </aside>
 
-  <!-- Main article -->
   <main class="article-body">
 
-    <!-- 01 THE PROBLEM -->
     <div class="section-anchor fade-up" id="intro">
       <p class="section-num">01 — The Problem</p>
       <h2>Trapped in the <em>Conference Room</em></h2>
       <p class="lead"><strong>In Spring 2021, Microsoft Teams was synonymous with one thing: Work.</strong> It was the utility belt of the corporate world — efficient, reliable, and decidedly un-fun.</p>
       <p>The challenge? Convince the world that this same tool should host their family game nights, virtual birthday parties, and intimate connections. The tool that screamed Monday morning had to learn to say Saturday night.</p>
-
       <div class="inset-card">
         <h4>The Core Insight</h4>
         <p>We couldn't compete with Zoom on "ease of video" alone. We needed a deeper hook. People didn't just want to <em>talk</em> at a screen — they wanted to <em>do</em> things together. The verb was wrong. The entire category was positioning on the wrong verb.</p>
       </div>
     </div>
 
-    <!-- 02 THE PIVOT -->
     <div class="section-anchor fade-up" id="pivot">
       <p class="section-num">02 — The Pivot</p>
       <h2>Action <em>+</em> Together</h2>
       <p>This insight led to the <strong>Action + Together</strong> framework. We shifted the narrative from "calling" to "experiencing." The strategy wasn't about the fidelity of the video — it was about the utility of the shared environment.</p>
       <p>We demonstrated that Teams wasn't just for meetings; it was for planning the family reunion, organizing the soccer league, and actually doing the work of life, together. Not watching each other. Doing things alongside each other.</p>
-
       <div class="pull-quote">
         <p>The verb was wrong. Every competitor was fighting over "video call." We stepped out of that fight entirely and claimed a different word: together.</p>
       </div>
-
       <p>This repositioning required courage from stakeholders who had spent years building Teams as a workplace tool. The risk was real — alienating the core business user base in pursuit of an audience that didn't yet see Teams as relevant to their lives.</p>
     </div>
 
-    <!-- 03 HUMANIZING -->
     <div class="section-anchor fade-up" id="humanizing">
       <p class="section-num">03 — Humanizing IT</p>
       <h2>Breaking the <em>Corporate Blue</em></h2>
       <p>To break the "Corporate Blue" perception, we had to radically alter the visual language. We introduced a custom 3D emoji system: whimsical, tactile, and expressive.</p>
       <p>This wasn't just decoration. It was a signal. It told users: <em>it's okay to be silly here. This isn't just for spreadsheets.</em> The emojis became permission structures — emotional cues that reframed what Teams was for.</p>
-
       <div class="visual-break">
-        <!-- IMAGE PATH → /insights/assets/images/teams-page-break.png -->
-        <img src="../assets/images/teams-page-break.png" alt="Teams 3D Emoji Visual System">
+        <img src="/insights/assets/images/teams-page-break.png" alt="Teams 3D Emoji Visual System">
         <p class="visual-caption">A new visual language designed to signal a shift in purpose — from utility to warmth.</p>
       </div>
-
       <p>Every touchpoint — from App Store screenshots to social assets to the hero film — had to reinforce the same emotional truth. Teams wasn't changing what it was. It was revealing what it had always been capable of, with the right story wrapped around it.</p>
     </div>
 
-    <!-- 04 RESULTS -->
     <div class="section-anchor fade-up" id="results">
       <p class="section-num">04 — The Results</p>
       <h2>When Story Becomes <em>Strategy</em></h2>
       <p>The launch was a watershed moment. By positioning "Enterprise Reliability" as a feature for families — the call that actually works when grandma joins — we turned our perceived weakness into our greatest strength.</p>
-
       <div class="stats-band">
         <div class="stat-cell">
           <div class="stat-big">568<sup>M</sup></div>
@@ -1242,15 +1092,12 @@
           <div class="stat-sub">Consumer Users</div>
         </div>
       </div>
-
       <p>The numbers validated the strategy. But the more lasting result was a proof of concept: even the most utilitarian tools can find a place in the heart of the home if the story is right and the creative execution has the courage to match the ambition.</p>
-
       <div class="pull-quote">
         <p>We didn't rebuild Teams. We rebuilt the story around Teams — and the market responded to the story first.</p>
       </div>
-
       <div class="editorial-note">
-        <span class="editorial-label">Perspective & Sourcing</span>
+        <span class="editorial-label">Perspective &amp; Sourcing</span>
         <p>This article reflects professional experience and strategic opinion from firsthand involvement in the launch. Sources are available on request for any externally referenced data. It draws primarily from real-world practice rather than universal rules.</p>
       </div>
     </div>
@@ -1258,9 +1105,9 @@
   </main>
 </div>
 
-<!-- ══════════════════════════════════════════
+<!-- ═══════════════════════════════════════════
      PROJECT BRIDGE
-══════════════════════════════════════════ -->
+═══════════════════════════════════════════ -->
 <section class="bridge-section fade-up">
   <div class="bridge-inner">
     <div>
@@ -1268,68 +1115,69 @@
       <h2 class="bridge-title">See the Full<br><em>Case Study</em></h2>
       <p class="bridge-desc">You've read the philosophy. Now see the production. Explore the "Power of We" film, the visual system, and the detailed KPIs.</p>
       <a href="/work/case-study-teams-launch.html" class="bridge-cta">
-        View Project Portfolio
+        View Technical Blueprint
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </a>
     </div>
     <div class="bridge-image">
-      <!-- IMAGE PATH → /insights/assets/images/For_background_hero.png -->
-      <img src="../assets/images/For_background_hero.png" alt="Teams Consumer Launch Campaign">
+      <img src="/insights/assets/images/For_background_hero.png" alt="Teams Consumer Launch Campaign">
     </div>
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════
+<!-- ═══════════════════════════════════════════
      KEEP READING
-══════════════════════════════════════════ -->
+═══════════════════════════════════════════ -->
 <section class="keep-reading">
   <p class="keep-reading-eyebrow">Continue Reading</p>
   <h2>More from Insights</h2>
   <p>Explore more on creative strategy, brand systems, and the ideas behind the work.</p>
-  <a href="../index.html" class="back-link">
+  <a href="https://www.luis-gilberto.com/insights/" class="back-link">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
     Back to Insights
   </a>
 </section>
 
-<!-- ══════════════════════════════════════════
+<!-- ═══════════════════════════════════════════
      FOOTER
-══════════════════════════════════════════ -->
+═══════════════════════════════════════════ -->
 <footer>
   <div class="footer-inner">
     <div class="footer-top">
       <div>
-        <a href="../index.html" class="logo"><img src="../assets/images/insights_logo_light.svg" alt="Insights" style="height:28px;width:auto;" id="footer-logo"></a>
+        <a href="https://www.luis-gilberto.com/insights/">
+          <img id="footer-logo" src="/insights/assets/images/Insights_logo_black.png" alt="Insights" style="height:28px;width:auto;">
+        </a>
         <p class="footer-tagline">Exploring the intersection of design,<br>technology, and human experience.</p>
         <div class="social-row">
           <a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" class="social-btn" aria-label="LinkedIn">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
           </a>
-          <a href="https://luisgilberto00.link" target="_blank" class="social-btn" aria-label="Website">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <a href="https://www.luis-gilberto.com/contact.html" class="social-btn" aria-label="Contact">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
           </a>
         </div>
       </div>
       <div class="footer-col">
         <h4>Ecosystem</h4>
         <ul>
-          <li><a href="https://luis-gilberto.com">Portfolio</a></li>
-          <li><a href="../index.html">Insights</a></li>
-          <li><a href="/TheHub/">The Hub</a></li>
-          <li><a href="https://portal.luis-gilberto.com/">Portal</a></li>
+          <li><a href="https://www.luis-gilberto.com/">Portfolio</a></li>
+          <li><a href="https://www.luis-gilberto.com/insights/">Insights</a></li>
+          <li><a href="https://www.luis-gilberto.com/TheHub/">The Hub</a></li>
+          <li><a href="https://portal.luis-gilberto.com/" style="color:var(--coral)">The Portal →</a></li>
         </ul>
       </div>
       <div class="footer-col">
         <h4>Connect</h4>
         <ul>
-          <li><a href="https://luisgilberto00.link/contact">Contact</a></li>
-          <li><a href="#">About</a></li>
-          <li><a href="/insights/insights-brand.html" style="opacity:0.6; font-size:14px;">Brand Guidelines</a></li>
+          <li><a href="https://www.luis-gilberto.com/contact.html">Contact</a></li>
+          <li><a href="https://www.luis-gilberto.com/about.html">About</a></li>
+          <li><a href="https://www.linkedin.com/in/luisgilberto00" target="_blank">LinkedIn</a></li>
         </ul>
       </div>
       <div class="footer-col">
         <h4>Status</h4>
-        <p style="font-family:var(--ui); font-size:12px; color:#4CAF6E; margin-bottom:8px;"><span class="dot-green"></span>Available for projects</p>
+        <p style="font-family:'Inter',sans-serif; font-size:12px; color:#4CAF6E; margin-bottom:8px;"><span class="dot-green"></span>Available for projects</p>
         <p class="footer-tagline" style="font-size:13px; margin:0;">Seattle, WA — Open to select engagements worldwide.</p>
       </div>
     </div>
@@ -1342,35 +1190,41 @@
 
 <script>
 (() => {
-  // ── Reading progress ─────────────────────────────────────────
+  // ── Reading progress ───────────────────────────────────────
   const bar = document.getElementById('progress');
   window.addEventListener('scroll', () => {
     const total = document.documentElement.scrollHeight - window.innerHeight;
     bar.style.width = (window.scrollY / total * 100) + '%';
   }, { passive: true });
 
-  // ── Header scroll state ──────────────────────────────────────
+  // ── Header scroll state ────────────────────────────────────
   const header = document.getElementById('site-header');
   window.addEventListener('scroll', () => {
     header.classList.toggle('scrolled', window.scrollY > 10);
   }, { passive: true });
   if (window.scrollY > 10) header.classList.add('scrolled');
 
-  // ── DROPDOWN NAV (Radix-style) ───────────────────────────────
-  const viewport   = document.getElementById('nav-viewport-inner');
-  const triggers   = document.querySelectorAll('[data-trigger]');
-  const desktopNav = document.getElementById('desktop-nav');
-  let activeId   = null;
-  let closeTimer = null;
+  // ── Megamenu — four channels ───────────────────────────────
+  const viewportInner = document.getElementById('nav-viewport-inner');
+  const viewportWrap  = document.getElementById('nav-viewport');
+  const triggers      = document.querySelectorAll('[data-trigger]');
+  const desktopNav    = document.getElementById('desktop-nav');
+  let activeId = null, closeTimer = null;
 
   function openDropdown(trigger) {
     clearTimeout(closeTimer);
-    const contentId = trigger.id.replace('trigger-', 'content-');
-    const panel = document.getElementById(contentId);
+    const panelId = trigger.id.replace('trigger-', 'content-');
+    const panel   = document.getElementById(panelId);
     if (!panel) return;
     document.querySelectorAll('.nav-content').forEach(p => p.classList.remove('active'));
     panel.classList.add('active');
-    viewport.classList.add('open');
+
+    const triggerRect = trigger.getBoundingClientRect();
+    const navRect     = desktopNav.getBoundingClientRect();
+    const triggerMid  = triggerRect.left + triggerRect.width / 2 - navRect.left;
+    viewportWrap.style.left = triggerMid + 'px';
+
+    viewportInner.classList.add('open');
     triggers.forEach(t => t.setAttribute('aria-expanded', 'false'));
     trigger.setAttribute('aria-expanded', 'true');
     activeId = trigger.id;
@@ -1378,78 +1232,61 @@
 
   function closeDropdown() {
     closeTimer = setTimeout(() => {
-      viewport.classList.remove('open');
+      viewportInner.classList.remove('open');
       document.querySelectorAll('.nav-content').forEach(p => p.classList.remove('active'));
       triggers.forEach(t => t.setAttribute('aria-expanded', 'false'));
       activeId = null;
     }, 120);
   }
 
-  triggers.forEach(trigger => {
-    trigger.addEventListener('mouseenter', () => openDropdown(trigger));
-    trigger.addEventListener('click', (e) => {
+  triggers.forEach(t => {
+    t.addEventListener('mouseenter', () => openDropdown(t));
+    t.addEventListener('click', e => {
       e.stopPropagation();
-      activeId === trigger.id ? closeDropdown() : openDropdown(trigger);
+      activeId === t.id ? closeDropdown() : openDropdown(t);
     });
   });
-
   desktopNav.addEventListener('mouseleave', closeDropdown);
-  viewport.addEventListener('mouseenter', () => clearTimeout(closeTimer));
-  viewport.addEventListener('mouseleave', closeDropdown);
-  document.addEventListener('click', (e) => {
-    if (!desktopNav.contains(e.target)) closeDropdown();
-  });
-  desktopNav.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      closeDropdown();
-      document.getElementById(activeId)?.focus();
-    }
+  viewportInner.addEventListener('mouseenter', () => clearTimeout(closeTimer));
+  viewportInner.addEventListener('mouseleave', closeDropdown);
+  document.addEventListener('click', e => { if (!desktopNav.contains(e.target)) closeDropdown(); });
+  desktopNav.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { closeDropdown(); document.getElementById(activeId)?.focus(); }
   });
 
-  // ── Theme toggle ─────────────────────────────────────────────
+  // ── Theme toggle ───────────────────────────────────────────
   const themeToggle = document.getElementById('theme-toggle');
-  const iconSun     = document.getElementById('theme-icon-sun');
-  const iconMoon    = document.getElementById('theme-icon-moon');
+  const iconSun     = document.getElementById('icon-sun');
+  const iconMoon    = document.getElementById('icon-moon');
 
   function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('insights-theme', theme);
-    if (iconSun && iconMoon) {
-      iconSun.style.display  = theme === 'dark' ? 'none'  : 'block';
-      iconMoon.style.display = theme === 'dark' ? 'block' : 'none';
-    }
-    const logoDesktop = document.getElementById('logo-desktop');
-    if (logoDesktop) {
-      logoDesktop.src = theme === 'dark'
-        ? '../assets/images/insights_logo_dark.svg'
-        : '../assets/images/insights_logo_light.svg';
-    }
-    const logoMark = document.getElementById('logo-mark');
-    if (logoMark) {
-      logoMark.src = theme === 'dark'
-        ? '../assets/images/Symbol_mobile.png'
-        : '../assets/images/LG-logomark-BlackCoral.png';
-    }
-    const footerLogo = document.getElementById('footer-logo');
-    if (footerLogo) {
-      footerLogo.src = theme === 'dark'
-        ? '../assets/images/insights_logo_dark.svg'
-        : '../assets/images/insights_logo_light.svg';
-    }
+    iconSun.style.display  = theme === 'dark' ? 'none'  : 'block';
+    iconMoon.style.display = theme === 'dark' ? 'block' : 'none';
+    const ld = document.getElementById('logo-desktop');
+    if (ld) ld.src = theme === 'dark'
+      ? '/insights/assets/images/Insights_logo_white.png'
+      : '/insights/assets/images/Insights_logo_black.png';
+    const lm = document.getElementById('logo-mark');
+    if (lm) lm.src = theme === 'dark'
+      ? '/insights/assets/images/Symbol_mobile.png'
+      : '/insights/assets/images/LG-logomark-BlackCoral.png';
+    const fl = document.getElementById('footer-logo');
+    if (fl) fl.src = theme === 'dark'
+      ? '/insights/assets/images/Insights_logo_white.png'
+      : '/insights/assets/images/Insights_logo_black.png';
   }
-
   applyTheme(localStorage.getItem('insights-theme') || 'light');
   themeToggle?.addEventListener('click', () => {
-    const curr = document.documentElement.getAttribute('data-theme');
-    applyTheme(curr === 'dark' ? 'light' : 'dark');
+    applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
   });
 
-  // ── Mobile menu ──────────────────────────────────────────────
+  // ── Mobile menu ────────────────────────────────────────────
   const mobileToggle = document.getElementById('mobile-toggle');
   const mobileMenu   = document.getElementById('mobile-menu');
   const menuIcon     = document.getElementById('menu-icon');
   let menuOpen = false;
-
   mobileToggle?.addEventListener('click', () => {
     menuOpen = !menuOpen;
     mobileMenu.classList.toggle('open', menuOpen);
@@ -1460,20 +1297,18 @@
       : '<line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>';
   });
   window.addEventListener('resize', () => {
-    if (window.innerWidth >= 1024 && menuOpen) {
-      menuOpen = false;
-      mobileMenu.classList.remove('open');
-      document.body.style.overflow = '';
+    if (window.innerWidth > 1024 && menuOpen) {
+      menuOpen = false; mobileMenu.classList.remove('open'); document.body.style.overflow = '';
     }
   });
 
-  // ── Scroll fade-up ───────────────────────────────────────────
+  // ── Fade-up ────────────────────────────────────────────────
   const obs = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
   }, { threshold: 0.08 });
   document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
 
-  // ── Active TOC link ──────────────────────────────────────────
+  // ── TOC scrollspy ──────────────────────────────────────────
   const sections = document.querySelectorAll('.section-anchor');
   const links    = document.querySelectorAll('.toc-list a');
   const tocObs = new IntersectionObserver(entries => {
