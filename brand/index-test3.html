@@ -382,12 +382,8 @@
     display: flex; align-items: center;
     overflow: hidden; border-radius: 6px;
   }
-  /* Full-bleed video layer */
-  .pendulum-video {
-    position: absolute; inset: 0; width: 100%; height: 100%;
-    object-fit: cover; object-position: center;
-    z-index: 0; pointer-events: none;
-  }
+  /* Canvas replaces video layer */
+  #heroCanvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; z-index: 1; }
   /* Dark scrim so text and nodes stay legible */
   .pendulum-scrim {
     position: absolute; inset: 0; z-index: 1; pointer-events: none;
@@ -974,12 +970,8 @@
     <div class="pendulum-track">
       <div class="pendulum-bar"></div>
 
-      <!-- Commissioned artwork video -->
-      <video class="pendulum-video" id="pendulumVideo"
-        src="/assets/videos/brand-pendulum.mp4"
-        autoplay loop muted playsinline
-        preload="auto">
-      </video>
+      <!-- Canvas hero track -->
+      <canvas id="heroCanvas" style="position:absolute;inset:0;width:100%;height:100%;display:block;z-index:1;"></canvas>
       <!-- Scrim overlay -->
       <div class="pendulum-scrim"></div>
 
@@ -1404,7 +1396,7 @@
       <div class="footer-mark">
         <div class="footer-glow-coral"></div>
         <div class="footer-glow-teal"></div>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        <canvas id="footerCanvas" width="96" height="96" style="position:relative;z-index:2;display:block;border-radius:50%;"></canvas>
       </div>
     </div>
     <div class="footer-bottom">
@@ -1519,73 +1511,19 @@
   }, { rootMargin: '-20% 0px -70% 0px' });
   sections.forEach(s => tocObs.observe(s));
 
-  // Video autoplay fallback
-  document.getElementById('pendulumVideo')?.play().catch(() => {});
-
-  // Pendulum engine
-  (function(){
-    const pad = n => String(n).padStart(2,'0')
-    const frames = Array.from({length:12}, (_,i)=>`/assets/images/pendulum/${pad(i+1)}.png`)
-    const phases = ['origin','extract','drift','fusion','mark','depth','shift','shift','depth','mark','fusion','drift']
-
-    function runPlayer(rootId, opts={}){
-      const root = document.getElementById(rootId)
-      if(!root) return
-      const frameEl = root.querySelector('#pFrame') || root
-      const progressEl = document.getElementById('pProgress')
-      const captionEl = document.getElementById('pCaption')
-      let i = 0, dir = 1, paused = false
-      const frameMs = opts.frameMs ?? 750
-      const pauseMs = opts.pauseMs ?? 1000
-      function setFrame(){
-        frameEl.style.backgroundImage = `url('${frames[i]}')`
-        if(progressEl){ progressEl.style.width = ((i+1)/frames.length*100)+'%' }
-        if(captionEl){ captionEl.textContent = phases[i] || phases[0] }
-      }
-      function tick(){
-        if(paused) return
-        i += dir
-        if(i>=frames.length-1 || i<=0){
-          dir *= -1
-          setFrame()
-          setTimeout(tick, pauseMs)
-        } else {
-          setFrame()
-          setTimeout(tick, frameMs)
-        }
-      }
-      setFrame()
-      setTimeout(tick, frameMs)
-      root.addEventListener('mouseenter', ()=> paused = true)
-      root.addEventListener('mouseleave', ()=> { paused = false; setTimeout(tick, frameMs) })
-    }
-
-    // Card player
-    runPlayer('pendulumCard', { frameMs: 750, pauseMs: 1000 })
-
-    // Footer mark upgrade
-    const fm = document.querySelector('.footer-mark')
-    if(fm){
-      const fmFrame = document.createElement('div')
-      fmFrame.style.position='absolute'
-      fmFrame.style.inset='-6px'
-      fmFrame.style.borderRadius='50%'
-      fmFrame.style.backgroundSize='cover'
-      fmFrame.style.backgroundPosition='center'
-      fm.appendChild(fmFrame)
-      let i=0, dir=1
-      function advance(){
-        fmFrame.style.backgroundImage = `url('${frames[i]}')`
-        i += dir
-        if(i>=frames.length-1 || i<=0) dir*=-1
-        setTimeout(advance, i===0||i===frames.length-1 ? 1600 : 1100)
-      }
-      // Try to load first frame, fallback to CSS glow if 404
-      const test = new Image()
-      test.onload = ()=>{ advance() }
-      test.onerror = ()=>{ fm.removeChild(fmFrame) }
-      test.src = frames[0]
-    }
+  /* ══════════════════════════════════════════════════════
+     SMOOTH PENDULUM — Canvas + rAF engine
+     Two instances: hero (loop) + footer (one-way arrival)
+  ══════════════════════════════════════════════════════ */
+  (function PendulumEngine(){
+    const FRAMES=12
+    const PATH=n=>`/assets/images/pendulum/${String(n).padStart(2,'0')}.png`
+    const ease=t=>t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2
+    function preload(){return Promise.all(Array.from({length:FRAMES},(_,i)=>new Promise(res=>{const img=new Image();img.onload=()=>res(img);img.onerror=()=>res(null);img.src=PATH(i+1);} )))}
+    function blend(ctx,w,h,A,B,alpha){ctx.clearRect(0,0,w,h);if(A){ctx.globalAlpha=1;ctx.drawImage(A,0,0,w,h)}if(B&&alpha>0){ctx.globalAlpha=alpha;ctx.drawImage(B,0,0,w,h)}ctx.globalAlpha=1}
+    function initHero(imgs){const canvas=document.getElementById('heroCanvas');if(!canvas)return;const ctx=canvas.getContext('2d');const HOLD=700,BLEND=800,PAUSE=900;let cur=0,dir=1,phase='hold',t0=performance.now(),paused=false,raf;const PHASES=['origin','origin','extract','extract','drift','fusion','mark','mark','depth','depth','shift','shift'];const phaseEl=document.getElementById('pendulumPhase');const dirEl=document.getElementById('pendulumDir');const dots=document.querySelectorAll('#pendulumProgress .pendulum-dot');const fill=document.querySelector('.pendulum-progress-fill');function resize(){canvas.width=canvas.offsetWidth*devicePixelRatio;canvas.height=canvas.offsetHeight*devicePixelRatio}resize();window.addEventListener('resize',resize,{passive:true});function labels(i){if(phaseEl)phaseEl.textContent=PHASES[i]||'';if(dirEl)dirEl.textContent=dir===1?'→':'←';if(fill)fill.style.width=((i+1)/12*100).toFixed(1)+'%';dots.forEach((d,j)=>d.classList.toggle('active',j===i))}function tick(now){if(paused)return;const W=canvas.width,H=canvas.height,dt=now-t0;if(phase==='hold'){blend(ctx,W,H,imgs[cur],null,0);labels(cur);if(dt>=HOLD){const nx=cur+dir;phase=(nx<0||nx>=FRAMES)?'end':'blend';t0=now}}else if(phase==='end'){blend(ctx,W,H,imgs[cur],null,0);if(dt>=PAUSE){dir*=-1;phase='blend';t0=now}}else if(phase==='blend'){const nx=cur+dir;const a=ease(Math.min(dt/BLEND,1));blend(ctx,W,H,imgs[cur],imgs[nx],a);labels(nx);if(dt>=BLEND){cur=nx;phase='hold';t0=now}}raf=requestAnimationFrame(tick)}if(window.matchMedia('(prefers-reduced-motion:reduce)').matches){blend(ctx,canvas.width,canvas.height,imgs[6],null,0);labels(6);return}raf=requestAnimationFrame(tick);const track=canvas.closest('.pendulum-track');if(track){track.addEventListener('mouseenter',()=>{paused=true;cancelAnimationFrame(raf)});track.addEventListener('mouseleave',()=>{paused=false;t0=performance.now();raf=requestAnimationFrame(tick)})}}
+    function initFooter(imgs){const canvas=document.getElementById('footerCanvas');if(!canvas)return;const DPR=devicePixelRatio,S=96*DPR;canvas.width=S;canvas.height=S;const ctx=canvas.getContext('2d');const BLEND=1100,HOLD=600;let cur=0,phase='hold',t0=performance.now(),done=false,started=false,raf;function tick(now){const W=canvas.width,H=canvas.height,dt=now-t0;if(phase==='hold'){blend(ctx,W,H,imgs[cur],null,0);if(dt>=HOLD){if(cur===FRAMES-1){done=true;return}phase='blend';t0=now}}else if(phase==='blend'){const a=ease(Math.min(dt/BLEND,1));blend(ctx,W,H,imgs[cur],imgs[cur+1],a);if(dt>=BLEND){cur++;phase='hold';t0=now}}if(!done)raf=requestAnimationFrame(tick)}blend(ctx,S,S,imgs[0],null,0);const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting&&!started){started=true;io.disconnect();setTimeout(()=>{t0=performance.now();raf=requestAnimationFrame(tick)},400)}})},{threshold:0.5});io.observe(canvas)}
+    preload().then(imgs=>{const valid=imgs.filter(Boolean);if(valid.length<FRAMES)console.warn(`Pendulum: ${valid.length}/12 frames loaded`);if(valid.length>0){initHero(imgs);initFooter(imgs)}})
   })();
 
 })();

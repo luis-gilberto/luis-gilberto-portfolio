@@ -9,7 +9,9 @@ self.addEventListener('fetch', event => {
       /\/about(\.|\/|$)/i.test(url.pathname) && url.pathname !== '/about.html'
     );
     if (isAboutAlt) {
-      event.respondWith(Response.redirect('http://127.0.0.1:5500/about.html', 301));
+      // Use dynamic origin to support both localhost and production
+      const targetUrl = new URL('/about.html', url.origin).href;
+      event.respondWith(Response.redirect(targetUrl, 301));
       return;
     }
   } catch (e) {}
