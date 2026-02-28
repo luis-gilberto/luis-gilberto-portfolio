@@ -1,331 +1,541 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Message Received | Luis Gilberto</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Big+Shoulders+Display:wght@600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        :root { --coral:#F96F6E; --teal:#2ED3C6; --bg-primary:#FFFFFF; --text-primary:#1a1a1a; --text-secondary:#555555; --border-light:rgba(0,0,0,0.06); --grid-color:rgba(0,0,0,0.08); --card-bg:#FFFFFF; --shadow-soft:0 4px 20px rgba(0,0,0,0.05); }
-        [data-theme="dark"] { --bg-primary:#0E0E0F; --text-primary:rgba(245,245,245,0.94); --text-secondary:rgba(245,245,245,0.6); --border-light:rgba(255,255,255,0.05); --grid-color:rgba(255,255,255,0.03); --card-bg:rgba(255,255,255,0.02); --shadow-soft:0 4px 20px rgba(0,0,0,0.4); }
-        *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:'Inter',sans-serif;background-color:var(--bg-primary);background-image:radial-gradient(var(--grid-color) 1px,transparent 1px);background-size:24px 24px;color:var(--text-primary);line-height:1.6;padding-top:112px;transition:background-color .3s ease,color .3s ease;overflow-x:hidden}
-        #cursor-lens{position:fixed;pointer-events:none;z-index:200000;width:40px;height:40px;transform:translate(-50%,-50%);transition:all .15s cubic-bezier(.25,.46,.45,.94)}
-        .lens-outer{position:absolute;top:50%;left:50%;width:40px;height:40px;border:2px solid var(--coral);border-radius:50%;transform:translate(-50%,-50%);opacity:.4;transition:all .2s ease}
-        .lens-center{position:absolute;top:50%;left:50%;width:4px;height:4px;background:var(--teal);border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 10px var(--teal)}
-        body.cursor-hover .lens-outer{width:56px;height:56px;border-color:var(--teal);opacity:.8}
-        @media (pointer:coarse){#cursor-lens{display:none!important}body{cursor:auto!important}}
-        .primary-nav{position:fixed;top:0;left:0;width:100%;height:64px;background:rgba(26,26,26,.98);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.1);z-index:1000}
-        .primary-nav-container{max-width:1400px;margin:0 auto;padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between}
-        .nav-logo img{height:48px;width:auto}
-        .nav-links{display:flex;gap:2rem;align-items:center}
-        .nav-link{color:rgba(255,255,255,.7);text-decoration:none;font-size:14px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;transition:color .2s ease}
-        .nav-link:hover{color:#fff}
-        .theme-toggle{position:fixed;top:76px;right:20px;z-index:1002;background:var(--bg-primary);border:1px solid var(--border-light);border-radius:12px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .2s;box-shadow:var(--shadow-soft);color:var(--text-primary)}
-        .theme-toggle:hover{transform:scale(1.05);border-color:var(--coral)}
-        [data-theme="dark"] .sun-icon{display:block}[data-theme="dark"] .moon-icon{display:none}.sun-icon{display:none}.moon-icon{display:block}
-        .mobile-menu-toggle{display:none;background:transparent;border:none;cursor:pointer;padding:.75rem;color:#fff;z-index:1002}
-        @media (max-width:1023px){.nav-links{display:none}.mobile-menu-toggle{display:flex;align-items:center;justify-content:center;color:#ffffff}}
-        .container{max-width:1000px;margin:0 auto;padding:0 2rem;text-align:center}
-        .hero-section{padding:4rem 0 2rem;position:relative}
-        .status-icon-wrapper{width:80px;height:80px;margin:0 auto 2rem;position:relative;display:flex;align-items:center;justify-content:center}
-        .status-ring{position:absolute;inset:0;border:2px solid var(--coral);border-radius:50%;animation:pulseRing 2s infinite;opacity:0}
-        .status-check{width:100%;height:100%;background:linear-gradient(135deg,var(--coral),#ff8a8a);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:32px;box-shadow:0 10px 30px rgba(249,111,110,.4);position:relative;z-index:2}
-        @keyframes pulseRing{0%{transform:scale(.8);opacity:.5}100%{transform:scale(2);opacity:0}}
-        .hero-title{font-family:'Big Shoulders Display',sans-serif;font-size:clamp(3rem,8vw,5rem);margin-bottom:1rem;line-height:1;letter-spacing:-1px;text-transform:uppercase}
-        .hero-title span{color:var(--teal)}
-        .hero-desc{font-size:1.2rem;color:var(--text-secondary);max-width:600px;margin:0 auto 2rem}
-        .quote{font-family:'Inter',serif;font-style:italic;color:var(--coral);margin-bottom:4rem;opacity:.8}
-        .steps-section{padding:4rem 0}
-        .steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2rem;text-align:left}
-        .step-card{background:var(--card-bg);border:1px solid var(--border-light);border-radius:16px;padding:2.5rem;transition:transform .3s ease,border-color .3s ease;position:relative;overflow:hidden}
-        .step-card:hover{transform:translateY(-5px);border-color:var(--teal);box-shadow:var(--shadow-soft)}
-        .step-num{font-family:'Big Shoulders Display';font-size:4rem;color:var(--border-light);position:absolute;top:10px;right:20px;font-weight:800;opacity:.5}
-        .step-title{font-size:1.25rem;font-weight:700;margin-bottom:1rem;color:var(--text-primary);position:relative;z-index:2}
-        .step-desc{font-size:.95rem;color:var(--text-secondary);line-height:1.6;position:relative;z-index:2}
-        .cta-section{padding:4rem 0 6rem}
-        .btn-group{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:2rem}
-        .btn{padding:14px 32px;border-radius:50px;font-weight:600;text-decoration:none;transition:all .2s}
-        .btn-primary{background:var(--text-primary);color:var(--bg-primary)}.btn-primary:hover{background:var(--coral);color:#fff;transform:translateY(-2px)}
-        .btn-outline{border:1px solid var(--border-light);color:var(--text-primary)}.btn-outline:hover{border-color:var(--text-primary)}
-        .mobile-menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:2000;opacity:0;pointer-events:none;transition:opacity .3s ease}
-        .mobile-menu-overlay.active{opacity:1;pointer-events:auto}
-        .mobile-drawer{position:absolute;top:0;right:0;height:100vh;width:85vw;max-width:400px;background:#000;transform:translateX(100%);transition:transform .35s ease;display:flex;flex-direction:column;overflow-y:auto}
-        .mobile-menu-overlay.active .mobile-drawer{transform:translateX(0)}
-        .mobile-menu-close{position:absolute;top:1rem;right:1rem;background:none;border:none;color:#fff;font-size:32px;cursor:pointer;z-index:10}
-        .mobile-menu-content{padding:2rem;display:flex;flex-direction:column;gap:2rem;margin-top:2rem}
-        .mobile-nav-label{font-size:.7rem;color:#666;text-transform:uppercase;letter-spacing:.15em;margin-bottom:1rem}
-        .mobile-link{display:block;color:#aaa;text-decoration:none;font-size:1.1rem;margin-bottom:1rem;transition:color .2s}
-        .mobile-link.main{font-family:'Big Shoulders Display';font-size:2rem;color:#fff;font-weight:700;margin-bottom:.5rem}
-        .mobile-link:hover{color:var(--coral)}
-        .site-footer{background:#0A0A0A;border-top:1px solid rgba(255,255,255,.1);padding:4rem 2rem 2rem;color:#fff;margin-top:auto}
-        .footer-container{max-width:1400px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1.5fr;gap:3rem}
-        .footer-brand h3{font-family:'Big Shoulders Display';font-size:1.5rem;text-transform:uppercase;color:#fff;margin-bottom:1rem}
-        .footer-tagline{color:rgba(255,255,255,.5);font-size:.9rem;margin-bottom:2rem}
-        .footer-heading{font-family:'Big Shoulders Display';font-size:1rem;letter-spacing:.1em;color:rgba(255,255,255,.4);text-transform:uppercase;margin-bottom:1.5rem}
-        .footer-list{list-style:none;display:flex;flex-direction:column;gap:.75rem}
-        .footer-link{color:rgba(255,255,255,.7);text-decoration:none;font-size:.9rem;transition:color .2s}
-        .footer-link:hover{color:#fff}
-        .footer-bottom{border-top:1px solid rgba(255,255,255,.05);margin-top:3rem;padding-top:2rem;text-align:center;color:rgba(255,255,255,.3);font-size:.8rem}
-        .footer-nav-divider{margin-top:.75rem;padding-top:.75rem;border-top:1px solid rgba(255,255,255,.1)}
-        .footer-system-link{font-size:.85rem;color:var(--coral)!important;font-style:italic;text-decoration:none;transition:opacity .2s}
-        .footer-system-link:hover{opacity:.8}
-        @media (max-width:900px){.footer-container{grid-template-columns:1fr;text-align:center;gap:2rem}}
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Message Received — Luis Gilberto</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,300;1,400&family=Big+Shoulders+Display:wght@700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-<style>
-/* Mega Menu System (Phase 117+118) */
-.desktop-nav .nav-item {
-  position: relative; /* Task 1: Positional Anchor */
-}
+  <style>
+    /* ── tokens ── */
+    :root {
+      --coral:       #F96F6E;
+      --teal:        #2ED3C6;
+      --ink:         #FAF7F4;
+      --ink-soft:    rgba(250,247,244,0.55);
+      --bg:          #0E0C0A;
+      --bg-raised:   #161310;
+      --rule:        rgba(250,247,244,0.08);
+      --f-display:   'Big Shoulders Display', sans-serif;
+      --f-serif:     'Playfair Display', Georgia, serif;
+      --f-ui:        'Inter', sans-serif;
+    }
+    [data-theme="light"] {
+      --ink:         #1A1714;
+      --ink-soft:    rgba(26,23,20,0.55);
+      --bg:          #FAF7F4;
+      --bg-raised:   #F0EBE6;
+      --rule:        rgba(26,23,20,0.08);
+    }
 
-.desktop-nav .mega-panel {
-  display: block;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.2s ease;
-  transition-delay: 100ms; /* Task 3: Hover Intent */
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%) translateY(10px) translateZ(0); /* Task 1: Alignment & GPU */
-  backface-visibility: hidden;
-  width: 520px; /* Slightly wider for padding */
-  background: #0A0A0A; /* Task 2: Always Dark */
-  border: 1px solid rgba(255, 255, 255, 0.1); /* Task 2: Subtle Border */
-  padding: 1.5rem; /* Task 3: Spacing */
-  border-radius: 0.75rem;
-  z-index: 50;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  margin-top: 1rem;
-}
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--f-ui);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.3s, color 0.3s;
+      overflow-x: hidden;
+    }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
 
-/* Safe Tunnel */
-.desktop-nav .mega-panel::before {
-  content: "";
-  position: absolute;
-  top: -20px;
-  left: 0;
-  right: 0;
-  height: 20px;
-  background: transparent;
-}
+    /* ── HERO ── */
+    .hero {
+      min-height: 70vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 24px 64px;
+      position: relative;
+      overflow: hidden;
+    }
 
-.desktop-nav .nav-item:hover .mega-panel {
-  opacity: 1;
-  visibility: visible;
-  transform: translateX(-50%) translateY(0) translateZ(0);
-}
+    /* background glow orbs */
+    .hero-glow-coral {
+      position: absolute;
+      top: -140px; right: -140px;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(249,111,110,0.12) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-glow-teal {
+      position: absolute;
+      bottom: -100px; left: -100px;
+      width: 480px; height: 480px;
+      background: radial-gradient(circle, rgba(46,211,198,0.08) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    /* subtle grain */
+    .hero-grain {
+      position: absolute; inset: 0; pointer-events: none;
+      opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 256px;
+    }
 
-.desktop-nav .group\/item:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-}
+    .hero-inner {
+      position: relative; z-index: 2;
+      max-width: 720px; margin: 0 auto;
+    }
 
-/* Task 3: Icon Colors */
-.desktop-nav .group\/item .icon-teal { color: #2ED3C6; }
-.desktop-nav .group\/item .icon-coral { color: #F96F6E; }
+    /* check icon */
+    .check-wrap {
+      width: 88px; height: 88px;
+      margin: 0 auto 40px;
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .check-ring {
+      position: absolute; inset: 0;
+      border: 1.5px solid var(--coral);
+      border-radius: 50%;
+      animation: ringPulse 2.4s ease-out infinite;
+      opacity: 0;
+    }
+    .check-ring:nth-child(2) { animation-delay: 0.8s; }
+    @keyframes ringPulse {
+      0%   { transform: scale(0.85); opacity: 0.6; }
+      100% { transform: scale(1.8);  opacity: 0; }
+    }
+    .check-circle {
+      width: 72px; height: 72px;
+      background: linear-gradient(135deg, var(--coral) 0%, #ff9a8a 100%);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; z-index: 2;
+      box-shadow: 0 16px 40px rgba(249,111,110,0.35);
+      animation: checkIn 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.1s both;
+    }
+    @keyframes checkIn {
+      from { transform: scale(0.4); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+    .check-circle svg { width: 32px; height: 32px; stroke: #fff; }
 
-.desktop-nav .group\/item:hover .icon-teal,
-.desktop-nav .group\/item:hover .icon-coral {
-  filter: brightness(1.2);
-}
+    /* eyebrow */
+    .hero-eyebrow {
+      font-family: var(--f-ui);
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--coral);
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeUp 0.6s ease 0.3s forwards;
+    }
+    .hero-eyebrow::before, .hero-eyebrow::after {
+      content: ''; display: block; width: 24px; height: 1px; background: var(--coral);
+    }
 
-/* Task 4: Typography & Case */
-.desktop-nav .mega-title-text {
-  font-family: 'Big Shoulders Display', sans-serif;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-size: 1.1rem;
-  color: #F4F1ED; /* Task 2: White/Paper */
-}
+    .hero-title {
+      font-family: var(--f-display);
+      font-size: clamp(52px, 9vw, 96px);
+      font-weight: 900;
+      line-height: 0.95;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: fadeUp 0.6s ease 0.4s forwards;
+    }
+    .hero-title em {
+      font-style: normal;
+      color: var(--teal);
+    }
 
-.desktop-nav .mega-desc-text {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.75rem;
-  color: #A1A1AA; /* Task 2: Muted Zinc */
-  margin-top: 0.25rem;
-}
+    .hero-desc {
+      font-family: var(--f-serif);
+      font-size: 20px; font-weight: 300;
+      color: var(--ink-soft);
+      line-height: 1.75;
+      max-width: 540px; margin: 0 auto 32px;
+      opacity: 0;
+      animation: fadeUp 0.6s ease 0.5s forwards;
+    }
 
-</style>
+    .hero-quote {
+      font-family: var(--f-serif);
+      font-size: 16px; font-style: italic;
+      color: var(--coral);
+      opacity: 0;
+      animation: fadeUp 0.6s ease 0.6s forwards;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── DIVIDER ── */
+    .section-divider {
+      max-width: 1280px; margin: 0 auto;
+      padding: 0 48px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .section-divider::before, .section-divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--rule);
+    }
+    .section-divider-label {
+      font-family: var(--f-ui); font-size: 10px; font-weight: 600;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--coral);
+      white-space: nowrap;
+    }
+
+    /* ── STEPS ── */
+    .steps-section {
+      padding: 80px 48px;
+      max-width: 1280px; margin: 0 auto;
+    }
+    .steps-header {
+      text-align: center; margin-bottom: 56px;
+    }
+    .steps-header h2 {
+      font-family: var(--f-serif);
+      font-size: clamp(32px, 4vw, 52px);
+      font-weight: 400; line-height: 1.15;
+      color: var(--ink);
+    }
+    .steps-header h2 em {
+      font-style: italic; color: var(--coral);
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      background: var(--rule);
+      border: 1px solid var(--rule);
+    }
+
+    .step-card {
+      background: var(--bg);
+      padding: 48px 40px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.25s;
+    }
+    .step-card:hover { background: var(--bg-raised); }
+
+    .step-number {
+      font-family: var(--f-display);
+      font-size: 80px; font-weight: 900;
+      line-height: 1;
+      color: var(--rule);
+      position: absolute;
+      top: 16px; right: 20px;
+      transition: color 0.25s;
+      user-select: none;
+    }
+    .step-card:hover .step-number { color: rgba(249,111,110,0.08); }
+
+    .step-icon {
+      width: 44px; height: 44px;
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--teal);
+      margin-bottom: 24px;
+      transition: border-color 0.25s, color 0.25s;
+    }
+    .step-card:hover .step-icon { border-color: var(--teal); }
+    .step-icon svg { width: 20px; height: 20px; }
+
+    .step-title {
+      font-family: var(--f-ui);
+      font-size: 15px; font-weight: 700;
+      letter-spacing: 0.02em;
+      color: var(--ink);
+      margin-bottom: 12px;
+      position: relative; z-index: 2;
+    }
+    .step-desc {
+      font-family: var(--f-serif);
+      font-size: 16px; font-weight: 300;
+      color: var(--ink-soft);
+      line-height: 1.75;
+      position: relative; z-index: 2;
+    }
+
+    /* ── CTA ── */
+    .cta-section {
+      padding: 80px 48px 100px;
+      text-align: center;
+      max-width: 1280px; margin: 0 auto;
+    }
+    .cta-section h2 {
+      font-family: var(--f-serif);
+      font-size: clamp(28px, 3.5vw, 44px);
+      font-weight: 400;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+    .cta-section h2 em { font-style: italic; color: var(--ink-soft); }
+    .cta-sub {
+      font-family: var(--f-ui); font-size: 13px;
+      color: var(--ink-soft); margin-bottom: 40px;
+    }
+    .btn-group {
+      display: flex; align-items: center; justify-content: center;
+      gap: 12px; flex-wrap: wrap;
+    }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--f-ui); font-size: 12px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: #1A1714; background: var(--ink);
+      padding: 14px 28px; border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .btn-primary:hover { background: var(--coral); color: #fff; transform: translateY(-2px); box-shadow: 0 10px 28px rgba(249,111,110,0.25); }
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--f-ui); font-size: 12px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--ink-soft);
+      border: 1px solid var(--rule);
+      padding: 14px 28px; border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .btn-ghost:hover { border-color: var(--ink-soft); color: var(--ink); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--bg-raised);
+      border-top: 1px solid var(--rule);
+      padding: 72px 48px 40px;
+    }
+    .footer-inner { max-width: 1280px; margin: 0 auto; }
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 56px;
+      padding-bottom: 48px;
+      border-bottom: 1px solid var(--rule);
+      margin-bottom: 32px;
+    }
+    .footer-logo-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .footer-logo-wrap img { height: 28px; opacity: 0.85; }
+    .footer-brand-name {
+      font-family: var(--f-display); font-size: 18px; font-weight: 900;
+      text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink);
+    }
+    .footer-tagline {
+      font-family: var(--f-serif); font-size: 14px; font-style: italic;
+      color: var(--ink-soft); line-height: 1.65; margin-bottom: 20px;
+    }
+    .footer-col h4 {
+      font-family: var(--f-ui); font-size: 9px; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--ink-soft); opacity: 0.6; margin-bottom: 16px;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .footer-col ul li a {
+      font-family: var(--f-serif); font-size: 15px;
+      color: var(--ink-soft); transition: color 0.15s;
+    }
+    .footer-col ul li a:hover { color: var(--coral); }
+    .footer-status-card {
+      background: var(--bg); border: 1px solid var(--rule); border-radius: 8px;
+      padding: 16px;
+    }
+    .footer-status-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .footer-status-dot {
+      width: 7px; height: 7px; background: var(--teal); border-radius: 50%;
+      box-shadow: 0 0 6px rgba(46,211,198,0.5);
+      animation: statusPulse 2s infinite;
+    }
+    @keyframes statusPulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    .footer-status-label {
+      font-family: var(--f-ui); font-size: 11px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--teal);
+    }
+    .footer-status-desc {
+      font-family: var(--f-ui); font-size: 12px; color: var(--ink-soft);
+    }
+    .footer-bottom {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .footer-copy {
+      font-family: var(--f-ui); font-size: 11px; color: var(--ink-soft); opacity: 0.5;
+    }
+    .footer-copy span { color: var(--coral); opacity: 1; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1024px) {
+      .steps-grid { grid-template-columns: 1fr; }
+      .footer-top  { grid-template-columns: 1fr 1fr; gap: 36px; }
+    }
+    @media (max-width: 768px) {
+      .steps-section, .cta-section { padding: 56px 24px; }
+      footer { padding: 56px 24px 32px; }
+      .footer-top { grid-template-columns: 1fr; gap: 28px; }
+      .section-divider { padding: 0 24px; }
+      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+    }
+  </style>
 </head>
 <body>
-    <div id="cursor-lens"><div class="lens-outer"></div><div class="lens-center"></div></div>
-    <nav class="primary-nav"><div class="primary-nav-container"><a href="/index.html" class="nav-logo"><img src="/assets/images/AUg_logo_White.png" alt="LG"></a><div class="nav-links"><a href="/index.html" class="nav-link">Portfolio</a><a href="/insights/index.html" class="nav-link">Insights</a><div class="nav-item has-dropdown group relative" id="hubMega">
-    <a href="/TheHub/" class="nav-link">
-        THE HUB <i class="fas fa-chevron-down chevron"></i>
-    </a>
-    <div class="mega-panel">
-        <div class="grid grid-cols-2 gap-6" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
-            <!-- Hub Home -->
-            <a href="/TheHub/index.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
-                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-teal" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
-                    <i class="fa-solid fa-house"></i>
-                </div>
-                <div>
-                    <div class="mega-title-text" style="font-weight: 700;">Hub Home</div>
-                    <div class="mega-desc-text">System overview and entry point.</div>
-                </div>
-            </a>
-            <!-- StrategyIQ -->
-            <a href="/TheHub/strategy-iq/" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
-                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
-                    <i class="fa-solid fa-chart-line"></i>
-                </div>
-                <div>
-                    <div class="mega-title-text" style="font-weight: 700;">StrategyIQ</div>
-                    <div class="mega-desc-text">Benchmark maturity and define the roadmap.</div>
-                </div>
-            </a>
-            <!-- Advisory -->
-            <a href="/TheHub/advisory/" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
-                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-teal" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
-                    <i class="fa-solid fa-compass"></i>
-                </div>
-                <div>
-                    <div class="mega-title-text" style="font-weight: 700;">Advisory</div>
-                    <div class="mega-desc-text">Leadership alignment and decision support.</div>
-                </div>
-            </a>
-            <!-- The Studio -->
-            <a href="/TheHub/studio.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
-                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
-                    <i class="fa-solid fa-palette"></i>
-                </div>
-                <div>
-                    <div class="mega-title-text" style="font-weight: 700;">The Studio</div>
-                    <div class="mega-desc-text">Creative production and execution.</div>
-                </div>
-            </a>
-        </div>
-        <!-- Footer CTA -->
-        <div class="mt-6 pt-4 border-t border-white/10 flex justify-end" style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: flex-end;">
-            <a href="https://portal.luis-gilberto.com" class="text-xs font-bold text-coral flex items-center gap-1 hover:brightness-110" style="font-size: 0.75rem; font-weight: 700; color: var(--coral); display: flex; align-items: center; gap: 0.25rem;">
-                Enter The Portal <span class="text-lg" style="font-size: 1.125rem;">→</span>
-            </a>
-        </div>
-    </div>
-</div>
 
-              <a href="https://portal.luis-gilberto.com" class="nav-link" target="_blank">The Portal</a></div><button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button></div></nav>
-    <button class="theme-toggle" id="themeToggle"><i class="fa-regular fa-sun sun-icon"></i><i class="fa-regular fa-moon moon-icon"></i></button>
-    <div class="mobile-menu-overlay" id="mobileMenuOverlay"><div class="mobile-drawer"><button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button><div class="mobile-menu-content"><div><div class="mobile-nav-label">Global</div><a href="/index.html" class="mobile-link main">Portfolio</a><a href="/insights/index.html" class="mobile-link main">Insights</a><div class="nav-item has-dropdown group relative" id="hubMega">
-    <a href="/TheHub/" class="nav-link">
-        THE HUB <i class="fas fa-chevron-down chevron"></i>
-    </a>
-    <div class="mega-panel">
-        <div class="grid grid-cols-2 gap-6" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
-            <!-- Hub Home -->
-            <a href="/TheHub/index.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
-                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center text-zinc-400 group-hover/item:text-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
-                    <i class="fa-solid fa-house"></i>
-                </div>
-                <div>
-                    <div class="font-bold text-white tracking-tight" style="font-weight: 700; color: white;">Hub Home</div>
-                    <div class="text-xs text-zinc-500 leading-tight mt-1" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.25rem;">System overview and entry point.</div>
-                </div>
-            </a>
-            <!-- StrategyIQ -->
-            <a href="/TheHub/strategy-iq/" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
-                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center text-zinc-400 group-hover/item:text-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
-                    <i class="fa-solid fa-chart-line"></i>
-                </div>
-                <div>
-                    <div class="font-bold text-white tracking-tight" style="font-weight: 700; color: white;">StrategyIQ</div>
-                    <div class="text-xs text-zinc-500 leading-tight mt-1" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.25rem;">Benchmark maturity and define the roadmap.</div>
-                </div>
-            </a>
-            <!-- Advisory -->
-            <a href="/TheHub/advisory/" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
-                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center text-zinc-400 group-hover/item:text-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
-                    <i class="fa-solid fa-compass"></i>
-                </div>
-                <div>
-                    <div class="font-bold text-white tracking-tight" style="font-weight: 700; color: white;">Advisory</div>
-                    <div class="text-xs text-zinc-500 leading-tight mt-1" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.25rem;">Leadership alignment and decision support.</div>
-                </div>
-            </a>
-            <!-- The Studio -->
-            <a href="/TheHub/studio.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
-                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center text-zinc-400 group-hover/item:text-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
-                    <i class="fa-solid fa-palette"></i>
-                </div>
-                <div>
-                    <div class="font-bold text-white tracking-tight" style="font-weight: 700; color: white;">The Studio</div>
-                    <div class="text-xs text-zinc-500 leading-tight mt-1" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.25rem;">Creative production and execution.</div>
-                </div>
-            </a>
+  <!-- ── NAV COMPONENT ── -->
+  <div id="site-nav" data-active="contact"></div>
+  <script src="/assets/js/nav-component.js"></script>
+
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <div class="hero-grain"></div>
+    <div class="hero-glow-coral"></div>
+    <div class="hero-glow-teal"></div>
+    <div class="hero-inner">
+
+      <div class="check-wrap">
+        <div class="check-ring"></div>
+        <div class="check-ring"></div>
+        <div class="check-circle">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
         </div>
-        <!-- Footer CTA -->
-        <div class="mt-6 pt-4 border-t border-white/10 flex justify-end" style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: flex-end;">
-            <a href="https://portal.luis-gilberto.com" class="text-xs font-bold text-coral flex items-center gap-1 hover:brightness-110" style="font-size: 0.75rem; font-weight: 700; color: var(--coral); display: flex; align-items: center; gap: 0.25rem;">
-                Enter The Portal <span class="text-lg" style="font-size: 1.125rem;">→</span>
-            </a>
-        </div>
+      </div>
+
+      <p class="hero-eyebrow">Confirmed</p>
+
+      <h1 class="hero-title">Message<br><em>Received</em></h1>
+
+      <p class="hero-desc">Your project details are in my hands. Whether this came from The Hub or a direct inquiry, I'm already reviewing the context.</p>
+
+      <p class="hero-quote">"Every great campaign starts with a conversation. Let's make yours count."</p>
+
     </div>
-</div><a href="https://portal.luis-gilberto.com" class="mobile-link main">The Portal</a></div><div><div class="mobile-nav-label">Connect</div><a href="/about.html" class="mobile-link">About Me</a><a href="/contact.html" class="mobile-link">Contact</a></div></div></div></div>
-    <main>
-        <section class="hero-section"><div class="container"><div class="status-icon-wrapper"><div class="status-ring"></div><div class="status-check"><i class="fa-solid fa-check"></i></div></div><h1 class="hero-title">Message <span>Received</span></h1><p class="hero-desc">Your project details are in my hands. Whether this came from The Hub or a direct inquiry, I'm already reviewing the context.</p><div class="quote">"Every great campaign starts with a conversation. Let's make yours count."</div></div></section>
-        <section class="steps-section"><div class="container"><h2 style="font-family:'Big Shoulders Display';font-size:2.5rem;margin-bottom:2rem">What Happens Next?</h2><div class="steps-grid"><div class="step-card"><div class="step-num">01</div><h3 class="step-title">Review & Analysis</h3><p class="step-desc">I'll review your brief (or message) within 24 hours to understand the friction points and goals you've outlined.</p></div><div class="step-card"><div class="step-num">02</div><h3 class="step-title">Discovery Response</h3><p class="step-desc">I'll send a personalized response. If the fit is right, we'll book a 30-minute discovery call to align on scope.</p></div><div class="step-card"><div class="step-num">03</div><h3 class="step-title">Strategic Proposal</h3><p class="step-desc">Following our chat, I'll craft a tailored proposal or roadmap that transforms your challenges into momentum.</p></div></div></div></section>
-        <section class="cta-section"><div class="container"><h2 style="font-family:'Big Shoulders Display';font-size:2.5rem">While You Wait</h2><div class="btn-group"><a href="/index.html" class="btn btn-primary">View Portfolio</a><a href="/insights/index.html" class="btn btn-outline">Read Insights</a></div></div></section>
-    </main>
-    <footer class="site-footer"><div class="footer-container"><div class="footer-brand"><a href="/index.html" style="text-decoration:none;display:flex;align-items:center;gap:10px"><img src="/assets/images/Logomark_White_a.png" alt="LG" style="height:32px;opacity:.9"><h3 style="margin:0;font-size:1.5rem">Luis Gilberto</h3></a><p class="footer-tagline">Making technology feel human through clarity, beautiful execution, and systems that scale.</p></div><div><h4 class="footer-heading">Ecosystem</h4><ul class="footer-list"><li><a href="/index.html" class="footer-link">Portfolio</a></li><li><div class="nav-item has-dropdown group relative" id="hubMega">
-    <a href="/TheHub/" class="nav-link">
-        THE HUB <i class="fas fa-chevron-down chevron"></i>
-    </a>
-    <div class="mega-panel">
-        <div class="grid grid-cols-2 gap-6" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
-            <!-- Hub Home -->
-            <a href="/TheHub/index.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
-                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center text-zinc-400 group-hover/item:text-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
-                    <i class="fa-solid fa-house"></i>
-                </div>
-                <div>
-                    <div class="font-bold text-white tracking-tight" style="font-weight: 700; color: white;">Hub Home</div>
-                    <div class="text-xs text-zinc-500 leading-tight mt-1" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.25rem;">System overview and entry point.</div>
-                </div>
-            </a>
-            <!-- StrategyIQ -->
-            <a href="/TheHub/strategy-iq/" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
-                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center text-zinc-400 group-hover/item:text-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
-                    <i class="fa-solid fa-chart-line"></i>
-                </div>
-                <div>
-                    <div class="font-bold text-white tracking-tight" style="font-weight: 700; color: white;">StrategyIQ</div>
-                    <div class="text-xs text-zinc-500 leading-tight mt-1" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.25rem;">Benchmark maturity and define the roadmap.</div>
-                </div>
-            </a>
-            <!-- Advisory -->
-            <a href="/TheHub/advisory/" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
-                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center text-zinc-400 group-hover/item:text-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
-                    <i class="fa-solid fa-compass"></i>
-                </div>
-                <div>
-                    <div class="font-bold text-white tracking-tight" style="font-weight: 700; color: white;">Advisory</div>
-                    <div class="text-xs text-zinc-500 leading-tight mt-1" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.25rem;">Leadership alignment and decision support.</div>
-                </div>
-            </a>
-            <!-- The Studio -->
-            <a href="/TheHub/studio.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
-                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center text-zinc-400 group-hover/item:text-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
-                    <i class="fa-solid fa-palette"></i>
-                </div>
-                <div>
-                    <div class="font-bold text-white tracking-tight" style="font-weight: 700; color: white;">The Studio</div>
-                    <div class="text-xs text-zinc-500 leading-tight mt-1" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.25rem;">Creative production and execution.</div>
-                </div>
-            </a>
-        </div>
-        <!-- Footer CTA -->
-        <div class="mt-6 pt-4 border-t border-white/10 flex justify-end" style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: flex-end;">
-            <a href="https://portal.luis-gilberto.com" class="text-xs font-bold text-coral flex items-center gap-1 hover:brightness-110" style="font-size: 0.75rem; font-weight: 700; color: var(--coral); display: flex; align-items: center; gap: 0.25rem;">
-                Enter The Portal <span class="text-lg" style="font-size: 1.125rem;">→</span>
-            </a>
-        </div>
+  </section>
+
+  <!-- ── DIVIDER ── -->
+  <div class="section-divider">
+    <span class="section-divider-label">What Happens Next</span>
+  </div>
+
+  <!-- ── STEPS ── -->
+  <section class="steps-section">
+    <div class="steps-header">
+      <h2>Three steps to<br><em>momentum</em></h2>
     </div>
-</div></li><li><a href="/insights/index.html" class="footer-link">Insights</a></li><li><a href="https://portal.luis-gilberto.com" class="footer-link" style="color:var(--teal)">The Portal</a></li><li class="footer-nav-divider"><a href="/system/" class="footer-system-link">How it all connects</a></li></ul></div><div><h4 class="footer-heading">Connect</h4><ul class="footer-list"><li><a href="/contact.html" class="footer-link">Contact</a></li><li><a href="/about.html" class="footer-link">About Me</a></li><li><a href="https://linkedin.com/in/luisgilberto00" class="footer-link">LinkedIn</a></li></ul></div><div><h4 class="footer-heading">Status</h4><div style="background:rgba(255,255,255,.05);padding:1rem;border-radius:8px;border:1px solid rgba(255,255,255,.1)"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="width:8px;height:8px;background:var(--teal);border-radius:50%"></span><span style="font-weight:700;text-transform:uppercase;font-size:.8rem">Available</span></div><p style="font-size:.8rem;margin:0;opacity:.7">Accepting new strategic projects.</p></div></div></div><div class="footer-bottom">&copy; 2026 Luis Gilberto. All rights reserved.</div></footer>
-    <script>(()=>{const themeToggle=document.getElementById('themeToggle');const html=document.documentElement;const savedTheme=localStorage.getItem('theme')||'light';html.setAttribute('data-theme',savedTheme);if(themeToggle){themeToggle.addEventListener('click',()=>{const current=html.getAttribute('data-theme');const next=current==='light'?'dark':'light';html.setAttribute('data-theme',next);localStorage.setItem('theme',next);});}const menuToggle=document.getElementById('mobileMenuToggle');const menuOverlay=document.getElementById('mobileMenuOverlay');const menuClose=document.getElementById('mobileMenuClose');if(menuToggle&&menuOverlay){menuToggle.addEventListener('click',()=>{menuOverlay.classList.add('active');document.body.style.overflow='hidden';});const closeMenu=()=>{menuOverlay.classList.remove('active');document.body.style.overflow='';};menuClose?.addEventListener('click',closeMenu);menuOverlay.addEventListener('click',e=>{if(e.target===menuOverlay)closeMenu();});}const cursor=document.getElementById('cursor-lens');document.addEventListener('mousemove',e=>{if(cursor){cursor.style.left=e.clientX+'px';cursor.style.top=e.clientY+'px';}});document.querySelectorAll('a, button').forEach(el=>{el.addEventListener('mouseenter',()=>document.body.classList.add('cursor-hover'));el.addEventListener('mouseleave',()=>document.body.classList.remove('cursor-hover'));});})();</script>
+    <div class="steps-grid">
+
+      <div class="step-card">
+        <span class="step-number">01</span>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </div>
+        <h3 class="step-title">Review &amp; Analysis</h3>
+        <p class="step-desc">I'll review your brief within 24 hours to understand the friction points and goals you've outlined.</p>
+      </div>
+
+      <div class="step-card">
+        <span class="step-number">02</span>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </div>
+        <h3 class="step-title">Discovery Response</h3>
+        <p class="step-desc">I'll send a personalized response. If the fit is right, we'll book a 30-minute discovery call to align on scope.</p>
+      </div>
+
+      <div class="step-card">
+        <span class="step-number">03</span>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+        </div>
+        <h3 class="step-title">Strategic Proposal</h3>
+        <p class="step-desc">Following our chat, I'll craft a tailored proposal or roadmap that transforms your challenges into momentum.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── DIVIDER ── -->
+  <div class="section-divider">
+    <span class="section-divider-label">While You Wait</span>
+  </div>
+
+  <!-- ── CTA ── -->
+  <section class="cta-section">
+    <h2>Explore the<br><em>ecosystem</em></h2>
+    <p class="cta-sub">There's plenty to discover while I review your message.</p>
+    <div class="btn-group">
+      <a href="/index.html" class="btn-primary">
+        View Portfolio
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+      <a href="/insights/" class="btn-ghost">Read Insights</a>
+      <a href="/TheHub/" class="btn-ghost">Explore The Hub</a>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div>
+          <div class="footer-logo-wrap">
+            <img src="/assets/images/Logomark_White_a.png" alt="Luis Gilberto">
+            <span class="footer-brand-name">Luis Gilberto</span>
+          </div>
+          <p class="footer-tagline">Making technology feel human through clarity,<br>beautiful execution, and systems that scale.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Ecosystem</h4>
+          <ul>
+            <li><a href="/index.html">Portfolio</a></li>
+            <li><a href="/insights/">Insights</a></li>
+            <li><a href="/TheHub/">The Hub</a></li>
+            <li><a href="https://portal.luis-gilberto.com" style="color:var(--teal)">The Portal</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Connect</h4>
+          <ul>
+            <li><a href="/contact.html">Contact</a></li>
+            <li><a href="/about.html">About Me</a></li>
+            <li><a href="https://linkedin.com/in/luisgilberto00">LinkedIn</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Status</h4>
+          <div class="footer-status-card">
+            <div class="footer-status-row">
+              <div class="footer-status-dot"></div>
+              <span class="footer-status-label">Available</span>
+            </div>
+            <p class="footer-status-desc">Accepting new strategic projects.</p>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-copy">© 2026 <span>Luis Gilberto</span>. All rights reserved.</p>
+        <p class="footer-copy">Crafted with intention · Caracas meets Cascadia</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Apply saved theme before paint to avoid flash
+    (function() {
+      const t = localStorage.getItem('portfolio-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+
 </body>
 </html>

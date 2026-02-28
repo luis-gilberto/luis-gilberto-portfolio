@@ -268,6 +268,8 @@
       cursor: pointer; color: rgba(250,247,244,0.5); transition: all 0.15s; flex-shrink: 0;
     }
     .snav-theme-btn:hover { border-color: rgba(250,247,244,0.4); color: #FAF7F4; }
+    .snav-theme-btn span { display: flex; align-items: center; justify-content: center; width: 16px; height: 16px; }
+    .snav-theme-btn span svg { width: 16px; height: 16px; }
     .snav-mobile-toggle {
       display: none; background: none; border: 1px solid rgba(250,247,244,0.12);
       border-radius: 6px; width: 36px; height: 36px;
