@@ -763,6 +763,69 @@
         .delay-1 { animation-delay: 0.1s; }
         .delay-2 { animation-delay: 0.2s; }
         .delay-3 { animation-delay: 0.3s; }
+        /* ========================
+           HUB DIAGNOSTIC OVERLAY
+           ======================== */
+        .intent-backdrop {
+            position: fixed; inset: 0; z-index: 10000;
+            background: rgba(5, 5, 5, 0.95); backdrop-filter: blur(20px);
+            display: none; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.5s ease;
+        }
+        .intent-backdrop.visible { opacity: 1; }
+        
+        .intent-container {
+            max-width: 1000px; width: 90%; text-align: center;
+            transform: translateY(20px); transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .intent-backdrop.visible .intent-container { transform: translateY(0); }
+        
+        .intent-header {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: clamp(40px, 6vw, 80px); line-height: 0.9;
+            margin-bottom: 60px; text-transform: uppercase; color: #FFF;
+        }
+        .intent-header .emphasis { color: var(--coral); font-style: italic; }
+        
+        .intent-cards {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+            margin-bottom: 60px;
+        }
+        
+        .intent-card {
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 48px 32px; border-radius: 16px; cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); text-align: center;
+            display: flex; flex-direction: column; align-items: center; gap: 12px;
+            color: #FFF; text-decoration: none;
+        }
+        .intent-card:hover {
+            background: rgba(255, 255, 255, 0.08); transform: translateY(-8px);
+            border-color: rgba(255, 255, 255, 0.3); box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        
+        .card-qualifier { font-family: monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.5; }
+        .card-keyword { font-family: 'Big Shoulders Display', sans-serif; font-size: 32px; text-transform: uppercase; margin: 4px 0; }
+        .card-microline { font-size: 13px; opacity: 0.7; line-height: 1.4; }
+        
+        .intent-card--partner:hover .card-keyword { color: var(--coral); }
+        .intent-card--assess:hover .card-keyword { color: #FFB800; } /* Mustard */
+        .intent-card--explore:hover .card-keyword { color: var(--teal); }
+        
+        .intent-skip { margin-top: 40px; }
+        .skip-link {
+            font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em;
+            color: rgba(255, 255, 255, 0.4); text-decoration: none; transition: color 0.2s;
+        }
+        .skip-link:hover { color: #FFF; }
+        
+        body.modal-open { overflow: hidden; }
+
+        @media (max-width: 768px) {
+            .intent-cards { grid-template-columns: 1fr; gap: 16px; }
+            .intent-card { padding: 32px 24px; }
+        }
+
     </style>
 </head>
 <body>
@@ -1203,8 +1266,83 @@
             const yearEl = document.getElementById('currentYear');
             if (yearEl) yearEl.textContent = new Date().getFullYear();
 
+            // ---- Hub Diagnostic Overlay (The Modal Engine) ----
+            const intentGate = {
+                el: document.getElementById('intentGate'),
+                init() {
+                    const params = new URLSearchParams(window.location.search);
+                    if (params.get('open') === 'diagnostic') {
+                        this.open();
+                    }
+                    
+                    // Listen for external triggers (e.g., from nav-component.js)
+                    window.addEventListener('open-diagnostic', () => this.open());
+                },
+                open() {
+                    if (!this.el) return;
+                    this.el.style.display = 'flex';
+                    // Force reflow
+                    this.el.offsetHeight;
+                    this.el.classList.add('visible');
+                    document.body.classList.add('modal-open');
+                },
+                close() {
+                    if (!this.el) return;
+                    this.el.classList.remove('visible');
+                    setTimeout(() => { 
+                        this.el.style.display = 'none'; 
+                        document.body.classList.remove('modal-open');
+                    }, 500);
+                    // Clean up URL without reload
+                    const url = new URL(window.location);
+                    if (url.searchParams.has('open')) {
+                        url.searchParams.delete('open');
+                        window.history.replaceState({}, '', url);
+                    }
+                },
+                select(lens) {
+                    localStorage.setItem('user-lens', lens);
+                    // Dispatch event for other components to sync
+                    window.dispatchEvent(new StorageEvent('storage', {
+                        key: 'user-lens',
+                        newValue: lens
+                    }));
+                    this.close();
+                }
+            };
+            
+            // Expose to window for inline onclicks
+            window.intentGate = intentGate;
+            intentGate.init();
+
         });
     </script>
 
+    <!-- HUB DIAGNOSTIC OVERLAY HTML -->
+    <div class="intent-backdrop" id="intentGate" style="display: none;">
+        <div class="intent-container">
+            <h2 class="intent-header">What brings you to <span class="emphasis">The Hub?</span></h2>
+            <div class="intent-cards">
+                <button class="intent-card intent-card--partner" onclick="intentGate.select('partner')">
+                    <p class="card-qualifier">I am looking for a</p>
+                    <h3 class="card-keyword">Partner</h3>
+                    <p class="card-microline">Strategic leadership & execution.</p>
+                </button>
+                <button class="intent-card intent-card--assess" onclick="intentGate.select('assess')">
+                    <p class="card-qualifier">I need to</p>
+                    <h3 class="card-keyword">Assess</h3>
+                    <p class="card-microline">Diagnosis & roadmap development.</p>
+                </button>
+                <button class="intent-card intent-card--explore" onclick="intentGate.select('explore')">
+                    <p class="card-qualifier">I want to</p>
+                    <h3 class="card-keyword">Explore</h3>
+                    <p class="card-microline">Systems, stories & outcomes.</p>
+                </button>
+            </div>
+            <div class="intent-skip">
+                <a href="#" class="skip-link" onclick="event.preventDefault(); intentGate.close();">Close — I'll find my way</a>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

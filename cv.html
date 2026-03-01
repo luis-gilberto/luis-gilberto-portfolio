@@ -1,6 +1,5 @@
-
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -9,299 +8,501 @@
     
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
     
-    <!-- Ecosystem Fonts (matches homepage) -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&display=swap" rel="stylesheet">
+    <!-- Ecosystem Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Big+Shoulders+Display:wght@600;700;800&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
     
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <style>
-/* Mega Menu System (Phase 117+118) */
-.desktop-nav .nav-item {
-  position: relative; /* Task 1: Positional Anchor */
-}
+        /* ==========================================
+           ECOSYSTEM VARIABLES
+           ========================================== */
+        :root {
+            --coral: #F96F6E;
+            --teal: #2ED3C6;
+            --mustard: #FFB800;
+            --accent-lens: var(--coral); /* Default */
+            
+            /* Light Mode Palette */
+            --bg-primary: #FFFFFF;
+            --bg-alt: #F4F5F7; 
+            --text-primary: #111111;
+            --text-secondary: #555555;
+            --text-muted: rgba(0, 0, 0, 0.5);
+            --border-subtle: rgba(0, 0, 0, 0.06);
+            --border-strong: rgba(0, 0, 0, 0.12);
+            --thread-line: rgba(0, 0, 0, 0.06);
+            
+            /* Fonts */
+            --font-sans: 'Inter', sans-serif;
+            --font-display: 'Big Shoulders Display', sans-serif;
+            
+            /* UI */
+            --card-bg: #FFFFFF;
+            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.04);
+            --shadow-hover: 0 12px 30px rgba(0, 0, 0, 0.08);
+        }
 
-.desktop-nav .mega-panel {
-  display: block;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.2s ease;
-  transition-delay: 100ms; /* Task 3: Hover Intent */
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%) translateY(10px) translateZ(0); /* Task 1: Alignment & GPU */
-  backface-visibility: hidden;
-  width: 520px; /* Slightly wider for padding */
-  background: #0A0A0A; /* Task 2: Always Dark */
-  border: 1px solid rgba(255, 255, 255, 0.1); /* Task 2: Subtle Border */
-  padding: 1.5rem; /* Task 3: Spacing */
-  border-radius: 0.75rem;
-  z-index: 50;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  margin-top: 1rem;
-}
+        /* Dark Mode Palette */
+        [data-theme="dark"] {
+            --bg-primary: #0E0E0F;
+            --bg-alt: #161617;
+            --text-primary: #F5F5F5;
+            --text-secondary: #A0A0A0;
+            --text-muted: rgba(255, 255, 255, 0.4);
+            --border-subtle: rgba(255, 255, 255, 0.05);
+            --border-strong: rgba(255, 255, 255, 0.15);
+            --thread-line: rgba(255, 255, 255, 0.08);
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.4);
+            --shadow-hover: 0 12px 30px rgba(0, 0, 0, 0.5);
+        }
 
-/* Safe Tunnel */
-.desktop-nav .mega-panel::before {
-  content: "";
-  position: absolute;
-  top: -20px;
-  left: 0;
-  right: 0;
-  height: 20px;
-  background: transparent;
-}
+        /* Resume Palette Selector Component */
+        .resume-palette-selector {
+            background: white;
+            border: 1px solid rgba(10, 10, 10, 0.08);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+            z-index: 50;
+            position: relative;
+        }
 
-.desktop-nav .nav-item:hover .mega-panel {
-  opacity: 1;
-  visibility: visible;
-  transform: translateX(-50%) translateY(0) translateZ(0);
-}
+        [data-theme="dark"] .resume-palette-selector {
+            background: #1A1A1A;
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+        }
 
-.desktop-nav .group\/item:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-}
+        .selector-label {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #0A0A0A;
+            margin-bottom: 16px;
+            display: block;
+        }
 
-/* Task 3: Icon Colors */
-.desktop-nav .group\/item .icon-teal { color: #2ED3C6; }
-.desktop-nav .group\/item .icon-coral { color: #F96F6E; }
+        [data-theme="dark"] .selector-label { color: #F4F1ED; }
 
-.desktop-nav .group\/item:hover .icon-teal,
-.desktop-nav .group\/item:hover .icon-coral {
-  filter: brightness(1.2);
-}
+        .palette-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
 
-/* Task 4: Typography & Case */
-.desktop-nav .mega-title-text {
-  font-family: 'Big Shoulders Display', sans-serif;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-size: 1.1rem;
-  color: #F4F1ED; /* Task 2: White/Paper */
-}
+        .palette-option {
+            background: #F9F8F6;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            padding: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
 
-.desktop-nav .mega-desc-text {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.75rem;
-  color: #A1A1AA; /* Task 2: Muted Zinc */
-  margin-top: 0.25rem;
-}
+        [data-theme="dark"] .palette-option { background: #252525; }
 
-</style>
+        .palette-option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
 
+        [data-theme="dark"] .palette-option:hover { box-shadow: 0 4px 16px rgba(255, 255, 255, 0.05); }
+
+        .palette-option.active { border-color: var(--accent-lens); background: color-mix(in srgb, var(--accent-lens) 4%, transparent); }
+        [data-theme="dark"] .palette-option.active { background: color-mix(in srgb, var(--accent-lens) 8%, transparent); }
+
+        .palette-option .checkmark {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 20px;
+            height: 20px;
+            background: var(--accent-lens);
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+        }
+        .palette-option.active .checkmark { display: flex; }
+
+        .palette-colors { display: flex; gap: 6px; margin-bottom: 8px; }
+        .color-dot { width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(10, 10, 10, 0.1); transition: transform 0.2s ease; }
+        .palette-option:hover .color-dot { transform: scale(1.15); }
+
+        .palette-name { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; color: #0A0A0A; margin-bottom: 2px; }
+        [data-theme="dark"] .palette-name { color: #F4F1ED; }
+        .palette-desc { font-family: 'Inter', sans-serif; font-size: 11px; color: #666; line-height: 1.3; }
+        [data-theme="dark"] .palette-desc { color: #999; }
+
+        .download-btn { display: block; width: 100%; background: var(--accent-lens); color: white; text-decoration: none; padding: 14px; border-radius: 8px; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.2s ease; margin-bottom: 16px; }
+        .download-btn:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 6px 20px color-mix(in srgb, var(--accent-lens) 30%, transparent); }
+        .download-btn:active { transform: translateY(0); }
+
+        .preview-panel { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, opacity 0.3s ease; opacity: 0; margin-top: 16px; }
+        .preview-panel.open { max-height: 450px; opacity: 1; }
+        .preview-content { background: #FAFAFA; border: 1px solid rgba(10, 10, 10, 0.08); border-radius: 8px; padding: 16px; min-height: 240px; max-height: 280px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+        [data-theme="dark"] .preview-content { background: #1F1F1F; border-color: rgba(255, 255, 255, 0.1); }
+        .preview-thumbnail { width: 100%; height: auto; max-height: 240px; object-fit: contain; border-radius: 4px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+
+        @media (max-width: 480px) { .palette-options { grid-template-columns: 1fr; } }
+
+        /* Sidebar Scrolling Optimization */
+        @media (min-width: 1024px) {
+            .cv-sidebar { 
+                max-height: calc(100vh - 120px); 
+                overflow-y: auto; 
+                overflow-x: hidden; 
+                padding-right: 10px;
+                scrollbar-width: thin;
+                scrollbar-color: color-mix(in srgb, var(--accent-lens) 30%, transparent) transparent;
+            }
+            .cv-sidebar::-webkit-scrollbar { width: 6px; }
+            .cv-sidebar::-webkit-scrollbar-track { background: transparent; }
+            .cv-sidebar::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--accent-lens) 30%, transparent); border-radius: 10px; }
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            background-image: radial-gradient(var(--border-subtle) 1px, transparent 1px);
+            background-size: 24px 24px;
+            line-height: 1.6;
+            padding-top: var(--header-height, 64px); 
+            transition: background-color 0.3s ease, color 0.3s ease;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                background-size: 16px 16px;
+            }
+        }
+
+        /* ==========================================
+           EXECUTIVE LAYOUT
+           ========================================== */
+        .container { 
+            max-width: 1200px; margin: 0 auto; padding: 0 2rem; 
+            position: relative; z-index: 1; 
+        }
+        .cv-layout {
+            display: grid; grid-template-columns: 1fr; gap: 3rem; padding: 2rem 0;
+        }
+        @media (min-width: 1024px) {
+            .cv-layout { grid-template-columns: 360px 1fr; align-items: start; }
+            .cv-sidebar { position: sticky; top: 140px; }
+        }
+
+        /* Sidebar Profile */
+        .profile-header h1 {
+            font-family: var(--font-display); font-size: clamp(3.5rem, 8vw, 4rem);
+            line-height: 0.9; margin-bottom: 0.5rem; color: var(--text-primary);
+            text-transform: uppercase;
+        }
+        .profile-role {
+            font-family: var(--font-sans); font-size: 1.1rem; color: var(--accent-lens);
+            font-weight: 600; margin-bottom: 1.5rem; letter-spacing: 0.05em;
+        }
+        .profile-contact {
+            display: flex; flex-direction: column; gap: 0.8rem;
+            margin-bottom: 2rem; font-size: 0.95rem; color: var(--text-secondary);
+        }
+        .profile-contact a { color: var(--text-secondary); text-decoration: none; }
+        .profile-contact a:hover { color: var(--accent-lens); }
+
+        .cv-cta-group {
+            display: flex; flex-direction: column; gap: 1rem;
+            padding-top: 2rem; border-top: 1px solid var(--border-strong);
+        }
+        .btn { 
+            display: inline-flex; align-items: center; justify-content: center; 
+            padding: 14px 24px; border-radius: 12px; font-weight: 600; 
+            font-size: 1rem; text-decoration: none; transition: all 0.3s; 
+            border: none; cursor: pointer; width: 100%; text-align: center;
+        }
+        .btn-primary { background: var(--text-primary); color: var(--bg-primary); }
+        .btn-primary:hover { background: var(--accent-lens); color: white; transform: translateY(-2px); }
+
+        /* Job Cards */
+        .section-label {
+            font-size: 0.85rem; font-weight: 700; letter-spacing: 0.15em;
+            text-transform: uppercase; color: var(--text-muted);
+            margin: 3rem 0 1.5rem; display: flex; align-items: center; gap: 1rem;
+        }
+        .section-label::after { content: ""; flex: 1; height: 1px; background: var(--border-strong); }
+        
+        .job-card {
+            background: var(--card-bg); border: 1px solid var(--border-strong);
+            border-left: 4px solid var(--text-primary); padding: 2rem; 
+            border-radius: 0 16px 16px 0; transition: all 0.3s ease; margin-bottom: 2rem;
+        }
+        .job-card:hover { transform: translateX(5px); border-left-color: var(--accent-lens); box-shadow: var(--shadow-hover); }
+        
+        .job-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem; }
+        .job-title { font-family: var(--font-display); font-size: clamp(1.5rem, 3vw, 1.75rem); font-weight: 700; color: var(--text-primary); }
+        .job-meta { font-family: var(--font-sans); font-size: 0.95rem; color: var(--accent-lens); font-weight: 600; margin-bottom: 1.5rem; }
+        .job-details li { color: var(--text-secondary); margin-bottom: 0.75rem; font-size: 1rem; padding-left: 1.5rem; position: relative; }
+        .job-details li::before { content: "→"; position: absolute; left: 0; color: var(--accent-lens); font-weight: bold; }
+
+        /* Skills Grid */
+        .specs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
+        .spec-card { background: var(--bg-alt); border: 1px solid var(--border-subtle); padding: 1.5rem; border-radius: 12px; transition: border-color 0.3s ease; }
+        .spec-card:hover { border-color: var(--accent-lens); }
+        .spec-title { color: var(--accent-lens); font-family: var(--font-display); font-size: 1.25rem; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .spec-list { list-style: none; padding: 0; font-size: 0.9rem; color: var(--text-secondary); line-height: 1.8; }
+        .spec-list li { border-bottom: 1px dashed var(--border-subtle); padding: 4px 0; }
+
+        /* Parallax */
+        .skills-parallax { padding: 40px 0; background: var(--bg-alt); overflow: hidden; margin: 4rem 0; width: 100%; border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); }
+        .skills-text { display: flex; gap: 40px; font-family: var(--font-display); font-size: clamp(3rem, 6vw, 4rem); font-weight: 900; color: var(--border-strong); text-transform: uppercase; white-space: nowrap; animation: slideLeft 40s linear infinite; opacity: 0.4; }
+        @keyframes slideLeft { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* ==========================================
+           MOBILE OPTIMIZATIONS
+           ========================================== */
+        
+        /* Tablet adjustments */
+        @media (max-width: 1023px) {
+            .container { padding: 0 1.5rem; }
+            .cv-layout { gap: 2rem; padding: 1.5rem 0 2rem; }
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            /* Tighter container */
+            .container { padding: 0 1rem; }
+            .cv-layout { gap: 1.5rem; padding: 1rem 0 2rem; }
+            
+            /* Profile Header - Much Smaller Text */
+            .profile-header { text-align: left; }
+            .profile-header h1 { 
+                font-size: 2rem; 
+                margin-bottom: 0.25rem; 
+                line-height: 1;
+                letter-spacing: -0.02em;
+            }
+            .profile-role { 
+                font-size: 0.8rem; 
+                margin-bottom: 1rem;
+                line-height: 1.3;
+            }
+            
+            /* Contact Info - Compact */
+            .profile-contact { 
+                align-items: flex-start; 
+                gap: 0.4rem; 
+                margin-bottom: 1rem;
+                font-size: 0.8rem;
+            }
+            .profile-contact i { 
+                font-size: 0.75rem;
+                width: 16px;
+            }
+            
+            /* Bio - Smaller Text */
+            .profile-bio { 
+                text-align: left;
+                font-size: 0.85rem !important;
+                line-height: 1.5 !important;
+                margin-bottom: 1.25rem !important;
+            }
+            
+            /* CTA Group */
+            .cv-cta-group { 
+                flex-direction: column; 
+                width: 100%;
+                padding-top: 1.25rem;
+                margin-bottom: 2rem;
+            }
+            .btn {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+            
+            /* Section Labels - Smaller */
+            .section-label {
+                font-size: 0.7rem;
+                margin: 2rem 0 1rem;
+                gap: 0.75rem;
+            }
+            .section-label i {
+                font-size: 0.85rem;
+            }
+            
+            /* Job Cards - Compact */
+            .job-card { 
+                padding: 1.25rem 1rem; 
+                margin-bottom: 1.25rem;
+                border-radius: 0 12px 12px 0;
+            }
+            
+            .job-header { 
+                flex-direction: column; 
+                gap: 0.25rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .job-title { 
+                font-size: 1.1rem; 
+                line-height: 1.2;
+            }
+            
+            .job-header > div:last-child {
+                font-size: 0.75rem;
+                font-weight: 600;
+            }
+            
+            .job-meta { 
+                font-size: 0.8rem; 
+                margin-bottom: 1rem;
+            }
+            
+            .job-details { 
+                padding-left: 0;
+            }
+            
+            .job-details li { 
+                font-size: 0.85rem;
+                line-height: 1.5;
+                margin-bottom: 0.65rem;
+                padding-left: 1.25rem;
+            }
+            
+            .job-details li::before {
+                font-size: 0.85rem;
+            }
+            
+            /* Skills Grid - Single Column */
+            .specs-grid { 
+                grid-template-columns: 1fr; 
+                gap: 1rem;
+            }
+            
+            .spec-card {
+                padding: 1.25rem;
+            }
+            
+            .spec-title { 
+                font-size: 1rem;
+                margin-bottom: 0.75rem;
+            }
+            
+            .spec-list { 
+                font-size: 0.85rem;
+                line-height: 1.6;
+            }
+            
+            .spec-list li {
+                padding: 3px 0;
+            }
+            
+            /* Parallax - Smaller Text */
+            .skills-parallax { 
+                padding: 24px 0; 
+                margin: 2.5rem 0;
+            }
+            
+            .skills-text { 
+                font-size: 2rem;
+                gap: 24px;
+            }
+            
+            /* Footer Mobile */
+            .footer-container {
+                padding: 2.5rem 1rem 2rem;
+            }
+            
+            .footer-brand-name {
+                font-size: 1.25rem;
+            }
+            
+            .footer-tagline {
+                font-size: 0.85rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .footer-nav-heading {
+                font-size: 0.85rem;
+                margin-bottom: 1rem;
+            }
+            
+            .footer-nav-link {
+                font-size: 0.85rem;
+            }
+            
+            .footer-bottom-container {
+                padding: 1.25rem 1rem;
+            }
+        }
+        
+        /* Extra small phones */
+        @media (max-width: 375px) {
+            .container { padding: 0 0.875rem; }
+            
+            .profile-header h1 { 
+                font-size: 1.75rem;
+            }
+            
+            .job-title { 
+                font-size: 1rem;
+            }
+            
+            .job-card {
+                padding: 1rem 0.875rem;
+            }
+            
+            .spec-card {
+                padding: 1rem;
+            }
+        }
+
+    </style>
 </head>
 <body>
-
-    <!-- ═══════════════════════════════════════════════════════
-         HEADER — Matches Homepage Exactly
-         ═══════════════════════════════════════════════════════ -->
-    <header class="site-header">
-        <div class="nav-container">
-            <!-- Zone 1: Logo -->
-            <a href="/index.html" class="nav-logo">
-                <picture>
-                    <source media="(max-width: 1023px)" srcset="assets/images/Logomark_White_a.png">
-                    <img src="assets/images/AUg_logo_White.png" alt="Luis Gilberto">
-                </picture>
-            </a>
-
-            <!-- Zone 2: Desktop Navigation -->
-            <nav class="desktop-nav"> 
-              <!-- Portfolio Dropdown Trigger --> 
-              <div class="nav-item has-dropdown group relative" id="portfolioMega">
-    <button class="nav-link">
-        PORTFOLIO <i class="fas fa-chevron-down chevron"></i>
-    </button>
-    <div class="mega-panel">
-        <div class="grid grid-cols-2 gap-6" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
-            <!-- Experience -->
-            <a href="/myexperience.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
-                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-teal" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
-                    <i class="fa-solid fa-briefcase"></i>
-                </div>
-                <div>
-                    <div class="mega-title-text" style="font-weight: 700;">Experience</div>
-                    <div class="mega-desc-text">Deep dives into key projects.</div>
-                </div>
-            </a>
-            <!-- About Me -->
-            <a href="/about.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
-                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
-                    <i class="fa-solid fa-user"></i>
-                </div>
-                <div>
-                    <div class="mega-title-text" style="font-weight: 700;">About me</div>
-                    <div class="mega-desc-text">The human behind the work.</div>
-                </div>
-            </a>
-            <!-- Identity -->
-            <a href="/brand/index.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
-                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-teal" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
-                    <i class="fa-solid fa-fingerprint"></i>
-                </div>
-                <div>
-                    <div class="mega-title-text" style="font-weight: 700;">Identity</div>
-                    <div class="mega-desc-text">Brand book and visual DNA.</div>
-                </div>
-            </a>
-            <!-- Contact -->
-            <a href="/contact.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
-                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
-                    <i class="fa-solid fa-paper-plane"></i>
-                </div>
-                <div>
-                    <div class="mega-title-text" style="font-weight: 700;">Contact</div>
-                    <div class="mega-desc-text">Let's start a conversation.</div>
-                </div>
-            </a>
-        </div>
-    </div>
-</div>
-                  <div class="nav-item has-dropdown group relative" id="hubMega">
-    <a href="/TheHub/" class="nav-link">
-        THE HUB <i class="fas fa-chevron-down chevron"></i>
-    </a>
-    <div class="mega-panel">
-        <div class="grid grid-cols-2 gap-6" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
-            <!-- Hub Home -->
-            <a href="/TheHub/index.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
-                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-teal" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
-                    <i class="fa-solid fa-house"></i>
-                </div>
-                <div>
-                    <div class="mega-title-text" style="font-weight: 700;">Hub Home</div>
-                    <div class="mega-desc-text">System overview and entry point.</div>
-                </div>
-            </a>
-            <!-- StrategyIQ -->
-            <a href="/TheHub/strategy-iq/" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
-                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
-                    <i class="fa-solid fa-chart-line"></i>
-                </div>
-                <div>
-                    <div class="mega-title-text" style="font-weight: 700;">StrategyIQ</div>
-                    <div class="mega-desc-text">Benchmark maturity and define the roadmap.</div>
-                </div>
-            </a>
-            <!-- Advisory -->
-            <a href="/TheHub/advisory/" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
-                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-teal" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
-                    <i class="fa-solid fa-compass"></i>
-                </div>
-                <div>
-                    <div class="mega-title-text" style="font-weight: 700;">Advisory</div>
-                    <div class="mega-desc-text">Leadership alignment and decision support.</div>
-                </div>
-            </a>
-            <!-- The Studio -->
-            <a href="/TheHub/studio.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
-                <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-coral" style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;">
-                    <i class="fa-solid fa-palette"></i>
-                </div>
-                <div>
-                    <div class="mega-title-text" style="font-weight: 700;">The Studio</div>
-                    <div class="mega-desc-text">Creative production and execution.</div>
-                </div>
-            </a>
-        </div>
-        <!-- Footer CTA -->
-        <div class="mt-6 pt-4 border-t border-white/10 flex justify-end" style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: flex-end;">
-            <a href="https://portal.luis-gilberto.com" class="text-xs font-bold text-coral flex items-center gap-1 hover:brightness-110" style="font-size: 0.75rem; font-weight: 700; color: var(--coral); display: flex; align-items: center; gap: 0.25rem;">
-                Enter The Portal <span class="text-lg" style="font-size: 1.125rem;">→</span>
-            </a>
-        </div>
-    </div>
-</div>
-
-              <a href="https://portal.luis-gilberto.com" class="nav-link">THE PORTAL</a> 
-          </nav>
-
-            <!-- Zone 3: Desktop Actions -->
-            <div class="nav-actions">
-                <button class="theme-toggle" id="themeToggle">
-                    <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                    <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-                </button>
-            </div>
-
-            <!-- Mobile Controls -->
-            <div class="mobile-controls">
-                <button class="mobile-menu-toggle" id="mobileMenuToggle">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-                </button>
-            </div>
-        </div>
-    </header>
-
-
-
-    <!-- ═══════════════════════════════════════════════════════
-         MOBILE DRAWER — Exact Homepage Pattern
-         ═══════════════════════════════════════════════════════ -->
-    <div class="mobile-menu-overlay" id="mobileMenuOverlay" aria-hidden="true">
-        <div class="mobile-drawer" role="dialog" aria-modal="true">
-            <button class="mobile-menu-close" id="mobileMenuClose">&times;</button>
-            <div class="mobile-menu-content">
-                <div class="mobile-drawer-header">
-                    <div class="mobile-drawer-brand">
-                        <span class="mobile-drawer-name">Luis Gilberto</span>
-                        <span class="mobile-drawer-role">Creative Strategy</span>
-                    </div>
-                </div>
-
-                <div class="mobile-nav-section">
-                    <div class="mobile-nav-label">GLOBAL</div>
-                    <a href="/index.html" class="mobile-nav-link-primary">Portfolio</a>
-                    <a href="/insights/" class="mobile-nav-link-primary">Insights</a>
-                    <a href="/TheHub/" class="mobile-nav-link-primary">The Hub</a>
-                    <a href="https://portal.luis-gilberto.com" class="mobile-nav-link-primary" target="_blank" rel="noopener noreferrer">The Portal</a>
-                </div>
-
-                <div class="mobile-nav-section">
-                    <div class="mobile-nav-label">PORTFOLIO</div>
-                    <a href="/index.html" class="mobile-nav-link-secondary">Home</a>
-                    <a href="/timeline.html" class="mobile-nav-link-secondary">Timeline</a>
-                    <a href="/myexperience.html" class="mobile-nav-link-secondary">Experience</a>
-                    <a href="/cv.html" class="mobile-nav-link-secondary active">Resume</a>
-                    <a href="/about.html" class="mobile-nav-link-secondary">About</a>
-                    <a href="/brand/" class="mobile-nav-link-secondary">Identity</a>
-                    <a href="/contact.html" class="mobile-nav-link-secondary">Contact</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ═══════════════════════════════════════════════════════
-         MAIN CONTENT: CV EXECUTIVE LAYOUT
-         ═══════════════════════════════════════════════════════ -->
+    <div id="site-nav" data-active="portfolio"></div>
+    
+    <!-- MAIN CONTENT: EXECUTIVE LAYOUT -->
     <div class="container">
         <div class="cv-layout">
-
-            <!-- LEFT COLUMN: STICKY SIDEBAR -->
+            
+            <!-- LEFT COLUMN: STICKY BRAND & BIO -->
             <aside class="cv-sidebar">
                 <div class="profile-header">
                     <h1>Luis<br>Gilberto</h1>
                     <div class="profile-role">Sr. Integrated Marketing Lead</div>
-
+                    
                     <div class="profile-contact">
-                        <div><i class="fas fa-envelope"></i> <a href="/cdn-cgi/l/email-protection#a3cbc6cfcfcce3cfd6cad08ec4cacfc1c6d1d7cc8dc0ccce"><span class="__cf_email__" data-cfemail="a7cfc2cbcbc8e7cbd2ced48ac0cecbc5c2d5d3c889c4c8ca">[email&#160;protected]</span></a></div>
-                        <div><i class="fab fa-linkedin"></i> <a href="https://www.linkedin.com/in/luisgilberto00/" target="_blank" rel="noopener">linkedin.com/in/luisgilberto00</a></div>
+                        <div><i class="fas fa-envelope"></i> <a href="mailto:hello@luis-gilberto.com">hello@luis-gilberto.com</a></div>
+                        <div><i class="fab fa-linkedin"></i> <a href="https://linkedin.com/in/luisgilberto" target="_blank" rel="noopener">linkedin.com/in/luisgilberto</a></div>
                         <div><i class="fas fa-globe"></i> <a href="https://luis-gilberto.com">luis-gilberto.com</a></div>
                         <div><i class="fas fa-map-marker-alt"></i> Seattle, WA</div>
                     </div>
 
-                    <div class="profile-bio">
-                        Marketing Architect &amp; Creative Strategist. Former Microsoft Lead who introduced Copilot to consumers globally, commercializing its first entry points (Edge) and shaping the narratives that normalized everyday AI use. Now building proprietary <strong>Productized Strategy Ecosystems</strong> that combine React-based tools with integrated campaign frameworks.
+                    <div class="profile-bio" style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 2rem;">
+                        Marketing Architect & Creative Strategist. Former Microsoft Lead who introduced Copilot to consumers globally, commercializing its first entry points (Edge) and shaping the narratives that normalized everyday AI use. Now building proprietary <strong>Productized Strategy Ecosystems</strong> that combine React-based tools with integrated campaign frameworks.
                     </div>
 
                     <div class="cv-cta-group">
                         <div class="resume-palette-selector">
                             <label class="selector-label">Choose Your Style</label>
                             <div class="palette-options">
-                                <div class="palette-option active" data-style="coral-light" data-pdf="assets/Components/THE_FOUR/LS-cv_coral-light.pdf" data-thumbnail="assets/images/thumb_coral_light.png">
+                                <div class="palette-option active" data-style="coral-light" data-pdf="assets/documents/Luis_Gilberto_Resume.pdf?v=3" data-thumbnail="assets/images/thumb_coral_light.png">
                                     <span class="checkmark">&#10003;</span>
                                     <div class="palette-colors">
                                         <span class="color-dot" style="background:#F96F6E;"></span>
@@ -309,9 +510,9 @@
                                         <span class="color-dot" style="background:#E8E6E3;"></span>
                                     </div>
                                     <div class="palette-name">Coral Light</div>
-                                    <div class="palette-desc">Warm &amp; approachable</div>
+                                    <div class="palette-desc">Warm & approachable</div>
                                 </div>
-                                <div class="palette-option" data-style="coral-dark" data-pdf="assets/Components/THE_FOUR/LS-cv_coral-dark-pdf.pdf" data-thumbnail="assets/images/thumb_coral_dark.png">
+                                <div class="palette-option" data-style="coral-dark" data-pdf="assets/documents/Luis_Gilberto_Resume_Dark.pdf" data-thumbnail="assets/images/thumb_coral_dark.png">
                                     <span class="checkmark">&#10003;</span>
                                     <div class="palette-colors">
                                         <span class="color-dot" style="background:#F96F6E;"></span>
@@ -319,9 +520,9 @@
                                         <span class="color-dot" style="background:#FF9B9A;"></span>
                                     </div>
                                     <div class="palette-name">Coral Dark</div>
-                                    <div class="palette-desc">Bold &amp; premium</div>
+                                    <div class="palette-desc">Bold & premium</div>
                                 </div>
-                                <div class="palette-option" data-style="teal-hybrid" data-pdf="assets/Components/THE_FOUR/LS-cv_teal-hybrid-pdf.pdf" data-thumbnail="assets/images/thumb_teal_hybrid.png">
+                                <div class="palette-option" data-style="teal-hybrid" data-pdf="assets/documents/Luis_Gilberto_Resume_Teal.pdf" data-thumbnail="assets/images/thumb_teal_hybrid.png">
                                     <span class="checkmark">&#10003;</span>
                                     <div class="palette-colors">
                                         <span class="color-dot" style="background:#2A2A2A;"></span>
@@ -329,15 +530,15 @@
                                         <span class="color-dot" style="background:#F4F1ED;"></span>
                                     </div>
                                     <div class="palette-name">Teal Hybrid</div>
-                                    <div class="palette-desc">Modern &amp; strategic</div>
+                                    <div class="palette-desc">Modern & strategic</div>
                                 </div>
-                                <div class="palette-option" data-style="print-bw" data-pdf="assets/Components/THE_FOUR/LS-cv_print-bw-pdf.pdf" data-thumbnail="assets/images/thumb_print_BW.png">
+                                <div class="palette-option" data-style="print-bw" data-pdf="assets/documents/Luis_Gilberto_Resume_Print.pdf" data-thumbnail="assets/images/thumb_print_BW.png">
                                     <span class="checkmark">&#10003;</span>
                                     <div class="palette-colors">
                                         <span class="color-dot" style="background:#FFFFFF; border-color:#CCC;"></span>
                                         <span class="color-dot" style="background:#0A0A0A;"></span>
                                     </div>
-                                    <div class="palette-name">Print B&amp;W</div>
+                                    <div class="palette-name">Print B&W</div>
                                     <div class="palette-desc">Ink-saver elegance</div>
                                 </div>
                             </div>
@@ -345,7 +546,7 @@
                                 <div class="preview-content">
                                     <img src="" alt="Resume Preview" class="preview-thumbnail" id="previewThumbnail" style="display:none;">
                                 </div>
-                                <a href="assets/Components/THE_FOUR/LS-cv_coral-light.pdf" class="download-btn" id="downloadBtn" download>Download PDF</a>
+                                <a href="assets/documents/Luis_Gilberto_Resume.pdf?v=3" class="download-btn" id="downloadBtn" download>Download PDF</a>
                             </div>
                         </div>
                     </div>
@@ -354,19 +555,24 @@
 
             <!-- RIGHT COLUMN: EXPERIENCE FEED -->
             <div class="cv-feed">
-
-                <div class="section-label"><i class="fas fa-briefcase" style="color:var(--teal); margin-right:8px;"></i> Experience Record</div>
-
+                
+                <!-- Experience Section -->
+                <div class="section-label"><i class="fas fa-briefcase" style="color:var(--accent-lens); margin-right:8px;"></i> Experience Record</div>
+                
                 <!-- Principal & Systems Architect -->
-                <div class="job-card" style="border-left-color: var(--coral);">
+                <div class="job-card" style="border-left-color: var(--accent-lens);">
                     <div class="job-header">
-                        <div class="job-title">Principal &amp; Systems Architect</div>
-                        <div style="font-weight:700; color:var(--text-primary);">2024 &mdash; Present</div>
+                        <div class="job-title">Principal & Systems Architect</div>
+                        <div style="font-weight:700; color:var(--text-primary);">2024 — Present</div>
                     </div>
-                    <div class="job-meta"><span>Luis Gilberto Ecosystem</span> <span style="opacity:0.3;">|</span> <span>Seattle, WA</span></div>
+                    <div class="job-meta">
+                        <span>Luis Gilberto Ecosystem</span>
+                        <span style="opacity:0.3;">|</span>
+                        <span>Seattle, WA</span>
+                    </div>
                     <ul class="job-details">
-                        <li>Architected a proprietary digital platform ("The Hub" &amp; "Portal") shifting consulting from hourly service to <strong>productized intelligence</strong>.</li>
-                        <li>Developed <strong>StrategyIQ&#8482;</strong>, a React-based diagnostic engine that automates brand health auditing and generates strategic roadmaps.</li>
+                        <li>Architected a proprietary digital platform ("The Hub" & "Portal") shifting consulting from hourly service to <strong>productized intelligence</strong>.</li>
+                        <li>Developed <strong>StrategyIQ</strong>, a React-based diagnostic engine that automates brand health auditing and generates strategic roadmaps.</li>
                         <li>Codified the "Trinity Framework" (Strategist, Storyteller, Orchestrator) to align cross-functional teams and streamline campaign execution.</li>
                     </ul>
                 </div>
@@ -375,9 +581,13 @@
                 <div class="job-card">
                     <div class="job-header">
                         <div class="job-title">Sr. Integrated Marketing Lead</div>
-                        <div style="font-weight:700; color:var(--text-primary);">2022 &mdash; 2025</div>
+                        <div style="font-weight:700; color:var(--text-primary);">2022 — Present</div>
                     </div>
-                    <div class="job-meta"><span>Microsoft</span> <span style="opacity:0.3;">|</span> <span>Edge &amp; Copilot</span></div>
+                    <div class="job-meta">
+                        <span>Microsoft</span>
+                        <span style="opacity:0.3;">|</span>
+                        <span>Edge & Copilot</span>
+                    </div>
                     <ul class="job-details">
                         <li>Led brand transformation of Microsoft Edge from "shopping browser" to "AI-powered browser" through strategic narrative repositioning.</li>
                         <li>Crafted global narratives for Copilot in Edge, translating complex LLM features into tangible consumer benefits.</li>
@@ -389,11 +599,15 @@
                 <div class="job-card">
                     <div class="job-header">
                         <div class="job-title">Sr. Integrated Marketing Lead</div>
-                        <div style="font-weight:700; color:var(--text-primary);">2016 &mdash; 2022</div>
+                        <div style="font-weight:700; color:var(--text-primary);">2016 — 2022</div>
                     </div>
-                    <div class="job-meta"><span>Microsoft</span> <span style="opacity:0.3;">|</span> <span>Microsoft 365</span></div>
+                    <div class="job-meta">
+                        <span>Microsoft</span>
+                        <span style="opacity:0.3;">|</span>
+                        <span>Microsoft 365</span>
+                    </div>
                     <ul class="job-details">
-                        <li>Developed 360&deg; integrated marketing plans across the Microsoft 365 and Office portfolio.</li>
+                        <li>Developed 360° integrated marketing plans across the Microsoft 365 and Office portfolio.</li>
                         <li>Directed GTM strategy for Teams personal use and launched the "Free to be Free" pandemic campaign for productivity apps.</li>
                         <li>Owned end-to-end creative direction across paid, owned, and earned media channels.</li>
                     </ul>
@@ -403,9 +617,13 @@
                 <div class="job-card">
                     <div class="job-header">
                         <div class="job-title">Marketing Manager</div>
-                        <div style="font-weight:700; color:var(--text-primary);">2012 &mdash; 2016</div>
+                        <div style="font-weight:700; color:var(--text-primary);">2012 — 2016</div>
                     </div>
-                    <div class="job-meta"><span>Microsoft</span> <span style="opacity:0.3;">|</span> <span>Worldwide Retail</span></div>
+                    <div class="job-meta">
+                        <span>Microsoft</span>
+                        <span style="opacity:0.3;">|</span>
+                        <span>Worldwide Retail</span>
+                    </div>
                     <ul class="job-details">
                         <li>Developed GTM strategies for 3+ global campaigns/year across Windows, Surface, and HoloLens hardware.</li>
                         <li>Managed $2M+ annual budget and established KPI tracking frameworks to ensure measurable retail partner impact.</li>
@@ -416,17 +634,21 @@
                 <div class="job-card">
                     <div class="job-header">
                         <div class="job-title">Campaign Strategy Roles</div>
-                        <div style="font-weight:700; color:var(--text-primary);">2008 &mdash; 2012</div>
+                        <div style="font-weight:700; color:var(--text-primary);">2008 — 2012</div>
                     </div>
-                    <div class="job-meta"><span>Microsoft Vendor</span> <span style="opacity:0.3;">|</span> <span>Various Agencies</span></div>
+                    <div class="job-meta">
+                        <span>Microsoft Vendor</span>
+                        <span style="opacity:0.3;">|</span>
+                        <span>Various Agencies</span>
+                    </div>
                     <ul class="job-details">
                         <li>Launched in-store demos for Windows Phone in 30+ languages.</li>
                         <li>Led campaign execution for MSN, Bing, and Internet Explorer.</li>
                     </ul>
                 </div>
 
-                <!-- Competencies -->
-                <div class="section-label"><i class="fas fa-microchip" style="color:var(--teal); margin-right:8px;"></i> Core Competencies</div>
+                <!-- Competencies Section -->
+                <div class="section-label"><i class="fas fa-microchip" style="color:var(--accent-lens); margin-right:8px;"></i> Core Competencies</div>
                 <div class="specs-grid">
                     <div class="spec-card">
                         <div class="spec-title">Strategy</div>
@@ -440,7 +662,7 @@
                     <div class="spec-card">
                         <div class="spec-title">Creative</div>
                         <ul class="spec-list">
-                            <li>Creative Direction &amp; UX</li>
+                            <li>Creative Direction & UX</li>
                             <li>AI Feature Marketing</li>
                             <li>Campaign Development</li>
                             <li>Content Strategy</li>
@@ -455,8 +677,8 @@
                             <li>Partner Enablement</li>
                         </ul>
                     </div>
-                    <div class="spec-card" style="border-color: var(--teal);">
-                        <div class="spec-title" style="color: var(--teal);">Systems &amp; Tech</div>
+                    <div class="spec-card">
+                        <div class="spec-title">Systems & Tech</div>
                         <ul class="spec-list">
                             <li>Next.js / React</li>
                             <li>Tailwind CSS</li>
@@ -465,10 +687,10 @@
                         </ul>
                     </div>
                 </div>
-
-                <!-- Education -->
-                <div class="section-label"><i class="fas fa-graduation-cap" style="color:var(--teal); margin-right:8px;"></i> Education</div>
-                <div class="job-card" style="padding:2rem; border-left-color: var(--border-strong);">
+                
+                <!-- Education Section -->
+                <div class="section-label"><i class="fas fa-graduation-cap" style="color:var(--accent-lens); margin-right:8px;"></i> Education</div>
+                <div class="job-card" style="padding: 2rem; border-left-color: var(--border-strong);">
                     <div class="job-header">
                         <div class="job-title" style="font-size:1.4rem;">B.S. Computer Sciences</div>
                     </div>
@@ -476,243 +698,100 @@
                     <div style="color:var(--text-secondary); font-size:0.9rem; margin-top:1rem;">+ Executive Education at Kellogg Sales Institute (Northwestern)</div>
                 </div>
 
-                <!-- Parallax -->
+                <!-- Parallax Break -->
                 <div class="skills-parallax">
                     <div class="skills-text">
-                        STRATEGY &bull; CREATIVE &bull; LEADERSHIP &bull; STRATEGY &bull; CREATIVE &bull; LEADERSHIP &bull;
+                        STRATEGY <span class="skills-dot">•</span> CREATIVE <span class="skills-dot">•</span> LEADERSHIP <span class="skills-dot">•</span> STRATEGY <span class="skills-dot">•</span> CREATIVE <span class="skills-dot">•</span> LEADERSHIP <span class="skills-dot">•</span>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
 
-    <!-- ═══════════════════════════════════════════════════════
-         FOOTER — Exact Homepage Pattern (same icons, paths, structure)
-         ═══════════════════════════════════════════════════════ -->
-    <footer class="site-footer" role="contentinfo">
-        <div class="footer-container">
-            <div class="footer-grid-layout">
-                <!-- Col 1: Brand -->
-                <div class="footer-brand-col">
-                    <a href="/index.html" class="footer-logo-link">
-                        <img src="assets/images/Logomark_White_a.png" alt="Luis Gilberto" class="footer-logo-img">
-                        <span class="footer-brand-name">Luis Gilberto</span>
-                    </a>
-                    <p class="footer-tagline">Making technology feel human through clarity, beautiful execution, and systems that scale.</p>
-                    <div class="footer-social">
-                        <a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" rel="noopener noreferrer" class="social-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
-                        </a>
-                        <a href="/cdn-cgi/l/email-protection#a6cec3cacac9e6cad3cfd58bc1cfcac4c3d4d2c988c5c9cb" class="social-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-                        </a>
-                    </div>
-                </div>
+    <script src="/assets/js/nav-component.js"></script>
+    <script>
+        (() => {
+            // 🎨 RESUME PALETTE SELECTOR LOGIC
+            const paletteOptions = document.querySelectorAll('.palette-option');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const previewThumbnail = document.getElementById('previewThumbnail');
+            const previewPanel = document.getElementById('previewPanel');
 
-                <!-- Col 2: Ecosystem -->
-                <nav class="footer-nav-col">
-                    <h3 class="footer-nav-heading">Ecosystem</h3>
-                    <ul class="footer-nav-list">
-                        <li><a href="/index.html" class="footer-nav-link">Portfolio</a></li>
-                        <li><a href="/insights/" class="footer-nav-link">Insights</a></li>
-                        <li><a href="/TheHub/" class="footer-nav-link">The Hub</a></li>
-                        <li><a href="https://portal.luis-gilberto.com" target="_blank" class="footer-nav-link footer-portal-link">The Portal <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a></li>
-                        <li class="footer-nav-divider"><a href="/system/" class="footer-system-link">How it all connects</a></li>
-                    </ul>
-                </nav>
+            if (paletteOptions.length > 0) {
+                // Initialize default state
+                const activeOption = document.querySelector('.palette-option.active');
+                if (activeOption && previewThumbnail) {
+                    const thumbUrl = activeOption.getAttribute('data-thumbnail');
+                    if (thumbUrl) {
+                        previewThumbnail.src = thumbUrl;
+                        previewThumbnail.style.display = 'block';
+                        previewPanel.classList.add('open');
+                    }
+                }
 
-                <!-- Col 3: Connect -->
-                <nav class="footer-nav-col">
-                    <h3 class="footer-nav-heading">Connect</h3>
-                    <ul class="footer-nav-list">
-                        <li><a href="/contact.html" class="footer-nav-link">Contact</a></li>
-                        <li><a href="/about.html" class="footer-nav-link">About Me</a></li>
-                        <li><a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" class="footer-nav-link">LinkedIn</a></li>
-                    </ul>
-                </nav>
+                paletteOptions.forEach(option => {
+                    option.addEventListener('click', function() {
+                        // Toggle active class
+                        paletteOptions.forEach(opt => opt.classList.remove('active'));
+                        this.classList.add('active');
 
-                <!-- Col 4: Status -->
-                <div class="footer-status-col">
-                    <h3 class="footer-nav-heading">Status</h3>
-                    <div class="footer-status-card">
-                        <div class="status-indicator">
-                            <span class="status-dot"></span>
-                            <span class="status-text">Accepting Projects</span>
-                        </div>
-                        <p class="status-description">Currently available for strategic consulting and creative direction.</p>
-                        <a href="/contact.html" class="status-cta">Start a Conversation <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-                    </div>
-                </div>
-            </div>
-        </div>
+                        // Update download link
+                        const pdfUrl = this.getAttribute('data-pdf');
+                        if (downloadBtn) {
+                            downloadBtn.setAttribute('href', pdfUrl);
+                        }
 
-        <div class="footer-bottom-bar">
-            <div class="footer-bottom-container">
-                <p class="footer-copyright">&copy; <span id="currentYear">2026</span> Luis Gilberto. All Rights Reserved.</p>
-                <nav class="footer-legal-links">
-                    <a href="/legal/privacy.html" class="footer-legal-link">Privacy Policy</a>
-                    <a href="/legal/terms.html" class="footer-legal-link">Terms of Use</a>
-                    <a href="/legal/accessibility.html" class="footer-legal-link">Accessibility</a>
-                </nav>
-            </div>
-        </div>
-    </footer>
-
-    <!-- ═══════════════════════════════════════════════════════
-         SCRIPTS
-         ═══════════════════════════════════════════════════════ -->
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-    (function() {
-        'use strict';
-
-        // ─── 1. THEME SYSTEM ───
-        const rootEl = document.documentElement;
-        const themeToggle = document.getElementById('themeToggle');
-        const saved = localStorage.getItem('theme') || 'dark';
-        rootEl.setAttribute('data-theme', saved);
-
-        function toggleTheme() {
-            const current = rootEl.getAttribute('data-theme');
-            const next = current === 'dark' ? 'light' : 'dark';
-            rootEl.setAttribute('data-theme', next);
-            localStorage.setItem('theme', next);
-        }
-        if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
-
-        // ─── 2. MEGA MENU (with hover bridge + close delay) ───
-        const mega = document.getElementById('portfolioMega');
-        const panel = document.getElementById('portfolioMegaPanel');
-
-        if (mega && panel) {
-            const isDesktop = () => window.innerWidth >= 1024;
-            let closeTimeout;
-
-            function openMega() {
-                if (!isDesktop()) return;
-                clearTimeout(closeTimeout);
-                mega.classList.add('is-open');
-            }
-
-            function closeMega() {
-                closeTimeout = setTimeout(() => {
-                    mega.classList.remove('is-open');
-                }, 200); // 200ms grace period for diagonal mouse paths
-            }
-
-            // The nav item itself
-            mega.addEventListener('mouseenter', openMega);
-            mega.addEventListener('mouseleave', closeMega);
-
-            // The full-width panel (keeps menu alive when cursor enters it)
-            panel.addEventListener('mouseenter', () => { clearTimeout(closeTimeout); });
-            panel.addEventListener('mouseleave', closeMega);
-
-            // Click toggle for accessibility
-            const trigger = mega.querySelector('.nav-link');
-            if (trigger) {
-                trigger.addEventListener('click', (e) => {
-                    if (!isDesktop()) return;
-                    e.preventDefault();
-                    mega.classList.toggle('is-open');
+                        // Update thumbnail with path candidate loading logic
+                        const thumbnailUrl = this.getAttribute('data-thumbnail');
+                        if (thumbnailUrl && previewThumbnail) {
+                            const fileName = thumbnailUrl.split('/').pop();
+                            const candidates = [
+                                thumbnailUrl,
+                                thumbnailUrl.replace('assets/', '/assets/'),
+                                `/assets/images/${fileName}`,
+                                `${window.location.origin}/assets/images/${fileName}`
+                            ];
+                            
+                            let attemptIdx = 0;
+                            const tryNextCandidate = () => {
+                                if (attemptIdx >= candidates.length) {
+                                    previewThumbnail.style.display = 'none';
+                                    return;
+                                }
+                                
+                                const currentCandidate = candidates[attemptIdx++];
+                                const img = new Image();
+                                img.onload = () => {
+                                    previewThumbnail.src = currentCandidate;
+                                    previewThumbnail.style.display = 'block';
+                                    previewPanel.classList.add('open');
+                                };
+                                img.onerror = tryNextCandidate;
+                                img.src = currentCandidate;
+                            };
+                            
+                            tryNextCandidate();
+                        }
+                    });
                 });
             }
-        }
 
-        // ─── 3. MOBILE DRAWER ───
-        const mobileBtn = document.getElementById('mobileMenuToggle');
-        const mobileOverlay = document.getElementById('mobileMenuOverlay');
-        const mobileClose = document.getElementById('mobileMenuClose');
-
-        if (mobileBtn && mobileOverlay) {
-            mobileBtn.addEventListener('click', () => {
-                mobileOverlay.classList.add('active');
-                mobileOverlay.setAttribute('aria-hidden', 'false');
-                document.body.style.overflow = 'hidden';
-            });
-
-            function closeDrawer() {
-                mobileOverlay.classList.remove('active');
-                mobileOverlay.setAttribute('aria-hidden', 'true');
-                document.body.style.overflow = '';
-            }
-
-            if (mobileClose) mobileClose.addEventListener('click', closeDrawer);
-
-            // Close on backdrop click (not drawer itself)
-            mobileOverlay.addEventListener('click', (e) => {
-                if (e.target === mobileOverlay) closeDrawer();
-            });
-        }
-
-        // ─── 4. RESUME PALETTE SELECTOR ───
-        var paletteOptions = document.querySelectorAll('.palette-option');
-        var downloadBtn = document.getElementById('downloadBtn');
-        var previewThumbnail = document.getElementById('previewThumbnail');
-        var currentPdfUrl = 'assets/Components/THE_FOUR/LS-cv_coral-light.pdf';
-
-        // Load initial thumbnail for the default active selection
-        (function() {
-            var active = document.querySelector('.palette-option.active');
-            if (active && previewThumbnail) {
-                var url = active.getAttribute('data-thumbnail');
-                if (url) { previewThumbnail.src = url; previewThumbnail.style.display = 'block'; }
-            }
-        })();
-
-        paletteOptions.forEach(function(option) {
-            option.addEventListener('click', function() {
-                paletteOptions.forEach(function(o) { o.classList.remove('active'); });
-                this.classList.add('active');
-
-                var pdfUrl = this.getAttribute('data-pdf');
-                var thumbnailUrl = this.getAttribute('data-thumbnail');
-
-                currentPdfUrl = pdfUrl;
-                if (downloadBtn) downloadBtn.setAttribute('href', pdfUrl);
-
-                if (thumbnailUrl && previewThumbnail) {
-                    var fileName = thumbnailUrl.split('/').pop();
-                    var candidates = [
-                        thumbnailUrl,
-                        thumbnailUrl.replace('./', ''),
-                        '/assets/images/' + fileName,
-                        location.origin + '/assets/images/' + fileName
-                    ];
-                    var idx = 0;
-                    function tryLoad() {
-                        if (idx >= candidates.length) { previewThumbnail.style.display = 'none'; return; }
-                        var candidate = candidates[idx++];
-                        var testImg = new Image();
-                        testImg.onload = function() { previewThumbnail.src = candidate; previewThumbnail.style.display = 'block'; };
-                        testImg.onerror = tryLoad;
-                        testImg.src = candidate;
-                    }
-                    tryLoad();
-                }
-            });
-        });
-
-        // ─── 5. PARALLAX FULL-WIDTH ───
-        var parallax = document.querySelector('.skills-parallax');
-        if (parallax) {
+            // 🧬 CV-SPECIFIC PARALLAX LOGIC
             function resizeParallax() {
+                const parallax = document.querySelector('.skills-parallax');
+                if (!parallax) return;
                 parallax.style.marginLeft = '0';
                 parallax.style.width = '100%';
-                var rect = parallax.getBoundingClientRect();
+                const rect = parallax.getBoundingClientRect();
+                const offsetLeft = rect.left;
                 parallax.style.width = '100vw';
-                parallax.style.marginLeft = '-' + rect.left + 'px';
+                parallax.style.marginLeft = `-${offsetLeft}px`;
             }
             window.addEventListener('load', resizeParallax);
             window.addEventListener('resize', resizeParallax);
             resizeParallax();
-        }
-
-        // ─── 6. FOOTER YEAR ───
-        var yearEl = document.getElementById('currentYear');
-        if (yearEl) yearEl.textContent = new Date().getFullYear();
-
-    })();
+        })();
     </script>
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"7d9039f5d5b84e54a54bb66d7a78302f","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
