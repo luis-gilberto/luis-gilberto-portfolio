@@ -289,6 +289,56 @@
     position: relative; z-index: 2;
     max-width: 1280px; width: 100%; margin: 0 auto;
     padding: 0 48px 100px;
+    display: flex; align-items: center;
+  }
+  .hero-text-col { position: relative; z-index: 2; max-width: 650px; flex-shrink: 0; }
+  
+  /* Cinematic Video Container */
+  .hero-video-col {
+     display: flex; align-items: center; justify-content: center;
+     position: relative;
+     /* Move it slightly behind text on desktop for depth */
+     margin-left: -10%;
+     z-index: 0;
+     flex-grow: 1;
+  }
+ 
+  .hero-video-frame {
+     width: 100%;
+     max-width: 500px; /* Constrain size to reduce grain */
+     aspect-ratio: 1 / 1;
+     position: relative;
+     
+     /* THE GHOST EFFECT */
+     /* 1. Fade edges to transparency */
+     -webkit-mask-image: radial-gradient(closest-side, black 40%, transparent 90%);
+     mask-image: radial-gradient(closest-side, black 40%, transparent 90%);
+     
+     /* 2. Drop the black background (Only shows the light/fire) */
+     mix-blend-mode: screen;
+     
+     /* 3. Smooth it out */
+     opacity: 0.8;
+     filter: contrast(1.2) saturate(1.1); /* Pop the colors */
+  }
+  
+  .hero-video-frame video { width: 100%; height: 100%; object-fit: cover; }
+ 
+  /* Light Mode Safety: Video might look odd, so we lower opacity or invert */
+  [data-theme="light"] .hero-video-frame {
+     mix-blend-mode: multiply; /* Darkens on light bg */
+     filter: invert(1); /* If video is black bg, this might be needed, or just hide it */
+     opacity: 0.1; /* Keep it very subtle texture */
+  }
+
+  @media (max-width: 1024px) {
+    .hero-content { flex-direction: column; align-items: flex-start; }
+    .hero-text-col { max-width: 100%; }
+    .hero-video-col { margin-left: 0; margin-top: -60px; width: 100%; justify-content: flex-end; opacity: 0.6; }
+    .hero-video-frame { max-width: 400px; }
+  }
+  @media (max-width: 768px) {
+     .hero-video-col { justify-content: center; margin-top: 0; opacity: 0.4; }
   }
   .hero-version {
     display: inline-flex; align-items: center; gap: 10px;
@@ -919,17 +969,34 @@
   <div class="hero-glow-left"></div>
   <div class="hero-glow-right"></div>
   <div class="hero-content">
-    <div class="hero-version">brand.system · v1.0 · February 2026</div>
-    <p class="hero-eyebrow">Canonical Brand Guidelines</p>
-    <h1 class="hero-title">
-      One <em>mind.</em><br>
-      <span class="display-word">Four</span> voices.
-    </h1>
-    <p class="hero-sub">The identity system behind a digital ecosystem built at the intersection of storytelling and systems — where Caracas meets Cascadia.</p>
-    <div class="hero-meta-row">
-      <span class="hero-meta-item">Portfolio + Hub</span>
-      <span class="hero-meta-item">Internal + External Reference</span>
-      <span class="hero-meta-item">luis-gilberto.com/brand</span>
+    <div class="hero-text-col">
+       <div class="hero-version">brand.system · v1.0 · February 2026</div>
+       <p class="hero-eyebrow">Canonical Brand Guidelines</p>
+       
+       <!-- Updated Headline: Matches the "Fire/Creation" visual -->
+       <h1 class="hero-title">
+         Identity,<br>
+         <span class="display-word" style="color: var(--coral);">Forged.</span>
+       </h1>
+       
+       <!-- Updated Subhead: Bridges the gap back to the system -->
+       <p class="hero-sub">
+         The spark behind the system. One mind, four voices, and the shared DNA that connects them all.
+       </p>
+ 
+       <div class="hero-meta-row">
+         <span class="hero-meta-item">Portfolio + Hub</span>
+         <span class="hero-meta-item">Internal + External Reference</span>
+         <span class="hero-meta-item">luis-gilberto.com/brand</span>
+       </div>
+    </div>
+
+    <div class="hero-video-col">
+      <div class="hero-video-frame">
+          <video autoplay loop muted playsinline preload="auto">
+             <source src="/assets/videos/burning.mp4" type="video/mp4">
+          </video>
+      </div>
     </div>
   </div>
   <div class="hero-scroll"><div class="scroll-line"></div><span>Explore</span></div>
