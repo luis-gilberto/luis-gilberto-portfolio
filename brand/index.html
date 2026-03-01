@@ -492,16 +492,30 @@
   .channel-node[data-ch="portal"] .channel-node-label    { color: var(--teal); }
 
   .channel-node-card {
-    position: absolute; bottom: calc(100% + 40px); left: 50%;
-    transform: translateX(-50%) translateY(4px);
-    background: var(--bg-raised); border: 1px solid var(--rule-mid);
-    border-radius: 8px; padding: 14px 16px; width: 180px;
-    opacity: 0; pointer-events: none;
-    transition: opacity 0.2s, transform 0.2s;
-    z-index: 10;
+    position: fixed; /* Breaks out of overflow */
+    top: 0;
+    left: 0;
+    width: 200px;
+    background: var(--bg-raised);
+    border: 1px solid var(--rule-mid);
+    border-radius: 8px;
+    padding: 14px 16px;
+    z-index: 9999; /* Ensure it sits on top of everything */
+    opacity: 0;
+    pointer-events: none; /* Prevent flickering */
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    
+    /* Initial state: Hidden and slightly lower */
+    visibility: hidden;
+    transform: translate(-50%, 10px);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
   }
+
+  /* Active State (Triggered by JS/Hover) */
   .channel-node:hover .channel-node-card {
-    opacity: 1; transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -10px); /* Move up into position */
   }
   .channel-card-ch {
     font-family: var(--f-ui); font-size: 9px; font-weight: 700;
@@ -1554,6 +1568,30 @@
   // Video autoplay fallback
   document.getElementById('pendulumVideo')?.play().catch(() => {});
 
+})();
+</script>
+<script>
+(function() {
+    // Spectrum Tooltip Fix
+    const nodes = document.querySelectorAll('.channel-node');
+    
+    nodes.forEach(node => {
+        const card = node.querySelector('.channel-node-card');
+        
+        node.addEventListener('mouseenter', () => {
+            // Get the position of the "dot" (the channel-node itself)
+            const rect = node.getBoundingClientRect();
+            
+            // Calculate center X and top Y
+            // We subtract a bit from Y to position it above the dot
+            const targetX = rect.left + (rect.width / 2);
+            const targetY = rect.top - 10; // 10px buffer above the dot
+            
+            // Apply coordinates to the fixed card
+            card.style.left = `${targetX}px`;
+            card.style.top = `${targetY - card.offsetHeight}px`; // Shift up by card height
+        });
+    });
 })();
 </script>
 </body>
