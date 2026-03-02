@@ -38,9 +38,20 @@
     // If path is absolute (starts with http or https), return as is
     if (path.startsWith('http')) return path;
     
+    // 🧬 FIXED: Homepage redirect logic
+    // If we are already on the homepage (root or index.html), 
+    // we want links to the homepage to trigger the Diagnostic Modal instead of reloading.
+    const isRootHome = window.location.pathname === '/' || window.location.pathname === '/index.html' || (window.location.pathname.endsWith('/index.html') && !window.location.pathname.includes('/TheHub/') && !window.location.pathname.includes('/insights/'));
+    if (isRootHome && (path === '/' || path === '/index.html')) {
+      return 'javascript:if(window.intentGate)window.intentGate.open();';
+    }
+
     // Ensure we don't have double slashes if base is provided
     const cleanPath = path.startsWith('/') ? path.substring(1) : path;
-    return base + cleanPath; 
+    const finalPath = base + cleanPath;
+    
+    // 🧬 Ensure root path returns at least "/" if base is empty
+    return (finalPath === '' && path === '/') ? '/' : finalPath;
   }
 
   function isActive(keys) {
@@ -116,10 +127,14 @@
       --accent-lens: var(--nav-coral); /* Default */
     }
 
-    /* ── Lens Accent Overrides ── */
-    body.lens-partner { --accent-lens: var(--nav-mustard); }
-    body.lens-assess  { --accent-lens: var(--nav-teal); }
-    body.lens-explore { --accent-lens: var(--nav-coral); }
+    /* ── Persona Engine Overrides ── */
+    body.path-coral   { --accent-lens: var(--nav-coral); }
+    body.path-teal    { --accent-lens: var(--nav-teal); }
+    body.path-neutral { --accent-lens: rgba(250,247,244,0.4); }
+
+    body.lens-partner { --accent-lens: var(--nav-teal); }
+    body.lens-assess  { --accent-lens: var(--nav-coral); }
+    body.lens-explore { --accent-lens: rgba(250,247,244,0.4); }
 
     body { padding-top: var(--nav-h); }
 
@@ -299,19 +314,21 @@
     }
     .snav-theme-btn:hover { border-color: rgba(250,247,244,0.4); color: #FAF7F4; }
     .snav-theme-btn span { display: flex; align-items: center; justify-content: center; width: 16px; height: 16px; }
-    .snav-theme-btn span svg { width: 16px; height: 16px; }
+    .snav-theme-btn span svg, .snav-mobile-toggle span svg { width: 16px; height: 16px; display: block; }
     .snav-mobile-toggle {
       display: none; background: none; border: 1px solid rgba(250,247,244,0.12);
       border-radius: 6px; width: 36px; height: 36px;
       align-items: center; justify-content: center;
-      cursor: pointer; color: rgba(250,247,244,0.5);
+      cursor: pointer; color: rgba(250,247,244,0.5); transition: all 0.15s;
     }
+    .snav-mobile-toggle:hover { border-color: rgba(250,247,244,0.4); color: #FAF7F4; }
+    .snav-mobile-toggle span { display: flex; align-items: center; justify-content: center; width: 16px; height: 16px; }
     @media (max-width: 1024px) { .snav-mobile-toggle { display: flex; } }
 
     /* ── mobile drawer ── */
     .snav-drawer {
       display: none; position: fixed; inset: 0; top: var(--nav-h);
-      z-index: 99; background: rgba(5,5,5,0.98); backdrop-filter: blur(12px);
+      z-index: 10001; background: #050505; backdrop-filter: blur(12px);
       flex-direction: column; border-top: 1px solid rgba(250,247,244,0.08);
       overflow-y: auto;
     }
@@ -406,6 +423,19 @@
       display: flex; align-items: center; justify-content: space-between;
       flex-shrink: 0; margin-top: auto;
     }
+    
+    .snav-drawer-reset {
+      margin: 16px 24px; padding: 14px;
+      border: 1px solid rgba(250,247,244,0.1); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      color: var(--accent-lens); font-family: 'Inter', sans-serif;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+      background: rgba(250,247,244,0.03);
+    }
+    .snav-drawer-reset:hover { background: rgba(250,247,244,0.06); border-color: var(--accent-lens); }
+    .snav-drawer-reset svg { width: 14px; height: 14px; }
+
     .snav-status { display: flex; align-items: center; gap: 8px; }
     .snav-status-dot {
       width: 6px; height: 6px; background: var(--nav-teal); border-radius: 50%;
@@ -513,7 +543,7 @@
           <div class="snav-footer-heading">Connect</div>
           <a href="${u('/contact.html')}" class="snav-footer-link">Contact</a>
           <a href="${u('/about.html')}" class="snav-footer-link">About Me</a>
-          <a href="${u('/insights/brand-guidelines.html')}" class="snav-footer-link">Brand Guidelines</a>
+          <a href="${u('/insights/insights-brand.html')}" class="snav-footer-link">Brand Guidelines</a>
           <a href="#" class="snav-footer-link" onclick="document.getElementById('aiCollabModal').style.display='flex'; return false;">About AI Collaboration</a>
         </div>
         <div>
@@ -697,53 +727,45 @@
             <span id="snav-icon-moon" style="display:none;">${ICONS.moon}</span>
           </button>
           <button class="snav-mobile-toggle" id="snav-mobile-toggle" aria-label="Toggle menu" aria-expanded="false">
-            <span id="snav-menu-icon">${ICONS.menu}</span>
+            <span id="snav-icon-menu">${ICONS.menu}</span>
+            <span id="snav-icon-close" style="display:none;">${ICONS.close}</span>
           </button>
         </div>
       </div>
     </header>
     <!-- ── MOBILE DRAWER ── -->
     <div class="snav-drawer" id="snav-drawer">
-      <div class="snav-drawer-series">
-        <div class="snav-drawer-series-label">Portfolio</div>
-        <div class="snav-drawer-grid">
-          <a href="${u('/myexperience.html')}" class="snav-drawer-card${isActive('experience') ? ' snav-here' : ''}">
-            <div class="snav-drawer-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></div>
-            <div><div class="snav-drawer-card-title">Experience</div><div class="snav-drawer-card-desc">Work &amp; case studies</div></div>
-          </a>
-          <a href="${u('/timeline.html')}" class="snav-drawer-card${isActive('timeline') ? ' snav-here' : ''}">
-            <div class="snav-drawer-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="4"/><polyline points="6 10 12 4 18 10"/></svg></div>
-            <div><div class="snav-drawer-card-title">Timeline</div><div class="snav-drawer-card-desc">Career eras</div></div>
-          </a>
-          <a href="${u('/about.html')}" class="snav-drawer-card${isActive('about') ? ' snav-here' : ''}">
-            <div class="snav-drawer-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
-            <div><div class="snav-drawer-card-title">About Luis</div><div class="snav-drawer-card-desc">Caracas to Cascadia</div></div>
-          </a>
-          <a href="${u('/contact.html')}" class="snav-drawer-card${isActive('contact') ? ' snav-here' : ''}">
-            <div class="snav-drawer-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
-            <div><div class="snav-drawer-card-title">Contact</div><div class="snav-drawer-card-desc">Start a conversation</div></div>
-          </a>
+      <div class="snav-drawer-series" style="border-bottom:none; padding-bottom:0;">
+        <div style="display:flex; justify-content:center; padding: 20px 0;">
+          <img id="snav-drawer-mark" src="${u('/assets/images/Logomark_White_a.png')}" alt="LG" style="height:40px; width:auto;">
         </div>
       </div>
+
       <div class="snav-drawer-global">
-        <div class="snav-drawer-global-label">Ecosystem</div>
-        <a href="${u('/')}" class="snav-drawer-link">
-          <div class="snav-drawer-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+        <div class="snav-drawer-global-label">Primary Navigation</div>
+        <a href="${u('/')}" class="snav-drawer-link${isActive(['portfolio','experience','timeline','about','brand','contact']) ? ' snav-here' : ''}">
+          <div class="snav-drawer-link-icon">${ICONS.home}</div>
           <span class="snav-drawer-link-text">Portfolio</span>
         </a>
         <a href="${u('/insights/')}" class="snav-drawer-link${isActive('insights') ? ' snav-here' : ''}">
-          <div class="snav-drawer-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+          <div class="snav-drawer-link-icon">${ICONS.pencil}</div>
           <span class="snav-drawer-link-text">Insights</span>
         </a>
         <a href="${u('/TheHub/')}" class="snav-drawer-link${isActive('hub') ? ' snav-here' : ''}">
-          <div class="snav-drawer-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
+          <div class="snav-drawer-link-icon">${ICONS.hub}</div>
           <span class="snav-drawer-link-text">The Hub</span>
         </a>
         <a href="https://portal.luis-gilberto.com/" class="snav-drawer-link${isActive('portal') ? ' snav-here' : ''}" target="_blank" rel="noopener">
-          <div class="snav-drawer-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+          <div class="snav-drawer-link-icon">${ICONS.lock}</div>
           <span class="snav-drawer-link-text">The Portal ↗</span>
         </a>
       </div>
+
+      <div class="snav-drawer-reset" id="snav-drawer-reset">
+        ${ICONS.pulse}
+        <span>Reset Persona Lens</span>
+      </div>
+
       <div class="snav-drawer-footer">
         <div class="snav-status">
           <div class="snav-status-dot"></div>
@@ -806,7 +828,8 @@
     const flLight     = document.getElementById('snav-footer-logo-light');
     const mobileToggle = document.getElementById('snav-mobile-toggle');
     const drawer      = document.getElementById('snav-drawer');
-    const menuIcon    = document.getElementById('snav-menu-icon');
+    const iconMenu     = document.getElementById('snav-icon-menu');
+    const iconClose    = document.getElementById('snav-icon-close');
     const yearEl      = document.getElementById('snav-year');
 
     if (!header) return;
@@ -864,8 +887,8 @@
     function applyTheme(t) {
       document.documentElement.setAttribute('data-theme', t);
       localStorage.setItem('portfolio-theme', t);
-      iconSun.style.display  = t === 'dark' ? 'none'  : 'block';
-      iconMoon.style.display = t === 'dark' ? 'block' : 'none';
+      iconSun.style.display  = t === 'dark' ? 'none'  : 'flex';
+      iconMoon.style.display = t === 'dark' ? 'flex' : 'none';
       if (flDark)  flDark.style.display  = t === 'dark' ? 'block' : 'none';
       if (flLight) flLight.style.display = t === 'dark' ? 'none'  : 'block';
     }
@@ -881,48 +904,111 @@
       drawer.classList.toggle('open', drawerOpen);
       mobileToggle.setAttribute('aria-expanded', drawerOpen);
       document.body.style.overflow = drawerOpen ? 'hidden' : '';
-      menuIcon.innerHTML = drawerOpen
-        ? '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>'
-        : '<line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>';
+      iconMenu.style.display  = drawerOpen ? 'none'  : 'flex';
+      iconClose.style.display = drawerOpen ? 'flex' : 'none';
     });
 
-    // ── lens management ──
+    // ── persona management ──
     const lensBadge = document.getElementById('snav-lens-badge');
     const lensLabel = document.getElementById('snav-lens-label');
 
-    function applyLens(lens) {
+    function applyPersona(choice) {
       const LABELS = { 
-        partner: 'PARTNERING', 
-        assess: 'ASSESSING', 
-        explore: 'EXPLORING' 
+        coral:   'ASSESSING', 
+        teal:    'PARTNERING', 
+        neutral: 'EXPLORING' 
       };
-      document.body.classList.remove('lens-partner', 'lens-assess', 'lens-explore');
-      document.body.classList.add(`lens-${lens}`);
-      if (lensLabel) lensLabel.textContent = LABELS[lens] || 'EXPLORING';
+      
+      const LOGOS = {
+        teal:    u('/assets/hp/LG_Logo_teal.png'),
+        coral:   u('/assets/hp/LG_Ogo_coral.png'),
+        neutral: u('/assets/images/AUg_logo_White.png')
+      };
+
+      const LOGOMARKS = {
+        teal:    u('/assets/hp/LG_Logomark_teal.png'),
+        coral:   u('/assets/hp/LG_Logomark_coral.png'),
+        neutral: u('/assets/images/Logomark_White_a.png')
+      };
+
+      document.body.classList.remove('path-teal', 'path-coral', 'path-neutral');
+      document.body.classList.add(`path-${choice}`);
+      
+      const badge = document.getElementById('snav-lens-badge');
+      if (badge) {
+        if (choice === 'teal') {
+          badge.style.background = 'var(--nav-teal)';
+          badge.style.borderColor = 'var(--nav-teal)';
+          badge.style.color = '#050505';
+        } else {
+          badge.style.background = '';
+          badge.style.borderColor = '';
+          badge.style.color = '';
+        }
+      }
+      
+      if (lensLabel) lensLabel.textContent = LABELS[choice] || 'EXPLORING';
+
+      // 🧬 Handle body[data-journey] for index.html token sync
+      const journeyMap = { teal: 'partner', coral: 'hire', neutral: 'explore' };
+      document.body.setAttribute('data-journey', journeyMap[choice] || 'explore');
+
+      // Dynamic Logo Swap
+      const desktopLogo = document.getElementById('snav-logo-desktop');
+      if (desktopLogo) {
+        desktopLogo.src = LOGOS[choice] || LOGOS.neutral;
+      }
+
+      // Dynamic Drawer Mark Swap
+      const drawerMark = document.getElementById('snav-drawer-mark');
+      if (drawerMark) {
+        drawerMark.src = LOGOMARKS[choice] || LOGOMARKS.neutral;
+      }
+      
+      // 🧬 Hire Journey Footer Logic
+      const footerStatus = document.querySelector('.snav-footer-status span:nth-child(2)');
+      if (footerStatus) {
+        if (choice === 'coral') {
+          footerStatus.textContent = 'Open to senior marketing roles';
+        } else {
+          footerStatus.textContent = 'Accepting Projects';
+        }
+      }
     }
 
-    const currentLens = localStorage.getItem('user-lens') || 'explore';
-    applyLens(currentLens);
+    const currentPersona = localStorage.getItem('luxe-persona') || 'neutral';
+    applyPersona(currentPersona);
+
+    const drawerReset = document.getElementById('snav-drawer-reset');
+    drawerReset?.addEventListener('click', (e) => {
+      e.preventDefault();
+      
+      const isRootHome = window.location.pathname === '/' || window.location.pathname === '/index.html' || (window.location.pathname.endsWith('/index.html') && !window.location.pathname.includes('/TheHub/') && !window.location.pathname.includes('/insights/'));
+
+      if (isRootHome && window.intentGate) {
+        if (drawer) drawer.classList.remove('open');
+        window.intentGate.open();
+      } else {
+        window.location.href = u('/index.html?open=diagnostic');
+      }
+    });
 
     lensBadge?.addEventListener('click', (e) => {
       e.preventDefault();
       
-      const isHome = window.location.pathname === '/' || window.location.pathname.endsWith('index.html') && !window.location.pathname.includes('/');
-      // Actually home is usually root or index.html in root
       const isRootHome = window.location.pathname === '/' || window.location.pathname === '/index.html';
 
       if (isRootHome && window.intentGate) {
         window.intentGate.open();
       } else {
-        // Redirect to Home with open diagnostic param
         window.location.href = u('/index.html?open=diagnostic');
       }
     });
 
-    // Sync lens changes from other tabs or components
+    // Sync changes from other tabs
     window.addEventListener('storage', (e) => {
-      if (e.key === 'user-lens') {
-        applyLens(e.newValue);
+      if (e.key === 'luxe-persona') {
+        applyPersona(e.newValue);
       }
     });
   }
