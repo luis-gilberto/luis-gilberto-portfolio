@@ -1109,6 +1109,8 @@
       
       if (headerLabel) {
          headerLabel.textContent = LABELS[choice] || 'EXPLORING';
+         if (choice === 'teal') headerLabel.textContent = 'PARTNERING'; // Override for Partner Journey
+         
          let accentColor = '#FFFFFF';
          if (choice === 'teal') accentColor = '#2ED3C6';
          if (choice === 'coral') accentColor = '#F96F6E';

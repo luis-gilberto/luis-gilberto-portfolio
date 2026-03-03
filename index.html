@@ -12,11 +12,18 @@
   
   <style>
     :root {
+      --text-primary: #FAF7F4;
       --teal: #2ED3C6;
       --coral: #F47471;
       --mustard: #D48D3B;
       --black: #050505;
       
+      /* 🧬 RGB Mapping for Cinematic Glows */
+      --teal-rgb: 46, 211, 198;
+      --coral-rgb: 244, 116, 113;
+      --white-rgb: 255, 255, 255;
+      --primary-accent-rgb: var(--coral-rgb); /* Default */
+
       --coral-legacy: #F96F6E;
       --mustard-legacy: #D48D3B;
       --cloud-dancer: #F3EFE0;
@@ -24,7 +31,7 @@
       
       /* 🧬 Persona Engine Tokens (P0) */
       --accent: var(--coral-legacy);
-      --accent-dim: rgba(249, 111, 110, 0.2);
+      --accent-dim: rgba(var(--primary-accent-rgb), 0.2);
       --hero-texture: none;
       --card-glow: radial-gradient(circle at center, var(--accent-dim) 0%, transparent 70%);
       --font-display: 'Big Shoulders Display', sans-serif;
@@ -43,50 +50,56 @@
     /* ── JOURNEY TOKENS ── */
     body[data-journey="partner"] {
       --primary-accent: var(--teal);
-      --primary-accent-glow: rgba(46, 211, 198, 0.4);
+      --primary-accent-rgb: var(--teal-rgb);
+      --primary-accent-glow: rgba(var(--teal-rgb), 0.4);
       --hero-bg: url('/assets/hp/bg-partner.png');
     }
     body[data-journey="hire"] {
       --primary-accent: var(--coral);
-      --primary-accent-glow: rgba(244, 116, 113, 0.4);
+      --primary-accent-rgb: var(--coral-rgb);
+      --primary-accent-glow: rgba(var(--coral-rgb), 0.4);
       --hero-bg: url('/assets/hp/bg-hire.png');
     }
     body[data-journey="explore"] {
       --primary-accent: #FFFFFF;
-      --primary-accent-glow: rgba(255, 255, 255, 0.2);
+      --primary-accent-rgb: var(--white-rgb);
+      --primary-accent-glow: rgba(var(--white-rgb), 0.2);
       --hero-bg: url('/assets/hp/bg-explore.png');
     }
 
     /* ── PERSONA CLASSES ── */
     body.path-teal { /* Partner Journey */
       --accent: var(--teal);
-      --accent-dim: rgba(46, 211, 198, 0.15);
-      --hero-texture: url('assets/hp/bg-partner.png');
+      --primary-accent-rgb: var(--teal-rgb);
+      --accent-dim: rgba(var(--teal-rgb), 0.15);
+      --hero-texture: url('/assets/hp/bg-partner.png');
       --accent-word-content: 'together';
-      --hero-bg: url('assets/hp/bg-partner.png');
-      --logomark: url('assets/hp/LG_Logomark_teal.png');
+      --hero-bg: url('/assets/hp/bg-partner.png');
+      --logomark: url('/assets/hp/LG_Logomark_teal.png');
       --primary-accent: var(--teal);
-      --primary-accent-glow: rgba(46, 211, 198, 0.4);
+      --primary-accent-glow: rgba(var(--teal-rgb), 0.4);
     }
     body.path-coral { /* Hire Journey (Assess Fit) */
       --accent: var(--coral);
-      --accent-dim: rgba(244, 116, 113, 0.15);
-      --hero-texture: url('assets/hp/bg-hire.png');
+      --primary-accent-rgb: var(--coral-rgb);
+      --accent-dim: rgba(var(--coral-rgb), 0.15);
+      --hero-texture: url('/assets/hp/bg-hire.png');
       --accent-word-content: 'systems';
-      --hero-bg: url('assets/hp/bg-hire.png');
-      --logomark: url('assets/hp/LG_Logomark_coral.png');
+      --hero-bg: url('/assets/hp/bg-hire.png');
+      --logomark: url('/assets/hp/LG_Logomark_coral.png');
       --primary-accent: var(--coral);
-      --primary-accent-glow: rgba(244, 116, 113, 0.4);
+      --primary-accent-glow: rgba(var(--coral-rgb), 0.4);
     }
     body.path-neutral { /* Explore Journey */
       --accent: #FFFFFF;
-      --accent-dim: rgba(255, 255, 255, 0.1);
-      --hero-texture: url('assets/hp/bg-explore.png');
+      --primary-accent-rgb: var(--white-rgb);
+      --accent-dim: rgba(var(--white-rgb), 0.1);
+      --hero-texture: url('/assets/hp/bg-explore.png');
       --accent-word-content: 'extraordinary';
-      --hero-bg: url('assets/hp/bg-explore.png');
-      --logomark: url('assets/images/Logomark_White_a.png');
+      --hero-bg: url('/assets/hp/bg-explore.png');
+      --logomark: url('/assets/images/Logomark_White_a.png');
       --primary-accent: #FFFFFF;
-      --primary-accent-glow: rgba(255, 255, 255, 0.2);
+      --primary-accent-glow: rgba(var(--white-rgb), 0.2);
     }
 
     .accent-italic {
@@ -107,15 +120,37 @@
     /* ── TEXTURE BLEED ── */
     body {
       background: #0A0A0A;
-      background-image: var(--hero-texture);
+      /* background-image: var(--hero-texture); Removed for cleaner texture bleed */
       background-attachment: fixed;
       background-size: cover;
       background-position: center;
-      background-blend-mode: overlay;
     }
 
     body::before {
-      display: none; /* Removed legacy texture bleed implementation */
+      content: '';
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100vh;
+      background-image: var(--hero-texture);
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      z-index: -2;
+      opacity: 0.15;
+      pointer-events: none;
+      filter: grayscale(100%) contrast(1.2);
+      transition: background-image 0.5s ease;
+    }
+    
+    /* 🧬 Grounding Gradient Mask */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 0%, rgba(10,10,10,0.8) 70%, #0A0A0A 100%);
+      z-index: -1;
+      pointer-events: none;
     }
 
     /* ── LOGOMARK & CARD GLOWS ── */
@@ -155,14 +190,17 @@
     }
     
     [data-theme="light"] {
-      --bg-primary: var(--cloud-dancer);
-      --bg-secondary: #ffffff;
-      --bg-tertiary: #f5f5f5;
-      --text-primary: #0a0a0a;
-      --text-secondary: rgba(0, 0, 0, 0.7);
-      --text-tertiary: rgba(0, 0, 0, 0.5);
-      --border-color: rgba(0, 0, 0, 0.1);
-      --mega-bg: #FFFFFF;
+      --bg-primary: #F4F1ED;
+      --bg-secondary: #e6e3dd;
+      --bg-tertiary: #ffffff;
+      --text-primary: #0A0A0A;
+      --text-secondary: #333333;
+      --text-tertiary: #666666;
+      --border-color: rgba(0,0,0,0.1);
+      --hero-texture: url('/assets/hp/bg-texture-light.png');
+      --card-glow: radial-gradient(circle at center, rgba(0,0,0,0.05) 0%, transparent 70%);
+      
+      --mega-bg: rgba(255,255,255,0.9);
       --mega-border: rgba(0,0,0,0.08);
       --mega-title-color: #18181B;
       --mega-desc-color: #666666;
@@ -172,21 +210,84 @@
 
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-    body { font-family: var(--font-body); font-size: 1rem; line-height: 1.6; color: var(--text-primary); background: var(--bg-primary); transition: background-color 0.3s ease, color 0.3s ease; cursor: none; }
-    h1, h2, h3, h4, h5, h6 { font-family: var(--font-display); font-weight: 600; line-height: 1.2; letter-spacing: -0.02em; }
+    body { font-family: var(--font-body); font-size: 1rem; line-height: 1.6; color: var(--text-primary); background: var(--bg-primary); transition: background-color 0.3s ease, color 0.3s ease; cursor: auto; }
+    body.has-custom-cursor { cursor: none; }
+    h1, h2, h3, h4, h5, h6 { font-family: var(--font-display); font-weight: 600; line-height: 1.2; letter-spacing: -0.02em; color: var(--text-primary) !important; }
     h1 { font-size: 3.75rem; } h2 { font-size: 2.25rem; } h3 { font-size: 1.5rem; }
     p { font-size: 1.125rem; color: var(--text-secondary); line-height: 1.7; }
+    .subline { color: var(--text-primary) !important; }
     a { color: inherit; text-decoration: none; transition: all 0.15s ease; }
     .container { max-width: 1400px; margin: 0 auto; padding: 0 2rem; }
 
+    .btn-cta {
+      background-color: var(--primary-accent) !important;
+      color: #050505 !important;
+      opacity: 1 !important;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 32px;
+      border-radius: 99px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
     /* ── HERO ────────────────────────────────────────────── */
+    /* 🧬 Layer 1: The Root Background */
     .hero-section {
-      position: relative; min-height: 100vh; display: flex; align-items: center;
+      background-color: #050505; position: relative; min-height: 100vh; display: flex; align-items: center;
       overflow: hidden; transition: all 0.5s ease-in-out; padding: 0;
     }
+    
+    /* 🧬 Layer 2: The Fallback Image */
+    .hero-bg { 
+      position: absolute; inset: 0; 
+      background-size: cover; background-position: center; 
+      z-index: 0; 
+    }
+    
+    /* 🧬 Layer 3: The Video (Must be above image) */
+    .hero-bg-video { 
+      position: absolute; inset: 0; 
+      width: 100%; height: 100%; object-fit: cover; 
+      z-index: 1; /* Sits on top of the image */ 
+      opacity: 1; /* 🧬 Always visible (relies on poster) */
+    } 
+    /* .hero-bg-video.active { opacity: 1; }  <-- Removed */
+
+    /* 🧬 Smooth Hero Exit Gradient */
+    .hero-section::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 150px;
+      background: linear-gradient(to bottom, transparent, var(--bg-primary));
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* 🧬 Layer 4: The Darkening Scrim (Must be above video) */
     .hero-section::after {
-      content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
-      transition: opacity 0.5s ease; background: rgba(0,0,0,0.65); /* 🧬 Cinematic Mute (65% Opacity) */
+      content: ''; position: absolute; inset: 0; 
+      z-index: 2; /* Sits on top of the video */ 
+      background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.7) 100%); 
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+
+    /* 🧬 Layer 5: The Content (Top Floor) */
+    .hero-content {
+      position: relative;
+      z-index: 10 !important;
+    }
+
+    /* 🧬 Texture Bleed for Partner Journey */
+    body[data-journey="partner"]::before {
+      opacity: 0.15 !important; /* Force visibility for texture bleed */
+      background-image: url('/assets/hp/bg-partner.png') !important;
     }
 
     /* ── EXPLORE LENS (Coral) ── */
@@ -195,6 +296,7 @@
       backdrop-filter: blur(1.5px);
       mix-blend-mode: normal;
       opacity: 1;
+      z-index: 3 !important;
     }
     [data-lens="explore"] .headline-expressive {
       font-family: var(--font-serif); font-weight: 700; font-style: italic;
@@ -226,6 +328,7 @@
       background: radial-gradient(circle at center, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.95) 100%) !important; 
       mix-blend-mode: normal;
       opacity: 1;
+      z-index: 3 !important;
     }
     
     [data-lens="assess"] .headline-expressive { 
@@ -253,6 +356,7 @@
       background: radial-gradient(circle at center, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.95) 100%) !important; 
       mix-blend-mode: normal;
       opacity: 1;
+      z-index: 3 !important;
     }
     [data-lens="partner"] .headline-expressive { 
       font-family: var(--font-serif); font-weight: 700; font-style: italic; font-size: clamp(4rem,11vw,9.5rem); 
@@ -404,7 +508,7 @@
 
     .headline-primary {
       font-family: var(--font-display); font-weight: 900; line-height: 0.9;
-      font-size: clamp(4rem, 8vw, 7rem); letter-spacing: -0.02em; color: #fff;
+      font-size: clamp(4rem, 8vw, 7rem); letter-spacing: -0.02em; color: var(--text-primary);
       text-transform: uppercase; margin-bottom: 0.5rem;
     }
     .headline-expressive { 
@@ -414,7 +518,7 @@
     }
     .subline { 
       font-family: 'Inter', sans-serif; font-size: 1.25rem; font-weight: 400;
-      color: rgba(255,255,255,0.8); text-align: center; margin: 1.5rem auto 3rem; 
+      color: var(--text-secondary); text-align: center; margin: 1.5rem auto 3rem; 
       max-width: 700px; line-height: 1.6; letter-spacing: 0.02em;
     }
     
@@ -422,7 +526,7 @@
       display: inline-flex; align-items: center; justify-content: center; border: none;
       cursor: pointer; text-decoration: none; width: fit-content; border-radius: 99px !important;
       padding: 14px 32px !important; font-family: 'Inter', sans-serif; font-weight: 700;
-      font-size: 1rem; letter-spacing: 0.05em; color: #050505; text-transform: none;
+      font-size: 1rem; letter-spacing: 0.05em; color: var(--bg-primary); text-transform: none;
       background: var(--primary-accent);
       transition: all 0.3s cubic-bezier(0.16,1,0.3,1); position: relative; z-index: 1;
       box-shadow: 0 0 25px var(--primary-accent-glow);
@@ -451,10 +555,27 @@
     }
 
     /* ── STRATEGY STRIP ──────────────────────────────────── */
-    .banner-rotator { background: var(--cloud-dancer); padding: 3rem 0; overflow: hidden; }
-    [data-theme="dark"] .banner-rotator { background: #2a2a2a; }
-    .strategy-strip { background-color: #ffffff; color: #111111; text-align: center; padding: 40px 20px; width: 100%; }
-    [data-theme="dark"] .strategy-strip { background-color: #1b1b1b; color: #f5f5f5; }
+    .banner-rotator { 
+        background: transparent !important; padding: 3rem 0; overflow: hidden; 
+        position: relative;
+    }
+    .banner-rotator::before {
+        content: ''; position: absolute; top: -50px; left: 50%; transform: translateX(-50%);
+        width: 80%; height: 100px;
+        background: radial-gradient(ellipse at center, var(--primary-accent-glow) 0%, transparent 70%);
+        opacity: 0.18; pointer-events: none; filter: blur(80px);
+    }
+    [data-theme="dark"] .banner-rotator { background: transparent !important; }
+    .strategy-strip { 
+        background-color: rgba(255, 255, 255, 0.95); 
+        color: #111111; text-align: center; padding: 40px 20px; width: 100%; position: relative; z-index: 1; 
+        border-radius: 24px;
+    }
+    [data-theme="dark"] .strategy-strip { 
+        background-color: rgba(27, 27, 27, 0.6); 
+        color: #f5f5f5; 
+        backdrop-filter: blur(10px);
+    }
     .strategy-strip-link { text-decoration: none; color: inherit; }
     .strategy-strip-link:hover { color: var(--coral); }
     .strategy-strip-question {
@@ -465,26 +586,62 @@
     .strategy-strip-question.strategy-strip-fade-out { opacity: 0; }
 
     /* ── QUICK TOUR ──────────────────────────────────────── */
-    .quick-tour-section { padding: 5rem 2rem; background: var(--bg-secondary); }
-    .section-header { text-align: center; margin-bottom: 0; }
-    .section-header h2 { font-size: 3rem; margin-bottom: 1rem; font-family: var(--font-display); font-weight: 600; letter-spacing: -0.02em; }
+    .quick-tour-section { 
+        padding: 5rem 2rem; background: transparent !important; 
+        position: relative; overflow: hidden;
+    }
+    .quick-tour-section::before {
+        content: ''; position: absolute; top: 20%; left: 50%; transform: translateX(-50%);
+        width: 100%; max-width: 1200px; height: 600px;
+        background: radial-gradient(circle at center, var(--primary-accent-glow) 0%, transparent 60%);
+        opacity: 0.18; filter: blur(80px); pointer-events: none;
+    }
+    .section-header { text-align: center; margin-bottom: 0; position: relative; z-index: 1; }
+    .section-header h2 { font-size: 3rem; margin-bottom: 1rem; font-family: var(--font-display); font-weight: 600; letter-spacing: -0.02em; color: var(--text-primary); }
     .section-header h2 .period { color: var(--coral); }
+    .section-header h2 .accent { text-transform: lowercase; font-family: var(--font-serif); font-style: italic; }
     .section-header p { font-size: 1.25rem; color: var(--text-secondary); }
-    .cards-group { margin-bottom: 5rem; padding-top: 3rem; }
-    .cards-group:first-of-type { padding-top: 0; }
-    .cards-group h3 { font-size: 2rem; margin-bottom: 2.5rem; margin-top: 0; text-align: center; font-weight: 600; letter-spacing: -0.02em; font-family: var(--font-display); opacity: 0.9; line-height: 1.3; }
+    .cards-group { 
+        margin-bottom: 5rem; 
+        padding: 4rem 2rem; 
+        position: relative; 
+        z-index: 1; 
+        background: rgba(10, 10, 10, 0.4); /* Subtle darkening */
+        border-radius: 24px;
+        backdrop-filter: blur(5px);
+    }
+    [data-theme="light"] .cards-group { background: rgba(255, 255, 255, 0.4); border: 1px solid rgba(0,0,0,0.05); }
+    .cards-group:first-of-type { padding-top: 4rem; }
+    .cards-group h3 { font-size: 2rem; margin-bottom: 2.5rem; margin-top: 0; text-align: center; font-weight: 600; letter-spacing: -0.02em; font-family: var(--font-display); opacity: 0.9; line-height: 1.3; color: var(--text-primary); }
     .start-here-helper, .card-discovery-helper { text-align: center; font-size: 0.875rem; color: var(--text-tertiary); margin-top: 1.5rem; }
     .cards-grid { display: grid; gap: 2rem; }
     .cards-grid-2x2 { grid-template-columns: repeat(2, 300px); gap: 24px; justify-content: center; align-items: start; }
     .cards-grid-4 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
     .cards-grid-3 { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); justify-items: center; align-items: start; }
 
+    /* ── WHAT'S NEXT (Atmospheric Echo) ── */
+    .whats-next-section {
+        position: relative;
+        padding-bottom: 6rem;
+    }
+    .whats-next-section::after {
+        content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 200px;
+        background: radial-gradient(ellipse at bottom, var(--primary-accent-glow) 0%, transparent 70%);
+        opacity: 0.15; pointer-events: none;
+    }
+
     /* ── FLIP CARDS ──────────────────────────────────────── */
     .tour-card { perspective: 1000px; width: 300px; height: 400px; cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease; position: relative; z-index: 1; margin: 0 auto; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
-    .tour-card:hover { transform: translateY(-8px); z-index: 10; }
+    .tour-card:hover { 
+        transform: translateY(-8px); z-index: 10; 
+        box-shadow: 0 20px 40px -10px var(--primary-accent-glow);
+    }
     .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; -webkit-transform-style: preserve-3d; }
     .tour-card.flipped .card-inner { transform: rotateY(180deg); -webkit-transform: rotateY(180deg); }
-    .tour-card.flipped { z-index: 20; }
+    .tour-card.flipped { 
+        z-index: 20; 
+        box-shadow: 0 25px 50px -12px var(--primary-accent-glow);
+    }
     .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 1px solid var(--border-color); top: 0; left: 0; }
     
     /* 🧬 Resume Card Fix: Match siblings exactly */
@@ -497,11 +654,33 @@
     .card-back { transform: rotateY(180deg); -webkit-transform: rotateY(180deg); padding: 2.5rem 2rem; display: flex; flex-direction: column; justify-content: space-between; color: white; }
     [data-theme="dark"] .card-front, [data-theme="dark"] .card-back { box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
     .card-front img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+
+    /* 🧬 Optimize for Mobile & Motion */
+    @media (max-width: 768px) {
+        .quick-tour-section::before { opacity: 0.03; filter: blur(30px); }
+        .banner-rotator::before { display: none; }
+        .whats-next-section::after { opacity: 0.08; }
+        .tour-card:hover { transform: translateY(-4px); box-shadow: 0 10px 20px -5px var(--primary-accent-glow); }
+    }
+    
+    @media (prefers-reduced-motion: reduce) {
+        .quick-tour-section::before, 
+        .banner-rotator::before,
+        .whats-next-section::after { display: none !important; }
+        .tour-card:hover { transform: none; }
+    }
     .tour-card:hover .card-front img { transform: scale(1.08); }
     .card-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 100%); z-index: 4; }
     
-    .card-icon-container { position: absolute; top: 1.5rem; left: 1.5rem; z-index: 5; }
-    .card-icon-img { width: 32px; height: 32px; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3)); transition: transform 0.3s ease; }
+    .card-icon-container { 
+        position: absolute; top: 1.5rem; left: 1.5rem; z-index: 5; 
+        background: transparent; /* 🧬 Ensure transparency */
+    }
+    .card-icon-img { 
+        width: 32px; height: 32px; 
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); /* 🧬 Enhanced legibility */
+        transition: transform 0.3s ease; 
+    }
     .tour-card:hover .card-icon-img { transform: scale(1.1) rotate(5deg); }
     
     .card-front h3 { position: absolute; bottom: 1.5rem; left: 1.5rem; right: 1.5rem; color: white; font-size: 1.5rem; font-family: var(--font-display); text-shadow: 0 2px 8px rgba(0,0,0,0.5); transition: transform 0.3s ease; z-index: 5; }
@@ -541,8 +720,8 @@
     .cta-button:hover svg { transform: translateX(6px); }
 
     /* ── CUSTOM CURSOR ───────────────────────────────────── */
-    body { cursor: auto; }
-    body.has-custom-cursor { cursor: none; }
+    /* body { cursor: auto; } */ /* Removed duplicate */
+    /* body.has-custom-cursor { cursor: none; } */ /* Removed duplicate */
     #cursor-lens { position: fixed; pointer-events: none; z-index: 2147483647; width: 40px; height: 40px; transform: translate(-50%,-50%); transition: all 0.15s cubic-bezier(0.25,0.46,0.45,0.94); }
     .lens-outer { position: absolute; top: 50%; left: 50%; width: 40px; height: 40px; border: 2px solid var(--coral); border-radius: 50%; transform: translate(-50%,-50%); opacity: 0.4; transition: all 0.2s ease; }
     .lens-middle { position: absolute; top: 50%; left: 50%; width: 24px; height: 24px; border: 1.5px solid rgba(255,255,255,0.3); border-radius: 50%; transform: translate(-50%,-50%); opacity: 0.3; transition: all 0.2s ease; }
@@ -628,7 +807,10 @@
 
     <!-- SMART HERO -->
     <section id="portfolio" class="hero-section" data-lens="explore" data-layout="centered">
-      <div class="hero-bg"></div>
+      <div class="hero-bg">
+        <!-- 🧬 Permanent Video Layer -->
+        <video id="hero-video" muted playsinline loop preload="auto" class="hero-bg-video"></video>
+      </div>
       <div class="hero-content"><!-- injected by JS --></div>
     </section>
 
@@ -644,37 +826,135 @@
     </section>
 
     <!-- QUICK TOUR -->
-    <section id="quick-tour" class="quick-tour-section">
+    <section class="quick-tour-section" id="quick-tour">
       <div class="container">
-        <div class="section-header"></div>
-
-        <div class="cards-group">
-          <h3>The human &amp; the professional</h3>
-          <p class="start-here-helper" style="opacity:0.7;font-size:0.95rem;margin-top:-1.5rem;margin-bottom:2rem;text-align:center;">New here? Start with Timeline.</p>
-          <div class="cards-grid cards-grid-2x2" id="flip-card-grid">
-            <!-- Cards are dynamically injected by Persona Engine -->
-          </div>
+        
+        <div class="section-header">
+          <h2>THE <span class="accent">system</span></h2>
+          <p class="subline">How I think, lead, and build.</p>
+          <p class="start-here-helper">If you only click one thing, start here. Pick the lane that matches what you need today.</p>
         </div>
 
         <div class="cards-group">
-          <h3>Present &amp; future work</h3>
-          <div class="cards-grid cards-grid-3">
-
-            <div class="tour-card" data-category="present-future">
+          <h3>The human &amp; the professional</h3>
+          <p class="start-here-helper">Choose a card to dive deeper</p>
+          
+          <div class="cards-grid cards-grid-3" id="flip-card-grid">
+            
+            <!-- CARD 1: STRATEGY IQ -->
+            <div class="tour-card" onclick="this.classList.toggle('flipped')">
               <div class="card-inner">
                 <div class="card-front">
-                  <img src="assets/hp/Insights.webp" alt="Insights">
                   <div class="card-overlay"></div>
-                  <h3>Insights</h3>
+                  <div class="card-icon-container">
+                    <img src="/assets/hp/ICON_MyEthos_Compass_sm_white.png" class="card-icon-img" alt="Strategy Icon" onerror="this.onerror=null; this.src='/assets/hp/LG_Logomark_coral.png';">
+                  </div>
+                  <img src="/assets/hp/StrategyIQ.png" alt="StrategyIQ Visual" loading="lazy">
+                  <h3>StrategyIQ™</h3>
                 </div>
-                <div class="card-back card-back-coral">
-                  <p>My editorial lab for strategy, AI, narrative, and leadership. A space where I explore the future of design, marketing, and creative intelligence.</p>
-                  <a href="/insights/" class="card-cta">Explore →</a>
+                <div class="card-back" style="background: #151515;">
+                  <div>
+                    <h4 class="text-accent">StrategyIQ™</h4>
+                    <p style="margin-top: 1rem; font-size: 0.95rem; color: rgba(255,255,255,0.8);">
+                      A practical framework that turns brand intent into a plan people can actually execute.
+                    </p>
+                    <ul style="margin-top: 1rem; padding-left: 1.2rem; font-size: 0.85rem; color: rgba(255,255,255,0.6); list-style-type: disc;">
+                      <li style="margin-bottom: 0.5rem;">Diagnostic auditing</li>
+                      <li style="margin-bottom: 0.5rem;">System architecture</li>
+                      <li>Go-to-market execution</li>
+                    </ul>
+                  </div>
+                  <a href="/TheHub/strategy-iq/index.html" class="cta-button">
+                    Explore The Hub
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                  </a>
                 </div>
               </div>
             </div>
 
-            <div class="tour-card" data-category="present-future">
+            <!-- CARD 2: LEADERSHIP -->
+            <div class="tour-card" onclick="this.classList.toggle('flipped')">
+              <div class="card-inner">
+                <div class="card-front">
+                  <div class="card-overlay"></div>
+                  <div class="card-icon-container">
+                    <img src="/assets/hp/ICON_AboutMe_Person_sm_white.png" class="card-icon-img" alt="Leadership Icon" onerror="this.onerror=null; this.src='/assets/hp/LG_Logomark_coral.png';">
+                  </div>
+                  <img src="/assets/hp/leadership.png" alt="Leadership Visual" loading="lazy">
+                  <h3>Leadership</h3>
+                </div>
+                <div class="card-back" style="background: #151515;">
+                  <div>
+                    <h4 class="text-accent">Leadership</h4>
+                    <p style="margin-top: 1rem; font-size: 0.95rem; color: rgba(255,255,255,0.8);">
+                      How I lead creative marketing work through ambiguity, alignment, and delivery.
+                    </p>
+                    <ul style="margin-top: 1rem; padding-left: 1.2rem; font-size: 0.85rem; color: rgba(255,255,255,0.6); list-style-type: disc;">
+                      <li style="margin-bottom: 0.5rem;">Team structuring</li>
+                      <li style="margin-bottom: 0.5rem;">Cross-functional agility</li>
+                      <li>Culture & mentorship</li>
+                    </ul>
+                  </div>
+                  <a href="/myexperience.html" class="cta-button">
+                    View Experience
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <!-- CARD 3: BRAND IDENTITY -->
+            <div class="tour-card" id="card-brand" onclick="this.classList.toggle('flipped')">
+              <div class="card-inner">
+                <div class="card-front">
+                  <div class="card-overlay"></div>
+                  <div class="card-icon-container">
+                    <img src="/assets/hp/ICON_Resume_Document_sm_white.png" class="card-icon-img" alt="Identity Icon" onerror="this.onerror=null; this.src='/assets/hp/LG_Logomark_coral.png';">
+                  </div>
+                  <img src="/assets/hp/HERO_MyEthos_DualFoil_CoralTeal.jpg" id="img-brand" alt="Brand Identity Visual" loading="lazy">
+                  <h3>Identity</h3>
+                </div>
+                <div class="card-back" style="background: #151515;">
+                  <div>
+                    <h4 class="text-accent">Identity</h4>
+                    <p style="margin-top: 1rem; font-size: 0.95rem; color: rgba(255,255,255,0.8);">
+                      The story behind the system. Who I am, what I value, and why I build.
+                    </p>
+                  </div>
+                  <a href="/about.html" class="cta-button">
+                    About Luis
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /cards-grid -->
+        </div><!-- /cards-group -->
+
+        <div class="cards-group">
+          <h3>Present &amp; future work</h3>
+          <p class="card-discovery-helper">Swipe or click cards to flip</p>
+          <div class="cards-grid cards-grid-3">
+
+            <div class="tour-card" onclick="this.classList.toggle('flipped')">
+              <div class="card-inner">
+                <div class="card-front">
+                  <img src="/assets/hp/Insights.webp" alt="Insights">
+                  <div class="card-overlay"></div>
+                  <h3>Insights</h3>
+                </div>
+                <div class="card-back card-back-coral">
+                  <div class="card-back-content">
+                    <p class="card-back-title">Insights</p>
+                    <p>Short, useful essays on strategy, AI, narrative, and leadership. Built for people who ship.</p>
+                    <a href="/insights/" class="card-cta">Explore →</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tour-card" onclick="this.classList.toggle('flipped')">
               <div class="card-inner">
                 <div class="card-front">
                   <img src="/assets/hp/TheHub.png" alt="The Hub">
@@ -684,26 +964,26 @@
                 <div class="card-back card-back-teal">
                   <div class="card-back-content">
                     <p class="card-back-title">The Hub</p>
-                    <p>A collection of productized consulting tools and frameworks. Each one reduces guesswork and brings structure to modern marketing.</p>
+                    <p>My consulting toolbox. StrategyIQ, advisory work, and practical systems you can explore.</p>
+                    <a href="/TheHub/index.html" class="card-cta">Enter The Hub →</a>
                   </div>
-                  <a href="/TheHub/" class="card-cta">Explore</a>
                 </div>
               </div>
             </div>
 
-            <div class="tour-card" data-category="present-future">
+            <div class="tour-card" onclick="this.classList.toggle('flipped')">
               <div class="card-inner">
                 <div class="card-front">
-                  <img src="assets/hp/ThePortal.webp" alt="The Portal">
+                  <img src="/assets/hp/ThePortal.jpg" alt="The Portal">
                   <div class="card-overlay"></div>
                   <h3>The Portal</h3>
                 </div>
                 <div class="card-back card-back-deep-blue">
-                  <div class="card-back-content">
+                   <div class="card-back-content">
                     <p class="card-back-title">The Portal</p>
-                    <p>Invitation only. A workspace for partners who want deeper access to my systems, methodologies, and collaborative capabilities.</p>
+                    <p>A private workspace for active clients. If you’re curious, start with The Hub for context.</p>
+                    <a href="https://portal.luis-gilberto.com" target="_blank" class="card-cta">Client Login →</a>
                   </div>
-                  <a href="https://portal.luis-gilberto.com" class="card-cta">Explore →</a>
                 </div>
               </div>
             </div>
@@ -711,27 +991,22 @@
           </div>
         </div>
 
-        <p class="card-discovery-helper" style="opacity:0.6;font-size:0.9rem;margin-top:24px;text-align:center;">Each card reveals more when you tap or click. Explore freely.</p>
       </div>
+    </section>
     </section>
 
     <!-- WHAT'S NEXT -->
-    <section id="contact" class="whats-next-section">
-      <canvas id="constellationCanvas"></canvas>
-      <div class="container">
-        <h2>Ready for your next <span class="accent-word"></span>?</h2>
-        <p>Let's create something <span class="text-accent">extraordinary</span>.</p>
-        <a href="/contact.html" class="cta-button">
-          Let's talk about what's next
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </a>
+    <section class="whats-next-section">
+      <div class="container" style="text-align: center;">
+        <h2 class="headline-primary" style="font-size: clamp(2.5rem, 5vw, 4rem);">Ready for your next <span class="headline-expressive" style="color:var(--coral);">breakthrough</span>?</h2>
+        <p class="subline">Send a short note. I’ll reply with next steps and the right place to start.</p>
+        <a href="/contact.html" class="btn-cta">Let's talk about what's next →</a>
       </div>
     </section>
 
   </main>
 
   <!-- 🧬 LUXE SYSTEM COMPONENT SCRIPT -->
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
   <script>
     (() => {
       /* ── JOURNEY DETECTION LOGIC (The Brain) ── */
@@ -760,20 +1035,21 @@
       /* ── HERO 2.0 ENGINE (High Fidelity Restoration) ── */
       const HERO_CONFIG = {
         assess: {
-          lens: 'assess', layout: 'centered', bgImage: 'assets/hp/bg-hire.png',
-          logo: 'assets/hp/LG_Ogo_coral.png',
-          html: `<h1 class="hero-headline" data-copy-journey><span class="line line-lead">I LEAD</span><span class="line line-accent">Integrated Marketing</span><span class="line line-ship">THAT SHIPS</span></h1><p class="subline">Here’s how my experience translates into execution.</p><a href="/myexperience.html" class="btn-cta">View leadership experience →</a>`
+          lens: 'assess', layout: 'centered', bgImage: '/assets/hp/bg-hire.png',
+          logo: '/assets/hp/LG_Ogo_coral.png',
+          html: `<h1 class="hero-headline" data-copy-journey><span class="line line-lead">I LEAD</span><span class="line line-accent">Integrated Marketing</span><span class="line line-ship">THAT SHIPS</span></h1><p class="subline">Here’s how my experience translates into execution.</p><a href="/myexperience.html" class="btn-cta" style="background-color: #F96F6E; color: #050505;">View leadership experience →</a>`
         },
         partner: {
-          lens: 'partner', layout: 'centered', bgImage: 'assets/hp/bg-partner.png',
-          logo: 'assets/hp/LG_Logo_teal.png',
-          html: `<h1 class="hero-headline" data-copy-journey><span class="line line-lead">LET'S BUILD</span><span class="line line-accent">together</span><span class="line line-ship">WITH INTENT</span></h1><p class="subline">Partnership, strategy, and systems aligned for real-world impact</p><a href="/TheHub/index.html" class="btn-cta strategy-iq-glow">Start with StrategyIQ</a>`
+          lens: 'partner', layout: 'centered', bgImage: '/assets/hp/bg-partner.png',
+          bgVideo: '/assets/videos/bg-partner.mp4',
+          logo: '/assets/hp/LG_Logo_teal.png',
+          html: `<h1 class="hero-headline" data-copy-journey><span class="line line-lead">LET'S BUILD</span><span class="line line-accent" style="font-family: 'Playfair Display', serif; font-style: italic; transform: rotate(-2deg); display: inline-block;">together</span><span class="line line-ship">WITH INTENT</span></h1><p class="subline">Partnership, strategy, and systems aligned for real-world impact</p><a href="/TheHub/index.html" class="btn-cta strategy-iq-glow" style="background-color: #2ED3C6; color: #050505;">Start with StrategyIQ →</a>`
         },
         explore: {
-          lens: 'explore', layout: 'centered', bgImage: 'assets/hp/bg-explore.png',
+          lens: 'explore', layout: 'centered', bgImage: '/assets/hp/bg-explore.png',
           bgVideo: '/assets/videos/bg-explore.mp4',
-          logo: 'assets/images/AUg_logo_White.png',
-          html: `<h1 class="headline-primary">I MAKE TECH FEEL <br><span class="headline-expressive" style="color:var(--coral);">human</span></h1><p class="subline">Strategy, storytelling, and execution for modern teams.</p><a href="#quick-tour" class="btn-cta">See what I’ve built →</a>`
+          logo: '/assets/images/AUg_logo_White.png',
+          html: `<h1 class="headline-primary">I MAKE TECH FEEL <br><span class="headline-expressive" style="color:var(--coral);">human</span></h1><p class="subline">I help teams explain complex products clearly, then ship the marketing that makes them click.</p><a href="#quick-tour" class="btn-cta">See what I build →</a>`
         }
       };
 
@@ -787,60 +1063,38 @@
       if (!heroSection || !heroBg || !heroContent) return;
 
       function setHeroState(key) {
-        // Map persona keys to lens keys for the hero engine
         const lensMap = { teal: 'partner', coral: 'assess', neutral: 'explore' };
         const lensKey = lensMap[key] || 'explore';
         const cfg = HERO_CONFIG[lensKey] || HERO_CONFIG.explore;
+        const videoEl = document.getElementById('hero-video');
         
         heroSection.setAttribute('data-lens', cfg.lens);
         heroSection.setAttribute('data-layout', cfg.layout);
-        heroBg.style.backgroundImage = `url('${cfg.bgImage}')`;
-        heroContent.innerHTML = cfg.html;
-
-        // 🧬 VIDEO BACKGROUND LOGIC
-        const existingVideo = document.querySelector('.hero-bg-video');
         
+        // 1. Set the fallback image immediately 
+        heroBg.style.backgroundImage = `url('${cfg.bgImage}')`;
+        
+        // 2. Handle Video Swap
         if (cfg.bgVideo && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            // Create video if it doesn't exist
-            let videoEl = existingVideo;
-            if (!videoEl) {
-                videoEl = document.createElement('video');
-                videoEl.className = 'hero-bg-video';
-                videoEl.muted = true;
-                videoEl.loop = true;
-                videoEl.playsInline = true;
-                videoEl.autoplay = true;
-                
-                // Insert before the image layer (to ensure fallback visibility if fail)
-                heroBg.appendChild(videoEl);
-            }
+            const currentSrc = videoEl.getAttribute('src') || '';
             
-            // Update source if changed
-            if (videoEl.getAttribute('src') !== cfg.bgVideo) {
+            // Only swap if the source is different to prevent disappearing/flicker
+            if (!currentSrc.includes(cfg.bgVideo)) {
                 videoEl.src = cfg.bgVideo;
-                videoEl.load();
-                
-                // Play promise to handle autoplay policies
-                const playPromise = videoEl.play();
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        videoEl.classList.add('active');
-                    }).catch(error => {
-                        console.log('Autoplay prevented:', error);
-                        videoEl.style.display = 'none'; // Fallback to image
-                    });
-                }
-            } else {
-                videoEl.classList.add('active');
-                videoEl.play();
+                videoEl.classList.add('active'); // Ensure opacity is up
+                videoEl.play().catch(() => {});
             }
         } else {
-            // Cleanup video if not needed for this journey
-            if (existingVideo) {
-                existingVideo.classList.remove('active');
-                setTimeout(() => existingVideo.remove(), 800); // Wait for fade out
+            // Remove video source to stop buffering if not needed
+            if (videoEl.getAttribute('src')) {
+                videoEl.removeAttribute('src');
+                videoEl.load();
             }
+            // Ensure poster is still set
+            videoEl.poster = cfg.bgImage;
         }
+
+        heroContent.innerHTML = cfg.html;
 
         // Apply Persona Class to Body
         document.body.classList.remove('path-teal', 'path-coral', 'path-neutral');
@@ -866,43 +1120,47 @@
         // 🧬 Final Harmonization: Specific Persona Mapping
         const assets = {
           timeline: { 
-            img: '/assets/hp/Timeline.jpg', 
-            icon: `/assets/hp/ICON_Timeline_Clock_sm_${color === 'white' ? 'white' : color}.png`,
-            title: 'Timeline',
-            desc: 'A chronological walk through my career. Strategic pivots, standout campaigns, and the creative evolution that shaped my craft.',
-            href: '/timeline.html'
+            img: (choice === 'teal') ? '/assets/hp/HERO_MyEthos_Teal_Embossed.jpg' : '/assets/hp/StrategyIQ.png', 
+            icon: `/assets/hp/ICON_MyEthos_Compass_sm_${color === 'white' ? 'white' : color}.png`, // Verified Path
+            title: 'StrategyIQ™',
+            desc: (choice === 'coral') ? 'A practical framework that turns brand intent into a plan people can actually execute.' : 'A practical framework that turns brand intent into a plan people can actually execute.',
+            href: '/TheHub/strategy-iq/index.html'
           },
           about: { 
-            img: (choice === 'teal') ? '/assets/hp/AboutMe_pic_w_teal_bg.png' : (choice === 'coral' ? '/assets/hp/AboutMe_pic_w_coral_bg.png' : '/assets/hp/AboutMe_pic.png'), 
-            icon: `/assets/hp/ICON_AboutMe_Person_sm_${color === 'white' ? 'white' : color}.png`,
-            title: 'About Me',
-            desc: 'The human behind the work. My story, my values, and the spark that keeps me pairing creative vision with measurable impact.',
-            href: '/about.html'
+            img: (choice === 'teal') ? '/assets/hp/AboutMe_pic_w_teal_bg.png' : '/assets/hp/leadership.png', 
+            icon: `/assets/hp/ICON_AboutMe_Person_sm_${color === 'white' ? 'white' : color}.png`, // Verified Path
+            title: 'Leadership',
+            desc: 'How I lead creative marketing work through ambiguity, alignment, and delivery.',
+            href: '/myexperience.html'
           },
           resume: { 
-            img: (choice === 'teal') ? '/assets/hp/RESUME_perspective_teal.png' : (choice === 'coral') ? '/assets/hp/RESUME_perspective_coral.png' : '/assets/hp/RESUME_perspective_bw.png',
-            icon: `/assets/hp/ICON_Resume_Document_sm_${color === 'white' ? 'white' : color}.png`,
-            title: 'Resume',
-            desc: (choice === 'coral') ? 'Senior integrated marketing leadership at Microsoft and beyond. Real scope, real teams, real outcomes. The receipts are here.' : 'A focused view of my experience, skills, and the brands I\'ve helped scale through clarity and intention.',
-            href: '/cv.html'
+            img: (choice === 'teal') ? '/assets/hp/RESUME_perspective_teal.png' : '/assets/hp/HERO_MyEthos_DualFoil_CoralTeal.jpg',
+            icon: `/assets/hp/ICON_Resume_Document_sm_${color === 'white' ? 'white' : color}.png`, // Verified Path
+            title: 'Identity',
+            desc: 'The short version of who I am, how I think, and why this work matters to me.',
+            href: '/about.html'
           },
           brand: { 
-            img: (choice === 'neutral') ? '/assets/hp/HERO_MyEthos_DualFoil_CoralTeal.jpg' : (choice === 'teal') ? '/assets/hp/HERO_MyEthos_Teal_Embossed.jpg' : '/assets/hp/HERO_MyEthos_Coral_Embossed.jpg', 
-            icon: `/assets/hp/ICON_MyEthos_Compass_sm_${color === 'white' ? 'white' : color}.png`,
-            title: 'Brand',
-            desc: 'The visual system behind my work. Identity, voice, design choices, and the rules that keep it all consistent.',
-            href: '/brand/'
+            img: '/assets/hp/HERO_MyEthos_DualFoil_CoralTeal.jpg',
+            icon: `/assets/hp/ICON_Resume_Document_sm_${color === 'white' ? 'white' : color}.png`, // Verified Path
+            title: 'Identity',
+            desc: 'The short version of who I am, how I think, and why this work matters to me.',
+            href: '/about.html'
           }
         };
 
         const sectionHeading = document.querySelector('#quick-tour h3');
+        const sectionSubHeading = document.querySelector('#quick-tour .start-here-helper');
+
         if (sectionHeading) {
           if (choice === 'coral') {
             sectionHeading.innerHTML = 'Experience, leadership, and working style';
           } else if (choice === 'teal') {
-            sectionHeading.innerHTML = 'The human & the professional';
+            sectionHeading.innerHTML = 'The human & the extraordinary';
+            if (sectionSubHeading) sectionSubHeading.innerHTML = 'Context behind the work. Not the sales pitch.';
           } else {
             sectionHeading.innerHTML = 'The human & the professional';
+            if (sectionSubHeading) sectionSubHeading.innerHTML = 'Choose a card to dive deeper';
           }
         }
 
@@ -916,82 +1174,51 @@
            }
         }
 
-        grid.innerHTML = Object.keys(assets).map(key => {
-          const a = assets[key];
+        const cardHTML = (key, data) => {
           let mediaHtml = '';
-          
           if (key === 'resume' && choice === 'neutral') {
-             mediaHtml = `<video class="card-static-img" src="/assets/hp/cv_hover.mp4" poster="${a.img}" muted playsinline loop autoplay preload="metadata"></video>`;
+             mediaHtml = `<video class="card-static-img" src="/assets/hp/cv_hover.mp4" poster="${data.img}" muted playsinline loop autoplay preload="metadata"></video>`;
           } else {
-             mediaHtml = `<img src="${a.img}" alt="${a.title}" class="card-static-img">`;
+             mediaHtml = `<img src="${data.img}" alt="${data.title}" class="card-static-img">`;
           }
-
           return `
-            <div class="tour-card" data-category="past-present" id="card-${key}">
-              <div class="card-inner">
-                <div class="card-front">
-                  ${mediaHtml}
-                  <div class="card-overlay"></div>
-                  <h3>${a.title}</h3>
+          <div class="tour-card" data-category="past-present" id="card-${key}">
+            <div class="card-inner">
+              <div class="card-front">
+                ${mediaHtml}
+                <div class="card-overlay"></div>
+                <div class="card-icon-container">
+                  <img src="${data.icon}" class="card-icon-img" alt="${data.title} Icon" onerror="this.onerror=null; this.src='/assets/hp/LG_Logomark_coral.png';">
                 </div>
-                <div class="card-back card-back-${color === 'coral' ? 'coral' : 'teal'}">
-                  <div class="card-back-content">
-                    <p class="card-back-title">${a.title}</p>
-                    <p>${a.desc}</p>
-                  </div>
-                  <a href="${a.href}" class="card-cta">Explore</a>
+                <h3>${data.title}</h3>
+              </div>
+              <div class="card-back ${choice === 'teal' ? 'card-back-teal' : (choice === 'coral' ? 'card-back-coral' : 'card-back-deep-blue')}">
+                <div class="card-back-content">
+                  <p class="card-back-title">${data.title}</p>
+                  <p>${data.desc}</p>
                 </div>
+                <a href="${data.href}" class="card-cta">Explore →</a>
               </div>
             </div>
-          `;
-        }).join('');
+          </div>`;
+        };
 
-        // Update The Hub Card imagery in Work section
-        const hubCard = document.querySelector('.tour-card[data-category="present-future"] .card-front img[alt="The Hub"]')?.closest('.tour-card');
-        if (hubCard) {
-          const hubImg = hubCard.querySelector('.card-front img');
-          if (hubImg) hubImg.src = '/assets/hp/TheHub.png';
-          
-          // Remove any icons from The Hub card
-          const hubIcon = hubCard.querySelector('.card-icon-container');
-          if (hubIcon) hubIcon.remove();
-        }
+        grid.innerHTML = 
+          cardHTML('timeline', assets.timeline) +
+          cardHTML('about', assets.about) +
+          cardHTML('brand', assets.brand);
 
-        // Remove icons from other Work cards
-        const insightsCard = document.querySelector('.tour-card[data-category="present-future"] .card-front img[alt="Insights"]')?.closest('.tour-card');
-        if (insightsCard) {
-          const insightsIcon = insightsCard.querySelector('.card-icon-container');
-          if (insightsIcon) insightsIcon.remove();
-        }
-
-        const portalCard = document.querySelector('.tour-card[data-category="present-future"] .card-front img[alt="The Portal"]')?.closest('.tour-card');
-        if (portalCard) {
-          const portalIcon = portalCard.querySelector('.card-icon-container');
-          if (portalIcon) portalIcon.remove();
-        }
-
-        // Update Bottom CTA Section
-        const contactSection = document.getElementById('contact');
+        // 🧬 Update Bottom CTA Section
+        const contactSection = document.querySelector('.whats-next-section');
         if (contactSection) {
           const h2 = contactSection.querySelector('h2');
-          const p = contactSection.querySelector('p');
-          const ctaBtn = contactSection.querySelector('.cta-button');
-
+          
           if (choice === 'coral') { // Hire
             h2.innerHTML = 'Exploring a senior marketing leader?';
-            p.innerHTML = 'Let\'s create something <span class="text-accent">extraordinary</span>.';
-            ctaBtn.innerHTML = 'Get in touch &rarr;';
-            ctaBtn.href = '/contact.html';
           } else if (choice === 'teal') { // Partner
             h2.innerHTML = 'Ready to get your marketing unstuck?';
-            p.innerHTML = 'Let\'s create something <span class="text-accent">extraordinary</span>.';
-            ctaBtn.innerHTML = 'Run a StrategyIQ assessment &rarr;';
-            ctaBtn.href = '/TheHub/strategy-iq/index.html';
           } else { // Explore / Default
-            h2.innerHTML = 'Ready for your next <span class="accent-word"></span>?';
-            p.innerHTML = 'Let\'s create something <span class="text-accent">extraordinary</span>.';
-            ctaBtn.innerHTML = 'Let\'s talk about what\'s next &rarr;';
-            ctaBtn.href = '/contact.html';
+            h2.innerHTML = 'Ready for your next breakthrough?';
           }
         }
       }
@@ -1011,6 +1238,21 @@
         open: () => intentGate.classList.add('visible'),
         close: () => intentGate.classList.remove('visible')
       };
+
+      // 🧬 Robust Flip Logic
+      document.addEventListener('click', function(e) {
+        const card = e.target.closest('.tour-card');
+        // Don't flip if the user clicks the "Explore →" link inside the card
+        if (!card || e.target.closest('a')) return;
+
+        const wasFlipped = card.classList.contains('flipped');
+        // Close other cards for focus
+        document.querySelectorAll('.tour-card').forEach(c => c.classList.remove('flipped'));
+        
+        if (!wasFlipped) {
+          card.classList.add('flipped');
+        }
+      });
 
       intentCards.forEach(card => {
         card.addEventListener('click', () => {
@@ -1043,6 +1285,11 @@
       const urlParams = new URLSearchParams(window.location.search);
       const forceOpen = urlParams.get('open') === 'diagnostic' || urlParams.get('journey');
 
+      // 🧬 Always initialize visual state immediately
+      // This ensures the video/image loads even if the gate is about to open
+      const initialLens = savedPersona || 'neutral';
+      setHeroState(initialLens);
+
       if (!savedPersona || forceOpen) {
         if (urlParams.get('journey')) {
           const jMap = { hire: 'coral', partner: 'teal', explore: 'neutral' };
@@ -1055,8 +1302,6 @@
           setTimeout(window.intentGate.open, 800);
         }
       }
-
-      setHeroState(savedPersona || 'neutral');
 
       // Sync lens changes from other components (like nav-component)
       window.addEventListener('storage', (e) => {
@@ -1107,25 +1352,7 @@
 
     /* ── FLIP CARDS ── */
     document.addEventListener('DOMContentLoaded', () => {
-      const allCards = document.querySelectorAll('.tour-card');
-      
-      // Delegation to handle dynamically injected cards
-      document.addEventListener('click', function(e) {
-        const card = e.target.closest('.tour-card');
-        if (!card || e.target.closest('a')) return;
-
-        const wasFlipped = card.classList.contains('flipped');
-        
-        // Close all other cards
-        document.querySelectorAll('.tour-card').forEach(c => {
-          c.classList.remove('flipped');
-        });
-
-        // Toggle the clicked card
-        if (!wasFlipped) {
-          card.classList.add('flipped');
-        }
-      });
+      // Logic moved to main script
     });
 
     /* ── CANONICAL LINK ENFORCEMENT ── */
