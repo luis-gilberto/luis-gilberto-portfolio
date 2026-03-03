@@ -19,11 +19,11 @@
             --border: rgba(255, 255, 255, 0.08);
             --card-bg: rgba(255, 255, 255, 0.02);
             --font-display: 'Big Shoulders Display', sans-serif;
-            --font-serif: 'Cormorant Garamond', serif;
+            --font-serif: 'Playfair Display', serif;
             --font-body: 'Inter', sans-serif;
         }
 
-        [data-theme="light"] {
+        html[data-theme="light"] {
             --bg: #F5F3F0;
             --text: #0A0A0A;
             --border: rgba(0, 0, 0, 0.08);
@@ -44,33 +44,45 @@
             padding-top: 64px !important; 
             transition: background 0.4s ease, color 0.4s ease;
             -webkit-font-smoothing: antialiased;
+            display: flex; flex-direction: column; align-items: center; width: 100%;
         }
-        main { overflow-x: hidden; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
-        section { padding: 8rem 0; }
+        main { width: 100%; overflow-x: hidden; }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 0 2rem; 
+            width: 100%; 
+        }
+        section { padding: 8rem 0; width: 100%; display: flex; justify-content: center; flex-direction: column; align-items: center; }
         @media (max-width: 768px) { section { padding: 4rem 0; } }
+        
+        .hero, .manifesto { text-align: center; }
+        .pillars-header, .journey-header { 
+            text-align: left; 
+            width: 100%; 
+            max-width: 1200px; 
+            padding: 0 2rem; 
+            margin-bottom: 4rem; 
+            align-self: center; 
+        }
+        .pillars-grid { width: 100%; max-width: 1200px; padding: 0 2rem; }
 
         /* ── TYPOGRAPHY ── */
         .hero-title { 
             font-family: var(--font-display); 
             font-size: clamp(3.5rem, 12vw, 8.5rem); 
-            line-height: 0.9; 
+            line-height: 0.85; 
             font-weight: 900; 
             text-transform: uppercase; 
             margin-bottom: 2rem; 
         }
-        .section-title, .pillar-name { 
-            font-family: var(--font-display); 
-            text-transform: uppercase; 
-            font-weight: 800; 
-            letter-spacing: 0.04em; 
-        }
-        .section-title { font-size: 4rem; line-height: 1; margin-bottom: 1.5rem; }
-        .accent, .manifesto-quote { 
-            font-family: var(--font-serif); 
+        .hero-title .accent { 
+            font-family: 'Playfair Display', serif; 
+            text-transform: lowercase; 
             font-style: italic; 
+            font-weight: 500; 
             color: var(--accent); 
-            letter-spacing: -0.01em; 
+            display: inline-block;
         }
         .section-eyebrow {
             font-family: var(--font-display);
@@ -89,8 +101,10 @@
         /* ── MANIFESTO ── */
         .manifesto { position: relative; border-top: 1px solid var(--border); overflow: hidden; text-align: center; }
         .manifesto-inner { max-width: 900px; margin: 0 auto; position: relative; z-index: 1; }
-        .manifesto-quote { font-size: 3rem; line-height: 1.2; margin-bottom: 3rem; color: var(--text); }
+        .manifesto-quote { font-family: var(--font-serif); font-style: italic; font-size: 3rem; line-height: 1.2; margin-bottom: 3rem; color: var(--text); }
         .manifesto-body { font-size: 1.15rem; opacity: 0.5; line-height: 1.8; }
+        
+        .tag { background: var(--accent); color: #000; padding: 2px 8px; border-radius: 4px; font-weight: 600; text-transform: uppercase; font-size: 0.7em; letter-spacing: 0.05em; vertical-align: middle; margin-left: 8px; }
 
         /* ── PILLARS GRID ── */
         .pillars-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; margin-top: 5rem; }
@@ -98,29 +112,58 @@
 
         .pillar-card { 
             background: var(--card-bg); 
-            backdrop-filter: blur(10px); 
             border: 1px solid var(--border); 
-            padding: 3rem; 
+            padding: 3.5rem; 
             border-radius: 4px; 
             position: relative; 
             transition: all 0.4s ease; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: flex-start; 
+            opacity: 0; transform: translateY(30px);
+            display: flex; flex-direction: column; justify-content: flex-start;
         }
-        .pillar-card:hover { transform: translateY(-8px); border-color: var(--accent); }
-
-        .pillar-number {
-            position: absolute; top: 2rem; right: 3rem;
-            font-family: var(--font-display); font-size: 4rem; font-weight: 900; line-height: 1;
-            color: var(--accent); opacity: 0.4;
+        .pillar-card.visible { opacity: 1; transform: translateY(0); }
+        .pillar-card:hover { 
+            border-color: var(--accent); 
+            background: rgba(255, 255, 255, 0.03); 
+            transform: translateY(-5px); 
         }
-        .pillar-name { font-size: 2.25rem; margin-bottom: 0.5rem; }
-        .pillar-tagline { font-family: var(--font-body); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.15em; color: var(--accent); font-weight: 700; margin-bottom: 1.5rem; }
-        .pillar-description { font-size: 1rem; line-height: 1.7; opacity: 0.5; margin: 0; }
 
-        .pillar-card svg, .pillar-card img, .simple-step svg, .simple-step img { 
-            width: 40px !important; height: 40px !important; display: block; margin-bottom: 1.5rem; color: var(--accent); object-fit: contain; 
+        .pillar-number { 
+            font-family: var(--font-display); 
+            font-size: 5rem; 
+            font-weight: 900; 
+            color: var(--accent); 
+            opacity: 0.15; 
+            position: absolute; 
+            top: 2rem; right: 2rem; 
+            line-height: 1; 
+        }
+
+        .pillar-icon { 
+            width: 48px; height: 48px; 
+            margin-bottom: 2rem; 
+            color: var(--accent); 
+            stroke: currentColor; stroke-width: 1.5; fill: none; 
+        }
+        
+        /* 🧬 Restore Hub Icon */
+        img.pillar-icon { object-fit: contain; border-radius: 0; }
+
+        .pillar-name { font-size: 2rem; margin-bottom: 0.5rem; color: var(--text); }
+        .pillar-tagline { font-family: var(--font-serif); font-style: italic; color: var(--accent); margin-bottom: 1.5rem; font-size: 1.1rem; }
+        .pillar-description { line-height: 1.7; opacity: 0.7; font-size: 1.05rem; }
+
+        .accent-badge {
+            background: var(--accent);
+            color: #000;
+            padding: 0.2em 0.5em;
+            border-radius: 3px;
+            font-weight: 700;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: inline-block;
+            vertical-align: middle;
+            margin: 0 0.2em;
         }
 
         /* ── THE JOURNEY ── */
@@ -163,21 +206,60 @@
         .value-title { font-size: 5rem; line-height: 0.95; margin-bottom: 2rem; font-family: var(--font-display); text-transform: uppercase; }
         .value-body { max-width: 750px; margin: 0 auto 3.5rem; font-size: 1.25rem; line-height: 1.7; opacity: 0.6; }
 
-        .cta-button {
-            display: inline-flex; align-items: center; gap: 1rem; padding: 1.25rem 3rem; background: var(--accent); color: #000; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; border-radius: 4px; transition: all 0.3s ease;
+        /* 🧬 Final CTA Button Restoration */
+        .cta-button { 
+            background-color: var(--accent) !important; 
+            color: #050505 !important; /* Deep black for maximum contrast */ 
+            font-weight: 800 !important; 
+            text-transform: none !important; /* Fix: Sentence Case */ 
+            padding: 1.25rem 3rem !important; 
+            border: none !important; 
+            border-radius: 99px !important; /* Luxe Pill Shape */ 
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 20px var(--accent) !important; 
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease !important; 
+            text-decoration: none !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 1rem !important;
+        } 
+        
+        .cta-button:hover { 
+            transform: translateY(-5px) scale(1.02) !important; 
+            background-color: #FFFFFF !important; /* Flash to white on hover */ 
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6) !important; 
+        } 
+        
+        .cta-button svg { width: 20px; height: 20px; margin: 0 !important; color: #050505 !important; }
+
+        /* 🧬 Journey Action Links Fix */ 
+        .simple-action { 
+            background-color: var(--accent) !important; 
+            color: #050505 !important; 
+            padding: 8px 20px !important; 
+            border-radius: 99px !important; 
+            font-size: 0.8rem !important; 
+            font-weight: 700 !important; 
+            text-transform: none !important; 
+            display: inline-flex !important; 
+            align-items: center !important;
+            gap: 0.75rem !important;
+            border: none !important; 
+            text-decoration: none !important;
+            transition: transform 0.3s ease, background-color 0.3s ease !important;
         }
-        .cta-button:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.3); }
-        .cta-button svg { width: 20px; height: 20px; margin: 0 !important; color: #000 !important; }
+        
+        .simple-action:hover {
+            transform: translateY(-2px) !important;
+            background-color: #FFFFFF !important;
+        }
+        
+        .simple-action svg { width: 16px !important; height: 16px !important; margin: 0 !important; color: #050505 !important; }
 
     </style>
 </head>
 <body>
     <!-- 🧬 LUXE SYSTEM NAV HOOK -->
-    <div id="site-nav" data-active="portfolio" data-base="../"></div>
-<body>
-    <!-- 🧬 LUXE SYSTEM NAV HOOK -->
     <div id="site-nav" data-active="system" data-base="../"></div>
-    <script src="/assets/js/nav-component.js"></script>
 
     <main>
         <!-- Hero Section -->
@@ -245,7 +327,7 @@
                     <h3 class="pillar-name">The Hub</h3>
                     <div class="pillar-tagline">The Service Engine</div>
                     <p class="pillar-description">
-                        How we work. Structured, productized frameworks designed for clarity and results. Advisory for leadership, Integrated Marketing Communications (IMC) for full-service execution, and proprietary tools like ScopeIQ and StrategyIQ that turn ambiguity into action.
+                        How we work. Structured, productized frameworks designed for clarity and results. Advisory for leadership, Integrated Marketing Communications (IMC) for full-service execution, and proprietary tools like <span class="accent-badge">ScopeIQ</span> and <span class="accent-badge">StrategyIQ</span> that turn ambiguity into action.
                     </p>
                 </article>
 
@@ -300,7 +382,7 @@
                             </h3>
                             <p class="simple-text">Find your gap. Take the self-assessment to reveal where you stand. Discover where the opportunities hide.</p>
                             <a href="/contact.html" class="simple-action">
-                                Start Assessment
+                                Start assessment
                                 <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                             </a>
                         </div>
@@ -316,7 +398,7 @@
                             </h3>
                             <p class="simple-text">Build the plan. A strategic consultation that transforms diagnosis into a concrete roadmap.</p>
                             <a href="https://portal.luis-gilberto.com" target="_blank" class="simple-action">
-                                Access Portal
+                                Access portal
                                 <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                             </a>
                         </div>
@@ -332,7 +414,7 @@
                             </h3>
                             <p class="simple-text">The core build phase. We finalize assets, optimize systems, and establish governance, moving from roadmap to fully defined assets.</p>
                             <a href="/TheHub/" class="simple-action">
-                                Explore Services
+                                Explore services
                                 <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                             </a>
                         </div>
@@ -348,7 +430,7 @@
                             </h3>
                             <p class="simple-text">The final phase: deployment, performance tracking, live optimization, and establishing a continuous improvement loop for long-term growth.</p>
                             <a href="/myexperience.html#featured-work-anchor" class="simple-action">
-                                View Results
+                                View results
                                 <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                             </a>
                         </div>
@@ -370,55 +452,28 @@
                     Most consultants sell you their opinions. This system is built on data, validated by results, and refined through 15 years of decisions at the highest level. No guesswork. No gut feelings. Just frameworks that work.
                 </p>
                 <a href="/contact.html" class="cta-button" data-animate>
-                    <span>Start Your Assessment</span>
+                    <span>Start your assessment →</span>
                     <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </a>
             </div>
         </section>
     </main>
 
-    <!-- 🧬 LUXE SYSTEM COMPONENT SCRIPT -->
-    <script src="/assets/js/nav-component.js"></script>
-
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Apply persona from localStorage
-            const savedPersona = localStorage.getItem('luxe-persona') || 'teal';
-            document.body.classList.add(`path-${savedPersona}`);
-
-            // Intersection Observer for scroll animations
-            const observerOptions = {
-                root: null,
-                rootMargin: '0px 0px -100px 0px',
-                threshold: 0.1
-            };
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
-                });
-            }, observerOptions);
-
-            document.querySelectorAll('[data-animate]').forEach(el => {
-                observer.observe(el);
+        // ── INTERSECTION OBSERVER FOR FADE-IN ──
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
             });
+        }, { threshold: 0.1 });
 
-            // Smooth scroll for anchor links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        target.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
-                });
-            });
-        });
+        document.querySelectorAll('[data-animate]').forEach(el => observer.observe(el));
     </script>
+
+    <!-- 🧬 LUXE SYSTEM COMPONENT SCRIPT -->
+    <div id="site-nav" data-active="system" data-base="../"></div>
+    <script src="/assets/js/nav-component.js"></script>
 </body>
 </html>

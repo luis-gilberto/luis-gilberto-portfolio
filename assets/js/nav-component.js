@@ -41,17 +41,31 @@
     // 🧬 FIXED: Homepage redirect logic
     // If we are already on the homepage (root or index.html), 
     // we want links to the homepage to trigger the Diagnostic Modal instead of reloading.
-    const isRootHome = window.location.pathname === '/' || window.location.pathname === '/index.html' || (window.location.pathname.endsWith('/index.html') && !window.location.pathname.includes('/TheHub/') && !window.location.pathname.includes('/insights/'));
+    const isRootHome = window.location.pathname === '/' || window.location.pathname === '/index.html' || (window.location.pathname.endsWith('/index.html') && !window.location.pathname.includes('/TheHub/') && !window.location.pathname.includes('/insights/') && !window.location.pathname.includes('/system/'));
     if (isRootHome && (path === '/' || path === '/index.html')) {
       return 'javascript:if(window.intentGate)window.intentGate.open();';
     }
 
     // Ensure we don't have double slashes if base is provided
+    // 🧬 FORCE ROOT RELATIVE: If path starts with /, ignore base for navigation links
+    // This ensures /index.html always goes to root, regardless of subdirectory
+    if (path.startsWith('/')) {
+        return path; 
+    }
+
     const cleanPath = path.startsWith('/') ? path.substring(1) : path;
     const finalPath = base + cleanPath;
     
     // 🧬 Ensure root path returns at least "/" if base is empty
     return (finalPath === '' && path === '/') ? '/' : finalPath;
+  }
+  
+  // 🧬 ASSET HELPER: Use this for images/scripts/css to respect data-base
+  function asset(path) {
+    if (!path) return '';
+    if (path.startsWith('http')) return path;
+    const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+    return base + cleanPath;
   }
 
   function isActive(keys) {
@@ -307,6 +321,24 @@
 
     /* ── header CTAs ── */
     .snav-ctas { display: flex; align-items: center; gap: 8px; }
+
+    /* 🧬 LENS BADGE STYLES */
+    .lens-badge { 
+        display: flex; align-items: center; gap: 8px; 
+        background: rgba(255, 255, 255, 0.05); 
+        border: 1px solid rgba(255, 255, 255, 0.1); 
+        padding: 6px 14px; border-radius: 99px; 
+        cursor: pointer; transition: all 0.3s ease; 
+        height: 36px; /* Match other buttons */
+    } 
+    .lens-badge:hover { background: rgba(255, 255, 255, 0.12); border-color: var(--badge-accent, #fff); } 
+    .lens-dot { width: 6px; height: 6px; background: var(--badge-accent, #fff); border-radius: 50%; box-shadow: 0 0 10px var(--badge-accent, #fff); } 
+    #lens-label { font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; color: var(--badge-accent, #fff); } 
+
+    @media (max-width: 768px) {
+        #lens-badge-container { display: none; }
+    }
+
     .snav-theme-btn {
       background: none; border: 1px solid rgba(250,247,244,0.12); border-radius: 6px;
       width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
@@ -333,6 +365,63 @@
       overflow-y: auto;
     }
     .snav-drawer.open { display: flex; }
+    
+    /* 🧬 Mobile Drawer Luxe Styles */
+    .snav-drawer-group {
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .snav-drawer-header {
+        padding: 1.25rem 1.5rem;
+        display: flex; align-items: center; justify-content: space-between;
+        cursor: pointer; background: transparent; border: none; width: 100%;
+        color: #fff; text-align: left;
+    }
+    .snav-drawer-header:hover { background: rgba(255,255,255,0.03); }
+    .snav-drawer-title {
+        font-family: 'Big Shoulders Display', sans-serif;
+        font-size: 1.5rem; font-weight: 800; text-transform: uppercase;
+        letter-spacing: 0.02em; color: #fff;
+    }
+    .snav-drawer-chevron { transition: transform 0.3s ease; opacity: 0.5; }
+    .snav-drawer-header[aria-expanded="true"] .snav-drawer-chevron { transform: rotate(180deg); opacity: 1; color: var(--badge-accent, #fff); }
+    .snav-drawer-header[aria-expanded="true"] .snav-drawer-title { color: var(--badge-accent, #fff); }
+
+    .snav-drawer-content {
+        max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        background: rgba(255,255,255,0.02);
+    }
+    .snav-drawer-header[aria-expanded="true"] + .snav-drawer-content { max-height: 500px; }
+
+    .snav-drawer-sublink {
+        display: flex; align-items: center; gap: 1rem;
+        padding: 0.875rem 1.5rem 0.875rem 2rem;
+        text-decoration: none; color: rgba(255,255,255,0.6);
+        font-family: 'Inter', sans-serif; font-size: 0.95rem;
+        border-left: 2px solid transparent; transition: all 0.2s;
+    }
+    .snav-drawer-sublink:hover {
+        background: rgba(255,255,255,0.05);
+        color: #fff; padding-left: 2.25rem;
+    }
+    .snav-drawer-sublink.active {
+        color: #fff; border-left-color: var(--badge-accent, #fff);
+        background: linear-gradient(to right, rgba(255,255,255,0.05), transparent);
+    }
+    .snav-drawer-icon { width: 18px; height: 18px; opacity: 0.7; }
+    
+    .snav-drawer-footer { margin-top: auto; padding: 2rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.1); }
+    .snav-status { display: flex; align-items: center; gap: 0.75rem; }
+    .snav-status-dot { width: 8px; height: 8px; border-radius: 50%; background: #2ED3C6; box-shadow: 0 0 8px rgba(46,211,198,0.5); }
+    .snav-status-label { font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.8); }
+
+    .snav-drawer-reset { 
+        display: flex; align-items: center; justify-content: center; gap: 0.75rem;
+        padding: 1rem; margin: 1rem 1.5rem; 
+        border: 1px solid rgba(255,255,255,0.15); border-radius: 8px;
+        color: rgba(255,255,255,0.7); font-family: 'Inter', sans-serif; font-size: 0.9rem;
+        cursor: pointer; transition: all 0.2s;
+    }
+    .snav-drawer-reset:hover { background: rgba(255,255,255,0.1); color: #fff; border-color: #fff; }
 
     .snav-drawer-series { padding: 20px 24px; border-bottom: 1px solid rgba(250,247,244,0.08); position: relative; }
     .snav-drawer-series::before {
@@ -521,29 +610,29 @@
     <footer class="snav-footer snav-footer--editorial">
       <div class="snav-footer-grid">
         <div>
-          <a href="${u('/')}" class="snav-footer-logo-text">LG.</a>
+          <a href="/index.html" class="snav-footer-logo-text">LG.</a>
           <p class="snav-footer-tagline">Exploring the intersection of design, technology, and human experience.</p>
           <div class="snav-social-icons">
             <a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" class="snav-social-icon" aria-label="LinkedIn">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
             </a>
-            <a href="${u('/')}" class="snav-social-icon" aria-label="Website">
+            <a href="/index.html" class="snav-social-icon" aria-label="Website">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
             </a>
           </div>
         </div>
         <div>
           <div class="snav-footer-heading">Ecosystem</div>
-          <a href="${u('/')}" class="snav-footer-link">Portfolio</a>
-          <a href="${u('/insights/')}" class="snav-footer-link">Insights</a>
-          <a href="${u('/TheHub/')}" class="snav-footer-link">The Hub</a>
-          <a href="${u('/TheHub/strategy-iq/index.html')}" class="snav-footer-link">StrategyIQ</a>
+          <a href="/index.html" class="snav-footer-link">Portfolio</a>
+          <a href="/insights/index.html" class="snav-footer-link">Insights</a>
+          <a href="/TheHub/index.html" class="snav-footer-link">The Hub</a>
+          <a href="/TheHub/strategy-iq/index.html" class="snav-footer-link">StrategyIQ</a>
         </div>
         <div>
           <div class="snav-footer-heading">Connect</div>
-          <a href="${u('/contact.html')}" class="snav-footer-link">Contact</a>
-          <a href="${u('/about.html')}" class="snav-footer-link">About Me</a>
-          <a href="${u('/insights/insights-brand.html')}" class="snav-footer-link">Brand Guidelines</a>
+          <a href="/contact.html" class="snav-footer-link">Contact</a>
+          <a href="/about.html" class="snav-footer-link">About Me</a>
+          <a href="/insights/insights-brand.html" class="snav-footer-link">Brand Guidelines</a>
           <a href="#" class="snav-footer-link" onclick="document.getElementById('aiCollabModal').style.display='flex'; return false;">About AI Collaboration</a>
         </div>
         <div>
@@ -564,24 +653,24 @@
     <footer class="snav-footer">
       <div class="snav-footer-grid">
         <div>
-          <a href="${u('/')}" class="snav-footer-logo">
-            <img id="snav-footer-logo-dark"  src="${u('/assets/images/Logomark_White_a.png')}" alt="LG">
-            <img id="snav-footer-logo-light" src="${u('/assets/images/Logomark_Dark_a.png')}"  alt="LG" style="display:none;">
+          <a href="/index.html" class="snav-footer-logo">
+            <img id="snav-footer-logo-dark"  src="${asset('/assets/images/Logomark_White_a.png')}" alt="LG">
+            <img id="snav-footer-logo-light" src="${asset('/assets/images/Logomark_Dark_a.png')}"  alt="LG" style="display:none;">
           </a>
           <p class="snav-footer-tagline">Making technology feel human through clarity, beautiful execution, and systems that scale.</p>
         </div>
         <div>
           <div class="snav-footer-heading">Ecosystem</div>
-          <a href="${u('/')}"          class="snav-footer-link">Portfolio</a>
-          <a href="${u('/insights/')}" class="snav-footer-link">Insights</a>
-          <a href="${u('/TheHub/')}"   class="snav-footer-link">The Hub</a>
+          <a href="/index.html"          class="snav-footer-link">Portfolio</a>
+          <a href="/insights/index.html" class="snav-footer-link">Insights</a>
+          <a href="/TheHub/index.html"   class="snav-footer-link">The Hub</a>
           <a href="https://portal.luis-gilberto.com" target="_blank" class="snav-footer-link">The Portal</a>
         </div>
         <div>
           <div class="snav-footer-heading">Connect</div>
-          <a href="${u('/contact.html')}" class="snav-footer-link">Contact</a>
-          <a href="${u('/about.html')}"   class="snav-footer-link">About Me</a>
-          <a href="${u('/brand/')}"       class="snav-footer-link">Identity</a>
+          <a href="/contact.html" class="snav-footer-link">Contact</a>
+          <a href="/about.html"   class="snav-footer-link">About Me</a>
+          <a href="/brand/"       class="snav-footer-link">Identity</a>
           <a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" class="snav-footer-link">LinkedIn</a>
         </div>
         <div>
@@ -603,9 +692,9 @@
     <!-- ── HEADER ── -->
     <header class="snav-header" id="snav-header">
       <div class="snav-inner">
-        <a href="${u('/')}" class="snav-logo">
-          <img id="snav-logo-desktop" src="${u('/assets/images/AUg_logo_White.png')}" alt="Luis Gilberto">
-          <img id="snav-logo-mark"    src="${u('/assets/images/Logomark_White_a.png')}" alt="Luis Gilberto">
+        <a href="/index.html" class="snav-logo">
+          <img id="snav-logo-desktop" src="${asset('/assets/images/AUg_logo_White.png')}" alt="Luis Gilberto">
+          <img id="snav-logo-mark"    src="${asset('/assets/images/Logomark_White_a.png')}" alt="Luis Gilberto">
         </a>
         <nav class="snav-desktop" id="snav-desktop" aria-label="Main navigation">
           <button id="snav-trigger-portfolio" class="${navLinkClass(['portfolio','experience','timeline','about','brand','contact'])}"
@@ -634,15 +723,16 @@
                     <p class="snav-panel-title">Work, story &amp; process</p>
                   </div>
                   <div class="snav-grid">
-                    ${panelItem('/myexperience.html','briefcase','Work &amp; Experience','15+ years across Microsoft, startups, and beyond','experience')}
-                    ${panelItem('/timeline.html','timeline','Career Timeline','The eras, pivots, and moments that shaped the work','timeline')}
-                    ${panelItem('/about.html','user','About Luis','From Caracas to Cascadia — the full story','about')}
-                    ${panelItem('/brand/','brand','Brand Identity','The canonical system behind the ecosystem','brand')}
-                    ${panelItem('/contact.html','mail','Contact','Start a project or ask a question','contact')}
+                    ${panelItem('/index.html','grid','Portfolio Homepage','The complete overview of my work and methodology',['portfolio','home'])}
+                    ${panelItem('/myexperience.html','briefcase','Work &amp; Experience','15+ years across Microsoft, startups, and beyond',['experience'])}
+                    ${panelItem('/timeline.html','timeline','Career Timeline','The eras, pivots, and moments that shaped the work',['timeline'])}
+                    ${panelItem('/about.html','user','About Luis','From Caracas to Cascadia — the full story',['about'])}
+                    ${panelItem('/brand/','brand','Brand Identity','The canonical system behind the ecosystem',['brand'])}
+                    ${panelItem('/contact.html','mail','Contact','Start a project or ask a question',['contact'])}
                   </div>
                   <div class="snav-panel-footer">
-                    <a href="${u('/system/index.html')}" class="snav-panel-footer-link">How it all connects ${ICONS.arrow}</a>
-                    <a href="${u('/')}" class="snav-panel-footer-link">Visit portfolio ${ICONS.arrow}</a>
+                    <a href="/system/index.html" class="snav-panel-footer-link">How it all connects →</a>
+                    <a href="/index.html" class="snav-panel-footer-link">Visit portfolio →</a>
                   </div>
                 </div>
               </div>
@@ -654,14 +744,14 @@
                     <p class="snav-panel-title">Browse by Series</p>
                   </div>
                   <div class="snav-grid">
-                    ${panelItem('/insights/','pencil','All Stories','Insights homepage — browse everything','insights')}
+                    ${panelItem('/insights/index.html','pencil','All Stories','Insights homepage — browse everything',['insights'])}
                     ${panelItem('/insights/series/#building','grid','The Building Series','Structural decisions, built in public','')}
                     ${panelItem('/insights/series/#use-cases','pulse','Use Cases','Real-world launches and product strategies','')}
                     ${panelItem('/insights/series/#reflections','book','Reflections','Personal thoughts on creativity, pace, and momentum','')}
                   </div>
                   <div class="snav-panel-footer">
-                    <a href="${u('/system/index.html')}" class="snav-panel-footer-link">How it all connects ${ICONS.arrow}</a>
-                    <a href="${u('/insights/')}" class="snav-panel-footer-link">Visit Insights ${ICONS.arrow}</a>
+                    <a href="/system/index.html" class="snav-panel-footer-link">How it all connects →</a>
+                    <a href="/insights/index.html" class="snav-panel-footer-link">Visit Insights →</a>
                   </div>
                 </div>
               </div>
@@ -673,21 +763,14 @@
                     <p class="snav-panel-title">Four arms. One system.</p>
                   </div>
                   <div class="snav-grid-2col">
-                    ${panelItem('/TheHub/strategy-iq/index.html','hub','StrategyIQ™','Diagnostic engine — maturity benchmarking','hub','Strategic Intelligence')}
-                    ${panelItem('/TheHub/advisory/index.html','people','Advisory','Direct access — leadership alignment','hub','Partnership')}
-                    ${panelItem('/TheHub/studio.html','star','The Studio','High-fidelity execution — ideas into assets','hub','Creative Production')}
-                    <a href="https://portal.luis-gilberto.com/" target="_blank" rel="noopener" class="snav-item">
-                      <div class="snav-item-icon">${ICONS.lock}</div>
-                      <div class="snav-item-text">
-                        <p class="snav-item-title">The Portal ↗</p>
-                        <p class="snav-item-desc">Secure command center — client work lives here</p>
-                        <span class="snav-item-role">Client Access</span>
-                      </div>
-                    </a>
+                    ${panelItem('/TheHub/index.html','grid','The Hub Overview','How I productize strategy',['hub'])}
+                    ${panelItem('/TheHub/strategy-iq/index.html','pulse','StrategyIQ','Diagnostic &amp; roadmap calibration',['strategy-iq'])}
+                    ${panelItem('/system/index.html','book','The System','The owner\'s manual for my methodology',['system'])}
+                    ${panelItem('/contact.html','mail','Advisory','Fractional leadership &amp; consulting',['contact'])}
                   </div>
                   <div class="snav-panel-footer">
-                    <a href="${u('/system/index.html')}" class="snav-panel-footer-link">How it all connects ${ICONS.arrow}</a>
-                    <a href="${u('/TheHub/')}" class="snav-panel-footer-link">Explore The Hub ${ICONS.arrow}</a>
+                    <a href="/system/index.html" class="snav-panel-footer-link">How it all connects →</a>
+                    <a href="/TheHub/index.html" class="snav-panel-footer-link">Explore The Hub →</a>
                   </div>
                 </div>
               </div>
@@ -695,22 +778,17 @@
               <div id="snav-panel-portal" class="snav-panel">
                 <div class="snav-panel-wrap" data-ch="portal">
                   <div class="snav-panel-header">
-                    <p class="snav-panel-label">The Portal</p>
-                    <p class="snav-panel-title">Your command center</p>
+                    <p class="snav-panel-label">Client Access</p>
+                    <p class="snav-panel-title">Project Command</p>
                   </div>
                   <div class="snav-portal-features">
-                    <div class="snav-portal-feature"><div class="snav-portal-dot"></div>Strategy tools &amp; StrategyIQ engine</div>
-                    <div class="snav-portal-feature"><div class="snav-portal-dot"></div>Shared project workspaces</div>
-                    <div class="snav-portal-feature"><div class="snav-portal-dot"></div>Direct access to Luis &amp; Advisory</div>
-                    <div class="snav-portal-feature"><div class="snav-portal-dot"></div>Progress tracking &amp; deliverables</div>
+                    <div class="snav-portal-feature"><div class="snav-portal-dot"></div>Real-time Status</div>
+                    <div class="snav-portal-feature"><div class="snav-portal-dot"></div>Asset Library</div>
+                    <div class="snav-portal-feature"><div class="snav-portal-dot"></div>Strategy Docs</div>
                   </div>
                   <div class="snav-portal-cta">
-                    <p class="snav-portal-cta-label">Ready to enter<br>the ecosystem?</p>
-                    <a href="https://portal.luis-gilberto.com/auth/signup" target="_blank" rel="noopener" class="snav-portal-cta-btn">Request Access</a>
-                  </div>
-                  <div class="snav-panel-footer">
-                    <span class="snav-panel-footer-text">Existing client?</span>
-                    <a href="https://portal.luis-gilberto.com/auth/signin" target="_blank" rel="noopener" class="snav-panel-footer-link">Sign in ${ICONS.arrow}</a>
+                    <span class="snav-portal-cta-label">Active Client?</span>
+                    <a href="https://portal.luis-gilberto.com" target="_blank" class="snav-portal-cta-btn">Login</a>
                   </div>
                 </div>
               </div>
@@ -718,17 +796,19 @@
           </div><!-- /viewport -->
         </nav>
         <div class="snav-ctas">
-          <button class="snav-lens-badge" id="snav-lens-badge" aria-label="Audience Lens">
-            <div class="snav-lens-dot"></div>
-            <span id="snav-lens-label">Lens</span>
+          <!-- 🧬 LENS BADGE INJECTED HERE -->
+          <div id="lens-badge-container">
+            <button id="lens-reset-trigger" class="lens-badge">
+              <span class="lens-dot"></span>
+              <span id="lens-label">EXPLORING</span>
+            </button>
+          </div>
+
+          <button class="snav-theme-btn" id="snav-theme-toggle" aria-label="Toggle theme">
+            <span>${ICONS.moon}</span>
           </button>
-          <button class="snav-theme-btn" id="snav-theme-btn" aria-label="Toggle theme">
-            <span id="snav-icon-sun">${ICONS.sun}</span>
-            <span id="snav-icon-moon" style="display:none;">${ICONS.moon}</span>
-          </button>
-          <button class="snav-mobile-toggle" id="snav-mobile-toggle" aria-label="Toggle menu" aria-expanded="false">
-            <span id="snav-icon-menu">${ICONS.menu}</span>
-            <span id="snav-icon-close" style="display:none;">${ICONS.close}</span>
+          <button class="snav-mobile-toggle" id="snav-mobile-toggle" aria-label="Menu">
+            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></span>
           </button>
         </div>
       </div>
@@ -737,28 +817,87 @@
     <div class="snav-drawer" id="snav-drawer">
       <div class="snav-drawer-series" style="border-bottom:none; padding-bottom:0;">
         <div style="display:flex; justify-content:center; padding: 20px 0;">
-          <img id="snav-drawer-mark" src="${u('/assets/images/Logomark_White_a.png')}" alt="LG" style="height:40px; width:auto;">
+          <img id="snav-drawer-mark" src="${asset('/assets/images/Logomark_White_a.png')}" alt="LG" style="height:40px; width:auto;">
         </div>
       </div>
 
       <div class="snav-drawer-global">
-        <div class="snav-drawer-global-label">Primary Navigation</div>
-        <a href="${u('/')}" class="snav-drawer-link${isActive(['portfolio','experience','timeline','about','brand','contact']) ? ' snav-here' : ''}">
-          <div class="snav-drawer-link-icon">${ICONS.home}</div>
-          <span class="snav-drawer-link-text">Portfolio</span>
-        </a>
-        <a href="${u('/insights/')}" class="snav-drawer-link${isActive('insights') ? ' snav-here' : ''}">
-          <div class="snav-drawer-link-icon">${ICONS.pencil}</div>
-          <span class="snav-drawer-link-text">Insights</span>
-        </a>
-        <a href="${u('/TheHub/')}" class="snav-drawer-link${isActive('hub') ? ' snav-here' : ''}">
-          <div class="snav-drawer-link-icon">${ICONS.hub}</div>
-          <span class="snav-drawer-link-text">The Hub</span>
-        </a>
-        <a href="https://portal.luis-gilberto.com/" class="snav-drawer-link${isActive('portal') ? ' snav-here' : ''}" target="_blank" rel="noopener">
-          <div class="snav-drawer-link-icon">${ICONS.lock}</div>
-          <span class="snav-drawer-link-text">The Portal ↗</span>
-        </a>
+        <!-- 🧬 PORTFOLIO GROUP -->
+        <div class="snav-drawer-group">
+          <button class="snav-drawer-header" aria-expanded="false" onclick="toggleDrawerGroup(this)">
+            <span class="snav-drawer-title">Portfolio</span>
+            <span class="snav-drawer-chevron">${CHEVRON}</span>
+          </button>
+          <div class="snav-drawer-content">
+            <a href="/index.html" class="snav-drawer-sublink${isActive(['portfolio','home'])?' active':''}">
+               <span class="snav-drawer-icon">${ICONS.home}</span> Homepage
+            </a>
+            <a href="/myexperience.html" class="snav-drawer-sublink${isActive('experience')?' active':''}">
+               <span class="snav-drawer-icon">${ICONS.briefcase}</span> Experience
+            </a>
+            <a href="/timeline.html" class="snav-drawer-sublink${isActive('timeline')?' active':''}">
+               <span class="snav-drawer-icon">${ICONS.timeline}</span> Timeline
+            </a>
+            <a href="/about.html" class="snav-drawer-sublink${isActive('about')?' active':''}">
+               <span class="snav-drawer-icon">${ICONS.user}</span> About Me
+            </a>
+            <a href="/brand/" class="snav-drawer-sublink${isActive('brand')?' active':''}">
+               <span class="snav-drawer-icon">${ICONS.brand}</span> Identity
+            </a>
+          </div>
+        </div>
+
+        <!-- 🧬 HUB GROUP -->
+        <div class="snav-drawer-group">
+          <button class="snav-drawer-header" aria-expanded="false" onclick="toggleDrawerGroup(this)">
+            <span class="snav-drawer-title">The Hub</span>
+            <span class="snav-drawer-chevron">${CHEVRON}</span>
+          </button>
+          <div class="snav-drawer-content">
+            <a href="/TheHub/index.html" class="snav-drawer-sublink${isActive('hub')?' active':''}">
+               <span class="snav-drawer-icon">${ICONS.hub}</span> Hub Overview
+            </a>
+            <a href="/TheHub/strategy-iq/index.html" class="snav-drawer-sublink${isActive('strategy-iq')?' active':''}">
+               <span class="snav-drawer-icon">${ICONS.pulse}</span> StrategyIQ™
+            </a>
+            <a href="/system/index.html" class="snav-drawer-sublink${isActive('system')?' active':''}">
+               <span class="snav-drawer-icon">${ICONS.book}</span> The System
+            </a>
+            <a href="/contact.html" class="snav-drawer-sublink${isActive('contact')?' active':''}">
+               <span class="snav-drawer-icon">${ICONS.mail}</span> Advisory
+            </a>
+            <a href="https://portal.luis-gilberto.com/" target="_blank" class="snav-drawer-sublink${isActive('portal')?' active':''}">
+               <span class="snav-drawer-icon">${ICONS.lock}</span> Client Portal ↗
+            </a>
+          </div>
+        </div>
+
+        <!-- 🧬 INSIGHTS GROUP -->
+        <div class="snav-drawer-group">
+          <button class="snav-drawer-header" aria-expanded="false" onclick="toggleDrawerGroup(this)">
+            <span class="snav-drawer-title">Insights</span>
+            <span class="snav-drawer-chevron">${CHEVRON}</span>
+          </button>
+          <div class="snav-drawer-content">
+            <a href="/insights/index.html" class="snav-drawer-sublink${isActive('insights')?' active':''}">
+               <span class="snav-drawer-icon">${ICONS.pencil}</span> All Stories
+            </a>
+            <a href="/insights/series/#building" class="snav-drawer-sublink">
+               <span class="snav-drawer-icon">${ICONS.grid}</span> Building Series
+            </a>
+            <a href="/insights/series/#use-cases" class="snav-drawer-sublink">
+               <span class="snav-drawer-icon">${ICONS.pulse}</span> Use Cases
+            </a>
+          </div>
+        </div>
+        
+        <!-- 🧬 DIRECT LINKS -->
+        <div class="snav-drawer-group">
+            <a href="/contact.html" class="snav-drawer-header" style="text-decoration:none;">
+                <span class="snav-drawer-title">Contact</span>
+                <span class="snav-drawer-icon" style="color:rgba(255,255,255,0.5);">${ICONS.mail}</span>
+            </a>
+        </div>
       </div>
 
       <div class="snav-drawer-reset" id="snav-drawer-reset">
@@ -885,17 +1024,27 @@
 
     // theme
     function applyTheme(t) {
+      if (!t) t = 'dark';
       document.documentElement.setAttribute('data-theme', t);
       localStorage.setItem('portfolio-theme', t);
-      iconSun.style.display  = t === 'dark' ? 'none'  : 'flex';
-      iconMoon.style.display = t === 'dark' ? 'flex' : 'none';
-      if (flDark)  flDark.style.display  = t === 'dark' ? 'block' : 'none';
-      if (flLight) flLight.style.display = t === 'dark' ? 'none'  : 'block';
+      
+      // Safety checks for elements that might not exist in all contexts
+      if (iconSun)  iconSun.style.display  = t === 'dark' ? 'none'  : 'flex';
+      if (iconMoon) iconMoon.style.display = t === 'dark' ? 'flex' : 'none';
+      if (flDark)   flDark.style.display   = t === 'dark' ? 'block' : 'none';
+      if (flLight)  flLight.style.display  = t === 'dark' ? 'none'  : 'block';
     }
-    applyTheme(localStorage.getItem('portfolio-theme') || 'dark');
-    themeBtn?.addEventListener('click', () =>
-      applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark')
-    );
+    
+    // Defer initial theme application until elements are surely in the DOM
+    setTimeout(() => {
+        applyTheme(localStorage.getItem('portfolio-theme') || 'dark');
+    }, 0);
+
+    if (themeBtn) {
+        themeBtn.addEventListener('click', () =>
+          applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark')
+        );
+    }
 
     // mobile drawer
     let drawerOpen = false;
@@ -953,6 +1102,20 @@
       const journeyMap = { teal: 'partner', coral: 'hire', neutral: 'explore' };
       document.body.setAttribute('data-journey', journeyMap[choice] || 'explore');
 
+      // 🧬 Update Header Badge
+      const headerLabel = document.getElementById('lens-label');
+      const headerBadge = document.querySelector('.lens-badge');
+      const headerDot = document.querySelector('.lens-dot');
+      
+      if (headerLabel) {
+         headerLabel.textContent = LABELS[choice] || 'EXPLORING';
+         let accentColor = '#FFFFFF';
+         if (choice === 'teal') accentColor = '#2ED3C6';
+         if (choice === 'coral') accentColor = '#F96F6E';
+         
+         document.documentElement.style.setProperty('--badge-accent', accentColor);
+      }
+
       // Dynamic Logo Swap
       const desktopLogo = document.getElementById('snav-logo-desktop');
       if (desktopLogo) {
@@ -966,44 +1129,37 @@
       }
       
       // 🧬 Hire Journey Footer Logic
-      const footerStatus = document.querySelector('.snav-footer-status span:nth-child(2)');
-      if (footerStatus) {
-        if (choice === 'coral') {
-          footerStatus.textContent = 'Open to senior marketing roles';
-        } else {
-          footerStatus.textContent = 'Accepting Projects';
-        }
-      }
+      const footerStatus = document.querySelector('.snav-footer-status-label'); // Footer
+      const drawerStatus = document.querySelector('.snav-status-label'); // Drawer
+      
+      const statusText = (choice === 'coral') ? 'Open to senior marketing roles' : 'Accepting Projects';
+      
+      if (footerStatus) footerStatus.textContent = statusText;
+      if (drawerStatus) drawerStatus.textContent = statusText;
     }
 
     const currentPersona = localStorage.getItem('luxe-persona') || 'neutral';
     applyPersona(currentPersona);
 
+    // 🧬 LENS RESET HANDLER
+    const headerReset = document.getElementById('lens-reset-trigger');
     const drawerReset = document.getElementById('snav-drawer-reset');
-    drawerReset?.addEventListener('click', (e) => {
-      e.preventDefault();
-      
-      const isRootHome = window.location.pathname === '/' || window.location.pathname === '/index.html' || (window.location.pathname.endsWith('/index.html') && !window.location.pathname.includes('/TheHub/') && !window.location.pathname.includes('/insights/'));
 
-      if (isRootHome && window.intentGate) {
-        if (drawer) drawer.classList.remove('open');
-        window.intentGate.open();
-      } else {
-        window.location.href = u('/index.html?open=diagnostic');
-      }
-    });
+    const handleReset = (e) => {
+        e.preventDefault();
+        const isRootHome = window.location.pathname === '/' || window.location.pathname === '/index.html' || (window.location.pathname.endsWith('/index.html') && !window.location.pathname.includes('/TheHub/') && !window.location.pathname.includes('/insights/'));
 
-    lensBadge?.addEventListener('click', (e) => {
-      e.preventDefault();
-      
-      const isRootHome = window.location.pathname === '/' || window.location.pathname === '/index.html';
+        if (isRootHome && window.intentGate) {
+          if (drawer) drawer.classList.remove('open');
+          window.intentGate.open();
+        } else {
+          window.location.href = u('/index.html?open=diagnostic');
+        }
+    };
 
-      if (isRootHome && window.intentGate) {
-        window.intentGate.open();
-      } else {
-        window.location.href = u('/index.html?open=diagnostic');
-      }
-    });
+    if (headerReset) headerReset.addEventListener('click', handleReset);
+    if (drawerReset) drawerReset.addEventListener('click', handleReset);
+    if (lensBadge)   lensBadge.addEventListener('click', handleReset);
 
     // Sync changes from other tabs
     window.addEventListener('storage', (e) => {
@@ -1013,7 +1169,7 @@
     });
   }
 
-  // run after current script execution
+  // run after current script// ─── Initialize ───
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
@@ -1021,3 +1177,13 @@
   }
 
 })();
+
+// 🧬 Global Helper for Mobile Accordion
+window.toggleDrawerGroup = function(btn) {
+    const isExpanded = btn.getAttribute('aria-expanded') === 'true';
+    
+    // Optional: Close others (Accordion behavior)
+    // document.querySelectorAll('.snav-drawer-header').forEach(h => h.setAttribute('aria-expanded', 'false'));
+    
+    btn.setAttribute('aria-expanded', !isExpanded);
+};
