@@ -1048,14 +1048,16 @@
 
     // mobile drawer
     let drawerOpen = false;
-    mobileToggle?.addEventListener('click', () => {
-      drawerOpen = !drawerOpen;
-      drawer.classList.toggle('open', drawerOpen);
-      mobileToggle.setAttribute('aria-expanded', drawerOpen);
-      document.body.style.overflow = drawerOpen ? 'hidden' : '';
-      iconMenu.style.display  = drawerOpen ? 'none'  : 'flex';
-      iconClose.style.display = drawerOpen ? 'flex' : 'none';
-    });
+    if (mobileToggle) {
+      mobileToggle.addEventListener('click', () => {
+        drawerOpen = !drawerOpen;
+        if (drawer) drawer.classList.toggle('open', drawerOpen);
+        mobileToggle.setAttribute('aria-expanded', drawerOpen);
+        document.body.style.overflow = drawerOpen ? 'hidden' : '';
+        if (iconMenu) iconMenu.style.display  = drawerOpen ? 'none'  : 'flex';
+        if (iconClose) iconClose.style.display = drawerOpen ? 'flex' : 'none';
+      });
+    }
 
     // ── persona management ──
     const lensBadge = document.getElementById('snav-lens-badge');
