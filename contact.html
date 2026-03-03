@@ -188,6 +188,23 @@
     box-shadow: 0 6px 20px rgba(249,111,110,0.35);
   }
 
+  /* 🧬 Conditional Form Styling */ 
+  input:disabled, select:disabled { 
+    opacity: 0.35; 
+    cursor: not-allowed; 
+    background: rgba(255, 255, 255, 0.02) !important; 
+    border-color: var(--rule) !important; 
+  } 
+  
+  #role-type-group { 
+    animation: slideIn 0.4s ease forwards; 
+  } 
+  
+  @keyframes slideIn { 
+    from { opacity: 0; transform: translateY(-10px); } 
+    to { opacity: 1; transform: translateY(0); } 
+  }
+
   /* FAQ */
   .faq-section { margin-bottom: 100px; }
   .faq-section-title {
@@ -361,6 +378,7 @@
               <option value="content-strategy">Content Strategy</option>
               <option value="creative-direction">Creative Direction</option>
               <option value="consulting">Strategic Consulting</option>
+              <option value="role-discussion">Hiring / Role Discussion</option>
               <option value="other">Other</option>
             </select>
           </div>
@@ -375,6 +393,15 @@
               <option value="100k-plus">$100K+</option>
               <option value="discuss">Prefer to discuss</option>
             </select>
+            <!-- 🧬 Conditional Role Type (Hidden by default) -->
+            <div id="role-type-group" class="form-group" style="display: none; margin-top: 24px;">
+              <label for="role-type">Role Interest</label>
+              <select id="role-type" name="role-type">
+                <option value="full-time">Full-Time Leadership</option>
+                <option value="fractional-part-time">Fractional / Part-Time</option>
+                <option value="advisory">Advisory / Board Seat</option>
+              </select>
+            </div>
           </div>
         </div>
         <div class="form-group">
@@ -444,6 +471,28 @@
   // ── FAQ ──
   window.toggleFAQ = el => el.classList.toggle('active');
 
+  // ── Intent Switch Logic (Role Discussion) ──
+  const projectType = document.getElementById('project-type');
+  const budgetSelect = document.getElementById('budget');
+  const roleGroup = document.getElementById('role-type-group');
+  const dossierEyebrow = document.querySelector('[data-contact-headline]');
+
+  if (projectType && budgetSelect && roleGroup) {
+    projectType.addEventListener('change', (e) => {
+      if (e.target.value === 'role-discussion') {
+        // Hiring Path
+        budgetSelect.disabled = true;
+        roleGroup.style.display = 'block';
+        if (dossierEyebrow) dossierEyebrow.textContent = '// Talent Inquiry';
+      } else {
+        // Standard Path
+        budgetSelect.disabled = false;
+        roleGroup.style.display = 'none';
+        if (dossierEyebrow) dossierEyebrow.textContent = '// Intake Form';
+      }
+    });
+  }
+
   // ── Form — async submit → redirect ──
   const form = document.querySelector('.contact-form');
   if (form) {
@@ -499,7 +548,15 @@
     if (p.get('prefillName')  && name)  name.value  = decodeURIComponent(p.get('prefillName'));
     if (p.get('prefillEmail') && email) email.value = decodeURIComponent(p.get('prefillEmail'));
     if (p.get('prefillCompany') && co)  co.value    = decodeURIComponent(p.get('prefillCompany'));
-    if (brief || p.get('prefillName') || p.get('prefillEmail')) {
+    
+    // 🧬 Journey Sync: Auto-select Hiring Path
+    if (p.get('journey') === 'hire' && projectType) {
+      projectType.value = 'role-discussion';
+      // Trigger change event to activate UI logic
+      projectType.dispatchEvent(new Event('change'));
+    }
+
+    if (brief || p.get('prefillName') || p.get('prefillEmail') || p.get('journey')) {
       history.replaceState({}, document.title, location.pathname);
       form?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
