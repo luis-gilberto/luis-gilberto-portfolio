@@ -1,3 +1,15 @@
+## 2026-03-03
+
+- **System Typography Overhaul (v3.13)**
+  - **Hierarchy**: Refined "THE system" section header. "THE" uses dynamic accent color (Teal/Coral) in Big Shoulders Bold. "system" uses Cormorant Garamond Light (300) Italic for contrast.
+  - **Spacing**: Enforced strict vertical rhythm between title, thesis, and helper text.
+- **Homepage Interaction Fixes**
+  - **Card Flip**: Resolved unresponsive flip interaction on lower "Present & Future Work" cards by removing conflicting inline handlers and standardizing on global event delegation.
+  - **Visuals**: Fixed "stray dot" bug by hiding empty icon containers via CSS.
+- **The Hub Updates**
+  - **Content Sync**: Fully updated `TheHub/index.html` with new architecture grid and flow diagrams.
+  - **Assets**: Updated card icons for Studio, Portal, and StrategyIQ to use high-fidelity PNG assets from `/TheHub/assets/images/`.
+
 ## 2026-01-13
 
 - **Edge-ucational Case Study Refactor (Cinematic Dark Mode)**
