@@ -96,7 +96,7 @@
         } 
 
         .container { max-width: var(--container-width); margin: 0 auto; padding: 0 2rem; } 
-        .section { padding: 8.75rem 0; position: relative; } 
+        .section { padding: 11rem 0; position: relative; } 
 
         /* ========================================= 
            5. HUB HERO 
@@ -263,8 +263,10 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 3.5rem 0 1rem;
+            padding: 3.5rem 0 0;
             gap: 0;
+            margin: 0 auto;
+            max-width: 1200px;
         }
         .sd-row {
             display: flex;
@@ -336,11 +338,20 @@
            ========================================= */
             width: 100%;
             height: 1px;
-            background: linear-gradient(to right, transparent, rgba(255,255,255,0.08), transparent);
-            margin: 5rem 0;
+            background: linear-gradient(to right, transparent, rgba(249,111,110,0.2), transparent);
+            margin: 2.5rem 0;
+            position: relative;
+        }
+        .section-divider::after {
+            content: '';
+            position: absolute;
+            top: -1px; left: 50%; transform: translateX(-50%);
+            width: 200px; height: 3px;
+            background: radial-gradient(ellipse, rgba(249,111,110,0.35) 0%, transparent 70%);
+            filter: blur(2px);
         }
         [data-theme="light"] .section-divider {
-            background: linear-gradient(to right, transparent, rgba(0,0,0,0.08), transparent);
+            background: linear-gradient(to right, transparent, rgba(249,111,110,0.12), transparent);
         }
 
         .architecture-grid { 
@@ -415,14 +426,15 @@
         /* ========================================= 
            7. THE FLOW (Process) — Portal as container
            ========================================= */ 
-        .section-flow { padding: 7rem 0; position: relative; overflow: hidden; }
+        .section-flow { padding: 9rem 0; position: relative; overflow: hidden; }
+        .section-flow .container { max-width: 1280px; }
 
         /* Portal environment wrapper */
         .portal-environment {
             position: relative;
             border: 1px solid rgba(249,111,110,0.2);
             border-radius: 20px;
-            padding: 2.5rem 2rem 2rem;
+            padding: 4rem 3rem 3.5rem;
             margin-top: 3.5rem;
             background: rgba(249,111,110,0.03);
         }
@@ -481,7 +493,7 @@
             display: flex; flex-direction: column; 
             align-items: center; text-align: center; position: relative; z-index: 2; 
         }
-        .flow-title { font-size: 1.5rem; margin-bottom: 0.2rem; }
+        .flow-title { font-size: clamp(1.5rem, 2.5vw, 1.75rem); margin-bottom: 0.2rem; letter-spacing: 0.03em; }
         .flow-sub { 
             font-family: var(--font-orchestrator);
             font-size: 0.65rem; color: var(--coral); text-transform: uppercase; 
@@ -499,7 +511,7 @@
         /* ========================================= 
            8. WHY THE HUB EXISTS
            ========================================= */
-        .section-why { padding: 8.75rem 0; }
+        .section-why { padding: 11rem 0; }
         .why-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -685,7 +697,845 @@
         .delay-2 { animation-delay: 0.2s; }
         .delay-3 { animation-delay: 0.3s; }
 
-    </style>
+    
+        /* =========================================
+           HOW IT WORKS MODULE (hub_v6 artifact)
+           ========================================= */
+/* ============================================================
+       CSS VARIABLES & RESET
+    ============================================================ */
+    :root {
+      --coral:       #F96F6E;
+      --coral-dim:   rgba(249,111,110,0.18);
+      --coral-glow:  rgba(249,111,110,0.35);
+
+      --teal:        #2ED3C6;
+      --teal-dim:    rgba(46,211,198,0.14);
+      --teal-glow:   rgba(46,211,198,0.30);
+
+      --gold:        #C9A84C;
+      --gold-dim:    rgba(201,168,76,0.15);
+      --gold-glow:   rgba(201,168,76,0.30);
+
+      --purple:      #A78BFF;
+      --purple-dim:  rgba(167,139,255,0.14);
+      --purple-glow: rgba(167,139,255,0.30);
+
+      --ink:         #0A0A0A;
+      --surface-1:   #111113;
+      --surface-2:   #1A1A1E;
+      --surface-3:   #222228;
+      --border:      rgba(255,255,255,0.08);
+      --border-bright: rgba(255,255,255,0.15);
+      --text-primary: #F0EDE8;
+      --text-muted:   rgba(240,237,232,0.55);
+
+      --font-display: 'Big Shoulders Display', sans-serif;
+      --font-serif:   'Playfair Display', serif;
+      --font-body:    'Inter', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--ink);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ============================================================
+       SECTION WRAPPER
+    ============================================================ */
+    .how-it-works {
+      position: relative;
+      padding: 120px 0 160px;
+      overflow: hidden;
+      /* Subtle teal→coral left-to-right gradient */
+      background: linear-gradient(
+        90deg,
+        rgba(46,211,198,0.04) 0%,
+        transparent 40%,
+        transparent 60%,
+        rgba(249,111,110,0.04) 100%
+      );
+    }
+
+    /* Dot-grid texture */
+    .how-it-works::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.055) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none; z-index: 0;
+    }
+
+    /* Grain/noise texture overlay */
+    .how-it-works::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      opacity: 0.08;
+      pointer-events: none;
+      z-index: 0;
+      mix-blend-mode: overlay;
+    }
+
+    .section-glow-teal {
+      position: absolute;
+      bottom: -150px; left: -100px;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(46,211,198,0.06) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 40px;
+      position: relative; z-index: 1;
+    }
+
+    /* ============================================================
+       SECTION HEADER
+    ============================================================ */
+    .section-header {
+      text-align: center;
+      margin-bottom: 80px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      font-family: var(--font-body);
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--coral);
+      margin-bottom: 20px;
+      padding: 6px 14px;
+      border: 1px solid var(--coral-dim);
+      border-radius: 2px;
+      background: var(--coral-dim);
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(42px, 6vw, 72px);
+      font-weight: 700; line-height: 1.0;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+      margin-bottom: 20px;
+    }
+
+    .section-subtitle {
+      font-family: var(--font-body);
+      font-size: 17px; font-weight: 300;
+      color: var(--text-muted);
+      max-width: 560px; margin: 0 auto;
+      line-height: 1.65;
+    }
+
+    /* ============================================================
+       REVEAL ANIMATIONS
+    ============================================================ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 650ms cubic-bezier(0.22,1,0.36,1),
+                  transform 650ms cubic-bezier(0.22,1,0.36,1);
+      will-change: opacity, transform;
+    }
+    .reveal.is-visible { opacity: 1; transform: translateY(0); }
+    .reveal-d0 { transition-delay: 0ms; }
+    .reveal-d1 { transition-delay: 150ms; }
+    .reveal-d2 { transition-delay: 300ms; }
+    .reveal-d3 { transition-delay: 450ms; }
+    .reveal-d4 { transition-delay: 500ms; }
+    .reveal-d5 { transition-delay: 600ms; }
+    .reveal-d6 { transition-delay: 700ms; }
+    .reveal-d7 { transition-delay: 800ms; }
+
+    /* ============================================================
+       SCAN LINES — animated dotted horizontal rules
+    ============================================================ */
+    .scan-line {
+      position: relative;
+      width: 100%;
+      height: 14px;
+      overflow: hidden;
+      /* No background — fully transparent container */
+    }
+    .scan-line svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+    .scan-line-top    { margin-bottom: 32px; }
+    .scan-line-bottom { margin-top: 32px; }
+
+    /* Travel segments per direction */
+    @keyframes dot-travel-ltr {
+      0%   { stroke-dashoffset: 160; opacity: 0.2; }
+      20%  { opacity: 0.9; }
+      80%  { opacity: 0.9; }
+      100% { stroke-dashoffset: -160; opacity: 0.2; }
+    }
+    @keyframes dot-travel-rtl {
+      0%   { stroke-dashoffset: -160; opacity: 0.2; }
+      20%  { opacity: 0.9; }
+      80%  { opacity: 0.9; }
+      100% { stroke-dashoffset: 160; opacity: 0.2; }
+    }
+
+    .scan-base {
+      stroke: rgba(255,255,255,0.10);
+      stroke-width: 1;
+      stroke-dasharray: 4 8;
+    }
+    .scan-travel-ltr {
+      stroke: var(--teal);
+      stroke-width: 1.5;
+      stroke-dasharray: 28 240;
+      stroke-dashoffset: 160;
+      animation: dot-travel-ltr 6s ease-in-out infinite;
+    }
+    .scan-travel-rtl {
+      stroke: var(--coral);
+      stroke-width: 1.5;
+      stroke-dasharray: 28 240;
+      stroke-dashoffset: -160;
+      animation: dot-travel-rtl 6s ease-in-out infinite;
+      animation-delay: -3s;
+    }
+
+    /* ============================================================
+       CENTER GLOW RING (spotlight / halo)
+    ============================================================ */
+    .center-glow {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 700px; height: 350px;
+      background: radial-gradient(ellipse at center,
+        rgba(255,255,255,0.22) 0%,
+        rgba(255,255,255,0.06) 35%,
+        transparent 70%);
+      filter: blur(90px);
+      pointer-events: none;
+      z-index: 0;
+      animation: ring-pulse 3s ease-in-out infinite;
+    }
+    @keyframes ring-pulse {
+      0%, 100% { opacity: 0.25; transform: translate(-50%,-50%) scale(1); }
+      50%       { opacity: 0.55; transform: translate(-50%,-50%) scale(1.06); }
+    }
+
+    /* ============================================================
+       ECOSYSTEM CANVAS
+    ============================================================ */
+    .ecosystem-canvas {
+      background: var(--surface-1);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 0 44px 0;
+      position: relative;
+      overflow: visible;
+    }
+
+    /* Tighter, less "UI kit" canvas label */
+    .ecosystem-canvas-label {
+      position: absolute;
+      top: -10px; left: 20px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 2px 8px;
+      font-size: 9px; font-weight: 600;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: rgba(240,237,232,0.35);
+    }
+
+    /* Diagram row — position:relative so center-glow stays inside */
+    .diagram-row {
+      position: relative;
+      padding-top: 52px;
+    }
+
+    .macro-diagram {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      padding: 20px 0 36px;
+      flex-wrap: nowrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Base eco-node ── */
+    .eco-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      flex: 0 0 auto;
+    }
+
+    .eco-node-card {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 22px;
+      text-align: center;
+      min-width: 130px;
+      position: relative;
+      cursor: pointer;
+      user-select: none;
+      transition: border-color 0.25s ease,
+                  box-shadow   0.25s ease,
+                  transform    0.25s cubic-bezier(0.22,1,0.36,1);
+    }
+
+    .eco-node-icon  { font-size: 22px; margin-bottom: 8px; display: block; }
+
+    .eco-node-name  {
+      font-family: var(--font-display);
+      font-size: 14px; font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--text-primary); line-height: 1.2;
+    }
+
+    .eco-node-tag {
+      font-size: 10px; font-weight: 500;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--text-muted); margin-top: 4px;
+    }
+
+    /* 🔻 Chevron — intentional visibility rules */
+    .node-toggle-icon {
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 8px;
+      opacity: 0;
+      transform: translateY(2px);
+      transition:
+        opacity 220ms ease,
+        transform 350ms cubic-bezier(0.22,1,0.36,1),
+        color 200ms ease;
+    }
+    .node-toggle-icon svg { width: 14px; height: 14px; }
+
+    /* Hover / focus: subtle hint */
+    .eco-node-card:hover .node-toggle-icon,
+    .node-wrap:focus-visible .node-toggle-icon {
+      opacity: 0.55;
+      transform: translateY(0);
+    }
+    /* Active: fully confident */
+    .eco-node.is-active .node-toggle-icon {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    /* Rotate when expanded */
+    .node-wrap.is-expanded .node-toggle-icon { transform: rotate(180deg); }
+
+    .node-wrap {
+      display: flex; flex-direction: column; align-items: center;
+    }
+
+    .node-drop-line {
+      width: 2px; height: 48px;
+      margin-top: 2px;
+      position: relative;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .node-drop-line::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 50%;
+      width: 8px; height: 8px;
+      transform: translateX(-50%) rotate(45deg);
+    }
+    .node-wrap.is-expanded .node-drop-line { opacity: 1; }
+
+    .node-zoom-badge {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      margin: 6px 0 0;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .node-zoom-badge svg { width: 12px; height: 12px; }
+    .node-wrap.is-expanded .node-zoom-badge { opacity: 0.78; }
+
+    /* Tooltip on inactive nodes */
+    .eco-node:not(.is-active) .eco-node-card::after {
+      content: attr(data-hint);
+      position: absolute;
+      bottom: calc(100% + 8px); left: 50%;
+      transform: translateX(-50%) translateY(4px);
+      background: var(--surface-3);
+      border: 1px solid var(--teal-dim);
+      border-radius: 5px;
+      padding: 4px 10px;
+      font-size: 10px; font-weight: 500;
+      letter-spacing: 0.08em;
+      color: var(--teal);
+      white-space: nowrap;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 10;
+    }
+    .eco-node:not(.is-active) .eco-node-card:hover::after {
+      opacity: 1; transform: translateX(-50%) translateY(0);
+    }
+
+    /* Default hover glow (inactive nodes) */
+    .eco-node:not(.is-active) .eco-node-card:hover {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 1px var(--teal-dim), 0 0 20px var(--teal-glow);
+      transform: translateY(-2px);
+    }
+
+    /* ════════════════════════════════════════
+       PER-NODE ACTIVE COLOR OVERRIDES
+    ════════════════════════════════════════ */
+
+    /* Intelligence — TEAL */
+    .eco-node-intelligence.is-active .eco-node-card {
+      border: 1.5px solid var(--teal);
+      box-shadow: 0 0 0 1px var(--teal-dim), 0 0 24px var(--teal-glow), inset 0 0 16px rgba(46,211,198,0.04);
+      background: linear-gradient(135deg, rgba(46,211,198,0.08) 0%, var(--surface-2) 100%);
+      transform: none;
+    }
+    .eco-node-intelligence.is-active .eco-node-name { color: var(--teal); }
+    .eco-node-intelligence .node-toggle-icon { color: var(--teal); }
+    .eco-node-intelligence .node-drop-line {
+      background: linear-gradient(to bottom, var(--teal) 0%, rgba(46,211,198,0.3) 60%, transparent 100%);
+    }
+    .eco-node-intelligence .node-drop-line::after {
+      border-right: 2px solid rgba(46,211,198,0.5);
+      border-bottom: 2px solid rgba(46,211,198,0.5);
+    }
+    .eco-node-intelligence .node-zoom-badge { color: var(--teal); }
+
+    /* Strategy — GOLD */
+    .eco-node-strategy.is-active .eco-node-card {
+      border: 1.5px solid var(--gold);
+      box-shadow: 0 0 0 1px var(--gold-dim), 0 0 24px var(--gold-glow), inset 0 0 16px rgba(201,168,76,0.04);
+      background: linear-gradient(135deg, rgba(201,168,76,0.08) 0%, var(--surface-2) 100%);
+      transform: none;
+    }
+    .eco-node-strategy.is-active .eco-node-name { color: var(--gold); }
+    .eco-node-strategy .node-toggle-icon { color: var(--gold); }
+    .eco-node-strategy .node-drop-line {
+      background: linear-gradient(to bottom, var(--gold) 0%, rgba(201,168,76,0.3) 60%, transparent 100%);
+    }
+    .eco-node-strategy .node-drop-line::after {
+      border-right: 2px solid rgba(201,168,76,0.5);
+      border-bottom: 2px solid rgba(201,168,76,0.5);
+    }
+    .eco-node-strategy .node-zoom-badge { color: var(--gold); }
+
+    /* Creative — PURPLE */
+    .eco-node-creative.is-active .eco-node-card {
+      border: 1.5px solid var(--purple);
+      box-shadow: 0 0 0 1px var(--purple-dim), 0 0 24px var(--purple-glow), inset 0 0 16px rgba(167,139,255,0.04);
+      background: linear-gradient(135deg, rgba(167,139,255,0.08) 0%, var(--surface-2) 100%);
+      transform: none;
+    }
+    .eco-node-creative.is-active .eco-node-name { color: var(--purple); }
+    .eco-node-creative .node-toggle-icon { color: var(--purple); }
+    .eco-node-creative .node-drop-line {
+      background: linear-gradient(to bottom, var(--purple) 0%, rgba(167,139,255,0.3) 60%, transparent 100%);
+    }
+    .eco-node-creative .node-drop-line::after {
+      border-right: 2px solid rgba(167,139,255,0.5);
+      border-bottom: 2px solid rgba(167,139,255,0.5);
+    }
+    .eco-node-creative .node-zoom-badge { color: var(--purple); }
+
+    /* Platform — CORAL */
+    .eco-node-platform .eco-node-card {
+      border: 1.5px solid var(--coral);
+      box-shadow: 0 0 0 1px var(--coral-dim), 0 0 24px var(--coral-glow), inset 0 0 16px rgba(249,111,110,0.04);
+      background: linear-gradient(135deg, rgba(249,111,110,0.08) 0%, var(--surface-2) 100%);
+    }
+    .eco-node-platform.is-active .eco-node-card { transform: none; }
+    .eco-node-platform .eco-node-name { color: var(--coral); }
+    .eco-node-platform .node-toggle-icon { color: var(--coral); opacity: 1; }
+    .eco-node-platform .node-drop-line {
+      background: linear-gradient(to bottom, var(--coral) 0%, rgba(249,111,110,0.3) 60%, transparent 100%);
+    }
+    .eco-node-platform .node-drop-line::after {
+      border-right: 2px solid rgba(249,111,110,0.5);
+      border-bottom: 2px solid rgba(249,111,110,0.5);
+    }
+    .eco-node-platform .node-zoom-badge { color: var(--coral); }
+    .eco-node-platform .eco-node-card:hover {
+      border-color: var(--coral) !important;
+      box-shadow: 0 0 0 1px var(--coral-dim), 0 0 30px var(--coral-glow) !important;
+      transform: translateY(-1px);
+    }
+    .eco-node-platform:not(.is-active) .eco-node-card::after {
+      border-color: var(--coral-dim) !important;
+      color: var(--coral) !important;
+    }
+
+    /* ──────────────────────────────────────
+       ANIMATED ARROW CONNECTORS
+    ────────────────────────────────────── */
+    .eco-arrow {
+      display: flex; align-items: center;
+      padding: 0 2px; flex: 0 0 auto;
+      position: relative; top: -18px;
+      opacity: 0.95;
+    }
+    .eco-arrow svg { width: 48px; height: 14px; overflow: visible; }
+
+    /* Base line (always visible, dim) */
+    .arrow-base { opacity: 1; }
+
+    /* Travel dash — off by default */
+    .arrow-travel { animation: none; }
+
+    /* Arrowhead glow layer — hidden by default */
+    .arrow-head-glow {
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    /* Arrowhead — show on hover or is-lit */
+    .arrow-head {
+      opacity: 0.3;
+      transition: opacity 0.3s ease;
+    }
+
+    /* When arrow or parent node is hovered / is-lit, show arrowhead fully */
+    .eco-arrow:hover .arrow-head,
+    .eco-arrow.is-lit .arrow-head { opacity: 1; }
+    .eco-arrow:hover .arrow-head-glow,
+    .eco-arrow.is-lit .arrow-head-glow { opacity: 0.5; }
+
+    /* ── Named keyframes — one per arrow color ── */
+    @keyframes arrow-flow-1 {
+      0%   { stroke-dashoffset: 60; opacity: 0.2; }
+      50%  { opacity: 1; }
+      100% { stroke-dashoffset: -10; opacity: 0.2; }
+    }
+    @keyframes arrow-flow-2 {
+      0%   { stroke-dashoffset: 60; opacity: 0.2; }
+      50%  { opacity: 1; }
+      100% { stroke-dashoffset: -10; opacity: 0.2; }
+    }
+    @keyframes arrow-flow-3 {
+      0%   { stroke-dashoffset: 60; opacity: 0.2; }
+      50%  { opacity: 1; }
+      100% { stroke-dashoffset: -10; opacity: 0.2; }
+    }
+
+    /* ✨ Arrow travel — driven entirely by JS .is-lit (no fragile sibling selectors) */
+    #arrow-1.is-lit .arrow-travel { animation: arrow-flow-1 0.9s ease-in-out infinite; }
+    #arrow-2.is-lit .arrow-travel { animation: arrow-flow-2 0.9s ease-in-out infinite; }
+    #arrow-3.is-lit .arrow-travel { animation: arrow-flow-3 0.9s ease-in-out infinite; }
+
+    /* Hovering the arrow itself — slightly faster, same keyframe */
+    #arrow-1:hover .arrow-travel { animation: arrow-flow-1 0.6s ease-in-out infinite; }
+    #arrow-2:hover .arrow-travel { animation: arrow-flow-2 0.6s ease-in-out infinite; }
+    #arrow-3:hover .arrow-travel { animation: arrow-flow-3 0.6s ease-in-out infinite; }
+
+    /* ============================================================
+       UNIFIED DETAIL PANEL
+    ============================================================ */
+    .detail-panel-wrap {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.55s cubic-bezier(0.22,1,0.36,1);
+    }
+    .detail-panel-wrap.is-open { grid-template-rows: 1fr; }
+
+    .detail-panel-overflow { overflow: hidden; min-height: 0; }
+
+    /* Bridge */
+    .zoom-bridge {
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      padding: 10px 0 14px;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .detail-panel-wrap.is-open .zoom-bridge { opacity: 1; }
+
+    .zoom-bridge-line { width: 1px; height: 70px; }
+    .zoom-bridge-line.teal-line   { background: linear-gradient(to bottom, rgba(46,211,198,0.55), rgba(46,211,198,0.15), rgba(46,211,198,0)); }
+    .zoom-bridge-line.gold-line   { background: linear-gradient(to bottom, rgba(201,168,76,0.55), rgba(201,168,76,0.15), rgba(201,168,76,0)); }
+    .zoom-bridge-line.purple-line { background: linear-gradient(to bottom, rgba(167,139,255,0.55), rgba(167,139,255,0.15), rgba(167,139,255,0)); }
+    .zoom-bridge-line.coral-line  { background: linear-gradient(to bottom, rgba(249,111,110,0.55), rgba(249,111,110,0.15), rgba(249,111,110,0)); }
+
+    .zoom-bridge-label {
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      padding: 6px 10px; border-radius: 999px;
+    }
+    .zoom-bridge-label.teal-label   { color: rgba(46,211,198,0.85); background: rgba(46,211,198,0.06); border: 1px solid rgba(46,211,198,0.18); }
+    .zoom-bridge-label.gold-label   { color: rgba(201,168,76,0.9);  background: rgba(201,168,76,0.06);  border: 1px solid rgba(201,168,76,0.2);  }
+    .zoom-bridge-label.purple-label { color: rgba(167,139,255,0.9); background: rgba(167,139,255,0.06); border: 1px solid rgba(167,139,255,0.2); }
+    .zoom-bridge-label.coral-label  { color: rgba(249,111,110,0.85);background: rgba(249,111,110,0.06); border: 1px solid rgba(249,111,110,0.18); }
+
+    /* 🎛️ Detail panel entrance polish */
+    .detail-panel {
+      transform: translateY(-6px);
+      opacity: 0;
+      transition:
+        transform 420ms cubic-bezier(0.22,1,0.36,1),
+        opacity 320ms ease,
+        border-color 350ms ease,
+        background 350ms ease;
+    }
+    .detail-panel-wrap.is-open .detail-panel {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Panel box */
+    .detail-panel {
+      border-radius: 14px; padding-top: 12px;
+      position: relative; overflow: visible;
+      /* transition handled by entrance polish block above */
+    }
+    .detail-panel[data-color="teal"]   { border: 1.5px dashed rgba(46,211,198,0.35);  background: rgba(46,211,198,0.03); }
+    .detail-panel[data-color="gold"]   { border: 1.5px dashed rgba(201,168,76,0.35);  background: rgba(201,168,76,0.03); }
+    .detail-panel[data-color="purple"] { border: 1.5px dashed rgba(167,139,255,0.35); background: rgba(167,139,255,0.03); }
+    .detail-panel[data-color="coral"]  { border: 1.5px dashed rgba(249,111,110,0.35); background: rgba(249,111,110,0.03); }
+
+    .detail-panel-label {
+      position: absolute; top: -13px; left: 24px;
+      background: var(--ink); border-radius: 4px;
+      padding: 3px 12px;
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      display: flex; align-items: center; gap: 6px;
+      transition: color 0.35s ease, border-color 0.35s ease;
+    }
+    .detail-panel-label::before { content: '↳'; opacity: 0.7; font-size: 11px; }
+    .detail-panel[data-color="teal"]   .detail-panel-label { color: var(--teal);   border: 1px solid rgba(46,211,198,0.3);  }
+    .detail-panel[data-color="gold"]   .detail-panel-label { color: var(--gold);   border: 1px solid rgba(201,168,76,0.3);  }
+    .detail-panel[data-color="purple"] .detail-panel-label { color: var(--purple); border: 1px solid rgba(167,139,255,0.3); }
+    .detail-panel[data-color="coral"]  .detail-panel-label { color: var(--coral);  border: 1px solid rgba(249,111,110,0.3); }
+
+    /* Content switcher */
+    .panel-content {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.45s cubic-bezier(0.22,1,0.36,1), opacity 0.3s ease;
+      opacity: 0;
+    }
+    .panel-content.is-active { grid-template-rows: 1fr; opacity: 1; }
+    .panel-content-inner { overflow: hidden; min-height: 0; }
+
+    /* Steps grid */
+    .panel-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      padding: 40px 8px 28px;
+    }
+
+    .panel-step {
+      padding: 28px 24px; position: relative;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .panel-step + .panel-step::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 10%; bottom: 10%; width: 1px;
+      background: linear-gradient(to bottom, transparent, var(--border) 30%, var(--border) 70%, transparent);
+    }
+
+    /* Step badge variants */
+    .step-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 36px; height: 36px; border-radius: 50%;
+      font-family: var(--font-display); font-size: 16px; font-weight: 900;
+      background: transparent; border: 1.5px solid var(--border-bright);
+      color: var(--text-muted); flex-shrink: 0;
+    }
+    .step-badge.active-teal   { border-color: var(--teal);   color: var(--teal);   background: var(--teal-dim);   box-shadow: 0 0 12px rgba(46,211,198,0.25); }
+    .step-badge.active-gold   { border-color: var(--gold);   color: var(--gold);   background: var(--gold-dim);   box-shadow: 0 0 12px rgba(201,168,76,0.25); }
+    .step-badge.active-purple { border-color: var(--purple); color: var(--purple); background: var(--purple-dim); box-shadow: 0 0 12px rgba(167,139,255,0.25); }
+    .step-badge.active-coral  { border-color: var(--coral);  color: var(--coral);  background: var(--coral-dim);  box-shadow: 0 0 12px rgba(249,111,110,0.25); }
+
+    /* Step typography */
+    .step-eyebrow {
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 2px;
+    }
+    .step-eyebrow.teal   { color: var(--teal); }
+    .step-eyebrow.gold   { color: var(--gold); }
+    .step-eyebrow.purple { color: var(--purple); }
+    .step-eyebrow.coral  { color: var(--coral); }
+
+    .step-title {
+      font-family: var(--font-display);
+      font-size: 22px; font-weight: 700;
+      color: var(--text-primary); line-height: 1.1; letter-spacing: 0.01em;
+    }
+
+    .step-body {
+      font-size: 13.5px; font-weight: 300;
+      color: var(--text-muted); line-height: 1.65;
+    }
+
+    .step-visual {
+      margin-top: auto;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 8px; padding: 16px;
+      min-height: 80px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+
+    /* ============================================================
+       SVG ANIMATIONS
+    ============================================================ */
+
+    /* Intelligence: signal-web pulse lines */
+    @keyframes sig-pulse-1 { 0%,100%{stroke-opacity:.15;stroke-dashoffset:36}50%{stroke-opacity:.85;stroke-dashoffset:0} }
+    @keyframes sig-pulse-2 { 0%,100%{stroke-opacity:.15;stroke-dashoffset:36}50%{stroke-opacity:.85;stroke-dashoffset:0} }
+    @keyframes sig-pulse-3 { 0%,100%{stroke-opacity:.15;stroke-dashoffset:36}50%{stroke-opacity:.85;stroke-dashoffset:0} }
+    @keyframes sig-pulse-4 { 0%,100%{stroke-opacity:.15;stroke-dashoffset:36}50%{stroke-opacity:.85;stroke-dashoffset:0} }
+    @keyframes sig-pulse-5 { 0%,100%{stroke-opacity:.15;stroke-dashoffset:36}50%{stroke-opacity:.85;stroke-dashoffset:0} }
+    @keyframes hub-glow   { 0%,100%{filter:drop-shadow(0 0 4px rgba(46,211,198,.6))}50%{filter:drop-shadow(0 0 10px rgba(46,211,198,1))} }
+
+    .sig-line { stroke-dasharray: 36; }
+    .sig-line-1 { animation: sig-pulse-1 1.6s ease-in-out infinite; animation-delay:0s; }
+    .sig-line-2 { animation: sig-pulse-2 1.6s ease-in-out infinite; animation-delay:.32s; }
+    .sig-line-3 { animation: sig-pulse-3 1.6s ease-in-out infinite; animation-delay:.64s; }
+    .sig-line-4 { animation: sig-pulse-4 1.6s ease-in-out infinite; animation-delay:.96s; }
+    .sig-line-5 { animation: sig-pulse-5 1.6s ease-in-out infinite; animation-delay:1.28s; }
+    .hub-core   { animation: hub-glow 2.2s ease-in-out infinite; }
+
+    /* Strategy: funnel bands slide-in */
+    @keyframes band-in { from{transform:translateX(-18px);opacity:0}to{transform:translateX(0);opacity:1} }
+    .band-1 { animation: band-in 0.7s cubic-bezier(.22,1,.36,1) forwards; animation-delay: .1s; opacity:0; }
+    .band-2 { animation: band-in 0.7s cubic-bezier(.22,1,.36,1) forwards; animation-delay: .25s; opacity:0; }
+    .band-3 { animation: band-in 0.7s cubic-bezier(.22,1,.36,1) forwards; animation-delay: .4s; opacity:0; }
+    @keyframes arrow-draw { from{stroke-dashoffset:40}to{stroke-dashoffset:0} }
+    .funnel-arrow { stroke-dasharray:40; animation: arrow-draw 0.6s cubic-bezier(.22,1,.36,1) forwards; animation-delay:.6s; opacity:0;
+      animation-fill-mode: forwards; }
+    .funnel-arrow-fill { animation: band-in 0.4s ease forwards; animation-delay:.7s; opacity:0; }
+
+    /* Creative: canvas layers stack + settle */
+    @keyframes layer-settle { 0%{transform:translateY(10px) rotate(-3deg);opacity:0} 70%{transform:translateY(-2px) rotate(var(--rot));opacity:1} 100%{transform:translateY(0) rotate(var(--rot));opacity:1} }
+    .canvas-layer { opacity:0; transform-origin: center; animation-fill-mode: forwards; }
+    .canvas-layer-1 { --rot:-5deg; animation: layer-settle .7s cubic-bezier(.22,1,.36,1) .1s forwards; }
+    .canvas-layer-2 { --rot: 2deg; animation: layer-settle .7s cubic-bezier(.22,1,.36,1) .25s forwards; }
+    .canvas-layer-3 { --rot: 0deg; animation: layer-settle .7s cubic-bezier(.22,1,.36,1) .4s forwards; }
+    @keyframes cursor-blink { 0%,100%{opacity:1}50%{opacity:0} }
+    .canvas-cursor { animation: cursor-blink 1.2s step-end infinite; }
+
+    /* Platform: metric bars grow up + sparkline draw */
+    @keyframes bar-grow { from{transform:scaleY(0);transform-origin:bottom}to{transform:scaleY(1);transform-origin:bottom} }
+    @keyframes spark-draw { from{stroke-dashoffset:120}to{stroke-dashoffset:0} }
+    .metric-bar { animation: bar-grow .7s cubic-bezier(.22,1,.36,1) forwards; animation-fill-mode: forwards; }
+    .metric-bar-1 { animation-delay:.05s; }
+    .metric-bar-2 { animation-delay:.15s; }
+    .metric-bar-3 { animation-delay:.25s; }
+    .metric-bar-4 { animation-delay:.35s; }
+    .metric-bar-5 { animation-delay:.45s; }
+    .metric-bar-6 { animation-delay:.55s; }
+    .spark-line { stroke-dasharray: 120; animation: spark-draw 1.2s cubic-bezier(.22,1,.36,1) .4s forwards; }
+
+    /* ============================================================
+       POLISHED LEGEND
+    ============================================================ */
+    .eco-legend {
+      display: flex;
+      gap: 10px;
+      padding: 20px 36px 24px;
+      border-top: 1px solid var(--border);
+      background: var(--surface-1);
+      border-radius: 0 0 16px 16px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+    }
+    .legend-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 12px 5px 10px;
+      border-radius: 6px;
+      font-size: 11px; font-weight: 500;
+      letter-spacing: 0.04em;
+      border-left: 3px solid;
+      transition: opacity 0.2s;
+    }
+    .legend-tag:hover { opacity: 0.85; }
+    .legend-tag-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%; flex-shrink: 0;
+    }
+    .legend-tag-label { font-weight: 600; }
+    .legend-tag-desc  { color: var(--text-muted); font-weight: 300; }
+
+    .legend-tag.lt-teal   { border-color: var(--teal);   background: rgba(46,211,198,0.06);   color: var(--text-muted); }
+    .legend-tag.lt-gold   { border-color: var(--gold);   background: rgba(201,168,76,0.06);   color: var(--text-muted); }
+    .legend-tag.lt-purple { border-color: var(--purple); background: rgba(167,139,255,0.06);  color: var(--text-muted); }
+    .legend-tag.lt-coral  { border-color: var(--coral);  background: rgba(249,111,110,0.06);  color: var(--text-muted); }
+    .legend-tag.lt-teal   .legend-tag-label { color: var(--teal); }
+    .legend-tag.lt-gold   .legend-tag-label { color: var(--gold); }
+    .legend-tag.lt-purple .legend-tag-label { color: var(--purple); }
+    .legend-tag.lt-coral  .legend-tag-label { color: var(--coral); }
+    .legend-tag.lt-teal   .legend-tag-dot { background: var(--teal);   box-shadow: 0 0 5px var(--teal-glow); }
+    .legend-tag.lt-gold   .legend-tag-dot { background: var(--gold);   box-shadow: 0 0 5px var(--gold-glow); }
+    .legend-tag.lt-purple .legend-tag-dot { background: var(--purple); box-shadow: 0 0 5px var(--purple-glow); }
+    .legend-tag.lt-coral  .legend-tag-dot { background: var(--coral);  box-shadow: 0 0 5px var(--coral-glow); }
+
+    /* ♿ Reduced Motion — keep it classy */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+      }
+      .center-glow { animation: none !important; }
+      .scan-travel-ltr, .scan-travel-rtl { animation: none !important; }
+      .arrow-travel { animation: none !important; }
+      .detail-panel { transform: none; opacity: 1; }
+    }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 900px) {
+      .macro-diagram { flex-direction: column; gap: 12px; padding: 20px 0 24px; }
+      /* Hide SVG arrows on mobile — replaced by node ::after connectors below */
+      .eco-arrow { display: none; }
+      /* Short vertical connector between stacked nodes (CSS-only, no extra HTML) */
+      .eco-node:not(.eco-node-platform)::after {
+        content: '';
+        display: block;
+        width: 1px; height: 20px;
+        background: linear-gradient(to bottom, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.03) 100%);
+        margin: 0 auto;
+        pointer-events: none;
+      }
+      .panel-steps { grid-template-columns: 1fr; padding: 32px 8px 20px; }
+      .panel-step + .panel-step::before { top: 0; bottom: auto; left: 10%; right: 10%; width: auto; height: 1px; }
+      .eco-legend { padding: 16px 20px 18px; gap: 8px; }
+      .eco-node:not(.is-active) .eco-node-card::after { display: none; }
+    }
+
+    @media (max-width: 600px) {
+      .container { padding: 0 20px; }
+      .ecosystem-canvas { padding: 0 20px 0; }
+    }
+
+        </style>
 </head>
 <body>
 
@@ -700,12 +1550,17 @@
         <section class="hub-hero"> 
             <div class="container relative z-10 grid md:grid-cols-2 gap-12 items-center"> 
                 <div class="hub-hero-content"> 
-                    <h1 class="hero-headline animate-in">THE HUB</h1>
-                    <div class="hero-tagline-block animate-in delay-1">
-                        <span class="hero-tagline-line">Strategy alone doesn't move organizations forward.</span>
-                        <span class="hero-tagline-line">Execution alone doesn't create direction.</span>
+                    <div class="animate-in" style="display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--font-orchestrator); font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.16em; color: rgba(255,255,255,0.3); margin-bottom: 1.25rem;">
+                        <span style="display: block; width: 20px; height: 1px; background: rgba(255,255,255,0.25);"></span>
+                        The System
                     </div>
-                    <p class="hero-subhead animate-in delay-1">A strategic operating system that turns <span class="ra">diagnosis</span>, <span class="ra">alignment</span>, and <span class="ra">execution</span> into coordinated progress.</p> 
+                    <h1 class="hero-headline animate-in">THE HUB</h1>
+                    <p class="animate-in delay-1" style="font-family: var(--font-orchestrator); font-size: 1.05rem; font-weight: 400; color: rgba(255,255,255,0.5); letter-spacing: 0.01em; margin-bottom: 1.5rem; line-height: 1.5;">A strategic operating system for modern organizations.</p>
+                    <div class="hero-tagline-block animate-in delay-1">
+                        <span class="hero-tagline-line">Strategy without execution stalls.</span>
+                        <span class="hero-tagline-line">Execution without strategy drifts.</span>
+                    </div>
+                    <p class="hero-subhead animate-in delay-1">A strategic operating system for <span class="ra">diagnosis</span>, <span class="ra">alignment</span>, and <span class="ra">execution</span>.</p> 
                     <div class="cta-buttons-hero animate-in delay-2"> 
                         <a href="#how-it-works" class="btn-coral">See the Flow</a> 
                         <a href="#pillars" class="btn-outline-teal">Explore Pillars</a> 
@@ -720,9 +1575,9 @@
         <!-- H2: FOUR COMPONENTS -->
         <section class="section container" id="pillars">
             <h2 class="section-title">Four Components. One System.</h2>
-            <p class="section-subtitle">Modern marketing work is fragmented across tools, teams, and timelines.</p>
+            <p class="section-subtitle">Modern organizations operate across fragmented tools, teams, and timelines.</p>
             <div class="system-intro">
-                <p>The Hub brings those moving pieces into one coherent system. Four components work together to move organizations from uncertainty to coordinated execution.</p>
+                <p>The Hub connects these moving pieces into a coherent system. Four components work together to move organizations from uncertainty to coordinated execution.</p>
             </div>
             
             <div class="architecture-grid">
@@ -734,21 +1589,21 @@
                     <div class="arch-question">What problem are we actually solving?</div>
                 </a>
                 <a href="/TheHub/advisory/index.html" class="arch-card">
-                    <div class="icon-circle"><img src="/TheHub/assets/images/Luis_portrait_circle.png" alt="Luis Gilberto"></div>
+                    <div class="icon-circle"><img src="../assets/images/Luis_portrait_circle.png" alt="Luis Gilberto"></div>
                     <h3 class="arch-title">Advisory</h3>
                     <span class="arch-role" style="color:var(--coral);">Alignment</span>
                     <p class="arch-desc">Strategic guidance for leadership teams navigating complexity. Advisory sessions translate insights into decisions, helping organizations align around positioning, priorities, and narrative clarity.</p>
                     <div class="arch-question">What should we do next, and why?</div>
                 </a>
                 <a href="/TheHub/studio.html" class="arch-card">
-                    <div class="icon-circle"><img src="/TheHub/assets/images/TheStudio_icon.png" alt="The Studio"></div>
+                    <div class="icon-circle"><img src="../assets/images/Teal_LG-3D.png" alt="Studio"></div>
                     <h3 class="arch-title">The Studio</h3>
                     <span class="arch-role">Execution</span>
                     <p class="arch-desc">The execution arm where strategy becomes tangible work. Campaigns, digital experiences, brand systems, and storytelling assets are developed here with precision and clarity.</p>
                     <div class="arch-question">How does this strategy come to life?</div>
                 </a>
                 <a href="https://portal.luis-gilberto.com" target="_blank" class="arch-card">
-                    <div class="icon-circle"><img src="/TheHub/assets/images/TheHub_icon.png" alt="The Portal"></div>
+                    <div class="icon-circle"><img src="/TheHub/assets/images/TheHub_icon.png" alt="The Hub"></div>
                     <h3 class="arch-title">The Portal</h3>
                     <span class="arch-role" style="color:var(--coral);">Operation</span>
                     <p class="arch-desc">The operational command center where projects live after strategy is defined. The Portal coordinates work across stakeholders, assets, approvals, and timelines — keeping decisions visible and progress measurable.</p>
@@ -759,6 +1614,17 @@
 
         <!-- Subtle section divider -->
         <div class="container">
+            <!-- THE HUB ECOSYSTEM header -->
+            <div style="text-align: center; padding-top: 2rem; margin-bottom: 0;">
+                <p style="font-family: var(--font-orchestrator); font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.16em; color: rgba(255,255,255,0.25); margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: center; gap: 0.625rem;">
+                    <span style="display: block; width: 20px; height: 1px; background: rgba(255,255,255,0.2);"></span>
+                    Layer 1 — Architecture
+                    <span style="display: block; width: 20px; height: 1px; background: rgba(255,255,255,0.2);"></span>
+                </p>
+                <h2 style="font-family: var(--font-strategist); font-size: clamp(2rem, 4vw, 3rem); font-weight: 900; color: var(--hub-text); letter-spacing: -0.01em; line-height: 1; margin-bottom: 0.75rem;">THE HUB ECOSYSTEM</h2>
+                <p style="font-family: var(--font-orchestrator); font-size: 0.9rem; color: rgba(255,255,255,0.4); margin-bottom: 0; max-width: 440px; margin-left: auto; margin-right: auto; line-height: 1.6;">Four components working together as a single strategic system.</p>
+            </div>
+
             <!-- System diagram -->
             <div class="system-diagram">
                 <div class="sd-row sd-top">
@@ -785,58 +1651,695 @@
                     </div>
                 </div>
             </div>
-            <div class="section-divider"></div>
+
+            <!-- Vertical zoom connector -->
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 0; margin: 0 auto;">
+                <div style="width: 1px; height: 60px; background: linear-gradient(to bottom, rgba(249,111,110,0.3), rgba(255,255,255,0));"></div>
+                <div style="width: 5px; height: 5px; border-radius: 50%; background: rgba(249,111,110,0.25);"></div>
+            </div>
         </div>
 
-        <!-- H2: SYSTEM FLOW — Portal as environment -->
-        <section class="section-flow" id="how-it-works">
-            <div class="container">
-                <h2 class="section-title" style="margin-bottom: 0.5rem;">How the System Works</h2>
-                <p class="section-subtitle">Strategic work moves through a clear progression.</p>
+        <section class="how-it-works">
+    <div class="section-glow-teal" aria-hidden="true"></div>
 
-                <div class="portal-environment">
-                    <span class="portal-env-label">The Portal — Operating Environment</span>
-                    <p class="portal-env-subtitle">Decisions, assets, and collaboration remain visible throughout every stage.</p>
+    <div class="container">
 
-                    <div class="flow-container" id="flow-system">
-                        <div class="flow-node" data-step="1">
-                            <span class="flow-sub">Step 1</span>
-                            <h3 class="flow-title">Diagnosis</h3>
-                            <p class="flow-desc">Clarifies the real problem</p>
-                        </div>
-                        <div class="flow-connector"><div class="signal-line"></div></div>
-                        <div class="flow-node" data-step="2">
-                            <span class="flow-sub">Step 2</span>
-                            <h3 class="flow-title">Alignment</h3>
-                            <p class="flow-desc">Brings leadership together around the solution</p>
-                        </div>
-                        <div class="flow-connector"><div class="signal-line"></div></div>
-                        <div class="flow-node" data-step="3">
-                            <span class="flow-sub">Step 3</span>
-                            <h3 class="flow-title">Execution</h3>
-                            <p class="flow-desc">Transforms strategy into tangible work</p>
-                        </div>
-                    </div>
+      <!-- Section header -->
+      <div class="section-header">
+        <span class="eyebrow reveal reveal-d0">The Ecosystem</span>
+        <h2 class="section-title reveal reveal-d1">How The Ecosystem Works</h2>
+        <p class="section-subtitle reveal reveal-d2">
+          Four interconnected layers. One integrated system.
+        </p>
+      </div>
+
+      <!-- Scan line TOP -->
+      <div class="scan-line scan-line-top reveal reveal-d2" aria-hidden="true">
+        <svg preserveAspectRatio="none" viewBox="0 0 1200 10" xmlns="http://www.w3.org/2000/svg">
+          <line class="scan-base"       x1="0" y1="5" x2="1200" y2="5"/>
+          <line class="scan-travel-ltr" x1="0" y1="5" x2="1200" y2="5"/>
+        </svg>
+      </div>
+
+      <!-- Ecosystem canvas -->
+      <div class="ecosystem-canvas reveal reveal-d2">
+        <span class="ecosystem-canvas-label">Full Ecosystem</span>
+
+        <div class="diagram-row">
+
+          <!-- Center glow ring -->
+          <div class="center-glow" aria-hidden="true"></div>
+
+          <!-- Faint vertical anchor line behind the node row -->
+        <div aria-hidden="true" style="
+          position:absolute;
+          top:0; bottom:0; left:50%; transform:translateX(-50%);
+          width:1px;
+          background:linear-gradient(to bottom, transparent 0%, rgba(255,255,255,0.04) 30%, rgba(255,255,255,0.04) 70%, transparent 100%);
+          pointer-events:none; z-index:0;
+        "></div>
+
+        <div class="macro-diagram">
+
+            <!-- ── Intelligence (teal) ── -->
+            <div class="eco-node eco-node-intelligence reveal reveal-d0" id="intelligence-node">
+              <div class="node-wrap" id="intelligence-toggle" role="button" tabindex="0"
+                   aria-expanded="false"
+                   aria-controls="panel-intelligence"
+                   aria-label="Toggle Intelligence detail view">
+                <div class="eco-node-card" data-hint="Click to explore">
+                  <span class="eco-node-icon">◈</span>
+                  <div class="eco-node-name">Intelligence</div>
+                  <div class="eco-node-tag">Signal Layer</div>
+                  <div class="node-toggle-icon" aria-hidden="true">
+                    <svg viewBox="0 0 14 14" fill="none"><path d="M3 5L7 9L11 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </div>
                 </div>
+                <div class="node-drop-line" aria-hidden="true"></div>
+                <div class="node-zoom-badge" aria-hidden="true">
+                  <svg viewBox="0 0 12 12" fill="none"><circle cx="5" cy="5" r="4" stroke="currentColor" stroke-width="1.2"/><line x1="8.5" y1="8.5" x2="11" y2="11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="5" y1="3" x2="5" y2="7" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><line x1="3" y1="5" x2="7" y2="5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+                  Zoom in
+                </div>
+              </div>
             </div>
-        </section>
+
+            <!-- Arrow 1: Intelligence → Strategy (teal) -->
+            <div class="eco-arrow reveal reveal-d0" id="arrow-1" aria-hidden="true">
+              <svg viewBox="0 0 48 14" fill="none">
+                <!-- base -->
+                <line class="arrow-base" x1="0" y1="7" x2="38" y2="7"
+                      stroke="rgba(46,211,198,0.25)" stroke-width="1.5" stroke-dasharray="4 3"/>
+                <!-- travel dash -->
+                <line class="arrow-travel" x1="0" y1="7" x2="38" y2="7"
+                      stroke="#2ED3C6" stroke-width="2"
+                      stroke-dasharray="10 28" stroke-dashoffset="60"/>
+                <!-- arrowhead glow -->
+                <path class="arrow-head-glow" d="M34 3L42 7L34 11"
+                      stroke="#2ED3C6" stroke-width="6" fill="none"
+                      stroke-linecap="round" stroke-linejoin="round" opacity="0.2"/>
+                <!-- arrowhead -->
+                <path class="arrow-head" d="M34 3L42 7L34 11"
+                      stroke="#2ED3C6" stroke-width="1.5" fill="none"
+                      stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+
+            <!-- ── Strategy (gold) ── -->
+            <div class="eco-node eco-node-strategy reveal reveal-d1" id="strategy-node">
+              <div class="node-wrap" id="strategy-toggle" role="button" tabindex="0"
+                   aria-expanded="false"
+                   aria-controls="panel-strategy"
+                   aria-label="Toggle Strategy detail view">
+                <div class="eco-node-card" data-hint="Click to explore">
+                  <span class="eco-node-icon">◎</span>
+                  <div class="eco-node-name">Strategy</div>
+                  <div class="eco-node-tag">Direction Layer</div>
+                  <div class="node-toggle-icon" aria-hidden="true">
+                    <svg viewBox="0 0 14 14" fill="none"><path d="M3 5L7 9L11 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </div>
+                </div>
+                <div class="node-drop-line" aria-hidden="true"></div>
+                <div class="node-zoom-badge" aria-hidden="true">
+                  <svg viewBox="0 0 12 12" fill="none"><circle cx="5" cy="5" r="4" stroke="currentColor" stroke-width="1.2"/><line x1="8.5" y1="8.5" x2="11" y2="11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="5" y1="3" x2="5" y2="7" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><line x1="3" y1="5" x2="7" y2="5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+                  Zoom in
+                </div>
+              </div>
+            </div>
+
+            <!-- Arrow 2: Strategy → Creative (gold) -->
+            <div class="eco-arrow reveal reveal-d1" id="arrow-2" aria-hidden="true">
+              <svg viewBox="0 0 48 14" fill="none">
+                <line class="arrow-base" x1="0" y1="7" x2="38" y2="7"
+                      stroke="rgba(201,168,76,0.25)" stroke-width="1.5" stroke-dasharray="4 3"/>
+                <line class="arrow-travel" x1="0" y1="7" x2="38" y2="7"
+                      stroke="#C9A84C" stroke-width="2"
+                      stroke-dasharray="10 28" stroke-dashoffset="60"/>
+                <path class="arrow-head-glow" d="M34 3L42 7L34 11"
+                      stroke="#C9A84C" stroke-width="6" fill="none"
+                      stroke-linecap="round" stroke-linejoin="round" opacity="0.2"/>
+                <path class="arrow-head" d="M34 3L42 7L34 11"
+                      stroke="#C9A84C" stroke-width="1.5" fill="none"
+                      stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+
+            <!-- ── Creative (purple) ── -->
+            <div class="eco-node eco-node-creative reveal reveal-d2" id="creative-node">
+              <div class="node-wrap" id="creative-toggle" role="button" tabindex="0"
+                   aria-expanded="false"
+                   aria-controls="panel-creative"
+                   aria-label="Toggle Creative detail view">
+                <div class="eco-node-card" data-hint="Click to explore">
+                  <span class="eco-node-icon">✦</span>
+                  <div class="eco-node-name">Creative</div>
+                  <div class="eco-node-tag">Execution Layer</div>
+                  <div class="node-toggle-icon" aria-hidden="true">
+                    <svg viewBox="0 0 14 14" fill="none"><path d="M3 5L7 9L11 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </div>
+                </div>
+                <div class="node-drop-line" aria-hidden="true"></div>
+                <div class="node-zoom-badge" aria-hidden="true">
+                  <svg viewBox="0 0 12 12" fill="none"><circle cx="5" cy="5" r="4" stroke="currentColor" stroke-width="1.2"/><line x1="8.5" y1="8.5" x2="11" y2="11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="5" y1="3" x2="5" y2="7" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><line x1="3" y1="5" x2="7" y2="5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+                  Zoom in
+                </div>
+              </div>
+            </div>
+
+            <!-- Arrow 3: Creative → Platform (coral) -->
+            <div class="eco-arrow reveal reveal-d2" id="arrow-3" aria-hidden="true">
+              <svg viewBox="0 0 48 14" fill="none">
+                <line class="arrow-base" x1="0" y1="7" x2="38" y2="7"
+                      stroke="rgba(249,111,110,0.4)" stroke-width="1.5" stroke-dasharray="4 3"/>
+                <line class="arrow-travel" x1="0" y1="7" x2="38" y2="7"
+                      stroke="#F96F6E" stroke-width="2"
+                      stroke-dasharray="10 28" stroke-dashoffset="60"/>
+                <path class="arrow-head-glow" d="M34 3L42 7L34 11"
+                      stroke="#F96F6E" stroke-width="6" fill="none"
+                      stroke-linecap="round" stroke-linejoin="round" opacity="0.2"/>
+                <path class="arrow-head" d="M34 3L42 7L34 11"
+                      stroke="#F96F6E" stroke-width="1.5" fill="none"
+                      stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+
+            <!-- ── Platform (coral) ── -->
+            <div class="eco-node eco-node-platform reveal reveal-d3" id="platform-node">
+              <div class="node-wrap" id="platform-toggle" role="button" tabindex="0"
+                   aria-expanded="false"
+                   aria-controls="panel-platform"
+                   aria-label="Toggle Platform detail view">
+                <div class="eco-node-card" data-hint="Click to explore">
+                  <span class="eco-node-icon">⬡</span>
+                  <div class="eco-node-name">Platform</div>
+                  <div class="eco-node-tag">Operations Layer</div>
+                  <div class="node-toggle-icon" aria-hidden="true">
+                    <svg viewBox="0 0 14 14" fill="none"><path d="M3 5L7 9L11 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </div>
+                </div>
+                <div class="node-drop-line" aria-hidden="true"></div>
+                <div class="node-zoom-badge" aria-hidden="true">
+                  <svg viewBox="0 0 12 12" fill="none"><circle cx="5" cy="5" r="4" stroke="currentColor" stroke-width="1.2"/><line x1="8.5" y1="8.5" x2="11" y2="11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="5" y1="3" x2="5" y2="7" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><line x1="3" y1="5" x2="7" y2="5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+                  Zoom in
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /macro-diagram -->
+        </div><!-- /diagram-row -->
+
+        <!-- ══════════════════════════════════════════
+             UNIFIED DETAIL PANEL
+        ══════════════════════════════════════════ -->
+        <div class="detail-panel-wrap" id="detail-panel-wrap">
+          <div class="detail-panel-overflow">
+
+            <div class="zoom-bridge" id="zoom-bridge" aria-hidden="true">
+              <div class="zoom-bridge-line" id="bridge-line"></div>
+              <div class="zoom-bridge-label" id="bridge-label">Zooming in</div>
+            </div>
+
+            <div class="detail-panel" id="detail-panel" data-color="coral">
+              <div class="detail-panel-label" id="detail-panel-label">Detail View</div>
+
+              <!-- ── INTELLIGENCE CONTENT ── -->
+              <div class="panel-content" id="panel-intelligence">
+                <div class="panel-content-inner">
+                  <div class="panel-steps">
+
+                    <div class="panel-step">
+                      <div class="step-badge active-teal">01</div>
+                      <div>
+                        <div class="step-eyebrow teal">Signal Aggregation</div>
+                        <div class="step-title">Everything<br>in One View</div>
+                      </div>
+                      <p class="step-body">
+                        Pulls from market data, cultural trends, audience behavior, and category shifts to build a real-time picture of what's happening.
+                      </p>
+                      <div class="step-visual">
+                        <!-- Signal Web SVG: hub with 5 radiating lines, staggered pulse -->
+                        <svg width="120" height="80" viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <!-- Signal lines from endpoints to center hub -->
+                          <line class="sig-line sig-line-1" x1="12"  y1="10"  x2="60" y2="40" stroke="#2ED3C6" stroke-width="1.5"/>
+                          <line class="sig-line sig-line-2" x1="108" y1="10"  x2="60" y2="40" stroke="#2ED3C6" stroke-width="1.5"/>
+                          <line class="sig-line sig-line-3" x1="6"   y1="55"  x2="60" y2="40" stroke="#2ED3C6" stroke-width="1.5"/>
+                          <line class="sig-line sig-line-4" x1="114" y1="55"  x2="60" y2="40" stroke="#2ED3C6" stroke-width="1.5"/>
+                          <line class="sig-line sig-line-5" x1="60"  y1="72"  x2="60" y2="40" stroke="#2ED3C6" stroke-width="1.5"/>
+                          <!-- Endpoint nodes -->
+                          <circle cx="12"  cy="10"  r="4" fill="rgba(46,211,198,0.25)" stroke="#2ED3C6" stroke-width="1"/>
+                          <circle cx="108" cy="10"  r="4" fill="rgba(46,211,198,0.25)" stroke="#2ED3C6" stroke-width="1"/>
+                          <circle cx="6"   cy="55"  r="4" fill="rgba(46,211,198,0.2)"  stroke="#2ED3C6" stroke-width="1"/>
+                          <circle cx="114" cy="55"  r="4" fill="rgba(46,211,198,0.2)"  stroke="#2ED3C6" stroke-width="1"/>
+                          <circle cx="60"  cy="72"  r="4" fill="rgba(46,211,198,0.2)"  stroke="#2ED3C6" stroke-width="1"/>
+                          <!-- Hub core -->
+                          <circle class="hub-core" cx="60" cy="40" r="10" fill="rgba(46,211,198,0.15)" stroke="#2ED3C6" stroke-width="2"/>
+                          <circle cx="60" cy="40" r="4"  fill="#2ED3C6"/>
+                        </svg>
+                      </div>
+                    </div>
+
+                    <div class="panel-step">
+                      <div class="step-badge">02</div>
+                      <div>
+                        <div class="step-eyebrow teal">Insight Engine</div>
+                        <div class="step-title">Signal to<br>So What</div>
+                      </div>
+                      <p class="step-body">
+                        Transforms raw signals into strategic inputs — surfacing the 'so what' that informs every brief, pitch, and plan.
+                      </p>
+                      <div class="step-visual">
+                        <!-- Funnel compression: wide → narrow → point -->
+                        <svg width="120" height="70" viewBox="0 0 120 70" fill="none">
+                          <!-- Input streams (wide left) -->
+                          <rect class="band-1" x="4" y="8"  width="44" height="9"  rx="2" fill="rgba(46,211,198,0.18)" stroke="rgba(46,211,198,0.4)" stroke-width="1"/>
+                          <rect class="band-2" x="4" y="30" width="44" height="9"  rx="2" fill="rgba(46,211,198,0.25)" stroke="rgba(46,211,198,0.5)" stroke-width="1"/>
+                          <rect class="band-3" x="4" y="52" width="44" height="9"  rx="2" fill="rgba(46,211,198,0.18)" stroke="rgba(46,211,198,0.4)" stroke-width="1"/>
+                          <!-- Converge lines -->
+                          <line x1="48" y1="12"  x2="80" y2="35" stroke="rgba(46,211,198,0.3)" stroke-width="1" stroke-dasharray="3 2"/>
+                          <line x1="48" y1="34"  x2="80" y2="35" stroke="rgba(46,211,198,0.4)" stroke-width="1"/>
+                          <line x1="48" y1="56"  x2="80" y2="35" stroke="rgba(46,211,198,0.3)" stroke-width="1" stroke-dasharray="3 2"/>
+                          <!-- Focal point -->
+                          <circle cx="80" cy="35" r="6" fill="rgba(46,211,198,0.2)" stroke="#2ED3C6" stroke-width="1.5"/>
+                          <circle cx="80" cy="35" r="2.5" fill="#2ED3C6"/>
+                          <!-- Output arrow -->
+                          <line class="funnel-arrow" x1="86" y1="35" x2="112" y2="35" stroke="#2ED3C6" stroke-width="1.5"/>
+                          <path class="funnel-arrow-fill" d="M108 31L116 35L108 39" stroke="#2ED3C6" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                        </svg>
+                      </div>
+                    </div>
+
+                    <div class="panel-step">
+                      <div class="step-badge">03</div>
+                      <div>
+                        <div class="step-eyebrow teal">Competitive Radar</div>
+                        <div class="step-title">Know the<br>Landscape Cold</div>
+                      </div>
+                      <p class="step-body">
+                        Tracks competitors and adjacent categories to identify white space, emerging threats, and positioning opportunities.
+                      </p>
+                      <div class="step-visual">
+                        <!-- Radar rings with blips -->
+                        <svg width="90" height="80" viewBox="0 0 90 80" fill="none">
+                          <circle cx="45" cy="40" r="36" stroke="rgba(46,211,198,0.12)" stroke-width="1"/>
+                          <circle cx="45" cy="40" r="24" stroke="rgba(46,211,198,0.2)"  stroke-width="1"/>
+                          <circle cx="45" cy="40" r="12" stroke="rgba(46,211,198,0.35)" stroke-width="1"/>
+                          <!-- Crosshair -->
+                          <line x1="9"  y1="40" x2="81" y2="40" stroke="rgba(46,211,198,0.08)" stroke-width="1"/>
+                          <line x1="45" y1="4"  x2="45" y2="76" stroke="rgba(46,211,198,0.08)" stroke-width="1"/>
+                          <!-- Blips -->
+                          <circle cx="28" cy="22" r="3.5" fill="rgba(46,211,198,0.5)" stroke="#2ED3C6" stroke-width="1"/>
+                          <circle cx="68" cy="30" r="2.5" fill="rgba(46,211,198,0.35)"/>
+                          <circle cx="22" cy="58" r="2"   fill="rgba(46,211,198,0.25)"/>
+                          <circle cx="62" cy="60" r="3"   fill="rgba(46,211,198,0.4)" stroke="#2ED3C6" stroke-width="0.8"/>
+                          <!-- Center -->
+                          <circle cx="45" cy="40" r="4"  fill="#2ED3C6" opacity="0.9"/>
+                          <circle cx="45" cy="40" r="7"  fill="none" stroke="rgba(46,211,198,0.4)" stroke-width="1" opacity="0.6"/>
+                        </svg>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div><!-- /panel-intelligence -->
+
+              <!-- ── STRATEGY CONTENT ── -->
+              <div class="panel-content" id="panel-strategy">
+                <div class="panel-content-inner">
+                  <div class="panel-steps">
+
+                    <div class="panel-step">
+                      <div class="step-badge active-gold">01</div>
+                      <div>
+                        <div class="step-eyebrow gold">Directional Brief</div>
+                        <div class="step-title">One Direction.<br>No Ambiguity.</div>
+                      </div>
+                      <p class="step-body">
+                        Distills intelligence into a clear, opinionated brief that aligns stakeholders and sets the creative in motion.
+                      </p>
+                      <div class="step-visual">
+                        <!-- Decision funnel: 3 bands → converge → arrow -->
+                        <svg width="120" height="70" viewBox="0 0 120 70" fill="none">
+                          <rect class="band-1" x="4" y="8"  width="50" height="12" rx="3" fill="rgba(201,168,76,0.15)" stroke="rgba(201,168,76,0.4)" stroke-width="1"/>
+                          <rect class="band-2" x="4" y="29" width="50" height="12" rx="3" fill="rgba(201,168,76,0.22)" stroke="var(--gold)" stroke-width="1.5"/>
+                          <rect class="band-3" x="4" y="50" width="50" height="12" rx="3" fill="rgba(201,168,76,0.15)" stroke="rgba(201,168,76,0.4)" stroke-width="1"/>
+                          <line x1="54" y1="14" x2="82" y2="35" stroke="rgba(201,168,76,0.3)" stroke-width="1" stroke-dasharray="3 2"/>
+                          <line x1="54" y1="35" x2="82" y2="35" stroke="rgba(201,168,76,0.5)" stroke-width="1"/>
+                          <line x1="54" y1="56" x2="82" y2="35" stroke="rgba(201,168,76,0.3)" stroke-width="1" stroke-dasharray="3 2"/>
+                          <circle cx="82" cy="35" r="6" fill="rgba(201,168,76,0.2)" stroke="var(--gold)" stroke-width="1.5"/>
+                          <circle cx="82" cy="35" r="2.5" fill="var(--gold)"/>
+                          <line class="funnel-arrow" x1="88" y1="35" x2="112" y2="35" stroke="var(--gold)" stroke-width="1.5"/>
+                          <path class="funnel-arrow-fill" d="M108 31L116 35L108 39" stroke="var(--gold)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                        </svg>
+                      </div>
+                    </div>
+
+                    <div class="panel-step">
+                      <div class="step-badge">02</div>
+                      <div>
+                        <div class="step-eyebrow gold">Market Play Framework</div>
+                        <div class="step-title">Where to Win.<br>How to Own It.</div>
+                      </div>
+                      <p class="step-body">
+                        Maps the competitive landscape to define where to play, how to win, and what to own in the market.
+                      </p>
+                      <div class="step-visual">
+                        <!-- 2×2 positioning grid with highlighted quadrant -->
+                        <svg width="110" height="80" viewBox="0 0 110 80" fill="none">
+                          <!-- Axes -->
+                          <line x1="55" y1="6" x2="55" y2="74" stroke="rgba(201,168,76,0.2)" stroke-width="1"/>
+                          <line x1="6"  y1="40" x2="104" y2="40" stroke="rgba(201,168,76,0.2)" stroke-width="1"/>
+                          <!-- Quadrant fills -->
+                          <rect x="57" y="8"  width="45" height="30" rx="2" fill="rgba(201,168,76,0.18)" stroke="var(--gold)" stroke-width="1.5"/>
+                          <rect x="8"  y="8"  width="45" height="30" rx="2" fill="rgba(201,168,76,0.05)" stroke="rgba(201,168,76,0.2)" stroke-width="1"/>
+                          <rect x="8"  y="42" width="45" height="30" rx="2" fill="rgba(201,168,76,0.05)" stroke="rgba(201,168,76,0.2)" stroke-width="1"/>
+                          <rect x="57" y="42" width="45" height="30" rx="2" fill="rgba(201,168,76,0.08)" stroke="rgba(201,168,76,0.25)" stroke-width="1"/>
+                          <!-- Star in highlighted quadrant -->
+                          <circle cx="79" cy="23" r="5" fill="var(--gold)" opacity="0.9"/>
+                          <!-- Axis labels -->
+                          <text x="55" y="80"  text-anchor="middle" font-size="7" fill="rgba(201,168,76,0.5)" font-family="Inter,sans-serif">Reach</text>
+                          <text x="4"  y="42"  text-anchor="middle" font-size="7" fill="rgba(201,168,76,0.5)" font-family="Inter,sans-serif" transform="rotate(-90,4,42)">Impact</text>
+                        </svg>
+                      </div>
+                    </div>
+
+                    <div class="panel-step">
+                      <div class="step-badge">03</div>
+                      <div>
+                        <div class="step-eyebrow gold">Decision Clarity</div>
+                        <div class="step-title">Structured.<br>Actionable. Done.</div>
+                      </div>
+                      <p class="step-body">
+                        Removes ambiguity from complex situations — delivering structured recommendations that teams can act on immediately.
+                      </p>
+                      <div class="step-visual">
+                        <!-- Decision tree: root → branches → leaves -->
+                        <svg width="120" height="70" viewBox="0 0 120 70" fill="none">
+                          <rect x="42" y="4" width="36" height="18" rx="4" fill="rgba(201,168,76,0.15)" stroke="var(--gold)" stroke-width="1.5"/>
+                          <text x="60" y="17" text-anchor="middle" font-size="8" fill="rgba(201,168,76,0.9)" font-family="Inter,sans-serif" font-weight="600">Brief</text>
+                          <line x1="60" y1="22" x2="30" y2="44" stroke="rgba(201,168,76,0.35)" stroke-width="1.5"/>
+                          <line x1="60" y1="22" x2="90" y2="44" stroke="rgba(201,168,76,0.5)" stroke-width="1.5"/>
+                          <rect x="8"  y="44" width="44" height="16" rx="3" fill="rgba(201,168,76,0.08)" stroke="rgba(201,168,76,0.3)" stroke-width="1"/>
+                          <text x="30" y="56" text-anchor="middle" font-size="7.5" fill="rgba(201,168,76,0.6)" font-family="Inter,sans-serif">Explore</text>
+                          <rect x="68" y="44" width="44" height="16" rx="3" fill="rgba(201,168,76,0.2)" stroke="var(--gold)" stroke-width="1.5"/>
+                          <text x="90" y="56" text-anchor="middle" font-size="7.5" fill="var(--gold)" font-family="Inter,sans-serif" font-weight="600">Execute</text>
+                        </svg>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div><!-- /panel-strategy -->
+
+              <!-- ── CREATIVE CONTENT ── -->
+              <div class="panel-content" id="panel-creative">
+                <div class="panel-content-inner">
+                  <div class="panel-steps">
+
+                    <div class="panel-step">
+                      <div class="step-badge active-purple">01</div>
+                      <div>
+                        <div class="step-eyebrow purple">Story Architecture</div>
+                        <div class="step-title">The Narrative<br>Blueprint</div>
+                      </div>
+                      <p class="step-body">
+                        Structures the narrative: message hierarchy, tone of voice, and the creative platform that everything else builds from.
+                      </p>
+                      <div class="step-visual">
+                        <!-- Layered canvas artboards stacking in -->
+                        <svg width="110" height="80" viewBox="0 0 110 80" fill="none">
+                          <!-- Layer 3 (back) -->
+                          <g class="canvas-layer canvas-layer-1" transform="rotate(-5,55,40)">
+                            <rect x="18" y="22" width="74" height="50" rx="4" fill="rgba(167,139,255,0.06)" stroke="rgba(167,139,255,0.25)" stroke-width="1"/>
+                          </g>
+                          <!-- Layer 2 (middle) -->
+                          <g class="canvas-layer canvas-layer-2" transform="rotate(2,55,40)">
+                            <rect x="18" y="22" width="74" height="50" rx="4" fill="rgba(167,139,255,0.10)" stroke="rgba(167,139,255,0.4)" stroke-width="1"/>
+                            <!-- type lines -->
+                            <rect x="26" y="32" width="30" height="4" rx="2" fill="rgba(167,139,255,0.4)"/>
+                            <rect x="26" y="40" width="48" height="3" rx="1.5" fill="rgba(167,139,255,0.2)"/>
+                            <rect x="26" y="46" width="38" height="3" rx="1.5" fill="rgba(167,139,255,0.2)"/>
+                          </g>
+                          <!-- Layer 1 (front) -->
+                          <g class="canvas-layer canvas-layer-3">
+                            <rect x="18" y="22" width="74" height="50" rx="4" fill="rgba(167,139,255,0.14)" stroke="var(--purple)" stroke-width="1.5"/>
+                            <!-- Content blocks -->
+                            <rect x="26" y="30" width="40" height="6"  rx="3" fill="var(--purple)" opacity="0.8"/>
+                            <rect x="26" y="41" width="58" height="3"  rx="1.5" fill="rgba(167,139,255,0.35)"/>
+                            <rect x="26" y="47" width="44" height="3"  rx="1.5" fill="rgba(167,139,255,0.25)"/>
+                            <rect x="26" y="55" width="20" height="10" rx="3" fill="rgba(167,139,255,0.25)" stroke="rgba(167,139,255,0.4)" stroke-width="1"/>
+                            <!-- cursor blink -->
+                            <rect class="canvas-cursor" x="69" y="30" width="2" height="6" rx="1" fill="var(--purple)"/>
+                          </g>
+                          <!-- Corner dog-ear on top layer -->
+                          <polygon points="92,22 92,30 84,22" fill="var(--purple)" opacity="0.4"/>
+                        </svg>
+                      </div>
+                    </div>
+
+                    <div class="panel-step">
+                      <div class="step-badge">02</div>
+                      <div>
+                        <div class="step-eyebrow purple">Design Language</div>
+                        <div class="step-title">Visual Identity<br>That Holds</div>
+                      </div>
+                      <p class="step-body">
+                        Translates strategy into visual identity — typography, color, layout, and motion that make a brand feel like itself.
+                      </p>
+                      <div class="step-visual">
+                        <!-- Color palette + type scale system -->
+                        <svg width="120" height="72" viewBox="0 0 120 72" fill="none">
+                          <!-- Color swatches row -->
+                          <rect x="6"  y="6"  width="20" height="20" rx="4" fill="var(--purple)"/>
+                          <rect x="30" y="6"  width="20" height="20" rx="4" fill="rgba(167,139,255,0.55)"/>
+                          <rect x="54" y="6"  width="20" height="20" rx="4" fill="rgba(167,139,255,0.28)"/>
+                          <rect x="78" y="6"  width="20" height="20" rx="4" fill="rgba(167,139,255,0.12)" stroke="rgba(167,139,255,0.3)" stroke-width="1"/>
+                          <rect x="102" y="6" width="12" height="20" rx="4" fill="rgba(167,139,255,0.06)" stroke="rgba(167,139,255,0.25)" stroke-width="1"/>
+                          <!-- Type scale bars -->
+                          <rect x="6"  y="34" width="52" height="5" rx="2" fill="rgba(167,139,255,0.7)"/>
+                          <rect x="6"  y="44" width="38" height="4" rx="2" fill="rgba(167,139,255,0.45)"/>
+                          <rect x="6"  y="53" width="28" height="3" rx="1.5" fill="rgba(167,139,255,0.3)"/>
+                          <rect x="6"  y="61" width="20" height="2.5" rx="1.25" fill="rgba(167,139,255,0.2)"/>
+                          <!-- Grid mark -->
+                          <rect x="72" y="34" width="42" height="32" rx="3" fill="rgba(167,139,255,0.06)" stroke="rgba(167,139,255,0.2)" stroke-width="1" stroke-dasharray="3 2"/>
+                          <line x1="84" y1="34" x2="84" y2="66" stroke="rgba(167,139,255,0.12)" stroke-width="1"/>
+                          <line x1="96" y1="34" x2="96" y2="66" stroke="rgba(167,139,255,0.12)" stroke-width="1"/>
+                          <line x1="72" y1="50" x2="114" y2="50" stroke="rgba(167,139,255,0.12)" stroke-width="1"/>
+                        </svg>
+                      </div>
+                    </div>
+
+                    <div class="panel-step">
+                      <div class="step-badge">03</div>
+                      <div>
+                        <div class="step-eyebrow purple">Campaign Production</div>
+                        <div class="step-title">Brief to Launch.<br>End to End.</div>
+                      </div>
+                      <p class="step-body">
+                        Brings it all to life — content, assets, activations, and experiences built for the channels that matter.
+                      </p>
+                      <div class="step-visual">
+                        <!-- Production timeline: phases with milestones -->
+                        <svg width="120" height="70" viewBox="0 0 120 70" fill="none">
+                          <!-- Track -->
+                          <rect x="8" y="14" width="104" height="4" rx="2" fill="rgba(167,139,255,0.12)"/>
+                          <!-- Progress fill -->
+                          <rect x="8" y="14" width="72"  height="4" rx="2" fill="var(--purple)" opacity="0.7"/>
+                          <!-- Phase markers -->
+                          <circle cx="8"  cy="16" r="5" fill="var(--purple)"/>
+                          <circle cx="36" cy="16" r="5" fill="var(--purple)"/>
+                          <circle cx="64" cy="16" r="5" fill="var(--purple)" opacity="0.8"/>
+                          <circle cx="92" cy="16" r="5" fill="rgba(167,139,255,0.2)" stroke="rgba(167,139,255,0.4)" stroke-width="1.5"/>
+                          <circle cx="112" cy="16" r="5" fill="rgba(167,139,255,0.1)" stroke="rgba(167,139,255,0.3)" stroke-width="1"/>
+                          <!-- Labels -->
+                          <text x="8"   y="30" text-anchor="middle" font-size="7" fill="var(--purple)"              font-family="Inter,sans-serif">Brief</text>
+                          <text x="36"  y="30" text-anchor="middle" font-size="7" fill="rgba(167,139,255,0.8)"      font-family="Inter,sans-serif">Design</text>
+                          <text x="64"  y="30" text-anchor="middle" font-size="7" fill="rgba(167,139,255,0.7)"      font-family="Inter,sans-serif">Build</text>
+                          <text x="92"  y="30" text-anchor="middle" font-size="7" fill="rgba(167,139,255,0.45)"     font-family="Inter,sans-serif">Review</text>
+                          <text x="112" y="30" text-anchor="middle" font-size="7" fill="rgba(167,139,255,0.3)"      font-family="Inter,sans-serif">Live</text>
+                          <!-- Deliverable cards -->
+                          <rect x="6"  y="38" width="32" height="22" rx="3" fill="rgba(167,139,255,0.12)" stroke="rgba(167,139,255,0.3)" stroke-width="1"/>
+                          <rect x="44" y="38" width="32" height="22" rx="3" fill="rgba(167,139,255,0.10)" stroke="rgba(167,139,255,0.25)" stroke-width="1"/>
+                          <rect x="82" y="38" width="32" height="22" rx="3" fill="rgba(167,139,255,0.06)" stroke="rgba(167,139,255,0.15)" stroke-width="1" stroke-dasharray="3 2"/>
+                          <text x="22" y="53" text-anchor="middle" font-size="7.5" fill="var(--purple)"         font-family="Inter,sans-serif" font-weight="500">Assets</text>
+                          <text x="60" y="53" text-anchor="middle" font-size="7.5" fill="rgba(167,139,255,0.7)" font-family="Inter,sans-serif">Content</text>
+                          <text x="98" y="53" text-anchor="middle" font-size="7.5" fill="rgba(167,139,255,0.4)" font-family="Inter,sans-serif">Activate</text>
+                        </svg>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div><!-- /panel-creative -->
+
+              <!-- ── PLATFORM CONTENT ── -->
+              <div class="panel-content" id="panel-platform">
+                <div class="panel-content-inner">
+                  <div class="panel-steps">
+
+                    <div class="panel-step">
+                      <div class="step-badge active-coral">01</div>
+                      <div>
+                        <div class="step-eyebrow coral">Audience Intelligence</div>
+                        <div class="step-title">Know Who.<br>Reach Them Right.</div>
+                      </div>
+                      <p class="step-body">
+                        Centralizes audience data, builds segments, and creates the connective layer between who you're talking to and how.
+                      </p>
+                      <div class="step-visual">
+                        <!-- Audience segment circles / Venn diagram -->
+                        <svg width="110" height="76" viewBox="0 0 110 76" fill="none">
+                          <!-- Segment circles -->
+                          <circle cx="36" cy="36" r="28" fill="rgba(249,111,110,0.08)" stroke="rgba(249,111,110,0.35)" stroke-width="1.5"/>
+                          <circle cx="74" cy="36" r="28" fill="rgba(249,111,110,0.08)" stroke="rgba(249,111,110,0.35)" stroke-width="1.5"/>
+                          <!-- Overlap fill -->
+                          <path d="M55 12 Q70 20 70 36 Q70 52 55 60 Q40 52 40 36 Q40 20 55 12Z" fill="rgba(249,111,110,0.22)" stroke="none"/>
+                          <!-- Center highlight -->
+                          <circle cx="55" cy="36" r="6" fill="var(--coral)" opacity="0.8"/>
+                          <!-- Segment labels -->
+                          <text x="25" y="38" text-anchor="middle" font-size="7" fill="rgba(249,111,110,0.7)" font-family="Inter,sans-serif">Seg A</text>
+                          <text x="85" y="38" text-anchor="middle" font-size="7" fill="rgba(249,111,110,0.7)" font-family="Inter,sans-serif">Seg B</text>
+                          <text x="55" y="68" text-anchor="middle" font-size="7" fill="var(--coral)"           font-family="Inter,sans-serif" font-weight="600">Core</text>
+                        </svg>
+                      </div>
+                    </div>
+
+                    <div class="panel-step">
+                      <div class="step-badge">02</div>
+                      <div>
+                        <div class="step-eyebrow coral">Campaign Operations</div>
+                        <div class="step-title">The Command<br>Center</div>
+                      </div>
+                      <p class="step-body">
+                        The command center: where launches are tracked, timelines are managed, and nothing falls through the cracks.
+                      </p>
+                      <div class="step-visual">
+                        <!-- Gantt-style launch tracker -->
+                        <svg width="120" height="72" viewBox="0 0 120 72" fill="none">
+                          <!-- Row labels area -->
+                          <text x="4"  y="20" font-size="7" fill="rgba(249,111,110,0.6)" font-family="Inter,sans-serif">Launch</text>
+                          <text x="4"  y="36" font-size="7" fill="rgba(249,111,110,0.5)" font-family="Inter,sans-serif">Content</text>
+                          <text x="4"  y="52" font-size="7" fill="rgba(249,111,110,0.4)" font-family="Inter,sans-serif">Ads</text>
+                          <text x="4"  y="68" font-size="7" fill="rgba(249,111,110,0.35)" font-family="Inter,sans-serif">Social</text>
+                          <!-- Bars -->
+                          <rect x="42" y="12" width="70" height="9" rx="3" fill="var(--coral)"              opacity="0.75"/>
+                          <rect x="42" y="28" width="48" height="9" rx="3" fill="rgba(249,111,110,0.5)"/>
+                          <rect x="42" y="44" width="32" height="9" rx="3" fill="rgba(249,111,110,0.35)"/>
+                          <rect x="42" y="60" width="22" height="9" rx="3" fill="rgba(249,111,110,0.2)"     stroke="rgba(249,111,110,0.3)" stroke-width="1"/>
+                          <!-- Now line -->
+                          <line x1="84" y1="8" x2="84" y2="70" stroke="rgba(249,111,110,0.6)" stroke-width="1" stroke-dasharray="3 2"/>
+                          <text x="85" y="12" font-size="6.5" fill="var(--coral)" font-family="Inter,sans-serif">Now</text>
+                        </svg>
+                      </div>
+                    </div>
+
+                    <div class="panel-step">
+                      <div class="step-badge">03</div>
+                      <div>
+                        <div class="step-eyebrow coral">Performance Hub</div>
+                        <div class="step-title">Execution Meets<br>Insight</div>
+                      </div>
+                      <p class="step-body">
+                        Real-time dashboards, attribution models, and reporting loops that close the gap between execution and insight.
+                      </p>
+                      <div class="step-visual">
+                        <!-- Live metrics grid: 2×3 tiles with sparklines and bars -->
+                        <svg width="120" height="80" viewBox="0 0 120 80" fill="none">
+                          <!-- Tile 1 -->
+                          <rect x="4"  y="4"  width="34" height="22" rx="3" fill="rgba(249,111,110,0.08)" stroke="rgba(249,111,110,0.25)" stroke-width="1"/>
+                          <text x="8"  y="14" font-size="6.5" fill="rgba(249,111,110,0.55)" font-family="Inter,sans-serif">CTR</text>
+                          <text x="8"  y="22" font-size="9"   fill="var(--coral)" font-family="Inter,sans-serif" font-weight="600">4.2%</text>
+                          <!-- Tile 2 -->
+                          <rect x="43" y="4"  width="34" height="22" rx="3" fill="rgba(249,111,110,0.08)" stroke="rgba(249,111,110,0.25)" stroke-width="1"/>
+                          <text x="47" y="14" font-size="6.5" fill="rgba(249,111,110,0.55)" font-family="Inter,sans-serif">Conv</text>
+                          <text x="47" y="22" font-size="9"   fill="var(--coral)" font-family="Inter,sans-serif" font-weight="600">12K</text>
+                          <!-- Tile 3 -->
+                          <rect x="82" y="4"  width="34" height="22" rx="3" fill="rgba(249,111,110,0.12)" stroke="var(--coral)" stroke-width="1.5"/>
+                          <text x="86" y="14" font-size="6.5" fill="rgba(249,111,110,0.7)" font-family="Inter,sans-serif">ROAS</text>
+                          <text x="86" y="22" font-size="9"   fill="var(--coral)" font-family="Inter,sans-serif" font-weight="700">3.8×</text>
+                          <!-- Sparkline below tiles (full width) -->
+                          <polyline class="spark-line" points="4,56 18,52 32,54 46,44 60,48 74,40 88,36 102,30 116,26"
+                            stroke="var(--coral)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                          <!-- Sparkline area fill -->
+                          <polygon points="4,56 18,52 32,54 46,44 60,48 74,40 88,36 102,30 116,26 116,72 4,72"
+                            fill="url(#cg-fill)" opacity="0.18"/>
+                          <!-- Bar chart row -->
+                          <rect class="metric-bar metric-bar-1" x="10"  y="62" width="8"  height="10" rx="1.5" fill="rgba(249,111,110,0.35)"/>
+                          <rect class="metric-bar metric-bar-2" x="22"  y="58" width="8"  height="14" rx="1.5" fill="rgba(249,111,110,0.45)"/>
+                          <rect class="metric-bar metric-bar-3" x="34"  y="54" width="8"  height="18" rx="1.5" fill="rgba(249,111,110,0.55)"/>
+                          <rect class="metric-bar metric-bar-4" x="46"  y="50" width="8"  height="22" rx="1.5" fill="rgba(249,111,110,0.65)"/>
+                          <rect class="metric-bar metric-bar-5" x="58"  y="46" width="8"  height="26" rx="1.5" fill="rgba(249,111,110,0.75)"/>
+                          <rect class="metric-bar metric-bar-6" x="70"  y="42" width="8"  height="30" rx="1.5" fill="var(--coral)" opacity="0.85"/>
+                          <defs>
+                            <linearGradient id="cg-fill" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="0%"   stop-color="#F96F6E"/>
+                              <stop offset="100%" stop-color="#F96F6E" stop-opacity="0"/>
+                            </linearGradient>
+                          </defs>
+                        </svg>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div><!-- /panel-platform -->
+
+            </div><!-- /detail-panel -->
+          </div><!-- /detail-panel-overflow -->
+        </div><!-- /detail-panel-wrap -->
+
+        <!-- Polished legend -->
+        <div class="eco-legend reveal reveal-d7">
+          <div class="legend-tag lt-teal">
+            <span class="legend-tag-dot"></span>
+            <span class="legend-tag-label">Intelligence</span>
+            <span class="legend-tag-desc">— Signal &amp; insight layer</span>
+          </div>
+          <div class="legend-tag lt-gold">
+            <span class="legend-tag-dot"></span>
+            <span class="legend-tag-label">Strategy</span>
+            <span class="legend-tag-desc">— Direction &amp; decision layer</span>
+          </div>
+          <div class="legend-tag lt-purple">
+            <span class="legend-tag-dot"></span>
+            <span class="legend-tag-label">Creative</span>
+            <span class="legend-tag-desc">— Story &amp; execution layer</span>
+          </div>
+          <div class="legend-tag lt-coral">
+            <span class="legend-tag-dot"></span>
+            <span class="legend-tag-label">Platform</span>
+            <span class="legend-tag-desc">— Operations &amp; performance layer</span>
+          </div>
+        </div>
+
+      </div><!-- /ecosystem-canvas -->
+
+      <!-- Scan line BOTTOM (reversed direction) -->
+      <div class="scan-line scan-line-bottom reveal reveal-d7" aria-hidden="true">
+        <svg preserveAspectRatio="none" viewBox="0 0 1200 10" xmlns="http://www.w3.org/2000/svg">
+          <line class="scan-base"       x1="0" y1="5" x2="1200" y2="5"/>
+          <line class="scan-travel-rtl" x1="0" y1="5" x2="1200" y2="5"/>
+        </svg>
+      </div>
+
+    </div><!-- /container -->
+  </section>
 
         <!-- H2: WHY THE HUB EXISTS -->
+        <div style="width:100%;height:1px;background:linear-gradient(to right,transparent,rgba(249,111,110,0.18),transparent);"></div>
         <section class="section-why">
             <div class="container">
                 <div class="why-grid">
                     <div class="why-left">
                         <h2>WHY THE HUB EXISTS</h2>
-                        <p>Over time, most organizations accumulate tools, processes, and strategies that never fully connect.</p>
+                        <p>Over time, organizations accumulate tools, processes, and strategies that no longer connect.</p>
                         <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem;">
                             <div class="why-problem">
-                                <p>Ideas get approved but not executed.</p>
+                                <p>Ideas get approved but never executed.</p>
                             </div>
                             <div class="why-problem">
-                                <p>Campaigns launch but lack strategic continuity.</p>
+                                <p>Campaigns launch without strategic continuity.</p>
                             </div>
                             <div class="why-problem">
-                                <p>Decisions are made but slowly lose context.</p>
+                                <p>Decisions get made but slowly lose context.</p>
                             </div>
                         </div>
                     </div>
@@ -883,6 +2386,178 @@
                 raObs.observe(heroSubhead);
             }
         });
+    
+    /* ── Hub v6 Node Panel System ── */
+/* ── IntersectionObserver: staggered reveal ── */
+    (function initReveal() {
+      const items = document.querySelectorAll('.reveal');
+      if (!items.length) return;
+
+      /* Threshold 0 + generous rootMargin ensures items reveal as soon as
+         any pixel enters the viewport — works correctly on stacked mobile layouts. */
+      const observer = new IntersectionObserver(
+        entries => entries.forEach(e => {
+          if (e.isIntersecting) { e.target.classList.add('is-visible'); observer.unobserve(e.target); }
+        }),
+        { threshold: 0, rootMargin: '0px 0px 0px 0px' }
+      );
+      items.forEach(el => observer.observe(el));
+
+      /* Fallback: force-reveal everything after 600 ms in case any item
+         sits below the initial viewport and never crosses the threshold
+         (e.g. in screenshots / print / accessibility tools). */
+      setTimeout(() => {
+        items.forEach(el => el.classList.add('is-visible'));
+      }, 600);
+    })();
+
+    /* ── NODE PANEL SYSTEM ── */
+    (function initNodeToggles() {
+
+      const NODE_CONFIG = {
+        intelligence: {
+          nodeEl:    'intelligence-node',
+          toggleEl:  'intelligence-toggle',
+          panelEl:   'panel-intelligence',
+          color:     'teal',
+          lineClass: 'teal-line',
+          labelClass:'teal-label',
+          bridge:    'Zooming into Intelligence capabilities',
+          label:     'Intelligence — Signal Layer',
+          arrowIn:   null,
+          arrowOut:  'arrow-1',
+        },
+        strategy: {
+          nodeEl:    'strategy-node',
+          toggleEl:  'strategy-toggle',
+          panelEl:   'panel-strategy',
+          color:     'gold',
+          lineClass: 'gold-line',
+          labelClass:'gold-label',
+          bridge:    'Zooming into Strategy capabilities',
+          label:     'Strategy — Direction Layer',
+          arrowIn:   'arrow-1',
+          arrowOut:  'arrow-2',
+        },
+        creative: {
+          nodeEl:    'creative-node',
+          toggleEl:  'creative-toggle',
+          panelEl:   'panel-creative',
+          color:     'purple',
+          lineClass: 'purple-line',
+          labelClass:'purple-label',
+          bridge:    'Zooming into Creative capabilities',
+          label:     'Creative — Execution Layer',
+          arrowIn:   'arrow-2',
+          arrowOut:  'arrow-3',
+        },
+        platform: {
+          nodeEl:    'platform-node',
+          toggleEl:  'platform-toggle',
+          panelEl:   'panel-platform',
+          color:     'coral',
+          lineClass: 'coral-line',
+          labelClass:'coral-label',
+          bridge:    'Zooming into Platform capabilities',
+          label:     'Platform — Operations Layer',
+          arrowIn:   'arrow-3',
+          arrowOut:  null,
+        },
+      };
+
+      const panelWrap   = document.getElementById('detail-panel-wrap');
+      const detailPanel = document.getElementById('detail-panel');
+      const panelLabel  = document.getElementById('detail-panel-label');
+      const bridgeLine  = document.getElementById('bridge-line');
+      const bridgeLabel = document.getElementById('bridge-label');
+      let activeNode = null;
+
+      function deactivateAll() {
+        Object.keys(NODE_CONFIG).forEach(id => {
+          const cfg = NODE_CONFIG[id];
+          const nodeEl   = document.getElementById(cfg.nodeEl);
+          const toggleEl = document.getElementById(cfg.toggleEl);
+          const panelEl  = document.getElementById(cfg.panelEl);
+          if (nodeEl)   nodeEl.classList.remove('is-active');
+          if (toggleEl) { toggleEl.classList.remove('is-expanded'); toggleEl.setAttribute('aria-expanded','false'); }
+          if (panelEl)  panelEl.classList.remove('is-active');
+        });
+        /* Remove is-lit from all arrows */
+        document.querySelectorAll('.eco-arrow').forEach(a => a.classList.remove('is-lit'));
+      }
+
+      function activateNode(id) {
+        const cfg      = NODE_CONFIG[id];
+        const nodeEl   = document.getElementById(cfg.nodeEl);
+        const toggleEl = document.getElementById(cfg.toggleEl);
+        const panelEl  = document.getElementById(cfg.panelEl);
+
+        deactivateAll();
+        activeNode = id;
+
+        if (nodeEl)   nodeEl.classList.add('is-active');
+        if (toggleEl) { toggleEl.classList.add('is-expanded'); toggleEl.setAttribute('aria-expanded','true'); }
+
+        /* Bridge */
+        bridgeLine.className  = 'zoom-bridge-line ' + cfg.lineClass;
+        bridgeLabel.className = 'zoom-bridge-label ' + cfg.labelClass;
+        bridgeLabel.textContent = cfg.bridge;
+
+        /* Panel */
+        detailPanel.setAttribute('data-color', cfg.color);
+        panelLabel.textContent = cfg.label;
+
+        /* Open panel */
+        panelWrap.classList.add('is-open');
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          if (panelEl) panelEl.classList.add('is-active');
+        }));
+
+        /* Light up connected arrows */
+        if (cfg.arrowIn)  { const a = document.getElementById(cfg.arrowIn);  if (a) a.classList.add('is-lit'); }
+        if (cfg.arrowOut) { const a = document.getElementById(cfg.arrowOut); if (a) a.classList.add('is-lit'); }
+      }
+
+      function toggleNode(id) {
+        if (activeNode === id) {
+          deactivateAll();
+          panelWrap.classList.remove('is-open');
+          activeNode = null;
+        } else {
+          activateNode(id);
+        }
+      }
+
+      /* Wire all toggles */
+      Object.keys(NODE_CONFIG).forEach(id => {
+        const toggleEl = document.getElementById(NODE_CONFIG[id].toggleEl);
+        if (!toggleEl) return;
+        toggleEl.addEventListener('click',   () => toggleNode(id));
+        toggleEl.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleNode(id); } });
+      });
+
+      /* ── Per-node hover: light the outgoing (and incoming) arrow ── */
+      Object.keys(NODE_CONFIG).forEach(id => {
+        const cfg    = NODE_CONFIG[id];
+        const nodeEl = document.getElementById(cfg.nodeEl);
+        if (!nodeEl) return;
+
+        nodeEl.addEventListener('mouseenter', () => {
+          if (activeNode === id) return; // already active, is-lit already set
+          if (cfg.arrowOut) { const a = document.getElementById(cfg.arrowOut); if (a) a.classList.add('is-lit'); }
+          if (cfg.arrowIn)  { const a = document.getElementById(cfg.arrowIn);  if (a) a.classList.add('is-lit'); }
+        });
+        nodeEl.addEventListener('mouseleave', () => {
+          if (activeNode === id) return;
+          if (cfg.arrowOut) { const a = document.getElementById(cfg.arrowOut); if (a) a.classList.remove('is-lit'); }
+          if (cfg.arrowIn)  { const a = document.getElementById(cfg.arrowIn);  if (a) a.classList.remove('is-lit'); }
+        });
+      });
+
+      /* Default: open Platform on desktop */
+      const isMobile = () => window.matchMedia('(max-width: 900px)').matches;
+      if (!isMobile()) activateNode('platform');
+    })();
     </script>
 </body>
 </html>
