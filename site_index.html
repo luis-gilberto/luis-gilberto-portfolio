@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ecosystem Mission Control Dashboard v8.0</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=Playfair+Display:ital,wght@1,400&family=JetBrains+Mono:wght@400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-body: #0A0A0A;
+      --bg-card: #141414;
+      --bg-card-hover: #1A1A1A;
+      --text-primary: #F4F1ED;
+      --text-secondary: #888;
+      --text-muted: #555;
+      --border: rgba(255,255,255,0.08);
+      --teal: #2ED3C6;
+      --coral: #F96F6E;
+      --gray: #444;
+      --font-display: 'Big Shoulders Display', sans-serif;
+      --font-serif: 'Playfair Display', serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-sans: 'Inter', sans-serif;
+    }
+    
+    [data-theme="light"] {
+      --bg-body: #F4F1ED;
+      --bg-card: #FFFFFF;
+      --bg-card-hover: #F9F9F9;
+      --text-primary: #111;
+      --text-secondary: #666;
+      --text-muted: #999;
+      --border: rgba(0,0,0,0.08);
+    }
+
+    body {
+      background: var(--bg-body);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      padding: 2rem;
+      margin: 0;
+      transition: background 0.3s, color 0.3s;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* HEADER */
+    .control-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 2rem;
+      margin-bottom: 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: 3rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 0;
+      line-height: 1;
+    }
+
+    .meta {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      text-align: right;
+    }
+
+    /* GRID LAYOUT */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+      width: 100%;
+      margin-bottom: 4rem;
+      flex: 1;
+    }
+
+    @media (max-width: 1400px) {
+      .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 768px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* LANE / COLUMN */
+    .engine-column {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    /* LAYER 1: ANCHOR CARDS */
+    .anchor-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      min-height: 160px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      transition: background 0.2s;
+    }
+    
+    .anchor-card:hover {
+      background: var(--bg-card-hover);
+    }
+
+    .anchor-header {
+      font-family: var(--font-display);
+      font-size: 28pt; /* User Requirement */
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-primary);
+      margin: 0;
+      line-height: 1;
+    }
+
+    /* LAYER 2: SUBSYSTEMS (Medium Cards) */
+    .subsystem-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .subsystem-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+    }
+
+    .series-label {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 1.5rem;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.5rem;
+      display: block;
+    }
+
+    /* LAYER 3: ARTIFACTS */
+    .artifact-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .map-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .map-item:hover { opacity: 0.7; }
+    .map-item:last-child { border-bottom: none; }
+
+    .map-title {
+      font-family: var(--font-sans);
+      font-weight: 500;
+      font-size: 1rem;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .map-path {
+      font-family: var(--font-mono); /* User Requirement */
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      word-break: break-all;
+      white-space: normal; /* No ellipses */
+      padding-left: 1.2rem;
+      opacity: 0.8;
+    }
+
+    /* INFRASTRUCTURE ROW */
+    .infrastructure-row {
+      border-top: 1px solid var(--border);
+      padding-top: 3rem;
+      margin-top: auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 4rem;
+    }
+    
+    .infra-section h3 {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+    }
+
+    .infra-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+
+    /* STATUS DOTS */
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .status-teal { background: var(--teal); box-shadow: 0 0 6px rgba(46, 211, 198, 0.4); }
+    .status-coral { background: var(--coral); }
+    .status-gray { background: var(--gray); opacity: 0.5; }
+
+    /* TOGGLE */
+    .theme-toggle {
+      position: fixed;
+      top: 2rem;
+      right: 2rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      z-index: 100;
+    }
+  </style>
+
+  <script>
+    (function() {
+      const t = localStorage.getItem('lg_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+</head>
+<body>
+
+  <button class="theme-toggle" id="themeToggle">Theme</button>
+
+  <header class="control-header">
+    <div>
+      <h1>Ecosystem Mission Control Dashboard</h1>
+      <p style="color:var(--teal); font-family:var(--font-display); letter-spacing:0.1em; margin-top:0.5rem; font-size: 1.2rem;">v8.0 // STRUCTURAL LOCK</p>
+    </div>
+    <div class="meta">
+      <p>STATUS: OPERATIONAL</p>
+      <p>SYNC: MARCH 07, 2026</p>
+    </div>
+  </header>
+
+  <main class="dashboard-grid">
+
+    <!-- LANE 1: PORTFOLIO -->
+    <section class="engine-column">
+      <!-- Layer 1: Anchor -->
+      <div class="anchor-card">
+        <h2 class="anchor-header">PORTFOLIO</h2>
+        <div class="map-path" style="margin-top:0.5rem; padding-left:0;">/index.html</div>
+      </div>
+
+      <!-- Layer 2: Subsystems -->
+      <div class="subsystem-container">
+        <div class="subsystem-card">
+          <span class="series-label">Strategic Lens (The Blueprints)</span>
+          
+          <!-- Layer 3: Artifacts -->
+          <div class="artifact-list">
+            <a href="/work/case-study-family-safety.html" class="map-item">
+              <div class="map-title"><div class="status-dot status-teal"></div>Family Safety</div>
+              <div class="map-path">/work/case-study-family-safety.html</div>
+            </a>
+            
+            <a href="/work/case-study-teams-launch.html" class="map-item">
+              <div class="map-title"><div class="status-dot status-teal"></div>Teams Launch</div>
+              <div class="map-path">/work/case-study-teams-launch.html</div>
+            </a>
+
+            <a href="/work/edge-ucational-blueprint.html" class="map-item">
+              <div class="map-title"><div class="status-dot status-teal"></div>Edge Blueprint</div>
+              <div class="map-path">/work/edge-ucational-blueprint.html</div>
+            </a>
+
+            <a href="/work/case-study-ai-browsing.html" class="map-item">
+              <div class="map-title"><div class="status-dot status-coral"></div>AI Browsing</div>
+              <div class="map-path">/work/case-study-ai-browsing.html</div>
+            </a>
+            
+            <a href="/work/case-study_edge_mobile.html" class="map-item">
+              <div class="map-title"><div class="status-dot status-coral"></div>Edge Mobile</div>
+              <div class="map-path">/work/case-study_edge_mobile.html</div>
+            </a>
+
+            <a href="/work/case-study-free-to-be-free.html" class="map-item">
+              <div class="map-title"><div class="status-dot status-coral"></div>Free to be Free</div>
+              <div class="map-path">/work/case-study-free-to-be-free.html</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LANE 2: INSIGHTS -->
+    <section class="engine-column">
+      <div class="anchor-card">
+        <h2 class="anchor-header">INSIGHTS</h2>
+        <div class="map-path" style="margin-top:0.5rem; padding-left:0;">/insights/index.html</div>
+      </div>
+
+      <div class="subsystem-container">
+        <!-- Series 1 -->
+        <div class="subsystem-card">
+          <span class="series-label">Director’s Commentary</span>
+          <div class="artifact-list">
+            <a href="/insights/family-safety-launch/index.html" class="map-item">
+              <div class="map-title"><div class="status-dot status-teal"></div>Family Safety Launch</div>
+              <div class="map-path">/insights/family-safety-launch/index.html</div>
+            </a>
+            <a href="/insights/teams-consumer-launch/index.html" class="map-item">
+              <div class="map-title"><div class="status-dot status-teal"></div>Teams Consumer</div>
+              <div class="map-path">/insights/teams-consumer-launch/index.html</div>
+            </a>
+            <a href="/insights/edge-ucational-series/index.html" class="map-item">
+              <div class="map-title"><div class="status-dot status-teal"></div>Edge-ucational</div>
+              <div class="map-path">/insights/edge-ucational-series/index.html</div>
+            </a>
+            <a href="/insights/transforming-browsing-ai/index.html" class="map-item">
+              <div class="map-title"><div class="status-dot status-coral"></div>Transforming Browsing</div>
+              <div class="map-path">/insights/transforming-browsing-ai/index.html</div>
+            </a>
+            <a href="/insights/edge-mobile-rebrand/index.html" class="map-item">
+              <div class="map-title"><div class="status-dot status-coral"></div>Edge Rebrand</div>
+              <div class="map-path">/insights/edge-mobile-rebrand/index.html</div>
+            </a>
+            <a href="/insights/free-to-be-free/index.html" class="map-item">
+              <div class="map-title"><div class="status-dot status-coral"></div>Free to be Free</div>
+              <div class="map-path">/insights/free-to-be-free/index.html</div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Series 2 -->
+        <div class="subsystem-card">
+          <span class="series-label">The Building Series</span>
+          <div class="artifact-list">
+            <a href="/insights/building-the-ecosystem/index.html" class="map-item">
+              <div class="map-title"><div class="status-dot status-teal"></div>Building Ecosystem</div>
+              <div class="map-path">/insights/building-the-ecosystem/index.html</div>
+            </a>
+            <a href="/insights/building-insights/index.html" class="map-item">
+              <div class="map-title"><div class="status-dot status-teal"></div>Building Insights</div>
+              <div class="map-path">/insights/building-insights/index.html</div>
+            </a>
+            <a href="/insights/building-the-hub/index.html" class="map-item">
+              <div class="map-title"><div class="status-dot status-coral"></div>Building The Hub</div>
+              <div class="map-path">/insights/building-the-hub/index.html</div>
+            </a>
+            <a href="/insights/building-the-portfolio/index.html" class="map-item">
+              <div class="map-title"><div class="status-dot status-coral"></div>Building Portfolio</div>
+              <div class="map-path">/insights/building-the-portfolio/index.html</div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Series 3 -->
+        <div class="subsystem-card">
+          <span class="series-label">Reflections</span>
+          <div class="artifact-list">
+            <a href="/insights/unlocking-the-blank-page/index.html" class="map-item">
+              <div class="map-title"><div class="status-dot status-teal"></div>Unlock Blank Page</div>
+              <div class="map-path">/insights/unlocking-the-blank-page/index.html</div>
+            </a>
+            <a href="/insights/proof-of-life/index.html" class="map-item">
+              <div class="map-title"><div class="status-dot status-coral"></div>Proof of Life</div>
+              <div class="map-path">/insights/proof-of-life/index.html</div>
+            </a>
+            <a href="/insights/move-at-your-speed/index.html" class="map-item">
+              <div class="map-title"><div class="status-dot status-coral"></div>Move at Your Speed</div>
+              <div class="map-path">/insights/move-at-your-speed/index.html</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LANE 3: THE HUB -->
+    <section class="engine-column">
+      <div class="anchor-card">
+        <h2 class="anchor-header">THE HUB</h2>
+        <div class="map-path" style="margin-top:0.5rem; padding-left:0;">/TheHub/index.html</div>
+      </div>
+
+      <div class="subsystem-container">
+        <!-- Modules -->
+        <div class="subsystem-card">
+          <span class="series-label">Modules</span>
+          <div class="artifact-list">
+            <a href="/TheHub/strategy-iq/index.html" class="map-item">
+              <div class="map-title"><div class="status-dot status-teal"></div>StrategyIQ</div>
+              <div class="map-path">/TheHub/strategy-iq/index.html</div>
+            </a>
+            <a href="/TheHub/advisory/index.html" class="map-item">
+              <div class="map-title"><div class="status-dot status-teal"></div>Advisory</div>
+              <div class="map-path">/TheHub/advisory/index.html</div>
+            </a>
+            <a href="/TheHub/studio.html" class="map-item">
+              <div class="map-title"><div class="status-dot status-teal"></div>The Studio</div>
+              <div class="map-path">/TheHub/studio.html</div>
+            </a>
+            <a href="/TheHub/scopeiq/index.html" class="map-item">
+              <div class="map-title"><div class="status-dot status-teal"></div>ScopeIQ</div>
+              <div class="map-path">/TheHub/scopeiq/index.html</div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Docs -->
+        <div class="subsystem-card">
+          <span class="series-label">Documentation</span>
+          <div class="artifact-list">
+            <a href="/TheHub/styleguide.html" class="map-item">
+              <div class="map-title"><div class="status-dot status-teal"></div>Framework Styleguide</div>
+              <div class="map-path">/TheHub/styleguide.html</div>
+            </a>
+            <a href="/system/index.html" class="map-item">
+              <div class="map-title"><div class="status-dot status-teal"></div>System Documentation</div>
+              <div class="map-path">/system/index.html</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LANE 4: THE PORTAL -->
+    <section class="engine-column">
+      <div class="anchor-card">
+        <h2 class="anchor-header">THE PORTAL</h2>
+        <div class="map-path" style="margin-top:0.5rem; padding-left:0;">portal.luis-gilberto.com</div>
+      </div>
+
+      <div class="subsystem-container">
+        <div class="subsystem-card">
+          <span class="series-label">Access</span>
+          <div class="artifact-list">
+            <a href="https://portal.luis-gilberto.com" target="_blank" class="map-item">
+              <div class="map-title"><div class="status-dot status-teal"></div>Client Environment ↗</div>
+              <div class="map-path">https://portal.luis-gilberto.com</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- INFRASTRUCTURE ROW -->
+  <footer class="infrastructure-row">
+    
+    <div class="infra-section">
+      <h3>Core Identity</h3>
+      <div class="infra-grid">
+        <a href="/about.html" class="map-item">
+          <div class="map-title"><div class="status-dot status-teal"></div>About</div>
+          <div class="map-path">/about.html</div>
+        </a>
+        <a href="/contact.html" class="map-item">
+          <div class="map-title"><div class="status-dot status-teal"></div>Contact</div>
+          <div class="map-path">/contact.html</div>
+        </a>
+        <a href="/cv.html" class="map-item">
+          <div class="map-title"><div class="status-dot status-teal"></div>CV / Resume</div>
+          <div class="map-path">/cv.html</div>
+        </a>
+        <a href="/timeline.html" class="map-item">
+          <div class="map-title"><div class="status-dot status-teal"></div>Timeline</div>
+          <div class="map-path">/timeline.html</div>
+        </a>
+        <a href="/brand/" class="map-item">
+          <div class="map-title"><div class="status-dot status-teal"></div>Brand Guidelines</div>
+          <div class="map-path">/brand/</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="infra-section">
+      <h3>The Archive</h3>
+      <div class="infra-grid">
+        <div class="map-item" style="opacity:0.5;">
+          <div class="map-title"><div class="status-dot status-gray"></div>insights_prod_index</div>
+          <div class="map-path">LEGACY</div>
+        </div>
+        <div class="map-item" style="opacity:0.5;">
+          <div class="map-title"><div class="status-dot status-gray"></div>insights_pages_dev</div>
+          <div class="map-path">LEGACY</div>
+        </div>
+        <div class="map-item" style="opacity:0.5;">
+          <div class="map-title"><div class="status-dot status-gray"></div>case-study-fsa.html</div>
+          <div class="map-path">LEGACY</div>
+        </div>
+      </div>
+    </div>
+
+  </footer>
+
+  <script>
+    const btn = document.getElementById('themeToggle');
+    btn.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('lg_theme', next);
+    });
+  </script>
+</body>
+</html>
