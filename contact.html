@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
+<script>
+(function(){ 
+    var t = localStorage.getItem('lg_theme') || localStorage.getItem('lg-theme') || 'dark'; 
+    document.documentElement.setAttribute('data-theme', t); 
+})(); 
+</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contact — Luis Gilberto | Let's Create Something Amazing</title>
@@ -256,7 +262,7 @@
 
   /* ═══════════════════════════════════════════════════════════
      CUSTOM LENS CURSOR
-  ═══════════════════════════════════════════════════════════/* Custom lens cursor */
+  ═══════════════════════════════════════════════════════════*/
   #cursor-lens {
     position: fixed; pointer-events: none; z-index: 2147483647;
     width: 40px; height: 40px; transform: translate(-50%, -50%);
@@ -289,7 +295,8 @@
     transform: translate(-50%, -50%) scale(1.5);
   }
   @media (pointer: coarse) { #cursor-lens { display: none !important; } }
-</style>
+  </style>
+
 </head>
 <body>
 
@@ -382,7 +389,8 @@
               <option value="other">Other</option>
             </select>
           </div>
-          <div class="form-group">
+          <!-- 🧬 Budget Group - Can be Hidden -->
+          <div class="form-group" id="budget-group">
             <label for="budget">Budget Range</label>
             <select id="budget" name="budget">
               <option value="">Select range...</option>
@@ -393,15 +401,15 @@
               <option value="100k-plus">$100K+</option>
               <option value="discuss">Prefer to discuss</option>
             </select>
-            <!-- 🧬 Conditional Role Type (Hidden by default) -->
-            <div id="role-type-group" class="form-group" style="display: none; margin-top: 24px;">
-              <label for="role-type">Role Interest</label>
-              <select id="role-type" name="role-type">
-                <option value="full-time">Full-Time Leadership</option>
-                <option value="fractional-part-time">Fractional / Part-Time</option>
-                <option value="advisory">Advisory / Board Seat</option>
-              </select>
-            </div>
+          </div>
+          <!-- 🧬 Role Type (Hidden by default) -->
+          <div id="role-type-group" class="form-group" style="display: none;">
+            <label for="role-type">Role Interest</label>
+            <select id="role-type" name="role-type">
+              <option value="full-time">Full-Time Leadership</option>
+              <option value="fractional-part-time">Fractional / Part-Time</option>
+              <option value="advisory">Advisory / Board Seat</option>
+            </select>
           </div>
         </div>
         <div class="form-group">
@@ -473,20 +481,20 @@
 
   // ── Intent Switch Logic (Role Discussion) ──
   const projectType = document.getElementById('project-type');
-  const budgetSelect = document.getElementById('budget');
+  const budgetGroup = document.getElementById('budget-group');
   const roleGroup = document.getElementById('role-type-group');
   const dossierEyebrow = document.querySelector('[data-contact-headline]');
 
-  if (projectType && budgetSelect && roleGroup) {
+  if (projectType && budgetGroup && roleGroup) {
     projectType.addEventListener('change', (e) => {
       if (e.target.value === 'role-discussion') {
-        // Hiring Path
-        budgetSelect.disabled = true;
+        // Hiring Path: Hide Budget, Show Role
+        budgetGroup.style.display = 'none';
         roleGroup.style.display = 'block';
         if (dossierEyebrow) dossierEyebrow.textContent = '// Talent Inquiry';
       } else {
-        // Standard Path
-        budgetSelect.disabled = false;
+        // Standard Path: Show Budget, Hide Role
+        budgetGroup.style.display = 'block';
         roleGroup.style.display = 'none';
         if (dossierEyebrow) dossierEyebrow.textContent = '// Intake Form';
       }

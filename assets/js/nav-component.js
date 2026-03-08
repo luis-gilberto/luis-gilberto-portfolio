@@ -671,6 +671,7 @@
           <a href="/contact.html" class="snav-footer-link">Contact</a>
           <a href="/about.html"   class="snav-footer-link">About Me</a>
           <a href="/brand/"       class="snav-footer-link">Identity</a>
+          ${active === 'hub' ? `<a href="${u('/TheHub/styleguide.html')}" class="snav-footer-link">Hub Editorial Guide</a>` : ''}
           <a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" class="snav-footer-link">LinkedIn</a>
         </div>
         <div>
@@ -960,7 +961,7 @@
     const viewport    = document.getElementById('snav-viewport');
     const desktopNav  = document.getElementById('snav-desktop');
     const triggers    = document.querySelectorAll('[data-snav-trigger]');
-    const themeBtn    = document.getElementById('snav-theme-btn');
+    const themeBtn    = document.getElementById('snav-theme-toggle');
     const iconSun     = document.getElementById('snav-icon-sun');
     const iconMoon    = document.getElementById('snav-icon-moon');
     const flDark      = document.getElementById('snav-footer-logo-dark');
@@ -1024,26 +1025,50 @@
 
     // theme
     function applyTheme(t) {
-      if (!t) t = 'dark';
-      document.documentElement.setAttribute('data-theme', t);
-      localStorage.setItem('portfolio-theme', t);
+      if (!t) {
+        // Default logic: Insights pages default to 'light', others to 'dark'
+        const isInsights = window.location.pathname.includes('/insights/');
+        t = isInsights ? 'light' : 'dark';
+      }
       
-      // Safety checks for elements that might not exist in all contexts
-      if (iconSun)  iconSun.style.display  = t === 'dark' ? 'none'  : 'flex';
-      if (iconMoon) iconMoon.style.display = t === 'dark' ? 'flex' : 'none';
-      if (flDark)   flDark.style.display   = t === 'dark' ? 'block' : 'none';
-      if (flLight)  flLight.style.display  = t === 'dark' ? 'none'  : 'block';
+      document.documentElement.setAttribute('data-theme', t);
+      localStorage.setItem('lg_theme', t); // 🧬 Standardized key
+      
+      // Dispatch custom event for other components to react
+      window.dispatchEvent(new Event('themeChanged'));
+      
+      // Update UI icons
+      const iconSun = document.getElementById('snav-icon-sun');
+      const iconMoon = document.getElementById('snav-icon-moon');
+      const flDark = document.getElementById('snav-footer-logo-dark');
+      const flLight = document.getElementById('snav-footer-logo-light');
+
+      // Note: These icons are SVG strings in the button, so we toggle their visibility via CSS classes or direct manipulation if they existed as separate elements.
+      // But in this component, the button contains an SVG. Let's update the button content.
+      const themeBtn = document.getElementById('snav-theme-btn');
+      if (themeBtn) {
+          themeBtn.innerHTML = `<span>${t === 'dark' ? ICONS.sun : ICONS.moon}</span>`;
+          themeBtn.setAttribute('aria-label', t === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode');
+      }
+
+      // Footer Logo Toggle
+      if (flDark) flDark.style.display = t === 'dark' ? 'block' : 'none';
+      if (flLight) flLight.style.display = t === 'dark' ? 'none' : 'block';
     }
     
-    // Defer initial theme application until elements are surely in the DOM
-    setTimeout(() => {
-        applyTheme(localStorage.getItem('portfolio-theme') || 'dark');
-    }, 0);
+    // Initial Theme Load
+    const savedTheme = localStorage.getItem('lg_theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    applyTheme(savedTheme);
 
     if (themeBtn) {
-        themeBtn.addEventListener('click', () =>
-          applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark')
-        );
+        themeBtn.addEventListener('click', () => {
+          const current = document.documentElement.getAttribute('data-theme') || 'dark';
+          const newTheme = current === 'dark' ? 'light' : 'dark';
+          document.documentElement.setAttribute('data-theme', newTheme);
+          localStorage.setItem('lg_theme', newTheme);
+          applyTheme(newTheme);
+        });
     }
 
     // mobile drawer
