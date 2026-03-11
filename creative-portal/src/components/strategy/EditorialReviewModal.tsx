@@ -156,7 +156,7 @@ export function EditorialReviewModal({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-1 h-1 rounded-full bg-teal" />
-                    <h4 className="text-[10px] font-bold text-white/40 tracking-[0.2em] uppercase">Edit Panel // Tools</h4>
+                    <h4 className="text-[10px] font-bold text-white/40 tracking-[0.2em] uppercase">Edit Panel&nbsp;|&nbsp;Tools</h4>
                   </div>
                   <Badge variant="outline" className="border-white/5 text-[8px] text-zinc-600 uppercase tracking-widest">v1.0</Badge>
                 </div>

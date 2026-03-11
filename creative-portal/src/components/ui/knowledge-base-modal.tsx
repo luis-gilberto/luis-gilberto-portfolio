@@ -15,7 +15,7 @@ This playbook transforms you from "person asking questions" into a **systematic 
 ✅ **Builds Client Confidence** - You're not guessing, you're diagnosing  
 ✅ **Captures Actionable Intelligence** - Every answer becomes strategic insight  
 ✅ **Positions Your Expertise** - Professional, systematic, differentiated  
-✅ **Generates Revenue** - Clear path from assessment → package recommendation → closed deal  
+✅ **Generates Revenue** - Clear path from assessment&nbsp;&nbsp;→&nbsp;&nbsp;package recommendation&nbsp;&nbsp;→&nbsp;&nbsp;closed deal  
 
 ---
 
@@ -26,9 +26,9 @@ This playbook transforms you from "person asking questions" into a **systematic 
 **Step 1: Load Client from ScopeIQ**
 
 Log into StrategyIQ Portal
-→ Navigate to "Clients" dashboard
-→ Search for client name or email
-→ Review ScopeIQ intake data
+&nbsp;&nbsp;→&nbsp;&nbsp;Navigate to "Clients" dashboard
+&nbsp;&nbsp;→&nbsp;&nbsp;Search for client name or email
+&nbsp;&nbsp;→&nbsp;&nbsp;Review ScopeIQ intake data
 
 **What to look for:**
 - **Project Type:** GTM, brand positioning, campaign, creative?
@@ -105,14 +105,14 @@ Log into StrategyIQ Portal
    What you need:
    - 60-90 minutes of uninterrupted time
    - Access to any existing brand guidelines, analytics, or campaign data (if applicable)
-   - An open mind—this isn't about what you think you need, it's about what the data reveals
+   - An open mind: this isn't about what you think you need, it's about what the data reveals
    
    This is a working session, not a sales pitch. By the end, you'll have clarity on your strategic gaps and exactly how to fix them.
    
    See you tomorrow,
    Luis
    
-   P.S. — We'll be screen-sharing StrategyIQ so you can follow along. Professional, transparent, systematic.
+   P.S.: We'll be screen-sharing StrategyIQ so you can follow along. Professional, transparent, systematic.
    \`\`\`
 
 ---
@@ -126,12 +126,12 @@ Log into StrategyIQ Portal
 **Script:**
 
 > "Hey [Name], great to meet you. Before we dive in, let me explain how this works. 
->
-> StrategyIQ is my strategic assessment framework—it's how I diagnose what a business actually needs instead of just guessing based on gut feel. You're going to see the whole methodology, the scoring, everything. Totally transparent.
->
-> Here's what we'll do: I'll walk you through [5 or 20] strategic questions across [one area or four areas]. You answer based on your current reality—not where you want to be, but where you are today. I'll be taking notes and the system will calculate your Strategic Intelligence Score in real-time.
->
-> At the end, you get a score (0-25 scale), a breakdown of your strengths and gaps, and a clear recommendation on what you need next—with pricing. No surprises, no bait-and-switch.
+> 
+> StrategyIQ is my strategic assessment framework: it's how I diagnose what a business actually needs instead of just guessing based on gut feel. You're going to see the whole methodology, the scoring, everything. Totally transparent.  
+> 
+> Here's what we'll do: I'll walk you through [5 or 20] strategic questions across [one area or four areas]. You answer based on your current reality: not where you want to be, but where you are today. I'll be taking notes and the system will calculate your Strategic Intelligence Score in real-time.  
+> 
+> At the end, you get a score (0-25 scale), a breakdown of your strengths and gaps, and a clear recommendation on what you need next: with pricing. No surprises, no bait-and-switch.
 >
 > Sound good? Any questions before we start?"
 
@@ -141,10 +141,10 @@ Log into StrategyIQ Portal
 A: "Not at all. This is a diagnostic. You'll see exactly how I arrive at my recommendation. If it makes sense for you, great. If not, you still leave with actionable insights."
 
 **Q: "How long will this take?"**  
-A: "About [60-90 minutes / 30-45 minutes]. We'll move efficiently—no fluff, just strategy."
+A: "About [60-90 minutes / 30-45 minutes]. We'll move efficiently: no fluff, just strategy."
 
 **Q: "What if I don't know the answer to something?"**  
-A: "That's valuable information too. Not knowing is a data point—it tells me where you need support."
+A: "That's valuable information too. Not knowing is a data point: it tells me where you need support."
 
 ---
 
@@ -166,8 +166,8 @@ A: "That's valuable information too. Not knowing is a data point—it tells me w
 │                                                      │
 │ 💬 SAY THIS:                                         │
 │ "Let's talk about your creative assets for a second.│
-│ When someone on your team needs to create something—│
-│ a social post, a presentation, a one-pager—do they  │
+│ When someone on your team needs to create something:│
+│ a social post, a presentation, a one-pager: do they │
 │ have a playbook to follow, or is everyone kind of   │
 │ winging it?"                                         │
 │                                                      │

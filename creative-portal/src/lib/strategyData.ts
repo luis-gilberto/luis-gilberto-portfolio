@@ -149,7 +149,7 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
         script: "Let’s talk about how clearly your brand is positioned today. Not just what you say internally, but how clearly it shows up in decisions and execution. Can your team clearly explain who you are, who you’re for, and why you’re different?",
         context: "Positioning is only real if it is operationalized. If it doesn't guide day-to-day work, it’s just a deck, not a strategy.",
         redFlags: ["Brand means different things to different people", "Messaging shifts project to project", "Positioning is documented but ignored in reviews"],
-        insight: "Crystal-clear positioning allows teams to self-correct. When it’s enforced, the brand becomes a filter for what to do and—more importantly—what not to do."
+        insight: "Crystal-clear positioning allows teams to self-correct. When it’s enforced, the brand becomes a filter for what to do and: more importantly: what not to do."
       },
       options: [
         { label: 'Undefined / Vague', value: 'undefined', score: 0, insight: "Positioning observation: Alignment opportunity identified. Core Values & Positioning alignment is recommended." },
@@ -166,9 +166,9 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       type: 'single',
       consultantGuide: {
         script: "This is about how well you truly understand your audience beyond surface demographics. Do you know why people choose you, behave the way they do, and why they stay or leave?",
-        context: "Demographics are table stakes. Deep strategy requires psychographics—knowing the motivations, anxieties, and triggers that drive customer behavior.",
+        context: "Demographics are table stakes. Deep strategy requires psychographics: knowing the motivations, anxieties, and triggers that drive customer behavior.",
         redFlags: ["Relying on broad demographics only (age/gender)", "Personas based on internal assumptions rather than external research"],
-        insight: "The ultimate proof of audience understanding is the \"Community Loop\"—when customers start echoing your specific brand language back to you."
+        insight: "The ultimate proof of audience understanding is the \"Community Loop\": when customers start echoing your specific brand language back to you."
       },
       options: [
         { label: 'Broad Demographics Only', value: 'broad', score: 10, insight: "Research opportunity: Demographic focus identified. Recommend deeper audience research." },
@@ -187,7 +187,7 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
         script: "Let’s talk about how your brand sounds, not just how it looks. If I removed your logo, could someone recognize your brand by language alone?",
         context: "Voice creates emotional memory. Without defined guardrails, your brand sounds like whoever happens to be writing the copy that day.",
         redFlags: ["Tone changes by channel or writer", "Guidelines exist as a list of adjectives but have no examples or enforcement"],
-        insight: "An ownable brand character creates a defensible emotional moat. It makes the brand feel human and consistent, which accelerates trust."
+        insight: "An ownable brand character creates a defensible emotional moat. It makes the brand feel human and consistent: which accelerates trust."
       },
       options: [
         { label: 'No defined voice', value: 'none', score: 0, insight: "Voice alignment opportunity: Inconsistent voice identified. Recommend a Verbal Identity alignment." },
@@ -206,7 +206,7 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
         script: "This is about how recognizable and coherent your brand feels wherever it shows up. Do all your touchpoints feel like they belong to the same brand system?",
         context: "Coherence signals operational maturity. A fragmented visual identity suggests a fragmented organization.",
         redFlags: ["Conflicting colors, styles, or layouts across channels", "Same logo used but zero system or layout thinking", "Assets are scattered"],
-        insight: "Comprehensive design systems aren't just about \"looking good\"—they are velocity engines that allow designers and marketers to execute 2x faster."
+        insight: "Comprehensive design systems aren't just about \"looking good\": they are velocity engines that allow designers and marketers to execute 2x faster."
       },
       options: [
         { label: 'Inconsistent / Messy', value: 'inconsistent', score: 10, insight: "Visual alignment gap: Fragmented identity identified. Visual system update is recommended." },
@@ -225,7 +225,7 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
         script: "Why should someone choose you over alternatives, in one sentence? This helps us understand how differentiated your brand truly is in the market.",
         context: "Brands that cannot articulate their advantage become commodities. Differentiation must be rooted in unique methodology or IP to be defensible.",
         redFlags: ["Differentiation sounds generic", "Competing primarily on price or availability", "The brand is easily replaceable by alternatives"],
-        insight: "Radical differentiation reframes the category entirely. It makes alternatives difficult to even compare, creating new expectations in the mind of the customer."
+        insight: "Radical differentiation reframes the category entirely. It makes alternatives difficult to even compare: creating new expectations in the mind of the customer."
       },
       options: [
         { label: 'Unclear / Commodity', value: 'commodity', score: 0, insight: "Differentiation opportunity: Commodity focus identified. Recommend a strategic pivot." },
@@ -242,7 +242,7 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       type: 'single',
       consultantGuide: {
         script: "Before we talk tactics, let’s get clear on the goal. If this campaign worked really well, what would success actually look like?",
-        context: "We’re choosing the one thing this campaign is meant to do best. Awareness, revenue, or keeping customers engaged. We can’t optimize for everything at once.",
+        context: "We’re choosing the one thing this campaign is meant to do best: Awareness, revenue, or keeping customers engaged. We can’t optimize for everything at once.",
         redFlags: ["Answers like “everything” or “a bit of both”", "No clear distinction between awareness and revenue"],
         insight: "Campaigns with a single, explicit objective perform better because every decision ladders up to one definition of success."
       },
@@ -259,7 +259,7 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       type: 'single',
       consultantGuide: {
         script: "When someone moves from an ad to an email to a landing page, does it feel like one journey or a reset every time?",
-        context: "This is about whether the story continues as people move between channels, or if each channel is doing its own thing.",
+        context: "This is about whether the story continues as people move between channels: or if each channel is doing its own thing.",
         redFlags: ["Each channel owned by a different team with no coordination", "Visual consistency without message continuity"],
         insight: "Integration is not about being everywhere. It is about sequencing messages so each channel advances the same outcome."
       },
@@ -276,7 +276,7 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       type: 'single',
       consultantGuide: {
         script: "Are we showing the same message to everyone, or are we intentionally changing the message as people get closer to deciding?",
-        context: "People need different information at different moments. This checks whether the creative reflects that.",
+        context: "People need different information at different moments: This checks whether the creative reflects that.",
         redFlags: ["The same ‘Buy Now’ message shown to cold and warm audiences", "Retargeting that only repeats the same creative"],
         insight: "Funnel-aware creative increases efficiency because it meets customers where they are instead of forcing them to jump too far, too fast."
       },
@@ -293,7 +293,7 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       type: 'single',
       consultantGuide: {
         script: "When something works or doesn’t, will we actually know why?",
-        context: "This is about whether we’re learning from the campaign or just watching dashboards.",
+        context: "This is about whether we’re learning from the campaign: or just watching dashboards.",
         redFlags: ["No tracking plan defined before launch", "Reliance on platform-reported metrics only"],
         insight: "Good tracking turns marketing into a learning system, not a black box. It allows you to double down on what actually works."
       },
@@ -310,7 +310,7 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       type: 'single',
       consultantGuide: {
         script: "If something starts working better than expected, can we move money toward it quickly?",
-        context: "This checks whether the budget can adapt to performance, or if it’s locked no matter what.",
+        context: "This checks whether the budget can adapt to performance: or if it’s locked no matter what.",
         redFlags: ["Budget fully committed before any performance data", "Decisions driven by habit rather than results"],
         insight: "The strongest campaigns treat budget as a lever, not a constraint. Flexibility is often the difference between good and great results."
       },
@@ -329,7 +329,7 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       type: 'single',
       consultantGuide: {
         script: "How do you know when creative is actually working? Not just that it looks good, but that it did its job.",
-        context: "This reveals whether creative is treated as subjective art or a performance-driven business lever.",
+        context: "This reveals whether creative is treated as subjective art: or a performance-driven business lever.",
         redFlags: ["“We just know when it works”", "Heavy focus on vanity metrics (likes/shares) with no downstream revenue connection"],
         insight: "If creative success isn't measurable, it can't be optimized. We must shift the client from opinion-based feedback to outcome-based performance."
       },
@@ -346,9 +346,9 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       type: 'single',
       consultantGuide: {
         script: "Who’s actually making the work today? And how repeatable is that process?",
-        context: "Production structure (In-house vs. Freelance vs. Agency) determines your speed, quality floor, and ability to scale.",
+        context: "Production structure: (In-house vs. Freelance vs. Agency) determines your speed, quality floor, and ability to scale.",
         redFlags: ["One person doing everything", "Heavy reliance on a single external vendor with no backup or internal knowledge retention"],
-        insight: "Creative bottlenecks are rarely talent problems—they are system problems. Scalability requires a repeatable production engine."
+        insight: "Creative bottlenecks are rarely talent problems: they are system problems. Scalability requires a repeatable production engine."
       },
       options: [
         { value: 'diy', label: 'No resources / DIY', score: 0, insight: "Alignment opportunity: Resource constraints identified. Full execution support is recommended." },
@@ -363,7 +363,7 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       type: 'single',
       consultantGuide: {
         script: "When it comes down to it, who has the final ‘yes’?",
-        context: "Approval flow determines velocity. Creative clarity is often lost in committees or late-stage founder feedback loops.",
+        context: "Approval flow determines velocity: Creative clarity is often lost in committees or late-stage founder feedback loops.",
         redFlags: ["“Everyone needs to weigh in”", "Committee-based consensus", "Lack of a single designated decision-maker"],
         insight: "Great creative dies in committees. Establishing clear ownership and autonomy is the fastest way to accelerate results."
       },
@@ -380,7 +380,7 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       type: 'single',
       consultantGuide: {
         script: "How frequently does new creative actually go live?",
-        context: "Creative fatigue kills campaign performance faster than bad targeting. Cadence equals learning velocity.",
+        context: "Creative fatigue kills campaign performance faster than bad targeting: Cadence equals learning velocity.",
         redFlags: ["Ad-hoc/Reactive shipping", "Same ads running \"until they stop working\" with no testing rhythm"],
         insight: "Frequency isn't about volume; it's about how fast your team can test a hypothesis and move to the next iteration."
       },
@@ -397,7 +397,7 @@ export const assessmentQuestions: Record<AssessmentCategory, AssessmentQuestion[
       type: 'single',
       consultantGuide: {
         script: "If I asked for everything right now, how easily could you find it?",
-        context: "Asset organization impacts speed and consistency. Disorganized assets lead to expensive, redundant work.",
+        context: "Asset organization impacts speed and consistency: Disorganized assets lead to expensive, redundant work.",
         redFlags: ["Assets living in Slack threads, email, or personal drives", "No single source of truth or centralized library"],
         insight: "When assets aren't systemized, creative becomes expensive and slow. A centralized DAM (Digital Asset Manager) is a prerequisite for scale."
       },

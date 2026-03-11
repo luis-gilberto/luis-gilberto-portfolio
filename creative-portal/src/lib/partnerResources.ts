@@ -16,7 +16,7 @@ export const partnerResources: PartnerResource[] = [
     title: "Deciphering StrategyIQ",
     subtext: "How to read your results and turn them into market action.",
     content: {
-      overview: "The StrategyIQ score is not a traditional grade; it is a 'Friction Diagnostic.' It measures the alignment between your current business intent and market readiness. While our AI Narrative captures the 'Business Soul' of your inputs, the Luis Gilberto Consultant Review adds the necessary 'Market Reality'—layering in the volatility, risks, and specific opportunities that algorithms alone cannot see.",
+      overview: "The StrategyIQ score is not a traditional grade; it is a 'Friction Diagnostic.' It measures the alignment between your current business intent and market readiness. While our AI Narrative captures the 'Business Soul' of your inputs, the Luis Gilberto Consultant Review adds the necessary 'Market Reality': layering in the volatility, risks, and specific opportunities that algorithms alone cannot see.",
       keyTakeaways: [
         "High scores indicate efficiency and readiness; low scores highlight strategic friction.",
         "The AI synthesis is your baseline intelligence, not the final word.",
@@ -35,7 +35,7 @@ export const partnerResources: PartnerResource[] = [
     title: "The 24-Hour Review",
     subtext: "What our strategists are looking for during the human-led verification phase.",
     content: {
-      overview: "This is the 'Human Handoff.' Every AI-generated finding is vetted by Luis Gilberto senior strategists. We don't just verify data; we stress-test it against current real-world market volatility. Our goal is to ensure that every strategic recommendation is 'execution-ready'—meaning it is technically feasible, financially sound, and strategically sound for your specific industry vertical.",
+      overview: "This is the 'Human Handoff.' Every AI-generated finding is vetted by Luis Gilberto senior strategists. We don't just verify data; we stress-test it against current real-world market volatility. Our goal is to ensure that every strategic recommendation is 'execution-ready': meaning it is technically feasible, financially sound, and strategically sound for your specific industry vertical.",
       keyTakeaways: [
         "We filter out algorithmic hallucinations and generic advice.",
         "Your brief is tailored to current market conditions (updated every 24 hours).",
@@ -73,7 +73,7 @@ export const partnerResources: PartnerResource[] = [
     title: "Next Steps Roadmap",
     subtext: "A high-level overview of the transition from Strategy to Execution.",
     content: {
-      overview: "Your journey through the LG Ecosystem is a structured evolution. It begins with the StrategyIQ Intake, which populates your Strategy Mini-Briefs. These briefs then coalesce into a Master Strategic Plan—a comprehensive roadmap for your entire business ecosystem. From there, we move into Execution Sprints, where strategy becomes tangible assets, campaigns, and market growth.",
+      overview: "Your journey through the LG Ecosystem is a structured evolution. It begins with the StrategyIQ Intake, which populates your Strategy Mini-Briefs. These briefs then coalesce into a Master Strategic Plan: a comprehensive roadmap for your entire business ecosystem. From there, we move into Execution Sprints, where strategy becomes tangible assets, campaigns, and market growth.",
       keyTakeaways: [
         "Strategy is iterative: Intake leads to Briefs, which lead to the Master Plan.",
         "Mini-Briefs are specialized diagnostics for GTM, Brand, Campaign, and Creative.",

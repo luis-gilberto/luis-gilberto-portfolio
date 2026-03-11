@@ -24,7 +24,7 @@ export default function ChangelogPage() {
     <main className="max-w-4xl mx-auto px-6 py-10 space-y-8">
       <header className="space-y-3">
         <h1 className="text-3xl font-bold">Portal Changelog</h1>
-        <p className="text-[var(--text-secondary)]">Version {version} · Deployed to {deployTarget}</p>
+        <p className="text-[var(--text-secondary)]">Version {version}&nbsp;&nbsp;·&nbsp;&nbsp;Deployed to {deployTarget}</p>
       </header>
 
       <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -34,7 +34,7 @@ export default function ChangelogPage() {
             {timeline.map((t, i) => (
               <li key={i} className="text-sm">
                 <span className="font-medium">{t.title}</span>
-                <span className="text-[var(--text-secondary)]"> — {t.benefit}</span>
+                <span className="text-[var(--text-secondary)]">: {t.benefit}</span>
               </li>
             ))}
           </ul>
@@ -47,12 +47,12 @@ export default function ChangelogPage() {
       <section className="rounded-xl border border-[var(--border-subtle)] bg-[var(--card-bg)] p-4">
         <h2 className="text-xl font-semibold mb-2">Screens & Examples</h2>
         <ul className="text-sm space-y-2">
-          <li><Link className="text-[var(--coral)]" href="/dashboard">Dashboard</Link> — overview and quick navigation</li>
-          <li><Link className="text-[var(--coral)]" href="/projects">Projects</Link> — active projects list</li>
-          <li><Link className="text-[var(--coral)]" href="/documents">Documents</Link> — client assets</li>
-          <li><Link className="text-[var(--coral)]" href="/strategyiq">StrategyIQ</Link> — assessments and KB modal</li>
-          <li><Link className="text-[var(--coral)]" href="/admin">Admin</Link> — admin controls</li>
-          <li><Link className="text-[var(--coral)]" href="/auth/signin">Sign In</Link> — authentication entry</li>
+          <li><Link className="text-[var(--coral)]" href="/dashboard">Dashboard</Link>: overview and quick navigation</li>
+          <li><Link className="text-[var(--coral)]" href="/projects">Projects</Link>: active projects list</li>
+          <li><Link className="text-[var(--coral)]" href="/documents">Documents</Link>: client assets</li>
+          <li><Link className="text-[var(--coral)]" href="/strategyiq">StrategyIQ</Link>: assessments and KB modal</li>
+          <li><Link className="text-[var(--coral)]" href="/admin">Admin</Link>: admin controls</li>
+          <li><Link className="text-[var(--coral)]" href="/auth/signin">Sign In</Link>: authentication entry</li>
         </ul>
       </section>
 
