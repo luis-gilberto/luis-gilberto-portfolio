@@ -44,7 +44,10 @@
         }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        html { scroll-behavior: smooth; }
+        html {
+            scroll-behavior: smooth;
+            scroll-snap-type: y mandatory;
+        }
         body {
             background: var(--bg-body);
             color: var(--text-primary);
@@ -82,11 +85,15 @@
         ========================================= */
         .portal-hero {
             position: relative;
-            min-height: 100vh;
+            min-height: 100svh;
             display: flex;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             overflow: hidden;
             padding-top: var(--header-height);
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
         }
         .portal-hero-bg {
             position: absolute; inset: 0;
@@ -309,6 +316,7 @@
             box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 40px rgba(46,211,198,0.03);
             transition: all 0.5s var(--ease-spring);
             overflow: hidden;
+            max-height: 60vh;
         }
         .screenshot-frame:hover {
             transform: translateY(-10px) scale(1.01);
@@ -339,6 +347,13 @@
             font-family: var(--font-orchestrator);
             font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
             color: var(--text-muted); margin-top: 1.5rem; display: block;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background: rgba(5, 5, 5, 0.4);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            display: inline-block;
         }
         @media (max-width: 900px) {
             .product-reveal-grid { grid-template-columns: 1fr; gap: 3rem; text-align: center; }
@@ -352,6 +367,12 @@
         .portal-section {
             padding: 8rem 0;
             position: relative;
+            min-height: 100svh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            scroll-snap-align: start;
+            scroll-snap-stop: normal; /* normal allows scrolling through to footer */
         }
         .portal-section + .portal-section { border-top: 1px solid var(--border); }
 
@@ -367,8 +388,11 @@
         .section-h2 {
             font-family: var(--font-strategist);
             font-size: clamp(2.5rem, 5vw, 4rem);
-            font-weight: 900; text-transform: uppercase; line-height: 0.95;
-            letter-spacing: -0.01em; color: var(--text-primary);
+            font-weight: 900;
+            text-transform: uppercase;
+            line-height: 0.95;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
             margin-bottom: 1.5rem;
         }
         .section-h2 em { font-style: normal; color: var(--coral); }
@@ -712,6 +736,10 @@
         .cta-section {
             text-align: center; padding: 9rem 0;
             position: relative; overflow: hidden;
+            /* Terminal Dock Alignment */
+            scroll-snap-align: start;
+            scroll-snap-stop: normal;
+            min-height: auto;
         }
         .cta-section::before {
             content: ''; position: absolute; inset: 0;
@@ -741,7 +769,7 @@
            FOOTER
         ========================================= */
         /* Adjusted footer styles for cleaner integration */
-        .site-footer { background: #030303; border-top: 1px solid rgba(255,255,255,0.05); padding: 5rem 0 0; color: #FFF; }
+        .site-footer { background: #030303; border-top: 1px solid rgba(255,255,255,0.05); padding: 5rem 0 0; color: #FFF; scroll-snap-align: end; }
         .footer-grid { max-width: 1400px; margin: 0 auto; padding: 0 2rem 4rem; display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 3rem; }
         .footer-heading { font-family: var(--font-strategist); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; color: #444; margin-bottom: 1.25rem; font-weight: 700; }
         .footer-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.625rem; }
@@ -763,16 +791,24 @@
             .cta-section { padding: 6rem 0; }
         }
         @media (max-width: 768px) {
+            html {
+                scroll-snap-type: y proximity;
+            }
             /* Stack the 3-step flow vertically on mobile */
-            [style*="grid-template-columns: 1fr auto 1fr auto 1fr"] {
+            .how-it-works-grid {
                 display: flex !important;
                 flex-direction: column !important;
                 gap: 1rem !important;
             }
-            [style*="grid-template-columns: 1fr auto 1fr auto 1fr"] > [style*="fa-arrow-right"] {
+            .step-arrow {
+                display: flex !important;
+                justify-content: center;
+                align-items: center;
+                padding: 2rem 0 !important;
+                width: 100% !important;
+            }
+            .step-arrow i {
                 transform: rotate(90deg);
-                text-align: center;
-                padding: 0 !important;
             }
         }
         @media (max-width: 600px) {
@@ -785,13 +821,15 @@
            TERMINAL EDITORIAL MODULE
         ========================================= */
         .editorial-moment {
-            position: relative; width: 100%; min-height: 400px;
-            margin: 0; display: flex; align-items: center; justify-content: center;
+            position: relative; width: 100%; min-height: 100svh;
+            margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
             overflow: hidden; background-color: #050505;
             background-image:
                 linear-gradient(to bottom, #050505 0%, transparent 15%, transparent 85%, #050505 100%),
                 url('/TheHub/assets/images/pull-quotes_bg.png');
             background-size: cover; background-position: center; background-attachment: fixed;
+            scroll-snap-align: start;
+            scroll-snap-stop: normal; /* normal = snaps on approach but doesn't trap scroll */
         }
         .editorial-moment::before {
             content: ""; position: absolute; inset: 0;
@@ -976,6 +1014,55 @@
             .outcome-divider { width: 100%; height: 1px; }
         }
 
+        /* =========================================
+           HOW IT WORKS — GRID & ARROWS
+        ========================================= */
+        .how-it-works-grid {
+            display: grid;
+            grid-template-columns: 1fr 60px 1fr 60px 1fr;
+            align-items: center;
+            gap: 0;
+            margin-bottom: 5rem;
+        }
+
+        .step-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            color: rgba(249, 111, 110, 0.45);
+            font-size: 1.25rem;
+        }
+
+        @media (max-width: 900px) {
+            .how-it-works-grid {
+                grid-template-columns: 1fr;
+                max-width: 420px;
+                margin: 0 auto 3rem;
+            }
+            .step-arrow {
+                width: 100%;
+                transform: rotate(90deg);
+                padding: 1rem 0;
+                text-align: center;
+                justify-content: center;
+            }
+        }
+
+        /* =========================================
+           MOBILE SCROLL SNAP SAFEGUARD
+           ========================================= */
+        @media (max-width: 480px) {
+            html {
+                scroll-snap-type: y proximity;
+            }
+        }
+
+        .proof-strip {
+            scroll-snap-align: start;
+            scroll-snap-stop: normal;
+        }
+
     </style>
 </head>
 <body>
@@ -1119,7 +1206,7 @@
             </div>
 
             <!-- 3-step visual flow -->
-            <div class="reveal reveal-d2" style="display:grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items:start; gap:0; margin-bottom:5rem;">
+            <div class="how-it-works-grid reveal reveal-d2">
                 <!-- Step 1 -->
                 <div style="padding:2rem; background:var(--surface-1); border:1px solid var(--border); border-radius:12px; text-align:center;">
                     <div style="width:48px;height:48px;border-radius:50%;background:rgba(46,211,198,0.1);border:1px solid rgba(46,211,198,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;color:var(--teal);font-size:1.1rem;">
@@ -1128,8 +1215,8 @@
                     <div style="font-family:var(--font-strategist);font-size:1.5rem;font-weight:900;text-transform:uppercase;letter-spacing:0.02em;margin-bottom:0.5rem;color:var(--text-primary);">Diagnose</div>
                     <p style="font-size:0.875rem;line-height:1.6;color:var(--text-muted);">StrategyIQ surfaces where strategy is strong, where it's fragile, and what needs to move first.</p>
                 </div>
-                <!-- Arrow -->
-                <div style="display:flex;align-items:center;justify-content:center;padding:0 1rem;padding-top:3.5rem;color:rgba(249,111,110,0.4);font-size:1.25rem;">
+                <!-- Arrow 1 -->
+                <div class="step-arrow">
                     <i class="fas fa-arrow-right"></i>
                 </div>
                 <!-- Step 2 -->
@@ -1140,8 +1227,8 @@
                     <div style="font-family:var(--font-strategist);font-size:1.5rem;font-weight:900;text-transform:uppercase;letter-spacing:0.02em;margin-bottom:0.5rem;color:var(--text-primary);">Align</div>
                     <p style="font-size:0.875rem;line-height:1.6;color:var(--text-muted);">Advisory frameworks bring stakeholders into one shared view — decisions visible, context preserved.</p>
                 </div>
-                <!-- Arrow -->
-                <div style="display:flex;align-items:center;justify-content:center;padding:0 1rem;padding-top:3.5rem;color:rgba(249,111,110,0.4);font-size:1.25rem;">
+                <!-- Arrow 2 -->
+                <div class="step-arrow">
                     <i class="fas fa-arrow-right"></i>
                 </div>
                 <!-- Step 3 -->

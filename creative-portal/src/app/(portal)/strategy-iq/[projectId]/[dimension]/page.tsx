@@ -19,17 +19,17 @@ export default async function StrategyIQEntryGate({ params }: PageProps) {
 
   const role = session.user.role
 
-  // KILL SWITCH: Verify project status for non-admins (Deadbolt)
-  const isCalibrated = project?.status === 'CALIBRATED' || project?.status === 'ACTIVE' || project?.status === 'CERTIFIED';
-  if (role !== 'ADMIN' && !isCalibrated) {
-    redirect('/dashboard?error=calibration_required');
-  }
-
   // Handle project fetching
   const project = await prisma.project.findUnique({
     where: { id: projectId },
     include: { client: true }
   })
+
+  // KILL SWITCH: Verify project status for non-admins (Deadbolt)
+  const isCalibrated = project?.status === 'CALIBRATED' || project?.status === 'ACTIVE' || project?.status === 'CERTIFIED';
+  if (role !== 'ADMIN' && !isCalibrated) {
+    redirect('/dashboard?error=calibration_required');
+  }
 
   if (!project || !project.clientId) {
     return (
