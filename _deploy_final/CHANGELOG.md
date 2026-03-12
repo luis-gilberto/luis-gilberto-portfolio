@@ -1,3 +1,25 @@
+## 2026-03-03
+
+- **System Typography Overhaul (v3.13)**
+  - **Hierarchy**: Refined "THE system" section header. "THE" uses dynamic accent color (Teal/Coral) in Big Shoulders Bold. "system" uses Cormorant Garamond Light (300) Italic for contrast.
+  - **Spacing**: Enforced strict vertical rhythm between title, thesis, and helper text.
+- **Homepage Interaction Fixes**
+  - **Card Flip**: Resolved unresponsive flip interaction on lower "Present & Future Work" cards by removing conflicting inline handlers and standardizing on global event delegation.
+  - **Visuals**: Fixed "stray dot" bug by hiding empty icon containers via CSS.
+- **The Hub Updates**
+  - **Content Sync**: Fully updated `TheHub/index.html` with new architecture grid and flow diagrams.
+  - **Assets**: Updated card icons for Studio, Portal, and StrategyIQ to use high-fidelity PNG assets from `/TheHub/assets/images/`.
+
+## 2026-01-13
+
+- **Edge-ucational Case Study Refactor (Cinematic Dark Mode)**
+  - **Standardization**: Updated `case-study-edge-ucational.html` to match the global portfolio shell (Header, Subnav, Footer).
+  - **Dark Mode Enforced**: Locked header and navigation to black (#050505) regardless of user theme preference, creating an immersive cinematic environment.
+  - **Navigation**: Restored Sticky Table of Contents with active state tracking (ScrollSpy) and smooth scrolling.
+  - **Visuals**: Updated logo to `AUg_logo_White.png` (48px, no filters) and enhanced Hero readability with deeper gradients.
+  - **Cleanup**: Removed obsolete `insights/edge-ucational-series/index-1.html` and redundant CSS.
+  - **Homepage**: Updated Teams Consumer Launch tile link to point to `/insights/teams-consumer-launch/`.
+
 ## 2026-01-12
 
 - **Insights Landing Page Update (ULTIMO Version)**

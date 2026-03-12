@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Building The Ecosystem - Final Test | Luis Gilberto – Insights</title>
+    <meta name="description" content="I didn't want to just freelance. I wanted to productize how I think. From Microsoft strategist to systems architect.">
+
+    <!-- Fonts -->
+    <link rel="icon" type="image/png" href="/insights/assets/icons/favicon-32x32.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/insights/assets/css/article-theme.css">
+    <link rel="stylesheet" href="/insights/assets/css/insights-navigation.css">
+    <style>
+        /* SAFETY OVERRIDE: enforce single image per theme */
+        html[data-theme="light"] .theme-img-dark, html[data-theme="light"] .sig-sticker.theme-img-dark { display: none !important; }
+        html[data-theme="dark"] .theme-img-light, html[data-theme="dark"] .sig-sticker.theme-img-light { display: none !important; }
+        /* 1. Fix the container so it hugs the image drawing exactly */
+        .theme-image-container {
+            position: relative !important;
+            display: inline-block !important;
+            width: auto !important; /* Prevents stretching to screen edge */
+            max-width: 100% !important;
+            line-height: 0;
+            margin: 0 auto; /* Centers the container if the parent is a flex/center block */
+        }
+
+        /* Base Signature Positioning */
+        div.theme-image-container img.sig-sticker {
+            display: block !important;
+            position: absolute !important;
+            bottom: 5% !important;
+            right: 5% !important;
+            width: 22% !important;
+            min-width: 80px !important;
+            max-width: 150px !important;
+            z-index: 100 !important;
+            transform: rotate(-2.5deg) !important;
+            opacity: 0.85 !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            border: none !important;
+            pointer-events: none !important;
+        }
+
+        /* Theme-specific visibility */
+        [data-theme="light"] .sig-sticker.theme-img-dark { display: none !important; }
+        [data-theme="dark"] .sig-sticker.theme-img-light { display: none !important; }
+
+        /* Blending for 'Ink-on-Paper' feel */
+        [data-theme="light"] .sig-sticker.theme-img-light { mix-blend-mode: multiply !important; }
+        [data-theme="dark"] .sig-sticker.theme-img-dark { mix-blend-mode: screen !important; }
+
+        /* Use dedicated dark asset and hide the light asset in dark mode */
+        [data-theme="dark"] .sig-sticker.theme-img-dark { filter: none !important; }
+        [data-theme="dark"] .sig-sticker.theme-img-light { display: none !important; }
+        [data-theme="light"] .sig-sticker.theme-img-dark { display: none !important; }
+
+        /* Button Alignment Fix */
+        .btn-pill-black {
+            display: inline-flex !important;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Modal Overlay - Full screen, hidden by default */
+        .modal-overlay {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top (should be higher than other content) */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if content is too long */
+            background-color: rgba(0,0,0,0.8); /* Black w/ opacity */
+            justify-content: center; /* Center content horizontally */
+            align-items: center; /* Center content vertically */
+            backdrop-filter: blur(5px); /* Optional: Frosted glass effect */
+            -webkit-backdrop-filter: blur(5px); /* Safari support */
+        }
+
+        /* Modal Content Box */
+        .modal-content {
+            background-color: #1a1a1a; /* Dark background for modal */
+            color: #f0f0f0; /* Light text color */
+            margin: auto; /* Center modal */
+            padding: 30px;
+            border: 1px solid #333;
+            width: 80%; /* Could be 60-90% depending on screen size */
+            max-width: 600px; /* Maximum width for readability */
+            box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+            border-radius: 8px;
+            position: relative; /* For close button positioning */
+            line-height: 1.6;
+        }
+
+        /* Modal Title */
+        .modal-content h2 {
+            color: #E17B6C; /* Use your Coral accent for headings */
+            font-size: 1.8em;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        /* Modal Paragraphs */
+        .modal-content p {
+            font-size: 1em;
+            color: #d0d0d0;
+        }
+
+        /* Close Button */
+        .modal-close-button {
+            color: #aaa;
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .modal-close-button:hover,
+        .modal-close-button:focus {
+            color: #f0f0f0;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Ecosystem Explore Row */
+        .ecosystem-explore {
+            margin-top: 14px;
+            font-size: 0.95em;
+            opacity: 0.75;
+        }
+
+        .main-content .reading-content .ecosystem-explore a {
+            text-decoration: none;
+            border-bottom: 1px solid rgba(0,0,0,0.15);
+            color: inherit; /* Ensure links inherit the muted text color */
+        }
+
+        .main-content .reading-content .ecosystem-explore a:hover {
+            opacity: 1;
+            border-bottom-color: currentColor;
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media screen and (max-width: 768px) {
+            .modal-content {
+                width: 90%;
+                padding: 20px;
+            }
+            .modal-content h2 {
+                font-size: 1.5em;
+            }
+            [data-theme="dark"] .lg-site-header {
+                background-color: #ffffff !important; /* Keep Header Light on Mobile */
+            }
+        }
+
+        /* ========================================= 
+           Insights Article Link Styling (Premium) 
+           ========================================= */ 
+        .main-content .reading-content a { 
+            color: #1BA6A6;                  /* teal */ 
+            text-decoration: none; 
+            border-bottom: 1px solid rgba(27, 166, 166, 0.18); /* Reduced opacity for quiet references */
+            padding-bottom: 1px; 
+            transition: color 180ms ease, border-color 180ms ease, opacity 180ms ease; 
+        } 
+        .main-content .reading-content a:hover { 
+            color: #F96F6E;                  /* coral hover */ 
+            border-bottom-color: rgba(249, 111, 110, 0.55); 
+        } 
+        .main-content .reading-content a:visited { 
+            color: #1BA6A6;                  /* keep teal, prevent purple visited */ 
+            border-bottom-color: rgba(27, 166, 166, 0.25); 
+        } 
+        .main-content .reading-content a:focus-visible { 
+            outline: 2px solid rgba(249, 111, 110, 0.65); 
+            outline-offset: 3px; 
+            border-bottom-color: transparent; 
+        } 
+        /* Optional: make links inside bulleted lists slightly cleaner */ 
+        .main-content .reading-content li a { 
+            border-bottom-width: 1px; 
+        }
+        /* --- AI TOOLTIP & INTERACTION --- */ 
+         /* 1. The Popup Bubble */ 
+         .ai-tooltip { 
+             visibility: hidden; 
+             opacity: 0; 
+             position: absolute; 
+             bottom: 50px; /* Sits above the sticker */ 
+             right: 20px;  /* Aligns with sticker */ 
+             background-color: rgba(0, 0, 0, 0.9); 
+             color: #fff; 
+             padding: 8px 12px; 
+             border-radius: 6px; 
+             font-family: 'Inter', sans-serif; 
+             font-size: 0.75rem; 
+             line-height: 1.3; 
+             width: max-content; 
+             max-width: 200px; 
+             z-index: 1000; 
+             transition: all 0.2s ease; 
+             transform: translateY(5px); 
+             pointer-events: none; 
+             border: 1px solid rgba(255,255,255,0.15); 
+         } 
+         
+         /* 2. Show Tooltip on Sticker Hover */ 
+         /* Uses ~ sibling selector to find the span regardless of order */ 
+         .theme-image-container .sig-sticker:hover ~ .ai-tooltip { 
+             visibility: visible !important; 
+             opacity: 1 !important; 
+             transform: translateY(0) !important; 
+         } 
+         
+         /* 3. FORCE INTERACTIVITY (Specific Selector to Win Override) */ 
+          div.theme-image-container img.sig-sticker { 
+              pointer-events: auto !important; 
+              cursor: help; 
+          } 
+         
+         /* 4. Main Image Dimming Effect */ 
+         .theme-image-container img:not(.sig-sticker) { transition: filter 0.3s ease; } 
+         .theme-image-container:hover img:not(.sig-sticker) { filter: brightness(0.95); } 
+    </style>
+</head>
+<body>
+
+    <!-- Header / Nav (Standard) -->
+    <header class="lg-site-header" role="banner">
+      <div class="lg-site-header-inner">
+        <a href="/insights" class="lg-logo" title="Luis Gilberto's Insights" aria-label="Insights">
+            <img src="/insights/assets/images/insights_logo_light.svg" alt="Luis Gilberto's Insights" style="height: 32px; width: auto;">
+        </a>
+        <nav class="lg-main-nav" id="lgMainNav">
+          <a href="https://luis-gilberto.com" class="lg-nav-link">PORTFOLIO</a>
+          <a href="/insights" class="lg-nav-link is-active">INSIGHTS</a>
+          <a href="/TheHub/" class="lg-nav-link">THE HUB</a>
+          <a href="https://portal.luis-gilberto.com/" class="lg-nav-link">THE PORTAL</a>
+        </nav>
+        <button class="mobile-menu-toggle" aria-label="Menu" id="mobileMenuToggle">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Context Bar -->
+    <nav class="lg-context-bar">
+        <div class="container">
+            <a href="/insights" class="breadcrumb-link">Insights</a>
+            <span class="breadcrumb-separator">/</span>
+            <a href="/insights/series" class="breadcrumb-link">Building Series</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current">Building The Ecosystem</span>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay (Standard) -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay">
+        <div class="mobile-menu-header">
+            <img src="/insights/assets/images/insights_logo_light.svg" alt="Luis Gilberto's Insights" style="height: 28px; width: auto;">
+            <button class="mobile-close-btn" id="mobileMenuClose">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <nav class="mobile-global-nav">
+            <a href="https://luis-gilberto.com" class="mobile-nav-link">PORTFOLIO</a>
+            <a href="/insights" class="mobile-nav-link is-active">INSIGHTS</a>
+            <a href="/TheHub/" class="mobile-nav-link">THE HUB</a>
+            <a href="https://portal.luis-gilberto.com/" class="mobile-nav-link">THE PORTAL</a>
+        </nav>
+        <div class="mobile-sub-nav">
+            <span class="mobile-sub-label">Current Context:</span>
+            <a href="/insights" class="mobile-sub-link">Insights</a>
+            <a href="/insights/series" class="mobile-sub-link">Building Series</a>
+            <span class="mobile-sub-current">Building The Ecosystem</span>
+        </div>
+    </div>
+
+    <button class="theme-toggle" id="themeToggle">
+        <svg class="sun-icon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="5"></circle></svg>
+        <svg class="moon-icon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </button>
+    <div class="top-accent"></div>
+
+    <!-- Hero Section -->
+    <header class="article-hero-modular">
+        <div class="container">
+            <div class="article-eyebrow">
+                <span class="category-tag">Systems Thinking</span>
+                <span class="eyebrow-sep">•</span>
+                <span class="series-tag">Architecture</span>
+            </div>
+
+            <h1>Building The Ecosystem</h1>
+            <p class="article-subtitle">I didn't want to just freelance. I wanted to productize how I think. From Microsoft strategist to systems architect.</p>
+
+            <div class="article-byline-row">
+                <span>By Luis Gilberto</span>
+                <span class="byline-sep">/</span>
+                <span class="publish-date">Updated January 2026</span>
+            </div>
+        </div>
+        
+        <div class="hero-illustration">
+            <div class="theme-image-container"> 
+                <img src="/insights/assets/images/signature-AI.png" class="sig-sticker theme-img-light" alt="Luis Gilberto / AI" width="145" height="145"> 
+                <img src="/insights/assets/images/signature-AI-dark.png" class="sig-sticker theme-img-dark" alt="Luis Gilberto / AI" width="145" height="145"> 
+                
+                <!-- The Tooltip --> 
+                <span class="ai-tooltip">Visuals conceptualized by Luis Gilberto, refined via AI partnership.</span> 
+            
+                <!-- Light Mode Hero --> 
+                <img src="/insights/assets/images/ecosystem-design.png" 
+                     alt="The Ecosystem Architecture Model" 
+                     title="The Blueprint: Visualizing the machine that builds the work." 
+                     class="theme-img-light"> 
+                <!-- Dark Mode Hero --> 
+                <img src="/insights/assets/images/ecosystem-design-dark.png" 
+                     alt="The Ecosystem Architecture Model (Dark Mode)" 
+                     title="The Blueprint: Visualizing the machine that builds the work." 
+                     class="theme-img-dark"> 
+            </div>
+            <p class="caption" style="margin-top: 2rem; opacity: 0.7;">The Vision: Designing the machine that builds the work.</p>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="article-layout">
+        
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="principles-nav">
+                <span class="principles-title">Table of Contents</span>
+                <a href="#intro" class="principle-link active">Introduction</a>
+                <a href="#the-pivot" class="principle-link">The Pivot</a>
+                <a href="#architecture" class="principle-link">The Architecture</a>
+                <a href="#portal" class="principle-link">The Portal</a>
+            </div>
+
+            <!-- TIMELINE -->
+            <div class="timeline-card">
+                <div class="timeline-card-title">Timeline</div>
+                <div class="timeline-item">
+                    <span class="timeline-year">2008–2012</span>
+                    <div class="timeline-event">Microsoft</div>
+                    <div class="timeline-details">Learned scale</div>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-year">2014–2023</span>
+                    <div class="timeline-event">The Strategist</div>
+                    <div class="timeline-details">Windows, Surface, Copilot</div>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-year">2024</span>
+                    <div class="timeline-event">The Pivot</div>
+                    <div class="timeline-details">Campaigns to Systems</div>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-year">2025</span>
+                    <div class="timeline-event">The Ecosystem</div>
+                    <div class="timeline-details">StrategyIQ, Studio, Portal</div>
+                </div>
+            </div>
+
+            <div class="inset-card" style="margin: 0; padding: 1.5rem; font-size: 0.9rem; border-left-color: var(--teal-accent);">
+                <strong>Current Status</strong>
+                <p style="margin-top: 0.5rem; opacity: 0.8;">Accepting projects.<br>Systems-first partnership.</p>
+            </div>
+        </aside>
+
+        <!-- CONTENT -->
+        <article class="main-content">
+            <div class="reading-content" id="intro">
+                <p>Before <a href="https://www.luis-gilberto.com/TheHub/">The Hub</a> existed as code, it existed as a necessity. I needed a way to structure the chaos of creative strategy and build something that could scale beyond my own bandwidth.</p>
+            </div>
+
+            <div class="reading-content" id="the-pivot">
+                <h3>The Pivot</h3>
+                <p>When I left the corporate world, I knew the next chapter couldn’t run on effort alone. Doing great work wasn’t the challenge. The challenge was doing it consistently, across different projects, timelines, and collaborators, without rebuilding the wheel every time.</p>
+                <p>I realized that relying solely on experience wasn’t scalable. I needed to move from a dependency on personal genius to a repeatable process. Intelligence over intuition.</p>
+                <div class="visual-break"> 
+                    <div class="theme-image-container">
+                        <!-- Light Mode Image --> 
+                        <img src="/insights/assets/images/ecosystem-problem.png" 
+                             alt="Illustration of manual strategy" 
+                             class="theme-img-light"> 
+                        <!-- Dark Mode Image --> 
+                        <img src="/insights/assets/images/ecosystem-problem-dark.png" 
+                             alt="Illustration of manual strategy (Dark Mode)" 
+                             class="theme-img-dark"> 
+                    </div>
+                    <p class="caption">The trap: trying to build a cathedral without a blueprint.</p> 
+                </div>
+                <div class="inset-card" style="border-left-color: var(--coral-accent);">
+                    <strong>Philosophy</strong>
+                    <p>Systems are not just about code. They’re about people. A good system amplifies human intent and strengthens collaboration, rather than replacing it.</p>
+                </div>
+            </div>
+
+            <div class="reading-content" id="architecture">
+                <h3>The Architecture</h3>
+                <p>What ultimately emerged from this process is what I now call <a href="https://www.luis-gilberto.com/TheHub/">The Hub</a>.</p>
+                <p>It began as a way to organize my work. It evolved into a system that reorganized how I deliver value altogether. What was once a collection of capabilities is now a strategic ecosystem designed to operate as a whole.</p>
+                <p>The Hub is structured around four distinct pillars:<br>
+                <a href="https://www.luis-gilberto.com/TheHub/strategy-iq">StrategyIQ</a> functions as the diagnostic brain.<br>
+                <a href="https://www.luis-gilberto.com/TheHub/studio">The Studio</a> translates insight into execution.<br>
+                <a href="https://www.luis-gilberto.com/TheHub/advisory/">Advisory</a> supports long-term partnership and decision-making.<br>
+                <a href="https://portal.luis-gilberto.com/">The Portal</a> serves as the secured command center that connects everything together.</p>
+
+                <p class="ecosystem-explore">
+                    Explore: 
+                    <a href="https://www.luis-gilberto.com/TheHub/strategy-iq">StrategyIQ</a> · 
+                    <a href="https://www.luis-gilberto.com/TheHub/studio">Studio</a> · 
+                    <a href="https://www.luis-gilberto.com/TheHub/advisory/">Advisory</a> · 
+                    <a href="https://portal.luis-gilberto.com/">Portal</a>
+                </p>
+
+                <p>This shift marked a fundamental change in my model. I no longer sell time or isolated deliverables. I build a repeatable operating system for growth.</p>
+                
+                <div class="visual-break"> 
+                    <div class="theme-image-container"> 
+                        <img src="/insights/assets/images/signature-AI.png" class="sig-sticker theme-img-light" alt="Luis Gilberto / AI Signature" width="145" height="145"> 
+                        <img src="/insights/assets/images/signature-AI-dark.png" class="sig-sticker theme-img-dark" alt="Luis Gilberto / AI Signature (Dark)" width="145" height="145"> 
+                        
+                        <!-- The Tooltip --> 
+                        <span class="ai-tooltip">Visuals conceptualized by Luis Gilberto, refined via AI partnership.</span> 
+                    
+                        <!-- Light Mode Image --> 
+                        <img src="/insights/assets/images/ecosystem-solution.png" 
+                             alt="The Ecosystem Solution" 
+                             title="The Connected System: StrategyIQ, Studio, and Advisory in unison." 
+                             class="theme-img-light"> 
+                        <!-- Dark Mode Image --> 
+                        <img src="/insights/assets/images/ecosystem-solution-dark.png" 
+                             alt="The Ecosystem Solution (Dark Mode)" 
+                             title="The Connected System: StrategyIQ, Studio, and Advisory in unison." 
+                             class="theme-img-dark"> 
+                    </div> 
+                    <p class="caption">The Solution: A unified operating system for growth.</p> 
+                </div> 
+
+                <h4>1. StrategyIQ (The Brain)</h4>
+                <p>The intelligence layer. This is where inputs become direction and decisions gain structure.<br>
+                Explore: <a href="https://www.luis-gilberto.com/TheHub/strategyiq/">StrategyIQ</a></p>
+
+                <h4>2. Advisory (The Connection)</h4>
+                <p>The human connection. Guiding leaders and teams through complexity with clarity, momentum, and trust.<br>
+                Explore: <a href="https://www.luis-gilberto.com/TheHub/advisory/">Advisory</a></p>
+
+                <h4>3. Studio (The Engine)</h4>
+                <p>The execution engine. Where ideas turn into tangible assets, built with craft and precision.<br>
+                Explore: <a href="https://www.luis-gilberto.com/TheHub/studio">The Studio</a></p>
+            </div>
+
+            <div class="reading-content" id="portal">
+                <h3>The Portal</h3>
+                <p>A secure command center designed to bring everything together.<br>
+                Explore: <a href="https://portal.luis-gilberto.com/">The Portal</a> | <a href="https://portal.luis-gilberto.com/auth/signin">Sign In</a> | <a href="https://portal.luis-gilberto.com/auth/signup">Request Access</a></p>
+                <div class="visual-break"> 
+                    <img src="/insights/assets/images/ThePortal_new.png" 
+                         alt="The Portal Command Center UI" 
+                         style="width:100%; height:auto; border-radius:12px; border:1px solid rgba(255,255,255,0.1);"> 
+                    <p class="caption">The Portal: Intelligence over Intuition.</p> 
+                </div>
+            </div>
+
+            <div class="reading-content"> 
+                <h3>The Moment After the Build</h3> 
+                <p>There’s a quiet that comes after you finish building something you’ve been living inside for years.</p> 
+                <p>Not relief. Not celebration.<br>Just stillness.</p> 
+                <p>For a long time, the ecosystem was the work. The structure, the systems, the decisions about what connects to what and why. It was how I created clarity when everything else felt fragmented.</p> 
+                <p>Finishing it doesn’t stop the thinking. It gives the thinking somewhere to live.</p> 
+                <p>I no longer have to hold the entire structure in my head.<br>I can move faster without rushing.<br>I can collaborate without re-explaining myself.</p> 
+                <p>That’s what the ecosystem ultimately gave me: space.</p> 
+                <div class="inset-card"> 
+                    <p>Space to create.<br>Space to partner.<br>Space to choose the right problems instead of every problem.</p> 
+                </div> 
+                <p class="closing-paragraph">The ecosystem is built.<br>Now I get to use it.</p> 
+                
+                <div style="margin-top: 3rem; text-align: center;">
+                    <a href="https://portal.luis-gilberto.com" class="back-link btn-pill-black" style="display: inline-flex !important;">Request Access</a>
+                </div>
+            </div>
+        </article>
+    </div>
+
+    <section class="keep-reading-section">
+        <div class="container">
+            <h2>Keep Reading</h2>
+            <p>Explore more insights on creative strategy and intention.</p>
+            <a href="/insights" class="back-link-cta">Back to Insights</a>
+        </div>
+    </section>
+
+    <!-- Footer (Standard) -->
+    <footer class="site-footer" role="contentinfo" aria-label="Site footer">
+        <div class="footer-container">
+            <div class="footer-grid-layout">
+                <!-- Brand Column -->
+                <div class="footer-brand-col">
+                    <a href="/index.html" class="footer-logo-link">
+                        <img src="/assets/images/Logomark_White_a.png" alt="Luis Gilberto" class="footer-logo-img">
+                        <span class="footer-brand-name">Luis Gilberto</span>
+                    </a>
+                    <p class="footer-tagline">
+                        Making technology feel human through clarity, beautiful execution, and systems that scale.
+                    </p>
+                    <div class="footer-social">
+                        <a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="social-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                        </a>
+                        <a href="/cdn-cgi/l/email-protection#5139343d3d3e113d2438227c36383d333423253e7f323e3c" aria-label="Email" class="social-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Ecosystem Column -->
+                <nav aria-label="Ecosystem navigation" class="footer-nav-col">
+                    <h3 class="footer-nav-heading">Ecosystem</h3>
+                    <ul class="footer-nav-list">
+                        <li><a href="/index.html" class="footer-nav-link">Portfolio</a></li>
+                        <li><a href="/TheHub/" class="footer-nav-link">The Hub</a></li>
+                        <li><a href="/insights/" class="footer-nav-link">Insights</a></li>
+                        <li><a href="https://portal.luis-gilberto.com" target="_blank" rel="noopener noreferrer" class="footer-nav-link footer-portal-link">The Portal <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a></li>
+                        <li class="footer-nav-divider"><a href="/system/" class="footer-system-link">How it all connects</a></li>
+                    </ul>
+                </nav>
+
+                <!-- Connect Column -->
+                <nav aria-label="Connect navigation" class="footer-nav-col">
+                    <h3 class="footer-nav-heading">Connect</h3>
+                    <ul class="footer-nav-list">
+                        <li><a href="/contact.html" class="footer-nav-link">Contact</a></li>
+                        <li><a href="/about.html" class="footer-nav-link">About Me</a></li>
+                        <li><a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" class="footer-nav-link footer-linkedin-link">LinkedIn</a></li>
+                        <li><a href="#ai-collaboration-info" id="openAiModalLink" class="footer-nav-link">About AI Collaboration</a></li>
+                    </ul>
+                </nav>
+
+                <!-- Status Column -->
+                <div class="footer-status-col">
+                    <h3 class="footer-nav-heading">Status</h3>
+                    <div class="footer-status-card">
+                        <div class="status-indicator"><span class="status-dot"></span><span class="status-text">Accepting Projects</span></div>
+                        <p class="status-description">Currently available for strategic consulting and creative direction.</p>
+                        <a href="/contact.html" class="status-cta">Start a Conversation <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom-bar">
+            <div class="footer-bottom-container">
+                <p class="footer-copyright">© <span id="currentYear">2026</span> Luis Gilberto. All Rights Reserved.</p>
+                <nav class="footer-legal-links">
+                    <a href="/legal/privacy.html" class="footer-legal-link">Privacy Policy</a>
+                    <a href="/legal/terms.html" class="footer-legal-link">Terms of Use</a>
+                </nav>
+            </div>
+        </div>
+    </footer>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+    <script src="/insights/assets/js/insights-navigation.js"></script>
+    <script src="/insights/assets/js/article-interactions.js"></script>
+
+    <!-- Modal Background Overlay -->
+    <div id="aiCollaborationModal" class="modal-overlay">
+        <!-- Modal Content Box -->
+        <div class="modal-content">
+            <span class="modal-close-button">&times;</span> <!-- Close button -->
+            <h2>About AI Collaboration</h2>
+            <p>
+                The illustrations on this site are a testament to creative partnership. Each visual is meticulously conceptualized, art-directed, and refined by Luis Gilberto. Advanced AI tools are then leveraged to translate these precise artistic visions into high-fidelity, polished illustrations, enhancing the visual narrative and achieving an elevated aesthetic. This collaboration allows for dynamic exploration and precise execution, ensuring every image serves the article's core insights.
+            </p>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var modal = document.getElementById("aiCollaborationModal");
+        var openLink = document.getElementById("openAiModalLink");
+        var closeButton = document.getElementsByClassName("modal-close-button")[0];
+
+        // When the user clicks the link, open the modal
+        if (openLink) {
+            openLink.onclick = function(event) {
+                event.preventDefault(); // Prevent default link behavior
+                modal.style.display = "flex"; // Use flex to center content
+            }
+        }
+
+        // When the user clicks on <span> (x), close the modal
+        if (closeButton) {
+            closeButton.onclick = function() {
+                modal.style.display = "none";
+            }
+        }
+
+        // When the user clicks anywhere outside of the modal content, close it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    });
+    </script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"7d9039f5d5b84e54a54bb66d7a78302f","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>

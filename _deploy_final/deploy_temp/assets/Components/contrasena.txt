@@ -1,0 +1,142 @@
+Great! Now replace that entire admin mode section with this better code:
+
+STEP A: Add this HTML right before the closing </body> tag in the-system.html:
+
+<div id="passwordModal" class="password-modal" style="display: none;">
+  <div class="password-modal-overlay"></div>
+  <div class="password-modal-content">
+    <div class="lock-icon">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 14.5V16.5M7 10.0288C7.47142 10 8.05259 10 8.8 10H15.2C15.9474 10 16.5286 10 17 10.0288M7 10.0288C6.41168 10.0647 5.99429 10.1455 5.63803 10.327C5.07354 10.6146 4.6146 11.0735 4.32698 11.638C4 12.2798 4 13.1198 4 14.8V16.2C4 17.8802 4 18.7202 4.32698 19.362C4.6146 19.9265 5.07354 20.3854 5.63803 20.673C6.27976 21 7.11984 21 8.8 21H15.2C16.8802 21 17.7202 21 18.362 20.673C18.9265 20.3854 19.3854 19.9265 19.673 19.362C20 18.7202 20 17.8802 20 16.2V14.8C20 13.1198 20 12.2798 19.673 11.638C19.3854 11.0735 18.9265 10.6146 18.362 10.327C18.0057 10.1455 17.5883 10.0647 17 10.0288M7 10.0288V8C7 5.23858 9.23858 3 12 3C14.7614 3 17 5.23858 17 8V10.0288" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <h2 class="modal-title">Admin Access</h2>
+    <p class="modal-subtitle">Enter password to view admin content</p>
+    
+    <form id="adminPasswordForm">
+      <div class="input-wrapper">
+        <input type="password" id="adminPasswordInput" class="modal-input-field" placeholder="Enter admin password" autocomplete="off">
+        <button type="button" class="modal-toggle-password" id="modalTogglePassword">
+          <svg class="eye-icon" viewBox="0 0 24 24" fill="none">
+            <path d="M2 12C2 12 5 5 12 5C19 5 22 12 22 12C22 12 19 19 12 19C5 19 2 12 2 12Z" stroke="currentColor" stroke-width="2"/>
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+          </svg>
+        </button>
+      </div>
+      <button type="submit" class="modal-submit-btn">Access Admin Content</button>
+      <button type="button" class="modal-cancel-btn" id="modalCancel">Cancel</button>
+      <div class="modal-error-message" id="modalErrorMessage" style="display: none;">Incorrect password. Please try again.</div>
+    </form>
+  </div>
+</div>
+
+
+STEP B: Add these styles to the-system.css file:
+
+/* Password Modal Styles */
+.password-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.password-modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.password-modal-content { position: relative; width: 100%; max-width: 420px; background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 2.5rem 2rem; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); animation: slideUp 0.4s ease; }
+@keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+.password-modal .lock-icon { width: 48px; height: 48px; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #F96F6E 0%, #2ED3C6 100%); border-radius: 16px; }
+.password-modal .lock-icon svg { width: 24px; height: 24px; color: white; }
+.modal-title { font-family: 'Playfair Display', serif; font-size: 1.75rem; font-weight: 600; color: #ffffff; text-align: center; margin-bottom: 0.5rem; }
+.modal-subtitle { color: rgba(255, 255, 255, 0.6); font-size: 0.9rem; text-align: center; margin-bottom: 2rem; }
+.input-wrapper { position: relative; margin-bottom: 1.5rem; }
+.modal-input-field { width: 100%; padding: 1rem 3rem 1rem 1.25rem; background: rgba(255, 255, 255, 0.05); border: 1.5px solid rgba(255, 255, 255, 0.15); border-radius: 12px; color: #ffffff; font-size: 1rem; font-family: 'Inter', sans-serif; transition: all 0.3s ease; }
+.modal-input-field:focus { outline: none; background: rgba(255, 255, 255, 0.08); border-color: #F96F6E; box-shadow: 0 0 0 3px rgba(249, 111, 110, 0.1); }
+.modal-input-field::placeholder { color: rgba(255, 255, 255, 0.3); }
+.modal-toggle-password { position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); background: none; border: none; color: rgba(255, 255, 255, 0.4); cursor: pointer; padding: 0.5rem; transition: color 0.3s ease; }
+.modal-toggle-password:hover { color: rgba(255, 255, 255, 0.7); }
+.modal-toggle-password svg { width: 20px; height: 20px; }
+.modal-submit-btn { width: 100%; padding: 1rem; background: linear-gradient(135deg, #F96F6E 0%, #2ED3C6 100%); border: none; border-radius: 12px; color: white; font-size: 1rem; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.3s ease; margin-bottom: 0.75rem; }
+.modal-submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(249, 111, 110, 0.4); }
+.modal-cancel-btn { width: 100%; padding: 1rem; background: transparent; border: 1.5px solid rgba(255, 255, 255, 0.15); border-radius: 12px; color: rgba(255, 255, 255, 0.7); font-size: 1rem; font-weight: 500; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.3s ease; }
+.modal-cancel-btn:hover { background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.3); color: #ffffff; }
+.modal-error-message { margin-top: 1rem; padding: 0.875rem; background: rgba(249, 111, 110, 0.1); border: 1px solid rgba(249, 111, 110, 0.3); border-radius: 10px; color: #F96F6E; font-size: 0.9rem; text-align: center; animation: shake 0.5s ease; }
+@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+
+
+STEP C: Replace the admin mode JavaScript code you showed me with this:
+
+// ===================================
+// Admin Mode Toggle with Password Modal
+// ===================================
+let adminModeActive = false;
+const ADMIN_PASSWORD = 'LG100';
+const adminToggleBtn = document.getElementById('admin-toggle');
+const adminContents = document.querySelectorAll('.admin-content');
+const passwordModal = document.getElementById('passwordModal');
+const adminPasswordForm = document.getElementById('adminPasswordForm');
+const adminPasswordInput = document.getElementById('adminPasswordInput');
+const modalCancel = document.getElementById('modalCancel');
+const modalTogglePassword = document.getElementById('modalTogglePassword');
+const modalErrorMessage = document.getElementById('modalErrorMessage');
+
+adminToggleBtn.addEventListener('click', () => {
+    if (!adminModeActive) {
+        // Show password modal
+        passwordModal.style.display = 'flex';
+        setTimeout(() => adminPasswordInput.focus(), 100);
+    } else {
+        // Deactivate admin mode
+        adminModeActive = false;
+        adminToggleBtn.classList.remove('active');
+        adminContents.forEach(content => content.style.display = 'none');
+        sessionStorage.removeItem('adminMode');
+        console.log('%c🔒 Admin Mode Deactivated', 'font-size: 16px; color: #999;');
+    }
+});
+
+// Handle password form submission
+adminPasswordForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    modalErrorMessage.style.display = 'none';
+    
+    if (adminPasswordInput.value === ADMIN_PASSWORD) {
+        // Correct password
+        adminModeActive = true;
+        adminToggleBtn.classList.add('active');
+        adminContents.forEach(content => content.style.display = 'block');
+        sessionStorage.setItem('adminMode', 'true');
+        passwordModal.style.display = 'none';
+        adminPasswordInput.value = '';
+        console.log('%c🔓 Admin Mode Activated', 'font-size: 16px; font-weight: bold; color: #F96F6E;');
+    } else {
+        // Wrong password
+        modalErrorMessage.style.display = 'block';
+        adminPasswordInput.value = '';
+        adminPasswordInput.focus();
+    }
+});
+
+// Cancel button
+modalCancel.addEventListener('click', () => {
+    passwordModal.style.display = 'none';
+    adminPasswordInput.value = '';
+    modalErrorMessage.style.display = 'none';
+});
+
+// Close on overlay click
+passwordModal.addEventListener('click', (e) => {
+    if (e.target === passwordModal || e.target.classList.contains('password-modal-overlay')) {
+        passwordModal.style.display = 'none';
+        adminPasswordInput.value = '';
+        modalErrorMessage.style.display = 'none';
+    }
+});
+
+// Toggle password visibility
+modalTogglePassword.addEventListener('click', () => {
+    adminPasswordInput.type = adminPasswordInput.type === 'password' ? 'text' : 'password';
+});
+
+// Check if admin mode was previously activated
+if (sessionStorage.getItem('adminMode') === 'true') {
+    adminModeActive = true;
+    adminToggleBtn.classList.add('active');
+    adminContents.forEach(content => content.style.display = 'block');
+}
+
+Now test it - click the admin button and you should see a beautiful modal instead of that ugly prompt!

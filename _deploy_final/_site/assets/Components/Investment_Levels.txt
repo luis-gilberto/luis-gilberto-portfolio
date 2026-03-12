@@ -1,0 +1,638 @@
+================================================================================
+INVESTMENT LEVELS SECTION - MOBILE OPTIMIZATION UPDATE
+================================================================================
+
+TARGET FILE: TheHub/IMCServices/index.html
+
+OBJECTIVE: Replace the existing "Investment Levels" section with a mobile-optimized 
+version that provides better spacing, touch-friendly interactions, and clearer 
+visual hierarchy across all breakpoints (mobile, tablet, desktop).
+
+================================================================================
+STEP 1: LOCATE THE CSS TO REMOVE
+================================================================================
+
+In the <style> section of TheHub/IMCServices/index.html, find and DELETE the 
+following CSS blocks:
+
+1. Find this comment block and DELETE everything from this comment down to 
+   (but NOT including) the "/* Footer CTA */" comment:
+
+   /* Investment Levels */
+
+   DELETE FROM HERE:
+   ↓↓↓
+   /* Investment Levels */
+   .investment-grid {
+       display: grid;
+       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+       gap: 2rem;
+       margin-top: 3rem;
+   }
+   ... [everything related to investment levels] ...
+   ↑↑↑
+   DELETE TO HERE (stop before "/* Footer CTA */")
+
+
+2. Also find and DELETE this related CSS block in the <style> section:
+
+   DELETE THIS ENTIRE BLOCK:
+   ↓↓↓
+   /* Pricing lock/reveal */
+   .tier-price {
+       filter: blur(6px);
+       opacity: 0.9;
+       user-select: none;
+       transition: filter 0.25s ease, opacity 0.25s ease;
+   }
+   .tier-price.revealed {
+       filter: none;
+       opacity: 1;
+   }
+   .price-lock {
+       display: flex;
+       flex-wrap: wrap;
+       align-items: center;
+       justify-content: center;
+       gap: 0.75rem;
+       background: var(--glass-bg);
+       border: 1px solid var(--glass-border);
+       border-radius: 12px;
+       padding: 0.75rem 1rem;
+       margin: 1rem auto 0;
+       max-width: 720px;
+   }
+   .lock-label { font-weight: 600; color: var(--ink-muted); }
+   .price-input {
+       flex: 1 1 200px;
+       min-width: 160px;
+       width: 100%;
+       padding: 0.5rem 0.65rem;
+       height: 44px; /* compact yet touch-friendly */
+       font-size: 0.95rem;
+       border-radius: 8px;
+       border: 1px solid var(--glass-border);
+       background: rgba(255,255,255,0.03);
+       color: var(--ink);
+       outline: none;
+   }
+   .price-input::placeholder { color: var(--ink-muted); }
+   .price-status { min-width: 160px; font-size: 0.9rem; color: var(--ink-muted); }
+   .price-status.ok { color: var(--teal); }
+   .price-status.error { color: var(--coral); }
+   @media (max-width: 480px) {
+       .price-lock { flex-direction: column; align-items: stretch; gap: 0.5rem; padding: 0.5rem 0.75rem; }
+       .price-input { height: 44px; font-size: 1rem; }
+   }
+   ↑↑↑
+   END DELETE
+
+
+3. Find and DELETE the old mobile-specific investment styles in the responsive 
+   section near the bottom of the <style> tag:
+
+   FIND THIS SECTION (around line 1100-1150):
+   
+   @media (max-width: 768px) {
+       ...existing mobile styles...
+       
+       .investment-grid {
+           max-width: 100%;
+           overflow-x: visible;
+       }
+
+       .tier-card {
+           padding: 2rem 1.5rem;
+           border: 2px solid rgba(255,255,255,0.1);
+           border-radius: 12px;
+           background: linear-gradient(135deg, rgba(0,0,0,0.4), rgba(0,0,0,0.2));
+           min-height: 44px;
+       }
+
+       .tier-card.featured {
+           border-color: #0066ff;
+           position: relative;
+       }
+
+       .tier-name {
+           font-size: 1.75rem;
+           margin-bottom: 0.5rem;
+       }
+
+       .tier-features li {
+           padding: 0.75rem 0;
+           border-bottom: 1px solid rgba(255,255,255,0.05);
+           font-size: 0.95rem;
+       }
+       ...
+   }
+   
+   DELETE ONLY THE INVESTMENT-RELATED RULES from the @media (max-width: 768px) 
+   block. Do NOT delete other mobile styles for capabilities, proof-grid, etc.
+
+================================================================================
+STEP 2: INSERT THE NEW CSS
+================================================================================
+
+In the <style> section, find the comment:
+
+   /* Investment Section - Different Angle Orbital (Revised) */
+
+IMMEDIATELY BEFORE that comment (leaving a blank line), INSERT this new CSS:
+
+↓↓↓ INSERT THIS BLOCK ↓↓↓
+
+/* ============================================
+   INVESTMENT LEVELS - MOBILE-OPTIMIZED
+   ============================================ */
+
+.investment-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.tier-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 2.5rem;
+    backdrop-filter: blur(12px);
+    transition: all 0.4s ease;
+    position: relative;
+}
+
+.tier-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--teal);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.tier-featured {
+    border-color: var(--teal);
+    background: rgba(46, 211, 198, 0.05);
+}
+
+.tier-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--teal);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.tier-name {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--ink);
+}
+
+.tier-price {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--coral);
+    margin: 1rem 0;
+    filter: blur(6px);
+    opacity: 0.9;
+    user-select: none;
+    transition: filter 0.25s ease, opacity 0.25s ease;
+}
+
+.tier-price.revealed {
+    filter: none;
+    opacity: 1;
+}
+
+.tier-duration {
+    color: var(--ink-muted);
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+}
+
+.tier-features {
+    list-style: none;
+    margin-bottom: 2rem;
+}
+
+.tier-features li {
+    padding: 0.75rem 0;
+    color: var(--ink-dim);
+    position: relative;
+    padding-left: 1.5rem;
+    line-height: 1.5;
+}
+
+.tier-features li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--teal);
+    font-weight: bold;
+}
+
+/* Pricing Lock/Reveal - Mobile First */
+.price-lock {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin: 1.5rem auto 2.5rem;
+    max-width: 520px;
+}
+
+.lock-label {
+    font-weight: 600;
+    color: var(--ink-muted);
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.price-input {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    min-height: 48px;
+    font-size: 1rem;
+    border-radius: 10px;
+    border: 1px solid var(--glass-border);
+    background: rgba(255,255,255,0.04);
+    color: var(--ink);
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.price-input:focus {
+    border-color: var(--teal);
+    background: rgba(255,255,255,0.06);
+}
+
+.price-input::placeholder {
+    color: var(--ink-muted);
+}
+
+#revealPriceBtn {
+    width: 100%;
+    min-height: 48px;
+    padding: 0.875rem 1.5rem;
+    font-weight: 600;
+    border-radius: 10px;
+}
+
+.price-status {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--ink-muted);
+    min-height: 1.5rem;
+}
+
+.price-status.ok {
+    color: var(--teal);
+}
+
+.price-status.error {
+    color: var(--coral);
+}
+
+/* Mobile-Specific Optimizations */
+@media (max-width: 768px) {
+    .investment-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        padding: 0;
+    }
+
+    .tier-card {
+        padding: 2rem 1.5rem;
+        border-width: 2px;
+        border-radius: 16px;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+
+    .tier-card.tier-featured {
+        border-width: 2px;
+        box-shadow: 
+            inset 0 1px 0 rgba(46, 211, 198, 0.15),
+            0 4px 12px rgba(46, 211, 198, 0.1);
+    }
+
+    .tier-badge {
+        top: -10px;
+        font-size: 0.7rem;
+        padding: 0.4rem 0.875rem;
+    }
+
+    .tier-name {
+        font-size: 1.6rem;
+        margin-bottom: 0.75rem;
+        letter-spacing: -0.01em;
+    }
+
+    .tier-price {
+        font-size: 2.25rem;
+        margin: 1.25rem 0;
+    }
+
+    .tier-duration {
+        font-size: 0.95rem;
+        margin-bottom: 1.75rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .tier-features {
+        margin-bottom: 2rem;
+    }
+
+    .tier-features li {
+        padding: 0.875rem 0;
+        padding-left: 2rem;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .tier-features li:last-child {
+        border-bottom: none;
+    }
+
+    .tier-features li::before {
+        left: 0.25rem;
+        font-size: 1.1rem;
+    }
+
+    .tier-card .cta-row {
+        margin-top: 1.5rem;
+    }
+
+    .tier-card .btn {
+        width: 100%;
+        min-height: 52px;
+        font-size: 1rem;
+        padding: 1rem 1.5rem;
+    }
+
+    .price-lock {
+        margin: 1.5rem 0.5rem 2rem;
+        padding: 1rem;
+    }
+
+    .lock-label {
+        font-size: 0.85rem;
+    }
+
+    .price-input {
+        font-size: 1.05rem;
+    }
+}
+
+/* Small Mobile Refinements */
+@media (max-width: 480px) {
+    .tier-card {
+        padding: 1.75rem 1.25rem;
+    }
+
+    .tier-name {
+        font-size: 1.5rem;
+    }
+
+    .tier-price {
+        font-size: 2rem;
+    }
+
+    .price-lock {
+        margin: 1.25rem 0 2rem;
+    }
+}
+
+/* Tablet Optimization */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .investment-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.75rem;
+    }
+
+    .tier-card:nth-child(3):last-child {
+        grid-column: 1 / -1;
+        max-width: 480px;
+        margin: 0 auto;
+    }
+}
+
+/* Desktop - 3-Column Layout */
+@media (min-width: 1025px) {
+    .investment-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+    }
+
+    .price-lock {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        padding: 0.875rem 1.25rem;
+    }
+
+    .lock-label {
+        text-align: left;
+    }
+
+    .price-input {
+        flex: 1 1 200px;
+        max-width: 240px;
+        min-height: 44px;
+        font-size: 0.95rem;
+    }
+
+    #revealPriceBtn {
+        flex: 0 0 auto;
+        width: auto;
+        min-height: 44px;
+        padding: 0.625rem 1.5rem;
+    }
+
+    .price-status {
+        flex-basis: 100%;
+        text-align: center;
+    }
+}
+
+↑↑↑ END INSERT ↑↑↑
+
+================================================================================
+STEP 3: VERIFY THE HTML STRUCTURE
+================================================================================
+
+The HTML structure for the Investment Levels section should remain UNCHANGED.
+It should look like this (no modifications needed):
+
+<section class="section">
+    <div class="section-header">
+        <h2 class="section-title"><span class="investment-word">Investment</span> Levels</h2>
+        <p class="section-subtitle">
+            Flexible engagement models that scale from strategic foundation 
+            to fully integrated campaign execution.
+        </p>
+    </div>
+    
+    <!-- Pricing lock / password reveal -->
+    <div class="price-lock" id="priceLock">
+        <span class="lock-label">Pricing locked</span>
+        <input type="password" class="price-input" id="pricePassword" placeholder="Enter password" autocomplete="off">
+        <button class="btn btn-ghost" id="revealPriceBtn" type="button">Reveal Pricing</button>
+        <div class="price-status" id="priceStatus" aria-live="polite"></div>
+    </div>
+
+    <div class="investment-grid">
+        <div class="tier-card">
+            <h3 class="tier-name">Strategic Foundation</h3>
+            <div class="tier-price">$15K–$30K</div>
+            <div class="tier-duration">4-6 week engagement</div>
+            <ul class="tier-features">
+                <li>Strategic discovery & positioning</li>
+                <li>Brand architecture & messaging</li>
+                <li>Go-to-market framework</li>
+                <li>Creative brief & direction</li>
+                <li>Performance framework</li>
+            </ul>
+            <div class="cta-row">
+                <a href="/TheHub/contact.html" class="btn btn-ghost">Start Foundation</a>
+            </div>
+        </div>
+
+        <div class="tier-card tier-featured">
+            <div class="tier-badge">Most Popular</div>
+            <h3 class="tier-name">Creative Campaign</h3>
+            <div class="tier-price">$25K–$50K</div>
+            <div class="tier-duration">6-10 week campaign</div>
+            <ul class="tier-features">
+                <li>Everything in Strategic Foundation</li>
+                <li>Creative concept development</li>
+                <li>Visual identity & brand systems</li>
+                <li>Campaign asset production</li>
+                <li>Launch coordination & optimization</li>
+            </ul>
+            <div class="cta-row">
+                <a href="/TheHub/contact.html" class="btn btn-primary">Launch Campaign</a>
+            </div>
+        </div>
+
+        <div class="tier-card">
+            <h3 class="tier-name">Integrated Program</h3>
+            <div class="tier-price">$50K–$100K</div>
+            <div class="tier-duration">3-6 month program</div>
+            <ul class="tier-features">
+                <li>Everything in Creative Campaign</li>
+                <li>Multi-channel execution</li>
+                <li>Ongoing creative production</li>
+                <li>Real-time optimization</li>
+                <li>Dedicated account leadership</li>
+            </ul>
+            <div class="cta-row">
+                <a href="/TheHub/contact.html" class="btn btn-ghost">Build Program</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+✓ If your HTML matches this structure, NO CHANGES are needed to the HTML.
+✓ The existing JavaScript for password reveal should continue to work unchanged.
+
+================================================================================
+STEP 4: VERIFY THE JAVASCRIPT
+================================================================================
+
+The existing JavaScript at the bottom of the file should remain UNCHANGED:
+
+<script>
+  // Pricing password reveal
+  (function(){
+    const btn = document.getElementById('revealPriceBtn');
+    const pwd = document.getElementById('pricePassword');
+    const status = document.getElementById('priceStatus');
+    function reveal() {
+      const val = (pwd && pwd.value ? pwd.value.trim() : '');
+      if (val === 'LG100') {
+        document.querySelectorAll('.tier-price').forEach(el => el.classList.add('revealed'));
+        if (status) { status.textContent = 'Pricing revealed'; status.classList.remove('error'); status.classList.add('ok'); }
+      } else {
+        if (status) { status.textContent = 'Incorrect password'; status.classList.remove('ok'); status.classList.add('error'); }
+      }
+    }
+    if (btn) btn.addEventListener('click', reveal);
+    if (pwd) pwd.addEventListener('keyup', function(e){ if (e.key === 'Enter') reveal(); });
+  })();
+</script>
+
+✓ No changes needed to this script.
+
+================================================================================
+STEP 5: TEST THE IMPLEMENTATION
+================================================================================
+
+After implementing the changes:
+
+1. Open TheHub/IMCServices/index.html in a browser
+2. Scroll to the Investment Levels section
+3. Test responsive behavior by resizing the browser window:
+   - Mobile (320-768px): Single column, touch-friendly buttons
+   - Tablet (769-1024px): 2 columns with centered third card
+   - Desktop (1025px+): 3 columns side-by-side
+
+4. Test the password reveal feature:
+   - Enter password: LG100
+   - Pricing should unblur and become readable
+
+5. Test on actual mobile devices for touch interactions
+
+================================================================================
+EXPECTED RESULTS
+================================================================================
+
+✓ Mobile: Cards stack vertically with clear spacing and visual hierarchy
+✓ Tablet: Smart 2-column layout with centered overflow
+✓ Desktop: Original 3-column grid maintained
+✓ Touch targets: All buttons are 48px+ height for easy tapping
+✓ Feature lists: Subtle borders between items for clarity
+✓ Password input: Stacks vertically on mobile, horizontal on desktop
+✓ Featured card: Enhanced visual treatment across all breakpoints
+
+================================================================================
+ROLLBACK INSTRUCTIONS (IF NEEDED)
+================================================================================
+
+If you need to revert to the original:
+
+1. Use version control (git) to revert the file:
+   git checkout HEAD -- TheHub/IMCServices/index.html
+
+2. Or manually restore from your backup before making these changes
+
+================================================================================
+NOTES FOR TRAE (YOUR AI IDE)
+================================================================================
+
+- This is a CSS-only update with no HTML or JavaScript changes
+- Focus on surgical precision: only remove/replace Investment Levels CSS
+- Preserve all other sections (capabilities, process, proof, footer, etc.)
+- The new CSS is self-contained and includes all responsive breakpoints
+- Test the final result at multiple viewport widths
+
+================================================================================
+END OF INSTRUCTIONS
+================================================================================
+
+Questions or issues? Reach out to Luis Gilberto.
+Last updated: 2025-10-20

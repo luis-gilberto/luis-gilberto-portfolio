@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Building the Portfolio | Luis Gilberto – Insights</title>
+    <meta name="description" content="A portfolio is a portrait. This is the story of how I rebuilt the site and, quietly, myself.">
+
+    <link rel="icon" type="image/png" href="/insights/assets/icons/favicon-32x32.png">
+    
+    <!-- FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous"></script>
+
+    <!-- CORE CSS -->
+    <link rel="stylesheet" href="/insights/assets/css/article-theme.css">
+    
+    <style>
+        /* PAGE SPECIFIC EDITORIAL STYLES */
+        :root {
+            --accent-color: #FF6B6B; /* Coral */
+        }
+
+        /* Fix double underline in global nav active state */
+        .lg-nav-link,
+        .mobile-nav-link {
+            text-decoration: none;
+        }
+
+        .lg-nav-link.is-active {
+            box-shadow: none;
+        }
+
+        /* Dark Mode Logo Fix (if needed) */
+        html[data-theme="dark"] .lg-logo img,
+        html[data-theme="dark"] .mobile-menu-header img {
+            filter: invert(1) hue-rotate(180deg);
+            opacity: 0.92;
+        }
+
+        .hero-illustration {
+            margin-top: 3rem;
+            border-radius: 4px;
+            overflow: hidden;
+            background: var(--surface);
+            border: 1px solid var(--border);
+        }
+        .hero-illustration img { width: 100%; display: block; }
+
+        .date-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-weight: 700;
+            opacity: 0.65;
+            margin-right: 0.4rem;
+        }
+
+        /* --- EDITORIAL HIERARCHY --- */
+        
+        /* The Dek */
+        .article-dek {
+            margin-top: 0.75rem;
+            max-width: 55ch;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            line-height: 1.6;
+            opacity: 0.82;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Signature Pull Quote */
+        .pull-quote-block {
+            margin: 2.25rem 0 2.5rem;
+            padding: 1.5rem 1.5rem;
+            border-left: 3px solid var(--accent-color);
+            background: var(--soft);
+            border-radius: 8px;
+        }
+        .pull-quote-kicker {
+            font-family: 'Inter', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin: 0 0 0.5rem;
+        }
+        .pull-quote-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.45rem;
+            line-height: 1.35;
+            margin: 0;
+            font-style: italic;
+        }
+
+        /* Quote Card (Reinvention) */
+        .quote-card {
+            margin: 2.5rem 0;
+            padding: 2rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            text-align: center;
+        }
+        .large-quote {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            font-style: italic;
+            color: var(--text-primary);
+        }
+
+        /* Editorial Note (Reflection) */
+        .editorial-note {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: var(--soft);
+            border-radius: 8px;
+            border-left: 4px solid var(--text-primary);
+        }
+        .editorial-label {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            opacity: 0.6;
+        }
+        .editorial-text {
+            font-style: italic;
+            opacity: 0.9;
+        }
+
+        /* Narrative Dividers */
+        .section-divider-label {
+          margin-top: 2rem;
+          font-family: 'Inter', sans-serif;
+          font-size: 0.85rem;
+          letter-spacing: 0.02em;
+          color: var(--muted);
+          border-left: 2px solid var(--border);
+          padding-left: 0.9rem;
+        }
+        
+        .closing-line {
+          margin-top: 2rem;
+          font-family: 'Inter', sans-serif;
+          font-size: 1rem;
+          color: var(--muted);
+        }
+
+        /* Closing Section */
+        .closing-section {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+        .closing-section h3 {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Quiet Sidebar TOC */
+        .principles-nav {
+            position: sticky;
+            top: 6rem;
+        }
+        .principles-title { opacity: 0.75; display: block; margin-bottom: 1rem; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; }
+        .principle-link { opacity: 0.6; display: block; margin-bottom: 0.5rem; text-decoration: none; color: inherit; font-size: 0.9rem; transition: opacity 0.2s; }
+        .principle-link:hover { opacity: 1; }
+        .principle-link.active { opacity: 1; color: var(--text-primary); font-weight: 600; border-left: 2px solid var(--accent-color); padding-left: 0.75rem; margin-left: -0.85rem; }
+
+        /* Nav Link Fix */
+        .lg-nav-link {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #666;
+            text-decoration: none;
+            padding-bottom: 4px;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        .lg-nav-link:hover { color: var(--text-primary); }
+        .lg-nav-link.is-active { color: var(--text-primary); border-bottom-color: var(--accent-color); }
+
+        /* Dark Mode Overrides for Page Specifics */
+        [data-theme="dark"] .lg-nav-link { color: #aaa; }
+        [data-theme="dark"] .lg-nav-link:hover,
+        [data-theme="dark"] .lg-nav-link.is-active { color: #fff; }
+        [data-theme="dark"] .hero-illustration { background: #1a1a1a; border-color: rgba(255,255,255,0.1); }
+        [data-theme="dark"] .pull-quote-block { background: rgba(255,255,255,0.05); }
+        [data-theme="dark"] .editorial-note { background: rgba(255,255,255,0.05); border-left-color: #fff; }
+        [data-theme="dark"] .quote-card { background: rgba(255,255,255,0.05); }
+
+        /* Responsive Logic */
+        @media (max-width: 968px) {
+            .sidebar { display: none !important; }
+            .article-layout { grid-template-columns: 1fr; display: block; }
+            .pull-quote-text { font-size: 1.4rem; }
+            .header-container { padding: 0 1rem; }
+            
+            .main-content { max-width: 68ch; margin: 0 auto; }
+            .pull-quote-block { padding: 1.15rem; }
+            .pull-quote-text { font-size: 1.22rem; }
+            .section-divider-label { margin-top: 1.75rem; }
+
+            .article-byline-row {
+                flex-wrap: wrap;
+                gap: 0.4rem 0.6rem;
+            }
+
+            .byline-sep {
+                opacity: 0.35;
+            }
+        }
+
+        /* Signature placement fix for hero image */
+        .article-hero-modular .img-sig-wrapper .sig-sticker {
+            bottom: 12px !important;
+            right: 12px !important;
+            width: 110px !important;
+            transform: rotate(-2deg) !important;
+        }
+
+        /* --- Sticker Positioning for Article Body Images --- */
+        .img-sig-wrapper { 
+            position: relative; 
+            display: block; 
+            width: 100%; 
+            height: 100%; 
+        }
+
+        /* --- FIX FOR VISUAL BREAK WRAPPER --- */ 
+        .visual-break .img-sig-wrapper { 
+            width: fit-content !important; /* Shrink wrapper to image width */ 
+            margin: 0 auto; /* Keep the image centered */ 
+            line-height: 0; /* Remove ghost space below image */ 
+        }
+
+        .visual-break .sig-sticker {
+            position: absolute !important;
+            bottom: 10px !important;
+            right: 10px !important;
+            width: 100px !important;
+            z-index: 20;
+            transform: rotate(-3deg) !important;
+            opacity: 0.9;
+            pointer-events: auto !important;
+            cursor: help;
+        }
+
+        /* Ensure Dark/Light toggling works in the body */
+        [data-theme="light"] .visual-break .sig-sticker.theme-img-dark { display: none !important; }
+        [data-theme="dark"] .visual-break .sig-sticker.theme-img-light { display: none !important; }
+
+        /* --- HEADER DARK MODE FIX --- */ 
+        html[data-theme="dark"] .lg-site-header { 
+            background-color: #111111 !important; /* Force dark background */ 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important; 
+        } 
+        
+        /* Improve Link Contrast in Dark Mode */ 
+        html[data-theme="dark"] .lg-nav-link { 
+            color: #b0b0b0 !important; /* Light grey for inactive links */ 
+        } 
+        
+        html[data-theme="dark"] .lg-nav-link:hover, 
+        html[data-theme="dark"] .lg-nav-link.is-active { 
+            color: #ffffff !important; /* Pure white for active/hover */ 
+            border-bottom-color: var(--accent-color) !important; 
+        }
+
+        /* --- AI ATTRIBUTION TOOLTIP --- */ 
+        .ai-tooltip { 
+            visibility: hidden; 
+            opacity: 0; 
+            position: absolute; 
+            bottom: 45px; /* Sits right above the sticker */ 
+            right: 0; 
+            background-color: rgba(0, 0, 0, 0.9); 
+            color: #fff; 
+            padding: 8px 12px; 
+            border-radius: 6px; 
+            font-family: 'Inter', sans-serif; 
+            font-size: 0.75rem; 
+            line-height: 1.3; 
+            width: max-content; 
+            max-width: 220px; 
+            z-index: 100; 
+            transition: opacity 0.2s ease, transform 0.2s ease; 
+            transform: translateY(5px); 
+            pointer-events: none; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2); 
+            border: 1px solid rgba(255,255,255,0.1); 
+        } 
+        
+        /* Show tooltip on hover */ 
+        .img-sig-wrapper .sig-sticker:hover ~ .ai-tooltip { 
+            visibility: visible !important; 
+            opacity: 1 !important; 
+            transform: translateY(0) !important; 
+            z-index: 999 !important; 
+        } 
+        
+        /* Also ensure the hero container doesn't clip the tooltip */ 
+        .hero-illustration, .visual-break { 
+            overflow: visible !important; 
+        } 
+        
+        /* Main Image Hover Effect (Subtle) */ 
+        .hero-illustration img:not(.sig-sticker), 
+        .visual-break img:not(.sig-sticker) { 
+            transition: filter 0.3s ease; 
+        } 
+        .hero-illustration:hover img:not(.sig-sticker), 
+        .visual-break:hover img:not(.sig-sticker) { 
+            filter: brightness(0.98); /* Tiny feedback on hover */ 
+        } 
+
+        /* FORCE STICKER INTERACTIVITY */ 
+        .sig-sticker, 
+        .visual-break .sig-sticker { 
+            pointer-events: auto !important; /* Allows the mouse to trigger the hover */ 
+            cursor: help; /* Changes cursor to a question mark to indicate interactivity */ 
+        } 
+    </style>
+</head>
+
+<body>
+
+    <!-- 1. HEADER -->
+    <header class="lg-site-header" role="banner">
+      <div class="lg-site-header-inner">
+        <a href="/insights" class="lg-logo" title="Luis Gilberto's Insights" aria-label="Insights">
+            <img src="/insights/assets/images/insights_logo_light.svg" alt="Luis Gilberto's Insights" style="height: 32px; width: auto;">
+        </a>
+        <nav class="lg-main-nav">
+          <a href="https://luis-gilberto.com" class="lg-nav-link">PORTFOLIO</a>
+          <a href="/insights" class="lg-nav-link is-active">INSIGHTS</a>
+          <a href="/TheHub/" class="lg-nav-link">THE HUB</a>
+          <a href="https://portal.luis-gilberto.com/" class="lg-nav-link">THE PORTAL</a>
+        </nav>
+
+        <button class="mobile-menu-toggle" aria-label="Menu" id="mobileMenuToggle">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- 2. CONTEXT BAR -->
+    <nav class="lg-context-bar">
+        <div class="container">
+            <a href="/insights" class="breadcrumb-link">Insights</a>
+            <span class="breadcrumb-separator">/</span>
+            <a href="/insights/series" class="breadcrumb-link">Building Series</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current">Building the Portfolio</span>
+        </div>
+    </nav>
+    
+    <!-- MOBILE DRAWER -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay">
+        <div class="mobile-menu-header">
+            <img src="/insights/assets/images/insights_logo_light.svg" alt="Luis Gilberto's Insights" style="height: 28px; width: auto;">
+            <button class="mobile-close-btn" id="mobileMenuClose">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+
+        <nav class="mobile-global-nav">
+            <a href="https://luis-gilberto.com" class="mobile-nav-link">PORTFOLIO</a>
+            <a href="/insights" class="mobile-nav-link is-active">INSIGHTS</a>
+            <a href="/TheHub/" class="mobile-nav-link">THE HUB</a>
+            <a href="https://portal.luis-gilberto.com/" class="mobile-nav-link">THE PORTAL</a>
+        </nav>
+
+        <div class="mobile-sub-nav">
+            <span class="mobile-sub-label">Current Context:</span>
+            <a href="/insights" class="mobile-sub-link">Insights</a>
+            <a href="/insights/series" class="mobile-sub-link">Series</a>
+            <span class="mobile-sub-current">Building the Portfolio</span>
+        </div>
+    </div>
+
+    <button class="theme-toggle" id="themeToggle">
+        <svg class="sun-icon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="5"></circle></svg>
+        <svg class="moon-icon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </button>
+    <div class="top-accent"></div>
+
+    <!-- 3. HERO SECTION -->
+    <header class="article-hero-modular">
+        <div class="container">
+            <div class="article-eyebrow">
+                <span class="category-tag" style="color: var(--accent-color);">Human x Tech</span>
+                <span class="eyebrow-sep">•</span>
+                <span class="series-tag">Building Series</span>
+            </div>
+
+            <h1>Building the Portfolio</h1>
+            <p class="article-subtitle">The work was never the work. I was.</p>
+            <!-- DEK -->
+            <p class="article-dek">What I thought was a rebuild of a site turned out to be a rebuild of me.</p>
+
+            <div class="article-byline-row">
+                <span>By Luis Gilberto</span>
+                <span class="byline-sep">/</span>
+                <span class="publish-date">
+                    <span class="date-label">Published</span> Aug 2025
+                </span>
+                <span class="byline-sep">/</span>
+                <span class="publish-date">
+                    <span class="date-label">Updated</span> Jan 2026
+                </span>
+            </div>
+            
+            <div class="hero-illustration">
+                <div class="img-sig-wrapper"> 
+                    <img src="/insights/assets/images/signature-AI.png" class="sig-sticker theme-img-light" alt="Luis Gilberto / AI"> 
+                    <img src="/insights/assets/images/signature-AI-dark.png" class="sig-sticker theme-img-dark" alt="Luis Gilberto / AI"> 
+                    
+                    <!-- The Short Disclaimer Tooltip --> 
+                    <span class="ai-tooltip">Visuals conceptualized by Luis Gilberto, refined via AI partnership.</span> 
+                
+                    <!-- Main Image with SEO Title --> 
+                    <img src="/insights/assets/images/Hero_illustration_Building_Portfolio.png" 
+                         alt="A figure facing a mirror; reflection appears more awake." 
+                         title="Self-Reflection: Seeing the artist behind the corporate badge."> 
+                </div> 
+            </div>
+        </div>
+    </header>
+
+    <!-- 4. MAIN LAYOUT -->
+    <div class="article-layout">
+        
+        <!-- SIDEBAR (Desktop Only) -->
+        <aside class="sidebar">
+            <div class="principles-nav">
+                <span class="principles-title">Table of Contents</span>
+                <a href="#portrait" class="principle-link active">The Portrait</a>
+                <a href="#badge" class="principle-link">Leaving the Badge</a>
+                <a href="#craft" class="principle-link">The Craft</a>
+                <a href="#system" class="principle-link">The Self</a>
+            </div>
+
+            <div class="inset-card" style="margin-top: 2rem; padding: 1.5rem; font-size: 0.9rem; border-color: var(--accent-color);">
+                <strong style="color: var(--accent-color);">Status</strong>
+                <p style="margin-top: 0.5rem; opacity: 0.8;">Live v3.0<br>Systematized<br>Human-First</p>
+            </div>
+        </aside>
+
+        <!-- CONTENT -->
+        <article class="main-content">
+            
+            <!-- SECTION 1: THE PORTRAIT -->
+            <div class="reading-content" id="portrait">
+              <p class="lead">A portfolio is not a website. It is not a gallery of screenshots or a collection of deliverables. A portfolio is your portrait.</p>
+            
+              <section class="pull-quote-block" aria-label="Signature pull quote">
+                <p class="pull-quote-kicker">Signature line</p>
+                <p class="pull-quote-text">I care about the idea. Of course I do. But more than that, I care about the delivery.</p>
+              </section>
+            
+              <p>I did not realize that for a long time. For years, I believed my value lived inside the company badge hanging from my desk. I borrowed identity from the places I worked. From the logos I wore. From the teams I belonged to.</p>
+            
+              <p>You can do that when your career lives inside a machine built for momentum. Swap logos, swap titles, and eventually you convince yourself the fleece and the lanyard are you. I lived that version of existence for years, building portfolios that could survive the system instead of challenging it.</p>
+            
+              <p>When I stepped away, it felt like jumping off a moving train. Everything was loud at first. Then it went quiet.</p>
+            
+              <p>Quieter than I expected. But the quiet stayed. And the quiet did something important. It made room.</p>
+            
+              <p>I was left with a blank page. No brief. No stakeholders. No need to refresh something that already existed. I could finally decide what I wanted to say and how I wanted it to feel.</p>
+            
+              <p class="section-divider-label">A portfolio is your space to show up as you actually are.</p>
+            </div>
+
+            <!-- SECTION 2: LEAVING THE BADGE -->
+            <div class="reading-content" id="badge">
+              <p>The old version of this site was safe. Helpful. Polite. It showed the work clearly, but it left me out. I still have screenshots where my face never appears.</p>
+
+              <p>That is when I finally asked the question that started the entire rebuild. <strong>How do I build a portfolio that feels alive?</strong></p>
+
+              <p>If the site was going to feel alive, I had to be alive in it. I had to show up.</p>
+
+              <p>I used to think the work said everything that needed to be said. The badges were my voice. Proof I was trusted. Proof I belonged. But muted smiles and tidy case studies do not make a person. Logos are not your voice.</p>
+
+              <p>Your portfolio will not feel alive until the human behind the work stops hiding.</p>
+
+              <div class="visual-break"> 
+                  <div class="img-sig-wrapper"> 
+                    <img src="/insights/assets/images/signature-AI.png" class="sig-sticker theme-img-light" alt="Luis Gilberto / AI"> 
+                    <img src="/insights/assets/images/signature-AI-dark.png" class="sig-sticker theme-img-dark" alt="Luis Gilberto / AI"> 
+                    
+                    <!-- The Short Disclaimer Tooltip --> 
+                    <span class="ai-tooltip">Visuals conceptualized by Luis Gilberto, refined via AI partnership.</span> 
+              
+                    <!-- Main Image with SEO Title --> 
+                    <img src="/insights/assets/images/BTP_Decorative_break_1.png" 
+                         alt="A figure stepping off a conveyor belt of identical workers." 
+                         title="Breaking Momentum: Stepping off the corporate assembly line." 
+                         style="border-radius: 4px;"> 
+                  </div> 
+                  <p class="caption">Stepping off the machine designed for momentum.</p> 
+              </div>
+            </div>
+
+            <!-- SECTION 3: THE CRAFT -->
+            <div class="reading-content" id="craft">
+              <h3>The Rebuild</h3>
+
+              <p>Once I faced that truth, I rebuilt from the inside out. I did not start with pages or sections. I started with mood.</p>
+
+              <p>I wanted the site to feel like walking through a city at night with headphones on. Quiet intensity. Gentle confidence. The sense that something is happening even if nothing is shouting.</p>
+
+              <p>Typography came first. Headlines that speak with authority without yelling. Body copy that feels warm instead of corporate. Familiar enough to trust because it is not rushing you.</p>
+
+              <p>Color followed naturally. Black is my visual home, so I anchored there. Coral is the punctuation, the rhythm of curiosity throughout the site. And plenty of space so the words can do the heavy lifting. When a layout slows down, the message can breathe.</p>
+
+              <div class="quote-card">
+                <p class="large-quote">Reinventing yourself is not a redesign. It is repair.</p>
+              </div>
+
+              <p>Each decision became a quiet yes. Yes to trusting what I like because I like it. Yes to letting contradictions exist.</p>
+
+              <p>The old version of this site was built to prove I could fit into certain spaces. This one is built to show who I am when I stop trying to fit.</p>
+
+              <p class="section-divider-label">And yes, you are the one holding the reset button.</p>
+            </div>
+
+            <!-- SECTION 4: THE SYSTEM (SELF) -->
+            <div class="reading-content" id="system">
+              <h3>The New Self</h3>
+
+              <p>Had I known building a portfolio could give back this much, I would have started sooner.</p>
+
+              <p>What I thought would be an exercise in documentation gave me something far more valuable. Trust. Trust in my taste. Trust in my pace. Trust in my ability to create work that feels true without a badge validating it.</p>
+
+              <p>The site you see today is not the lesson. This is.</p>
+
+              <div class="editorial-note">
+                  <span class="editorial-label">Takeaway</span>
+                  <p class="editorial-text">
+                  Stop spending your life proving you are good enough. Start showing who you actually are. Build beautiful things on purpose. A portfolio is your portrait. More than that, it is your permission slip.
+                  </p>
+              </div>
+
+              <p class="closing-line">If you are in a rebuild season too, take your time. Make it beautiful on purpose.</p>
+            </div>
+
+        </article>
+    </div>
+
+    <!-- 5. BRIDGE -->
+    <section class="container" style="margin-top: 6rem; margin-bottom: 6rem;">
+        <div class="project-bridge">
+            <div class="bridge-content">
+                <span class="bridge-label">See the Result</span>
+                <h2 class="bridge-title">Explore the Portfolio</h2>
+                <p class="bridge-desc">
+                    You've read the story of the build. Now explore the finished system, the case studies, and the work itself.
+                </p>
+                <!-- UPDATED CTA -->
+                <a href="/" class="bridge-cta">
+                    Enter the Portfolio
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </a>
+            </div>
+            <div class="bridge-image" style="background-image: url('/assets/images/Hero_banner.png');"></div>
+        </div>
+    </section>
+
+    <section class="keep-reading-section">
+        <div class="container">
+            <h2>Keep Reading</h2>
+            <p>Explore more insights on creative strategy and intention.</p>
+            <a href="/insights" class="back-link-cta">Back to Insights</a>
+        </div>
+    </section>
+
+    <!-- 6. FOOTER -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-grid-layout">
+                <div class="footer-brand-col">
+                    <a href="/" class="footer-logo-link"><img src="/assets/images/Logomark_White_a.png" alt="LG" class="footer-logo-img"></a>
+                    <p class="footer-tagline">Making technology feel human through clarity, beautiful execution, and systems that scale.</p>
+                </div>
+                <nav class="footer-nav-col">
+                    <h3 class="footer-nav-heading">Ecosystem</h3>
+                    <ul class="footer-nav-list">
+                        <li><a href="/" class="footer-nav-link">Portfolio</a></li>
+                        <li><a href="/insights" class="footer-nav-link">Insights</a></li>
+                        <li><a href="/TheHub/" class="footer-nav-link">The Hub</a></li>
+                    </ul>
+                </nav>
+                <nav class="footer-nav-col">
+                    <h3 class="footer-nav-heading">Connect</h3>
+                    <ul class="footer-nav-list">
+                        <li><a href="/contact.html" class="footer-nav-link">Contact</a></li>
+                        <li><a href="https://linkedin.com/in/luisgilberto00" class="footer-nav-link">LinkedIn</a></li>
+                    </ul>
+                </nav>
+                <div class="footer-status-col">
+                    <div class="footer-status-card">
+                        <div class="status-indicator"><span class="status-dot"></span><span class="status-text">Accepting Projects</span></div>
+                        <a href="/contact.html" class="status-cta">Start a Conversation &rarr;</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom-bar">
+            <div class="footer-bottom-container">
+                <p class="footer-copyright">© 2026 Luis Gilberto. All Rights Reserved.</p> 
+                <a href="#ai-collaboration-info" id="openAiModalLink" style="display: inline-block; margin-left: 15px; font-size: 0.8rem; color: #888; text-decoration: underline; cursor: pointer; opacity: 1;">About AI Collaboration</a> 
+            </div>
+        </div>
+    </footer>
+
+    <!-- AI Modal --> 
+    <div id="aiCollaborationModal" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(4px);"> 
+        <div class="modal-content" style="background: #111; color: #fff; padding: 40px; max-width: 500px; border-radius: 8px; position: relative; border: 1px solid #333; line-height: 1.6;"> 
+            <span class="modal-close-button" style="position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; opacity: 0.7;">&times;</span> 
+            <h2 style="color: var(--accent-color); margin-top: 0;">About AI Collaboration</h2> 
+            <p style="font-size: 0.95rem; opacity: 0.9;"> 
+                The illustrations on this site are a testament to creative partnership. Each visual is meticulously conceptualized, art-directed, and refined by Luis Gilberto. Advanced AI tools are then leveraged to translate these precise artistic visions into high-fidelity, polished illustrations, enhancing the visual narrative and achieving an elevated aesthetic. 
+            </p> 
+        </div> 
+    </div> 
+    
+    <script> 
+        // Modal Logic 
+        document.addEventListener('DOMContentLoaded', () => { 
+            const modal = document.getElementById('aiCollaborationModal'); 
+            const link = document.getElementById('openAiModalLink'); 
+            const close = document.querySelector('.modal-close-button'); 
+    
+            if(link) link.onclick = (e) => { e.preventDefault(); modal.style.display = 'flex'; }; 
+            if(close) close.onclick = () => { modal.style.display = 'none'; }; 
+            window.onclick = (e) => { if(e.target == modal) modal.style.display = 'none'; }; 
+        }); 
+    </script>
+
+    <!-- Safe Script Loading -->
+    <script src="/insights/assets/js/article-interactions.js"></script>
+</body>
+</html>

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Depth Layers Visual Diagram</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0A0A0A;
+            color: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #F96F6E, #2ED3C6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 3rem;
+        }
+
+        .diagram-container {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 3rem;
+            position: relative;
+            perspective: 1200px;
+        }
+
+        .layer-stack {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            transform-style: preserve-3d;
+        }
+
+        .layer {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 80%;
+            transform-origin: center center;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .layer-far {
+            transform: translate(-50%, -50%) translateZ(-200px) scale(0.7);
+            background: rgba(249, 111, 110, 0.03);
+            border-color: rgba(249, 111, 110, 0.3);
+            opacity: 0.4;
+        }
+
+        .layer-mid {
+            transform: translate(-50%, -50%) translateZ(-100px) scale(0.85);
+            background: rgba(46, 211, 198, 0.04);
+            border-color: rgba(46, 211, 198, 0.3);
+            opacity: 0.6;
+        }
+
+        .layer-front {
+            transform: translate(-50%, -50%) translateZ(0) scale(1);
+            background: rgba(249, 111, 110, 0.05);
+            border-color: rgba(249, 111, 110, 0.4);
+            opacity: 0.8;
+        }
+
+        .layer-content {
+            transform: translate(-50%, -50%) translateZ(100px) scale(1.1);
+            background: rgba(46, 211, 198, 0.08);
+            border-color: rgba(46, 211, 198, 0.5);
+            opacity: 1;
+        }
+
+        .layer:hover {
+            transform: translate(-50%, -50%) translateZ(50px) scale(1.05);
+            opacity: 1;
+        }
+
+        .layer-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .layer-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .badge-far {
+            background: rgba(249, 111, 110, 0.15);
+            color: #F96F6E;
+            border: 1px solid rgba(249, 111, 110, 0.3);
+        }
+
+        .badge-mid {
+            background: rgba(46, 211, 198, 0.15);
+            color: #2ED3C6;
+            border: 1px solid rgba(46, 211, 198, 0.3);
+        }
+
+        .badge-front {
+            background: rgba(249, 111, 110, 0.2);
+            color: #F96F6E;
+            border: 1px solid rgba(249, 111, 110, 0.4);
+        }
+
+        .badge-content {
+            background: rgba(46, 211, 198, 0.2);
+            color: #2ED3C6;
+            border: 1px solid rgba(46, 211, 198, 0.5);
+        }
+
+        .layer-specs {
+            list-style: none;
+            padding: 0;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .layer-specs li {
+            padding: 0.25rem 0;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .spec-label {
+            color: rgba(255, 255, 255, 0.5);
+            margin-right: 0.5rem;
+        }
+
+        .legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .legend-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .legend-item h3 {
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .legend-item p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        .icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+
+        .icon-far {
+            background: radial-gradient(circle, #F96F6E, transparent);
+            opacity: 0.3;
+        }
+
+        .icon-mid {
+            background: radial-gradient(circle, #2ED3C6, transparent);
+            opacity: 0.5;
+        }
+
+        .icon-front {
+            background: radial-gradient(circle, #F96F6E, transparent);
+            opacity: 0.7;
+        }
+
+        .icon-content {
+            background: radial-gradient(circle, #2ED3C6, transparent);
+            opacity: 1;
+        }
+
+        .controls {
+            text-align: center;
+            margin-top: 2rem;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .diagram-container {
+                padding: 1.5rem;
+            }
+
+            .layer-stack {
+                height: 400px;
+            }
+
+            .layer {
+                width: 90%;
+                padding: 1.5rem;
+            }
+
+            .layer-title {
+                font-size: 1.25rem;
+            }
+
+            .legend {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Depth Layers Architecture</h1>
+        <p class="subtitle">3D visualization of the multi-layer constellation system</p>
+
+        <div class="diagram-container">
+            <div class="layer-stack">
+                <!-- Layer 1: Far Background -->
+                <div class="layer layer-far">
+                    <div class="layer-title">
+                        <span class="layer-badge badge-far">z-index: 0</span>
+                        <span>Far Background</span>
+                    </div>
+                    <ul class="layer-specs">
+                        <li><span class="spec-label">Opacity:</span>0.06 (barely visible)</li>
+                        <li><span class="spec-label">Blur:</span>2px (out of focus)</li>
+                        <li><span class="spec-label">Shapes:</span>2 (Compass, Queen)</li>
+                        <li><span class="spec-label">Animation:</span>48-50s (slowest)</li>
+                        <li><span class="spec-label">Purpose:</span>Distant stars effect</li>
+                    </ul>
+                </div>
+
+                <!-- Layer 2: Mid Background -->
+                <div class="layer layer-mid">
+                    <div class="layer-title">
+                        <span class="layer-badge badge-mid">z-index: 1</span>
+                        <span>Mid Background</span>
+                    </div>
+                    <ul class="layer-specs">
+                        <li><span class="spec-label">Opacity:</span>0.12 (soft presence)</li>
+                        <li><span class="spec-label">Blur:</span>1px (gentle)</li>
+                        <li><span class="spec-label">Shapes:</span>2 (Atom, Telescope)</li>
+                        <li><span class="spec-label">Animation:</span>42-44s (medium)</li>
+                        <li><span class="spec-label">Purpose:</span>Supporting depth layer</li>
+                    </ul>
+                </div>
+
+                <!-- Layer 3: Foreground -->
+                <div class="layer layer-front">
+                    <div class="layer-title">
+                        <span class="layer-badge badge-front">z-index: 2</span>
+                        <span>Foreground</span>
+                    </div>
+                    <ul class="layer-specs">
+                        <li><span class="spec-label">Opacity:</span>0.18-0.22 (most visible)</li>
+                        <li><span class="spec-label">Blur:</span>0.5px (sharp)</li>
+                        <li><span class="spec-label">Shapes:</span>4 (all 4 shapes)</li>
+                        <li><span class="spec-label">Animation:</span>32-40s (fastest)</li>
+                        <li><span class="spec-label">Purpose:</span>Main constellation</li>
+                    </ul>
+                </div>
+
+                <!-- Layer 4: Content -->
+                <div class="layer layer-content">
+                    <div class="layer-title">
+                        <span class="layer-badge badge-content">z-index: 3</span>
+                        <span>Hero Content</span>
+                    </div>
+                    <ul class="layer-specs">
+                        <li><span class="spec-label">Opacity:</span>1.0 (fully visible)</li>
+                        <li><span class="spec-label">Blur:</span>0 (crisp)</li>
+                        <li><span class="spec-label">Content:</span>Title, Description, CTAs</li>
+                        <li><span class="spec-label">Position:</span>Always on top</li>
+                        <li><span class="spec-label">Purpose:</span>Primary user focus</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="controls">
+                ✨ Hover over each layer to bring it forward
+            </div>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <h3>
+                    <span class="icon icon-far"></span>
+                    Depth Perception
+                </h3>
+                <p>Created through size variation (26-88px), opacity gradient (0.06-0.22), blur levels (0-2px), and animation speed (32-50s)</p>
+            </div>
+
+            <div class="legend-item">
+                <h3>
+                    <span class="icon icon-mid"></span>
+                    Color Balance
+                </h3>
+                <p>4 coral shapes (warm, energetic) and 4 teal shapes (cool, analytical) distributed evenly across all layers for visual harmony</p>
+            </div>
+
+            <div class="legend-item">
+                <h3>
+                    <span class="icon icon-front"></span>
+                    Layering Magic
+                </h3>
+                <p>Badge and stats sit at z-index: 2 (same as front shapes), allowing some shapes to appear behind UI elements while others remain in front</p>
+            </div>
+
+            <div class="legend-item">
+                <h3>
+                    <span class="icon icon-content"></span>
+                    Performance
+                </h3>
+                <p>GPU-accelerated animations using transform and opacity only, with will-change hints and reduced motion support for accessibility</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add gentle rotation to the layer stack on mouse move
+        const layerStack = document.querySelector('.layer-stack');
+        const diagramContainer = document.querySelector('.diagram-container');
+
+        diagramContainer.addEventListener('mousemove', (e) => {
+            const rect = diagramContainer.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const rotateX = (y - centerY) / centerY * 10;
+            const rotateY = (x - centerX) / centerX * 10;
+            
+            layerStack.style.transform = `rotateX(${-rotateX}deg) rotateY(${rotateY}deg)`;
+        });
+
+        diagramContainer.addEventListener('mouseleave', () => {
+            layerStack.style.transform = 'rotateX(0) rotateY(0)';
+        });
+
+        // Respect reduced motion preferences
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            diagramContainer.removeEventListener('mousemove', () => {});
+            layerStack.style.transition = 'none';
+        }
+    </script>
+</body>
+</html>

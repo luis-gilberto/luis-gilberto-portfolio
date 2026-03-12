@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -23,6 +23,8 @@
         :root {
             --coral: #F96F6E;
             --teal: #2ED3C6;
+            --mustard: #FFB800;
+            --accent-lens: var(--coral); /* Default */
             
             /* Light Mode Palette */
             --bg-primary: #FFFFFF;
@@ -59,6 +61,118 @@
             --shadow-hover: 0 12px 30px rgba(0, 0, 0, 0.5);
         }
 
+        /* Resume Palette Selector Component */
+        .resume-palette-selector {
+            background: white;
+            border: 1px solid rgba(10, 10, 10, 0.08);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+            z-index: 50;
+            position: relative;
+        }
+
+        [data-theme="dark"] .resume-palette-selector {
+            background: #1A1A1A;
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+        }
+
+        .selector-label {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #0A0A0A;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        [data-theme="dark"] .selector-label { color: #F4F1ED; }
+
+        .palette-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .palette-option {
+            background: #F9F8F6;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            padding: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        [data-theme="dark"] .palette-option { background: #252525; }
+
+        .palette-option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        [data-theme="dark"] .palette-option:hover { box-shadow: 0 4px 16px rgba(255, 255, 255, 0.05); }
+
+        .palette-option.active { border-color: var(--accent-lens); background: color-mix(in srgb, var(--accent-lens) 4%, transparent); }
+        [data-theme="dark"] .palette-option.active { background: color-mix(in srgb, var(--accent-lens) 8%, transparent); }
+
+        .palette-option .checkmark {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 20px;
+            height: 20px;
+            background: var(--accent-lens);
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+        }
+        .palette-option.active .checkmark { display: flex; }
+
+        .palette-colors { display: flex; gap: 6px; margin-bottom: 8px; }
+        .color-dot { width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(10, 10, 10, 0.1); transition: transform 0.2s ease; }
+        .palette-option:hover .color-dot { transform: scale(1.15); }
+
+        .palette-name { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; color: #0A0A0A; margin-bottom: 2px; }
+        [data-theme="dark"] .palette-name { color: #F4F1ED; }
+        .palette-desc { font-family: 'Inter', sans-serif; font-size: 11px; color: #666; line-height: 1.3; }
+        [data-theme="dark"] .palette-desc { color: #999; }
+
+        .download-btn { display: block; width: 100%; background: var(--accent-lens); color: white; text-decoration: none; padding: 14px; border-radius: 8px; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.2s ease; margin-bottom: 16px; }
+        .download-btn:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 6px 20px color-mix(in srgb, var(--accent-lens) 30%, transparent); }
+        .download-btn:active { transform: translateY(0); }
+
+        .preview-panel { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, opacity 0.3s ease; opacity: 0; margin-top: 16px; }
+        .preview-panel.open { max-height: 450px; opacity: 1; }
+        .preview-content { background: #FAFAFA; border: 1px solid rgba(10, 10, 10, 0.08); border-radius: 8px; padding: 16px; min-height: 240px; max-height: 280px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+        [data-theme="dark"] .preview-content { background: #1F1F1F; border-color: rgba(255, 255, 255, 0.1); }
+        .preview-thumbnail { width: 100%; height: auto; max-height: 240px; object-fit: contain; border-radius: 4px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+
+        @media (max-width: 480px) { .palette-options { grid-template-columns: 1fr; } }
+
+        /* Sidebar Scrolling Optimization */
+        @media (min-width: 1024px) {
+            .cv-sidebar { 
+                max-height: calc(100vh - 120px); 
+                overflow-y: auto; 
+                overflow-x: hidden; 
+                padding-right: 10px;
+                scrollbar-width: thin;
+                scrollbar-color: color-mix(in srgb, var(--accent-lens) 30%, transparent) transparent;
+            }
+            .cv-sidebar::-webkit-scrollbar { width: 6px; }
+            .cv-sidebar::-webkit-scrollbar-track { background: transparent; }
+            .cv-sidebar::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--accent-lens) 30%, transparent); border-radius: 10px; }
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
@@ -68,123 +182,16 @@
             background-image: radial-gradient(var(--border-subtle) 1px, transparent 1px);
             background-size: 24px 24px;
             line-height: 1.6;
-            padding-top: 136px; 
+            padding-top: var(--header-height, 64px); 
             transition: background-color 0.3s ease, color 0.3s ease;
             overflow-x: hidden;
             -webkit-tap-highlight-color: transparent;
         }
 
-        @media (max-width: 1023px) {
-            body {
-                padding-top: 80px;
-            }
-        }
-        
         @media (max-width: 768px) {
             body {
                 background-size: 16px 16px;
             }
-        }
-
-        /* ========================================
-           NAVIGATION
-           ======================================== */
-        .primary-nav {
-            position: fixed; top: 0; left: 0; width: 100%; height: 88px;
-            background: rgba(26, 26, 26, 0.98); 
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            z-index: 10000;
-        }
-        .primary-nav-container {
-            max-width: 1400px; margin: 0 auto; padding: 0 2rem;
-            height: 88px; display: flex; align-items: center; justify-content: space-between;
-        }
-        .nav-logo img { height: 40px; width: auto; }
-        .nav-links { display: flex; gap: 2rem; align-items: center; }
-        .nav-link {
-            color: rgba(255, 255, 255, 0.7); text-decoration: none;
-            font-size: 13px; font-weight: 600; text-transform: uppercase;
-            letter-spacing: 0.08em; position: relative; transition: color 0.2s ease;
-        }
-        .nav-link:hover, .nav-link.active { color: #ffffff; }
-        
-        /* Sub Nav */
-        .portfolio-subnav {
-            position: fixed; top: 88px; left: 0; width: 100%;
-            background: var(--bg-primary); border-bottom: 1px solid var(--border-subtle);
-            z-index: 9999; transition: background 0.3s ease;
-        }
-        .portfolio-subnav-container {
-            max-width: 1400px; margin: 0 auto; padding: 0 2rem;
-            height: 48px; display: flex; align-items: center; gap: 2rem;
-            overflow-x: auto;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-            -webkit-overflow-scrolling: touch;
-        }
-        .portfolio-subnav-container::-webkit-scrollbar { display: none; }
-        
-        .subnav-link {
-            color: var(--text-secondary); text-decoration: none;
-            font-size: 14px; font-weight: 500; transition: color 0.2s ease;
-            padding: 0.5rem 0; white-space: nowrap;
-        }
-        .subnav-link:hover { color: var(--coral); }
-        .subnav-link.active { color: var(--text-primary); font-weight: 700; }
-
-        /* Theme Toggle */
-        .theme-toggle {
-            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 50%; width: 36px; height: 36px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; margin-left: 1.5rem; color: #ffffff; transition: all 0.3s ease;
-        }
-        .sun-icon { display: none; }
-        [data-theme="dark"] .sun-icon { display: block; }
-        [data-theme="dark"] .moon-icon { display: none; }
-
-        /* Mobile Menu */
-        .mobile-menu-toggle { 
-            display: none; flex-direction: column; gap: 5px; 
-            background: none; border: none; padding: 8px; 
-            cursor: pointer; z-index: 10001;
-        }
-        .mobile-menu-toggle span { 
-            width: 24px; height: 2px; background: #ffffff;
-            display: block; transition: all 0.3s ease;
-        }
-        
-        .mobile-menu-overlay {
-            position: fixed; inset: 0; background: var(--bg-primary);
-            z-index: 9998; transform: translateX(100%); transition: transform 0.3s ease;
-            padding: 8rem 2rem; display: flex; flex-direction: column; gap: 2rem; overflow-y: auto;
-        }
-        .mobile-menu-overlay.active { transform: translateX(0); }
-        
-        .mobile-link-group { display: flex; flex-direction: column; gap: 1rem; }
-        .mobile-label { 
-            font-size: 0.7rem; text-transform: uppercase; color: var(--text-secondary); 
-            letter-spacing: 0.1em; margin-bottom: 0.5rem; font-weight: 700;
-        }
-        .mobile-link { 
-            font-size: 1.5rem; font-family: var(--font-display); color: var(--text-primary); 
-            text-decoration: none; font-weight: 700; transition: color 0.2s ease, transform 0.2s ease;
-            padding: 0.5rem 0;
-        }
-        .mobile-link:hover, .mobile-link.active { color: var(--coral); }
-        .mobile-link.sub {
-            font-size: 1.2rem; font-family: var(--font-sans); font-weight: 500;
-            padding-left: 1rem; border-left: 2px solid var(--border-subtle);
-        }
-
-        @media (max-width: 1023px) {
-            .nav-links, .portfolio-subnav { display: none; }
-            .mobile-menu-toggle { display: flex; }
-            body { padding-top: 80px; }
-            .primary-nav, .primary-nav-container { height: 80px; }
-            .nav-logo img { height: 32px; }
-            .primary-nav-container { padding: 0 1.5rem; }
         }
 
         /* ==========================================
@@ -209,7 +216,7 @@
             text-transform: uppercase;
         }
         .profile-role {
-            font-family: var(--font-sans); font-size: 1.1rem; color: var(--coral);
+            font-family: var(--font-sans); font-size: 1.1rem; color: var(--accent-lens);
             font-weight: 600; margin-bottom: 1.5rem; letter-spacing: 0.05em;
         }
         .profile-contact {
@@ -217,7 +224,7 @@
             margin-bottom: 2rem; font-size: 0.95rem; color: var(--text-secondary);
         }
         .profile-contact a { color: var(--text-secondary); text-decoration: none; }
-        .profile-contact a:hover { color: var(--coral); }
+        .profile-contact a:hover { color: var(--accent-lens); }
 
         .cv-cta-group {
             display: flex; flex-direction: column; gap: 1rem;
@@ -230,7 +237,7 @@
             border: none; cursor: pointer; width: 100%; text-align: center;
         }
         .btn-primary { background: var(--text-primary); color: var(--bg-primary); }
-        .btn-primary:hover { background: var(--coral); color: white; transform: translateY(-2px); }
+        .btn-primary:hover { background: var(--accent-lens); color: white; transform: translateY(-2px); }
 
         /* Job Cards */
         .section-label {
@@ -245,18 +252,19 @@
             border-left: 4px solid var(--text-primary); padding: 2rem; 
             border-radius: 0 16px 16px 0; transition: all 0.3s ease; margin-bottom: 2rem;
         }
-        .job-card:hover { transform: translateX(5px); border-left-color: var(--coral); box-shadow: var(--shadow-hover); }
+        .job-card:hover { transform: translateX(5px); border-left-color: var(--accent-lens); box-shadow: var(--shadow-hover); }
         
         .job-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem; }
         .job-title { font-family: var(--font-display); font-size: clamp(1.5rem, 3vw, 1.75rem); font-weight: 700; color: var(--text-primary); }
-        .job-meta { font-family: var(--font-sans); font-size: 0.95rem; color: var(--teal); font-weight: 600; margin-bottom: 1.5rem; }
+        .job-meta { font-family: var(--font-sans); font-size: 0.95rem; color: var(--accent-lens); font-weight: 600; margin-bottom: 1.5rem; }
         .job-details li { color: var(--text-secondary); margin-bottom: 0.75rem; font-size: 1rem; padding-left: 1.5rem; position: relative; }
-        .job-details li::before { content: "→"; position: absolute; left: 0; color: var(--coral); font-weight: bold; }
+        .job-details li::before { content: "→"; position: absolute; left: 0; color: var(--accent-lens); font-weight: bold; }
 
         /* Skills Grid */
         .specs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
-        .spec-card { background: var(--bg-alt); border: 1px solid var(--border-subtle); padding: 1.5rem; border-radius: 12px; }
-        .spec-title { color: var(--coral); font-family: var(--font-display); font-size: 1.25rem; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .spec-card { background: var(--bg-alt); border: 1px solid var(--border-subtle); padding: 1.5rem; border-radius: 12px; transition: border-color 0.3s ease; }
+        .spec-card:hover { border-color: var(--accent-lens); }
+        .spec-title { color: var(--accent-lens); font-family: var(--font-display); font-size: 1.25rem; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
         .spec-list { list-style: none; padding: 0; font-size: 0.9rem; color: var(--text-secondary); line-height: 1.8; }
         .spec-list li { border-bottom: 1px dashed var(--border-subtle); padding: 4px 0; }
 
@@ -464,408 +472,11 @@
             }
         }
 
-        /* ==========================================
-           FOOTER STYLES (Standardized 4-Column)
-           ========================================== */
-        .site-footer {
-            background: #0A0A0A;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            padding: 0;
-            margin-top: auto;
-            font-family: var(--font-sans);
-            color: #ffffff;
-        }
-
-        .footer-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 4rem 2rem 3rem;
-        }
-
-        /* 4-Column Grid Desktop */
-        .footer-grid-layout {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1.5fr;
-            gap: 3rem;
-        }
-
-        .footer-logo-link {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            text-decoration: none;
-            margin-bottom: 1.5rem;
-        }
-
-        .footer-logo-img {
-            height: 32px;
-            width: auto;
-            opacity: 0.9;
-        }
-
-        .footer-brand-name {
-            font-family: var(--font-display);
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #ffffff;
-            letter-spacing: 0.02em;
-            text-transform: uppercase;
-        }
-
-        .footer-tagline {
-            color: rgba(255,255,255,0.5);
-            font-size: 0.9375rem;
-            line-height: 1.6;
-            margin-bottom: 2rem;
-            max-width: 320px;
-        }
-
-        .footer-social {
-            display: flex;
-            gap: 0.75rem;
-        }
-
-        .social-icon {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.05);
-            color: #ffffff;
-            transition: all 0.2s ease;
-            border: 1px solid rgba(255,255,255,0.1);
-            text-decoration: none;
-        }
-
-        .social-icon:hover {
-            background: var(--coral);
-            border-color: var(--coral);
-        }
-
-        .footer-nav-heading {
-            font-family: var(--font-display);
-            font-size: 1rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: rgba(255,255,255,0.4);
-            margin-bottom: 1.5rem;
-        }
-
-        .footer-nav-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        .footer-nav-link {
-            color: rgba(255,255,255,0.7);
-            text-decoration: none;
-            font-size: 0.9375rem;
-            transition: color 0.2s;
-        }
-
-        .footer-nav-link:hover {
-            color: var(--coral);
-        }
-
-        .footer-portal-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-
-        .footer-system-link {
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: var(--coral);
-            text-decoration: none;
-            font-style: italic;
-        }
-
-        .footer-nav-divider {
-            margin-top: 0.5rem;
-            padding-top: 0.75rem;
-            border-top: 1px solid rgba(255,255,255,0.15);
-        }
-
-        /* Status Card */
-        .footer-status-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 8px;
-            padding: 1.25rem;
-        }
-
-        .status-indicator {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--teal);
-            border-radius: 50%;
-            box-shadow: 0 0 10px rgba(46, 211, 198, 0.5);
-        }
-
-        .status-text {
-            font-family: var(--font-display);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #ffffff;
-            font-size: 0.9rem;
-        }
-
-        .status-description {
-            font-size: 0.85rem;
-            color: rgba(255,255,255,0.5);
-            margin: 0 0 1rem 0;
-            line-height: 1.5;
-        }
-
-        .status-cta {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: #ffffff;
-            text-decoration: none;
-            font-size: 0.85rem;
-            font-weight: 500;
-            transition: gap 0.2s ease;
-        }
-
-        .status-cta:hover {
-            gap: 0.75rem;
-            color: var(--coral);
-        }
-
-        /* Bottom Bar */
-        .footer-bottom-bar {
-            border-top: 1px solid rgba(255,255,255,0.05);
-            background: #050505;
-        }
-
-        .footer-bottom-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 1.5rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-        }
-
-        .footer-copyright {
-            color: rgba(255,255,255,0.3);
-            font-size: 0.8rem;
-            margin: 0;
-        }
-
-        .footer-legal-links {
-            display: flex;
-            gap: 1.5rem;
-            flex-wrap: wrap;
-        }
-
-        .footer-legal-link {
-            color: rgba(255,255,255,0.3);
-            text-decoration: none;
-            font-size: 0.8rem;
-            transition: color 0.2s;
-        }
-
-        .footer-legal-link:hover {
-            color: #ffffff;
-        }
-
-        /* Footer Mobile Overrides (Centered Stack) */
-        @media (max-width: 1023px) {
-            .footer-grid-layout {
-                grid-template-columns: 1fr;
-                gap: 3rem;
-                text-align: center;
-            }
-
-            .footer-brand-col,
-            .footer-nav-col,
-            .footer-status-col {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                margin: 0 auto;
-                max-width: 100%;
-            }
-
-            .footer-logo-link {
-                justify-content: center;
-            }
-
-            .footer-tagline {
-                margin-left: auto;
-                margin-right: auto;
-            }
-
-            .footer-social {
-                justify-content: center;
-            }
-
-            .footer-status-card {
-                text-align: left;
-                max-width: 400px;
-                width: 100%;
-            }
-
-            .footer-bottom-container {
-                flex-direction: column;
-                text-align: center;
-                gap: 1rem;
-            }
-            
-            .footer-legal-links {
-                justify-content: center;
-            }
-        }
-        /* Fix sidebar container overflow */
-        .cv-sidebar { max-height: calc(100vh - 120px); overflow-y: auto; overflow-x: hidden; padding-bottom: 60px; }
-        .preview-panel.open { max-height: 450px !important; opacity: 1; }
-        .preview-content { min-height: 240px; max-height: 280px; }
-        .preview-thumbnail { max-height: 240px; }
-        .cv-sidebar::-webkit-scrollbar { width: 8px; }
-        .cv-sidebar::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.05); border-radius: 4px; }
-        .cv-sidebar::-webkit-scrollbar-thumb { background: rgba(249, 111, 110, 0.3); border-radius: 4px; }
-        .cv-sidebar::-webkit-scrollbar-thumb:hover { background: rgba(249, 111, 110, 0.5); }
-        [data-theme="dark"] .cv-sidebar::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); }
-        [data-theme="dark"] .cv-sidebar::-webkit-scrollbar-thumb { background: rgba(249, 111, 110, 0.4); }
-
-        .resume-palette-selector { background: white; border: 1px solid rgba(10, 10, 10, 0.08); border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); transition: all 0.3s ease; }
-        [data-theme="dark"] .resume-palette-selector { background: #1A1A1A; border-color: rgba(255, 255, 255, 0.1); box-shadow: 0 2px 12px rgba(0, 0, 0, 0.6); }
-        .selector-label { font-family: 'Big Shoulders Display', sans-serif; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #0A0A0A; margin-bottom: 16px; display: block; }
-        [data-theme="dark"] .selector-label { color: #F4F1ED; }
-        .palette-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
-        .palette-option { background: #F9F8F6; border: 2px solid transparent; border-radius: 10px; padding: 14px; cursor: pointer; transition: all 0.2s ease; position: relative; }
-        [data-theme="dark"] .palette-option { background: #252525; }
-        .palette-option:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
-        [data-theme="dark"] .palette-option:hover { box-shadow: 0 4px 16px rgba(255, 255, 255, 0.05); }
-        .palette-option.active { border-color: #F96F6E; background: rgba(249, 111, 110, 0.04); }
-        [data-theme="dark"] .palette-option.active { background: rgba(249, 111, 110, 0.08); }
-        .palette-option .checkmark { position: absolute; top: 8px; right: 8px; width: 20px; height: 20px; background: #F96F6E; border-radius: 50%; display: none; align-items: center; justify-content: center; color: white; font-size: 12px; }
-        .palette-option.active .checkmark { display: flex; }
-        .palette-colors { display: flex; gap: 6px; margin-bottom: 8px; }
-        .color-dot { width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(10, 10, 10, 0.1); transition: transform 0.2s ease; }
-        .palette-option:hover .color-dot { transform: scale(1.15); }
-        .palette-name { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; color: #0A0A0A; margin-bottom: 2px; }
-        [data-theme="dark"] .palette-name { color: #F4F1ED; }
-        .palette-desc { font-family: 'Inter', sans-serif; font-size: 11px; color: #666; line-height: 1.3; }
-        [data-theme="dark"] .palette-desc { color: #999; }
-        .current-selection { background: #F4F1ED; border-radius: 8px; padding: 12px; margin-bottom: 16px; text-align: center; transition: all 0.3s ease; }
-        [data-theme="dark"] .current-selection { background: #252525; }
-        .current-label { font-family: 'Inter', sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: #666; margin-bottom: 4px; }
-        [data-theme="dark"] .current-label { color: #999; }
-        .current-style { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 600; color: #F96F6E; }
-        .download-btn { display: block; width: 100%; background: #F96F6E; color: white; text-decoration: none; padding: 14px; border-radius: 8px; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.2s ease; margin-bottom: 16px; }
-        .download-btn:hover { background: #E85E5D; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(249, 111, 110, 0.3); }
-        .download-btn:active { transform: translateY(0); }
-        .preview-panel { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, opacity 0.3s ease; opacity: 0; margin-top: 16px; }
-        .preview-panel.open { max-height: 600px; opacity: 1; }
-        .preview-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .preview-label { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; color: #0A0A0A; }
-        [data-theme="dark"] .preview-label { color: #F4F1ED; }
-        .close-preview { background: transparent; border: none; color: #666; cursor: pointer; font-size: 20px; padding: 4px 8px; border-radius: 4px; transition: all 0.2s ease; }
-        .close-preview:hover { background: rgba(10, 10, 10, 0.05); color: #0A0A0A; }
-        [data-theme="dark"] .close-preview:hover { background: rgba(255, 255, 255, 0.05); color: #F4F1ED; }
-        .preview-content { background: #FAFAFA; border: 1px solid rgba(10, 10, 10, 0.08); border-radius: 8px; padding: 16px; min-height: 320px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-        [data-theme="dark"] .preview-content { background: #1F1F1F; border-color: rgba(255, 255, 255, 0.1); }
-        .preview-thumbnail { width: 100%; height: auto; max-height: 300px; object-fit: contain; border-radius: 4px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
-        .preview-actions { display: flex; gap: 8px; margin-top: 12px; }
-        .preview-action-btn { flex: 1; padding: 10px; border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; border: none; cursor: pointer; transition: all 0.2s ease; }
-        .preview-action-btn.primary { background: #F96F6E; color: white; }
-        .preview-action-btn.primary:hover { background: #E85E5D; }
-        .preview-action-btn.secondary { background: transparent; color: #0A0A0A; border: 1px solid rgba(10, 10, 10, 0.15); }
-        [data-theme="dark"] .preview-action-btn.secondary { color: #F4F1ED; border-color: rgba(255, 255, 255, 0.2); }
-        .preview-action-btn.secondary:hover { background: rgba(10, 10, 10, 0.03); }
-        [data-theme="dark"] .preview-action-btn.secondary:hover { background: rgba(255, 255, 255, 0.05); }
-        @media (max-width: 480px) { .palette-options { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
-    <!-- 1. GLOBAL PRIMARY NAV -->
-    <nav class="primary-nav" id="primaryNav">
-        <div class="primary-nav-container">
-            <a href="/index.html" class="nav-logo">
-               <img src="/assets/images/AUg_logo_White.png" alt="LG">
-            </a>
-
-            <div class="nav-links">
-                <a href="/index.html" class="nav-link active">Portfolio</a>
-                <a href="/insights/index.html" class="nav-link">Insights</a>
-                <a href="/TheHub/" class="nav-link">The Hub</a>
-                <a href="https://portal.luis-gilberto.com" class="nav-link" target="_blank" rel="noopener noreferrer" aria-label="Access The Portal (opens in new tab)">Portal</a>
-                
-                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" aria-pressed="false">
-                    <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-                    <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                </button>
-            </div>
-
-            <button class="mobile-menu-toggle" id="mobileToggle" aria-label="Toggle menu" aria-controls="mobileOverlay" aria-expanded="false">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-        </div>
-    </nav>
-
-    <!-- 2. PORTFOLIO CONTEXT SUB-NAV -->
-    <nav class="portfolio-subnav" role="navigation" aria-label="Portfolio sub-navigation">
-        <div class="portfolio-subnav-container">
-            <a href="/index.html" class="subnav-link">Home</a>
-            <a href="/timeline.html" class="subnav-link">Timeline</a>
-            <a href="/myexperience.html" class="subnav-link">Experience</a>
-            <a href="/cv.html" class="subnav-link active">Resume</a>
-            <a href="/about.html" class="subnav-link">About</a>
-            <a href="/brand/" class="subnav-link">Identity</a>
-        </div>
-    </nav>
-
-    <!-- MOBILE MENU OVERLAY -->
-    <div class="mobile-menu-overlay" id="mobileOverlay">
-        <div style="display: flex; justify-content: flex-end; width: 100%; margin-bottom: 2rem;">
-            <button class="theme-toggle" id="mobileThemeToggle" aria-label="Toggle Dark Mode">
-                <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-                <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-            </button>
-        </div>
-        
-        <div class="mobile-link-group">
-            <div class="mobile-label">Global</div>
-            <a href="/index.html" class="mobile-link active-parent">Portfolio</a>
-            <a href="/insights" class="mobile-link">Insights</a>
-            <a href="/TheHub/index.html" class="mobile-link">The Hub</a>
-            <a href="https://portal.luis-gilberto.com" class="mobile-link" target="_blank" rel="noopener noreferrer" aria-label="The Portal (opens in a new tab)">The Portal</a>
-        </div>
-        
-        <div class="mobile-link-group" aria-label="Portfolio sub-navigation">
-            <div class="mobile-label">Portfolio</div>
-            <a href="/index.html" class="mobile-link sub">Home</a>
-            <a href="/timeline.html" class="mobile-link sub">Timeline</a>
-            <a href="/myexperience.html" class="mobile-link sub">Experience</a>
-            <a href="/cv.html" class="mobile-link sub active">Resume</a>
-            <a href="/about.html" class="mobile-link sub">About</a>
-            <a href="/brand/" class="mobile-link sub">Identity</a>
-        </div>
-    </div>
-
+    <div id="site-nav" data-active="portfolio"></div>
+    
     <!-- MAIN CONTENT: EXECUTIVE LAYOUT -->
     <div class="container">
         <div class="cv-layout">
@@ -878,7 +489,7 @@
                     
                     <div class="profile-contact">
                         <div><i class="fas fa-envelope"></i> <a href="mailto:hello@luis-gilberto.com">hello@luis-gilberto.com</a></div>
-                        <div><i class="fab fa-linkedin"></i> <a href="https://www.linkedin.com/in/luisgilberto00/" target="_blank" rel="noopener">linkedin.com/in/luisgilberto00</a></div>
+                        <div><i class="fab fa-linkedin"></i> <a href="https://linkedin.com/in/luisgilberto" target="_blank" rel="noopener">linkedin.com/in/luisgilberto</a></div>
                         <div><i class="fas fa-globe"></i> <a href="https://luis-gilberto.com">luis-gilberto.com</a></div>
                         <div><i class="fas fa-map-marker-alt"></i> Seattle, WA</div>
                     </div>
@@ -891,63 +502,51 @@
                         <div class="resume-palette-selector">
                             <label class="selector-label">Choose Your Style</label>
                             <div class="palette-options">
-                                <div class="palette-option active" data-style="coral-light" data-pdf="assets/Components/THE_FOUR/LS-cv_coral-light.pdf" data-thumbnail="./assets/Components/THE_FOUR/coral-light-thumb.jpeg">
-                                    <span class="checkmark">✓</span>
+                                <div class="palette-option active" data-style="coral-light" data-pdf="assets/documents/Luis_Gilberto_Resume.pdf?v=3" data-thumbnail="assets/images/thumb_coral_light.png">
+                                    <span class="checkmark">&#10003;</span>
                                     <div class="palette-colors">
-                                        <span class="color-dot" style="background: #F96F6E;"></span>
-                                        <span class="color-dot" style="background: #F4F1ED;"></span>
-                                        <span class="color-dot" style="background: #E8E6E3;"></span>
+                                        <span class="color-dot" style="background:#F96F6E;"></span>
+                                        <span class="color-dot" style="background:#F4F1ED;"></span>
+                                        <span class="color-dot" style="background:#E8E6E3;"></span>
                                     </div>
                                     <div class="palette-name">Coral Light</div>
                                     <div class="palette-desc">Warm & approachable</div>
                                 </div>
-                                <div class="palette-option" data-style="coral-dark" data-pdf="assets/Components/THE_FOUR/LS-cv_coral-dark-pdf.pdf" data-thumbnail="./assets/Components/THE_FOUR/coral-dark-thumb.jpeg">
-                                    <span class="checkmark">✓</span>
+                                <div class="palette-option" data-style="coral-dark" data-pdf="assets/documents/Luis_Gilberto_Resume_Dark.pdf" data-thumbnail="assets/images/thumb_coral_dark.png">
+                                    <span class="checkmark">&#10003;</span>
                                     <div class="palette-colors">
-                                        <span class="color-dot" style="background: #F96F6E;"></span>
-                                        <span class="color-dot" style="background: #2A2A2A;"></span>
-                                        <span class="color-dot" style="background: #FF9B9A;"></span>
+                                        <span class="color-dot" style="background:#F96F6E;"></span>
+                                        <span class="color-dot" style="background:#2A2A2A;"></span>
+                                        <span class="color-dot" style="background:#FF9B9A;"></span>
                                     </div>
                                     <div class="palette-name">Coral Dark</div>
                                     <div class="palette-desc">Bold & premium</div>
                                 </div>
-                                <div class="palette-option" data-style="teal-hybrid" data-pdf="assets/Components/THE_FOUR/LS-cv_teal-hybrid-pdf.pdf" data-thumbnail="./assets/Components/THE_FOUR/teal-hybrid-thumb.jpeg">
-                                    <span class="checkmark">✓</span>
+                                <div class="palette-option" data-style="teal-hybrid" data-pdf="assets/documents/Luis_Gilberto_Resume_Teal.pdf" data-thumbnail="assets/images/thumb_teal_hybrid.png">
+                                    <span class="checkmark">&#10003;</span>
                                     <div class="palette-colors">
-                                        <span class="color-dot" style="background: #2A2A2A;"></span>
-                                        <span class="color-dot" style="background: #2ED3C6;"></span>
-                                        <span class="color-dot" style="background: #F4F1ED;"></span>
+                                        <span class="color-dot" style="background:#2A2A2A;"></span>
+                                        <span class="color-dot" style="background:#2ED3C6;"></span>
+                                        <span class="color-dot" style="background:#F4F1ED;"></span>
                                     </div>
                                     <div class="palette-name">Teal Hybrid</div>
                                     <div class="palette-desc">Modern & strategic</div>
                                 </div>
-                                <div class="palette-option" data-style="print-bw" data-pdf="assets/Components/THE_FOUR/LS-cv_print-bw-pdf.pdf" data-thumbnail="./assets/Components/THE_FOUR/print-bw-thumb.jpeg">
-                                    <span class="checkmark">✓</span>
+                                <div class="palette-option" data-style="print-bw" data-pdf="assets/documents/Luis_Gilberto_Resume_Print.pdf" data-thumbnail="assets/images/thumb_print_BW.png">
+                                    <span class="checkmark">&#10003;</span>
                                     <div class="palette-colors">
-                                        <span class="color-dot" style="background: #FFFFFF; border-color: #CCC;"></span>
-                                        <span class="color-dot" style="background: #0A0A0A;"></span>
+                                        <span class="color-dot" style="background:#FFFFFF; border-color:#CCC;"></span>
+                                        <span class="color-dot" style="background:#0A0A0A;"></span>
                                     </div>
                                     <div class="palette-name">Print B&W</div>
                                     <div class="palette-desc">Ink-saver elegance</div>
                                 </div>
                             </div>
-                            <div class="current-selection">
-                                <div class="current-label">Currently Selected</div>
-                                <div class="current-style" id="currentStyle">Coral Light</div>
-                            </div>
-                            <a href="assets/Components/THE_FOUR/LS-cv_coral-light.pdf" class="download-btn" id="downloadBtn" download>Download PDF</a>
                             <div class="preview-panel" id="previewPanel">
-                                <div class="preview-header">
-                                    <span class="preview-label" id="previewLabel">Preview: Coral Light</span>
-                                    <button class="close-preview" id="closePreview">×</button>
-                                </div>
                                 <div class="preview-content">
-                                    <img src="" alt="Resume Preview" class="preview-thumbnail" id="previewThumbnail" style="display: none;">
+                                    <img src="" alt="Resume Preview" class="preview-thumbnail" id="previewThumbnail" style="display:none;">
                                 </div>
-                                <div class="preview-actions">
-                                    <button class="preview-action-btn primary" id="downloadFromPreview">Download This Version</button>
-                                    <button class="preview-action-btn secondary" id="tryAnother">Try Another Style</button>
-                                </div>
+                                <a href="assets/documents/Luis_Gilberto_Resume.pdf?v=3" class="download-btn" id="downloadBtn" download>Download PDF</a>
                             </div>
                         </div>
                     </div>
@@ -958,10 +557,10 @@
             <div class="cv-feed">
                 
                 <!-- Experience Section -->
-                <div class="section-label"><i class="fas fa-briefcase" style="color:var(--teal); margin-right:8px;"></i> Experience Record</div>
+                <div class="section-label"><i class="fas fa-briefcase" style="color:var(--accent-lens); margin-right:8px;"></i> Experience Record</div>
                 
                 <!-- Principal & Systems Architect -->
-                <div class="job-card" style="border-left-color: var(--coral);">
+                <div class="job-card" style="border-left-color: var(--accent-lens);">
                     <div class="job-header">
                         <div class="job-title">Principal & Systems Architect</div>
                         <div style="font-weight:700; color:var(--text-primary);">2024 — Present</div>
@@ -1049,7 +648,7 @@
                 </div>
 
                 <!-- Competencies Section -->
-                <div class="section-label"><i class="fas fa-microchip" style="color:var(--teal); margin-right:8px;"></i> Core Competencies</div>
+                <div class="section-label"><i class="fas fa-microchip" style="color:var(--accent-lens); margin-right:8px;"></i> Core Competencies</div>
                 <div class="specs-grid">
                     <div class="spec-card">
                         <div class="spec-title">Strategy</div>
@@ -1078,8 +677,8 @@
                             <li>Partner Enablement</li>
                         </ul>
                     </div>
-                    <div class="spec-card" style="border-color: var(--teal);">
-                        <div class="spec-title" style="color: var(--teal);">Systems & Tech</div>
+                    <div class="spec-card">
+                        <div class="spec-title">Systems & Tech</div>
                         <ul class="spec-list">
                             <li>Next.js / React</li>
                             <li>Tailwind CSS</li>
@@ -1090,7 +689,7 @@
                 </div>
                 
                 <!-- Education Section -->
-                <div class="section-label"><i class="fas fa-graduation-cap" style="color:var(--teal); margin-right:8px;"></i> Education</div>
+                <div class="section-label"><i class="fas fa-graduation-cap" style="color:var(--accent-lens); margin-right:8px;"></i> Education</div>
                 <div class="job-card" style="padding: 2rem; border-left-color: var(--border-strong);">
                     <div class="job-header">
                         <div class="job-title" style="font-size:1.4rem;">B.S. Computer Sciences</div>
@@ -1110,218 +709,89 @@
         </div>
     </div>
 
-    <!-- FOOTER -->
-    <footer class="site-footer" role="contentinfo" aria-label="Site footer">
-        <div class="footer-container">
-            <div class="footer-grid-layout">
-                
-                <!-- Column 1: Brand -->
-                <div class="footer-brand-col">
-                    <a href="/index.html" class="footer-logo-link">
-                        <img src="/assets/images/Logomark_White_a.png" alt="" class="footer-logo-img">
-                        <span class="footer-brand-name">Luis Gilberto</span>
-                    </a>
-                    <p class="footer-tagline">
-                        Making technology feel human through clarity, beautiful execution, and systems that scale.
-                    </p>
-                    
-                    <div class="footer-social">
-                        <a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="social-icon">
-                            <i class="fab fa-linkedin-in"></i>
-                        </a>
-                        <a href="mailto:hello@luis-gilberto.com" aria-label="Email" class="social-icon">
-                            <i class="far fa-envelope"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Column 2: Ecosystem -->
-                <nav aria-label="Ecosystem navigation" class="footer-nav-col">
-                    <h3 class="footer-nav-heading">Ecosystem</h3>
-                    <ul class="footer-nav-list">
-                        <li><a href="/index.html" class="footer-nav-link">Portfolio</a></li>
-                        <li><a href="/TheHub/index.html" class="footer-nav-link">The Hub</a></li>
-                        <li><a href="/insights/index.html" class="footer-nav-link">Insights</a></li>
-                        <li><a href="https://portal.luis-gilberto.com" target="_blank" rel="noopener noreferrer" aria-label="Access The Portal (opens in new tab)" class="footer-nav-link footer-portal-link">
-                            The Portal <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
-                        </a></li>
-                        <li class="footer-nav-divider">
-                            <a href="/system/" class="footer-system-link">How it all connects</a>
-                        </li>
-                    </ul>
-                </nav>
-
-                <!-- Column 3: Connect -->
-                <nav aria-label="Connect navigation" class="footer-nav-col">
-                    <h3 class="footer-nav-heading">Connect</h3>
-                    <ul class="footer-nav-list">
-                        <li><a href="/contact.html" class="footer-nav-link">Contact</a></li>
-                        <li><a href="/about.html" class="footer-nav-link">About Me</a></li>
-                        <li><a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" class="footer-nav-link footer-linkedin-link">LinkedIn</a></li>
-                    </ul>
-                </nav>
-
-                <!-- Column 4: Status -->
-                <div class="footer-status-col">
-                    <h3 class="footer-nav-heading">Status</h3>
-                    
-                    <div class="footer-status-card">
-                        <div class="status-indicator">
-                            <span class="status-dot"></span>
-                            <span class="status-text">Accepting Projects</span>
-                        </div>
-                        <p class="status-description">
-                            Currently available for strategic consulting and creative direction.
-                        </p>
-                        <a href="/contact.html" class="status-cta">
-                            Start a Conversation <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                        </a>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- Bottom Bar -->
-        <div class="footer-bottom-bar">
-            <div class="footer-bottom-container">
-                <p class="footer-copyright">
-                    &copy; <span id="currentYear"></span> Luis Gilberto. All Rights Reserved.
-                </p>
-                <div class="footer-legal-links">
-                    <a href="/legal/privacy.html" class="footer-legal-link">Privacy Policy</a>
-                    <a href="/legal/terms.html" class="footer-legal-link">Terms of Use</a>
-                    <a href="/legal/accessibility.html" class="footer-legal-link">Accessibility</a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
+    <script src="/assets/js/nav-component.js"></script>
     <script>
-        // Resume Palette Selector Logic - Enhanced with Debugging
-        (function() {
+        (() => {
+            // 🎨 RESUME PALETTE SELECTOR LOGIC
             const paletteOptions = document.querySelectorAll('.palette-option');
-            const currentStyle = document.getElementById('currentStyle');
             const downloadBtn = document.getElementById('downloadBtn');
-            const previewPanel = document.getElementById('previewPanel');
-            const previewLabel = document.getElementById('previewLabel');
             const previewThumbnail = document.getElementById('previewThumbnail');
-            const closePreview = document.getElementById('closePreview');
-            const downloadFromPreview = document.getElementById('downloadFromPreview');
-            const tryAnother = document.getElementById('tryAnother');
-            const styleNames = { 'coral-light': 'Coral Light', 'coral-dark': 'Coral Dark', 'teal-hybrid': 'Teal Hybrid', 'print-bw': 'Print B&W' };
-            let currentPdfUrl = 'assets/Components/THE_FOUR/LS-cv_coral-light.pdf';
-            console.group('🎨 Resume Palette Selector - Debug Info');
-            console.log('Component initialized');
-            paletteOptions.forEach(option => { console.log(`${option.getAttribute('data-style')}: ${option.getAttribute('data-thumbnail')}`); });
-            console.groupEnd();
-            paletteOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    paletteOptions.forEach(opt => opt.classList.remove('active'));
-                    this.classList.add('active');
-                    const styleName = this.getAttribute('data-style');
-                    const pdfUrl = this.getAttribute('data-pdf');
-                    const thumbnailUrl = this.getAttribute('data-thumbnail');
-                    console.log(`🎨 Palette clicked: ${styleName}`);
-                    console.log(`📄 PDF: ${pdfUrl}`);
-                    console.log(`🖼️ Thumbnail: ${thumbnailUrl}`);
-                    currentStyle.textContent = styleNames[styleName];
-                    currentPdfUrl = pdfUrl;
-                    downloadBtn.setAttribute('href', pdfUrl);
-                    previewLabel.textContent = `Preview: ${styleNames[styleName]}`;
-                    if (thumbnailUrl) {
-                        const img = new Image();
-                        img.onload = function() { console.log('✅ Thumbnail loaded successfully:', thumbnailUrl); previewThumbnail.src = thumbnailUrl; previewThumbnail.style.display = 'block'; };
-                        img.onerror = function() {
-                            console.error('❌ Failed to load thumbnail:', thumbnailUrl);
-                            const altPaths = [ thumbnailUrl.replace('assets/', '/assets/'), thumbnailUrl.replace('./assets/', 'assets/'), thumbnailUrl.replace('./assets/', '/assets/') ];
-                            console.log('🔄 Attempting alternative paths...');
-                            let i = 0;
-                            const tryNext = () => {
-                                if (i < altPaths.length) {
-                                    const alt = altPaths[i];
-                                    console.log(`Trying: ${alt}`);
-                                    const aimg = new Image();
-                                    aimg.onload = function() { console.log('✅ Alternative path worked:', alt); previewThumbnail.src = alt; previewThumbnail.style.display = 'block'; };
-                                    aimg.onerror = function() { console.log('❌ Alternative path failed:', alt); i++; tryNext(); };
-                                    aimg.src = alt;
-                                } else { console.error('❌ All paths failed. Check file location.'); previewThumbnail.style.display = 'none'; }
-                            };
-                            tryNext();
-                        };
-                        img.src = thumbnailUrl;
+            const previewPanel = document.getElementById('previewPanel');
+
+            if (paletteOptions.length > 0) {
+                // Initialize default state
+                const activeOption = document.querySelector('.palette-option.active');
+                if (activeOption && previewThumbnail) {
+                    const thumbUrl = activeOption.getAttribute('data-thumbnail');
+                    if (thumbUrl) {
+                        previewThumbnail.src = thumbUrl;
+                        previewThumbnail.style.display = 'block';
+                        previewPanel.classList.add('open');
                     }
-                    previewPanel.classList.add('open');
-                });
-            });
-            if (closePreview) { closePreview.addEventListener('click', () => { console.log('🔒 Preview closed'); previewPanel.classList.remove('open'); }); }
-            if (downloadFromPreview) { downloadFromPreview.addEventListener('click', () => { console.log('⬇️ Download initiated:', currentPdfUrl); window.location.href = currentPdfUrl; }); }
-            if (tryAnother) { tryAnother.addEventListener('click', () => { console.log('🔄 User choosing another style'); previewPanel.classList.remove('open'); }); }
-            document.addEventListener('click', (e) => { if (!e.target.closest('.resume-palette-selector')) { if (previewPanel.classList.contains('open')) { console.log('🔒 Preview closed (outside click)'); previewPanel.classList.remove('open'); } } });
-            console.log('✅ Palette selector fully initialized');
-        })();
-    </script>
-        // Theme Logic
-        const themeToggle = document.querySelectorAll('.theme-toggle');
-        const html = document.documentElement;
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        html.setAttribute('data-theme', savedTheme);
-
-        themeToggle.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                const currentTheme = html.getAttribute('data-theme');
-                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-                html.setAttribute('data-theme', newTheme);
-                localStorage.setItem('theme', newTheme);
-            });
-        });
-
-        // Mobile Menu
-        const mobileToggle = document.getElementById('mobileToggle');
-        const mobileOverlay = document.getElementById('mobileOverlay');
-        
-        if(mobileToggle && mobileOverlay) {
-            mobileToggle.addEventListener('click', () => {
-                mobileOverlay.classList.toggle('active');
-                const isExpanded = mobileOverlay.classList.contains('active');
-                mobileToggle.setAttribute('aria-expanded', isExpanded);
-                if(isExpanded) { document.body.style.overflow = 'hidden'; } else { document.body.style.overflow = ''; }
-            });
-            mobileOverlay.addEventListener('click', (e) => {
-                if(e.target === mobileOverlay) {
-                    mobileOverlay.classList.remove('active');
-                    mobileToggle.setAttribute('aria-expanded', 'false');
-                    document.body.style.overflow = '';
                 }
-            });
-            const mobileLinks = mobileOverlay.querySelectorAll('.mobile-link');
-            mobileLinks.forEach(link => {
-                link.addEventListener('click', () => {
-                    mobileOverlay.classList.remove('active');
-                    mobileToggle.setAttribute('aria-expanded', 'false');
-                    document.body.style.overflow = '';
-                });
-            });
-        }
 
-        // Parallax Breakout
-        function resizeParallax() {
-            const parallax = document.querySelector('.skills-parallax');
-            if (!parallax) return;
-            parallax.style.marginLeft = '0';
-            parallax.style.width = '100%';
-            const rect = parallax.getBoundingClientRect();
-            const offsetLeft = rect.left;
-            parallax.style.width = '100vw';
-            parallax.style.marginLeft = `-${offsetLeft}px`;
-        }
-        window.addEventListener('load', resizeParallax);
-        window.addEventListener('resize', resizeParallax);
-        resizeParallax();
-        
-        // Year
-        document.getElementById('currentYear').textContent = new Date().getFullYear();
+                paletteOptions.forEach(option => {
+                    option.addEventListener('click', function() {
+                        // Toggle active class
+                        paletteOptions.forEach(opt => opt.classList.remove('active'));
+                        this.classList.add('active');
+
+                        // Update download link
+                        const pdfUrl = this.getAttribute('data-pdf');
+                        if (downloadBtn) {
+                            downloadBtn.setAttribute('href', pdfUrl);
+                        }
+
+                        // Update thumbnail with path candidate loading logic
+                        const thumbnailUrl = this.getAttribute('data-thumbnail');
+                        if (thumbnailUrl && previewThumbnail) {
+                            const fileName = thumbnailUrl.split('/').pop();
+                            const candidates = [
+                                thumbnailUrl,
+                                thumbnailUrl.replace('assets/', '/assets/'),
+                                `/assets/images/${fileName}`,
+                                `${window.location.origin}/assets/images/${fileName}`
+                            ];
+                            
+                            let attemptIdx = 0;
+                            const tryNextCandidate = () => {
+                                if (attemptIdx >= candidates.length) {
+                                    previewThumbnail.style.display = 'none';
+                                    return;
+                                }
+                                
+                                const currentCandidate = candidates[attemptIdx++];
+                                const img = new Image();
+                                img.onload = () => {
+                                    previewThumbnail.src = currentCandidate;
+                                    previewThumbnail.style.display = 'block';
+                                    previewPanel.classList.add('open');
+                                };
+                                img.onerror = tryNextCandidate;
+                                img.src = currentCandidate;
+                            };
+                            
+                            tryNextCandidate();
+                        }
+                    });
+                });
+            }
+
+            // 🧬 CV-SPECIFIC PARALLAX LOGIC
+            function resizeParallax() {
+                const parallax = document.querySelector('.skills-parallax');
+                if (!parallax) return;
+                parallax.style.marginLeft = '0';
+                parallax.style.width = '100%';
+                const rect = parallax.getBoundingClientRect();
+                const offsetLeft = rect.left;
+                parallax.style.width = '100vw';
+                parallax.style.marginLeft = `-${offsetLeft}px`;
+            }
+            window.addEventListener('load', resizeParallax);
+            window.addEventListener('resize', resizeParallax);
+            resizeParallax();
+        })();
     </script>
 </body>
 </html>

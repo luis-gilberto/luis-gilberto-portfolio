@@ -1,0 +1,311 @@
+===========================================
+INSIGHTS TITLE VIDEO - COMPLETE IMPLEMENTATION INSTRUCTIONS FOR TRAE
+===========================================
+
+CRITICAL: This is a REPLACEMENT operation, not an addition.
+You must DELETE old code before adding new code.
+Follow steps in EXACT order. DO NOT improvise.
+
+===========================================
+SOURCE FILES LOCATION
+===========================================
+
+All video files are located in:
+C:\Users\luisg\OneDrive\Documents\Luis Gilberto\assets\Components\Insights animation
+
+Files you will use:
+- insights-video-light.webm  (668 KB)
+- insights-video-light.mp4   (572 KB)
+- insights-poster-light.jpg  (29 KB)
+- insights-video-dark-perfect.webm  (508 KB)
+- insights-video-dark-perfect.mp4   (382 KB)
+- insights-poster-dark-perfect.jpg  (32 KB)
+
+===========================================
+PHASE 1: LIGHT MODE ONLY (RECOMMENDED START)
+===========================================
+
+Start with light mode only. Get it working perfectly first.
+Add dark mode later.
+
+UPLOAD THESE 3 FILES TO /assets/ DIRECTORY:
+--------------------------------------------
+1. insights-video-light.webm
+2. insights-video-light.mp4
+3. insights-poster-light.jpg
+
+STEP 1: REMOVE OLD SVG HTML
+---------------------------
+In the Insights landing page hero-section, find and DELETE:
+
+<svg class="thread-svg" ...>
+  <path class="thread-path" .../>
+  <circle class="thread-dot" .../>
+</svg>
+
+DELETE THE ENTIRE <svg> ELEMENT from opening <svg to closing </svg>
+
+STEP 2: REMOVE OLD SVG CSS
+--------------------------
+In the stylesheet, find and DELETE these entire blocks:
+
+.thread-svg { ... }
+.thread-path { ... }
+.thread-dot { ... }
+
+@keyframes draw-thread { ... }
+@keyframes move-dot { ... }
+
+Search for "thread-svg", "thread-path", "thread-dot" and DELETE ALL references.
+Also delete any commented-out versions of these styles.
+
+STEP 3: ADD NEW VIDEO HTML
+--------------------------
+In the hero-section, where the old SVG was, add this EXACT code:
+
+<div class="insights-video-title">
+    <video 
+        autoplay 
+        loop 
+        muted 
+        playsinline
+        poster="/assets/insights-poster-light.jpg"
+        class="insights-video"
+    >
+        <source src="/assets/insights-video-light.webm" type="video/webm">
+        <source src="/assets/insights-video-light.mp4" type="video/mp4">
+    </video>
+</div>
+
+STEP 4: ADD VIDEO CSS
+---------------------
+In the stylesheet, add this CSS:
+
+/* ============================================
+   VIDEO TITLE ANIMATION STYLES
+   ============================================ */
+
+.insights-video-title {
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.insights-video {
+    width: 100%;
+    height: auto;
+    display: block;
+    background: transparent;
+}
+
+STEP 5: VERIFY IT WORKS
+-----------------------
+Check that:
+- Video loads and plays automatically
+- Video loops seamlessly
+- No black bars visible
+- No old SVG animation showing
+- No console errors
+- Works on mobile
+
+STOP HERE. Get light mode working perfectly before adding dark mode.
+
+===========================================
+PHASE 2: ADD DARK MODE (OPTIONAL - DO THIS LATER)
+===========================================
+
+Only proceed with this phase after light mode is working perfectly.
+
+UPLOAD THESE ADDITIONAL 3 FILES TO /assets/ DIRECTORY:
+------------------------------------------------------
+4. insights-video-dark-perfect.webm
+5. insights-video-dark-perfect.mp4
+6. insights-poster-dark-perfect.jpg
+
+STEP 1: UPDATE HTML FOR DUAL-VIDEO
+-----------------------------------
+Replace the video HTML from Phase 1 with this:
+
+<div class="insights-video-title">
+    <video 
+        autoplay 
+        loop 
+        muted 
+        playsinline
+        class="insights-video"
+    >
+        <source src="/assets/insights-video-light.webm" type="video/webm">
+        <source src="/assets/insights-video-light.mp4" type="video/mp4">
+    </video>
+</div>
+
+STEP 2: ADD JAVASCRIPT THEME SWITCHER
+-------------------------------------
+Add this JavaScript to your page (after the video element):
+
+<script>
+// Theme-aware video source switching
+function updateInsightsVideo() {
+    const video = document.querySelector('.insights-video');
+    if (!video) return;
+    
+    const theme = document.documentElement.getAttribute('data-theme') || 'light';
+    
+    if (theme === 'dark') {
+        video.innerHTML = `
+            <source src="/assets/insights-video-dark-perfect.webm" type="video/webm">
+            <source src="/assets/insights-video-dark-perfect.mp4" type="video/mp4">
+        `;
+    } else {
+        video.innerHTML = `
+            <source src="/assets/insights-video-light.webm" type="video/webm">
+            <source src="/assets/insights-video-light.mp4" type="video/mp4">
+        `;
+    }
+    
+    video.load();
+    video.play().catch(() => {}); // Handle autoplay restrictions
+}
+
+// Run on page load
+document.addEventListener('DOMContentLoaded', updateInsightsVideo);
+
+// IMPORTANT: Call this function when your theme toggle button is clicked
+// Add this line to your existing theme toggle handler:
+// updateInsightsVideo();
+</script>
+
+STEP 3: CONNECT TO YOUR THEME TOGGLE
+------------------------------------
+Find your existing theme toggle button code.
+It probably looks something like this:
+
+themeToggle.addEventListener('click', () => {
+    // Your existing theme toggle code here...
+    document.documentElement.setAttribute('data-theme', newTheme);
+    
+    // ADD THIS LINE:
+    updateInsightsVideo();
+});
+
+STEP 4: VERIFY DARK MODE WORKS
+------------------------------
+Check that:
+- Light mode shows light video
+- Dark mode shows dark video
+- Theme toggle switches video correctly
+- No flashing or delay when switching
+- Both videos have same animation timing
+- No console errors
+
+===========================================
+FILE PATH VERIFICATION
+===========================================
+
+After uploading, these URLs must work:
+https://luis-gilberto.com/assets/insights-video-light.webm
+https://luis-gilberto.com/assets/insights-video-light.mp4
+https://luis-gilberto.com/assets/insights-poster-light.jpg
+
+For dark mode (Phase 2):
+https://luis-gilberto.com/assets/insights-video-dark-perfect.webm
+https://luis-gilberto.com/assets/insights-video-dark-perfect.mp4
+https://luis-gilberto.com/assets/insights-poster-dark-perfect.jpg
+
+If your assets folder uses a different URL structure, 
+update all src paths accordingly.
+
+===========================================
+TROUBLESHOOTING
+===========================================
+
+PROBLEM: Video not playing
+-> Check browser console for 404 errors
+-> Verify file paths match your assets directory structure
+-> Confirm autoplay is working (requires muted attribute)
+-> Try hard refresh (Cmd+Shift+R / Ctrl+Shift+F5)
+
+PROBLEM: Black bars still showing
+-> You uploaded the WRONG files
+-> Make sure you're using the files from the specified folder
+-> Clear browser cache completely
+
+PROBLEM: Old SVG animation still visible
+-> You didn't complete STEP 1 and STEP 2 of Phase 1
+-> Search HTML for "thread-svg" - DELETE ALL instances
+-> Search CSS for "thread-svg" - DELETE ALL instances
+-> Check for commented-out code and delete that too
+
+PROBLEM: Theme switching not working (Phase 2)
+-> Verify updateInsightsVideo() is being called on theme change
+-> Check console.log in the function to debug
+-> Confirm data-theme attribute changes on <html> element
+-> Make sure JavaScript is loaded after the video element
+
+PROBLEM: Video looks pixelated
+-> Confirm WebM files uploaded (higher quality)
+-> Check file sizes match this guide
+-> Verify browser supports WebM (all modern browsers do)
+
+===========================================
+WHAT YOU SHOULD SEE
+===========================================
+
+LIGHT MODE:
+- Black "INSIGHTS" text
+- Coral thread weaving through letters
+- White/light background (blends with page gradient)
+- Square video (720x720) with NO black bars
+- Smooth seamless loop
+
+DARK MODE (if implemented):
+- White "INSIGHTS" text
+- Coral thread weaving through letters (same as light mode)
+- Dark background (blends with dark page gradient)
+- Square video (720x720) with NO black bars
+- IDENTICAL animation timing as light mode
+- Smooth seamless loop
+
+===========================================
+EXECUTION CHECKLIST
+===========================================
+
+PHASE 1 (Light Mode Only):
+- Upload 3 light mode files to /assets/
+- Delete old SVG HTML
+- Delete old SVG CSS
+- Add new video HTML
+- Add new video CSS
+- Test and verify
+- STOP - Get approval before Phase 2
+
+PHASE 2 (Dark Mode - Optional):
+- Upload 3 dark mode files to /assets/
+- Update video HTML
+- Add JavaScript theme switcher
+- Connect to theme toggle button
+- Test both themes
+- Test theme switching
+
+===========================================
+FINAL REMINDERS
+===========================================
+
+1. This is a REPLACEMENT, not a merge
+2. DELETE old SVG code FIRST, then ADD new video code
+3. Start with light mode only (Phase 1)
+4. Get approval before adding dark mode (Phase 2)
+5. DO NOT skip steps
+6. DO NOT improvise
+7. DO NOT keep old code "just in case"
+8. Test on mobile after desktop works
+
+The previous implementation failed because you added new code 
+without removing old code. This time: DELETE FIRST, then ADD.
+
+Follow these instructions EXACTLY as written.
+
+===========================================
+END OF INSTRUCTIONS
+===========================================

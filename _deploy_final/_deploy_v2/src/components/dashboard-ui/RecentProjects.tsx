@@ -1,0 +1,146 @@
+import { MoreVertical, ExternalLink } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+
+const projects = [
+  {
+    name: 'Website Redesign',
+    client: 'Acme Corp',
+    status: 'In Progress',
+    progress: 65,
+    dueDate: 'Feb 15',
+    image: 'https://c.animaapp.com/mklymbwtVkFt47/img/ai_1.png',
+    isPriority: true,
+  },
+  {
+    name: 'Mobile App Development',
+    client: 'TechStart Inc',
+    status: 'In Progress',
+    progress: 42,
+    dueDate: 'Mar 1',
+    image: 'https://c.animaapp.com/mklymbwtVkFt47/img/ai_2.png',
+    isPriority: false,
+  },
+  {
+    name: 'Brand Identity',
+    client: 'Creative Studio',
+    status: 'Review',
+    progress: 88,
+    dueDate: 'Jan 28',
+    image: 'https://c.animaapp.com/mklymbwtVkFt47/img/ai_3.png',
+    isPriority: false,
+  },
+  {
+    name: 'E-commerce Platform',
+    client: 'Retail Solutions',
+    status: 'In Progress',
+    progress: 34,
+    dueDate: 'Apr 10',
+    image: 'https://c.animaapp.com/mklymbwtVkFt47/img/ai_4.png',
+    isPriority: false,
+  },
+  {
+    name: 'Marketing Campaign',
+    client: 'Growth Agency',
+    status: 'Planning',
+    progress: 15,
+    dueDate: 'Feb 20',
+    image: 'https://c.animaapp.com/mklymbwtVkFt47/img/ai_5.png',
+    isPriority: false,
+  },
+];
+
+export default function RecentProjects() {
+  return (
+    <div className="bg-surface/20 backdrop-blur-sm border border-border/20 rounded-xl p-10">
+      <div className="flex items-center justify-between mb-10">
+        <h2 className="text-[22px] font-semibold text-text-primary tracking-tight">Active Threads</h2>
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="bg-transparent text-text-tertiary hover:text-text-primary hover:bg-transparent -mr-2"
+        >
+          <span className="text-[13px]">View All</span>
+          <ExternalLink className="w-3.5 h-3.5 ml-2" strokeWidth={1.5} />
+        </Button>
+      </div>
+
+      <ScrollArea className="h-[600px] -mr-4 pr-4">
+        <div className="space-y-2">
+          {projects.map((project, index) => (
+            <div
+              key={index}
+              className="group py-6 px-5 -mx-5 rounded-lg hover:bg-surface-elevated/40 transition-all duration-200"
+            >
+              <div className="flex items-start gap-5">
+                <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 opacity-50 group-hover:opacity-100 transition-opacity">
+                  <img
+                    src={project.image}
+                    alt={`${project.name} preview`}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="text-[15px] font-medium text-text-primary tracking-[-0.01em]">
+                          {project.name}
+                        </h3>
+                        {project.isPriority && (
+                          <span className="px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.08em] bg-primary/10 text-primary rounded">
+                            Priority
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[13px] text-text-tertiary">{project.client}</p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="bg-transparent text-text-muted hover:text-text-primary hover:bg-muted/50 opacity-0 group-hover:opacity-100 transition-opacity -mr-2"
+                    >
+                      <MoreVertical className="w-4 h-4" strokeWidth={1.5} />
+                    </Button>
+                  </div>
+
+                  <div className="flex items-center gap-4 mb-5">
+                    <span className="px-2.5 py-1 text-[11px] font-medium bg-neutral-muted/30 text-neutral rounded-md">
+                      {project.status}
+                    </span>
+                    <span className="text-[11px] text-text-muted">Due {project.dueDate}</span>
+                  </div>
+
+                  <div className="space-y-2.5">
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="text-text-muted uppercase tracking-[0.08em]">Progress</span>
+                      <span className="text-text-secondary font-medium">{project.progress}%</span>
+                    </div>
+                    <div className="relative h-1 bg-neutral-muted/20 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all duration-500 ${
+                          project.isPriority 
+                            ? 'bg-gradient-to-r from-primary to-primary/80' 
+                            : 'bg-neutral-muted/60'
+                        }`}
+                        style={{ width: `${project.progress}%` }}
+                      />
+                      {project.isPriority && (
+                        <div 
+                          className="absolute top-0 w-1 h-full bg-primary rounded-full shadow-sm"
+                          style={{ left: `${project.progress}%`, transform: 'translateX(-50%)' }}
+                        />
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </ScrollArea>
+    </div>
+  );
+}

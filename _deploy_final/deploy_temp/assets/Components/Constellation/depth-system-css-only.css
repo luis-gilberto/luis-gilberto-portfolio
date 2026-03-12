@@ -1,0 +1,323 @@
+/* ===========================================================================
+   MULTI-LAYER DEPTH CONSTELLATION SYSTEM
+   Drop-in CSS for floating shapes with 3-layer depth effect
+   
+   To use: 
+   1. Replace your existing .floating-shapes CSS with this
+   2. Update your HTML with the new shape structure (see HTML-STRUCTURE.txt)
+   3. Adjust positions as needed
+   =========================================================================== */
+
+/* === BASE CONTAINER === */
+.floating-shapes {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    perspective: 1200px;
+    transform-style: preserve-3d;
+}
+
+/* === BASE SHAPE STYLING === */
+.floating-shapes .shape {
+    position: absolute;
+    height: auto;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+}
+
+/* ===================================================================
+   DEPTH LAYER 1: FAR BACKGROUND (Distant Stars)
+   - Barely visible
+   - Slowest animations
+   - Smallest sizes
+   =================================================================== */
+.floating-shapes .depth-far {
+    z-index: 0;
+    opacity: 0.06;
+    filter: blur(2px) saturate(0.7);
+    mix-blend-mode: soft-light;
+}
+
+/* Far Compass (Coral) - Top Left */
+.shape-compass-far {
+    top: 18%;
+    left: 8%;
+    width: clamp(28px, 4vw, 48px);
+    animation: shapeRotateContinuous 50s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+}
+
+.shape-compass-far.coral {
+    filter: drop-shadow(0 2px 8px rgba(249, 111, 110, 0.08)) blur(2px) saturate(0.7);
+}
+
+/* Far Queen (Teal) - Bottom Right */
+.shape-queen-far {
+    top: 65%;
+    right: 12%;
+    width: clamp(26px, 3.8vw, 44px);
+    animation: shapePendulum 48s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite reverse;
+}
+
+.shape-queen-far.teal {
+    filter: drop-shadow(0 2px 8px rgba(46, 211, 198, 0.08)) blur(2px) saturate(0.7);
+}
+
+/* ===================================================================
+   DEPTH LAYER 2: MID BACKGROUND (Supporting Layer)
+   - Soft presence
+   - Medium animations
+   - Medium sizes
+   =================================================================== */
+.floating-shapes .depth-mid {
+    z-index: 1;
+    opacity: 0.12;
+    filter: blur(1px) saturate(0.85);
+    mix-blend-mode: soft-light;
+}
+
+/* Mid Atom (Teal) - Upper Mid Left */
+.shape-atom-mid {
+    top: 22%;
+    left: 28%;
+    width: clamp(32px, 4.5vw, 54px);
+    animation: shapePendulum 42s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+}
+
+.shape-atom-mid.teal {
+    filter: drop-shadow(0 3px 10px rgba(46, 211, 198, 0.1)) blur(1px) saturate(0.85);
+}
+
+/* Mid Telescope (Coral) - Lower Mid Right */
+.shape-telescope-mid {
+    bottom: 22%;
+    right: 25%;
+    width: clamp(34px, 4.8vw, 56px);
+    animation: shapeRotateContinuous 44s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite reverse;
+}
+
+.shape-telescope-mid.coral {
+    filter: drop-shadow(0 3px 10px rgba(249, 111, 110, 0.1)) blur(1px) saturate(0.85);
+}
+
+/* ===================================================================
+   DEPTH LAYER 3: FOREGROUND (Main Constellation)
+   - Most visible
+   - Fastest animations
+   - Largest sizes
+   - Sits at z-index: 2 (behind main content, same as badge/stats)
+   =================================================================== */
+.floating-shapes .depth-front {
+    z-index: 2;
+    opacity: 0.18;
+    filter: blur(0.5px) saturate(0.92);
+    mix-blend-mode: screen;
+}
+
+/* Front Compass (Coral) - Mid Left */
+.shape-compass {
+    top: 38%;
+    left: 12%;
+    width: clamp(38px, 6vw, 72px);
+    animation: shapeRotateContinuous 34s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+}
+
+.shape-compass.coral {
+    filter: drop-shadow(0 5px 14px rgba(249, 111, 110, 0.16)) saturate(0.95);
+}
+
+/* Front Atom (Teal) - Upper Right */
+.shape-atom {
+    top: 28%;
+    right: 22%;
+    width: clamp(32px, 5vw, 60px);
+    animation: shapePendulum 32s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+}
+
+.shape-atom.teal {
+    filter: drop-shadow(0 3px 10px rgba(46, 211, 198, 0.12)) saturate(0.92);
+}
+
+/* Front Telescope (Coral) - Bottom Left - MOST VISIBLE */
+.shape-telescope {
+    bottom: 12%;
+    left: 20%;
+    width: clamp(52px, 7.2vw, 88px);
+    animation: shapeRotateContinuous 40s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite reverse;
+    opacity: 0.22; /* Slightly more visible than others */
+}
+
+.shape-telescope.coral {
+    filter: drop-shadow(0 8px 20px rgba(249, 111, 110, 0.22)) saturate(1);
+}
+
+/* Front Queen (Teal) - Bottom Right */
+.shape-queen {
+    bottom: 15%;
+    right: 18%;
+    width: clamp(46px, 6.8vw, 82px);
+    animation: shapePendulum 36s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite reverse;
+    opacity: 0.20; /* Slightly more visible than others */
+}
+
+.shape-queen.teal {
+    filter: drop-shadow(0 6px 16px rgba(46, 211, 198, 0.2)) saturate(0.98);
+}
+
+/* ===================================================================
+   ANIMATIONS
+   =================================================================== */
+
+/* Continuous 360° Rotation */
+@keyframes shapeRotateContinuous {
+    0% { 
+        transform: translate3d(0, 0, 0) rotate(0deg) translateZ(30px) scale(1); 
+    }
+    25% { 
+        transform: translate3d(18px, -12px, 0) rotate(90deg) translateZ(60px) scale(1.02); 
+    }
+    50% { 
+        transform: translate3d(-6px, 18px, 0) rotate(180deg) translateZ(30px) scale(1); 
+    }
+    75% { 
+        transform: translate3d(-12px, -6px, 0) rotate(270deg) translateZ(60px) scale(1.02); 
+    }
+    100% { 
+        transform: translate3d(0, 0, 0) rotate(360deg) translateZ(30px) scale(1); 
+    }
+}
+
+/* Pendulum 180° Swing */
+@keyframes shapePendulum {
+    0% { 
+        transform: translate3d(0, 0, 0) rotate(0deg) translateZ(40px) scale(1); 
+    }
+    25% { 
+        transform: translate3d(12px, -10px, 0) rotate(45deg) translateZ(65px) scale(1.03); 
+    }
+    50% { 
+        transform: translate3d(0, 15px, 0) rotate(180deg) translateZ(40px) scale(1); 
+    }
+    75% { 
+        transform: translate3d(-10px, -6px, 0) rotate(45deg) translateZ(65px) scale(1.03); 
+    }
+    100% { 
+        transform: translate3d(0, 0, 0) rotate(0deg) translateZ(40px) scale(1); 
+    }
+}
+
+/* ===================================================================
+   INTERACTIVE HOVER EFFECTS
+   Enhance depth perception on hover
+   =================================================================== */
+.floating-shapes:hover .depth-far {
+    opacity: 0.09;
+    filter: blur(1.5px) saturate(0.8);
+}
+
+.floating-shapes:hover .depth-mid {
+    opacity: 0.15;
+    filter: blur(0.75px) saturate(0.9);
+}
+
+.floating-shapes:hover .depth-front {
+    opacity: 0.22;
+    filter: blur(0.3px) saturate(1);
+}
+
+/* ===================================================================
+   MOBILE OPTIMIZATIONS
+   =================================================================== */
+@media (max-width: 768px) {
+    /* Reduce opacity for less visual noise on small screens */
+    .floating-shapes .depth-far {
+        opacity: 0.05;
+    }
+    
+    .floating-shapes .depth-mid {
+        opacity: 0.10;
+    }
+    
+    .floating-shapes .depth-front {
+        opacity: 0.15;
+    }
+    
+    /* Adjust positions to avoid crowding */
+    .shape-compass-far { 
+        top: 20%; 
+        left: 10%; 
+    }
+    
+    .shape-queen-far { 
+        top: 70%; 
+        right: 10%; 
+    }
+    
+    .shape-atom-mid { 
+        top: 25%; 
+        left: 25%; 
+    }
+    
+    .shape-telescope-mid { 
+        bottom: 25%; 
+        right: 20%; 
+    }
+}
+
+/* ===================================================================
+   ACCESSIBILITY: RESPECT REDUCED MOTION
+   =================================================================== */
+@media (prefers-reduced-motion: reduce) {
+    .floating-shapes .shape {
+        animation: none !important;
+        transform: none !important;
+        transition: opacity 0.3s ease-out;
+    }
+    
+    .floating-shapes:hover .shape {
+        transform: none !important;
+    }
+}
+
+/* ===================================================================
+   UI CONTENT Z-INDEX ADJUSTMENTS
+   Ensure proper layering with shapes
+   =================================================================== */
+
+/* Hero Badge - same level as front shapes (some shapes will appear behind) */
+.hero-badge {
+    position: relative;
+    z-index: 2;
+}
+
+/* Hero Stats - same level as front shapes (some shapes will appear behind) */
+.hero-stats {
+    position: relative;
+    z-index: 2;
+}
+
+/* Hero Content (title, description, CTAs) - always on top */
+.hero-content {
+    position: relative;
+    z-index: 3;
+}
+
+/* ===================================================================
+   CUSTOMIZATION TIPS
+   
+   To add more distant shapes:
+   1. Copy a depth-far shape definition
+   2. Change the class name and position
+   3. Adjust animation timing (48-52s for far layer)
+   4. Keep opacity at 0.06 and blur at 2px
+   
+   To make shapes appear closer/further:
+   - Closer: increase opacity, decrease blur, speed up animation
+   - Further: decrease opacity, increase blur, slow down animation
+   
+   Position adjustments:
+   - Use % for responsive positioning
+   - Avoid center area (reserve for content)
+   - Use corners and edges for prominent shapes
+   =================================================================== */

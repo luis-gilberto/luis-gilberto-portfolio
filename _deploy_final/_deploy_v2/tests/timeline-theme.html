@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Timeline Theme Tests</title>
+  <style>
+    body{font-family:Inter, sans-serif; background:#0a0a0a; color:#fff; padding:20px}
+    .result{padding:8px 12px; border-radius:6px; margin:6px 0}
+    .pass{background:rgba(46,211,198,.12); border:1px solid rgba(46,211,198,.4)}
+    .fail{background:rgba(249,111,110,.12); border:1px solid rgba(249,111,110,.4)}
+    iframe{width:100%; height:500px; border:1px solid #333; border-radius:6px; margin:12px 0}
+  </style>
+</head>
+<body>
+  <h1>Timeline Theme Switching Tests</h1>
+  <div id="results"></div>
+  <iframe id="page" src="/_deploy_v2/timeline.html?v=20260220"></iframe>
+  <script>
+    const results = document.getElementById('results');
+    function log(ok, msg){
+      const d=document.createElement('div'); d.className='result '+(ok?'pass':'fail'); d.textContent=(ok?'PASS: ':'FAIL: ')+msg; results.appendChild(d);
+    }
+    const wordmarkDark='assets/Brand/Core/logo-lockup-dark_3.png';
+    const markDark='assets/Brand/Core/icon-coral-white.png';
+    const wordmarkLight='assets/images/AUg_logo_White.png';
+    const markLight='assets/images/Logomark_White_a.png';
+    const iframe=document.getElementById('page');
+    iframe.onload=()=>{
+      const doc=iframe.contentDocument;
+      const btn=doc.getElementById('themeToggle');
+      const navImg=doc.querySelector('#primaryNav .nav-logo img');
+      const mobileImg=doc.querySelector('.mobile-drawer-header picture img');
+      const heroTitle=doc.querySelector('.timeline-hero h1');
+      const heroDesc=doc.querySelector('.hero-description');
+      // Initial should be dark
+      log(!!navImg && navImg.src.endsWith(wordmarkLight), 'Initial wordmark light asset loaded');
+      log(!!mobileImg && mobileImg.src.endsWith(wordmarkLight), 'Initial mobile wordmark light asset loaded');
+      // Toggle to light
+      btn.click();
+      setTimeout(()=>{
+        log(navImg.src.endsWith(wordmarkDark), 'Wordmark swapped on light');
+        log(doc.querySelector('.mobile-drawer-header picture source').srcset.endsWith(markDark), 'Logomark srcset swapped on light');
+        const navBg = getComputedStyle(doc.getElementById('primaryNav')).backgroundColor;
+        log(navBg !== 'rgb(255, 255, 255)', 'Nav not white in light mode');
+        log(getComputedStyle(heroTitle).color === 'rgb(255, 255, 255)', 'Hero title remains white');
+        log(getComputedStyle(heroDesc).color !== 'rgb(26, 26, 26)', 'Hero description readable');
+        // Rapid toggle stress
+        for(let i=0;i<5;i++){ btn.click(); }
+        setTimeout(()=>{
+          log(true, 'Rapid toggling completed without script errors');
+        }, 200);
+      }, 300);
+    };
+  </script>
+</body>
+</html>

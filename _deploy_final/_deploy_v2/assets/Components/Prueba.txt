@@ -1,0 +1,307 @@
+================================================================================
+"GO DEEPER" TOP-RIGHT PLACEMENT - EXACT IMPLEMENTATION
+================================================================================
+
+PLACEMENT (as shown in your mockup):
+- "Go deeper" = TOP-RIGHT corner
+- "Skip Intro" = BOTTOM-LEFT corner (existing button)
+
+This creates diagonal balance and makes "Go deeper" feel like it's watching
+from above, mysterious and observant.
+
+================================================================================
+IMPLEMENTATION
+================================================================================
+
+FIND: The Object.assign section in your animation script where you set the
+      learnMoreCTA styles
+
+REPLACE THE POSITIONING FROM:
+          Object.assign(learnMoreCTA.style, {
+            position: 'fixed',
+            left: '2rem',
+            bottom: '1.5rem',
+
+WITH THIS (TOP-RIGHT):
+          Object.assign(learnMoreCTA.style, {
+            position: 'fixed',
+            right: '2rem',
+            top: '2rem',
+
+
+ALSO UPDATE: The initial transform (emerges from above instead of below)
+FROM:
+            transform: 'translateY(10px)',
+
+TO:
+            transform: 'translateY(-10px)',
+
+
+ALSO UPDATE: Mobile responsive positioning
+FROM:
+          if (window.innerWidth <= 768) {
+            learnMoreCTA.style.left = '1rem';
+            learnMoreCTA.style.bottom = '1rem';
+
+TO:
+          if (window.innerWidth <= 768) {
+            learnMoreCTA.style.right = '1rem';
+            learnMoreCTA.style.top = '1rem';
+
+
+ALSO UPDATE: Reveal animation (comes from above)
+FROM:
+            learnMoreCTA.style.transform = 'translateY(0)';
+
+TO:
+            learnMoreCTA.style.transform = 'translateY(0)';
+            // (this stays the same, but coming from -10px it drops down)
+
+
+ALSO UPDATE: Hide animation (goes back up)
+FROM:
+            learnMoreCTA.style.transform = 'translateY(10px)';
+
+TO:
+            learnMoreCTA.style.transform = 'translateY(-10px)';
+
+
+ALSO UPDATE: Hover transforms (keep the same, just scale)
+            this.style.transform = 'translateY(0) scale(1.02)';
+            // and
+            this.style.transform = 'translateY(0) scale(1)';
+            // (these stay as-is)
+
+
+================================================================================
+COMPLETE CODE BLOCK FOR TOP-RIGHT PLACEMENT
+================================================================================
+
+Replace your entire styling section with this:
+
+          // Mysterious, subtle styling - positioned TOP-RIGHT
+          Object.assign(learnMoreCTA.style, {
+            position: 'fixed',
+            right: '2rem',
+            top: '2rem',
+            zIndex: '10001',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            padding: '0.75rem 1.25rem',
+            background: 'rgba(46, 211, 198, 0.08)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            border: '1px solid rgba(46, 211, 198, 0.2)',
+            borderRadius: '8px',
+            color: 'rgba(46, 211, 198, 0.7)',
+            textDecoration: 'none',
+            fontFamily: 'Inter, sans-serif',
+            fontWeight: '500',
+            fontSize: '0.875rem',
+            letterSpacing: '0.02em',
+            opacity: '0',
+            transform: 'translateY(-10px)',  // Comes from above
+            transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+            pointerEvents: 'none',
+            boxShadow: '0 0 0 rgba(46, 211, 198, 0)',
+            textShadow: '0 0 0 rgba(46, 211, 198, 0)'
+          });
+          
+          // Mobile responsive
+          if (window.innerWidth <= 768) {
+            learnMoreCTA.style.right = '1rem';
+            learnMoreCTA.style.top = '1rem';
+            learnMoreCTA.style.padding = '0.625rem 1rem';
+            learnMoreCTA.style.fontSize = '0.8125rem';
+          }
+          
+          // Hover: intensify the mystery
+          learnMoreCTA.addEventListener('mouseenter', function() {
+            this.style.background = 'rgba(46, 211, 198, 0.18)';
+            this.style.borderColor = 'rgba(46, 211, 198, 0.5)';
+            this.style.color = 'rgba(46, 211, 198, 1)';
+            this.style.transform = 'translateY(0) scale(1.02)';
+            this.style.boxShadow = '0 0 30px rgba(46, 211, 198, 0.3), 0 0 60px rgba(46, 211, 198, 0.1)';
+            this.style.textShadow = '0 0 20px rgba(46, 211, 198, 0.5)';
+            
+            const svg = this.querySelector('.deeper-arrow');
+            if (svg) svg.style.transform = 'translateX(4px)';
+          });
+          
+          learnMoreCTA.addEventListener('mouseleave', function() {
+            this.style.background = 'rgba(46, 211, 198, 0.08)';
+            this.style.borderColor = 'rgba(46, 211, 198, 0.2)';
+            this.style.color = 'rgba(46, 211, 198, 0.7)';
+            this.style.transform = 'translateY(0) scale(1)';
+            this.style.boxShadow = '0 0 20px rgba(46, 211, 198, 0.15)';
+            this.style.textShadow = '0 0 10px rgba(46, 211, 198, 0.3)';
+            
+            const svg = this.querySelector('.deeper-arrow');
+            if (svg) svg.style.transform = 'translateX(0)';
+          });
+          
+          // Style the arrow
+          const svg = learnMoreCTA.querySelector('.deeper-arrow');
+          if (svg) {
+            svg.style.transition = 'transform 0.3s ease';
+            svg.style.opacity = '0.7';
+          }
+          
+          // Track navigation
+          learnMoreCTA.addEventListener('click', function(e) {
+            sessionStorage.setItem('hubNavigated', 'true');
+          });
+          
+          // Add to container
+          hubContainer.appendChild(learnMoreCTA);
+          
+          // TEASING REVEAL: Fade in slowly from above
+          setTimeout(() => {
+            learnMoreCTA.style.opacity = '1';
+            learnMoreCTA.style.transform = 'translateY(0)';
+            learnMoreCTA.style.pointerEvents = 'auto';
+            learnMoreCTA.style.boxShadow = '0 0 20px rgba(46, 211, 198, 0.15)';
+            learnMoreCTA.style.textShadow = '0 0 10px rgba(46, 211, 198, 0.3)';
+          }, 5000);
+          
+          // FLASH/PULSE EFFECT: Create intrigue with periodic flashes
+          let flashCount = 0;
+          const flashInterval = setInterval(() => {
+            if (flashCount >= 3) {
+              clearInterval(flashInterval);
+              return;
+            }
+            
+            // Quick flash to bright
+            learnMoreCTA.style.transition = 'all 0.2s ease-out';
+            learnMoreCTA.style.color = 'rgba(46, 211, 198, 1)';
+            learnMoreCTA.style.borderColor = 'rgba(46, 211, 198, 0.6)';
+            learnMoreCTA.style.boxShadow = '0 0 40px rgba(46, 211, 198, 0.4), 0 0 80px rgba(46, 211, 198, 0.2)';
+            learnMoreCTA.style.textShadow = '0 0 25px rgba(46, 211, 198, 0.6)';
+            
+            // Return to subtle after flash
+            setTimeout(() => {
+              learnMoreCTA.style.transition = 'all 0.6s ease-in';
+              learnMoreCTA.style.color = 'rgba(46, 211, 198, 0.7)';
+              learnMoreCTA.style.borderColor = 'rgba(46, 211, 198, 0.2)';
+              learnMoreCTA.style.boxShadow = '0 0 20px rgba(46, 211, 198, 0.15)';
+              learnMoreCTA.style.textShadow = '0 0 10px rgba(46, 211, 198, 0.3)';
+            }, 200);
+            
+            flashCount++;
+          }, 1500);
+          
+          // CONTINUOUS SUBTLE PULSE
+          setTimeout(() => {
+            const pulseKeyframes = `
+              @keyframes deeperPulse {
+                0%, 100% {
+                  box-shadow: 0 0 20px rgba(46, 211, 198, 0.15);
+                  text-shadow: 0 0 10px rgba(46, 211, 198, 0.3);
+                }
+                50% {
+                  box-shadow: 0 0 30px rgba(46, 211, 198, 0.25);
+                  text-shadow: 0 0 15px rgba(46, 211, 198, 0.4);
+                }
+              }
+            `;
+            
+            const styleSheet = document.createElement('style');
+            styleSheet.textContent = pulseKeyframes;
+            document.head.appendChild(styleSheet);
+            
+            learnMoreCTA.style.animation = 'deeperPulse 3s ease-in-out infinite';
+          }, 10000);
+          
+          // Hide CTA when animation completes (goes back up)
+          setTimeout(() => {
+            learnMoreCTA.style.opacity = '0';
+            learnMoreCTA.style.transform = 'translateY(-10px)';
+            setTimeout(() => {
+              if (learnMoreCTA.parentNode) {
+                learnMoreCTA.remove();
+              }
+            }, 400);
+          }, 12000);
+
+
+================================================================================
+VISUAL RESULT
+================================================================================
+
+Your animation will now look like:
+
+┌────────────────────────────────────────────┐
+│                    [Go deeper →]   ← TOP-RIGHT
+│                                            │
+│         [Coral Laser Animation]           │
+│                                            │
+│         Built for what's next              │
+│                                            │
+│ [Skip Intro ›]                             │
+│  ↑ BOTTOM-LEFT                             │
+└────────────────────────────────────────────┘
+
+DIAGONAL BALANCE:
+- Top-right: "Go deeper" (teal, mysterious)
+- Bottom-left: "Skip Intro" (existing button)
+- Creates visual balance across the diagonal
+- Both buttons are accessible without competing
+
+
+================================================================================
+BEHAVIOR
+================================================================================
+
+TIMELINE:
+0s ━━━━━━ Animation starts
+          ↓
+5s ━━━━━━ "Go deeper" drops down from above (top-right)
+          Subtle, dim, mysterious
+          ↓
+6.5s ━━━ ⚡ FLASH #1
+          ↓
+8s ━━━━━ ⚡ FLASH #2
+          ↓
+9.5s ━━━ ⚡ FLASH #3
+          ↓
+10s+ ━━━ Gentle breathing pulse
+          ↓
+12s ━━━━ Disappears upward
+
+
+ANIMATION DIRECTION:
+- Enters: Drops from above (translateY from -10px to 0)
+- Exits: Rises back up (translateY from 0 to -10px)
+- Feels like: "Watching from above, then retreating"
+
+
+================================================================================
+WHY TOP-RIGHT WORKS
+================================================================================
+
+✓ DIAGONAL BALANCE: Opposite corner from Skip creates harmony
+✓ UNEXPECTED: Most CTAs are bottom - top feels mysterious
+✓ OBSERVANT: Top-right feels like it's "watching" or "observing"
+✓ NON-COMPETING: Doesn't fight with Skip Intro spatially
+✓ PREMIUM: Top placement feels more sophisticated
+✓ MOBILE-SAFE: Won't conflict with mobile browser chrome
+
+
+================================================================================
+SUMMARY OF CHANGES
+================================================================================
+
+1. Change positioning: left/bottom → right/top
+2. Change initial transform: translateY(10px) → translateY(-10px)
+3. Change hide transform: translateY(10px) → translateY(-10px)
+4. Update mobile: left/bottom → right/top
+5. Keep all other behaviors: flash, pulse, hover
+
+That's it! The CTA now appears top-right exactly as in your mockup.
+
+
+================================================================================
+END OF DOCUMENT
+================================================================================

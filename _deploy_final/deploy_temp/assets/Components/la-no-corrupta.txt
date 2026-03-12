@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experience | Luis Gilberto</title>
+    
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Big+Shoulders+Display:wght@600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* === RESET & CORE === */
+        :root {
+            --coral: #F96F6E;
+            --teal: #2ED3C6;
+            --bg-body: #0A0A0A;
+            --surface-dark: #111216;
+            --text-primary: #F4F1ED;
+            --text-muted: rgba(244, 241, 237, 0.65);
+            --border-light: 1px solid rgba(255,255,255,0.08);
+            --font-strategist: 'Big Shoulders Display', sans-serif;
+            --font-storyteller: 'Playfair Display', serif;
+            --font-orchestrator: 'Inter', sans-serif;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            font-family: var(--font-orchestrator);
+            line-height: 1.6;
+            overflow-x: hidden; /* Prevent horizontal scroll only */
+            padding-top: 112px; /* Space for double nav */
+        }
+
+        /* === HEADER (Standardized) === */
+        .primary-nav { position: fixed; top: 0; left: 0; width: 100%; height: 64px; background: rgba(10, 10, 10, 0.98); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.1); z-index: 1000; }
+        .primary-nav-container { max-width: 1400px; margin: 0 auto; padding: 0 2rem; height: 100%; display: flex; align-items: center; justify-content: space-between; }
+        .nav-logo img { height: 40px; width: auto; }
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-link { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.6); position: relative; text-decoration: none; transition: color 0.2s; }
+        .nav-link:hover, .nav-link.active { color: #ffffff; }
+        .nav-link.active::after { content: ''; position: absolute; bottom: -6px; left: 0; width: 100%; height: 2px; background: var(--coral); }
+
+        /* === SUB NAV (Standardized) === */
+        .sub-navigation { position: fixed; top: 64px; left: 0; width: 100%; background: #141414; border-bottom: 1px solid rgba(255,255,255,0.08); z-index: 999; height: 48px; display: flex; align-items: center; }
+        .sub-nav-container { max-width: 1400px; margin: 0 auto; padding: 0 2rem; width: 100%; }
+        .sub-nav-list { list-style: none; display: flex; gap: 2rem; padding: 0; margin: 0; }
+        .sub-nav-list a { font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.5); text-decoration: none; transition: color 0.2s; }
+        .sub-nav-list a:hover { color: #ffffff; }
+        .sub-nav-list a.active { color: var(--coral); font-weight: 600; }
+
+        /* === MOBILE TOGGLE === */
+        .mobile-menu-toggle { display: none; background: transparent; border: none; cursor: pointer; color: #fff; z-index: 1002; }
+        
+        @media (max-width: 1024px) {
+            .nav-links, .sub-navigation { display: none !important; }
+            .mobile-menu-toggle { display: flex !important; align-items: center; justify-content: center; }
+            body { padding-top: 64px; } /* Adjust padding since subnav is gone */
+        }
+
+        /* === THEME TOGGLE === */
+        .theme-toggle { width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); background: transparent; color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
+        .sun-icon { display: none; }
+        [data-theme="dark"] .sun-icon { display: block; }
+        [data-theme="dark"] .moon-icon { display: none; }
+
+        /* === MOBILE DRAWER === */
+        .mobile-menu-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        .mobile-menu-overlay.active { opacity: 1; pointer-events: auto; }
+        .mobile-drawer { position: absolute; top: 0; right: 0; width: 85vw; max-width: 400px; height: 100vh; background: #000; transform: translateX(100%); transition: transform 0.35s ease; padding: 2rem; display: flex; flex-direction: column; overflow-y: auto; }
+        .mobile-menu-overlay.active .mobile-drawer { transform: translateX(0); }
+        .mobile-menu-close { align-self: flex-end; background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; margin-bottom: 2rem; }
+        .mobile-nav-label { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #666; margin-bottom: 1rem; }
+        .mobile-link { display: block; font-size: 1.1rem; color: #aaa; margin-bottom: 1rem; text-decoration: none; }
+        .mobile-link.main { font-family: var(--font-strategist); font-size: 2rem; color: #fff; font-weight: 700; margin-bottom: 0.5rem; }
+        .mobile-link.active { color: var(--coral); padding-left: 10px; border-left: 2px solid var(--coral); }
+
+        /* === PAGE CONTENT STYLES === */
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 2rem; }
+        .section { padding: 5rem 0; }
+        
+        .hero { padding: 6rem 0 4rem; text-align: center; position: relative; background: radial-gradient(circle at 50% 0%, rgba(46,211,198,0.1), transparent 60%); }
+        .hero h1 { font-size: clamp(3rem, 9vw, 6rem); margin-bottom: 1.5rem; line-height: 0.9; }
+        .line-tech { display: block; color: #fff; letter-spacing: 2px; font-family: var(--font-strategist); font-weight: 800; }
+        .line-human { display: block; font-family: var(--font-storyteller); font-style: italic; font-weight: 400; color: #fff; font-size: 0.9em; }
+        .hero-desc { max-width: 600px; margin: 0 auto 3rem; color: var(--text-muted); font-size: 1.2rem; }
+
+        .path-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; max-width: 900px; margin: 0 auto; }
+        .path-card { background: rgba(255,255,255,0.03); border: var(--border-light); border-radius: 16px; padding: 2rem; text-align: center; cursor: pointer; transition: all 0.3s; }
+        .path-card:hover { transform: translateY(-5px); border-color: var(--teal); background: rgba(255,255,255,0.05); }
+        .path-icon { font-size: 2rem; color: var(--teal); margin-bottom: 1rem; }
+        .path-title { font-size: 1.2rem; margin-bottom: 0.5rem; font-family: var(--font-strategist); }
+        .path-meta { font-size: 0.9rem; color: var(--text-subtle); }
+
+        .section-header { text-align: center; margin-bottom: 4rem; }
+        .section-numeral { font-family: var(--font-storyteller); font-style: italic; color: var(--coral); font-size: 1.2rem; margin-bottom: 0.5rem; display: block; }
+        .section-title { font-size: 3rem; letter-spacing: 2px; color: #fff; font-family: var(--font-strategist); }
+
+        /* Stats & Bento */
+        .stats-wrap { background: var(--surface-dark); border: var(--border-light); border-radius: 16px; padding: 3rem; position: relative; overflow: hidden; }
+        .stat-grid-main { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; text-align: center; margin-bottom: 3rem; }
+        .stat-val-main { font-size: 4rem; font-family: var(--font-strategist); font-weight: 800; line-height: 1; }
+        .stat-accent-coral { color: var(--coral); }
+        .stat-accent-teal { color: var(--teal); }
+        .stat-lbl-main { font-family: var(--font-storyteller); font-style: italic; opacity: 0.7; margin-top: 0.5rem; }
+        .stat-grid-sec { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2rem; }
+        .stat-val-sec { font-size: 2rem; font-weight: 700; font-family: var(--font-strategist); }
+        .stat-lbl-sec { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.5; }
+
+        .bento-container { display: flex; flex-direction: column; gap: 1.5rem; }
+        .bento-row { display: grid; grid-template-columns: 1.5fr 1fr; gap: 1.5rem; }
+        .bento-row.alt { grid-template-columns: 1fr 1.5fr; }
+        .bento-card { position: relative; height: 320px; border-radius: 16px; overflow: hidden; border: var(--border-light); cursor: pointer; }
+        .bento-bg { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; opacity: 0.7; }
+        .bento-card:hover .bento-bg { transform: scale(1.05); opacity: 1; }
+        .bento-content { position: absolute; bottom: 0; left: 0; width: 100%; padding: 2rem; background: linear-gradient(to top, #000, transparent); }
+        .bento-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; padding: 4px 10px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); margin-bottom: 0.5rem; display: inline-block; }
+        .label-blueprint { color: var(--coral); border-color: var(--coral); }
+        .label-insight { color: var(--teal); border-color: var(--teal); }
+        .bento-title { font-size: 1.5rem; margin-bottom: 0.5rem; font-family: var(--font-strategist); }
+        .bento-link { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; }
+
+        .resume-preview { display: grid; grid-template-columns: 1fr 2fr; gap: 3rem; background: var(--surface-dark); border: var(--border-light); border-radius: 16px; padding: 3rem; }
+        .role-row { display: grid; grid-template-columns: 100px 1fr; gap: 2rem; margin-bottom: 1.5rem; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 1.5rem; }
+        .role-row:last-child { border: none; }
+        .role-date { color: var(--teal); font-weight: 700; font-size: 0.9rem; }
+        .role-date.current { color: var(--coral); }
+        .role-title { font-weight: 600; font-size: 1.1rem; color: #fff; margin-bottom: 0.2rem; }
+        .role-company { font-family: var(--font-storyteller); font-style: italic; opacity: 0.7; }
+        .resume-btn { background: var(--coral); color: #fff; padding: 1rem 2rem; border-radius: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: inline-block; margin-top: 1rem; transition: transform 0.2s; }
+        .resume-btn:hover { transform: translateY(-2px); }
+
+        @media (max-width: 900px) {
+            .path-grid, .stat-grid-main, .resume-preview, .bento-row, .bento-row.alt { grid-template-columns: 1fr; }
+            .stat-grid-sec { grid-template-columns: 1fr 1fr; }
+            .hero h1 { font-size: 3.5rem; }
+            .resume-preview { padding: 1.5rem; }
+        }
+
+        /* === FOOTER === */
+        .site-footer { background: #0A0A0A; border-top: 1px solid rgba(255,255,255,0.1); padding: 4rem 2rem 2rem; color: #ffffff; margin-top: 6rem; }
+        .footer-container { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 3rem; }
+        .footer-brand h3 { font-family: 'Big Shoulders Display'; font-size: 1.5rem; text-transform: uppercase; margin-bottom: 1rem; }
+        .footer-tagline { color: rgba(255,255,255,0.5); font-size: 0.9rem; margin-bottom: 2rem; }
+        .footer-heading { font-family: 'Big Shoulders Display'; font-size: 1rem; letter-spacing: 0.1em; color: rgba(255,255,255,0.4); text-transform: uppercase; margin-bottom: 1.5rem; }
+        .footer-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+        .footer-link { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+        .footer-link:hover { color: white; }
+        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.05); margin-top: 3rem; padding-top: 2rem; text-align: center; color: rgba(255,255,255,0.3); font-size: 0.8rem; }
+        .footer-nav-divider { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.1); }
+        .footer-system-link { font-size: 0.85rem; color: var(--coral) !important; font-style: italic; text-decoration: none; }
+        @media (max-width: 900px) { .footer-container { grid-template-columns: 1fr; text-align: center; gap: 2rem; } }
+
+        /* === CURSOR === */
+        #cursor-lens { position: fixed; pointer-events: none; z-index: 200000; width: 40px; height: 40px; transform: translate(-50%, -50%); transition: all 0.15s; }
+        .lens-outer { position: absolute; top: 50%; left: 50%; width: 40px; height: 40px; border: 2px solid var(--coral); border-radius: 50%; transform: translate(-50%, -50%); opacity: 0.4; }
+        .lens-center { position: absolute; top: 50%; left: 50%; width: 4px; height: 4px; background: var(--teal); border-radius: 50%; transform: translate(-50%, -50%); }
+        body.cursor-hover .lens-outer { width: 60px; height: 60px; opacity: 0.8; border-color: var(--teal); }
+        @media (pointer: coarse) { #cursor-lens { display: none; } }
+    </style>
+</head>
+<body>
+    <div id="cursor-lens"><div class="lens-outer"></div><div class="lens-center"></div></div>
+
+    <!-- PRIMARY NAV -->
+    <nav class="primary-nav" id="primaryNav">
+        <div class="primary-nav-container">
+            <a href="/index.html" class="nav-logo">
+                <img src="/assets/images/AUg_logo_White.png" alt="LG">
+            </a>
+            <div class="nav-links">
+                <a href="/index.html" class="nav-link active">Portfolio</a>
+                <a href="/insights/index.html" class="nav-link">Insights</a>
+                <a href="/TheHub/index.html" class="nav-link">The Hub</a>
+                <a href="https://portal.luis-gilberto.com" class="nav-link" target="_blank">The Portal</a>
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+                    <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                    <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                </button>
+            </div>
+            <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- SUB NAV -->
+    <nav class="sub-navigation">
+        <div class="sub-nav-container">
+            <ul class="sub-nav-list">
+                <li><a href="/index.html">Home</a></li>
+                <li><a href="/timeline.html">Timeline</a></li>
+                <li><a href="/myexperience.html" class="active">Experience</a></li>
+                <li><a href="/about.html">About</a></li>
+                <li><a href="/contact.html">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- MOBILE MENU -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay">
+        <div class="mobile-drawer">
+            <button class="mobile-menu-close" id="mobileMenuClose">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <div class="mobile-menu-content">
+                <div class="mobile-nav-section">
+                    <div class="mobile-nav-label">Global</div>
+                    <a href="/index.html" class="mobile-link main">Portfolio</a>
+                    <a href="/insights/index.html" class="mobile-link main">Insights</a>
+                    <a href="/TheHub/index.html" class="mobile-link main">The Hub</a>
+                    <a href="https://portal.luis-gilberto.com" class="mobile-link main">The Portal</a>
+                </div>
+                <div class="mobile-nav-section">
+                    <div class="mobile-nav-label">Portfolio</div>
+                    <a href="/index.html" class="mobile-link">Home</a>
+                    <a href="/timeline.html" class="mobile-link">Timeline</a>
+                    <a href="/myexperience.html" class="mobile-link active">Experience</a>
+                    <a href="/about.html" class="mobile-link">About</a>
+                    <a href="/contact.html" class="mobile-link">Contact</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main>
+        <!-- HERO -->
+        <section class="hero">
+            <div class="container">
+                <p style="color:var(--coral); font-family:var(--font-storyteller); font-style:italic; font-size:1.2rem; margin-bottom:1rem;">15+ years of impact</p>
+                <h1><span class="line-tech">EXPERIENCE IN</span><br><span class="line-human">three dimensions</span></h1>
+                <p class="hero-desc">From managing multi-million dollar budgets to crafting human narratives for AI. Explore my career through the lens that matters most to you.</p>
+                
+                <div class="path-grid">
+                    <div class="path-card" onclick="document.getElementById('numbers').scrollIntoView({ behavior: 'smooth' });">
+                        <div class="path-icon"><i class="fas fa-chart-pie"></i></div>
+                        <h3 class="path-title">The Numbers</h3>
+                        <p class="path-meta">Reach, Budget, ROI</p>
+                    </div>
+                    <div class="path-card" onclick="document.getElementById('stories').scrollIntoView({ behavior: 'smooth' });">
+                        <div class="path-icon"><i class="fas fa-book-open"></i></div>
+                        <h3 class="path-title">The Stories</h3>
+                        <p class="path-meta">Deep Dive Case Studies</p>
+                    </div>
+                    <div class="path-card" onclick="document.getElementById('resume').scrollIntoView({ behavior: 'smooth' });">
+                        <div class="path-icon"><i class="fas fa-file-contract"></i></div>
+                        <h3 class="path-title">The Resume</h3>
+                        <p class="path-meta">Roles & Timeline</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NUMBERS -->
+        <section class="section" id="numbers">
+            <div class="container">
+                <header class="section-header">
+                    <span class="section-numeral">I.</span>
+                    <h2 class="section-title">QUANTIFIED IMPACT</h2>
+                </header>
+                <div class="stats-wrap">
+                    <div class="stat-grid-main">
+                        <div><div class="stat-val-main stat-accent-coral">150M+</div><div class="stat-lbl-main">Total Users Reached</div></div>
+                        <div><div class="stat-val-main stat-accent-teal">$25M+</div><div class="stat-lbl-main">Media Investment Managed</div></div>
+                        <div><div class="stat-val-main">85%</div><div class="stat-lbl-main">Avg. Campaign Success</div></div>
+                    </div>
+                    <div class="stat-grid-sec">
+                        <div><div class="stat-val-sec">12</div><div class="stat-lbl-sec">Major Launches</div></div>
+                        <div><div class="stat-val-sec">6</div><div class="stat-lbl-sec">Microsoft Products</div></div>
+                        <div><div class="stat-val-sec">8</div><div class="stat-lbl-sec">Global Markets</div></div>
+                        <div><div class="stat-val-sec">3.2x</div><div class="stat-lbl-sec">ROI Improvement</div></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NARRATIVE -->
+        <section class="section" id="stories">
+            <div class="container">
+                <header class="section-header">
+                    <span class="section-numeral">II.</span>
+                    <h2 class="section-title">THE NARRATIVE</h2>
+                </header>
+                <div class="bento-container">
+                    <div class="bento-row">
+                        <div class="bento-card" onclick="window.location.href='/case-study-teams-launch.html'">
+                            <img src="assets/images/04_Teams.jpg" class="bento-bg" alt="Teams">
+                            <div class="bento-content">
+                                <span class="bento-label label-blueprint">Technical Blueprint</span>
+                                <h3 class="bento-title">Teams Consumer Launch</h3>
+                                <span class="bento-link">View Execution &rarr;</span>
+                            </div>
+                        </div>
+                        <div class="bento-card" onclick="window.location.href='/insights/teams-consumer-launch/index.html'">
+                            <img src="assets/images/directorscut_poster.png" class="bento-bg" alt="Director's Cut">
+                            <div class="bento-content">
+                                <span class="bento-label label-insight">Director's Commentary</span>
+                                <h3 class="bento-title">"We Rebuilt the Story"</h3>
+                                <span class="bento-link">Read Perspective &rarr;</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bento-row alt">
+                        <div class="bento-card" onclick="window.location.href='/insights/edge-ucational-series/index.html'">
+                            <img src="assets/images/Marketing-Toolkit.gif" class="bento-bg" alt="Edge">
+                            <div class="bento-content">
+                                <span class="bento-label label-insight">Director's Commentary</span>
+                                <h3 class="bento-title">"Confusion is Intent"</h3>
+                                <span class="bento-link">Read Perspective &rarr;</span>
+                            </div>
+                        </div>
+                        <div class="bento-card" onclick="window.location.href='/case-study-edge-ucational.html'">
+                            <img src="assets/images/Edge-ucational_TechnicalBlueprint.png" class="bento-bg" alt="Edge Blueprint">
+                            <div class="bento-content">
+                                <span class="bento-label label-blueprint">Technical Blueprint</span>
+                                <h3 class="bento-title">Edge-ucational Series</h3>
+                                <span class="bento-link">View Execution &rarr;</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bento-row">
+                        <div class="bento-card" onclick="window.location.href='/case-study-family-safety.html'">
+                            <img src="assets/images/01_FSA.jpg" class="bento-bg" alt="Family Safety">
+                            <div class="bento-content">
+                                <span class="bento-label label-blueprint">Technical Blueprint</span>
+                                <h3 class="bento-title">Microsoft Family Safety</h3>
+                                <span class="bento-link">View Execution &rarr;</span>
+                            </div>
+                        </div>
+                        <div class="bento-card" onclick="window.location.href='/insights/family-safety-launch/index.html'">
+                            <img src="assets/images/family_safety_poster.png" class="bento-bg" alt="Director's Cut">
+                            <div class="bento-content">
+                                <span class="bento-label label-special">Director's Commentary</span>
+                                <h3 class="bento-title">"Peace of Mind"</h3>
+                                <span class="bento-link">Read Perspective &rarr;</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RESUME -->
+        <section class="section" id="resume">
+            <div class="container">
+                <header class="section-header">
+                    <span class="section-numeral">III.</span>
+                    <h2 class="section-title">PROFESSIONAL RECORD</h2>
+                </header>
+                <div class="resume-preview">
+                    <div style="text-align:center; padding-right:2rem; border-right:1px solid rgba(255,255,255,0.1);">
+                        <h3>The Full Story</h3>
+                        <p style="margin-bottom:2rem; color:var(--text-muted);">Download the official CV or view the interactive web version.</p>
+                        <a href="assets/documents/Luis_Gilberto_Resume.pdf?v=3" class="resume-btn" download>Download PDF</a>
+                        <br><br>
+                        <a href="/cv.html" style="font-size:0.9rem; border-bottom:1px solid #666; padding-bottom:2px;">View Web Version &rarr;</a>
+                    </div>
+                    <div class="resume-list">
+                        <div class="role-row">
+                            <div class="role-date current">2024–Pres</div>
+                            <div><div class="role-title">Principal & Systems Architect</div><div class="role-company">Luis Gilberto Ecosystem</div></div>
+                        </div>
+                        <div class="role-row">
+                            <div class="role-date">2023–2024</div>
+                            <div><div class="role-title">Principal Creative Strategist</div><div class="role-company">Microsoft Copilot & AI Platform</div></div>
+                        </div>
+                        <div class="role-row">
+                            <div class="role-date">2018–2023</div>
+                            <div><div class="role-title">Sr. Integrated Marketing Lead</div><div class="role-company">Microsoft Edge Consumer</div></div>
+                        </div>
+                        <div class="role-row">
+                            <div class="role-date">2016–2018</div>
+                            <div><div class="role-title">Global Product Marketing Manager</div><div class="role-company">Microsoft 365 Consumer</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <a href="/index.html" style="text-decoration:none; display:flex; align-items:center; gap:10px;">
+                    <img src="/assets/images/Logomark_White_a.png" alt="LG" style="height:32px; opacity:0.9;">
+                    <h3 style="margin:0; font-size:1.5rem;">Luis Gilberto</h3>
+                </a>
+                <p class="footer-tagline">Making technology feel human through clarity, beautiful execution, and systems that scale.</p>
+            </div>
+            <div>
+                <h4 class="footer-heading">Ecosystem</h4>
+                <ul class="footer-list">
+                    <li><a href="/index.html" class="footer-link">Portfolio</a></li>
+                    <li><a href="/TheHub/index.html" class="footer-link">The Hub</a></li>
+                    <li><a href="/insights/index.html" class="footer-link">Insights</a></li>
+                    <li><a href="https://portal.luis-gilberto.com" class="footer-link" style="color:#2ED3C6;">The Portal</a></li>
+                    <li class="footer-nav-divider"><a href="/system/" class="footer-system-link">How it all connects</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="footer-heading">Connect</h4>
+                <ul class="footer-list">
+                    <li><a href="/contact.html" class="footer-link">Contact</a></li>
+                    <li><a href="/about.html" class="footer-link">About Me</a></li>
+                    <li><a href="https://linkedin.com/in/luisgilberto00" class="footer-link">LinkedIn</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="footer-heading">Status</h4>
+                <div style="background:rgba(255,255,255,0.05); padding:1rem; border-radius:8px; border:1px solid rgba(255,255,255,0.1);">
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                        <span style="width:8px; height:8px; background:#2ED3C6; border-radius:50%;"></span>
+                        <span style="font-weight:700; text-transform:uppercase; font-size:0.8rem;">Available</span>
+                    </div>
+                    <p style="font-size:0.8rem; margin:0; opacity:0.7;">Accepting new strategic projects.</p>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 Luis Gilberto. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        // === CUSTOM CURSOR ===
+        const cursor = document.getElementById('cursor-lens');
+        document.addEventListener('mousemove', (e) => {
+            if(cursor) {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+            }
+        });
+        document.querySelectorAll('a, button, .path-card, .bento-card').forEach(el => {
+            el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+            el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+        });
+
+        // === MOBILE MENU ===
+        const menuToggle = document.getElementById('mobileMenuToggle');
+        const menuOverlay = document.getElementById('mobileMenuOverlay');
+        const menuClose = document.getElementById('mobileMenuClose');
+
+        if(menuToggle && menuOverlay) {
+            menuToggle.addEventListener('click', () => {
+                menuOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+            const closeMenu = () => {
+                menuOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            };
+            menuClose.addEventListener('click', closeMenu);
+            menuOverlay.addEventListener('click', (e) => {
+                if(e.target === menuOverlay) closeMenu();
+            });
+        }
+
+        // === THEME TOGGLE ===
+        const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+        if(themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                const current = html.getAttribute('data-theme');
+                const next = current === 'light' ? 'dark' : 'light';
+                html.setAttribute('data-theme', next);
+                localStorage.setItem('theme', next);
+            });
+        }
+    </script>
+</body>
+</html>

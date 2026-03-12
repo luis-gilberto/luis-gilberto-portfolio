@@ -1,0 +1,192 @@
+Locate the "About Me" Card in "The Human and the Professional" Section
+Find this section in your HTML. It should look something like:
+
+<section class="quick-tour-section">
+  <div class="container">
+    <div class="section-header">
+      <h2>A Quick Tour<span class="period">.</span></h2>
+      <p>Ever wonder what happens when you click, there's only one *powerful* click.</p>
+    </div>
+    
+    <div class="cards-group">
+      <h3>The human & the professional</h3>
+      <p class="start-here-helper">Start wherever feels right. It all leads to the same story.</p>
+      
+      <div class="cards-grid cards-grid-2x2">
+        
+        <!-- THIS IS THE "ABOUT ME" CARD YOU WANT TO MODIFY -->
+        <div class="tour-card">
+          <div class="card-inner">
+            <div class="card-front">
+              <img src="assets/hp/AboutMe.webp" alt="About Me">
+              <div class="card-overlay"></div>
+              <div class="card-icon">
+                <!-- icon here -->
+              </div>
+              <h3>About Me</h3>
+            </div>
+            <div class="card-back card-back-coral">
+              <!-- back side content -->
+            </div>
+          </div>
+        </div>
+        
+        <!-- Other cards (Timeline, Resume, Brand Guidelines) -->
+        
+      </div>
+    </div>
+  </div>
+</section>
+Step 3: Modify ONLY the "About Me" Card
+Replace the "About Me" card structure with this:
+
+<div class="tour-card tour-card-about-me">
+  <div class="card-inner">
+    <div class="card-front">
+      <!-- Static image (default state) -->
+      <img src="assets/hp/AboutMe.webp" alt="About Me" class="card-static-img">
+      
+      <!-- Hover video (hidden by default) -->
+      <video autoplay loop muted playsinline class="card-hover-video">
+        <source src="assets/hp/luis_hover.webm" type="video/webm">
+        <source src="assets/hp/luis_hover.mp4" type="video/mp4">
+      </video>
+      
+      <div class="card-overlay"></div>
+      <div class="card-icon">
+        <!-- Keep your existing icon SVG here -->
+      </div>
+      <h3>About Me</h3>
+    </div>
+    <div class="card-back card-back-coral">
+      <!-- Keep your existing back side content here -->
+    </div>
+  </div>
+</div>
+Key Changes:
+
+Added .tour-card-about-me class for specific targeting
+Static image now has .card-static-img class
+Added <video> element with .card-hover-video class
+Both video formats included for cross-browser compatibility
+Step 4: Add CSS for the Card Hover Video
+In your <style> section, add this CSS after your existing card styles (around where you have .card-front img styles):
+
+/* ═══════════════════════════════════════════════════════
+   HOVER VIDEO ANIMATION FOR "ABOUT ME" CARD
+   ═══════════════════════════════════════════════════════ */
+
+/* Video element in card front */
+.card-hover-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Static image stays at z-index 1 by default */
+.card-static-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 2;
+  transition: opacity 0.5s ease-in-out;
+}
+
+/* Card overlay, icon, and title stay on top */
+.card-overlay {
+  z-index: 3;
+}
+
+.card-icon {
+  z-index: 4;
+}
+
+.card-front h3 {
+  z-index: 4;
+}
+
+/* Show video on hover, hide static image */
+.tour-card-about-me:hover .card-hover-video {
+  opacity: 1;
+  z-index: 2;
+}
+
+.tour-card-about-me:hover .card-static-img {
+  opacity: 0;
+}
+
+/* Optional: Subtle scale on hover */
+.tour-card-about-me:hover .card-hover-video {
+  transform: scale(1.05);
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+Step 5: Verify File Paths
+Confirm your video files are at:
+
+C:\Users\luisg\OneDrive\Documents\Luis Gilberto\assets\hp\luis_hover.webm
+C:\Users\luisg\OneDrive\Documents\Luis Gilberto\assets\hp\luis_hover.mp4
+Since your existing card uses assets/hp/AboutMe.webp, the video paths should be:
+
+Copy<source src="assets/hp/luis_hover.webm" type="video/webm">
+<source src="assets/hp/luis_hover.mp4" type="video/mp4">
+
+Step 6: Test It
+Open index-videotest.html in your browser
+Scroll down to "The human & the professional" section
+Hover over the "About Me" card (NOT the hero tiles)
+Video should fade in smoothly over the static image
+When you move away, it fades back to the static image
+
+
+🎯 Important Notes:
+DO NOT touch the hero tiles at the top—those stay as-is with images only
+ONLY the "About Me" card in the 2x2 grid gets the video treatment
+The other three cards (Timeline, Resume, Brand Guidelines) remain unchanged
+The card flip animation on click still works—the video is only for the front side hover state
+
+
+🔧 Optional: Control Video Playback on Hover
+If you want the video to only play when hovering (saves bandwidth), add this JavaScript before your closing </body> tag:
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const aboutMeCard = document.querySelector('.tour-card-about-me');
+  
+  if (aboutMeCard) {
+    const video = aboutMeCard.querySelector('.card-hover-video');
+    
+    if (video) {
+      // Pause video initially
+      video.pause();
+      
+      // Play on hover
+      aboutMeCard.addEventListener('mouseenter', () => {
+        video.play();
+      });
+      
+      // Pause and reset when hover ends
+      aboutMeCard.addEventListener('mouseleave', () => {
+        video.pause();
+        video.currentTime = 0;
+      });
+    }
+  }
+});
+</script>
+✅ Quick Checklist for Trae:
+ Copy index.html → index-videotest.html
+ Find "The human & the professional" section
+ Locate the "About Me" card (first card in 2x2 grid)
+ Add video elements with .card-hover-video class
+ Add CSS for card hover transition
+ Verify video file paths
+ Test by hovering over "About Me" card only
+ Confirm hero tiles are NOT affected

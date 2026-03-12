@@ -1,0 +1,205 @@
+
+# IMC Services — Single File for Trae (Apply Me As-Is)
+Owner: Luis Gilberto
+Goal: Re-center page on “Luis-first + Strategy / Systems / Spark”, keep existing CSS system, minimal edits, no rebuild.
+
+──────────────────────────────────────────────────────────────────────────────
+HOW TO USE (Trae)
+1) Save this file anywhere in the repo (e.g., /TASKS/IMC-Services_apply.txt).
+2) Run Trae's "apply unified diff" using the patch in Section A.
+3) If the patch fails, use Section B (manual copy/paste) and Section C (CSS/JS) exactly.
+4) Build locally, then deploy.
+
+Files assumed:
+- a/IMCServices/engagement-toolkit.html
+- a/styles/imc-services.css
+- a/scripts/imc-services.js
+
+Adjust paths if yours differ.
+
+──────────────────────────────────────────────────────────────────────────────
+SECTION A — UNIFIED DIFF (Preferred: one-click patch)
+
+--- a/IMCServices/engagement-toolkit.html
++++ b/IMCServices/engagement-toolkit.html
+@@
+-  <div class="imc-hero__inner">
+-    <!-- existing hero content -->
+-  </div>
++  <div class="imc-hero__inner">
++    <!-- Eyebrow chip -->
++    <span class="imc-chip">IMC Services</span>
++
++    <!-- Persona header -->
++    <div class="profile-header">
++      <img class="profile-photo" src="../assets/images/luis-profile.jpg" alt="Luis Gilberto" />
++      <div class="profile-info">
++        <h1>Luis Gilberto</h1>
++        <p>Marketing & Creative Leadership</p>
++      </div>
++    </div>
++
++    <!-- Headline + subhead -->
++    <h2 class="imc-hero__title">Strategic marketing leadership for ambitious brands</h2>
++    <p class="imc-hero__subhead">
++      I help teams move from clutter to clarity—with <strong>Strategy</strong> that scales,
++      <strong>Systems</strong> that deliver, and a creative <strong>Spark</strong> that connects.
++    </p>
++
++    <!-- 3 Pillars chips -->
++    <ul class="pillars">
++      <li class="pillars__chip pillars__chip--strategy">Strategy</li>
++      <li class="pillars__chip pillars__chip--systems">Systems</li>
++      <li class="pillars__chip pillars__chip--spark">Spark</li>
++    </ul>
++
++    <!-- CTAs -->
++    <div class="imc-hero__ctas">
++      <a class="btn btn--primary" href="/contact/">Start the Conversation</a>
++      <a class="btn btn--ghost" href="#how-we-work">See How I Work</a>
++    </div>
++  </div>
+@@
+-<section class="services">
++<section id="how-we-work" class="services">
+   <!-- services / engagement models content stays the same -->
+ </section>
+@@
+-<div class="services-grid">
++<div class="services-grid">
++  <!-- Strategy -->
++  <h3 class="pillar-subhead pillar-subhead--strategy">Strategy</h3>
+   <!-- Brand Strategy & Positioning card -->
+   <!-- Campaign Development card -->
++
++  <!-- Systems -->
++  <h3 class="pillar-subhead pillar-subhead--systems">Systems</h3>
+   <!-- Marketing Operations & Process Design card -->
+   <!-- Performance / Measurement card -->
++
++  <!-- Spark -->
++  <h3 class="pillar-subhead pillar-subhead--spark">Spark</h3>
+   <!-- Content Strategy & Storytelling card -->
+   <!-- Creative Direction & Design Systems card -->
+ </div>
+@@
+-<section class="logo-rotator-section"> ... </section>
+-<section class="testimonials-carousel"> ... </section>
+-<section class="microsoft-portfolio"> ... </section>
++<!-- Optional modules parked to reduce noise -->
++<!--
++<section class="logo-rotator-section"> ... </section>
++<section class="testimonials-carousel"> ... </section>
++<section class="microsoft-portfolio"> ... </section>
++-->
+@@
+-<title>Engagement Toolkit</title>
++<title>IMC Services</title>
+@@
+-<meta property="og:title" content="Engagement Toolkit">
+-<meta property="og:description" content="Where partnership meets execution">
++<meta property="og:title" content="Luis Gilberto – IMC Services">
++<meta property="og:description" content="Strategy. Systems. Spark. Strategic marketing leadership for ambitious brands.">
++<meta name="description" content="Strategy. Systems. Spark. Strategic marketing leadership for ambitious brands.">
+
+--- a/styles/imc-services.css
++++ b/styles/imc-services.css
+@@
++/* Pillars chips (new) */
++.pillars { display:flex; gap:.5rem; flex-wrap:wrap; margin: 12px 0 20px 0; padding:0; list-style:none; }
++.pillars__chip { padding:6px 12px; border:1px solid rgba(255,255,255,.22); border-radius:999px; font-size:12px; letter-spacing:.04em; }
++.pillars__chip--strategy { border-color: var(--lg-coral); color: var(--lg-coral); }
++.pillars__chip--systems  { border-color: rgba(255,255,255,.28); color: rgba(255,255,255,.9); }
++.pillars__chip--spark    { border-color: rgba(255,255,255,.28); color: rgba(255,255,255,.9); }
+@@
++/* In-grid mini section headers (new) */
++.pillar-subhead { grid-column: 1 / -1; font-family: 'Playfair Display', serif; font-size: 1.25rem;
++  letter-spacing: -.01em; margin: .25rem 0 -.5rem 0; padding-top: .5rem; color: rgba(255,255,255,.9); }
++.pillar-subhead--strategy { color: var(--lg-coral); }
++.pillar-subhead--systems  { color: rgba(255,255,255,.8); }
++.pillar-subhead--spark    { color: rgba(255,255,255,.8); }
+@@
++/* Pricing visibility (simplify) */
++.detailed-price { display: none; }
++.base-price     { display: inline; }
++.pricing-controls { display: none; } /* hide toggle if unused */
+@@
++/* Smooth scrolling for in-page anchors */
++html { scroll-behavior: smooth; }
+
+--- a/scripts/imc-services.js
++++ b/scripts/imc-services.js
+@@
++// Optional: pricing toggle safety (no-op if control hidden)
++(function(){
++  var toggle = document.querySelector('[data-action="toggle-pricing"]');
++  if (!toggle) return;
++  var basePrices = document.querySelectorAll('.base-price');
++  var detailed = document.querySelectorAll('.detailed-price');
++  toggle.addEventListener('click', function(){
++    var detailedVisible = detailed[0] && getComputedStyle(detailed[0]).display !== 'none';
++    detailed.forEach(function(el){ el.style.display = detailedVisible ? 'none' : 'inline'; });
++    basePrices.forEach(function(el){ el.style.display = detailedVisible ? 'inline' : 'none'; });
++  });
++})();
+
+──────────────────────────────────────────────────────────────────────────────
+SECTION B — MANUAL (Fallback if patch fails)
+
+1) HERO: Replace inner block of .imc-hero__inner with the markup above in Section A.
+2) HOW WE WORK: Add id to the section opening tag:
+   <section id="how-we-work" class="services">
+3) WHAT YOU GET: Insert the three <h3 class="pillar-subhead ..."> headers INSIDE .services-grid to group existing cards.
+4) PROOF: Comment out logo/testimonial rotators (keep Brand Legacy metrics visible).
+5) HEAD: Update <title> and meta og:title/og:description tags per Section A.
+
+──────────────────────────────────────────────────────────────────────────────
+SECTION C — CSS & JS (Copy/Paste if your build doesn’t pick up the diff)
+
+Add to styles/imc-services.css (end of file is fine):
+/* Pillars chips (new) */
+.pillars { display:flex; gap:.5rem; flex-wrap:wrap; margin: 12px 0 20px 0; padding:0; list-style:none; }
+.pillars__chip { padding:6px 12px; border:1px solid rgba(255,255,255,.22); border-radius:999px; font-size:12px; letter-spacing:.04em; }
+.pillars__chip--strategy { border-color: var(--lg-coral); color: var(--lg-coral); }
+.pillars__chip--systems  { border-color: rgba(255,255,255,.28); color: rgba(255,255,255,.9); }
+.pillars__chip--spark    { border-color: rgba(255,255,255,.28); color: rgba(255,255,255,.9); }
+
+/* In-grid mini section headers (new) */
+.pillar-subhead { grid-column: 1 / -1; font-family: 'Playfair Display', serif; font-size: 1.25rem;
+  letter-spacing: -.01em; margin: .25rem 0 -.5rem 0; padding-top: .5rem; color: rgba(255,255,255,.9); }
+.pillar-subhead--strategy { color: var(--lg-coral); }
+.pillar-subhead--systems  { color: rgba(255,255,255,.8); }
+.pillar-subhead--spark    { color: rgba(255,255,255,.8); }
+
+/* Pricing visibility (simplify) */
+.detailed-price { display: none; }
+.base-price     { display: inline; }
+.pricing-controls { display: none; } /* hide toggle if unused */
+
+/* Smooth scrolling for in-page anchors */
+html { scroll-behavior: smooth; }
+
+Add to scripts/imc-services.js (end of file is fine):
+// Optional: pricing toggle safety (no-op if control hidden)
+(function(){
+  var toggle = document.querySelector('[data-action="toggle-pricing"]');
+  if (!toggle) return;
+  var basePrices = document.querySelectorAll('.base-price');
+  var detailed = document.querySelectorAll('.detailed-price');
+  toggle.addEventListener('click', function(){
+    var detailedVisible = detailed[0] && getComputedStyle(detailed[0]).display !== 'none';
+    detailed.forEach(function(el){ el.style.display = detailedVisible ? 'none' : 'inline'; });
+    basePrices.forEach(function(el){ el.style.display = detailedVisible ? 'inline' : 'none'; });
+  });
+})();
+
+──────────────────────────────────────────────────────────────────────────────
+SECTION D — FINAL CHECKLIST (2 minutes)
+[ ] Hero shows photo + Luis name + Strategy/Systems/Spark chips
+[ ] Secondary CTA scrolls to “How We Work”
+[ ] Services cards are grouped by 3 pillar subheads (no component changes)
+[ ] Base prices visible by default, no confusing toggles
+[ ] Only one proof block visible: Brand Legacy metrics
+[ ] <title> and OG tags use “IMC Services” + Strategy/Systems/Spark description
+
+— End —

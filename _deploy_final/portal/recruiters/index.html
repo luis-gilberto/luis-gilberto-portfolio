@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Portal | Strategic Operating System</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@300;400;500;600;700&family=Big+Shoulders+Display:wght@700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* =========================================
+           CORE VARIABLES
+        ========================================= */
+        :root {
+            --coral: #F96F6E;
+            --teal: #2ED3C6;
+            --ink: #0A0A0A;
+            --bg-body: #050505;
+            --surface-1: #0E0E10;
+            --surface-2: #141416;
+            --border: rgba(255,255,255,0.07);
+            --border-bright: rgba(255,255,255,0.13);
+            --text-primary: #F0EDE8;
+            --text-muted: rgba(240,237,232,0.5);
+            --header-height: 72px;
+            --font-strategist: 'Big Shoulders Display', sans-serif;
+            --font-storyteller: 'Playfair Display', serif;
+            --font-orchestrator: 'Inter', sans-serif;
+            --ease-out: cubic-bezier(0.4, 0, 0.2, 1);
+            --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        [data-theme="light"] {
+            --bg-body: #FAF9F6;
+            --surface-1: #F0ECE6;
+            --surface-2: #E8E4DC;
+            --border: rgba(0,0,0,0.07);
+            --border-bright: rgba(0,0,0,0.12);
+            --text-primary: #0E0E0F;
+            --text-muted: rgba(14,14,15,0.5);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html {
+            scroll-behavior: smooth;
+            scroll-snap-type: y mandatory;
+        }
+        body {
+            background: var(--bg-body);
+            color: var(--text-primary);
+            font-family: var(--font-orchestrator);
+            overflow-x: hidden;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        a { text-decoration: none; color: inherit; }
+        img { max-width: 100%; }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* =========================================
+           NAV — exact match to Hub
+        ========================================= */
+        /* Removed hardcoded nav styles for Recruiter View - Using Hook */
+
+        /* =========================================
+           SCROLL REVEAL
+        ========================================= */
+        .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+        .reveal.is-visible { opacity: 1; transform: translateY(0); }
+        .reveal-d1 { transition-delay: 100ms; }
+        .reveal-d2 { transition-delay: 200ms; }
+        .reveal-d3 { transition-delay: 300ms; }
+        .reveal-d4 { transition-delay: 400ms; }
+        .reveal-d5 { transition-delay: 500ms; }
+
+        /* =========================================
+           HERO
+        ========================================= */
+        .portal-hero {
+            position: relative;
+            min-height: 100svh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding-top: var(--header-height);
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+        }
+        .portal-hero-bg {
+            position: absolute; inset: 0;
+            background-image: url('/TheHub/assets/images/Portal_hero_inversed.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.4;
+            z-index: 0;
+        }
+        .portal-hero-bg::after {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(
+                to right,
+                rgba(5, 5, 5, 1) 0%,
+                rgba(5, 5, 5, 0.9) 35%,
+                rgba(5, 5, 5, 0.4) 65%,
+                rgba(5, 5, 5, 0) 95%
+            ) !important;
+        }
+        .portal-hero-content {
+            position: relative; z-index: 1;
+            max-width: 780px;
+            padding: 8rem 2rem 7rem;
+            margin: 0 auto 0 calc((100vw - 1200px) / 2);
+        }
+        @media (max-width: 1240px) { .portal-hero-content { margin: 0 auto; padding: 7rem 2rem 6rem; } }
+
+        .hero-eyebrow {
+            display: inline-flex; align-items: center; gap: 10px;
+            font-family: var(--font-orchestrator);
+            font-size: 10px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase;
+            color: var(--coral); margin-bottom: 2rem;
+            padding: 6px 14px; border: 1px solid rgba(249,111,110,0.25); border-radius: 2px;
+            background: rgba(249,111,110,0.06);
+        }
+        .hero-eyebrow-dot { width: 5px; height: 5px; background: var(--coral); border-radius: 50%; box-shadow: 0 0 8px rgba(249,111,110,0.6); }
+
+        .portal-hero h1 {
+            font-family: var(--font-strategist);
+            font-size: clamp(2.8rem, 6vw, 5.5rem);
+            font-weight: 900;
+            line-height: 0.95;
+            letter-spacing: -0.01em;
+            text-transform: uppercase;
+            color: #fff;
+            margin-bottom: 2rem;
+        }
+        .portal-hero h1 em {
+            font-style: normal;
+            color: var(--coral);
+            white-space: nowrap;
+            display: block;
+        }
+
+        /* ── ADDITION 1: Human anchor ── */
+        .hero-human-anchor {
+            margin-bottom: 1.5rem;
+            padding: 1.125rem 1.5rem;
+            border-left: 2px solid rgba(249,111,110,0.4);
+            background: rgba(249,111,110,0.04);
+            border-radius: 0 4px 4px 0;
+        }
+        .hero-human-anchor p {
+            font-family: var(--font-orchestrator);
+            font-size: 0.9rem;
+            line-height: 1.65;
+            color: rgba(255,255,255,0.62);
+            font-weight: 400;
+        }
+        .hero-human-anchor p strong {
+            color: rgba(255,255,255,0.85);
+            font-weight: 600;
+        }
+        [data-theme="light"] .hero-human-anchor p { color: rgba(14,14,15,0.62); }
+        [data-theme="light"] .hero-human-anchor p strong { color: rgba(14,14,15,0.88); }
+
+        .hero-subhead {
+            font-family: var(--font-orchestrator); /* Changed to Inter per instruction */
+            /* font-style: italic; Removed per instruction (Inter 300) */
+            font-size: clamp(1.1rem, 2vw, 1.4rem);
+            font-weight: 300; /* Changed to 300 per instruction */
+            line-height: 1.55;
+            color: rgba(255,255,255,0.7);
+            max-width: 560px;
+            margin-bottom: 1.75rem;
+        }
+
+        .hero-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 3rem;
+        }
+        .hero-input-line {
+            display: flex; align-items: center; gap: 12px;
+            font-family: var(--font-orchestrator);
+            font-size: 0.875rem; font-weight: 400;
+            color: rgba(255,255,255,0.55);
+        }
+        .hero-input-line::before {
+            content: '';
+            width: 20px; height: 1px;
+            background: var(--coral); opacity: 0.5; flex-shrink: 0;
+        }
+        /* ── terminology note under each input line ── */
+        .hero-input-note {
+            font-family: var(--font-orchestrator);
+            font-size: 0.72rem;
+            color: rgba(255,255,255,0.28);
+            margin-left: 32px;
+            margin-top: -2px;
+            font-style: italic;
+        }
+
+        .hero-ctas { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+
+        .btn-coral {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: var(--coral); color: #fff;
+            font-family: var(--font-orchestrator); font-size: 0.82rem; font-weight: 700;
+            letter-spacing: 0.1em; text-transform: uppercase;
+            padding: 0.875rem 1.75rem; border-radius: 4px;
+            transition: all 0.25s; border: none; cursor: pointer;
+        }
+        .btn-coral:hover { background: #ff5a58; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(249,111,110,0.35); }
+        .btn-coral i { font-size: 0.7rem; transition: transform 0.2s; }
+        .btn-coral:hover i { transform: translateX(3px); }
+
+        .btn-ghost {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: transparent; color: rgba(255,255,255,0.7);
+            font-family: var(--font-orchestrator); font-size: 0.82rem; font-weight: 600;
+            letter-spacing: 0.08em; text-transform: uppercase;
+            padding: 0.875rem 1.5rem; border-radius: 4px;
+            border: 1px solid rgba(255,255,255,0.15);
+            transition: all 0.25s; cursor: pointer;
+        }
+        .btn-ghost:hover { color: #fff; border-color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.04); }
+
+        .hero-scroll-hint {
+            position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+            font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+            color: rgba(255,255,255,0.25); z-index: 1;
+        }
+        .hero-scroll-line {
+            width: 1px; height: 40px;
+            background: linear-gradient(to bottom, rgba(249,111,110,0.5), transparent);
+            animation: scroll-pulse 2s ease-in-out infinite;
+        }
+        @keyframes scroll-pulse { 0%,100%{opacity:0.3;transform:scaleY(1)} 50%{opacity:1;transform:scaleY(1.1)} }
+
+        /* =========================================
+           ADDITION 2: PROOF OF WORK STRIP
+        ========================================= */
+        .proof-strip {
+            background: rgba(255,255,255,0.03); /* Updated per instruction */
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            padding: 2rem 0; /* Updated per instruction */
+        }
+        .proof-strip-inner {
+            max-width: 1200px; margin: 0 auto; padding: 0 2rem;
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+        }
+        .proof-item {
+            padding: 0 1.5rem; /* Adjusted padding since container has padding */
+            border-right: 1px solid var(--border);
+            display: flex; flex-direction: column; gap: 0.375rem;
+        }
+        .proof-item:last-child { border-right: none; }
+        .proof-item-number {
+            font-family: var(--font-strategist);
+            font-size: 1.75rem; font-weight: 900;
+            line-height: 1; letter-spacing: -0.02em;
+            color: var(--text-primary);
+        }
+        .proof-item-number span { color: var(--coral); }
+        .proof-item-label {
+            font-family: var(--font-orchestrator);
+            font-size: 0.78rem; line-height: 1.4;
+            color: var(--text-muted); font-weight: 400;
+        }
+        .proof-item-label strong {
+            display: block;
+            color: var(--text-primary);
+            font-weight: 600; font-size: 0.8rem;
+            margin-bottom: 1px;
+        }
+        @media (max-width: 900px) {
+            .proof-strip-inner { grid-template-columns: 1fr 1fr; }
+            .proof-item:nth-child(2) { border-right: none; }
+            .proof-item:nth-child(3) { border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 1rem; }
+            .proof-item:nth-child(4) { border-top: 1px solid var(--border); border-right: none; padding-top: 1rem; margin-top: 1rem; }
+        }
+        @media (max-width: 600px) {
+            .proof-strip-inner { grid-template-columns: 1fr; }
+            .proof-item { border-right: none; border-top: 1px solid var(--border); padding: 1rem 0; margin: 0; }
+            .proof-item:first-child { border-top: none; }
+        }
+
+        /* =========================================
+           INSIDE THE SYSTEM - PRODUCT REVEAL
+        ========================================= */
+        .inside-system-section { background: var(--bg-body); overflow: hidden; }
+
+        .product-reveal-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 4rem; align-items: center; margin-bottom: 8rem;
+        }
+        .product-reveal-grid:last-of-type { margin-bottom: 0; }
+
+        .screenshot-frame {
+            position: relative;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: #050505;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 40px rgba(46,211,198,0.03);
+            transition: all 0.5s var(--ease-spring);
+            overflow: hidden;
+            max-height: 60vh;
+        }
+        .screenshot-frame:hover {
+            transform: translateY(-10px) scale(1.01);
+            border-color: rgba(46, 211, 198, 0.3);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 50px rgba(46,211,198,0.1);
+        }
+        .screenshot-frame img { width: 100%; display: block; }
+
+        .assistant-placeholder {
+            aspect-ratio: 16/10;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, #0A0A0A 0%, #0E0E10 100%);
+            color: var(--teal); gap: 1rem;
+        }
+        .assistant-placeholder i { font-size: 2.5rem; filter: drop-shadow(0 0 10px var(--teal)); }
+
+        .roadmap-center-reveal {
+            text-align: center; max-width: 900px; margin: 0 auto 8rem;
+        }
+        .roadmap-frame {
+            max-width: 700px; margin: 0 auto 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(255,255,255,0.02);
+            border-radius: 12px; padding: 2rem;
+            box-shadow: 0 0 40px rgba(249,111,110,0.05);
+        }
+        .screenshot-caption {
+            font-family: var(--font-orchestrator);
+            font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+            color: var(--text-muted); margin-top: 1.5rem; display: block;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background: rgba(5, 5, 5, 0.4);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            display: inline-block;
+        }
+        @media (max-width: 900px) {
+            .product-reveal-grid { grid-template-columns: 1fr; gap: 3rem; text-align: center; }
+            .product-reveal-grid > div:nth-child(1) { order: 2; }
+            .product-reveal-grid > div:nth-child(2) { order: 1; }
+        }
+
+        /* =========================================
+           SECTION BASE
+        ========================================= */
+        .portal-section {
+            padding: 8rem 0;
+            position: relative;
+            min-height: 100svh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            scroll-snap-align: start;
+            scroll-snap-stop: normal; /* normal allows scrolling through to footer */
+        }
+        .portal-section + .portal-section { border-top: 1px solid var(--border); }
+
+        .section-eyebrow {
+            display: inline-block;
+            font-family: var(--font-orchestrator);
+            font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+            color: var(--coral); margin-bottom: 1.25rem;
+            padding: 5px 12px; border: 1px solid rgba(249,111,110,0.2); border-radius: 2px;
+            background: rgba(249,111,110,0.05);
+        }
+
+        .section-h2 {
+            font-family: var(--font-strategist);
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 900;
+            text-transform: uppercase;
+            line-height: 0.95;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+        }
+        .section-h2 em { font-style: normal; color: var(--coral); }
+
+        .section-body {
+            font-size: 1.0625rem; line-height: 1.75;
+            color: var(--text-muted); max-width: 580px;
+        }
+
+        /* =========================================
+           SECTION 2 — PROBLEM
+        ========================================= */
+        .problem-section {
+            background: var(--surface-1);
+        }
+        .problem-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            align-items: center;
+        }
+        .problem-statements {
+            display: flex; flex-direction: column; gap: 0;
+        }
+        .problem-item {
+            padding: 1.5rem 0;
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: flex-start; gap: 1rem;
+        }
+        .problem-item:first-child { padding-top: 0; }
+        .problem-icon {
+            width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(249,111,110,0.08); color: var(--coral); font-size: 0.8rem;
+            margin-top: 2px;
+        }
+        .problem-text {
+            font-family: var(--font-orchestrator);
+            font-size: 0.9375rem; line-height: 1.6;
+            color: var(--text-muted);
+        }
+        .problem-text strong {
+            display: block; color: var(--text-primary);
+            font-weight: 600; margin-bottom: 2px;
+        }
+
+        /* =========================================
+           SECTION 3 — BREAKTHROUGH
+        ========================================= */
+        .breakthrough-section { text-align: center; }
+        .breakthrough-section .section-body { margin: 0 auto 3rem; text-align: left; max-width: 680px; }
+
+        .breakthrough-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 4rem;
+        }
+        .stat-cell {
+            background: var(--surface-1);
+            padding: 2.5rem 2rem;
+            text-align: center;
+            transition: background 0.2s;
+        }
+        .stat-cell:hover { background: var(--surface-2); }
+        .stat-number {
+            font-family: var(--font-strategist);
+            font-size: 3.5rem; font-weight: 900;
+            line-height: 1; color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+        .stat-number span { color: var(--coral); }
+        .stat-label {
+            font-size: 0.8rem; font-weight: 500; letter-spacing: 0.08em;
+            text-transform: uppercase; color: var(--text-muted); margin-top: 0.5rem;
+        }
+
+        /* =========================================
+           SECTION 4 — SYSTEM DIAGRAM
+        ========================================= */
+        .system-section { background: var(--surface-1); }
+        .system-diagram-wrap {
+            margin-top: 4rem;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            background: #050505 !important;
+            border: 1px solid rgba(255, 255, 255, 0.03) !important;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8),
+                        0 0 40px rgba(249, 111, 110, 0.05) !important;
+        }
+        .system-diagram-wrap img {
+            width: 100%; display: block;
+            filter: contrast(1.05) brightness(1.1);
+            transform: scale(1);
+            transition: transform 0.8s var(--ease-spring);
+        }
+        .system-diagram-wrap:hover img { transform: scale(1.03); }
+        .system-diagram-caption {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            padding: 1.5rem 2rem;
+            background: linear-gradient(to top, rgba(5,5,5,0.9), transparent);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .system-diagram-caption span {
+            font-family: var(--font-orchestrator);
+            font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase;
+            color: rgba(255,255,255,0.45);
+        }
+        .system-diagram-caption .teal { color: var(--teal); }
+
+        /* =========================================
+           ADDITION 3: PORTFOLIO BRIDGE
+        ========================================= */
+        .portfolio-bridge {
+            margin-top: 3.5rem;
+            padding: 2rem 2.25rem;
+            background: var(--bg-body);
+            border: 1px solid var(--border);
+            border-top: 2px solid var(--coral);
+            border-radius: 0 0 8px 8px;
+        }
+        [data-theme="light"] .portfolio-bridge { background: var(--surface-2); }
+        .portfolio-bridge-intro {
+            font-family: var(--font-orchestrator);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 1.25rem;
+        }
+        .portfolio-bridge-intro strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        .portfolio-bridge-links {
+            display: flex; flex-wrap: wrap; gap: 0.75rem;
+        }
+        .bridge-case-link {
+            display: inline-flex; align-items: center; gap: 8px;
+            font-family: var(--font-orchestrator);
+            font-size: 0.8rem; font-weight: 600;
+            letter-spacing: 0.06em; text-transform: uppercase;
+            color: rgba(255,255,255,0.6);
+            padding: 0.625rem 1rem;
+            border: 1px solid var(--border-bright);
+            border-radius: 4px;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        [data-theme="light"] .bridge-case-link { color: rgba(14,14,15,0.6); }
+        .bridge-case-link:hover {
+            color: var(--coral);
+            border-color: rgba(249,111,110,0.4);
+            background: rgba(249,111,110,0.05);
+        }
+        .bridge-case-link i { font-size: 0.65rem; transition: transform 0.2s; }
+        .bridge-case-link:hover i { transform: translateX(3px); }
+
+        /* =========================================
+           SECTION 5 — PORTAL LAYERS
+        ========================================= */
+        .layers-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-top: 4rem;
+        }
+        .layer-cell {
+            background: var(--bg-body);
+            padding: 2.5rem 2rem 2rem;
+            position: relative;
+            transition: background 0.25s;
+        }
+        [data-theme="light"] .layer-cell { background: var(--surface-1); }
+        .layer-cell:hover { background: var(--surface-1); }
+        [data-theme="light"] .layer-cell:hover { background: var(--surface-2); }
+        .layer-accent {
+            width: 32px; height: 3px; border-radius: 2px; margin-bottom: 1.5rem;
+        }
+        .layer-num {
+            position: absolute; top: 1.5rem; right: 1.5rem;
+            font-family: var(--font-strategist);
+            font-size: 3.5rem; font-weight: 900; line-height: 1;
+            color: rgba(255,255,255,0.04); letter-spacing: -0.02em;
+            user-select: none;
+        }
+        [data-theme="light"] .layer-num { color: rgba(0,0,0,0.04); }
+        .layer-title {
+            font-family: var(--font-strategist);
+            font-size: 1.375rem; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 0.02em; color: var(--text-primary); margin-bottom: 0.625rem;
+        }
+        .layer-sub {
+            font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+            color: var(--text-muted); margin-bottom: 1rem;
+        }
+        .layer-desc {
+            font-size: 0.9375rem; line-height: 1.65; color: var(--text-muted);
+        }
+
+        /* =========================================
+           SECTION 6 — WHAT IT ENABLES
+        ========================================= */
+        .enables-section { background: var(--surface-1); }
+        .enables-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-top: 4rem;
+        }
+        .enable-item {
+            display: flex; align-items: flex-start; gap: 1rem;
+            padding: 1.75rem;
+            background: var(--bg-body); border: 1px solid var(--border);
+            border-radius: 12px; transition: all 0.25s;
+        }
+        [data-theme="light"] .enable-item { background: var(--surface-2); }
+        .enable-item:hover { border-color: rgba(249,111,110,0.3); transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.2); }
+        .enable-dot {
+            width: 8px; height: 8px; background: var(--coral); border-radius: 50%;
+            flex-shrink: 0; margin-top: 6px; box-shadow: 0 0 8px rgba(249,111,110,0.4);
+        }
+        .enable-text {
+            font-size: 1rem; line-height: 1.6; color: var(--text-primary); font-weight: 400;
+        }
+
+        /* =========================================
+           SECTION 7 — PRODUCT EXPERIENCE
+        ========================================= */
+        .product-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            align-items: center;
+        }
+        .product-items {
+            display: flex; flex-direction: column; gap: 1px;
+            border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+        }
+        .product-item {
+            padding: 1.5rem 1.75rem;
+            background: var(--surface-1);
+            border-bottom: 1px solid var(--border);
+            transition: background 0.2s;
+            display: flex; align-items: center; gap: 1rem;
+        }
+        .product-item:last-child { border-bottom: none; }
+        .product-item:hover { background: var(--surface-2); }
+        .product-item-icon {
+            width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(249,111,110,0.08); color: var(--coral); font-size: 0.9rem;
+        }
+        .product-item-text strong {
+            display: block; font-family: var(--font-orchestrator);
+            font-size: 0.9375rem; font-weight: 600; color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+        .product-item-text span {
+            font-size: 0.8rem; color: var(--text-muted);
+        }
+
+        .scenario-card {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1.5rem; border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.4s var(--ease-spring);
+            cursor: default; min-height: 160px;
+            display: flex; flex-direction: column;
+        }
+        .scenario-card .card-title {
+            font-family: var(--font-strategist);
+            font-weight: 800; text-transform: uppercase;
+            font-size: 1.1rem; margin-bottom: 0.5rem;
+        }
+        .scenario-card .card-reveal {
+            font-size: 0.8rem; line-height: 1.4;
+            opacity: 0; transform: translateY(10px);
+            transition: all 0.3s ease; margin-top: auto;
+        }
+        .scenario-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateY(-8px);
+            border-color: var(--teal);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        .scenario-card.highlight-coral:hover { border-color: var(--coral); }
+        .scenario-card:hover .card-reveal { opacity: 0.7; transform: translateY(0); }
+
+        .workspace-section .product-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.4fr;
+            gap: 4rem;
+        }
+        .workspace-visual-container { position: relative; padding: 1rem; }
+        .workspace-img {
+            width: 100%; height: auto;
+            filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.6));
+            border-radius: 12px;
+            transition: transform 0.6s var(--ease-spring);
+        }
+        .workspace-visual-container:hover .workspace-img { transform: translateY(-10px) scale(1.02); }
+
+        @media (max-width: 900px) {
+            .workspace-section .product-grid { grid-template-columns: 1fr; text-align: center; }
+            .product-item { text-align: left; }
+        }
+
+        .portal-pullquote {
+            width: 100%; padding: 5rem 0 4rem;
+            display: flex; align-items: center; justify-content: center;
+            position: relative;
+        }
+        .portal-pullquote::before, .portal-pullquote::after {
+            content: ''; position: absolute; left: 50%; transform: translateX(-50%);
+            width: min(640px, 80vw); height: 1px;
+        }
+        .portal-pullquote::before { top: 0; background: linear-gradient(to right, transparent, rgba(255,255,255,0.08), transparent); }
+        .portal-pullquote::after  { bottom: 0; background: linear-gradient(to right, transparent, rgba(255,255,255,0.08), transparent); }
+        [data-theme="light"] .portal-pullquote::before, [data-theme="light"] .portal-pullquote::after { background: linear-gradient(to right, transparent, rgba(0,0,0,0.08), transparent); }
+        .portal-pullquote-inner { text-align: center; max-width: 680px; padding: 0 2rem; }
+        .portal-pullquote-line {
+            font-family: var(--font-storyteller); font-style: italic;
+            font-size: clamp(1.5rem, 3.5vw, 2.25rem); font-weight: 400; line-height: 1.3;
+            color: rgba(255,255,255,0.72); margin-bottom: 0;
+        }
+        [data-theme="light"] .portal-pullquote-line { color: rgba(0,0,0,0.6); }
+        .portal-pullquote-coral { color: var(--coral) !important; }
+
+        /* =========================================
+           SECTION 8 — CTA
+        ========================================= */
+        .cta-section {
+            text-align: center; padding: 9rem 0;
+            position: relative; overflow: hidden;
+            /* Terminal Dock Alignment */
+            scroll-snap-align: start;
+            scroll-snap-stop: normal;
+            min-height: auto;
+        }
+        .cta-section::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(ellipse at center, rgba(249,111,110,0.06) 0%, transparent 65%);
+            pointer-events: none;
+        }
+        .cta-section .section-h2 { margin-bottom: 1rem; }
+        .cta-lead {
+            font-family: var(--font-storyteller); font-style: italic;
+            font-size: clamp(1.1rem, 2vw, 1.35rem);
+            color: var(--text-muted); margin-bottom: 0.5rem; line-height: 1.5;
+        }
+        .cta-sub { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 3rem; }
+        .cta-actions { display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+        .btn-coral-lg {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: var(--coral); color: #fff;
+            font-family: var(--font-orchestrator); font-size: 0.88rem; font-weight: 700;
+            letter-spacing: 0.1em; text-transform: uppercase;
+            padding: 1rem 2.25rem; border-radius: 4px; transition: all 0.25s;
+        }
+        .btn-coral-lg:hover { background: #ff5a58; transform: translateY(-2px); box-shadow: 0 12px 32px rgba(249,111,110,0.4); }
+        .btn-coral-lg i { font-size: 0.75rem; transition: transform 0.2s; }
+        .btn-coral-lg:hover i { transform: translateX(3px); }
+
+        /* =========================================
+           FOOTER
+        ========================================= */
+        /* Adjusted footer styles for cleaner integration */
+        .site-footer { background: #030303; border-top: 1px solid rgba(255,255,255,0.05); padding: 5rem 0 0; color: #FFF; scroll-snap-align: end; }
+        .footer-grid { max-width: 1400px; margin: 0 auto; padding: 0 2rem 4rem; display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 3rem; }
+        .footer-heading { font-family: var(--font-strategist); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; color: #444; margin-bottom: 1.25rem; font-weight: 700; }
+        .footer-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.625rem; }
+        .footer-list a { font-size: 0.875rem; color: rgba(255,255,255,0.4); transition: color 0.2s; }
+        .footer-list a:hover { color: #FFF; }
+        .footer-legal-bar { border-top: 1px solid rgba(255,255,255,0.04); padding: 1.5rem 2rem; text-align: center; }
+        @media (max-width: 1024px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: 2.5rem; } .footer-grid > div:first-child { grid-column: 1 / -1; } }
+        @media (max-width: 767px) { .footer-grid { grid-template-columns: 1fr; gap: 2rem; } }
+
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+        @media (max-width: 900px) {
+            .problem-grid, .product-grid { grid-template-columns: 1fr; gap: 3rem; }
+            .breakthrough-stats { grid-template-columns: 1fr; }
+            .layers-grid { grid-template-columns: 1fr; }
+            .enables-list { grid-template-columns: 1fr; }
+            .portal-section { padding: 5rem 0; }
+            .cta-section { padding: 6rem 0; }
+
+            /* Fail-Safe Mobile Arrow Fix */
+            .how-it-works-grid {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 1rem !important;
+            }
+            .step-arrow { 
+                display: flex !important; 
+                justify-content: center !important; 
+                padding: 1.5rem 0 !important; 
+                width: 100% !important; 
+            } 
+            
+            .step-arrow i { 
+                /* Reset everything to ensure it points exactly where the icon intends */ 
+                transform: none !important; 
+                color: var(--coral) !important; 
+                opacity: 0.5; 
+                font-size: 1.25rem; 
+            }
+            
+            /* Toggle icons based on viewport */
+            .desktop-arrow { display: none !important; }
+            .mobile-arrow { display: inline-block !important; }
+        }
+
+        @media (max-width: 768px) {
+            html {
+                scroll-snap-type: y proximity;
+            }
+        }
+
+        
+        /* Base desktop state */
+        .mobile-arrow { display: none !important; }
+        .desktop-arrow { display: inline-block !important; }
+
+        @media (max-width: 600px) {
+            .container { padding: 0 1.25rem; }
+            .portal-hero-content { padding: 5rem 1.25rem 4rem; }
+            .hero-ctas { flex-direction: column; align-items: flex-start; }
+        }
+
+        /* =========================================
+           TERMINAL EDITORIAL MODULE
+        ========================================= */
+        .editorial-moment {
+            position: relative; width: 100%; min-height: 100svh;
+            margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            overflow: hidden; background-color: #050505;
+            background-image:
+                linear-gradient(to bottom, #050505 0%, transparent 15%, transparent 85%, #050505 100%),
+                url('/TheHub/assets/images/pull-quotes_bg.png');
+            background-size: cover; background-position: center; background-attachment: fixed;
+            scroll-snap-align: start;
+            scroll-snap-stop: normal; /* normal = snaps on approach but doesn't trap scroll */
+        }
+        .editorial-moment::before {
+            content: ""; position: absolute; inset: 0;
+            background: rgba(5, 5, 5, 0.5) !important; z-index: 1;
+        }
+        [data-theme="light"] .editorial-moment {
+            background-image:
+                linear-gradient(to bottom, #FAF9F6 0%, transparent 15%, transparent 85%, #FAF9F6 100%),
+                url('/TheHub/assets/images/pull-quotes_bg.png');
+        }
+        .editorial-moment .quote-container {
+            position: relative; padding: 60px 100px;
+            max-width: 95vw; text-align: center;
+            background: rgba(5, 5, 5, 0.6); backdrop-filter: blur(4px); z-index: 2;
+        }
+        [data-theme="light"] .editorial-moment .quote-container { background: rgba(250, 249, 246, 0.55); }
+        .quote-container::before, .quote-container::after {
+            content: ""; position: absolute; width: 40px; height: 40px;
+            border-color: rgba(255, 255, 255, 0.4) !important; border-style: solid; pointer-events: none;
+        }
+        .quote-container::before { top: 0; left: 0; border-width: 2px 0 0 2px; }
+        .quote-container::after  { bottom: 0; right: 0; border-width: 0 2px 2px 0; }
+        .editorial-line {
+            font-family: 'Big Shoulders Display', sans-serif; font-weight: 800;
+            text-transform: uppercase; display: block; letter-spacing: 0.1em;
+            line-height: 1.1; white-space: nowrap !important; text-overflow: ellipsis;
+        }
+        .editorial-line.primary {
+            font-size: clamp(1.2rem, 3.5vw, 2.8rem) !important; color: #FFFFFF !important;
+            margin-bottom: 10px; opacity: 0; transform: translateY(10px);
+            transition: all 0.8s ease-out;
+        }
+        [data-theme="light"] .editorial-line.primary { color: #111 !important; }
+        .editorial-line.secondary {
+            font-size: clamp(1.1rem, 3vw, 2.5rem) !important; color: var(--coral) !important;
+            border-right: none !important; padding-right: 15px !important;
+            white-space: nowrap; overflow: hidden; width: 0;
+            display: inline-block !important; vertical-align: bottom; position: relative;
+        }
+        .editorial-line.secondary::after {
+            content: "_" !important; display: inline-block; margin-left: 8px;
+            color: var(--coral); animation: blink-underscore 0.8s step-end infinite !important;
+        }
+        @keyframes blink-underscore { 50% { opacity: 0; } }
+        .editorial-moment.is-visible .editorial-line.primary { opacity: 1; transform: translateY(0); }
+        .editorial-moment.is-visible .editorial-line.secondary {
+            animation: em-typing 2.5s steps(40, end) forwards; animation-delay: 1s;
+        }
+        @keyframes em-typing { from { width: 0; } to { width: 100%; } }
+        @media (max-width: 767px) {
+            .editorial-moment { min-height: 300px; background-attachment: scroll; }
+            .editorial-moment .quote-container { padding: 40px 28px; }
+            .editorial-line.secondary { white-space: normal; width: auto !important; border-right: none; }
+            .editorial-moment.is-visible .editorial-line.secondary { animation: em-fade-in 0.8s ease-out 1s forwards; }
+        }
+        @keyframes em-fade-in { from { opacity: 0; } to { opacity: 1; } }
+        /* =========================================
+           CASE STUDY — ELEVATED TIMELINE
+        ========================================= */
+        .case-study-section {
+            background: var(--surface-1);
+            position: relative;
+            overflow: hidden;
+        }
+        .case-study-section::before {
+            content: '';
+            position: absolute;
+            top: -200px; right: -200px;
+            width: 600px; height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(249,111,110,0.05) 0%, transparent 65%);
+            pointer-events: none;
+        }
+
+        .case-study-header {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 0 4rem;
+            align-items: start;
+            margin-bottom: 5rem;
+        }
+        .case-study-label {
+            display: flex; flex-direction: column; gap: 0.75rem;
+            padding-top: 0.25rem;
+        }
+        .case-study-tag {
+            font-family: var(--font-orchestrator);
+            font-size: 0.72rem; font-weight: 600;
+            letter-spacing: 0.12em; text-transform: uppercase;
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border: 1px solid var(--border-bright);
+            border-radius: 2px;
+            width: fit-content;
+        }
+
+        /* Timeline */
+        .case-timeline {
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0;
+            margin-bottom: 4rem;
+        }
+        .timeline-track {
+            position: absolute;
+            top: 23px; left: 10%; right: 10%;
+            height: 1px;
+            background: linear-gradient(to right, var(--teal), #C9A84C, #A78BFF, var(--coral), var(--coral));
+            opacity: 0.3;
+            z-index: 0;
+        }
+        .timeline-step {
+            display: flex; flex-direction: column; align-items: center;
+            text-align: center; padding: 0 0.75rem;
+            position: relative; z-index: 1;
+        }
+        .timeline-node {
+            width: 48px; height: 48px;
+            border-radius: 50%; border: 1px solid;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; margin-bottom: 1.5rem;
+            transition: transform 0.3s var(--ease-spring), box-shadow 0.3s ease;
+            flex-shrink: 0;
+        }
+        .timeline-step:hover .timeline-node {
+            transform: scale(1.15) translateY(-4px);
+        }
+        .timeline-content { display: flex; flex-direction: column; gap: 0.375rem; }
+        .timeline-step-label {
+            font-family: var(--font-orchestrator);
+            font-size: 0.68rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+        }
+        .timeline-step-title {
+            font-family: var(--font-strategist);
+            font-size: 1.25rem; font-weight: 900; text-transform: uppercase;
+            letter-spacing: 0.02em; color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        .timeline-step-body {
+            font-size: 0.8rem; line-height: 1.55; color: var(--text-muted);
+        }
+
+        /* Outcome bar */
+        .case-outcomes {
+            display: flex; align-items: center;
+            gap: 2rem;
+            padding: 2rem 2.5rem;
+            background: var(--bg-body);
+            border: 1px solid var(--border);
+            border-top: 2px solid var(--coral);
+            border-radius: 0 0 12px 12px;
+        }
+        [data-theme="light"] .case-outcomes { background: var(--surface-2); }
+        .outcome-label { flex-shrink: 0; }
+        .outcome-stats { display: flex; align-items: center; gap: 2rem; flex-wrap: wrap; flex: 1; }
+        .outcome-divider { width: 1px; height: 36px; background: var(--border); flex-shrink: 0; }
+        .outcome-stat { display: flex; flex-direction: column; gap: 0.2rem; }
+        .outcome-number {
+            font-family: var(--font-strategist);
+            font-size: 1.6rem; font-weight: 900; line-height: 1;
+            color: var(--text-primary); letter-spacing: -0.02em;
+        }
+        .outcome-number em {
+            font-style: normal;
+            font-size: 0.75rem; font-weight: 700;
+            letter-spacing: 0.08em; text-transform: uppercase;
+            color: var(--coral); margin-left: 4px;
+        }
+        .outcome-desc {
+            font-size: 0.75rem; color: var(--text-muted); line-height: 1.3;
+        }
+
+        @media (max-width: 900px) {
+            .case-study-header { grid-template-columns: 1fr; gap: 2rem; }
+            .case-timeline { grid-template-columns: 1fr; gap: 2rem; }
+            .timeline-track { display: none; }
+            .timeline-step { flex-direction: row; text-align: left; gap: 1.25rem; align-items: flex-start; }
+            .timeline-node { flex-shrink: 0; margin-bottom: 0; }
+            .case-outcomes { flex-direction: column; align-items: flex-start; }
+            .outcome-stats { gap: 1.5rem; }
+            .outcome-divider { width: 100%; height: 1px; }
+        }
+
+        /* =========================================
+           HOW IT WORKS — GRID & ARROWS
+        ========================================= */
+        .how-it-works-grid {
+            display: grid;
+            grid-template-columns: 1fr 60px 1fr 60px 1fr;
+            align-items: center;
+            gap: 0;
+            margin-bottom: 5rem;
+        }
+
+        .step-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            color: rgba(249, 111, 110, 0.45);
+            font-size: 1.25rem;
+        }
+
+        @media (max-width: 900px) {
+            .how-it-works-grid {
+                grid-template-columns: 1fr;
+                max-width: 420px;
+                margin: 0 auto 3rem;
+            }
+            .step-arrow {
+                width: 100%;
+                transform: rotate(90deg);
+                padding: 1rem 0;
+                text-align: center;
+                justify-content: center;
+            }
+        }
+
+        /* =========================================
+           MOBILE SCROLL SNAP SAFEGUARD
+           ========================================= */
+        @media (max-width: 480px) {
+            html {
+                scroll-snap-type: y proximity;
+            }
+        }
+
+        .proof-strip {
+            scroll-snap-align: start;
+            scroll-snap-stop: normal;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- ══ NAV HOOK ══ -->
+<div id="site-nav" data-active="portal" data-base="../../"></div>
+
+<main>
+
+    <!-- ══ S1: HERO ══ -->
+    <section class="portal-hero">
+        <div class="portal-hero-bg"></div>
+        <div class="portal-hero-content">
+            <div class="hero-eyebrow reveal">
+                <span class="hero-eyebrow-dot"></span>
+                The Portal
+            </div>
+            <h1 class="reveal reveal-d1" style="font-family:'Big Shoulders Display',sans-serif;font-weight:900;">THE OPERATING MODEL<br>FOR WORK THAT <em>SHIPS</em></h1>
+
+            <p class="hero-subhead reveal reveal-d3" style="line-height: 1.6; max-width: 520px;"> 
+                <span style="font-family:'Big Shoulders Display',sans-serif; font-weight:800; font-size:1.1em; letter-spacing:0.04em; display:inline-flex; align-items:center; vertical-align:middle; margin-top:-2px;"> 
+                  <span style="color:var(--coral);">LG</span> 
+                  <span style="color:rgba(255,255,255,0.3); margin:0 6px; font-weight:300;">/</span> 
+                  <span style="color:#FFFFFF;">PORTAL</span> 
+                </span> 
+                <span style="font-family:'Playfair Display',serif; font-style:italic; font-weight:400; margin-left:6px; opacity:0.85;"> 
+                  deconstructs strategy into coordinated leadership alignment and creative execution. 
+                </span> 
+            </p> 
+            
+            <div class="hero-ctas reveal reveal-d4">
+                <a href="/myexperience.html" class="btn-coral">View Leadership Experience <i class="fas fa-arrow-right"></i></a>
+                <a href="#example" class="btn-ghost">See the work behind the system</a>
+            </div>
+        </div>
+        <div class="hero-scroll-hint">
+            <div class="hero-scroll-line"></div>
+            <span>Scroll</span>
+        </div>
+    </section>
+
+    <!-- ══ ADDITION 2: PROOF OF WORK STRIP ══ -->
+    <div class="proof-strip reveal">
+        <div class="proof-strip-inner">
+            <div class="proof-item">
+                <div class="proof-item-number">15<span>+</span> Years</div>
+                <div class="proof-item-label">
+                    Integrated Marketing Leadership
+                </div>
+            </div>
+            <div class="proof-item">
+                <div class="proof-item-number" style="font-size:1.5rem;">Microsoft Heritage</div>
+                <div class="proof-item-label">
+                    Launching Surface, Edge, and AI
+                </div>
+            </div>
+            <div class="proof-item">
+                <div class="proof-item-number">Strategy + Build</div>
+                <div class="proof-item-label">
+                    Bridging product and execution
+                </div>
+            </div>
+            <div class="proof-item">
+                <div class="proof-item-number">Team Alignment</div>
+                <div class="proof-item-label">
+                    Leading cross-functional excellence
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ S2: PROBLEM ══ -->
+    <section class="portal-section problem-section">
+        <div class="container">
+            <div class="problem-grid">
+                <div>
+                    <span class="section-eyebrow reveal">Organizational Drift</span>
+                    <h2 class="section-h2 reveal reveal-d1">The cost of the<br>Thinking/Doing gap</h2>
+                    <p class="section-body reveal reveal-d2">Complex marketing often breaks at the handoff between strategy and execution. I build frameworks to ensure clarity is never lost in transit.</p>
+                </div>
+                <div class="problem-statements">
+                    <div class="problem-item reveal reveal-d1">
+                        <div class="problem-icon"><i class="fas fa-comments"></i></div>
+                        <div class="problem-text"><strong>Decisions happen in meetings.</strong>Work happens somewhere else. The connection between them disappears.</div>
+                    </div>
+                    <div class="problem-item reveal reveal-d2">
+                        <div class="problem-icon"><i class="fas fa-arrows-split-up-and-left"></i></div>
+                        <div class="problem-text"><strong>Strategy becomes fragmented.</strong>Every team operates from a different version of the plan.</div>
+                    </div>
+                    <div class="problem-item reveal reveal-d3">
+                        <div class="problem-icon"><i class="fas fa-hourglass-half"></i></div>
+                        <div class="problem-text"><strong>Alignment fades. Execution stalls.</strong>The work slows down: not from lack of effort, but lack of continuity.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══ PULLQUOTE 1 ══ -->
+    <section class="editorial-moment" id="editorial-01">
+        <div class="quote-container">
+            <span class="editorial-line primary">THE GAP BETWEEN THINKING AND DOING</span>
+            <span class="editorial-line secondary">IS WHERE MOST STRATEGIES DIE</span>
+        </div>
+    </section>
+
+    <!-- ══ S3: THE ENGINE (moved up — problem → system) ══ -->
+    <section class="portal-section system-section">
+        <div class="container">
+            <span class="section-eyebrow reveal">The System</span>
+            <h2 class="section-h2 reveal reveal-d1">The Engine behind<br>the Portal</h2>
+            <p class="section-body reveal reveal-d2">This is the operating environment I built to keep strategy connected to execution. <strong style="color:var(--text-primary);">StrategyIQ</strong> sits at its core: diagnosing where strategy is strong, where it's fragile, and what needs to move first.</p>
+            <div class="system-diagram-wrap reveal reveal-d2">
+                <img src="/assets/images/portal/StrategyIQ_Hero_3D.png" alt="StrategyIQ Engine 3D Interface - The core operating environment of The Portal" onerror="this.onerror=null; this.src='/TheHub/assets/images/StrategyIQ_Hero_3D.png';">
+                <div class="system-diagram-caption">
+                    <span>Portal Interface v1.0</span>
+                    <span class="teal">StrategyIQ Engine → <strong style="color:#fff;">Active Environment</strong></span>
+                </div>
+            </div>
+
+            <!-- ══ ADDITION 3: PORTFOLIO BRIDGE ══ -->
+            <div class="portfolio-bridge reveal reveal-d3">
+                <p class="portfolio-bridge-intro">
+                    <strong>This system isn't theoretical.</strong> It reflects how I've structured and led real campaigns and product launches: from diagnosing strategic gaps to aligning leadership and activating execution at scale.
+                </p>
+                <div class="portfolio-bridge-links">
+                    <a href="/work/edge-ucational-blueprint.html" class="bridge-case-link">
+                        Edge-ucational Series <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <a href="/work/case-study-family-safety.html" class="bridge-case-link">
+                        Family Safety App Launch <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <a href="/myexperience.html" class="bridge-case-link">
+                        View All Case Studies <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══ HOW IT WORKS: 3-STEP FLOW ══ -->
+    <section class="portal-section inside-system-section">
+        <div class="container">
+
+            <div style="text-align:center; margin-bottom: 4rem;">
+                <span class="section-eyebrow reveal">How It Works</span>
+                <h2 class="section-h2 reveal reveal-d1">Three steps.<br>One continuous <em>flow</em></h2>
+                <p class="section-body reveal reveal-d2" style="margin: 0 auto;">The Portal doesn't just document strategy: it operationalizes it across three connected phases.</p>
+            </div>
+
+            <!-- 3-step visual flow -->
+            <div class="how-it-works-grid reveal reveal-d2">
+                <!-- Step 1 -->
+                <div style="padding:2rem; background:var(--surface-1); border:1px solid var(--border); border-radius:12px; text-align:center;">
+                    <div style="width:48px;height:48px;border-radius:50%;background:rgba(46,211,198,0.1);border:1px solid rgba(46,211,198,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;color:var(--teal);font-size:1.1rem;">
+                        <i class="fas fa-magnifying-glass-chart"></i>
+                    </div>
+                    <div style="font-family:var(--font-strategist);font-size:1.5rem;font-weight:900;text-transform:uppercase;letter-spacing:0.02em;margin-bottom:0.5rem;color:var(--text-primary);">Diagnose</div>
+                    <p style="font-size:0.875rem;line-height:1.6;color:var(--text-muted);">StrategyIQ surfaces where strategy is strong, where it's fragile, and what needs to move first.</p>
+                </div>
+                <!-- Arrow 1 -->
+                <div class="step-arrow">
+                    <i class="fas fa-arrow-right desktop-arrow"></i>
+                    <i class="fas fa-arrow-down mobile-arrow"></i>
+                </div>
+                <!-- Step 2 -->
+                <div style="padding:2rem; background:var(--surface-1); border:1px solid var(--border); border-radius:12px; text-align:center;">
+                    <div style="width:48px;height:48px;border-radius:50%;background:rgba(249,111,110,0.1);border:1px solid rgba(249,111,110,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;color:var(--coral);font-size:1.1rem;">
+                        <i class="fas fa-people-arrows"></i>
+                    </div>
+                    <div style="font-family:var(--font-strategist);font-size:1.5rem;font-weight:900;text-transform:uppercase;letter-spacing:0.02em;margin-bottom:0.5rem;color:var(--text-primary);">Align</div>
+                    <p style="font-size:0.875rem;line-height:1.6;color:var(--text-muted);">Advisory frameworks bring stakeholders into one shared view: decisions visible, context preserved.</p>
+                </div>
+                <!-- Arrow 2 -->
+                <div class="step-arrow">
+                    <i class="fas fa-arrow-right desktop-arrow"></i>
+                    <i class="fas fa-arrow-down mobile-arrow"></i>
+                </div>
+                <!-- Step 3 -->
+                <div style="padding:2rem; background:var(--surface-1); border:1px solid var(--border); border-radius:12px; text-align:center; border-color:rgba(249,111,110,0.25);">
+                    <div style="width:48px;height:48px;border-radius:50%;background:rgba(249,111,110,0.12);border:1px solid rgba(249,111,110,0.4);display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;color:var(--coral);font-size:1.1rem;">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <div style="font-family:var(--font-strategist);font-size:1.5rem;font-weight:900;text-transform:uppercase;letter-spacing:0.02em;margin-bottom:0.5rem;color:var(--coral);">Execute</div>
+                    <p style="font-size:0.875rem;line-height:1.6;color:var(--text-muted);">Studio activates campaigns and delivery workflows, tracked against strategy from day one.</p>
+                </div>
+            </div>
+
+            <!-- Workbench screenshot — full width proof -->
+            <div class="product-reveal-grid reveal reveal-d3">
+                <div>
+                    <span class="section-eyebrow">The Workbench</span>
+                    <h2 class="section-h2" style="margin-top:1rem;">From strategy<br>to execution</h2>
+                    <p class="section-body">The Portal is a purpose-built operating environment where high-level strategy deconstructs into structured execution: every decision mapped to a workflow, every sprint tied back to intent.</p>
+                </div>
+                <div>
+                    <div class="screenshot-frame">
+                        <img src="/assets/images/workbench.png" alt="Strategy Workbench Interface" onerror="this.style.display='none'; this.parentElement.querySelector('.img-fallback').style.display='flex';">
+                        <div class="img-fallback assistant-placeholder" style="display:none;">
+                            <i class="fas fa-table-columns"></i>
+                            <span style="font-family:'Inter'; font-size:10px; opacity:0.5; letter-spacing:2px;">WORKBENCH MODULE</span>
+                        </div>
+                    </div>
+                    <span class="screenshot-caption">System View: Strategy Workbench v1.2</span>
+                </div>
+            </div>
+
+            <!-- Roadmap screenshot — centered -->
+            <div class="roadmap-center-reveal reveal reveal-d1" style="margin-top:5rem;">
+                <span class="section-eyebrow" style="margin-bottom:1.5rem; display:inline-block;">Execution Roadmap</span>
+                <div class="roadmap-frame">
+                    <img src="/assets/images/roadmap.png" alt="Execution Roadmap Module" onerror="this.style.display='none'; this.parentElement.innerHTML += '<div style=\'padding:3rem; text-align:center; color:var(--teal); font-family:var(--font-strategist); font-size:1.5rem; letter-spacing:0.1em;\'>ROADMAP MODULE</div>';">
+                </div>
+                <p class="section-body" style="margin: 0 auto; text-align:center;"><strong style="color:var(--text-primary);">Execution roadmaps</strong> translate strategic decisions into visible workstreams: so stakeholders track momentum without losing sight of intent.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ══ S5: WHAT IT ENABLES ══ -->
+    <section class="portal-section enables-section">
+        <div class="container">
+            <span class="section-eyebrow reveal">What It Enables</span>
+            <h2 class="section-h2 reveal reveal-d1">What organizations<br>can finally do</h2>
+            <p class="section-body reveal reveal-d1" style="margin-bottom:0;">These aren't abstract capabilities: Each one reflects a problem I've solved in practice: on real teams, with real deadlines, at real scale.</p>
+            <div class="enables-list">
+                <div class="enable-item reveal reveal-d1">
+                    <div class="enable-dot"></div>
+                    <p class="enable-text">Maintain strategic clarity across teams: even as priorities shift.</p>
+                </div>
+                <div class="enable-item reveal reveal-d2">
+                    <div class="enable-dot"></div>
+                    <p class="enable-text">Translate insights directly into action without losing fidelity.</p>
+                </div>
+                <div class="enable-item reveal reveal-d1">
+                    <div class="enable-dot"></div>
+                    <p class="enable-text">Connect decision-making with execution inside one environment.</p>
+                </div>
+                <div class="enable-item reveal reveal-d2">
+                    <div class="enable-dot"></div>
+                    <p class="enable-text">Track progress without losing the context that drives it.</p>
+                </div>
+                <div class="enable-item reveal reveal-d1">
+                    <div class="enable-dot"></div>
+                    <p class="enable-text">Move faster without sacrificing alignment across the organization.</p>
+                </div>
+                <div class="enable-item reveal reveal-d2">
+                    <div class="enable-dot"></div>
+                    <p class="enable-text">Keep strategy alive while real work unfolds in market.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══ OPERATIONAL PATTERN ══ -->
+    <section class="portal-section case-study-section" id="example">
+        <div class="container">
+
+            <!-- Header -->
+            <div class="case-study-header reveal">
+                <div class="case-study-label">
+                    <span class="section-eyebrow" style="margin-bottom:0;">Observed Pattern</span>
+                    <div class="case-study-tag">15+ Years&nbsp;&nbsp;·&nbsp;&nbsp;Global Marketing Programs</div>
+                </div>
+                <h2 class="section-h2" style="margin-bottom:0.75rem;">The pattern behind<br>real <em>campaigns</em></h2>
+                <p class="section-body" style="max-width:560px;">Across global product launches and cross-functional programs, the same breakdown appears. Strategy loses fidelity in transit. This is the workflow pattern The Portal was built to protect.</p>
+            </div>
+
+            <!-- Timeline -->
+            <div class="case-timeline">
+                <div class="timeline-track"></div>
+
+                <div class="timeline-step reveal reveal-d1" data-step="01">
+                    <div class="timeline-node" style="border-color:var(--teal);background:rgba(46,211,198,0.08);">
+                        <i class="fas fa-bullseye" style="color:var(--teal);"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="timeline-step-label" style="color:var(--teal);">Step 01</div>
+                        <div class="timeline-step-title">Define</div>
+                        <p class="timeline-step-body">Leadership establishes the objective, constraints, and success criteria: before a single brief is written or team is briefed.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-step reveal reveal-d2" data-step="02">
+                    <div class="timeline-node" style="border-color:#C9A84C;background:rgba(201,168,76,0.08);">
+                        <i class="fas fa-magnifying-glass-chart" style="color:#C9A84C;"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="timeline-step-label" style="color:#C9A84C;">Step 02</div>
+                        <div class="timeline-step-title">Diagnose</div>
+                        <p class="timeline-step-body">Signals, gaps, and risks are surfaced before execution begins. Most programs skip this step: and pay for it mid-campaign.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-step reveal reveal-d3" data-step="03">
+                    <div class="timeline-node" style="border-color:#A78BFF;background:rgba(167,139,255,0.08);">
+                        <i class="fas fa-people-arrows" style="color:#A78BFF;"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="timeline-step-label" style="color:#A78BFF;">Step 03</div>
+                        <div class="timeline-step-title">Align</div>
+                        <p class="timeline-step-body">Cross-functional teams: product, brand, regional, agency: converge on one shared execution brief. One version. No drift.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-step reveal reveal-d4" data-step="04">
+                    <div class="timeline-node" style="border-color:var(--coral);background:rgba(249,111,110,0.08);">
+                        <i class="fas fa-rocket" style="color:var(--coral);"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="timeline-step-label" style="color:var(--coral);">Step 04</div>
+                        <div class="timeline-step-title">Execute</div>
+                        <p class="timeline-step-body">Campaigns activate across channels and markets with strategic intent intact: not approximated, not reinterpreted by each team.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-step reveal reveal-d5" data-step="05">
+                    <div class="timeline-node node-active" style="border-color:var(--coral);background:rgba(249,111,110,0.15);box-shadow:0 0 20px rgba(249,111,110,0.2);">
+                        <i class="fas fa-chart-line" style="color:var(--coral);"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="timeline-step-label" style="color:var(--coral);">Step 05</div>
+                        <div class="timeline-step-title">Track</div>
+                        <p class="timeline-step-body">Progress is measured against the original strategic intent: not just delivery metrics. Context is preserved through every sprint.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Outcome bar -->
+            <div class="case-outcomes reveal">
+                <div class="outcome-label">
+                    <span style="font-family:var(--font-strategist);font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-muted);">The result</span>
+                </div>
+                <div class="outcome-stats">
+                    <div class="outcome-stat">
+                        <span class="outcome-number">Multiple<em>teams</em></span>
+                        <span class="outcome-desc">Working from one strategic source</span>
+                    </div>
+                    <div class="outcome-divider"></div>
+                    <div class="outcome-stat">
+                        <span class="outcome-number">Multiple<em>markets</em></span>
+                        <span class="outcome-desc">Coordinated without version drift</span>
+                    </div>
+                    <div class="outcome-divider"></div>
+                    <div class="outcome-stat">
+                        <span class="outcome-number">One<em>path</em></span>
+                        <span class="outcome-desc">Aligned execution, start to finish</span>
+                    </div>
+                    <div class="outcome-divider"></div>
+                    <div class="outcome-stat">
+                        <span class="outcome-number">Zero<em>drift</em></span>
+                        <span class="outcome-desc">Strategy intact at every handoff</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ══ PULLQUOTE 2 ══ -->
+    <section class="editorial-moment" id="editorial-02">
+        <div class="quote-container">
+            <span class="editorial-line primary">THE FRAMEWORK BEGINS IN THE HUB</span>
+            <span class="editorial-line secondary">THE SYSTEM RUNS HERE</span>
+        </div>
+    </section>
+
+    <!-- ══ S8: CTA ══ -->
+    <section class="cta-section">
+        <div class="container">
+            <span class="section-eyebrow reveal">Leadership</span>
+            <h2 class="section-h2 reveal reveal-d1">Interested in how<br>I lead and <em>build?</em></h2>
+            <p class="cta-lead reveal reveal-d2">Explore the 15+ years of integrated marketing leadership that forged this operating model: or learn more about the strategic approach I bring to complex organizations.</p>
+            <div class="cta-actions reveal reveal-d3">
+                <a href="/myexperience.html" class="btn-coral-lg">View leadership experience <i class="fas fa-arrow-right"></i></a>
+                <a href="/about.html" class="btn-ghost">About my approach <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<script src="/assets/js/nav-component.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const yr = document.getElementById('currentYear');
+    if (yr) yr.textContent = new Date().getFullYear();
+
+    const root = document.documentElement;
+    const themeBtn = document.getElementById('themeToggle');
+    const drawerThemeBtn = document.getElementById('drawerThemeToggle');
+    function setTheme(t) {
+        root.setAttribute('data-theme', t);
+        localStorage.setItem('theme', t);
+        const icon = t === 'light' ? 'fa-regular fa-sun' : 'fa-regular fa-moon';
+        if (themeBtn) themeBtn.querySelector('i').className = icon;
+        if (drawerThemeBtn) drawerThemeBtn.querySelector('i').className = icon;
+    }
+    const saved = localStorage.getItem('theme') || 'dark';
+    setTheme(saved);
+    if (themeBtn) themeBtn.addEventListener('click', () => setTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
+    if (drawerThemeBtn) drawerThemeBtn.addEventListener('click', () => setTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
+
+    const overlay = document.getElementById('drawerOverlay');
+    const drawer  = document.getElementById('mobileDrawer');
+    const openBtn = document.getElementById('mobileMenuToggle');
+    const closeBtn = document.getElementById('drawerClose');
+    function openDrawer()  { drawer.classList.add('active'); overlay.classList.add('active'); document.body.style.overflow = 'hidden'; }
+    function closeDrawer() { drawer.classList.remove('active'); overlay.classList.remove('active'); document.body.style.overflow = ''; }
+    if (openBtn)  openBtn.addEventListener('click', openDrawer);
+    if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+    if (overlay)  overlay.addEventListener('click', closeDrawer);
+
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (e.isIntersecting) { e.target.classList.add('is-visible'); observer.unobserve(e.target); }
+        });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+    reveals.forEach(el => observer.observe(el));
+    setTimeout(() => reveals.forEach(el => el.classList.add('is-visible')), 800);
+
+    (function() {
+        var moments = document.querySelectorAll('.editorial-moment');
+        if (!moments.length) return;
+        var obs = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    obs.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.6 });
+        moments.forEach(function(m) { obs.observe(m); });
+    })();
+
+});
+</script>
+</body>
+</html>

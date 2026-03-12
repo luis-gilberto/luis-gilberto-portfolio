@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About | Luis Gilberto</title>
+    
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Big+Shoulders+Display:wght@600;700;800&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* =========================================
+           CORE VARIABLES & RESET
+           ========================================= */
+        :root {
+            --coral: #F96F6E;
+            --teal: #2ED3C6;
+            --bg-body: #0A0A0A;
+            --surface-dark: #111216;
+            --text-primary: #F4F1ED;
+            --text-secondary: #9CA3AF;
+            --border-light: 1px solid rgba(255,255,255,0.08);
+            
+            --font-display: 'Big Shoulders Display', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --font-serif: 'Playfair Display', serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+            padding-top: 112px; /* Space for Header + Subnav */
+        }
+
+        a { text-decoration: none; color: inherit; transition: all 0.2s; }
+        img { max-width: 100%; height: auto; display: block; }
+
+        /* =========================================
+           NAVIGATION (Standardized System)
+           ========================================= */
+        .primary-nav { position: fixed; top: 0; left: 0; width: 100%; height: 64px; background: rgba(10, 10, 10, 0.98); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.1); z-index: 1000; }
+        .nav-container { max-width: 1400px; margin: 0 auto; padding: 0 2rem; height: 100%; display: flex; align-items: center; justify-content: space-between; }
+        .nav-logo img { height: 32px; width: auto; }
+
+        .desktop-nav { display: flex; gap: 2rem; align-items: center; }
+        .nav-link { font-family: var(--font-body); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #888; background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+        .nav-link:hover, .nav-link.active { color: #fff; }
+        
+        /* Mega Menu Panel */
+        .nav-item { position: relative; }
+        .mega-panel {
+            display: block; opacity: 0; visibility: hidden;
+            position: absolute; top: 100%; left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            width: 520px; background: #0A0A0A;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.5rem; border-radius: 12px;
+            z-index: 50; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            margin-top: 1.5rem; transition: all 0.2s ease;
+        }
+        .mega-panel::before { content: ""; position: absolute; top: -20px; left: 0; right: 0; height: 20px; background: transparent; }
+        .nav-item:hover .mega-panel { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+        
+        .mega-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .group\/item { display: flex; gap: 1rem; padding: 12px; border-radius: 8px; transition: background 0.2s; }
+        .group\/item:hover { background: rgba(255,255,255,0.05); }
+        
+        .icon-box { width: 40px; height: 40px; background: rgba(255,255,255,0.05); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: #666; transition: color 0.2s; }
+        .group\/item:hover .icon-box.teal { color: var(--teal); }
+        .group\/item:hover .icon-box.coral { color: var(--coral); }
+        
+        .mega-title { font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; text-transform: uppercase; color: #fff; display: block; }
+        .mega-desc { font-size: 0.75rem; color: #888; display: block; }
+
+        /* Sub-Navigation */
+        .sub-navigation { position: fixed; top: 64px; left: 0; width: 100%; height: 48px; background: #141414; border-bottom: 1px solid rgba(255,255,255,0.08); z-index: 999; display: flex; align-items: center; }
+        .sub-nav-container { max-width: 1400px; margin: 0 auto; padding: 0 2rem; width: 100%; }
+        .sub-nav-list { list-style: none; display: flex; gap: 2rem; }
+        .sub-nav-list a { font-size: 13px; font-weight: 500; color: #888; transition: color 0.2s; }
+        .sub-nav-list a:hover { color: #fff; }
+        .sub-nav-list a.active { color: var(--coral); font-weight: 700; }
+
+        /* Mobile Controls */
+        .mobile-menu-toggle { display: none; background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; }
+        .nav-actions { display: flex; gap: 1rem; align-items: center; }
+        .theme-toggle { background: rgba(255,255,255,0.1); border: none; width: 36px; height: 36px; border-radius: 50%; color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
+        @media (max-width: 1024px) {
+            .desktop-nav, .sub-navigation { display: none; }
+            .mobile-menu-toggle { display: block; }
+            body { padding-top: 64px; }
+        }
+
+        /* =========================================
+           PAGE CONTENT
+           ========================================= */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+
+        /* Hero */
+        .hero { position: relative; height: 80vh; min-height: 600px; display: flex; align-items: center; justify-content: center; overflow: hidden; text-align: center; }
+        .hero-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.4; }
+        .hero-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, #0A0A0A 0%, rgba(10,10,10,0.8) 50%, #0A0A0A 100%); }
+        .hero-content { position: relative; z-index: 2; max-width: 900px; }
+        .hero-eyebrow { font-size: 0.9rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--teal); margin-bottom: 1.5rem; font-weight: 600; }
+        .hero h1 { font-family: var(--font-display); font-size: clamp(3.5rem, 8vw, 6rem); line-height: 0.95; margin-bottom: 1.5rem; text-transform: uppercase; }
+        .hero-highlight { color: var(--coral); font-style: italic; font-family: var(--font-serif); text-transform: none; font-weight: 400; }
+        .hero-tagline { font-size: 1.25rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto; }
+
+        /* Who I Am */
+        .who-i-am { padding: 6rem 0; }
+        .who-i-am-content { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+        .who-i-am-image img { border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); }
+        .who-i-am-text h2 { font-family: var(--font-display); font-size: 3rem; margin-bottom: 1.5rem; }
+        .who-i-am-text p { margin-bottom: 1.5rem; color: #ccc; font-size: 1.1rem; }
+
+        /* My Approach */
+        .my-approach { padding: 6rem 0; background: #111; }
+        .approach-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+        .approach-text h2 { font-family: var(--font-display); font-size: 3rem; margin-bottom: 1.5rem; }
+        .approach-text ul { list-style: none; padding: 0; margin: 2rem 0; border-left: 2px solid var(--teal); padding-left: 1.5rem; }
+        .approach-text li { margin-bottom: 0.5rem; font-size: 1.1rem; color: #ddd; }
+        .approach-images img { border-radius: 12px; opacity: 0.9; }
+
+        /* Where It Started */
+        .where-started { position: relative; padding: 8rem 2rem; text-align: center; overflow: hidden; margin: 4rem 0; border-radius: 20px; max-width: 1300px; margin-left: auto; margin-right: auto; }
+        .where-started-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.3; }
+        .where-started-overlay { position: absolute; inset: 0; background: linear-gradient(0deg, #0A0A0A 0%, transparent 100%); }
+        .where-started-content { position: relative; z-index: 2; max-width: 700px; margin: 0 auto; }
+        .where-started-content h2 { font-family: var(--font-display); font-size: 3.5rem; margin-bottom: 1.5rem; }
+        .where-started-content p { font-size: 1.2rem; color: #ddd; }
+
+        /* What I Believe */
+        .what-i-believe { padding: 6rem 0; }
+        .section-title-alt { font-family: var(--font-serif); font-size: 3rem; text-align: center; margin-bottom: 4rem; font-style: italic; color: var(--text-primary); }
+        .belief-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+        .belief-card { position: relative; height: 300px; border-radius: 16px; overflow: hidden; cursor: pointer; transition: transform 0.3s; }
+        .belief-card:hover { transform: translateY(-8px); }
+        .belief-card-bg { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; transition: opacity 0.3s; }
+        .belief-card:hover .belief-card-bg { opacity: 0.8; }
+        .belief-card-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; padding: 2rem; text-align: center; }
+        .belief-card-title { font-family: var(--font-display); font-size: 2rem; text-transform: uppercase; line-height: 1; }
+        .text-coral { color: var(--coral); }
+
+        /* Channels */
+        .nav-channels { padding: 6rem 0; background: #111; text-align: center; }
+        .nav-channels-subtitle { margin-bottom: 3rem; color: #888; }
+        .channel-buttons { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
+        .channel-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 1.5rem 3rem; border-radius: 12px; text-decoration: none; color: #fff; font-weight: 600; display: flex; flex-direction: column; align-items: center; gap: 1rem; transition: all 0.3s; width: 200px; }
+        .channel-btn:hover { background: var(--teal); color: #000; border-color: var(--teal); }
+        .channel-icon { height: 32px; width: auto; opacity: 0.7; }
+        .channel-btn:hover .channel-icon { filter: brightness(0); opacity: 1; }
+
+        /* CTA */
+        .cta-section { position: relative; padding: 8rem 2rem; text-align: center; overflow: hidden; }
+        .cta-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.2; }
+        .cta-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, #0A0A0A 0%, rgba(10,10,10,0.8) 50%, #0A0A0A 100%); }
+        .cta-content { position: relative; z-index: 2; max-width: 600px; margin: 0 auto; }
+        .cta-content h2 { font-family: var(--font-display); font-size: 3.5rem; margin-bottom: 1.5rem; }
+        .cta-btn { background: var(--coral); color: #fff; padding: 1rem 2.5rem; border-radius: 50px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; text-decoration: none; display: inline-block; margin-top: 2rem; transition: transform 0.2s; }
+        .cta-btn:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(249,111,110,0.3); }
+
+        /* Modals */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 10000; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        .modal-content { background: #1a1a1a; padding: 3rem; border-radius: 16px; max-width: 600px; position: relative; border: 1px solid rgba(255,255,255,0.1); }
+        .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: #fff; font-size: 2rem; cursor: pointer; }
+        .modal-title { font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 1rem; color: var(--coral); }
+
+        @media (max-width: 768px) {
+            .who-i-am-content, .approach-grid { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 3.5rem; }
+        }
+
+        /* =========================================
+           MOBILE DRAWER (Standardized)
+           ========================================= */
+        .mobile-menu-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); z-index: 10001; display: none; }
+        .mobile-drawer { position: absolute; top: 0; right: 0; width: 85%; max-width: 400px; height: 100%; background: #050505; border-left: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; padding: 2rem; }
+        .mobile-nav-section { margin-bottom: 2.5rem; }
+        .mobile-label { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #666; margin-bottom: 1rem; }
+        .mobile-link { display: block; font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: #fff; text-decoration: none; margin-bottom: 0.5rem; }
+        .mobile-link.active { color: var(--coral); padding-left: 10px; border-left: 3px solid var(--coral); }
+        .mobile-sub-link { display: block; font-family: var(--font-body); font-size: 1.1rem; color: #888; margin-bottom: 0.75rem; text-decoration: none; }
+        .mobile-sub-link.active { color: #fff; font-weight: 600; }
+
+        /* =========================================
+           FOOTER (Standardized)
+           ========================================= */
+        .site-footer { background: #080808; border-top: 1px solid rgba(255,255,255,0.05); padding: 4rem 2rem; margin-top: auto; }
+        .footer-grid { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 3rem; }
+        .footer-logo img { height: 32px; opacity: 0.9; margin-bottom: 1rem; }
+        .footer-heading { font-family: var(--font-display); font-size: 1rem; letter-spacing: 1px; margin-bottom: 1.5rem; color: #666; }
+        .footer-link { display: block; color: #888; text-decoration: none; margin-bottom: 0.8rem; font-size: 0.9rem; transition: color 0.2s; }
+        .footer-link:hover { color: #fff; }
+        .footer-status { background: rgba(255,255,255,0.03); padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
+        .status-dot { width: 8px; height: 8px; background: var(--teal); border-radius: 50%; display: inline-block; margin-right: 8px; }
+        
+        @media (max-width: 900px) { .footer-grid { grid-template-columns: 1fr; text-align: center; gap: 2rem; } }
+    </style>
+</head>
+<body data-theme="dark">
+
+    <!-- HEADER -->
+    <nav class="primary-nav" id="primaryNav">
+        <div class="nav-container">
+            <a href="/index.html" class="nav-logo">
+                <img src="/assets/images/AUg_logo_White.png" alt="Luis Gilberto">
+            </a>
+            
+            <div class="desktop-nav">
+                <!-- Portfolio Mega Menu -->
+                <div class="nav-item has-dropdown group relative" id="portfolioMega">
+                    <button class="nav-link active">PORTFOLIO <i class="fas fa-chevron-down"></i></button>
+                    <div class="mega-panel">
+                        <div class="mega-grid">
+                            <a href="/myexperience.html" class="group/item">
+                                <div class="icon-box teal"><i class="fas fa-briefcase"></i></div>
+                                <div><span class="mega-title">Experience</span><span class="mega-desc">Deep dives into key projects.</span></div>
+                            </a>
+                            <a href="/about.html" class="group/item">
+                                <div class="icon-box coral"><i class="fas fa-user"></i></div>
+                                <div><span class="mega-title">About Me</span><span class="mega-desc">The human behind the work.</span></div>
+                            </a>
+                            <a href="/brand/index.html" class="group/item">
+                                <div class="icon-box teal"><i class="fas fa-fingerprint"></i></div>
+                                <div><span class="mega-title">Identity</span><span class="mega-desc">Brand book and visual DNA.</span></div>
+                            </a>
+                            <a href="/contact.html" class="group/item">
+                                <div class="icon-box coral"><i class="fas fa-paper-plane"></i></div>
+                                <div><span class="mega-title">Contact</span><span class="mega-desc">Let's start a conversation.</span></div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="/insights/index.html" class="nav-link">INSIGHTS</a>
+                <a href="/TheHub/index.html" class="nav-link">THE HUB</a>
+                <a href="https://portal.luis-gilberto.com" class="nav-link" target="_blank">PORTAL</a>
+            </div>
+
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></button>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle"><i class="fas fa-bars"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- SUB NAVIGATION (Portfolio Context) -->
+    <nav class="sub-navigation">
+        <div class="sub-nav-container">
+            <ul class="sub-nav-list">
+                <li><a href="/index.html">Home</a></li>
+                <li><a href="/timeline.html">Timeline</a></li>
+                <li><a href="/myexperience.html">Experience</a></li>
+                <li><a href="/about.html" class="active">About</a></li>
+                <li><a href="/contact.html">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- MOBILE DRAWER -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay">
+        <div class="mobile-drawer">
+            <div style="display:flex; justify-content:flex-end; margin-bottom:2rem;">
+                <button id="drawerCloseBtn" style="background:none; border:none; color:white; font-size:24px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="mobile-nav-section">
+                <div class="mobile-label">Global</div>
+                <a href="/index.html" class="mobile-link main">Portfolio</a>
+                <a href="/insights/index.html" class="mobile-link main">Insights</a>
+                <a href="/TheHub/index.html" class="mobile-link main">The Hub</a>
+                <a href="https://portal.luis-gilberto.com" class="mobile-link main" style="color:#F96F6E;">Portal</a>
+            </div>
+
+            <div class="mobile-nav-section">
+                <div class="mobile-label">Portfolio</div>
+                <a href="/index.html" class="mobile-sub-link">Home</a>
+                <a href="/timeline.html" class="mobile-sub-link">Timeline</a>
+                <a href="/myexperience.html" class="mobile-sub-link">Experience</a>
+                <a href="/about.html" class="mobile-sub-link active">About Me</a>
+                <a href="/contact.html" class="mobile-sub-link">Contact</a>
+            </div>
+        </div>
+    </div>
+
+    <main>
+        <!-- HERO -->
+        <section class="hero">
+            <img src="assets/images/Hero_banner.png" alt="Luis Gilberto" class="hero-bg">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <p class="hero-eyebrow">15+ years of impact</p>
+                <h1>I make technology<br> feel <span class="hero-highlight">human</span></h1>
+                <p class="hero-tagline">Creative strategy. Integrated campaigns. Systems that scale.</p>
+            </div>
+        </section>
+
+        <!-- WHO I AM -->
+        <section class="section who-i-am" id="who">
+            <div class="container">
+                <div class="who-i-am-content">
+                    <div class="who-i-am-image">
+                        <img src="assets/images/Who_I_Am.png" alt="Luis Gilberto">
+                    </div>
+                    <div class="who-i-am-text">
+                        <h2>Who I Am</h2>
+                        <p>I'm Luis Gilberto, a strategist and creative leader with more than 15 years of experience helping technology brands communicate with clarity, purpose, and impact.</p>
+                        <p>I translate complexity into work that connects with real people. From product launches and brand systems to integrated campaigns and creative ecosystems, my focus is simple: make it human, and make it work.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MY APPROACH -->
+        <section class="section my-approach" id="approach">
+            <div class="container">
+                <div class="approach-grid">
+                    <div class="approach-text">
+                        <h2>My Approach</h2>
+                        <p>I don't believe in overcomplicated things. Good strategy is built on substance:</p>
+                        <ul>
+                            <li>Who you're trying to reach</li>
+                            <li>What they care about</li>
+                            <li>How your message earns attention</li>
+                        </ul>
+                        <p>That's how I work, collaborate, and create. Whether I'm designing systems or directing creative, I build with purpose and scale in mind.</p>
+                    </div>
+                    <div class="approach-images">
+                        <img src="assets/images/Approach_images.png" alt="Collaborative approach">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- WHERE IT STARTED -->
+        <section class="where-started">
+            <img src="assets/images/image_88fa4bde-df1f-4021-9c43-91b48c45bade.png" alt="Seattle skyline" class="where-started-bg">
+            <div class="where-started-overlay"></div>
+            <div class="where-started-content">
+                <h2>Where It Started</h2>
+                <p>I grew up in Venezuela and came to the U.S. with a scholarship. I was determined to explore, build, and turn ideas into something real. In the early part of my career, I learned that clarity and craft often matter more than the idea itself. Those lessons shaped how I show up: as a thinker, builder, and creative lead.</p>
+            </div>
+        </section>
+
+        <!-- WHAT I BELIEVE -->
+        <section class="section what-i-believe" id="beliefs">
+            <div class="container">
+                <h2 class="section-title-alt">What I Believe</h2>
+                <div class="belief-cards">
+                    <div class="belief-card" onclick="openBeliefModal('clarity')">
+                        <img src="assets/images/Clarity_over_complexity.png" alt="Clarity" class="belief-card-bg">
+                        <div class="belief-card-overlay">
+                            <div class="belief-card-title">Clarity <span class="text-coral">over</span> complexity</div>
+                        </div>
+                    </div>
+                    <div class="belief-card" onclick="openBeliefModal('people')">
+                        <img src="assets/images/People_over_systems.jpg" alt="People" class="belief-card-bg">
+                        <div class="belief-card-overlay">
+                            <div class="belief-card-title">People <span class="text-coral">before</span> platforms</div>
+                        </div>
+                    </div>
+                    <div class="belief-card" onclick="openBeliefModal('systems')">
+                        <img src="assets/images/Ambition.png" alt="Systems" class="belief-card-bg">
+                        <div class="belief-card-overlay">
+                            <div class="belief-card-title">Systems that <span class="text-coral">grow</span> with ambition</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHANNELS -->
+        <section class="section nav-channels" id="channels">
+            <div class="container">
+                <h2 class="section-title-alt">Want to see what that looks like?</h2>
+                <p class="nav-channels-subtitle">Explore how I think and create through these channels:</p>
+                <div class="channel-buttons">
+                    <a href="/index.html" class="channel-btn">
+                        <span>Portfolio</span>
+                        <img src="assets/images/icons/portfolio.svg" class="channel-icon">
+                    </a>
+                    <a href="/insights/" class="channel-btn">
+                        <span>Insights</span>
+                        <img src="assets/images/icons/insights.svg" class="channel-icon">
+                    </a>
+                    <a href="/TheHub/" class="channel-btn">
+                        <span>The Hub</span>
+                        <img src="assets/images/icons/thehub.svg" class="channel-icon">
+                    </a>
+                    <a href="https://portal.luis-gilberto.com" class="channel-btn" target="_blank">
+                        <span>The Portal</span>
+                        <img src="assets/images/icons/theportal.svg" class="channel-icon">
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="cta-section">
+            <img src="assets/images/Lets_Create_Together.jpg" alt="Create" class="cta-bg">
+            <div class="cta-overlay"></div>
+            <div class="cta-content">
+                <h2>Let's create something meaningful</h2>
+                <p>If you're building something complex and want to make it clearer, intentional, and creative, I'd love to talk.</p>
+                <a href="/contact.html" class="cta-btn">Start the Conversation</a>
+            </div>
+        </section>
+    </main>
+
+    <!-- MODALS -->
+    <div class="modal-overlay" id="modal-clarity" onclick="closeModal(event)">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal(event, true)">&times;</button>
+            <h3 class="modal-title">Clarity over complexity</h3>
+            <p class="modal-text">I believe clarity empowers creativity. Simplicity is strategy. When we strip away the noise, we find the signal that truly connects.</p>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-people" onclick="closeModal(event)">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal(event, true)">&times;</button>
+            <h3 class="modal-title">People before platforms</h3>
+            <p class="modal-text">Technology should serve human needs, not the other way around. I build systems that amplify human potential and foster genuine connection.</p>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-systems" onclick="closeModal(event)">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal(event, true)">&times;</button>
+            <h3 class="modal-title">Systems that grow with ambition</h3>
+            <p class="modal-text">Scalability isn't just about size; it's about sustainability. I design frameworks that evolve with your vision, ensuring long-term impact.</p>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-grid-layout">
+                <div class="footer-brand-col">
+                    <a href="/index.html" class="footer-logo-link">
+                        <img src="/assets/images/Logomark_White_a.png" class="footer-logo-img">
+                        <span class="footer-brand-name">Luis Gilberto</span>
+                    </a>
+                    <p class="footer-tagline">Making technology feel human through clarity, beautiful execution, and systems that scale.</p>
+                    <div class="footer-social">
+                        <a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="/cdn-cgi/l/email-protection#4e262b2222210e223b273d632927222c2b3c3a21602d2123" class="social-icon"><i class="far fa-envelope"></i></a>
+                    </div>
+                </div>
+                <nav class="footer-nav-col">
+                    <h3 class="footer-nav-heading">Ecosystem</h3>
+                    <ul class="footer-nav-list">
+                        <li><a href="/index.html" class="footer-nav-link">Portfolio</a></li>
+                        <li><a href="/insights/index.html" class="footer-nav-link">Insights</a></li>
+                        <li><a href="/TheHub/index.html" class="footer-nav-link">The Hub</a></li>
+                        <li><a href="https://portal.luis-gilberto.com" target="_blank" class="footer-nav-link">The Portal</a></li>
+                        <li class="footer-nav-divider"><a href="/system/" class="footer-system-link">How it all connects</a></li>
+                    </ul>
+                </nav>
+                <nav class="footer-nav-col">
+                    <h3 class="footer-nav-heading">Connect</h3>
+                    <ul class="footer-nav-list">
+                        <li><a href="/contact.html" class="footer-nav-link">Contact</a></li>
+                        <li><a href="/about.html" class="footer-nav-link">About Me</a></li>
+                        <li><a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" class="footer-nav-link">LinkedIn</a></li>
+                    </ul>
+                </nav>
+                <div class="footer-status-col">
+                    <h3 class="footer-nav-heading">Status</h3>
+                    <div class="footer-status-card">
+                        <div class="status-indicator">
+                            <span class="status-dot"></span>
+                            <span class="status-text">Accepting Projects</span>
+                        </div>
+                        <p class="status-description">Currently available for strategic consulting and creative direction.</p>
+                        <a href="/contact.html" class="status-cta">Start a Conversation</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom-bar">
+            <div class="footer-bottom-container">
+                <p class="footer-copyright">&copy; <span id="currentYear"></span> Luis Gilberto. All Rights Reserved.</p>
+                <div class="footer-legal-links">
+                    <a href="/legal/privacy.html" class="footer-legal-link">Privacy Policy</a>
+                    <a href="/legal/terms.html" class="footer-legal-link">Terms of Use</a>
+                    <a href="/legal/accessibility.html" class="footer-legal-link">Accessibility</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        (function() {
+            // Theme Management
+            const html = document.documentElement;
+            const themeToggle = document.getElementById('themeToggle');
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            html.setAttribute('data-theme', savedTheme);
+            
+            if (themeToggle) {
+                themeToggle.addEventListener('click', () => {
+                    const currentTheme = document.documentElement.getAttribute('data-theme');
+                    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                    document.documentElement.setAttribute('data-theme', newTheme);
+                    localStorage.setItem('theme', newTheme);
+                    themeToggle.innerHTML = newTheme === 'light' ? '<i class="fa-regular fa-sun"></i>' : '<i class="fa-regular fa-moon"></i>';
+                });
+            }
+
+            // Mobile Drawer
+            const mobileToggle = document.getElementById('mobileMenuToggle');
+            const mobileDrawer = document.getElementById('mobileDrawer');
+            const drawerClose = document.getElementById('drawerCloseBtn');
+            
+            if (mobileToggle && mobileDrawer) {
+                mobileToggle.addEventListener('click', () => {
+                    mobileDrawer.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+                const close = () => {
+                    mobileDrawer.classList.remove('active');
+                    document.body.style.overflow = '';
+                };
+                if (drawerClose) drawerClose.addEventListener('click', close);
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && mobileDrawer.classList.contains('active')) close();
+                });
+            }
+
+            // Belief Modals
+            window.openBeliefModal = function(id) {
+                const modal = document.getElementById('modal-' + id);
+                if (modal) {
+                    modal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+            };
+            window.closeModal = function(e, force) {
+                if (force || e.target.classList.contains('modal-overlay')) {
+                    const activeModal = document.querySelector('.modal-overlay.active');
+                    if (activeModal) {
+                        activeModal.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
+                }
+            };
+
+            // Custom Cursor (Restored Sophistication)
+            const cursor = document.getElementById('cursor-lens');
+            if (cursor) {
+                let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+                let cursorX = mouseX, cursorY = mouseY;
+                document.addEventListener('mousemove', (e) => {
+                    mouseX = e.clientX; mouseY = e.clientY;
+                });
+                function animate() {
+                    cursorX += (mouseX - cursorX) * 0.15;
+                    cursorY += (mouseY - cursorY) * 0.15;
+                    cursor.style.left = cursorX + 'px';
+                    cursor.style.top = cursorY + 'px';
+                    requestAnimationFrame(animate);
+                }
+                animate();
+                document.querySelectorAll('a, button, .belief-card').forEach(el => {
+                    el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+                    el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+                });
+            }
+
+            // Intersection Observer
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('section').forEach(s => observer.observe(s));
+
+            // Update Footer Year
+            const yearEl = document.getElementById('currentYear');
+            if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+            console.log('✅ About Page Restored to High-Fidelity Sophistication');
+        })();
+    </script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"7d9039f5d5b84e54a54bb66d7a78302f","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>

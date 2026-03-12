@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Luis Gilberto - Creative Strategist & Marketing Professional</title>
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ═══════════════════════════════════════════════════════
+       ROOT VARIABLES & DESIGN SYSTEM
+       ═══════════════════════════════════════════════════════ */
+    
+    :root {
+      /* Brand Colors */
+      --coral: #F96F6E;
+      --teal: #2ED3C6;
+      --cloud-dancer: #F3EFE0;
+      --deep-blue: #1a2332;
+      
+      /* Dark Mode (Default) */
+      --bg-primary: #0a0a0a;
+      --bg-secondary: #1a1a1a;
+      --bg-tertiary: #2a2a2a;
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255, 255, 255, 0.7);
+      --text-tertiary: rgba(255, 255, 255, 0.5);
+      --border-color: rgba(255, 255, 255, 0.1);
+      
+      /* Typography */
+      --font-display: 'Playfair Display', serif;
+      --font-body: 'Inter', sans-serif;
+    }
+    
+    /* Light Mode Override */
+    [data-theme="light"] {
+      --bg-primary: var(--cloud-dancer);
+      --bg-secondary: #ffffff;
+      --bg-tertiary: #f5f5f5;
+      --text-primary: #0a0a0a;
+      --text-secondary: rgba(0, 0, 0, 0.7);
+      --text-tertiary: rgba(0, 0, 0, 0.5);
+      --border-color: rgba(0, 0, 0, 0.1);
+    }
+    
+    /* ═══════════════════════════════════════════════════════
+       BASE RESET & TYPOGRAPHY
+       ═══════════════════════════════════════════════════════ */
+    
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    html {
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    body {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--text-primary);
+      background: var(--bg-primary);
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-display);
+      font-weight: 600;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+    
+    h1 { font-size: 3.75rem; }
+    h2 { font-size: 2.25rem; }
+    h3 { font-size: 1.5rem; }
+    
+    p {
+      font-size: 1.125rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+    
+    a {
+      color: inherit;
+      text-decoration: none;
+      transition: all 0.15s ease;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       QUICK TOUR SECTION WITH ANIMATED CARDS
+       ═══════════════════════════════════════════════════════ */
+    
+    .quick-tour-section {
+      padding: 5rem 2rem;
+      background: var(--bg-secondary);
+    }
+    
+    .section-header {
+      text-align: center;
+      margin-bottom: 0;
+    }
+    
+    .cards-group {
+      margin-bottom: 5rem;
+      padding-top: 3rem;
+    }
+    .cards-group:first-of-type { padding-top: 0; }
+    
+    .cards-group h3 {
+      font-size: 2rem;
+      margin-bottom: 2.5rem;
+      margin-top: 0;
+      text-align: center;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      font-family: var(--font-display);
+      opacity: 0.9;
+      line-height: 1.3;
+    }
+    
+    .start-here-helper,
+    .card-discovery-helper {
+      text-align: center;
+      font-size: 0.875rem;
+      color: var(--text-tertiary);
+      margin-top: 1.5rem;
+    }
+    
+    .cards-grid {
+      display: grid;
+      gap: 2rem;
+    }
+    
+    /* Responsive 2x2 grid for "Know the human & professional" */
+    .cards-grid-2x2 {
+      grid-template-columns: repeat(2, 300px);
+      gap: 24px;
+      justify-content: center;
+      align-items: start;
+    }
+    
+    .cards-grid-3 {
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      justify-items: center;
+      align-items: start;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       CARD FLIP ANIMATION - FIXED VERSION
+       ═══════════════════════════════════════════════════════ */
+
+    /* Card container */
+    .tour-card {
+      perspective: 1000px;
+      width: 300px;
+      height: 400px;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      z-index: 1;
+      margin: 0 auto;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .tour-card:hover {
+      transform: translateY(-8px);
+      z-index: 10;
+    }
+
+    /* Card inner - enables flip */
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+      -webkit-transform-style: preserve-3d;
+    }
+
+    /* Flipped state */
+    .tour-card.flipped .card-inner {
+      transform: rotateY(180deg);
+      -webkit-transform: rotateY(180deg);
+    }
+
+    .tour-card.flipped {
+      z-index: 20;
+    }
+
+    /* Card front and back sides */
+    .card-front,
+    .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      border: 1px solid var(--border-color);
+      top: 0;
+      left: 0;
+    }
+
+    /* Front side */
+    .card-front {
+      background: var(--bg-tertiary);
+      position: relative;
+      z-index: 2;
+      transform: rotateY(0deg);
+    }
+
+    /* Back side - rotated 180deg */
+    .card-back {
+      transform: rotateY(180deg);
+      -webkit-transform: rotateY(180deg);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      color: white;
+    }
+
+    [data-theme="dark"] .card-front,
+    [data-theme="dark"] .card-back {
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.8) 100%);
+      z-index: 3;
+    }
+
+    .card-icon {
+      position: absolute;
+      top: 1.5rem;
+      left: 1.5rem;
+      color: white;
+      transition: transform 0.3s ease;
+      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+      z-index: 4;
+    }
+
+    .card-icon-teal {
+      color: var(--teal);
+    }
+
+    .tour-card:hover .card-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .card-front h3 {
+      position: absolute;
+      bottom: 1.5rem;
+      left: 1.5rem;
+      right: 1.5rem;
+      color: white;
+      font-size: 1.5rem;
+      font-family: var(--font-display);
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s ease;
+      z-index: 4;
+    }
+
+    .tour-card:hover .card-front h3 {
+      transform: translateX(4px);
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       HOVER VIDEO - FIXED VERSION (JS-controlled)
+       ═══════════════════════════════════════════════════════ */
+
+    /* Video element - hidden by default, shown via JS on hover */
+    .card-hover-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 0.4s ease-in-out;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Static image - visible by default */
+    .card-static-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 1;
+      transition: opacity 0.4s ease-in-out, transform 0.5s ease;
+      z-index: 2;
+    }
+
+    /* Subtle scale effect on hover for static image */
+    .tour-card:hover .card-static-img {
+      transform: scale(1.05);
+    }
+
+    /* Card back colors */
+    .card-back-coral {
+      background: var(--coral);
+    }
+    
+    .card-back-teal {
+      background: var(--teal);
+    }
+    
+    .card-back-deep-blue {
+      background: var(--deep-blue);
+    }
+    
+    .card-icon-large {
+      width: 40px;
+      height: 40px;
+      margin-bottom: 1rem;
+    }
+    
+    .card-back p {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: rgba(255, 255, 255, 0.9);
+      flex-grow: 1;
+    }
+    
+    .card-cta,
+    .card-cta-coral,
+    .card-cta-teal,
+    .card-cta-deep-blue {
+      display: inline-flex;
+      align-items: center;
+      font-weight: 600;
+      font-size: 1.125rem;
+      color: white;
+      transition: transform 0.3s ease;
+      text-decoration: none;
+    }
+    
+    .card-cta:hover,
+    .card-cta-coral:hover,
+    .card-cta-teal:hover,
+    .card-cta-deep-blue:hover {
+      transform: translateX(6px);
+    }
+    
+    /* Subtle glow on card hover */
+    .tour-card::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      background: linear-gradient(135deg, rgba(249, 111, 110, 0.2), rgba(46, 211, 198, 0.2));
+      border-radius: 18px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: -1;
+      filter: blur(8px);
+      pointer-events: none;
+    }
+    
+    .tour-card:hover::before {
+      opacity: 1;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       RESPONSIVE DESIGN
+       ═══════════════════════════════════════════════════════ */
+    
+    @media (max-width: 768px) {
+      .cards-grid-2x2 {
+        grid-template-columns: 1fr;
+        justify-items: center;
+      }
+      .tour-card { 
+        width: 100%; 
+        max-width: 300px; 
+        height: 400px; 
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .cards-grid-2x2 { 
+        grid-template-columns: 1fr; 
+        gap: 20px; 
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <main>
+    <!-- Quick Tour Section - Cards Demo -->
+    <section id="quick-tour" class="quick-tour-section">
+      <div class="container">
+        <div class="section-header"></div>
+
+        <!-- Past & Present Cards -->
+        <div class="cards-group">
+          <h3>The human & the professional</h3>
+          <p class="start-here-helper" style="opacity:0.7; font-size:0.95rem; margin-top:-1.5rem; margin-bottom:2rem; text-align:center;">New here? Start with Timeline.</p>
+          <div class="cards-grid cards-grid-2x2" aria-label="Know the human & professional cards">
+            
+            <!-- Timeline Card -->
+            <div class="tour-card tour-card-video tour-card-timeline" data-category="past-present">
+              <div class="card-inner">
+                <div class="card-front">
+                  <!-- Static image (visible by default) -->
+                  <img src="assets/hp/Timeline.webp" alt="Timeline" class="card-static-img">
+                  
+                  <!-- Hover video (hidden by default, NO autoplay attribute) -->
+                  <video loop muted playsinline class="card-hover-video">
+                    <source src="assets/hp/timeline_hover.webm" type="video/webm">
+                    <source src="assets/hp/timeline_hover.mp4" type="video/mp4">
+                  </video>
+                  
+                  <div class="card-overlay"></div>
+                  <div class="card-icon card-icon-teal">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                  </div>
+                  <h3>Timeline</h3>
+                </div>
+                <div class="card-back card-back-coral">
+                  <svg class="card-icon-large" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <p>A chronological walk through my career from 2008 to today. Strategic pivots, standout campaigns, and the creative evolution that shaped my craft.</p>
+                  <a href="/timeline.html" class="card-cta">Explore →</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- About Me Card -->
+            <div class="tour-card tour-card-video tour-card-about-me" data-category="past-present" role="article" aria-label="About Me card">
+              <div class="card-inner">
+                <div class="card-front">
+                  <img src="assets/hp/AboutMe.webp" alt="About Me - Professional portrait" class="card-static-img">
+                  
+                  <video loop muted playsinline class="card-hover-video">
+                    <source src="assets/hp/luis_hover.webm" type="video/webm">
+                    <source src="assets/hp/luis_hover.mp4" type="video/mp4">
+                  </video>
+                  
+                  <div class="card-overlay"></div>
+                  <svg class="card-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  <h3>About Me</h3>
+                </div>
+                <div class="card-back card-back-teal">
+                  <svg class="card-icon-large" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  <p>The human behind the work. My story, my values, and the spark that keeps me pairing creative vision with measurable impact.</p>
+                  <a href="/about.html" class="card-cta">Explore →</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Resume Card -->
+            <div class="tour-card tour-card-video tour-card-resume" data-category="past-present" role="article" aria-label="Resume card">
+              <div class="card-inner">
+                <div class="card-front">
+                  <img src="assets/hp/Resume.webp" alt="Resume" class="card-static-img">
+                  
+                  <video loop muted playsinline class="card-hover-video">
+                    <source src="assets/hp/cv_hover.webm" type="video/webm">
+                    <source src="assets/hp/cv_hover.mp4" type="video/mp4">
+                  </video>
+                  
+                  <div class="card-overlay"></div>
+                  <div class="card-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                      <polyline points="14 2 14 8 20 8"></polyline>
+                      <line x1="16" y1="13" x2="8" y2="13"></line>
+                      <line x1="16" y1="17" x2="8" y2="17"></line>
+                      <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                  </div>
+                  <h3>Resume</h3>
+                </div>
+                <div class="card-back card-back-deep-blue">
+                  <svg class="card-icon-large" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                  </svg>
+                  <p>A focused view of my experience, skills, and the brands I've helped scale through clarity, creativity, and intention.</p>
+                  <a href="/cv.html" class="card-cta">Explore →</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Brand Guidelines Card -->
+            <div class="tour-card tour-card-video tour-card-brand" data-category="past-present" role="article" aria-label="Brand Guidelines card">
+              <div class="card-inner">
+                <div class="card-front">
+                  <img src="assets/hp/BrandGuidelines.webp" alt="Brand Guidelines" class="card-static-img">
+                  
+                  <video loop muted playsinline class="card-hover-video">
+                    <source src="assets/hp/brand_hover.webm" type="video/webm">
+                    <source src="assets/hp/brand_hover.mp4" type="video/mp4">
+                  </video>
+                  
+                  <div class="card-overlay"></div>
+                  <div class="card-icon card-icon-teal">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                    </svg>
+                  </div>
+                  <h3>Brand Guidelines</h3>
+                </div>
+                <div class="card-back card-back-coral">
+                  <svg class="card-icon-large" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                  </svg>
+                  <p>The visual and strategic DNA of my ecosystem. Typography, color systems, and design principles that guide everything I build.</p>
+                  <a href="/brand-guidelines/" class="card-cta">Explore →</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p class="card-discovery-helper" style="opacity:0.6; font-size:0.9rem; margin-top:24px; text-align:center;">Each card reveals more when you tap or click. Explore freely.</p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // ═══════════════════════════════════════════════════════
+    // FIXED CARD VIDEO HOVER + FLIP LOGIC
+    // ═══════════════════════════════════════════════════════
+    // 
+    // BEHAVIOR:
+    // - DESKTOP: Hover plays video animation, click flips card
+    // - MOBILE: Tap flips card (no video preview - cleaner UX)
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const videoCards = document.querySelectorAll('.tour-card-video');
+      const allCards = document.querySelectorAll('.tour-card');
+      
+      // Reliable device detection
+      // pointer: fine = mouse/trackpad (desktop behavior)
+      // pointer: coarse = touch (mobile behavior)
+      const hasFinPointer = window.matchMedia('(pointer: fine)').matches;
+      
+      console.log('🎴 Card system initialized:', { 
+        hasFinPointer,
+        videoCardsFound: videoCards.length,
+        totalCards: allCards.length
+      });
+
+      // ===== VIDEO CARD CONTROLS =====
+      videoCards.forEach(card => {
+        const video = card.querySelector('.card-hover-video');
+        const staticImg = card.querySelector('.card-static-img');
+        
+        if (!video) {
+          console.warn('Video card missing video element:', card);
+          return;
+        }
+        
+        // Ensure video is paused and hidden initially
+        video.pause();
+        video.currentTime = 0;
+        video.style.opacity = '0';
+        
+        // Ensure static image is visible
+        if (staticImg) {
+          staticImg.style.opacity = '1';
+        }
+        
+        if (hasFinPointer) {
+          // ===== DESKTOP: Mouse hover to play video =====
+          
+          card.addEventListener('mouseenter', function() {
+            // Don't play video if card is already flipped
+            if (card.classList.contains('flipped')) return;
+            
+            // Crossfade: show video, hide static image
+            video.style.opacity = '1';
+            if (staticImg) staticImg.style.opacity = '0';
+            
+            // Play video
+            video.play().catch(err => {
+              console.log('Video play blocked:', err.message);
+            });
+          });
+          
+          card.addEventListener('mouseleave', function() {
+            // Crossfade back: hide video, show static image
+            video.style.opacity = '0';
+            if (staticImg) staticImg.style.opacity = '1';
+            
+            // Stop and reset video
+            video.pause();
+            video.currentTime = 0;
+          });
+          
+        } else {
+          // ===== MOBILE/TOUCH: No hover video =====
+          // On touch devices, we skip the video preview entirely
+          // Tapping just flips the card (handled below)
+          video.style.display = 'none';
+        }
+        
+        // Watch for flip state changes to stop video
+        const observer = new MutationObserver(function(mutations) {
+          if (card.classList.contains('flipped')) {
+            video.pause();
+            video.currentTime = 0;
+            video.style.opacity = '0';
+            if (staticImg) staticImg.style.opacity = '1';
+          }
+        });
+        
+        observer.observe(card, { attributes: true, attributeFilter: ['class'] });
+      });
+
+      // ===== CARD FLIP LOGIC (ALL CARDS) =====
+      allCards.forEach(card => {
+        card.addEventListener('click', function(e) {
+          // Don't flip if clicking on a link (the "Explore →" CTA)
+          if (e.target.closest('a')) {
+            return;
+          }
+          
+          // Toggle flip state
+          this.classList.toggle('flipped');
+          
+          // Close any other flipped cards (only one open at a time)
+          allCards.forEach(otherCard => {
+            if (otherCard !== this && otherCard.classList.contains('flipped')) {
+              otherCard.classList.remove('flipped');
+            }
+          });
+        });
+      });
+      
+      // ===== CLICK OUTSIDE TO CLOSE =====
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.tour-card')) {
+          allCards.forEach(card => {
+            card.classList.remove('flipped');
+          });
+        }
+      });
+
+      console.log('✅ Card system ready!');
+    });
+  </script>
+
+</body>
+</html>

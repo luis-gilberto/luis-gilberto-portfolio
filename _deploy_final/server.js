@@ -3,7 +3,18 @@ const fs = require('fs');
 const path = require('path');
 
 const server = http.createServer((req, res) => {
-    let filePath = req.url === '/' ? '/index.html' : req.url;
+    // Strip query strings (e.g., ?v=1.2.3 or ide_webview_request_time)
+    const urlPath = req.url.split('?')[0];
+    console.log(`${req.method} ${urlPath}`);
+    
+    // Ignore Vite client requests common in some IDE previews
+    if (urlPath === '/@vite/client') {
+        res.writeHead(204);
+        res.end();
+        return;
+    }
+
+    let filePath = urlPath === '/' ? '/index.html' : urlPath;
     
     // Handle specific routes
     if (req.url === '/experimental' || req.url === '/experimental/') {
@@ -25,8 +36,15 @@ const server = http.createServer((req, res) => {
         '.json': 'application/json',
         '.png': 'image/png',
         '.jpg': 'image/jpg',
+        '.webp': 'image/webp',
         '.gif': 'image/gif',
-        '.svg': 'image/svg+xml'
+        '.svg': 'image/svg+xml',
+        '.ico': 'image/x-icon',
+        '.mp4': 'video/mp4',
+        '.webm': 'video/webm',
+        '.woff2': 'font/woff2',
+        '.woff': 'font/woff',
+        '.ttf': 'font/ttf'
     };
     
     const contentType = mimeTypes[extname] || 'application/octet-stream';
