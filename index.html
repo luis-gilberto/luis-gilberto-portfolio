@@ -992,9 +992,16 @@
       scroll-snap-align: start;
       background: var(--bg-primary);
     }
-    .site-footer {
-      scroll-snap-align: end;
-    }
+    .site-footer { scroll-snap-align: end; padding: 64px 48px; background: var(--bg-primary); border-top: 1px solid var(--border-color); }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 48px; max-width: 1280px; margin: 0 auto; }
+    .footer-heading { font-family: var(--font-ui, 'Inter', sans-serif); font-size: 12px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 16px; }
+    .footer-list { list-style: none; padding: 0; margin: 0; }
+    .footer-list li { margin: 8px 0; }
+    .footer-list a { color: var(--ink-soft); text-decoration: none; transition: color .2s ease; }
+    .footer-list a:hover { color: var(--ink); }
+    .footer-desc { color: var(--ink-soft); max-width: 52ch; line-height: 1.6; margin-top: 8px; }
+    .footer-legal-bar { max-width: 1280px; margin: 36px auto 0; padding-top: 16px; border-top: 1px solid var(--border-color); text-align: center; color: var(--ink-muted); font-size: 12px; }
+    @media (max-width: 768px) { .footer-grid { grid-template-columns: 1fr; gap: 24px; } }
 
     /* ── FLIP CARDS ──────────────────────────────────────── */
     .tour-card { perspective: 1000px; width: 300px; height: 400px; cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease; position: relative; z-index: 1; margin: 0 auto; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
@@ -1505,16 +1512,52 @@
        SITE FOOTER
   ════════════════════════════════════════ -->
   <footer class="site-footer">
-    <div class="footer-brand-lockup">
-      <!-- 🧬 Restored Brand Logomark -->
-      <a href="/index.html">
-        <img src="/assets/images/Logomark_White_a.png" alt="Luis Gilberto" class="footer-logo-img">
-      </a>
-      <span class="footer-brand-top">LUIS GILBERTO SYSTEMS</span>
-      <span class="footer-brand-bottom">
-        <span class="fb-lg">LG</span><span class="fb-pipe">|</span><span class="fb-portal">PORTAL</span>
-      </span>
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand-lockup">
+          <a href="/index.html">
+            <img src="/assets/images/Logomark_White_a.png" alt="Luis Gilberto" class="footer-logo-img">
+          </a>
+          <span class="footer-brand-top">LUIS GILBERTO SYSTEMS</span>
+          <span class="footer-brand-bottom">
+            <span class="fb-lg">LG</span><span class="fb-pipe">|</span><span class="fb-portal">PORTAL</span>
+          </span>
+        </div>
+        <p class="footer-desc">Making technology feel human through clarity, beautiful execution, and systems that scale.</p>
+        <div style="margin-top:1.5rem; font-size:12px; color:rgba(255,255,255,0.2);">© <span id="currentYear"></span> Luis Gilberto Sanchez. All rights reserved.</div>
+      </div>
+
+      <div>
+        <h4 class="footer-heading">Ecosystem</h4>
+        <ul class="footer-list">
+          <li><a href="/timeline.html">Portfolio</a></li>
+          <li><a href="/insights/">Insights</a></li>
+          <li><a href="/TheHub/index.html">The Hub</a></li>
+          <li><a href="/portal/story/">The Portal</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="footer-heading">Connect</h4>
+        <ul class="footer-list">
+          <li><a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" rel="noopener">LinkedIn</a></li>
+          <li><a href="/contact.html">Contact</a></li>
+          <li><a href="/about.html">About Me</a></li>
+          <li><a href="/brand/">Identity</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:1.25rem;">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+            <div style="width:8px; height:8px; background:var(--teal); border-radius:50%; box-shadow:0 0 8px rgba(46,211,198,0.5);"></div>
+            <span style="font-size:11px; font-weight:700; color:white; letter-spacing:0.5px; text-transform:uppercase;">Accepting Projects</span>
+          </div>
+          <p style="font-size:13px; line-height:1.4; margin:0; color:rgba(255,255,255,0.4);">Currently available for strategic consulting and creative direction.</p>
+        </div>
+      </div>
     </div>
+    <div class="footer-legal-bar">INTELLECTUAL PROPERTY NOTICE: StrategyIQ™, The Hub™, and the associated diagnostic methodologies are proprietary intellectual property of Luis Gilberto.</div>
   </footer>
 
   <!-- 🧬 LUXE SYSTEM COMPONENT SCRIPT -->
@@ -1524,28 +1567,22 @@
       function detectJourney() {
         const urlParams = new URLSearchParams(window.location.search);
         const journeyParam = urlParams.get('journey');
-        
         let persona = localStorage.getItem('luxe-persona');
         let journey = journeyParam;
-        
-        // Map journey param to persona if present
+
         const jMap = { hire: 'coral', partner: 'teal', explore: 'neutral' };
         if (journey && jMap[journey]) {
           persona = jMap[journey];
           localStorage.setItem('luxe-persona', persona);
         }
-        
-        // Final fallback
+
         if (!persona || !['coral', 'teal', 'neutral'].includes(persona)) {
-          persona = 'neutral';
-          localStorage.setItem('luxe-persona', persona);
+          persona = null; // no write; require explicit user selection
         }
-        
-        // Map persona back to journey for data-journey attribute
+
         const pMap = { coral: 'hire', teal: 'partner', neutral: 'explore' };
-        journey = pMap[persona];
-        
-        document.body.setAttribute('data-journey', journey);
+        journey = persona ? pMap[persona] : null;
+        if (journey) document.body.setAttribute('data-journey', journey);
         return journey;
       }
 
@@ -1878,18 +1915,14 @@
       // Initialization logic
       const savedPersona = localStorage.getItem('luxe-persona');
       const urlParams = new URLSearchParams(window.location.search);
-      const isForced = urlParams.get('open') === 'diagnostic';
+      const hasJourney = ['hire','partner','explore'].includes(urlParams.get('journey'));
 
-      // 🧬 Always initialize visual state immediately
-      const initialLens = savedPersona || 'neutral';
-      setHeroState(initialLens);
-
-      // ONLY open if there is NO saved persona AND it's not a forced skip
-      if (!savedPersona || isForced) {
-        setTimeout(window.intentGate.open, 800);
+      if (!savedPersona && !hasJourney) {
+        window.intentGate.open();
       } else {
+        const key = savedPersona || (hasJourney ? ({hire:'coral',partner:'teal',explore:'neutral'})[urlParams.get('journey')] : null);
+        if (key) setHeroState(key);
         window.intentGate.close();
-        setHeroState(savedPersona); // Warm up the site with the saved preference
       }
 
       // Sync lens changes from other components (like nav-component)
@@ -2042,6 +2075,10 @@
     // Backwards compatibility hook
     window.setTheme = applyTheme;
   })();
+  </script>
+  <script>
+    const yr = document.getElementById('currentYear');
+    if (yr) yr.textContent = new Date().getFullYear();
   </script>
 
 </body>
