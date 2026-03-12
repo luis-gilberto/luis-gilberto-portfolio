@@ -1027,32 +1027,22 @@
     // theme
     function applyTheme(t) {
       if (!t) {
-        // Default logic: Insights pages default to 'light', others to 'dark'
-        const isInsights = window.location.pathname.includes('/insights/');
-        t = isInsights ? 'light' : 'dark';
+        t = localStorage.getItem('lg_theme') || 'dark';
       }
       
       document.documentElement.setAttribute('data-theme', t);
-      localStorage.setItem('lg_theme', t); // 🧬 Standardized key
+      localStorage.setItem('lg_theme', t);
       
-      // Dispatch custom event for other components to react
       window.dispatchEvent(new Event('themeChanged'));
       
-      // Update UI icons
-      const iconSun = document.getElementById('snav-icon-sun');
-      const iconMoon = document.getElementById('snav-icon-moon');
-      const flDark = document.getElementById('snav-footer-logo-dark');
-      const flLight = document.getElementById('snav-footer-logo-light');
-
-      // Note: These icons are SVG strings in the button, so we toggle their visibility via CSS classes or direct manipulation if they existed as separate elements.
-      // But in this component, the button contains an SVG. Let's update the button content.
       const themeBtn = document.getElementById('snav-theme-btn');
       if (themeBtn) {
           themeBtn.innerHTML = `<span>${t === 'dark' ? ICONS.sun : ICONS.moon}</span>`;
           themeBtn.setAttribute('aria-label', t === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode');
       }
 
-      // Footer Logo Toggle
+      const flDark = document.getElementById('snav-footer-logo-dark');
+      const flLight = document.getElementById('snav-footer-logo-light');
       if (flDark) flDark.style.display = t === 'dark' ? 'block' : 'none';
       if (flLight) flLight.style.display = t === 'dark' ? 'none' : 'block';
     }

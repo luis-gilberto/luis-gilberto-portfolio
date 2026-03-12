@@ -1,0 +1,210 @@
+# ============================================
+# THE HUB — "BUILT FOR THE BOLD" BLOCK (Trae)
+# Version: 1.0
+# Purpose: Add a polished editorial section with proper hierarchy + motion
+# Notes:
+#  - One-word coral accent only (brand #F96F6E)
+#  - Subtle motion, reduced-motion safe
+#  - Idempotent: replaces existing pieces if they already exist
+# ============================================
+
+## 0) ACTIONS OVERVIEW
+- Ensure brand tokens exist in <head> (create or merge).
+- Inject/replace section CSS for the "bold" block.
+- Insert the "Built for the bold." HTML section after the hero or at provided anchor.
+- Add once-per-page reveal JS (guarded).
+- Remove any gradient headline classes/utilities if found on this new block (should be solid text).
+
+## 1) INSERT/UPDATE TOKENS IN <head>
+Target: <head> (before </head>)
+Create or replace a <style id="lg-tokens"> block with the following EXACT content:
+
+<style id="lg-tokens">
+  :root{
+    /* Brand */
+    --lg-coral: #F96F6E;
+    --lg-bg: #0F0F0F;
+    --lg-text: rgba(255,255,255,.92);
+    --lg-dim: rgba(255,255,255,.80);
+
+    /* Type scale for content sections */
+    --deck-size: clamp(1.8rem, 3.2vw, 2.5rem);   /* h2 */
+    --lead-size: clamp(1.05rem, 1.4vw, 1.2rem);
+    --tag-size: clamp(1.05rem, 1.4vw, 1.2rem);
+
+    /* Spacing */
+    --wrap: 1120px;
+    --section-pad: clamp(56px, 9vh, 96px);
+    --gap-sm: .75rem;
+    --gap-md: 1.25rem;
+    --gap-lg: 2.25rem;
+  }
+
+  /* Font stacks (assumes fonts are loaded elsewhere globally) */
+  .serif-hero{ font-family: "Recoleta","Editorial New","Playfair Display",ui-serif,serif; }
+  .sans{ font-family: "General Sans","Inter","SF Pro Text",ui-sans-serif,system-ui; }
+</style>
+
+## 2) INSERT/REPLACE SECTION CSS
+Target: <head> (before </head>)
+Create or replace a <style id="lg-bold-css"> block with the following EXACT content:
+
+<style id="lg-bold-css">
+  /* Base section shell */
+  .section{
+    background: var(--lg-bg);
+    color: var(--lg-text);
+    padding: var(--section-pad) 1.25rem;
+  }
+  .section__inner{ margin: 0 auto; max-width: var(--wrap); }
+
+  /* Editorial: left-aligned for rhythm change vs. centered hero */
+  .bold-block{ text-align: left; }
+
+  /* Kicker/Deck (H2) */
+  .deck{
+    font-size: var(--deck-size);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    font-weight: 800;
+    margin: 0 0 var(--gap-sm);
+  }
+  .accent{ color: var(--lg-coral); }
+
+  /* Lead paragraph */
+  .lead{
+    font-size: var(--lead-size);
+    line-height: 1.6;
+    color: var(--lg-dim);
+    max-width: 72ch;
+    margin: 0 0 var(--gap-lg);
+  }
+
+  /* Punchline with coral underline flourish */
+  .tagline{
+    font-size: var(--tag-size);
+    line-height: 1.6;
+    margin: 0;
+  }
+  .accent-underline{
+    position: relative;
+    font-weight: 800; color: var(--lg-text);
+  }
+  .accent-underline::after{
+    content: "";
+    position: absolute; left: 0; right: 0; bottom: -0.2em;
+    height: 2px; background: var(--lg-coral);
+    border-radius: 2px;
+    transform-origin: left center;
+    transform: scaleX(0);
+    transition: transform .6s ease .25s;
+  }
+
+  /* Pre-rule (magazine kicker) */
+  .bold-block .pre-rule{
+    display: inline-block;
+    width: 56px; height: 2px; background: var(--lg-coral);
+    border-radius: 2px; margin-bottom: var(--gap-md);
+    transform-origin: left center; transform: scaleX(.8);
+    opacity: .85;
+  }
+
+  /* Reveal animation */
+  .reveal{ opacity: 0; transform: translateY(10px); }
+  .reveal.in{ opacity: 1; transform: translateY(0); transition: opacity .46s ease, transform .46s ease; }
+  .delay-1.in{ transition-delay: .08s; }
+  .delay-2.in{ transition-delay: .16s; }
+  .delay-3.in{ transition-delay: .24s; }
+
+  /* When visible, draw the underline */
+  .tagline.in .accent-underline::after{ transform: scaleX(1); }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    .reveal, .reveal.in, .accent-underline::after, .tagline.in .accent-underline::after{
+      transition: none !important;
+      opacity: 1; transform: none;
+    }
+  }
+
+  /* Responsive niceties */
+  @media (max-width: 880px){ .lead{ max-width: 85%; } }
+  @media (max-width: 640px){ .lead{ max-width: 100%; } }
+</style>
+
+## 3) INSERT HTML BLOCK
+Placement preference:
+- Insert RIGHT AFTER the primary hero section.
+- If an explicit anchor exists, insert after the first element matching one of:
+  [data-hero], .hero, #hero, section.hero
+
+Create or replace a <section id="lg-bold-block"> with this EXACT markup:
+
+<section id="lg-bold-block" class="section bold-block" aria-labelledby="built-bold">
+  <div class="section__inner">
+    <span class="pre-rule reveal"></span>
+
+    <h2 id="built-bold" class="deck serif-hero reveal delay-1">
+      Built for the <span class="accent">bold</span>.
+    </h2>
+
+    <p class="lead sans reveal delay-2">
+      We bring strategy and story together to shape brands that move faster, connect deeper, and perform smarter.
+    </p>
+
+    <p class="tagline sans reveal delay-3">
+      Not just execution, <span class="accent-underline">evolution</span>.
+    </p>
+  </div>
+</section>
+
+## 4) ADD REVEAL SCRIPT (ONCE PER PAGE)
+Target: before </body>
+If an element with id="lg-reveal-script" does NOT exist, append the following:
+
+<script id="lg-reveal-script">
+  (() => {
+    const els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)) {
+      els.forEach(el => el.classList.add('in'));
+      // ensure underline appears without IO
+      document.querySelectorAll('.tagline').forEach(t => t.classList.add('in'));
+      return;
+    }
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting){
+          e.target.classList.add('in');
+          if (e.target.classList.contains('tagline')) {
+            // ensure underline draw
+            e.target.classList.add('in');
+          }
+          io.unobserve(e.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -10% 0px', threshold: 0.1 });
+    els.forEach(el => io.observe(el));
+  })();
+</script>
+
+## 5) CLEANUP (NO GRADIENTS ON THIS BLOCK)
+Within #lg-bold-block only, ensure no gradient text classes or styles are applied.
+Remove any of the following if present on its children:
+- CSS properties: background: linear-gradient(...), -webkit-background-clip:text, -webkit-text-fill-color: transparent
+- Utility classes commonly named: text-gradient, gradient-text, text-fill-transparent
+
+## 6) QA CHECKS
+- Exactly ONE <section id="lg-bold-block"> present.
+- Coral is ONLY applied to the word "bold" and the underline on "evolution".
+- Left alignment preserved on this block; hero may remain centered for rhythm contrast.
+- Mobile: headline ≤ 3 lines at 375–414px widths.
+- Reduced motion: underline appears instantly; no jank.
+
+## 7) ROLLBACK INSTRUCTIONS
+To revert, remove:
+- <section id="lg-bold-block">
+- <style id="lg-bold-css">
+- (Optionally) keep <style id="lg-tokens"> if used elsewhere; otherwise remove it.
+- <script id="lg-reveal-script"> if nothing else uses .reveal
+
+# End of file.

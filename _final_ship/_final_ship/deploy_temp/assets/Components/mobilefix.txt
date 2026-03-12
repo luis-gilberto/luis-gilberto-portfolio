@@ -1,0 +1,228 @@
+🔧 Mobile Fix for Card Video + Flip Animation
+Step 1: Update Your CSS
+Find your existing card CSS and add/update these mobile-specific rules:
+
+/* ═══════════════════════════════════════════════════════
+   MOBILE FIX FOR CARDS
+   ═══════════════════════════════════════════════════════ */
+
+/* Prevent text selection on cards */
+.tour-card {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Fix for card flip back side visibility */
+.card-front,
+.card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  top: 0;
+  left: 0;
+  border: 1px solid var(--border-color);
+}
+
+/* Ensure back side is rotated 180deg initially */
+.card-back {
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
+}
+
+/* When flipped, rotate the inner container */
+.tour-card.flipped .card-inner {
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
+}
+
+/* Card inner needs 3D context */
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+}
+
+/* Mobile: Disable hover effects, only use tap */
+@media (hover: none) and (pointer: coarse) {
+  /* Remove hover video animation on mobile */
+  .tour-card-video:hover .card-hover-video {
+    opacity: 0;
+    transform: none;
+  }
+  
+  .tour-card-video:hover .card-static-img {
+    opacity: 1;
+  }
+  
+  /* Show video only when card has 'playing' class */
+  .tour-card-video.playing .card-hover-video {
+    opacity: 1;
+    z-index: 2;
+  }
+  
+  .tour-card-video.playing .card-static-img {
+    opacity: 0;
+  }
+  
+  /* Prevent hover scale on mobile */
+  .tour-card-video:hover .card-hover-video {
+    transform: scale(1);
+  }
+}
+Step 2: Replace Your JavaScript
+Delete the old card JavaScript and replace with this mobile-aware version:
+
+Copy<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const videoCards = document.querySelectorAll('.tour-card-video');
+  const allCards = document.querySelectorAll('.tour-card');
+  
+  // Check if device is mobile/touch
+  const isMobile = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+  
+  videoCards.forEach(card => {
+    const video = card.querySelector('.card-hover-video');
+    
+    if (!video) return;
+    
+    // Pause video initially
+    video.pause();
+    
+    if (isMobile) {
+      // ===== MOBILE: Touch-based video control =====
+      let touchStartTime = 0;
+      let longPressTimer = null;
+      const longPressDuration = 500; // 500ms = half second
+      
+      // Start tracking touch
+      card.addEventListener('touchstart', (e) => {
+        touchStartTime = Date.now();
+        
+        // Start long press timer
+        longPressTimer = setTimeout(() => {
+          // Long press detected - play video
+          if (!card.classList.contains('flipped')) {
+            card.classList.add('playing');
+            video.play().catch(err => console.log('Video play failed:', err));
+          }
+        }, longPressDuration);
+      });
+      
+      // Cancel long press if finger moves
+      card.addEventListener('touchmove', () => {
+        clearTimeout(longPressTimer);
+      });
+      
+      // Handle touch end
+      card.addEventListener('touchend', (e) => {
+        const touchDuration = Date.now() - touchStartTime;
+        clearTimeout(longPressTimer);
+        
+        // If it was a quick tap (not long press)
+        if (touchDuration < longPressDuration) {
+          // Stop video if playing
+          if (card.classList.contains('playing')) {
+            card.classList.remove('playing');
+            video.pause();
+            video.currentTime = 0;
+          }
+          // Quick tap = flip card
+          // (Let the existing flip logic handle it)
+        } else {
+          // Long press ended - stop video
+          card.classList.remove('playing');
+          video.pause();
+          video.currentTime = 0;
+        }
+      });
+      
+      // Cancel long press if touch is cancelled
+      card.addEventListener('touchcancel', () => {
+        clearTimeout(longPressTimer);
+        card.classList.remove('playing');
+        video.pause();
+        video.currentTime = 0;
+      });
+      
+    } else {
+      // ===== DESKTOP: Hover-based video control =====
+      card.addEventListener('mouseenter', () => {
+        if (!card.classList.contains('flipped')) {
+          video.play().catch(err => console.log('Video play failed:', err));
+        }
+      });
+      
+      card.addEventListener('mouseleave', () => {
+        video.pause();
+        video.currentTime = 0;
+      });
+    }
+    
+    // Pause video when card is flipped (both mobile and desktop)
+    card.addEventListener('click', () => {
+      if (card.classList.contains('flipped')) {
+        video.pause();
+        card.classList.remove('playing');
+      }
+    });
+  });
+  
+  // ===== CARD FLIP LOGIC (for all cards) =====
+  allCards.forEach(card => {
+    card.addEventListener('click', function(e) {
+      // Prevent flip during long press on mobile
+      if (isMobile && card.classList.contains('playing')) {
+        return;
+      }
+      
+      // Toggle flip
+      this.classList.toggle('flipped');
+      
+      // Close other flipped cards
+      allCards.forEach(otherCard => {
+        if (otherCard !== this && otherCard.classList.contains('flipped')) {
+          otherCard.classList.remove('flipped');
+        }
+      });
+    });
+  });
+});
+</script>
+🎯 New Mobile Behavior:
+Quick Tap:
+Flips the card to show back content
+Video stays hidden
+Long Press (hold for 0.5 seconds):
+Plays the video animation
+Card does NOT flip
+Release = video stops
+Desktop (unchanged):
+Hover = video plays
+Click = card flips
+🔍 What This Fixes:
+✅ Text selection issue - Disabled user-select on cards
+✅ Empty back side - Fixed backface-visibility + transform
+✅ Mirrored content - Added proper 3D context with preserve-3d
+✅ Touch conflicts - Separated tap (flip) from long-press (video)
+✅ Mobile hover leak - Disabled hover effects on touch devices
+
+📱 Testing on Mobile:
+Quick tap → Card should flip, show back content clearly
+Long press (0.5 sec) → Video should play
+Release → Video stops
+Tap while flipped → Card flips back to front
+🎨 Optional: Adjust Long Press Duration
+If 0.5 seconds feels too short/long, change this line:
+
+Copyconst longPressDuration = 500; // Change to 300 (faster) or 700 (slower)

@@ -1,5 +1,5 @@
 const html = document.documentElement;
-const currentTheme = localStorage.getItem('theme') || 'light';
+const currentTheme = localStorage.getItem('lg_theme') || 'dark'; // 🧬 Unified Key
 html.setAttribute('data-theme', currentTheme);
 
 function setPressedForAll(isDark) {
@@ -18,7 +18,7 @@ function updateFooterLogo(isDark) {
 function applyTheme(theme) {
     const isDark = theme === 'dark';
     html.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
+    localStorage.setItem('lg_theme', theme); // 🧬 Unified Key
     setPressedForAll(isDark);
     updateFooterLogo(isDark);
     if (isDark) { initParticleCanvas(); } else { destroyParticles(); }

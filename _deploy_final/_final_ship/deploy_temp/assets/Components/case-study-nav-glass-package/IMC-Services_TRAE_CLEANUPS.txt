@@ -1,0 +1,229 @@
+
+# IMC Services — One File for Trae (Cleanups & Fixes)
+Owner: Luis Gilberto
+Date: 2025-09-22
+Goal: Fix hero portrait alignment, stabilize the Microsoft logo showcase, remove last two empty sections, and tighten copy — without a rebuild.
+
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+PRIMER (what’s already in code)
+• The Microsoft “dynamic-logo-showcase” markup uses relative paths like `assets/logos/Edge.svg`, `Teams.svg`, `Microsoft365.svg`, `Copilot.svg`, `OneDrive.svg` etc.
+• Keep your existing classes; we’re only adding small wrappers and utility CSS/JS.
+• We’ll also show base pricing by default and keep the detailed toggle optional.
+
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+A) HERO PORTRAIT POSITIONING (align photo horizontally with headline)
+
+1) Replace the inner hero block with a responsive two-column grid.
+Find your current hero inner wrapper (e.g., inside `.imc-hero__inner` or `.engagement-hero`) and replace the PERSONA + HEADLINE part with this:
+
+<!-- HERO :: start -->
+<div class="hero-grid">
+  <div class="hero-media">
+    <img class="hero-portrait" src="../assets/images/luis-profile.jpg" alt="Luis Gilberto" />
+  </div>
+
+  <div class="hero-copy">
+    <span class="imc-chip">IMC Services</span>
+    <h2 class="hero-title">Strategic marketing leadership for ambitious brands</h2>
+    <p class="hero-subtitle">
+      I help teams move from clutter to clarity—with <strong>Strategy</strong> that scales,
+      <strong>Systems</strong> that deliver, and a creative <strong>Spark</strong> that connects.
+    </p>
+    <div class="imc-hero__ctas">
+      <a class="btn btn--primary" href="/contact/">Start the Conversation</a>
+      <a class="btn btn--ghost" href="#how-we-work">See How I Work</a>
+    </div>
+  </div>
+</div>
+<!-- HERO :: end -->
+
+2) Add these styles (append to your main stylesheet or an inline <style>):
+
+/* === HERO two-column alignment (desktop) + stacked (mobile) === */
+.hero-grid {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  align-items: center;
+  gap: 1.25rem;
+}
+.hero-media { display:flex; align-items:center; justify-content:center; }
+.hero-portrait {
+  width: 120px; height: 120px; border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.12); object-fit: cover;
+}
+.hero-copy { display:flex; flex-direction:column; gap: .75rem; }
+.hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.25rem, 4.5vw, 3rem);
+  line-height: 1.1; letter-spacing: -0.02em; margin: 0;
+  color: #fff;
+}
+.hero-subtitle { color: rgba(255,255,255,.88); max-width: 62ch; }
+
+/* Mobile: stack portrait above text, center it */
+@media (max-width: 768px){
+  .hero-grid { grid-template-columns: 1fr; text-align: center; }
+  .hero-media { order: -1; } /* show portrait first */
+  .hero-portrait { width: 96px; height: 96px; }
+  .imc-hero__ctas { justify-content:center; }
+}
+
+NOTE
+• This replaces the misaligned `.profile-header` pattern with a grid that hard-locks horizontal alignment on desktop while remaining stacked on mobile.
+• You can keep your existing `.imc-chip`, `.btn`, `.btn--ghost` styles.
+
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+B) MICROCOPY POLISH (no fluff, friendly, clear)
+
+Replace any long intros with these crisp lines:
+
+• Section “How We Work” subline → “Choose the partnership structure that fits your goals, timeline, and budget.”
+• Strategy pillar blurb → “Positioning, messaging, go-to-market planning.”
+• Systems pillar blurb → “Ops, measurement, and workflows that scale.”
+• Spark pillar blurb → “Storytelling, creative direction, and brand voice.”
+• Pricing tier one-liners:
+  – Foundation → “Essentials for clarity and momentum.”
+  – Growth → “Strategy + execution for scaling teams.”
+  – Enterprise → “Leadership for complex launches and rebrands.”
+• Brand Legacy header → “15+ years building in the Microsoft ecosystem.”
+
+(If present, trim marketing filler words like “world-class, unparalleled, cutting-edge”.)
+
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+C) MICRO LAYOUT TIDY (show base pricing; keep toggle optional)
+
+CSS changes (append; overrides win without touching existing rules):
+/* Pricing visibility: show base price by default */
+.detailed-price { display: none !important; }
+.base-price     { display: inline !important; }
+/* Hide the toggle control if you don’t plan to use it this release */
+.pricing-controls { display: none; }
+
+Optional JS (no-op if you keep toggle hidden; add to the end of your JS bundle):
+(function(){
+  var toggle = document.querySelector('[data-action="toggle-pricing"]');
+  if (!toggle) return;
+  var base = document.querySelectorAll('.base-price');
+  var detail = document.querySelectorAll('.detailed-price');
+  toggle.addEventListener('click', function(){
+    var showDetail = detail[0] && getComputedStyle(detail[0]).display === 'none';
+    detail.forEach(el => el.style.display = showDetail ? 'inline' : 'none');
+    base.forEach(el => el.style.display = showDetail ? 'none' : 'inline');
+  });
+})();
+
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+D) MICROSOFT DYNAMIC LOGO SHOWCASE (verify + stabilize)
+
+1) Asset paths
+Set one base path and use it everywhere (prevents broken logos if directory depth changes):
+// Add before showcase code
+const LOGO_BASE = '/assets/logos/';  // or '../assets/logos/' if your site isn’t rooted
+// Then reference like: `${LOGO_BASE}Edge.svg`
+
+2) Product data array (keep small, easy to read)
+Place this near the end of the page (before closing </body>) or in your main JS file:
+
+<script>
+(function(){
+  const LOGO_BASE = '/assets/logos/'; // adjust to '../assets/logos/' if needed
+
+  const products = [
+    { name: 'Microsoft Edge', file: 'Edge.svg', years: '2015 – Present' },
+    { name: 'Microsoft Teams', file: 'Teams.svg', years: '2017 – Present' },
+    { name: 'Microsoft 365',  file: 'Microsoft365.svg', years: '2017 – Present' },
+    { name: 'Copilot',        file: 'Copilot.svg', years: '2023 – Present' },
+    { name: 'OneDrive',       file: 'OneDrive.svg', years: '2007 – Present' }
+  ];
+
+  // Elements
+  const featured = document.getElementById('featuredProduct');
+  const prevBtn  = document.getElementById('prevProduct');
+  const nextBtn  = document.getElementById('nextProduct');
+
+  if (!featured) return; // safety
+
+  // Render helper
+  let idx = 0;
+  function render(i){
+    const p = products[i];
+    if (!p) return;
+    featured.innerHTML = `
+      <img src="${LOGO_BASE + p.file}" alt="${p.name}" class="spotlight-logo" onerror="this.dataset.missing=1; this.style.opacity=.25;">
+      <span class="product-name">${p.name}</span>
+      <span class="product-year">${p.years}</span>
+    `;
+  }
+
+  // Controls
+  function clamp(n){ return (n + products.length) % products.length; }
+  prevBtn && prevBtn.addEventListener('click', () => { idx = clamp(idx-1); render(idx); });
+  nextBtn && nextBtn.addEventListener('click', () => { idx = clamp(idx+1); render(idx); });
+
+  // Auto-rotate (pause on hover)
+  let timer = setInterval(() => { idx = clamp(idx+1); render(idx); }, 4000);
+  featured.addEventListener('mouseenter', () => clearInterval(timer));
+  featured.addEventListener('mouseleave', () => { timer = setInterval(() => { idx = clamp(idx+1); render(idx); }, 4000); });
+
+  // Initial paint
+  render(idx);
+})();
+</script>
+
+3) CSS sanity (ensure spotlight/queue look consistent):
+/* Spotlight & queue – gentle defaults */
+.product-spotlight { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 1.5rem; display:flex; flex-direction:column; align-items:center; gap:.75rem; }
+.spotlight-logo { width: 80px; height: 80px; object-fit: contain; }
+.product-queue { display:flex; justify-content:center; gap: 1rem; margin: 1rem 0; }
+.queue-product { background: rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius: 10px; padding:.5rem; }
+.queue-logo { width: 32px; height: 32px; object-fit: contain; opacity:.8; }
+
+Checklist for Trae
+[ ] Ensure /assets/logos/ contains: Edge.svg, Teams.svg, Microsoft365.svg, Copilot.svg, OneDrive.svg
+[ ] If repo uses ../assets/logos/, update LOGO_BASE accordingly
+[ ] Confirm featuredProduct, prevProduct, nextProduct exist in DOM
+[ ] Confirm CSS present for .product-spotlight, .spotlight-logo, .product-queue, .queue-logo
+
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+E) REMOVE LAST TWO EMPTY SECTIONS (safe automation)
+
+Drop this utility at the bottom of the page (just before </body>). It removes the final two <section> tags ONLY if they contain no visible text or only whitespace:
+
+<script>
+(function(){
+  function isEffectivelyEmpty(el){
+    if (!el) return false;
+    const txt = el.textContent.replace(/\s+/g,''); // strip whitespace
+    return txt.length === 0;
+  }
+  const sections = Array.from(document.querySelectorAll('section'));
+  let removed = 0;
+  for (let i = sections.length - 1; i >= 0 && removed < 2; i--){
+    if (isEffectivelyEmpty(sections[i])){
+      sections[i].parentNode.removeChild(sections[i]);
+      removed++;
+    }
+  }
+})();
+</script>
+
+If you prefer a hard delete, simply comment those two <section> blocks in the HTML after you verify they’re truly empty.
+
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+F) ACCESSIBILITY & RESPONSIVE TOUCHES
+
+• Add alt text to the hero portrait (already in snippet).
+• Keep headings in logical order (H1 on homepage; H2 here is fine).
+• Ensure tap targets ≥ 44px (your .btn already does).
+• On mobile, the new hero grid stacks the portrait above copy and centers CTAs.
+
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+G) FINAL QA (5 bullets)
+
+[ ] Portrait aligns horizontally with headline on desktop; stacks nicely on mobile.
+[ ] Showcase rotates products and loads logos; any missing asset visibly degrades (low-opacity image).
+[ ] Base pricing visible; no confusing toggles shown.
+[ ] Last two empty sections are gone.
+[ ] Copy reads simple and human across all sections.
+
+— End —

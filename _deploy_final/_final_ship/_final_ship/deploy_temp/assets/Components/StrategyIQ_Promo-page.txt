@@ -1,0 +1,1249 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StrategyIQ™ - Proprietary Strategic Intelligence</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --coral: #F96F6E;
+            --teal: #2ED3C6;
+            --ink: #FFFFFF;
+            --ink-dim: rgba(255,255,255,.85);
+            --gradient: linear-gradient(90deg, var(--coral), var(--teal));
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --card-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+            --subtle-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.25);
+        }
+
+        * { 
+            font-family: 'Inter', sans-serif; 
+        }
+        
+        .font-display { 
+            font-family: 'Playfair Display', serif; 
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            min-height: 100vh;
+        }
+        
+        .text-coral { color: var(--coral); }
+        .text-teal { color: var(--teal); }
+        .text-gradient { 
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .bg-coral { background-color: var(--coral); }
+        .bg-teal { background-color: var(--teal); }
+        .bg-gradient { background: var(--gradient); }
+        
+        /* Premium Glass Morphism */
+        .glass-card { 
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--card-shadow);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.18);
+            transform: translateY(-2px);
+            box-shadow: 0 32px 64px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Enhanced Hub Navigation */
+        .hub-header {
+            background: rgba(15, 15, 15, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(51, 51, 51, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .hub-nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .hub-brand {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .hub-line-nav {
+            width: 100px;
+            height: 2px;
+            background: var(--coral);
+            border-radius: 1px;
+            animation: navPulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes navPulse {
+            0%, 100% { opacity: 1; transform: scaleX(1); }
+            50% { opacity: 0.7; transform: scaleX(0.9); }
+        }
+        
+        .hub-text-nav {
+            text-decoration: none;
+            color: var(--ink);
+            transition: all 0.3s ease;
+        }
+        
+        .hub-title-nav {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--coral);
+            line-height: 1;
+            margin-bottom: 0.25rem;
+            letter-spacing: -0.025em;
+        }
+        
+        .hub-subtitle-nav {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: rgba(179, 179, 179, 0.9);
+            letter-spacing: 0.05em;
+        }
+        
+        .hub-nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2.5rem;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .hub-nav-links a {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: rgba(179, 179, 179, 0.9);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+        
+        .hub-nav-links a:hover { 
+            color: var(--ink); 
+            transform: translateY(-1px);
+        }
+        
+        .hub-nav-links a.active { 
+            color: var(--ink); 
+        }
+        
+        .hub-nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -0.5rem;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--coral);
+            border-radius: 1px;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        /* Enhanced Admin Toggle */
+        .admin-toggle {
+            position: fixed;
+            top: 100px;
+            right: 2rem;
+            z-index: 999;
+            opacity: 0.03;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .admin-toggle:hover { 
+            opacity: 1; 
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: var(--subtle-shadow);
+        }
+
+        /* Mode Switching */
+        .public-mode .live-engine { 
+            display: none; 
+            opacity: 0;
+        }
+        
+        .public-mode .methodology-showcase { 
+            display: block; 
+            opacity: 1;
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        .admin-mode .live-engine { 
+            display: block; 
+            opacity: 1;
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        .admin-mode .methodology-showcase { 
+            display: none; 
+            opacity: 0;
+        }
+        
+        .admin-mode .admin-toggle { 
+            opacity: 1; 
+            background: var(--coral);
+            border-color: var(--coral);
+            box-shadow: 0 0 30px rgba(249, 111, 110, 0.4);
+        }
+
+        /* Premium Hero */
+        .hero-gradient {
+            background: linear-gradient(135deg, 
+                rgba(249, 111, 110, 0.3) 0%, 
+                rgba(46, 211, 198, 0.2) 50%, 
+                rgba(10, 10, 10, 0.8) 100%),
+                radial-gradient(circle at 30% 70%, rgba(249, 111, 110, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 30%, rgba(46, 211, 198, 0.1) 0%, transparent 50%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-gradient::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(0, 0, 0, 0.3) 0%, 
+                rgba(0, 0, 0, 0.1) 50%, 
+                rgba(0, 0, 0, 0.3) 100%);
+            z-index: 1;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Enhanced Cards */
+        .methodology-card {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .methodology-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .methodology-card:hover::before {
+            left: 100%;
+        }
+
+        .methodology-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(249, 111, 110, 0.4);
+            box-shadow: 
+                0 32px 64px -12px rgba(0, 0, 0, 0.6),
+                0 0 40px rgba(249, 111, 110, 0.2);
+        }
+
+        /* Enhanced Framework Preview */
+        .framework-preview {
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.08) 0%, 
+                rgba(255, 255, 255, 0.04) 100%);
+            border-left: 3px solid var(--coral);
+            border-radius: 0 0.75rem 0.75rem 0;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+        }
+        
+        .framework-preview:hover {
+            background: rgba(249, 111, 110, 0.08);
+            border-left-width: 4px;
+        }
+
+        /* Premium CTA */
+        .consultation-cta {
+            background: var(--gradient);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .consultation-cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, 
+                transparent 30%, 
+                rgba(255, 255, 255, 0.1) 50%, 
+                transparent 70%);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Enhanced Badges */
+        .protected-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(249, 111, 110, 0.15);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(249, 111, 110, 0.3);
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--coral);
+            letter-spacing: 0.025em;
+            box-shadow: 0 8px 32px rgba(249, 111, 110, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .protected-badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(249, 111, 110, 0.3);
+        }
+
+        /* Enhanced Intelligence Metrics */
+        .intelligence-metric {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            background: rgba(46, 211, 198, 0.08);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(46, 211, 198, 0.2);
+            border-radius: 1.5rem;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .intelligence-metric::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--teal);
+            transform: scaleX(0);
+            transition: transform 0.6s ease;
+        }
+        
+        .intelligence-metric:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .intelligence-metric:hover {
+            transform: translateY(-4px);
+            background: rgba(46, 211, 198, 0.12);
+            border-color: rgba(46, 211, 198, 0.4);
+            box-shadow: 0 20px 40px rgba(46, 211, 198, 0.2);
+        }
+
+        .metric-value {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--teal);
+            margin-bottom: 0.75rem;
+            line-height: 1;
+            background: linear-gradient(135deg, var(--teal), #4ade80);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Enhanced Live Engine Styles */
+        .service-card {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .service-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .service-card:hover::after {
+            opacity: 1;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-12px) scale(1.03);
+            box-shadow: 
+                0 40px 80px -12px rgba(0, 0, 0, 0.7),
+                0 0 60px rgba(249, 111, 110, 0.2);
+        }
+        
+        .service-card.coral-hover:hover {
+            border-color: rgba(249, 111, 110, 0.6);
+            box-shadow: 
+                0 40px 80px -12px rgba(0, 0, 0, 0.7),
+                0 0 60px rgba(249, 111, 110, 0.3);
+        }
+        
+        .service-card.teal-hover:hover {
+            border-color: rgba(46, 211, 198, 0.6);
+            box-shadow: 
+                0 40px 80px -12px rgba(0, 0, 0, 0.7),
+                0 0 60px rgba(46, 211, 198, 0.3);
+        }
+
+        /* Enhanced Progress Bar */
+        .progress-bar { 
+            background: var(--gradient);
+            border-radius: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.3), 
+                transparent);
+            animation: progressShimmer 2s ease-in-out infinite;
+        }
+        
+        @keyframes progressShimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Enhanced Question Options */
+        .question-option {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .question-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(249, 111, 110, 0.1), 
+                transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .question-option:hover::before {
+            left: 100%;
+        }
+        
+        .question-option:hover {
+            border-color: rgba(249, 111, 110, 0.4);
+            background: rgba(249, 111, 110, 0.08);
+            transform: translateX(4px);
+            box-shadow: 0 8px 32px rgba(249, 111, 110, 0.2);
+        }
+        
+        .question-option.selected {
+            border-color: var(--coral);
+            background: rgba(249, 111, 110, 0.15);
+            box-shadow: 
+                0 0 0 1px var(--coral),
+                0 8px 32px rgba(249, 111, 110, 0.3);
+        }
+
+        /* Enhanced Animations */
+        .fade-in {
+            animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(30px);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0);
+            }
+        }
+        
+        .stagger-in {
+            animation: staggerIn 0.6s ease-out;
+        }
+        
+        @keyframes staggerIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Enhanced Typography */
+        h1, h2, h3, h4, h5, h6 {
+            letter-spacing: -0.025em;
+        }
+        
+        .font-display {
+            font-feature-settings: "liga", "kern";
+        }
+        
+        /* Text Selection */
+        ::selection {
+            background: rgba(249, 111, 110, 0.3);
+            color: var(--ink);
+        }
+
+        /* Enhanced Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .hub-nav-container {
+                flex-direction: column;
+                gap: 1.5rem;
+                padding: 1rem 1.5rem;
+            }
+            
+            .hub-brand {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .hub-nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 1.5rem;
+            }
+            
+            .hero-gradient {
+                padding: 4rem 0;
+            }
+            
+            .metric-value {
+                font-size: 2.5rem;
+            }
+            
+            .methodology-card {
+                margin-bottom: 1rem;
+            }
+            
+            .admin-toggle {
+                top: 80px;
+                right: 1rem;
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .container {
+                padding-left: 1.5rem;
+                padding-right: 1.5rem;
+            }
+            
+            .glass-card {
+                padding: 1.5rem;
+            }
+            
+            .methodology-card:hover {
+                transform: translateY(-4px) scale(1.01);
+            }
+        }
+
+        /* Enhanced Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        
+        /* Focus States */
+        button:focus-visible,
+        .question-option:focus-within {
+            outline: 2px solid var(--coral);
+            outline-offset: 2px;
+        }
+
+        /* Loading States */
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid var(--coral);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Enhanced Contrast for Better Readability */
+        .text-high-contrast {
+            color: rgba(255, 255, 255, 0.95);
+        }
+        
+        .text-medium-contrast {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .text-low-contrast {
+            color: rgba(255, 255, 255, 0.6);
+        }
+    </style>
+</head>
+<body class="text-white public-mode">
+
+    <!-- Enhanced Hub Navigation -->
+    <header class="hub-header">
+        <div class="hub-nav-container">
+            <div class="hub-brand">
+                <div class="hub-line-nav"></div>
+                <a href="../" class="hub-text-nav">
+                    <div class="hub-title-nav">The Hub.</div>
+                    <div class="hub-subtitle-nav">Built for what's next</div>
+                </a>
+            </div>
+            
+            <nav>
+                <ul class="hub-nav-links">
+                    <li><a href="../">Home</a></li>
+                    <li><a href="./" class="active">StrategyIQ</a></li>
+                    <li><a href="../scopeiq/">ScopeIQ</a></li>
+                    <li><a href="../services/">Services</a></li>
+                    <li><a href="../advisory/">Advisory</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Enhanced Admin Toggle -->
+    <button class="admin-toggle bg-gray-900 text-white px-4 py-2 rounded-xl text-sm font-medium" onclick="toggleEngineMode()">
+        <i class="fas fa-lock mr-2"></i><span id="toggleText">Admin Access</span>
+    </button>
+
+    <!-- Premium Hero -->
+    <header class="hero-gradient py-24 relative overflow-hidden">
+        <div class="hero-content container mx-auto px-6 relative z-10">
+            <div class="max-w-5xl mx-auto text-center">
+                <div class="protected-badge mb-8 stagger-in">
+                    <i class="fas fa-shield-alt text-lg"></i>
+                    <span>Proprietary Strategic Intelligence</span>
+                </div>
+                <h1 class="font-display text-7xl font-bold mb-8 fade-in text-high-contrast">
+                    Strategy<span class="text-teal">IQ</span>™ Engine
+                </h1>
+                <p class="text-2xl mb-12 max-w-3xl mx-auto text-medium-contrast leading-relaxed">
+                    Luis Gilberto's proprietary systematic consultation framework. While agencies rely on intuition, we use intelligence-driven assessment to match strategic complexity with optimal engagement approach.
+                </p>
+                <div class="flex items-center justify-center flex-wrap gap-8 text-base">
+                    <div class="flex items-center stagger-in">
+                        <i class="fas fa-brain mr-3 text-xl text-coral"></i>
+                        <span class="font-medium">Intelligence Over Intuition</span>
+                    </div>
+                    <div class="flex items-center stagger-in">
+                        <i class="fas fa-shield-check mr-3 text-xl text-teal"></i>
+                        <span class="font-medium">Proprietary Methodology</span>
+                    </div>
+                    <div class="flex items-center stagger-in">
+                        <i class="fas fa-user-tie mr-3 text-xl text-coral"></i>
+                        <span class="font-medium">Consultation-Driven</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- PUBLIC METHODOLOGY SHOWCASE -->
+    <div class="methodology-showcase">
+        <div class="container mx-auto px-6 py-20">
+
+            <!-- Enhanced Strategic Positioning -->
+            <section class="mb-24">
+                <div class="max-w-5xl mx-auto text-center mb-16">
+                    <h2 class="font-display text-5xl font-bold mb-8 text-high-contrast">
+                        Why <span class="text-coral">Intelligence</span> Beats Intuition
+                    </h2>
+                    <p class="text-2xl text-medium-contrast leading-relaxed max-w-4xl mx-auto">
+                        Most consultants rely on experience and gut feel. Luis uses systematic assessment to match your strategic complexity with the optimal engagement approach—before the first strategic conversation.
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                    <div class="intelligence-metric stagger-in">
+                        <div class="metric-value">5</div>
+                        <div class="text-high-contrast font-semibold text-lg mb-2">Strategic Dimensions</div>
+                        <div class="text-medium-contrast">Weighted scoring across complexity factors</div>
+                    </div>
+                    <div class="intelligence-metric stagger-in">
+                        <div class="metric-value">6</div>
+                        <div class="text-high-contrast font-semibold text-lg mb-2">Service Tiers</div>
+                        <div class="text-medium-contrast">Algorithm-matched engagement models</div>
+                    </div>
+                    <div class="intelligence-metric stagger-in">
+                        <div class="metric-value">100%</div>
+                        <div class="text-high-contrast font-semibold text-lg mb-2">Data-Driven</div>
+                        <div class="text-medium-contrast">Zero guesswork in recommendations</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Enhanced Methodology Framework -->
+            <section class="mb-24">
+                <div class="text-center mb-16">
+                    <h2 class="font-display text-5xl font-bold mb-6 text-high-contrast">
+                        The <span class="text-gradient">Assessment</span> Framework
+                    </h2>
+                    <p class="text-xl text-medium-contrast max-w-3xl mx-auto leading-relaxed">
+                        Four strategic intelligence areas, each with weighted complexity scoring that informs optimal engagement tier matching.
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-10 max-w-7xl mx-auto">
+                    <!-- GTM Strategy -->
+                    <div class="methodology-card glass-card rounded-3xl p-10 stagger-in">
+                        <div class="flex items-start mb-8">
+                            <div class="w-16 h-16 bg-red-500 bg-opacity-20 rounded-2xl flex items-center justify-center mr-6 border border-coral border-opacity-30">
+                                <i class="fas fa-rocket text-coral text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-display text-2xl font-semibold mb-3 text-high-contrast">Go-to-Market <span class="text-coral">Intelligence</span></h3>
+                                <p class="text-medium-contrast">Business stage → market clarity → competitive landscape</p>
+                            </div>
+                        </div>
+                        <div class="framework-preview p-6 rounded-2xl">
+                            <div class="font-semibold mb-4 text-high-contrast">Assessment Dimensions:</div>
+                            <ul class="space-y-3 text-medium-contrast">
+                                <li class="flex items-start"><i class="fas fa-check text-coral mr-3 mt-1"></i>Business maturity & growth stage analysis</li>
+                                <li class="flex items-start"><i class="fas fa-check text-coral mr-3 mt-1"></i>Market understanding & validation depth</li>
+                                <li class="flex items-start"><i class="fas fa-check text-coral mr-3 mt-1"></i>Competitive intensity & positioning analysis</li>
+                                <li class="flex items-start"><i class="fas fa-check text-coral mr-3 mt-1"></i>Timeline urgency & flexibility assessment</li>
+                                <li class="flex items-start"><i class="fas fa-check text-coral mr-3 mt-1"></i>Resource availability & capability mapping</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Brand Positioning -->
+                    <div class="methodology-card glass-card rounded-3xl p-10 stagger-in">
+                        <div class="flex items-start mb-8">
+                            <div class="w-16 h-16 bg-teal-500 bg-opacity-20 rounded-2xl flex items-center justify-center mr-6 border border-teal border-opacity-30">
+                                <i class="fas fa-bullhorn text-teal text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-display text-2xl font-semibold mb-3 text-high-contrast">Brand <span class="text-teal">Positioning</span></h3>
+                                <p class="text-medium-contrast">Maturity → consistency → perception clarity</p>
+                            </div>
+                        </div>
+                        <div class="framework-preview p-6 rounded-2xl">
+                            <div class="font-semibold mb-4 text-high-contrast">Assessment Dimensions:</div>
+                            <ul class="space-y-3 text-medium-contrast">
+                                <li class="flex items-start"><i class="fas fa-check text-teal mr-3 mt-1"></i>Brand maturity & evolution stage</li>
+                                <li class="flex items-start"><i class="fas fa-check text-teal mr-3 mt-1"></i>Audience definition & insight depth</li>
+                                <li class="flex items-start"><i class="fas fa-check text-teal mr-3 mt-1"></i>Message consistency audit across channels</li>
+                                <li class="flex items-start"><i class="fas fa-check text-teal mr-3 mt-1"></i>Perception understanding & market feedback</li>
+                                <li class="flex items-start"><i class="fas fa-check text-teal mr-3 mt-1"></i>Differentiation challenge & opportunity mapping</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Campaign Planning -->
+                    <div class="methodology-card glass-card rounded-3xl p-10 stagger-in">
+                        <div class="flex items-start mb-8">
+                            <div class="w-16 h-16 bg-red-500 bg-opacity-20 rounded-2xl flex items-center justify-center mr-6 border border-coral border-opacity-30">
+                                <i class="fas fa-chart-bar text-coral text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-display text-2xl font-semibold mb-3 text-high-contrast">Campaign <span class="text-coral">Execution</span></h3>
+                                <p class="text-medium-contrast">Type → budget → channel complexity</p>
+                            </div>
+                        </div>
+                        <div class="framework-preview p-6 rounded-2xl">
+                            <div class="font-semibold mb-4 text-high-contrast">Assessment Dimensions:</div>
+                            <ul class="space-y-3 text-medium-contrast">
+                                <li class="flex items-start"><i class="fas fa-check text-coral mr-3 mt-1"></i>Campaign type & strategic objectives</li>
+                                <li class="flex items-start"><i class="fas fa-check text-coral mr-3 mt-1"></i>Budget allocation & resource framework</li>
+                                <li class="flex items-start"><i class="fas fa-check text-coral mr-3 mt-1"></i>Channel scope & integration complexity</li>
+                                <li class="flex items-start"><i class="fas fa-check text-coral mr-3 mt-1"></i>Measurement sophistication & analytics</li>
+                                <li class="flex items-start"><i class="fas fa-check text-coral mr-3 mt-1"></i>Creative resource & capability mapping</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Cross-Channel Narrative -->
+                    <div class="methodology-card glass-card rounded-3xl p-10 stagger-in">
+                        <div class="flex items-start mb-8">
+                            <div class="w-16 h-16 bg-teal-500 bg-opacity-20 rounded-2xl flex items-center justify-center mr-6 border border-teal border-opacity-30">
+                                <i class="fas fa-sitemap text-teal text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-display text-2xl font-semibold mb-3 text-high-contrast">Narrative <span class="text-teal">Architecture</span></h3>
+                                <p class="text-medium-contrast">Maturity → scale → governance needs</p>
+                            </div>
+                        </div>
+                        <div class="framework-preview p-6 rounded-2xl">
+                            <div class="font-semibold mb-4 text-high-contrast">Assessment Dimensions:</div>
+                            <ul class="space-y-3 text-medium-contrast">
+                                <li class="flex items-start"><i class="fas fa-check text-teal mr-3 mt-1"></i>Narrative development & maturity stage</li>
+                                <li class="flex items-start"><i class="fas fa-check text-teal mr-3 mt-1"></i>Channel ecosystem scope & complexity</li>
+                                <li class="flex items-start"><i class="fas fa-check text-teal mr-3 mt-1"></i>Content production volume & velocity</li>
+                                <li class="flex items-start"><i class="fas fa-check text-teal mr-3 mt-1"></i>Scalability requirements & constraints</li>
+                                <li class="flex items-start"><i class="fas fa-check text-teal mr-3 mt-1"></i>Governance & automation system needs</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Enhanced Competitive Advantage -->
+            <section class="mb-24">
+                <div class="glass-card rounded-3xl p-12 max-w-6xl mx-auto">
+                    <div class="text-center mb-12">
+                        <h2 class="font-display text-4xl font-bold mb-6 text-high-contrast">
+                            Why This <span class="text-coral">Changes</span> Everything
+                        </h2>
+                        <p class="text-xl text-medium-contrast">Traditional consulting vs. intelligence-driven methodology</p>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-10">
+                        <div class="border-2 border-gray-600 border-opacity-30 rounded-2xl p-8 bg-gray-800 bg-opacity-20">
+                            <div class="flex items-center mb-6">
+                                <i class="fas fa-times-circle text-gray-400 text-3xl mr-4"></i>
+                                <h4 class="font-semibold text-gray-400 text-xl">Traditional Approach</h4>
+                            </div>
+                            <ul class="space-y-4 text-gray-300">
+                                <li class="flex items-start"><i class="fas fa-circle text-xs mr-3 mt-2 text-gray-500"></i>Recommendations based on consultant intuition</li>
+                                <li class="flex items-start"><i class="fas fa-circle text-xs mr-3 mt-2 text-gray-500"></i>Relationship-dependent advice quality</li>
+                                <li class="flex items-start"><i class="fas fa-circle text-xs mr-3 mt-2 text-gray-500"></i>Generic service tier placement</li>
+                                <li class="flex items-start"><i class="fas fa-circle text-xs mr-3 mt-2 text-gray-500"></i>Unclear strategic rationale</li>
+                                <li class="flex items-start"><i class="fas fa-circle text-xs mr-3 mt-2 text-gray-500"></i>Inconsistent methodology application</li>
+                            </ul>
+                        </div>
+
+                        <div class="border-2 border-coral border-opacity-40 rounded-2xl p-8 bg-coral bg-opacity-10">
+                            <div class="flex items-center mb-6">
+                                <i class="fas fa-check-circle text-coral text-3xl mr-4"></i>
+                                <h4 class="font-semibold text-coral text-xl">StrategyIQ™ Intelligence</h4>
+                            </div>
+                            <ul class="space-y-4 text-high-contrast">
+                                <li class="flex items-start"><i class="fas fa-check text-coral mr-3 mt-1"></i>Systematic complexity assessment framework</li>
+                                <li class="flex items-start"><i class="fas fa-check text-coral mr-3 mt-1"></i>Algorithm-driven tier matching precision</li>
+                                <li class="flex items-start"><i class="fas fa-check text-coral mr-3 mt-1"></i>Transparent strategic logic & rationale</li>
+                                <li class="flex items-start"><i class="fas fa-check text-coral mr-3 mt-1"></i>Consistent methodology application</li>
+                                <li class="flex items-start"><i class="fas fa-check text-coral mr-3 mt-1"></i>Data-informed strategic recommendations</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Enhanced Experience CTA -->
+            <section class="mb-20">
+                <div class="consultation-cta rounded-3xl p-16 text-center text-white max-w-5xl mx-auto relative">
+                    <i class="fas fa-shield-alt text-8xl mb-8 opacity-90"></i>
+                    <h2 class="font-display text-5xl font-bold mb-6 text-high-contrast">
+                        Experience Strategic Intelligence
+                    </h2>
+                    <p class="text-2xl mb-12 opacity-95 max-w-3xl mx-auto leading-relaxed">
+                        StrategyIQ™ is Luis's proprietary consultation framework—experienced live during your strategic session. See systematic assessment in action, not through self-service forms.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-6 justify-center mb-12">
+                        <a href="../contact/" class="bg-white text-coral px-10 py-5 rounded-2xl font-bold text-xl hover:bg-gray-50 transition-all inline-flex items-center justify-center transform hover:scale-105">
+                            <i class="fas fa-calendar-check mr-3"></i>
+                            Book Strategic Consultation
+                        </a>
+                        <a href="../services/" class="border-2 border-white text-white px-10 py-5 rounded-2xl font-bold text-xl hover:bg-white hover:text-coral transition-all inline-flex items-center justify-center transform hover:scale-105">
+                            <i class="fas fa-compass mr-3"></i>
+                            Explore Service Tiers
+                        </a>
+                    </div>
+                    <div class="pt-8 border-t border-white border-opacity-20">
+                        <p class="opacity-80 flex items-center justify-center">
+                            <i class="fas fa-lock mr-3"></i>
+                            Crown Jewel Protection: Full StrategyIQ Engine access reserved for qualified strategic consultations
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Enhanced Methodology Proof Points -->
+            <section>
+                <div class="text-center mb-16">
+                    <h2 class="font-display text-4xl font-bold mb-6 text-high-contrast">
+                        Built on <span class="text-teal">Microsoft-Level</span> Rigor
+                    </h2>
+                    <p class="text-xl text-medium-contrast">Strategic frameworks that scale from startups to enterprise</p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                    <div class="glass-card rounded-2xl p-8 text-center stagger-in">
+                        <i class="fas fa-medal text-coral text-4xl mb-6"></i>
+                        <h4 class="font-semibold text-xl mb-4 text-high-contrast">15+ Years</h4>
+                        <p class="text-medium-contrast leading-relaxed">Strategic marketing expertise across tech, B2B, and consumer markets</p>
+                    </div>
+                    <div class="glass-card rounded-2xl p-8 text-center stagger-in">
+                        <i class="fas fa-building text-teal text-4xl mb-6"></i>
+                        <h4 class="font-semibold text-xl mb-4 text-high-contrast">Enterprise Heritage</h4>
+                        <p class="text-medium-contrast leading-relaxed">Microsoft strategic rigor meets boutique marketing agility</p>
+                    </div>
+                    <div class="glass-card rounded-2xl p-8 text-center stagger-in">
+                        <i class="fas fa-chart-line text-coral text-4xl mb-6"></i>
+                        <h4 class="font-semibold text-xl mb-4 text-high-contrast">Systematic Approach</h4>
+                        <p class="text-medium-contrast leading-relaxed">Frameworks, not feelings—intelligence over intuition</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- ADMIN-ONLY LIVE ENGINE -->
+    <div class="live-engine">
+        <div class="container mx-auto px-6 py-16">
+            <div class="bg-coral rounded-3xl p-12 mb-16 text-center max-w-5xl mx-auto relative overflow-hidden">
+                <div class="relative z-10">
+                    <i class="fas fa-unlock-alt text-6xl mb-6"></i>
+                    <h2 class="font-display text-4xl font-bold mb-4">Live StrategyIQ™ Engine</h2>
+                    <p class="text-xl opacity-95">Admin mode active - Full consultation framework accessible</p>
+                </div>
+            </div>
+
+            <!-- Live assessment content will go here -->
+            <div id="liveEngineContent">
+                <!-- This will be populated with the full functional assessment -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let engineMode = 'public';
+        
+        function toggleEngineMode() {
+            const isAdminMode = document.body.classList.contains('admin-mode');
+            
+            if (!isAdminMode) {
+                // Entering admin mode - require authentication
+                const password = prompt('Enter admin access code:');
+                if (password === 'LG100') { // Change this to your secure password
+                    document.body.classList.remove('public-mode');
+                    document.body.classList.add('admin-mode');
+                    document.getElementById('toggleText').textContent = 'Public View';
+                    engineMode = 'admin';
+                    initializeLiveEngine();
+                } else if (password) {
+                    alert('Invalid access code');
+                }
+            } else {
+                // Returning to public mode
+                document.body.classList.remove('admin-mode');
+                document.body.classList.add('public-mode');
+                document.getElementById('toggleText').textContent = 'Admin Access';
+                engineMode = 'public';
+            }
+        }
+
+        function initializeLiveEngine() {
+            // Load the full assessment interface with enhanced styling
+            document.getElementById('liveEngineContent').innerHTML = `
+                <div class="text-center mb-16">
+                    <p class="text-2xl text-medium-contrast mb-12 leading-relaxed">Full functional assessment engine loaded. Select a strategic area to begin live consultation assessment.</p>
+                </div>
+                
+                <!-- Enhanced Service Area Selection -->
+                <section id="serviceSelection">
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        <!-- Go-to-Market Strategy -->
+                        <div class="service-card coral-hover glass-card rounded-3xl p-8 cursor-pointer" onclick="startLiveAssessment('gtm')">
+                            <div class="text-center">
+                                <div class="w-20 h-20 bg-red-500 bg-opacity-20 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-coral border-opacity-30">
+                                    <i class="fas fa-rocket text-coral text-3xl"></i>
+                                </div>
+                                <h3 class="font-display text-2xl font-semibold mb-4 text-high-contrast">Go-to-Market</h3>
+                                <p class="text-medium-contrast">5-dimension assessment</p>
+                            </div>
+                        </div>
+
+                        <!-- Brand Positioning -->
+                        <div class="service-card teal-hover glass-card rounded-3xl p-8 cursor-pointer" onclick="startLiveAssessment('brand')">
+                            <div class="text-center">
+                                <div class="w-20 h-20 bg-teal-500 bg-opacity-20 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-teal border-opacity-30">
+                                    <i class="fas fa-bullhorn text-teal text-3xl"></i>
+                                </div>
+                                <h3 class="font-display text-2xl font-semibold mb-4 text-high-contrast">Brand Positioning</h3>
+                                <p class="text-medium-contrast">5-dimension assessment</p>
+                            </div>
+                        </div>
+
+                        <!-- Campaign Planning -->
+                        <div class="service-card coral-hover glass-card rounded-3xl p-8 cursor-pointer" onclick="startLiveAssessment('campaign')">
+                            <div class="text-center">
+                                <div class="w-20 h-20 bg-red-500 bg-opacity-20 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-coral border-opacity-30">
+                                    <i class="fas fa-chart-bar text-coral text-3xl"></i>
+                                </div>
+                                <h3 class="font-display text-2xl font-semibold mb-4 text-high-contrast">Campaign Execution</h3>
+                                <p class="text-medium-contrast">5-dimension assessment</p>
+                            </div>
+                        </div>
+
+                        <!-- Cross-Channel Narrative -->
+                        <div class="service-card teal-hover glass-card rounded-3xl p-8 cursor-pointer" onclick="startLiveAssessment('narrative')">
+                            <div class="text-center">
+                                <div class="w-20 h-20 bg-teal-500 bg-opacity-20 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-teal border-opacity-30">
+                                    <i class="fas fa-sitemap text-teal text-3xl"></i>
+                                </div>
+                                <h3 class="font-display text-2xl font-semibold mb-4 text-high-contrast">Narrative Architecture</h3>
+                                <p class="text-medium-contrast">5-dimension assessment</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Enhanced Assessment Flow (Hidden Initially) -->
+                <section id="assessmentFlow" class="hidden">
+                    <div class="max-w-5xl mx-auto">
+                        <!-- Enhanced Progress Bar -->
+                        <div class="mb-12">
+                            <div class="flex items-center justify-between text-lg mb-4">
+                                <span id="progressText" class="font-semibold text-high-contrast">Assessment Progress</span>
+                                <span id="progressPercent" class="font-bold text-coral text-2xl">0%</span>
+                            </div>
+                            <div class="w-full bg-gray-700 bg-opacity-30 rounded-full h-4">
+                                <div id="progressBar" class="progress-bar h-4 rounded-full transition-all duration-700" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Enhanced Question Container -->
+                        <div id="questionContainer" class="glass-card rounded-3xl p-12 mb-12">
+                            <!-- Questions will be dynamically loaded -->
+                        </div>
+
+                        <!-- Enhanced Admin Analytics -->
+                        <div class="grid md:grid-cols-2 gap-10 mb-12">
+                            <div class="glass-card rounded-3xl p-8">
+                                <h4 class="font-display text-2xl font-semibold mb-6 text-coral flex items-center">
+                                    <i class="fas fa-analytics mr-3"></i>Lead Scoring
+                                </h4>
+                                <div id="leadScore" class="text-5xl font-bold text-coral mb-4">0</div>
+                                <div class="text-lg text-medium-contrast mb-6">Qualification Score</div>
+                                <div>
+                                    <canvas id="scoringChart" style="height: 250px;"></canvas>
+                                </div>
+                            </div>
+                            
+                            <div class="glass-card rounded-3xl p-8">
+                                <h4 class="font-display text-2xl font-semibold mb-6 text-teal flex items-center">
+                                    <i class="fas fa-dollar-sign mr-3"></i>Revenue Potential
+                                </h4>
+                                <div id="revenueEstimate" class="text-5xl font-bold text-teal mb-4">$0</div>
+                                <div class="text-lg text-medium-contrast mb-6">Estimated Project Value</div>
+                                <div id="complexityIndicators" class="space-y-4">
+                                    <!-- Complexity indicators -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Enhanced Navigation -->
+                        <div class="flex justify-between">
+                            <button id="prevBtn" class="bg-gray-700 bg-opacity-50 text-white px-8 py-4 rounded-2xl font-semibold text-lg disabled:opacity-50 transition-all hover:bg-opacity-70" onclick="previousQuestion()" disabled>
+                                <i class="fas fa-arrow-left mr-3"></i>Previous
+                            </button>
+                            <button id="nextBtn" class="bg-coral text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:bg-red-600 transition-all transform hover:scale-105" onclick="nextQuestion()">
+                                Next<i class="fas fa-arrow-right ml-3"></i>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Enhanced Results Section (Hidden Initially) -->
+                <section id="resultsSection" class="hidden">
+                    <div class="max-w-7xl mx-auto">
+                        <div class="text-center mb-16">
+                            <h2 class="font-display text-5xl font-bold mb-6 text-high-contrast">
+                                Strategic <span class="text-gradient">Recommendations</span>
+                            </h2>
+                            <p class="text-2xl text-medium-contrast">Live consultation intelligence generated</p>
+                        </div>
+
+                        <div class="grid lg:grid-cols-3 gap-10">
+                            <div class="lg:col-span-2 space-y-10">
+                                <div class="glass-card rounded-3xl p-10">
+                                    <h3 class="font-display text-3xl font-semibold mb-8 text-high-contrast">Recommended <span class="text-coral">Engagement</span></h3>
+                                    <div id="serviceRecommendation"></div>
+                                </div>
+
+                                <div class="glass-card rounded-3xl p-10">
+                                    <h3 class="font-display text-3xl font-semibold mb-8 text-high-contrast">Strategic Brief <span class="text-teal">Preview</span></h3>
+                                    <div id="strategicBrief" class="space-y-8"></div>
+                                </div>
+                            </div>
+
+                            <div class="space-y-8">
+                                <div class="glass-card rounded-3xl p-8">
+                                    <h4 class="font-display text-2xl font-semibold mb-6 text-teal flex items-center">
+                                        <i class="fas fa-calculator mr-3"></i>Investment Analysis
+                                    </h4>
+                                    <div id="roiCalculation" class="space-y-6"></div>
+                                </div>
+
+                                <div class="glass-card rounded-3xl p-8">
+                                    <h4 class="font-display text-2xl font-semibold mb-6 text-coral flex items-center">
+                                        <i class="fas fa-tools mr-3"></i>Framework Arsenal
+                                    </h4>
+                                    <div id="frameworkLibrary" class="space-y-4"></div>
+                                </div>
+
+                                <div class="glass-card rounded-3xl p-8">
+                                    <h4 class="font-display text-2xl font-semibold mb-6 text-high-contrast flex items-center">
+                                        <i class="fas fa-roadmap mr-3"></i>Next Steps
+                                    </h4>
+                                    <div id="nextSteps" class="space-y-4"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            `;
+            
+            // Initialize with enhanced animations
+            setTimeout(() => {
+                document.querySelectorAll('#liveEngineContent .service-card').forEach((card, index) => {
+                    setTimeout(() => {
+                        card.classList.add('fade-in');
+                    }, index * 100);
+                });
+            }, 100);
+            
+            loadAssessmentEngine();
+        }
+
+        // Placeholder for the complete assessment engine
+        function loadAssessmentEngine() {
+            console.log('Enhanced assessment engine loaded in admin mode');
+        }
+
+        function startLiveAssessment(type) {
+            console.log('Starting assessment for:', type);
+            // Full assessment logic would go here
+        }
+
+        function nextQuestion() {
+            console.log('Next question');
+        }
+
+        function previousQuestion() {
+            console.log('Previous question');
+        }
+
+        // Enhanced page load animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Stagger in animations for elements
+            const staggerElements = document.querySelectorAll('.stagger-in');
+            staggerElements.forEach((element, index) => {
+                element.style.animationDelay = `${index * 0.1}s`;
+            });
+            
+            // Enhanced scroll animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-in');
+                    }
+                });
+            }, observerOptions);
+            
+            // Observe methodology cards
+            document.querySelectorAll('.methodology-card').forEach(card => {
+                observer.observe(card);
+            });
+        });
+    </script>
+
+    <!-- Link to complete assessment engine -->
+    <script src="../assets/js/strategyiq-engine-complete.js"></script>
+</body>
+</html>

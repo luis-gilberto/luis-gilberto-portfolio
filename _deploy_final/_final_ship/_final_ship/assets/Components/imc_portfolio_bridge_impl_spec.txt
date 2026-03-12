@@ -1,0 +1,218 @@
+IMC SERVICES × PORTFOLIO — IMPLEMENTATION SPEC (Trae-Ready)
+Author: Luis + Copilot
+Scope: Wire The Hub (services side) to the Portfolio (proof side) with consistent, fast, accessible bridges across pages: /TheHub (main), /TheHub/IMCServices/, /TheHub/advisory/, /TheHub/scopeiq/, /TheHub/strategyiq/
+
+================================================================================
+A) OUTCOMES (WHAT THIS DELIVERS)
+================================================================================
+1) “Proof at Peak Interest”
+   - Lightweight case-teaser module appears in four key spots (hero underlines, services grid, mid-page trust, pre-CTA) and links to portfolio items.
+2) Seamless motion + accessible HTML
+   - Uses small, mobile-friendly modules; no blocking libs; respects reduced motion.
+3) Trackable, testable
+   - UTM/source tagging + data attributes for A/B testing headline and module placement.
+
+================================================================================
+B) ASSETS & NAMING (DROP-IN CONVENTIONS)
+================================================================================
+Paths are relative to /TheHub unless noted.
+
+/TheHub/assets/portfolio/
+  - thumb-case1.jpg  (600×400, ~60–120KB, Web-optimized)
+  - thumb-case2.jpg
+  - thumb-case3.jpg
+
+Portfolio targets (adjust to your real routes):
+  - /portfolio/case-fsa.html
+  - /portfolio/case-contoso-ai.html
+  - /portfolio/case-labs-relaunch.html
+
+================================================================================
+C) GLOBAL CSS TOKENS (add once)
+================================================================================
+Place into a shared stylesheet loaded by all Hub pages (e.g. /TheHub/assets/Components/luis-gilberto.com_thehub/css/premium-styles.css) OR inline in each page’s <style> block if you prefer.
+
+/* ===== Portfolio Bridge (shared) ===== */
+:root{
+  --lg-coral:#F96F6E;
+  --lg-ink:#0B0B0C;
+  --lg-fg:#fff;
+  --lg-muted:rgba(255,255,255,.72);
+}
+.portfolio-bridge{display:grid;gap:16px;grid-template-columns:repeat(3,minmax(0,1fr));margin:28px auto 8px;max-width:980px;padding:4px}
+.portfolio-bridge .card{position:relative;border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;background:rgba(255,255,255,.02);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.portfolio-bridge .card:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,.25);border-color:rgba(249,111,110,.35)}
+.portfolio-bridge img{width:100%;height:160px;object-fit:cover;display:block;filter:saturate(1.02)}
+.portfolio-bridge .meta{padding:12px 14px 14px}
+.portfolio-bridge .eyebrow{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--lg-muted);margin-bottom:6px}
+.portfolio-bridge .title{font-weight:700;font-size:1.02rem;line-height:1.25;margin-bottom:4px}
+.portfolio-bridge .delta{font-size:.9rem;color:var(--lg-muted)}
+.portfolio-bridge a{color:inherit;text-decoration:none}
+@media(max-width:860px){.portfolio-bridge{grid-template-columns:1fr 1fr} .portfolio-bridge img{height:140px}}
+@media(max-width:520px){.portfolio-bridge{grid-template-columns:1fr} .portfolio-bridge img{height:180px}}
+
+/* Small “view all” link */
+.bridge-inline-cta{display:inline-flex;align-items:center;gap:.5rem;font-weight:700}
+.bridge-inline-cta svg{width:16px;height:16px}
+
+/* Subtle section bumper to separate proof from next block */
+.section-bumper{height:1px;background:linear-gradient(90deg,transparent,var(--lg-coral),transparent);opacity:.6;margin:22px 0}
+
+/* Reduced motion */
+@media(prefers-reduced-motion:reduce){
+  .portfolio-bridge .card:hover{transform:none}
+}
+
+================================================================================
+D) GLOBAL JS HELPERS (add once near bottom before </body> of each page)
+================================================================================
+<script>
+window.LG = window.LG || {};
+LG.bridge = {
+  addUTM(url, utm){ try{
+    const u = new URL(url, window.location.origin);
+    Object.entries(utm || {}).forEach(([k,v]) => v && u.searchParams.set(k,v));
+    return u.toString();
+  }catch(_){ return url; } },
+  clickTrack(e){
+    const card = e.target.closest('[data-bridge]'); if(!card) return;
+    const { caseId, placement } = card.dataset;
+    // lightweight event placeholder; swap to GA or CF analytics if needed
+    console.debug('bridge:click', {caseId, placement});
+  }
+};
+document.addEventListener('click', LG.bridge.clickTrack, {passive:true});
+</script>
+
+================================================================================
+E) MODULE HTML (copy/paste wherever instructed below)
+================================================================================
+<!-- ===== Portfolio Bridge (3-up teaser) ===== -->
+<div class="portfolio-bridge" role="region" aria-label="Recent work" data-bridge-container>
+  <a class="card" href="/portfolio/case-fsa.html" data-bridge data-case-id="fsa" data-placement="hero">
+    <img loading="lazy" src="/TheHub/assets/portfolio/thumb-case1.jpg" alt="FSA launch campaign visuals">
+    <div class="meta">
+      <div class="eyebrow">Case Study</div>
+      <div class="title">Financial Services: AI Launch</div>
+      <div class="delta">Lead gen +132% • CPL −28%</div>
+    </div>
+  </a>
+  <a class="card" href="/portfolio/case-contoso-ai.html" data-bridge data-case-id="contoso-ai" data-placement="hero">
+    <img loading="lazy" src="/TheHub/assets/portfolio/thumb-case2.jpg" alt="Enterprise AI solution campaign creative">
+    <div class="meta">
+      <div class="eyebrow">Case Study</div>
+      <div class="title">Enterprise: Platform Story</div>
+      <div class="delta">Pipeline +$4.2M • Win rate +6pt</div>
+    </div>
+  </a>
+  <a class="card" href="/portfolio/case-labs-relaunch.html" data-bridge data-case-id="labs" data-placement="hero">
+    <img loading="lazy" src="/TheHub/assets/portfolio/thumb-case3.jpg" alt="Brand and web relaunch showcase thumbnails">
+    <div class="meta">
+      <div class="eyebrow">Case Study</div>
+      <div class="title">Brand & Web Relaunch</div>
+      <div class="delta">Time‑to‑ship −40% • NPS 72</div>
+    </div>
+  </a>
+</div>
+<div class="section-bumper" aria-hidden="true"></div>
+
+<!-- ===== Inline “View portfolio” CTA (use inside intros/bridges) ===== -->
+<p class="bridge-inline-cta">
+  <a href="/portfolio/index.html">View full portfolio</a>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+    <path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path>
+  </svg>
+</p>
+
+================================================================================
+F) PAGE-BY-PAGE INSTRUCTIONS
+================================================================================
+
+F1) /TheHub/index.html (Main Hub)
+---------------------------------
+1. Locate the HERO wrapper (class ".hero .hero-content"). Insert the 3‑up “Portfolio Bridge” module **directly after** the primary hero subtitle/CTA block.
+   - Code: paste the MODULE HTML (Section E) after the hero copy.
+2. Add an inline “View full portfolio” CTA at the end of the hero text (or under the bridge) to reinforce discovery.
+3. (Optional) Insert the 3‑up bridge again **above the final primary CTA section** to catch late deciders.
+4. Ensure the global CSS and global JS helpers are loaded on this page (Sections C & D).
+
+F2) /TheHub/IMCServices/index.html (Services)
+---------------------------------------------
+1. In the “Core Capabilities” or immediately **below** the “The Bridge” section, insert the 3‑up “Portfolio Bridge” module.
+2. In each service tier or capability card, add a small text link beneath the body text: 
+   - Example: <a href="/portfolio/case-fsa.html" class="bridge-inline-cta">See how this looked in action →</a>
+3. In the footer CTA (“Ready to Bridge the Divide?”), add an adjacent ghost button linking to portfolio index:
+   - <a href="/portfolio/index.html" class="btn btn-ghost">Browse Portfolio</a>
+
+F3) /TheHub/advisory/index.html (Advisory)
+------------------------------------------
+1. After the first credibility/trust section (or the initial hero CTA row), insert a **single-row** 3‑up “Portfolio Bridge” module.
+2. In the expandable service details, add one “See an example →” link that maps to a relevant case.
+3. Add a footer row above site footer: a 2‑column layout:
+   - Left: short paragraph “Strategy that ships. See outcomes.”
+   - Right: “Browse Portfolio” ghost button.
+
+F4) /TheHub/scopeiq/index.html (ScopeIQ Wizard)
+-----------------------------------------------
+1. Add a **post-assessment** nudge: on the results screen, include a compact version of the bridge showing 2 cards (you may remove the third <a> card in the module).
+2. Add a small paragraph under the “Start Assessment” hero button: “Want to see outcomes first? View portfolio →”
+
+F5) /TheHub/strategyiq/index.html (StrategyIQ Engine)
+-----------------------------------------------------
+1. Within the “Recommendations” or “Next Steps” section, append a compact 2‑card version of the bridge with cases tied to strategy outcomes.
+2. In the page header or subhead, include the inline “View full portfolio” CTA.
+
+================================================================================
+G) ACCESSIBILITY, PERFORMANCE, ANALYTICS
+================================================================================
+- All images have alt; cards are <a> elements (native keyboard + semantics).
+- Lazy load thumbs (loading="lazy").
+- Keep thumbs ≤120KB; use modern compression.
+- Add UTM parameters when linking from Hub to Portfolio if desired:
+  - Example edit for a card href:
+    href="/portfolio/case-fsa.html?utm_source=thehub&utm_medium=bridge&utm_campaign=proof"
+- To systematically add UTM at runtime, swap each static href with:
+    href="javascript:void(0)" data-href="/portfolio/case-fsa.html"
+  and run this tiny init after DOM load:
+<script>
+document.querySelectorAll('[data-bridge][data-href]').forEach(a=>{
+  a.href = LG.bridge.addUTM(a.dataset.href, {
+    utm_source: 'thehub',
+    utm_medium: 'bridge',
+    utm_campaign: 'proof'
+  });
+});
+</script>
+
+================================================================================
+H) OPTIONAL: MINI CASE CARD SNIPPET (for inside service tiers)
+================================================================================
+<!-- Inline micro-proof under a service/tier -->
+<p class="delta" style="margin:.5rem 0 0;color:var(--lg-muted)">
+  Example: <a href="/portfolio/case-contoso-ai.html">Enterprise AI platform story →</a>
+</p>
+
+================================================================================
+I) DEPLOY CHECKLIST
+================================================================================
+[ ] CSS pasted once globally (or per-page) and purged of unused selectors if you’re running a CSS build step.
+[ ] JS helpers loaded once per page (no duplicate listeners).
+[ ] Module HTML inserted in the spots noted above.
+[ ] Real portfolio URLs wired; thumbs uploaded to /TheHub/assets/portfolio/.
+[ ] Lighthouse pass (mobile): LCP < 2.5s, Total size < 2.2MB, CLS < .05.
+[ ] Keyboard nav: Tab → cards → Enter opens.
+[ ] Reduced Motion: hover-only micro-animations, no autoplay video triggered.
+
+================================================================================
+J) QUICK SELECTOR MAP (where to paste)
+================================================================================
+- Main Hub hero container: .hero .hero-content
+- Services page target: below .bridge or inside #capabilities wrapper
+- Advisory: below the first CTA row in .hero or after first credibility block
+- ScopeIQ: results view container; intro page under primary CTA
+- StrategyIQ: inside “Recommendations”/“Next Steps” wrapper
+
+================================================================================
+K) ROLL-BACK
+================================================================================
+- Remove the <div class="portfolio-bridge"> blocks and the global CSS/JS additions. Layout returns to previous state without side effects.

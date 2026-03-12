@@ -1,0 +1,170 @@
+# COPY-PASTE THIS ENTIRE MESSAGE INTO TRAE
+
+---
+
+## TASK: Fix Broken Tablet Navigation on Insights Page
+
+### PROBLEM
+The Insights page at `/insights/index.html` has NO navigation visible on tablet devices (768-1024px width). Desktop nav is hidden, mobile toggle shows but clicking does nothing because the mobile drawer is also hidden. This affects approximately 25% of visitors.
+
+### SOLUTION
+Implement a three-tier responsive breakpoint system:
+- Desktop (>1024px): Horizontal navigation
+- Tablet (768-1024px): Horizontal navigation (compact) ← Currently broken
+- Mobile (≤768px): Slide-in drawer
+
+### YOUR INSTRUCTIONS
+
+Create 2 new files and modify 1 existing file as specified below. Follow exactly.
+
+---
+
+## FILE 1: CREATE `/insights/assets/css/insights-responsive-fixes.css`
+
+Use the complete CSS code from the file I provided. The file is 493 lines and includes:
+- Tablet breakpoint (769-1024px) with desktop nav shown
+- Mobile breakpoint (≤768px) with mobile drawer functionality  
+- Small mobile optimizations (≤480px)
+- Accessibility improvements
+- Performance optimizations
+
+**Key requirement**: This CSS must override existing inline styles, so it uses `!important` strategically.
+
+---
+
+## FILE 2: CREATE `/insights/assets/js/insights-responsive-navigation.js`
+
+Use the complete JavaScript code from the file I provided. The file is 274 lines and includes:
+- Navigation system with mobile drawer control
+- Theme toggle integration
+- Tab system functionality
+- Scroll reveal animations
+- Smooth scroll for anchor links
+- Keyboard accessibility
+
+**Key requirement**: This replaces the existing navigation JavaScript completely.
+
+---
+
+## FILE 3: MODIFY `/insights/index.html`
+
+Make these three surgical changes:
+
+### Change 3A: Add CSS Link
+**Location**: In `<head>` section, AFTER all existing `<style>` blocks and BEFORE `</head>`
+
+**Add this line**:
+```html
+<!-- Responsive Fixes - MUST be loaded last to override existing styles -->
+<link rel="stylesheet" href="/insights/assets/css/insights-responsive-fixes.css">
+```
+
+### Change 3B: Remove Conflicting Styles
+**Location**: In `<head>` section
+
+**Find and DELETE this entire block**:
+```html
+<style id="mobile-drawer-hard-hide">
+@media (max-width: 768px) {
+    .mobile-menu-overlay { position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; width: 100vw !important; height: 100vh !important; background-color: var(--bg-primary) !important; z-index: 11000 !important; transform: translateX(100%) !important; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important; display: none !important; flex-direction: column !important; overflow: hidden !important; visibility: hidden !important; opacity: 0 !important; }
+    .mobile-menu-overlay.active { display: flex !important; transform: translateX(0) !important; visibility: visible !important; opacity: 1 !important; }
+    .mobile-drawer-header, .mobile-drawer-content, .mobile-link, .mobile-group-label, .mobile-divider { display: none !important; }
+    .mobile-menu-overlay.active .mobile-drawer-header, .mobile-menu-overlay.active .mobile-drawer-content { display: flex !important; }
+    .mobile-menu-overlay.active .mobile-link, .mobile-menu-overlay.active .mobile-group-label, .mobile-menu-overlay.active .mobile-divider { display: block !important; }
+}
+</style>
+```
+
+### Change 3C: Replace Navigation JavaScript
+**Location**: Near the bottom of file, before `</body>`
+
+**Find this script** (it starts with `document.addEventListener("DOMContentLoaded", function () {` and contains navigation code):
+```javascript
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const header = document.querySelector(".lg-site-header");
+        const toggle = document.querySelector(".lg-nav-toggle");
+        // ... lots of navigation code ...
+    });
+</script>
+```
+
+**Replace it completely with**:
+```html
+<!-- Responsive Navigation System -->
+<script src="/insights/assets/js/insights-responsive-navigation.js"></script>
+```
+
+**IMPORTANT**: Do NOT remove the Swiper initialization script or the hero video script. Only replace the navigation-specific script.
+
+---
+
+## VERIFICATION STEPS
+
+After implementing, verify success:
+
+### Critical Test (30 seconds)
+1. Open `/insights/index.html` in browser
+2. Resize browser to exactly 800px wide
+3. **Expected**: Horizontal navigation visible (Portfolio • Insights • The Hub)
+4. **Expected**: NO hamburger menu icon
+5. If you see horizontal nav at 800px → Fix worked! ✅
+
+### Console Check (10 seconds)
+1. Open browser DevTools (F12)
+2. Check Console tab
+3. Should see these messages:
+   ```
+   ✅ Navigation system initialized
+   ✅ Theme system initialized
+   ✅ Tab system initialized
+   ✅ Scroll animations initialized
+   ✅ Smooth scroll initialized
+   ✅ All responsive navigation systems ready
+   ```
+
+### Full Test Matrix
+- **1920px**: Desktop nav horizontal ✅
+- **1200px**: Desktop nav horizontal ✅
+- **1024px**: Desktop nav horizontal ✅
+- **800px**: Desktop nav horizontal ✅ ← **CRITICAL - was broken**
+- **768px**: Desktop nav horizontal ✅
+- **767px**: Mobile drawer with hamburger ✅
+- **390px**: Mobile drawer with hamburger ✅
+
+---
+
+## SUCCESS CRITERIA
+
+Implementation is successful when:
+1. ✅ At 800px width, desktop navigation shows (not hamburger)
+2. ✅ At 390px width, hamburger icon shows and opens drawer
+3. ✅ No console errors
+4. ✅ Theme toggle works at all sizes
+5. ✅ All navigation links are clickable
+6. ✅ Mobile drawer slides in smoothly (400ms animation)
+
+---
+
+## NOTES
+
+- **Preserve**: All existing functionality (hero video, carousels, theme toggle, tabs)
+- **Fix**: Only the navigation breakpoint issue
+- **Approach**: Surgical fix, not a full rewrite
+- **CSS Load Order**: Critical that new CSS loads AFTER inline styles
+- **JavaScript**: Completely replace old nav script with new one
+
+This is a production-critical fix affecting ~25% of users. The tablet breakpoint (768-1024px) was completely non-functional before this fix.
+
+---
+
+## AFTER IMPLEMENTATION
+
+Please confirm:
+1. Files created at correct paths
+2. HTML modified as specified
+3. Test at 800px shows desktop nav
+4. Console shows 6 success messages
+5. No errors in console
+
+If all confirmed → Implementation complete! 🎉

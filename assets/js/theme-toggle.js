@@ -4,12 +4,12 @@
  * Storage key: 'lg_theme'
  */
 (function () {
-  const STORAGE_KEY = 'lg_theme';
+  const STORAGE_KEY = 'lg_theme'; // 🧬 Standardized Key
   const html = document.documentElement;
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
 
   function getStoredTheme() {
-    const t = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('theme');
+    const t = localStorage.getItem(STORAGE_KEY);
     return t === 'dark' || t === 'light' ? t : null;
   }
 
@@ -23,6 +23,9 @@
     if (persist) localStorage.setItem(STORAGE_KEY, next);
     const btn = document.getElementById('snav-theme-toggle');
     if (btn) btn.setAttribute('aria-label', next === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+
+    // Dispatch event to sync other components
+    window.dispatchEvent(new CustomEvent('theme-engine-sync', { detail: { theme: next } }));
   }
 
   function toggleTheme() {

@@ -1,0 +1,179 @@
+
+IMC Services → Contact Deep‑Link + Variant (Inline-CSS Edition)
+Trae Execution Plan (v3) — tailored to repo audit
+Author: ChatGPT for Luis Gilberto
+Date: 2025‑09‑21
+
+Audit Inputs (from Luis)
+------------------------
+- Contact page: assets\Contact\contact.html
+- IMC Services hub: IMCServices\index.html
+- No external stylesheets detected (pages use inline/embedded CSS)
+
+GOAL
+----
+Wire the "Start the conversation" CTA on /IMCServices/ to jump directly to the contact form AND show a subtle “IMC Services” variant on /contact — WITHOUT introducing external CSS/JS files (keep changes local to contact.html).
+
+What we’ll add
+--------------
+1) Deep‑link CTA: /contact/?source=imcservices#contact-form
+2) Anchor + copy hooks + hidden attribution field on contact.html
+3) A tiny variant <style> block in contact.html (scroll‑margin + subtle glow + badge)
+4) A tiny <script> in contact.html to detect ?source=imcservices and swap copy / set lead_source
+
+Path Notes
+----------
+- Use repo‑relative paths exactly as listed below.
+- Path separators may show as "\" on Windows and "/" on Linux; open the files by their repo location regardless of OS.
+
+TASK 0 — Safety (backup)
+------------------------
+Create a quick backup commit/branch before editing.
+
+TASK 1 — Update CTA on IMC Services (IMCServices\index.html)
+------------------------------------------------------------
+1A) OPEN: IMCServices\index.html
+1B) FIND: The final CTA link/button with visible text “Start the conversation”.
+1C) REPLACE its href with EXACTLY:
+/contact/?source=imcservices#contact-form
+
+Example target markup AFTER:
+<a class="btn btn-primary" href="/contact/?source=imcservices#contact-form" aria-label="Start the conversation — jump to contact form">
+  Start the conversation
+</a>
+
+(Option with UTMs — optional)
+/contact/?source=imcservices&utm_source=site&utm_medium=cta&utm_campaign=imcservices#contact-form
+
+TASK 2 — Add anchor + hooks on Contact (assets\Contact\contact.html)
+--------------------------------------------------------------------
+2A) OPEN: assets\Contact\contact.html
+
+2B) ADD an id to the form (or its closest wrapper). Choose ONE:
+- On wrapper:
+  <section id="contact-form"> … <form …>…</form> … </section>
+- OR directly on form:
+  <form id="contact-form" action="…" method="post"> … </form>
+
+2C) ADD lightweight copy hooks near the page headline area so we can swap text when source=imcservices:
+<h1 data-contact-headline>Start the conversation</h1>
+<p data-contact-subcopy>Tell me a bit about your project and goals.</p>
+
+2D) (Optional, recommended) ADD a tiny badge above the form/title block (exact placement up to layout):
+<span class="imc-badge" aria-hidden="true">IMC Services</span>
+
+2E) ADD a hidden attribution input INSIDE the <form>:
+<input type="hidden" name="lead_source" id="lead_source" value="">
+
+TASK 3 — Add the variant CSS inside contact.html
+------------------------------------------------
+3A) In assets\Contact\contact.html, LOCATE: the </head> closing tag.
+3B) RIGHT BEFORE </head>, INSERT this <style> block (place it *after* any existing styles so it wins cascade):
+
+<!-- ▶ Variant styling for IMC Services arrivals -->
+<style>
+  /* Ensure anchor lands correctly under any sticky header */
+  #contact-form { scroll-margin-top: 96px; } /* adjust if your header height differs */
+
+  /* Subtle variant when traffic comes from IMC Services */
+  .from-imcservices #contact-form {
+    border: 1px solid rgba(249,111,110,0.35); /* coral glow */
+    box-shadow: 0 18px 50px rgba(249,111,110,0.08);
+  }
+
+  .from-imcservices .imc-badge {
+    display: inline-flex;
+    font-size: 12px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #F96F6E, #2ED3C6); /* coral→teal */
+    color: #111;
+    margin-bottom: 8px;
+    box-shadow: 0 6px 24px rgba(249,111,110,.25);
+  }
+
+  /* Optional: little emphasis on primary button when from IMC */
+  .from-imcservices .btn-primary { outline: 2px solid #F96F6E22; }
+</style>
+
+TASK 4 — Add the detection script inside contact.html
+-----------------------------------------------------
+4A) In assets\Contact\contact.html, LOCATE: the </body> closing tag.
+4B) RIGHT BEFORE </body>, INSERT this <script> block:
+
+<!-- ▶ IMC Services arrival detection + copy swap + attribution -->
+<script>
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  var source = (params.get('source') || '').toLowerCase();
+
+  // Hidden field attribution
+  var lead = document.getElementById('lead_source');
+  if (lead) lead.value = source || 'organic';
+
+  if (source === 'imcservices') {
+    // Page-level class for variant styling
+    document.documentElement.classList.add('from-imcservices');
+
+    // Copy swap if targets exist
+    var head = document.querySelector('[data-contact-headline]');
+    var sub  = document.querySelector('[data-contact-subcopy]');
+    if (head) head.textContent = "Let’s scope the right engagement.";
+    if (sub)  sub.textContent  = "You came from the IMC Services hub. Tell us where you are in your journey and we’ll map the smartest next step.";
+
+    // Optional: preselect "Reason" dropdown by label
+    var reason = document.querySelector('select[name="reason"], #reason');
+    if (reason) {
+      var preferred = ["IMC Consulting","Integrated Marketing","ScopeIQ follow-up"];
+      var found = Array.prototype.find.call(reason.options, function(o){
+        return (o.text||'').trim() && preferred.indexOf((o.text||'').trim()) !== -1;
+      });
+      if (found) reason.value = found.value;
+    }
+
+    // If we arrived with #contact-form and have a sticky header, gently nudge position
+    if (window.location.hash === '#contact-form') {
+      var el = document.getElementById('contact-form');
+      if (el) {
+        requestAnimationFrame(function(){
+          var y = el.getBoundingClientRect().top + window.scrollY - 96; // adjust this offset to header height
+          window.scrollTo({ top: y, behavior: 'auto' });
+        });
+      }
+    }
+  }
+})();
+</script>
+
+TASK 5 — QA / Test Plan
+-----------------------
+1) From /IMCServices/, click “Start the conversation” CTA.
+   EXPECT: URL becomes /contact/?source=imcservices#contact-form
+   EXPECT: Page lands at the form (below sticky header).
+2) Inspect:
+   - <html> has class from-imcservices
+   - Hidden #lead_source value is "imcservices"
+   - Headline/subcopy swapped (if hooks inserted)
+   - “IMC Services” badge visible
+3) Submit a test (if backend wired). Verify the lead_source is captured.
+4) Visit /contact/ directly (no query params).
+   - No from-imcservices class; default copy; badge hidden
+   - Hidden field should be "organic" (script fallback)
+
+ROLLBACK
+--------
+- Revert the href change in IMCServices\index.html
+- Remove id="contact-form" (if newly added)
+- Remove the <style> and <script> blocks from assets\Contact\contact.html
+- Restore headline/subcopy back to original if needed
+- Remove hidden input #lead_source
+
+OPTIONAL: Consolidation (future tidy-up)
+----------------------------------------
+- Create /assets/styles/site.css and move the CSS block there; add <link rel="stylesheet" href="/assets/styles/site.css"> to contact.html (and hub if helpful).
+- Create /assets/scripts/contact-variant.js and move the <script> there; include it with <script src="/assets/scripts/contact-variant.js"></script>.
+- Doing this later keeps this change minimal now, but makes future maintenance cleaner.
+
+END OF FILE

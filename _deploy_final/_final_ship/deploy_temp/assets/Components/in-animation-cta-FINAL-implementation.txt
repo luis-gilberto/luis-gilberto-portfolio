@@ -1,0 +1,321 @@
+================================================================================
+IN-ANIMATION CTA: "LEARN MORE ABOUT THE HUB" - FINAL IMPLEMENTATION
+================================================================================
+
+Based on inspection of the actual hub-loader.min.js structure:
+- Container class: .hub-loading-container
+- Skip button exists on bottom-right
+- Our CTA will be on bottom-left (mirroring the skip button)
+
+This is a SURGICAL EDIT - just add the code block after your existing animation.
+
+================================================================================
+IMPLEMENTATION
+================================================================================
+
+LOCATION: In the Hub Loading Animation Initialization script (around line 1760)
+
+FIND THIS BLOCK:
+      const loader = HubLoader.create({
+        videoUrl: './assets/components/hub-animation/coral_laser_line.mp4',
+        duration: 12000,
+        autoStart: true,
+        showProgress: false,
+        skipOnClick: true,
+        onComplete: function() {
+          // Logo collapse animation
+          const logoOverlay = document.querySelector('.hub-logo-overlay');
+          if (logoOverlay) {
+            logoOverlay.classList.add('hub-logo-collapse');
+          }
+          
+          // Show main content
+          setTimeout(() => {
+            const mainContent = document.getElementById('main-content');
+            if (mainContent) {
+              mainContent.style.display = 'block';
+            }
+            
+            // Nav logo pulse effect
+            setTimeout(() => {
+              const navLogo = document.querySelector('.hub-nav-logo-img');
+              if (navLogo) {
+                navLogo.classList.add('nav-logo-attract');
+              }
+            }, 500);
+            
+            // Reveal elements
+            const revealElements = document.querySelectorAll('.reveal');
+            revealElements.forEach(el => {
+              if (el.getBoundingClientRect().top < window.innerHeight) {
+                el.classList.add('in');
+              }
+            });
+          }, 2000);
+        }
+      });
+
+IMMEDIATELY AFTER THE CLOSING }); ADD THIS ENTIRE BLOCK:
+--------------------------------------------------------------------------------
+      
+      // ========================================================================
+      // ADD "LEARN MORE ABOUT THE HUB" CTA TO ANIMATION
+      // ========================================================================
+      
+      setTimeout(() => {
+        // Find the hub loading container
+        const hubContainer = document.querySelector('.hub-loading-container');
+        
+        if (hubContainer) {
+          // Create the "Learn More" CTA
+          const learnMoreCTA = document.createElement('a');
+          learnMoreCTA.href = 'https://luis-gilberto.com/TheHub/system/';
+          learnMoreCTA.className = 'hub-animation-learn-more';
+          learnMoreCTA.innerHTML = `
+            <span>Learn more about The Hub</span>
+            <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
+              <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          `;
+          
+          // Add inline styles to the CTA
+          Object.assign(learnMoreCTA.style, {
+            position: 'fixed',
+            left: '2rem',
+            bottom: '2rem',
+            zIndex: '10001',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.75rem',
+            padding: '1rem 1.5rem',
+            background: 'rgba(46, 211, 198, 0.15)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            border: '1px solid rgba(46, 211, 198, 0.4)',
+            borderRadius: '12px',
+            color: '#2ED3C6',
+            textDecoration: 'none',
+            fontFamily: 'Inter, sans-serif',
+            fontWeight: '600',
+            fontSize: '0.95rem',
+            opacity: '0',
+            transform: 'translateX(-20px)',
+            transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+            pointerEvents: 'none',
+            boxShadow: '0 8px 32px rgba(46, 211, 198, 0.15)'
+          });
+          
+          // Mobile responsive styles
+          if (window.innerWidth <= 768) {
+            learnMoreCTA.style.left = '1rem';
+            learnMoreCTA.style.bottom = '1rem';
+            learnMoreCTA.style.padding = '0.75rem 1rem';
+            learnMoreCTA.style.fontSize = '0.875rem';
+          }
+          
+          // Hover effects
+          learnMoreCTA.addEventListener('mouseenter', function() {
+            this.style.background = 'rgba(46, 211, 198, 0.25)';
+            this.style.borderColor = 'rgba(46, 211, 198, 0.6)';
+            this.style.transform = 'translateX(0) scale(1.02)';
+            this.style.boxShadow = '0 12px 40px rgba(46, 211, 198, 0.25)';
+            
+            // Animate arrow
+            const svg = this.querySelector('svg');
+            if (svg) svg.style.transform = 'translateX(4px)';
+          });
+          
+          learnMoreCTA.addEventListener('mouseleave', function() {
+            this.style.background = 'rgba(46, 211, 198, 0.15)';
+            this.style.borderColor = 'rgba(46, 211, 198, 0.4)';
+            this.style.transform = 'translateX(0) scale(1)';
+            this.style.boxShadow = '0 8px 32px rgba(46, 211, 198, 0.15)';
+            
+            // Reset arrow
+            const svg = this.querySelector('svg');
+            if (svg) svg.style.transform = 'translateX(0)';
+          });
+          
+          // Add transition to SVG
+          const svg = learnMoreCTA.querySelector('svg');
+          if (svg) {
+            svg.style.transition = 'transform 0.3s ease';
+          }
+          
+          // Track navigation (prevent animation replay when returning)
+          learnMoreCTA.addEventListener('click', function(e) {
+            sessionStorage.setItem('hubNavigated', 'true');
+          });
+          
+          // Add CTA to the hub container
+          hubContainer.appendChild(learnMoreCTA);
+          
+          // Show CTA after 9 seconds (3 seconds before animation ends)
+          setTimeout(() => {
+            learnMoreCTA.style.opacity = '1';
+            learnMoreCTA.style.transform = 'translateX(0)';
+            learnMoreCTA.style.pointerEvents = 'auto';
+          }, 9000);
+          
+          // Hide CTA when animation completes (at 12 seconds)
+          setTimeout(() => {
+            learnMoreCTA.style.opacity = '0';
+            learnMoreCTA.style.transform = 'translateX(-20px)';
+            setTimeout(() => {
+              if (learnMoreCTA.parentNode) {
+                learnMoreCTA.remove();
+              }
+            }, 400);
+          }, 12000);
+        }
+      }, 200);
+--------------------------------------------------------------------------------
+
+THAT'S IT! The entire implementation is self-contained in this one block.
+
+
+================================================================================
+CONTEXT (WHAT IT SHOULD LOOK LIKE AFTER)
+================================================================================
+
+Your script should now look like:
+
+      const loader = HubLoader.create({
+        videoUrl: './assets/components/hub-animation/coral_laser_line.mp4',
+        duration: 12000,
+        autoStart: true,
+        showProgress: false,
+        skipOnClick: true,
+        onComplete: function() {
+          // ... existing code ...
+        }
+      });
+      
+      // ========================================================================
+      // ADD "LEARN MORE ABOUT THE HUB" CTA TO ANIMATION
+      // ========================================================================
+      
+      setTimeout(() => {
+        // Find the hub loading container
+        const hubContainer = document.querySelector('.hub-loading-container');
+        
+        if (hubContainer) {
+          // ... NEW CODE BLOCK HERE ...
+        }
+      }, 200);
+      
+    } else {
+      // User navigated internally - skip animation entirely
+      sessionStorage.setItem('hubNavigated', 'true');
+      // ... rest of existing code ...
+
+
+================================================================================
+VISUAL RESULT
+================================================================================
+
+Your animation will now show:
+
+┌─────────────────────────────────────────────────────────────┐
+│                                                             │
+│              [CORAL LASER VIDEO PLAYING]                   │
+│                                                             │
+│                                                             │
+│                                                             │
+│  [Learn more about The Hub →]            [Skip Intro →]   │
+│  ↑ LEFT (Teal, glassmorphism)            ↑ RIGHT (existing)│
+└─────────────────────────────────────────────────────────────┘
+
+TIMELINE:
+- 0s:  Animation starts
+- 9s:  "Learn more" CTA fades in smoothly from left
+- 12s: Animation completes, both CTAs disappear, main page appears
+
+BEHAVIOR:
+✓ Mirrors the "Skip Intro" button positioning (but on left side)
+✓ Smooth fade + slide-in animation at 9 seconds
+✓ Hover: brightens, scales slightly, arrow slides right
+✓ Click: navigates to System page immediately
+✓ Sets sessionStorage to prevent animation replay
+✓ Mobile responsive (smaller padding/font on mobile)
+✓ Self-contained - no CSS changes needed!
+
+
+================================================================================
+TESTING CHECKLIST
+================================================================================
+
+After Trae implements this:
+
+☐ Clear browser cache and sessionStorage
+☐ Type luis-gilberto.com/TheHub directly in browser
+☐ Animation starts playing
+☐ At ~9 seconds, verify CTA appears bottom-left
+☐ Hover over CTA - should brighten and scale
+☐ Verify "Skip Intro" button still works on right
+☐ Click "Learn more" CTA - should go to System page
+☐ Use back button - animation should NOT replay
+☐ Test on mobile (CTA should be smaller)
+☐ Test on tablet
+
+
+================================================================================
+WHY THIS WORKS
+================================================================================
+
+1. ✅ Targets the exact container: .hub-loading-container
+2. ✅ Uses same z-index strategy as skip button
+3. ✅ All styles are inline (no CSS conflicts)
+4. ✅ Self-contained timeout management
+5. ✅ Mobile responsive built-in
+6. ✅ Proper cleanup (removes itself after animation)
+7. ✅ sessionStorage tracking for navigation
+
+
+================================================================================
+TIMING ADJUSTMENTS (OPTIONAL)
+================================================================================
+
+If you want the CTA to appear earlier or later, change this line:
+          }, 9000);
+
+OPTIONS:
+- 8000  = Appears at 8s (4 seconds visible before end)
+- 9000  = Appears at 9s (3 seconds visible) - RECOMMENDED
+- 10000 = Appears at 10s (2 seconds visible)
+
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+If CTA doesn't appear:
+1. Check browser console for errors
+2. Verify .hub-loading-container exists (from your screenshot, it does!)
+3. Try increasing the initial setTimeout from 200ms to 500ms
+
+If CTA appears but looks wrong on mobile:
+1. The code auto-detects mobile and adjusts
+2. You can manually adjust the mobile breakpoint (currently 768px)
+
+If timing feels off:
+1. Adjust the 9000ms value (when CTA appears)
+2. Adjust the 12000ms value if animation duration changed
+
+
+================================================================================
+NOTES
+================================================================================
+
+- This implementation uses inline styles (no CSS changes needed)
+- Completely self-contained in one script block
+- Automatically cleans up after itself
+- Won't conflict with existing skip button
+- Mobile responsive is built-in
+- Arrow animation works on hover
+- sessionStorage prevents animation replay on return navigation
+
+
+================================================================================
+END OF DOCUMENT
+================================================================================

@@ -1,0 +1,129 @@
+
+1. Update src/components/dashboard-ui/PageHeader.tsx
+Change: Title back to 'Command Center'.
+code
+Tsx
+import React from 'react';
+interface PageHeaderProps { className?: string; }
+export default function PageHeader({ className = '' }: PageHeaderProps) {
+  return (
+    <div className={`mb-12 ${className}`}>
+      <div className="flex items-center gap-4 mb-6">
+        <div className="w-12 h-px bg-gradient-to-r from-primary/40 to-transparent" />
+        <div className="flex-1 h-px bg-gradient-to-r from-border/20 via-border/10 to-transparent" />
+      </div>
+      <h1 className="text-[42px] lg:text-[56px] font-semibold text-text-primary mb-2 tracking-tight leading-[1.1] uppercase">Command Center</h1>
+      <p className="text-[15px] text-text-tertiary font-normal tracking-[-0.01em] uppercase tracking-widest">Strategic Operations</p>
+    </div>
+  );
+}
+2. Update src/components/dashboard-ui/StatsRow.tsx
+Change: Switch from 3 columns to 4 columns.
+Change: Restore the metrics: Total Projects (12), Active Projects (5), Total Clients (8), Pending Tasks (3).
+code
+Tsx
+import { useEffect, useRef } from 'react';
+import gsap from 'gsap';
+interface StatsRowProps { className?: string; }
+
+// RESTORED DATA POINTS
+const stats = [
+  { label: 'Total Projects', value: 12, suffix: '', subtitle: 'All time' },
+  { label: 'Active Projects', value: 5, suffix: '', subtitle: 'In progress', isHighlight: true },
+  { label: 'Total Clients', value: 8, suffix: '', subtitle: 'Active accounts' },
+  { label: 'Pending Tasks', value: 3, suffix: '', subtitle: 'Requires attention' },
+];
+
+export default function StatsRow({ className = '' }: StatsRowProps) {
+  const statsRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (statsRef.current) {
+      gsap.fromTo(statsRef.current.children, 
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.5, stagger: 0.1, ease: 'power2.out' }
+      );
+    }
+  }, []);
+
+  return (
+    <div ref={statsRef} className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 ${className}`}>
+      {stats.map((stat, index) => (
+        <div key={index} className="bg-surface/10 border border-border/20 p-6 rounded-xl backdrop-blur-sm hover:bg-surface/20 transition-all">
+          <div className="text-[11px] uppercase tracking-[0.15em] text-text-muted font-semibold mb-4">{stat.label}</div>
+          <div className={`text-[48px] font-bold leading-none mb-2 ${stat.isHighlight ? 'text-primary' : 'text-text-primary'}`}>
+            {stat.value}{stat.suffix}
+          </div>
+          <div className="text-[13px] text-text-tertiary">{stat.subtitle}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+3. Update src/components/dashboard-ui/QuickActions.tsx
+Change: Restore the 4 specific buttons: New Project, Manage Leads, Analytics, System.
+Change: Grid to 4 columns.
+code
+Tsx
+import { Plus, Users, BarChart3, Settings } from 'lucide-react';
+interface QuickActionsProps { className?: string; }
+
+const actions = [
+  { icon: Plus, title: 'New Project', description: 'Initialize workflow' },
+  { icon: Users, title: 'Manage Leads', description: 'CRM Database' },
+  { icon: BarChart3, title: 'Analytics', description: 'Performance data' },
+  { icon: Settings, title: 'System', description: 'Configuration' },
+];
+
+export default function QuickActions({ className = '' }: QuickActionsProps) {
+  return (
+    <div className={`mt-12 ${className}`}>
+      <h2 className="text-[18px] font-semibold text-text-primary mb-6 flex items-center gap-2">
+        <span className="w-2 h-2 rounded-full bg-primary"></span> Quick Actions
+      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {actions.map((action, index) => (
+          <button key={index} className="group text-left p-6 rounded-xl bg-surface/5 border border-border/10 hover:bg-surface/10 hover:border-primary/30 transition-all duration-300">
+            <div className="mb-4 text-text-secondary group-hover:text-primary transition-colors">
+              <action.icon className="w-6 h-6" strokeWidth={1.5} />
+            </div>
+            <h3 className="text-[15px] font-medium text-text-primary mb-1">{action.title}</h3>
+            <p className="text-[12px] text-text-tertiary">{action.description}</p>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+4. Create/Update src/components/dashboard-ui/SystemFeed.tsx
+Action: Restore the 'System Feed' list from the original screenshot.
+code
+Tsx
+import { CheckCircle2, AlertCircle, UserPlus } from 'lucide-react';
+
+export default function SystemFeed() {
+  const feed = [
+    { icon: UserPlus, color: 'text-emerald-400', text: 'New user registration: consultant@example.com', time: '2h ago' },
+    { icon: AlertCircle, color: 'text-primary', text: 'Project "Alpha" status updated to Review', time: '4h ago' },
+    { icon: CheckCircle2, color: 'text-blue-400', text: 'System backup completed successfully', time: '6h ago' },
+  ];
+
+  return (
+    <div className="bg-surface/5 border border-border/10 rounded-xl p-8 h-full">
+      <h2 className="text-[18px] font-semibold text-text-primary mb-2">System Feed</h2>
+      <p className="text-[13px] text-text-tertiary mb-8">Live operational status</p>
+      
+      <div className="space-y-6">
+        {feed.map((item, i) => (
+          <div key={i} className="flex gap-4 items-start">
+            <div className={`mt-1 ${item.color}`}><item.icon size={16} /></div>
+            <div>
+              <p className="text-[14px] text-text-secondary mb-1">{item.text}</p>
+              <p className="text-[11px] text-text-muted uppercase tracking-wider">{item.time}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+Goal: The dashboard should now contain the exact data points of the 'Original' version (4 top stats, 4 middle buttons) but use the new styling."

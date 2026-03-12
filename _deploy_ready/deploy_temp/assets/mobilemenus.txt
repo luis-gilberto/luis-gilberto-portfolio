@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unified Navigation - Luis Gilberto</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Big+Shoulders+Display:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --text: #ffffff;
+            --muted: #888888;
+            --accent: #F96F6E;
+            --border: #333333;
+            --card-bg: #1a1a1a;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            padding-top: 70px;
+        }
+        
+        /* UNIFIED NAVIGATION STYLES */
+        .enhanced-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .enhanced-nav.scrolled {
+            background: rgba(0, 0, 0, 0.98);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 70px;
+        }
+
+        .nav-logo img {
+            height: 55px;
+            width: auto;
+            transition: all 0.3s ease;
+        }
+
+        /* Responsive Logo Display */
+        .nav-logo .desktop-logo {
+            display: block;
+        }
+
+        .nav-logo .mobile-logo {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .nav-logo .desktop-logo {
+                display: none;
+            }
+
+            .nav-logo .mobile-logo {
+                display: block;
+                height: 40px;
+            }
+        }
+
+        .desktop-nav {
+            display: none;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .desktop-nav a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .desktop-nav a:hover {
+            color: #F96F6E;
+        }
+
+        .desktop-nav a.active {
+            color: #F96F6E;
+        }
+
+        .desktop-nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #F96F6E;
+            transition: width 0.3s ease;
+        }
+
+        .desktop-nav a:hover::after,
+        .desktop-nav a.active::after {
+            width: 100%;
+        }
+
+        .mobile-nav-btn {
+            display: block;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .mobile-nav-btn:hover {
+            color: #F96F6E;
+        }
+
+        /* Navigation responsive styles */
+        @media (min-width: 768px) {
+            .desktop-nav {
+                display: flex !important;
+            }
+            .mobile-nav-btn {
+                display: none !important;
+            }
+        }
+        
+        /* Mobile Menu Styles */
+        .mobile-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(12, 12, 12, 0.96);
+            backdrop-filter: blur(20px);
+            z-index: 9999;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.25s ease-out;
+        }
+        
+        .mobile-menu-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+        
+        .mobile-menu-panel {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: min(90vw, 420px);
+            height: 100vh;
+            background: rgba(12, 12, 12, 0.96);
+            backdrop-filter: blur(20px);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            transform: translateX(100%);
+            transition: transform 0.25s ease-out;
+        }
+        
+        .mobile-menu-overlay.active .mobile-menu-panel {
+            transform: translateX(0);
+        }
+        
+        .mobile-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+        
+        .mobile-menu-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        .mobile-menu-close {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0.5rem;
+            margin: -0.5rem;
+            transition: color 0.2s ease;
+        }
+        
+        .mobile-menu-close:hover {
+            color: #F96F6E;
+        }
+        
+        .mobile-menu-logo {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .mobile-menu-logo img {
+            width: 32px;
+            height: 32px;
+        }
+        
+        .mobile-menu-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: auto;
+        }
+        
+        .mobile-menu-link {
+            color: white;
+            text-decoration: none;
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 500;
+            padding: 0.75rem 0;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            transition: color 0.2s ease;
+            opacity: 0;
+            transform: translateX(20px);
+            animation: slideInStagger 0.3s ease-out forwards;
+        }
+        
+        .mobile-menu-link:nth-child(1) { animation-delay: 0.1s; }
+        .mobile-menu-link:nth-child(2) { animation-delay: 0.15s; }
+        .mobile-menu-link:nth-child(3) { animation-delay: 0.2s; }
+        .mobile-menu-link:nth-child(4) { animation-delay: 0.25s; }
+        .mobile-menu-link:nth-child(5) { animation-delay: 0.3s; }
+        .mobile-menu-link:nth-child(6) { animation-delay: 0.35s; }
+        
+        .mobile-menu-link:hover,
+        .mobile-menu-link.active {
+            color: #F96F6E;
+        }
+        
+        .mobile-menu-cta {
+            background: linear-gradient(135deg, #F96F6E 0%, #ff8f86 100%);
+            color: white;
+            text-decoration: none;
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 1.125rem;
+            font-weight: 600;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 2rem;
+            transition: all 0.2s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideInUp 0.3s ease-out 0.4s forwards;
+        }
+        
+        .mobile-menu-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(249, 111, 110, 0.3);
+        }
+        
+        .mobile-menu-social {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideInUp 0.3s ease-out 0.5s forwards;
+        }
+        
+        .mobile-menu-social-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        
+        .mobile-menu-social-link:hover {
+            color: #F96F6E;
+        }
+        
+        @keyframes slideInStagger {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes slideInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* DEMO CONTENT STYLES */
+        .demo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .demo-content {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .demo-title {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+        
+        .demo-text {
+            color: var(--muted);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        .implementation-steps {
+            background: #1a1a1a;
+            border-left: 4px solid var(--accent);
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .implementation-steps h3 {
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+        
+        .implementation-steps ol {
+            color: var(--text);
+        }
+        
+        .implementation-steps li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .code-snippet {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #e6edf3;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- UNIFIED NAVIGATION - USE THIS ON ALL PAGES -->
+    <nav class="enhanced-nav">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="assets/Components/AUg_logo_White.png" alt="Luis Gilberto Logo" class="desktop-logo">
+                <img src="assets/icon-coral-white.png" alt="Luis Gilberto Logo" class="mobile-logo">
+            </a>
+            
+            <div class="desktop-nav">
+                <a href="index.html">Home</a>
+                <a href="about.html">About Me</a>
+                <a href="cv.html" class="active">CV</a>
+                <a href="timeline.html">Timeline</a>
+                <a href="myexperience.html">Experience</a>
+                <a href="contact.html">Contact</a>
+            </div>
+            
+            <button class="mobile-nav-btn" id="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay">
+        <div class="mobile-menu-panel">
+            <div class="mobile-menu-header">
+                <span class="mobile-menu-label">Menu</span>
+                <button class="mobile-menu-close" id="mobileMenuClose">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="mobile-menu-logo">
+                <img src="assets/icon-coral-white.png" alt="Luis Gilberto" id="mobileMenuLogo">
+            </div>
+            
+            <nav class="mobile-menu-nav">
+                <a href="index.html" class="mobile-menu-link">Home</a>
+                <a href="about.html" class="mobile-menu-link">About Me</a>
+                <a href="cv.html" class="mobile-menu-link active">CV</a>
+                <a href="timeline.html" class="mobile-menu-link">Timeline</a>
+                <a href="myexperience.html" class="mobile-menu-link">Experience</a>
+                <a href="contact.html" class="mobile-menu-link">Contact</a>
+            </nav>
+            
+            <a href="contact.html" class="mobile-menu-cta">Start a conversation</a>
+            
+            <div class="mobile-menu-social">
+                <a href="mailto:me@luis-gilberto.com" class="mobile-menu-social-link">Email</a>
+                <a href="https://linkedin.com/in/luisgilberto00" target="_blank" class="mobile-menu-social-link">LinkedIn</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- DEMO CONTENT -->
+    <div class="demo-container">
+        <div class="demo-content">
+            <h1 class="demo-title">Unified Mobile Navigation Solution</h1>
+            <p class="demo-text">This is the standardized navigation system based on your About page implementation. It features:</p>
+            <ul class="demo-text">
+                <li><strong>Left-aligned coral icon</strong> on mobile (icon-coral-white.png)</li>
+                <li><strong>Right-aligned hamburger menu</strong> with smooth slide-out panel</li>
+                <li><strong>Responsive logo switching</strong> between desktop and mobile versions</li>
+                <li><strong>Consistent coral accent</strong> color (#F96F6E) throughout</li>
+                <li><strong>Modern backdrop blur effects</strong> and smooth animations</li>
+                <li><strong>Accessible keyboard navigation</strong> and ARIA labels</li>
+            </ul>
+            
+            <div class="implementation-steps">
+                <h3>Implementation Steps:</h3>
+                <ol>
+                    <li><strong>Replace your CV page navigation</strong> with the HTML structure above</li>
+                    <li><strong>Copy the CSS styles</strong> (the enhanced-nav section and mobile menu styles)</li>
+                    <li><strong>Add the JavaScript functionality</strong> (scroll to bottom for the script)</li>
+                    <li><strong>Update the active class</strong> to match the current page (e.g., cv.html gets active class)</li>
+                    <li><strong>Test on mobile devices</strong> to ensure smooth functionality</li>
+                </ol>
+            </div>
+            
+            <p class="demo-text">This navigation works perfectly across all screen sizes and provides a premium user experience that matches your design aesthetic.</p>
+        </div>
+        
+        <div class="demo-content">
+            <h2 class="demo-title">Key Features:</h2>
+            <div class="code-snippet">
+Desktop: Full logo + horizontal menu
+Mobile: Coral icon (left) + hamburger (right)
+Panel: Right-slide with blur backdrop
+Colors: Coral accent (#F96F6E) + dark theme
+            </div>
+            
+            <p class="demo-text">The mobile menu slides in from the right with staggered animations, creating an engaging user experience while maintaining your brand consistency.</p>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT - INCLUDE THIS ON ALL PAGES -->
+    <script>
+        // Enhanced navigation functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const nav = document.querySelector('.enhanced-nav');
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
+            const mobileMenuPanel = document.querySelector('.mobile-menu-panel');
+            const mobileMenuClose = document.querySelector('.mobile-menu-close');
+
+            // Scroll effect for navigation
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    nav.classList.add('scrolled');
+                } else {
+                    nav.classList.remove('scrolled');
+                }
+            });
+
+            // Mobile menu functionality
+            function openMobileMenu() {
+                mobileMenuOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeMobileMenu() {
+                mobileMenuOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', openMobileMenu);
+            }
+
+            if (mobileMenuClose) {
+                mobileMenuClose.addEventListener('click', closeMobileMenu);
+            }
+
+            if (mobileMenuOverlay) {
+                mobileMenuOverlay.addEventListener('click', function(e) {
+                    if (e.target === mobileMenuOverlay) {
+                        closeMobileMenu();
+                    }
+                });
+            }
+
+            // Close mobile menu when clicking on a link
+            const mobileMenuLinks = document.querySelectorAll('.mobile-menu-panel a');
+            mobileMenuLinks.forEach(link => {
+                link.addEventListener('click', closeMobileMenu);
+            });
+
+            // Close menu on escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && mobileMenuOverlay.classList.contains('active')) {
+                    closeMobileMenu();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

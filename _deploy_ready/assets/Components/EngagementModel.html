@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Engagement Toolkit | Luis Gilberto</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=General+Sans:wght@400;500;600&family=Recoleta:wght@500;600;700&family=Editorial+New:opsz@6..72&display=swap" rel="stylesheet" />
+
+  <style>
+    :root{
+      --coral:#F96F6E;          /* 🌺 Brand accent */
+      --ink:#1E1E1E;            /* Primary text */
+      --ink-2:#444;             /* Secondary text */
+      --bg:#FAFAFA;             /* Page background */
+      --card:#FFFFFF;           /* Card background */
+      --line:#E9E9E9;           /* Dividers */
+      --radius:20px;
+      --shadow:0 10px 30px rgba(0,0,0,.06);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; background:var(--bg); color:var(--ink);
+      font-family:"General Sans", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      line-height:1.45;
+    }
+
+    /* ---------- Layout ---------- */
+    .wrap{max-width:1160px; margin:24px auto 80px; padding:24px}
+    .topbar{
+      display:flex; align-items:center; gap:12px; justify-content:space-between; margin-bottom:16px
+    }
+    .badge{font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-2)}
+    .actions{display:flex; gap:8px; flex-wrap:wrap}
+    .btn{
+      border:1px solid var(--line); background:var(--card);
+      border-radius:999px; padding:10px 14px; cursor:pointer;
+      font-size:14px;
+    }
+    .btn-primary{background:var(--ink); color:#fff; border-color:var(--ink)}
+    .btn-ghost{background:transparent}
+
+    /* ---------- Config Bar (hide before sharing if you want) ---------- */
+    .config{
+      background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+      padding:14px 16px; box-shadow:var(--shadow); margin-bottom:20px;
+      display:flex; flex-wrap:wrap; gap:16px; align-items:center; justify-content:space-between;
+    }
+    .config .group{display:flex; gap:12px; align-items:center; flex-wrap:wrap}
+    .config label{font-size:14px; color:var(--ink-2)}
+    .config input[type=checkbox]{transform:translateY(1px)}
+    .config small{color:var(--ink-2)}
+
+    /* ---------- Card ---------- */
+    .card{
+      background:var(--card); border:1px solid var(--line);
+      border-radius:var(--radius); box-shadow:var(--shadow);
+      display:grid; grid-template-columns: 1.15fr .85fr; gap:32px; padding:36px;
+    }
+    .col{min-width:0}
+    .divider{height:1px; background:var(--line); margin:20px 0}
+    @media (max-width:980px){
+      .card{grid-template-columns:1fr; padding:24px}
+    }
+
+    /* ---------- Typography ---------- */
+    .kicker{letter-spacing:.16em; text-transform:uppercase; font-size:13px; color:var(--ink-2)}
+    h1{font-family:"Recoleta", serif; font-weight:700; font-size:48px; line-height:1.06; margin:4px 0 8px}
+    h2{font-family:"Recoleta", serif; font-weight:600; font-size:18px; letter-spacing:.12em; text-transform:uppercase; margin:0 0 8px}
+    p{margin:0 0 12px}
+    .lede{font-family:"Editorial New", serif; font-size:17px; color:var(--ink-2)}
+    .muted{color:var(--ink-2)}
+    .accent{color:var(--coral); font-weight:600}
+
+    /* ---------- Lists ---------- */
+    .bullets{padding-left:18px; margin:10px 0 0}
+    .bullets li{margin:6px 0}
+    .grid-2{display:grid; grid-template-columns:1fr 1fr; gap:18px}
+    @media (max-width:640px){.grid-2{grid-template-columns:1fr}}
+
+    /* ---------- Packages ---------- */
+    .tbl{border:1px solid var(--line); border-radius:14px; overflow:hidden}
+    .row{display:grid; grid-template-columns: 1.1fr 1fr .6fr; gap:0; border-bottom:1px solid var(--line)}
+    .row:last-child{border-bottom:none}
+    .cell{padding:14px 16px; font-size:15px}
+    .head .cell{font-weight:600; background:#FBFBFB}
+    .price{white-space:nowrap; font-weight:600}
+
+    /* ---------- Footer ---------- */
+    .foot{
+      display:flex; align-items:center; justify-content:space-between; gap:16px; margin-top:22px; padding-top:12px; border-top:1px dashed var(--line)
+    }
+    .dot{width:8px; height:8px; border-radius:50%; background:var(--coral); display:inline-block; margin:0 10px}
+
+    /* ---------- Print to PDF ---------- */
+    @media print {
+      .config, .topbar .actions { display:none !important; }
+      body{background:#fff}
+      .wrap{margin:0; padding:0}
+      .card{border:none; box-shadow:none; padding:0}
+      a::after{content:""}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <!-- Top Bar -->
+    <div class="topbar">
+      <div class="badge">Private • By Invitation</div>
+      <div class="actions">
+        <button class="btn" id="copyLink">Copy Share Link</button>
+        <button class="btn btn-primary" onclick="window.print()">Download PDF</button>
+      </div>
+    </div>
+
+    <!-- Config Bar (🧰 hide before sending if you want) -->
+    <div class="config" id="configBar">
+      <div class="group">
+        <strong>Show sections:</strong>
+        <label><input type="checkbox" data-toggle="sec-intro" checked> Intro</label>
+        <label><input type="checkbox" data-toggle="sec-offer" checked> What I Offer</label>
+        <label><input type="checkbox" data-toggle="sec-trust" checked> Trusted By</label>
+        <label><input type="checkbox" data-toggle="sec-models" checked> Engagement Models</label>
+        <label><input type="checkbox" data-toggle="sec-footer" checked> Footer</label>
+      </div>
+      <div class="group">
+        <strong>Packages:</strong>
+        <label><input type="checkbox" data-package="quick" checked> Quick-Start</label>
+        <label><input type="checkbox" data-package="fractional" checked> Fractional</label>
+        <label><input type="checkbox" data-package="launch" checked> Launch</label>
+        <label><input type="checkbox" data-package="ally" checked> Founder’s Ally</label>
+      </div>
+      <small>Tip: use the “Copy Share Link” button to generate a URL with your current selections.</small>
+    </div>
+
+    <!-- Card -->
+    <section class="card">
+      <div class="col">
+        <!-- Intro -->
+        <div id="sec-intro">
+          <div class="kicker">Luis Gilberto</div>
+          <h1>Integrated Marketing Consultant</h1>
+          <p class="lede">
+            Strategy <span class="dot"></span> Storytelling <span class="dot"></span> Campaigns
+          </p>
+          <div class="divider"></div>
+          <p class="muted">
+            With 15+ years across Edge, Surface, Copilot, and Teams, I help brands bring big ideas to life through
+            strategic clarity, creative expression, and human resonance. I’m not just a marketer—I'm a narrative
+            strategist who builds campaigns that spark real moments.
+          </p>
+        </div>
+
+        <!-- What I Offer -->
+        <div id="sec-offer" style="margin-top:24px">
+          <h2>What I Offer</h2>
+          <ul class="bullets">
+            <li>Go-to-Market Strategy</li>
+            <li>Brand Positioning & Messaging</li>
+            <li>Campaign Planning & Execution</li>
+            <li>Cross-Channel Narrative Development</li>
+            <li>Creative Team Guidance & Asset Strategy</li>
+          </ul>
+        </div>
+
+        <!-- Trusted By -->
+        <div id="sec-trust" style="margin-top:24px">
+          <h2>Trusted By</h2>
+          <div class="grid-2">
+            <p><strong>Microsoft Edge</strong> · Microsoft 365 · Surface · Teams · Copilot</p>
+            <p>Agency collaborations · In-house teams · Emerging startups</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right column: Engagement Models -->
+      <div class="col" id="sec-models">
+        <h2>Engagement Models</h2>
+        <div class="tbl" id="packagesTable">
+          <div class="row head">
+            <div class="cell">Package</div>
+            <div class="cell">Sample Scope</div>
+            <div class="cell">Investment</div>
+          </div>
+
+          <!-- 🧩 Package rows (toggle via data-id) -->
+          <div class="row pkg" data-id="quick">
+            <div class="cell"><strong>Quick-Start Sprint</strong></div>
+            <div class="cell">Strategic audit + 1 campaign roadmap</div>
+            <div class="cell price">3k–6k</div>
+          </div>
+
+          <div class="row pkg" data-id="fractional">
+            <div class="cell"><strong>Fractional Lead</strong></div>
+            <div class="cell">Retainer for creative/IMC guidance</div>
+            <div class="cell price">2.5k–5k / month</div>
+          </div>
+
+          <div class="row pkg" data-id="launch">
+            <div class="cell"><strong>Launch Architect</strong></div>
+            <div class="cell">Full GTM planning + content framework</div>
+            <div class="cell price">7.5k–15k</div>
+          </div>
+
+          <div class="row pkg" data-id="ally">
+            <div class="cell"><strong>Founder’s Ally</strong></div>
+            <div class="cell">Startup support (equity + cash hybrid)</div>
+            <div class="cell price">Custom</div>
+          </div>
+        </div>
+
+        <p class="muted" style="margin-top:10px">Final pricing depends on scope, timeline, and deliverables.</p>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <div id="sec-footer" class="foot">
+      <div>Based in Seattle · Available globally</div>
+      <div>luis-gilberto.com</div>
+    </div>
+  </div>
+
+  <script>
+    /* ----------- Tiny util: parse & build query ----------- */
+    const qs = new URLSearchParams(location.search);
+    const $ = (s, p=document) => p.querySelector(s);
+    const $$ = (s, p=document) => Array.from(p.querySelectorAll(s));
+
+    // Apply incoming query params (?show=intro,offer&packages=quick,launch)
+    (function initFromQuery(){
+      const show = (qs.get('show')||'intro,offer,trust,models,footer')
+        .split(',').map(s=>s.trim().toLowerCase());
+      const pkgs = (qs.get('packages')||'quick,fractional,launch,ally')
+        .split(',').map(s=>s.trim());
+
+      // Sections map: short keys -> element IDs
+      const map = {
+        intro:'sec-intro', offer:'sec-offer', trust:'sec-trust',
+        models:'sec-models', footer:'sec-footer'
+      };
+      // Reflect in UI
+      Object.entries(map).forEach(([k,id])=>{
+        const el = document.getElementById(id);
+        const on = show.includes(k);
+        el.style.display = on ? '' : 'none';
+        const chk = document.querySelector(`[data-toggle="${id}"]`);
+        if (chk) chk.checked = on;
+      });
+
+      // Packages
+      $$('.pkg').forEach(row=>{
+        const id = row.dataset.id;
+        const on = pkgs.includes(id);
+        row.style.display = on ? 'grid' : 'none';
+        const chk = document.querySelector(`[data-package="${id}"]`);
+        if (chk) chk.checked = on;
+      });
+    })();
+
+    // Live toggles → update visibility
+    $$('#configBar [data-toggle]').forEach(chk=>{
+      chk.addEventListener('change', e=>{
+        const id = e.target.getAttribute('data-toggle');
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.style.display = e.target.checked ? '' : 'none';
+      });
+    });
+    $$('#configBar [data-package]').forEach(chk=>{
+      chk.addEventListener('change', e=>{
+        const id = e.target.getAttribute('data-package');
+        const row = document.querySelector(`.pkg[data-id="${id}"]`);
+        if (row) row.style.display = e.target.checked ? 'grid' : 'none';
+      });
+    });
+
+    // Copy share link reflecting current state
+    $('#copyLink').addEventListener('click', ()=>{
+      const sections = [];
+      const map = {
+        'sec-intro':'intro','sec-offer':'offer','sec-trust':'trust',
+        'sec-models':'models','sec-footer':'footer'
+      };
+      Object.entries(map).forEach(([id,key])=>{
+        if (document.getElementById(id).style.display !== 'none') sections.push(key);
+      });
+      const pkgs = $$('.pkg').filter(r=>r.style.display!=='none').map(r=>r.dataset.id);
+      const url = new URL(location.href);
+      url.searchParams.set('show', sections.join(','));
+      url.searchParams.set('packages', pkgs.join(','));
+      navigator.clipboard.writeText(url.toString()).then(()=>{
+        alert('Share link copied to clipboard ✅');
+      });
+    });
+  </script>
+</body>
+</html>

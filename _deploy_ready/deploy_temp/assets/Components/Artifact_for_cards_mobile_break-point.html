@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Card Fix</title>
+    <style>
+        /* Quick Tour Section - Mobile Fix */
+        .quick-tour-section {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quick-tour-section .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+
+        /* Cards Container */
+        .cards-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .card-stack {
+            position: relative;
+            width: 400px;
+            height: 500px;
+            margin-bottom: 40px;
+            perspective: 1000px;
+        }
+
+        /* Tour Card Base Styles */
+        .tour-card {
+            position: absolute;
+            width: 300px;
+            height: 420px;
+            transform-style: preserve-3d;
+            transition: transform 0.8s ease-in-out;
+            cursor: pointer;
+            border-radius: 15px;
+        }
+
+        /* Card positioning */
+        .tour-card.position-1 {
+            top: 0;
+            left: 50px;
+            z-index: 5;
+            transform: translateX(0) rotate(-2deg);
+        }
+
+        .tour-card.position-2 {
+            top: 15px;
+            left: 40px;
+            z-index: 4;
+            transform: translateX(0) rotate(1deg);
+        }
+
+        .tour-card.position-3 {
+            top: 30px;
+            left: 30px;
+            z-index: 3;
+            transform: translateX(0) rotate(-1deg);
+        }
+
+        .tour-card.position-4 {
+            top: 45px;
+            left: 20px;
+            z-index: 2;
+            transform: translateX(0) rotate(2deg);
+        }
+
+        .tour-card.position-5 {
+            top: 60px;
+            left: 10px;
+            z-index: 1;
+            transform: translateX(0) rotate(-1deg);
+        }
+
+        /* Card Face Styles */
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+        }
+
+        .card-back {
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" patternUnits="userSpaceOnUse" width="4" height="4"><circle cx="2" cy="2" r="1" fill="%23FF6B6B"/></pattern></defs><rect width="100" height="100" fill="%23000"/><rect width="100" height="100" fill="url(%23dots)"/></svg>');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transform: rotateY(0deg);
+        }
+
+        .card-front {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid rgba(0, 0, 0, 0.3);
+            padding: 25px;
+            color: white;
+            backdrop-filter: blur(10px);
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        /* Card flip state */
+        .tour-card.flipped {
+            transform: rotateY(180deg) !important;
+        }
+
+        /* CRITICAL MOBILE FIXES */
+        @media (max-width: 768px) {
+            .quick-tour-section {
+                padding: 60px 0;
+                overflow-x: hidden; /* Prevent horizontal scroll */
+            }
+            
+            .quick-tour-section .container {
+                padding: 0 15px; /* Reduce side padding on mobile */
+                max-width: 100%;
+                overflow: hidden;
+            }
+            
+            .cards-container {
+                width: 100%;
+                overflow: hidden;
+                display: flex;
+                justify-content: center;
+            }
+            
+            /* MAIN FIX: Adjust card stack for mobile */
+            .card-stack {
+                width: 280px; /* Reduce width to fit mobile screens */
+                height: 450px;
+                margin: 0 auto 40px auto; /* Center the stack */
+                position: relative;
+                left: 0; /* Reset any left positioning */
+            }
+
+            /* MAIN FIX: Adjust card sizes and positions for mobile */
+            .tour-card {
+                width: 260px; /* Smaller card width */
+                height: 380px; /* Smaller card height */
+            }
+
+            /* CRITICAL: Reposition cards to fit within mobile viewport */
+            .tour-card.position-1 {
+                left: 10px; /* Much smaller left offset */
+                top: 0;
+                transform: translateX(0) rotate(-2deg);
+            }
+
+            .tour-card.position-2 {
+                left: 8px;
+                top: 12px;
+                transform: translateX(0) rotate(1deg);
+            }
+
+            .tour-card.position-3 {
+                left: 6px;
+                top: 24px;
+                transform: translateX(0) rotate(-1deg);
+            }
+
+            .tour-card.position-4 {
+                left: 4px;
+                top: 36px;
+                transform: translateX(0) rotate(2deg);
+            }
+
+            .tour-card.position-5 {
+                left: 2px;
+                top: 48px;
+                transform: translateX(0) rotate(-1deg);
+            }
+
+            /* Maintain flip state on mobile */
+            .tour-card.position-1.flipped {
+                transform: translateX(0) rotate(-2deg) rotateY(180deg);
+            }
+
+            .tour-card.position-2.flipped {
+                transform: translateX(0) rotate(1deg) rotateY(180deg);
+            }
+
+            .tour-card.position-3.flipped {
+                transform: translateX(0) rotate(-1deg) rotateY(180deg);
+            }
+
+            .tour-card.position-4.flipped {
+                transform: translateX(0) rotate(2deg) rotateY(180deg);
+            }
+
+            .tour-card.position-5.flipped {
+                transform: translateX(0) rotate(-1deg) rotateY(180deg);
+            }
+
+            /* Adjust card content padding for smaller cards */
+            .card-front {
+                padding: 20px;
+                font-size: 0.9rem;
+            }
+
+            /* Section header adjustments */
+            .main-headline {
+                font-size: 2.5rem;
+                line-height: 1.2;
+            }
+
+            .section-description {
+                font-size: 1rem;
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        /* Extra small mobile devices */
+        @media (max-width: 480px) {
+            .card-stack {
+                width: 240px; /* Even smaller for very small screens */
+            }
+            
+            .tour-card {
+                width: 220px;
+                height: 340px;
+            }
+            
+            .main-headline {
+                font-size: 2rem;
+            }
+        }
+
+        /* Shuffle button styles */
+        .shuffle-btn, .shuffle-button {
+            background: rgba(255, 107, 107, 0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 107, 107, 0.4);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 40px;
+        }
+
+        /* Demo styles for this example */
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+            color: white;
+        }
+
+        .main-headline {
+            font-size: 3.2rem;
+            font-weight: 400;
+            line-height: 1.2;
+            color: white;
+            margin-bottom: 24px;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .section-description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            font-weight: 400;
+        }
+
+        .white-text { color: white; }
+        .coral-text { color: #FF6B6B; }
+
+        /* Demo card content */
+        .card-content {
+            padding: 20px 0;
+            color: #CCCCCC;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .card-cta {
+            margin-top: auto;
+            display: inline-block;
+            background: #F96F6E;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <section class="quick-tour-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="main-headline">Got a challenge? Let's tackle it.</h2>
+                <p class="section-description white-text">
+                    The hard stuff is where I thrive. If something's in your way, we'll figure it out together.
+                </p>
+                <p class="section-description coral-text">
+                    Tap on the cards and see how I've done it before.
+                </p>
+            </div>
+            
+            <div class="cards-container">
+                <div class="card-stack">
+                    <!-- Card 1 -->
+                    <div class="tour-card position-1">
+                        <div class="card-face card-back"></div>
+                        <div class="card-face card-front">
+                            <div class="card-content">
+                                <p>73% of launches miss their targets. If yours gets buried in the noise, I craft systems that cut through and convert.</p>
+                            </div>
+                            <a href="#" class="card-cta">Explore Launch Work</a>
+                        </div>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="tour-card position-2">
+                        <div class="card-face card-back"></div>
+                        <div class="card-face card-front">
+                            <div class="card-content">
+                                <p>89% of brands fail to stand out. If yours blends into the background, I reposition it to be unmistakable.</p>
+                            </div>
+                            <a href="#" class="card-cta">Explore Brand Work</a>
+                        </div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="tour-card position-3">
+                        <div class="card-face card-back"></div>
+                        <div class="card-face card-front">
+                            <div class="card-content">
+                                <p>68% of campaigns don't convert. If yours gets likes but not leads, I build campaigns that drive results.</p>
+                            </div>
+                            <a href="#" class="card-cta">View Performance Results</a>
+                        </div>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div class="tour-card position-4">
+                        <div class="card-face card-back"></div>
+                        <div class="card-face card-front">
+                            <div class="card-content">
+                                <p>95% of messages are forgotten. If yours fades fast, I create stories that connect and stay.</p>
+                            </div>
+                            <a href="#" class="card-cta">Experience Storytelling</a>
+                        </div>
+                    </div>
+
+                    <!-- Card 5 -->
+                    <div class="tour-card position-5">
+                        <div class="card-face card-back"></div>
+                        <div class="card-face card-front">
+                            <div class="card-content">
+                                <p>Inconsistent messaging costs brands 23%. If your voice feels scattered, I unify it across every touchpoint.</p>
+                            </div>
+                            <a href="#" class="card-cta">See Teams Launch System</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="shuffle-button">Shuffle cards</button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Add click handlers for card flipping
+        document.querySelectorAll('.tour-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') return; // Don't flip on CTA click
+                
+                if (this.classList.contains('flipped')) {
+                    this.classList.remove('flipped');
+                } else {
+                    this.classList.add('flipped');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

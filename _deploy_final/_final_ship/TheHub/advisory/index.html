@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advisory | Strategic Direction</title>
+    
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
+    
+    <!-- Ecosystem Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Big+Shoulders+Display:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* ==========================================
+           THEME VARIABLES
+           ========================================== */
+        :root {
+            --coral: #F96F6E;
+            --teal: #2ED3C6;
+            --bg-primary: #FAF9F6;
+            --bg-alt: #F5F3EE;
+            --text-primary: #0E0E0F;
+            --text-secondary: #4A4A4A;
+            --text-muted: #888888;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --font-strategist: 'Big Shoulders Display', sans-serif;
+            --font-orchestrator: 'Inter', sans-serif;
+            --ease-out: cubic-bezier(0.4, 0, 0.2, 1);
+            --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #050505;
+            --bg-alt: #0E0E0F;
+            --text-primary: #FFFFFF;
+            --text-secondary: #A0A0A0;
+            --text-muted: #666666;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            transition: background 0.3s, color 0.3s;
+            overflow-x: hidden;
+        }
+
+        /* ==========================================
+           THE "DARK FRAME" (Header/Footer Lock)
+           ========================================== */
+        .fixed-dark { 
+            background-color: #050505 !important; 
+            color: #ffffff !important; 
+            border-color: rgba(255,255,255,0.1) !important; 
+        }
+        .fixed-dark a { color: #888888; transition: 0.2s; }
+        .fixed-dark a:hover { color: #ffffff; }
+        .fixed-dark .active-link { color: #ffffff !important; font-weight: 700; }
+        .fixed-dark .highlight-text { color: #F96F6E !important; }
+
+        /* ==========================================
+           TYPOGRAPHY & UTILS
+           ========================================== */
+        h1, h2, h3 { font-family: 'Big Shoulders Display', sans-serif; letter-spacing: -0.01em; line-height: 1.1; }
+        
+        .text-gradient { 
+            background: linear-gradient(135deg, var(--coral), var(--teal)); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+        }
+        
+        .eyebrow {
+            font-size: 0.8rem; font-weight: 700; letter-spacing: 0.15em; color: var(--coral); 
+            text-transform: uppercase; margin-bottom: 1.5rem;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+        .section-alt { background-color: var(--bg-alt); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); }
+
+        /* BUTTONS */
+        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 14px 36px; border-radius: 99px; font-weight: 600; font-size: 14px; text-decoration: none; transition: all 0.3s; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em; }
+        .btn-primary { background: var(--text-primary); color: var(--bg-primary); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); opacity: 0.9; }
+        .btn-ghost { background: transparent; border: 1px solid var(--border-color); color: var(--text-primary); }
+        .btn-ghost:hover { border-color: var(--coral); color: var(--coral); }
+
+        /* CARDS */
+        .card { 
+            background: var(--bg-primary); 
+            border: 1px solid var(--border-color); 
+            border-radius: 12px; 
+            padding: 2.5rem; 
+            transition: transform 0.3s, box-shadow 0.3s; 
+        }
+        .card:hover { 
+            transform: translateY(-4px); 
+            border-color: var(--coral); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        /* SPINE */
+        .spine-container { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: -1; overflow: hidden; }
+        .central-spine { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: var(--border-color); transform: translateX(-50%); opacity: 0.5; }
+
+        /* ==========================================
+           PRICE LOCK & LEGACY UI
+           ========================================== */
+        .price-lock { 
+            display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 1rem; 
+            background: var(--bg-primary); border: 1px solid var(--border-color); 
+            border-radius: 12px; padding: 1rem; margin: 2rem auto; max-width: 600px; 
+        }
+        .price-input { 
+            padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border-color); 
+            background: var(--bg-alt); color: var(--text-primary); outline: none; width: 200px;
+        }
+        .tier-price { 
+            filter: blur(8px); transition: filter 0.5s ease; user-select: none; 
+            font-size: 1.75rem; font-weight: 700; color: var(--coral); margin: 1rem 0; 
+        }
+        .tier-price.revealed { filter: blur(0); }
+
+        /* LEGACY STATS */
+        .logo-display { height: 120px; display: flex; align-items: center; justify-content: center; background: var(--bg-alt); border: 1px solid var(--border-color); border-radius: 16px; margin-bottom: 2rem; overflow: hidden; position: relative; }
+        .logo-item { display: none; width: 100%; height: 100%; align-items: center; justify-content: center; padding: 2rem; }
+        .logo-item.active { display: flex; animation: fadeIn 0.5s ease; }
+        .logo-item img { max-height: 100%; max-width: 100%; object-fit: contain; filter: none; opacity: 1; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .legacy-stats { display: flex; justify-content: center; gap: 4rem; }
+        .stat-val { font-family: 'Big Shoulders Display'; font-size: 3rem; font-weight: 700; color: var(--text-primary); line-height: 1; }
+        .stat-lbl { font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.1em; }
+
+        /* ==========================================
+           HEADER: 3-COLUMN CENTERED NAV
+           ========================================== */
+        .header-bar {
+            position: fixed; top: 0; left: 0; width: 100%; height: 72px;
+            background-color: #050505; border-bottom: 1px solid rgba(255,255,255,0.1);
+            z-index: 10000;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .header-logo { display: flex; align-items: center; gap: 16px; text-decoration: none; }
+        .header-logo img { height: 32px; width: auto; }
+
+        /* MEGA MENU SYSTEM */
+        .desktop-nav { 
+            display: flex; gap: 24px; align-items: center;
+            justify-self: center;
+        }
+        .desktop-nav .nav-item { position: relative; }
+        .desktop-nav .nav-link {
+            background: none; border: none; color: #888; font-size: 11px; font-weight: 600;
+            letter-spacing: 1px; cursor: pointer; text-transform: uppercase; text-decoration: none;
+            display: flex; align-items: center; gap: 4px;
+        }
+        .desktop-nav .nav-link:hover { color: #fff; }
+        .desktop-nav .nav-link.active-link { color: #fff; }
+
+        .desktop-nav .mega-panel {
+            display: block; opacity: 0; visibility: hidden;
+            transition: all 0.2s ease; transition-delay: 100ms;
+            position: absolute; top: 100%; left: 50%;
+            transform: translateX(-50%) translateY(10px) translateZ(0);
+            backface-visibility: hidden; width: 520px;
+            background: #0A0A0A; border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.5rem; border-radius: 0.75rem; z-index: 50;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); margin-top: 1rem;
+        }
+        .desktop-nav .mega-panel::before { content: ""; position: absolute; top: -20px; left: 0; right: 0; height: 20px; background: transparent; }
+        .desktop-nav .nav-item:hover .mega-panel { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0) translateZ(0); }
+        .desktop-nav .group\/item:hover { background-color: rgba(255, 255, 255, 0.05); }
+        .desktop-nav .group\/item .icon-teal { color: #2ED3C6; }
+        .desktop-nav .group\/item .icon-coral { color: #F96F6E; }
+        .desktop-nav .group\/item:hover .icon-teal,
+        .desktop-nav .group\/item:hover .icon-coral { filter: brightness(1.2); }
+        .desktop-nav .mega-title-text { font-family: 'Big Shoulders Display', sans-serif; text-transform: uppercase; letter-spacing: 0.05em; font-size: 1.1rem; color: #F4F1ED; }
+        .desktop-nav .mega-desc-text { font-family: 'Inter', sans-serif; font-size: 0.75rem; color: #A1A1AA; margin-top: 0.25rem; }
+
+        .nav-actions { 
+            display: flex; align-items: center; gap: 12px;
+            justify-self: end;
+        }
+        .nav-actions .theme-btn {
+            width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.1);
+            border: none; color: white; cursor: pointer; display: flex; align-items: center;
+            justify-content: center; transition: 0.2s;
+        }
+        .nav-actions .theme-btn:hover { background: rgba(255,255,255,0.2); }
+        .nav-actions .mobile-menu-toggle {
+            display: none; background: none; border: none; font-size: 20px;
+            cursor: pointer; color: white;
+        }
+
+        /* ==========================================
+           MOBILE DRAWER (Standardized)
+           ========================================== */
+        .drawer-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px); z-index: 19999;
+            opacity: 0; visibility: hidden; transition: all 0.3s ease;
+        }
+        .drawer-overlay.active { opacity: 1; visibility: visible; }
+
+        .mobile-drawer {
+            position: fixed; top: 0; right: 0; width: 100%; max-width: 420px; height: 100dvh;
+            background: #0A0A0A; z-index: 20000; transform: translateX(100%);
+            transition: transform 0.45s var(--ease-spring);
+            display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden;
+        }
+        .mobile-drawer.active { transform: translateX(0); }
+
+        .drawer-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); flex-shrink: 0;
+        }
+        .drawer-header img { height: 28px; }
+        .drawer-close {
+            background: none; border: none; color: rgba(255,255,255,0.5);
+            font-size: 1.25rem; cursor: pointer; width: 40px; height: 40px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+        }
+        .drawer-close:hover { background: rgba(255,255,255,0.06); color: #FFF; }
+
+        .drawer-content { flex: 1; padding: 0; display: flex; flex-direction: column; }
+
+        .drawer-hub-section {
+            padding: 1.5rem; background: transparent;
+            border-bottom: 1px solid rgba(255,255,255,0.06); position: relative;
+        }
+        .drawer-hub-section::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 2px; height: 100%;
+            background: rgba(249,111,110,0.75); border-radius: 0 2px 2px 0;
+        }
+        .drawer-section-label {
+            display: flex; align-items: center; gap: 0.5rem;
+            font-family: var(--font-strategist); font-size: 0.7rem;
+            text-transform: uppercase; letter-spacing: 0.12em;
+            color: var(--coral); margin-bottom: 1.25rem; font-weight: 800;
+        }
+        .drawer-section-label i { font-size: 0.6rem; }
+        .drawer-hub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.625rem; }
+        .drawer-hub-card {
+            display: flex; flex-direction: column; gap: 0.5rem;
+            padding: 1rem; border-radius: 12px;
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+            text-decoration: none; transition: all 0.25s;
+        }
+        .drawer-hub-card:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); }
+        .drawer-hub-card.active { border-color: var(--coral); background: rgba(249,111,110,0.06); }
+        .drawer-hub-card-icon {
+            width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.05);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; color: rgba(255,255,255,0.4); transition: all 0.2s;
+        }
+        .drawer-hub-card.active .drawer-hub-card-icon { background: var(--coral); color: #FFF; }
+        .drawer-hub-card-title { font-family: var(--font-strategist); font-size: 1rem; text-transform: uppercase; color: #FFF; letter-spacing: 0.02em; }
+        .drawer-hub-card-sub { font-size: 0.7rem; color: rgba(255,255,255,0.4); line-height: 1.4; }
+
+        .drawer-global-section { padding: 1.5rem; flex: 1; }
+        .drawer-global-section .drawer-section-label { color: rgba(255,255,255,0.3); }
+        .drawer-global-link {
+            display: flex; align-items: center; gap: 0.875rem; padding: 0.875rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04); text-decoration: none; transition: all 0.2s;
+        }
+        .drawer-global-link:last-child { border-bottom: none; }
+        .drawer-global-link:hover .drawer-global-text { color: #FFF; }
+        .drawer-global-icon {
+            width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,0.04);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem; color: rgba(255,255,255,0.3); flex-shrink: 0; transition: all 0.2s;
+        }
+        .drawer-global-link:hover .drawer-global-icon { color: var(--teal); }
+        .drawer-global-text { font-family: var(--font-orchestrator); font-size: 0.9rem; font-weight: 500; color: rgba(255,255,255,0.6); transition: color 0.2s; }
+        .drawer-global-link.active .drawer-global-text { color: var(--coral); font-weight: 600; }
+
+        .drawer-footer {
+            padding: 1.25rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.06);
+            display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+        }
+        .drawer-footer-status { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: rgba(255,255,255,0.4); }
+        .drawer-status-dot { width: 6px; height: 6px; background: var(--teal); border-radius: 50%; box-shadow: 0 0 6px rgba(46,211,198,0.4); }
+        .drawer-theme-toggle {
+            background: none; border: 1px solid rgba(255,255,255,0.08); cursor: pointer;
+            color: rgba(255,255,255,0.4); font-size: 0.9rem; width: 36px; height: 36px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+        }
+        .drawer-theme-toggle:hover { background: rgba(255,255,255,0.06); color: #FFF; }
+
+        /* MOBILE OVERRIDES */
+        @media (max-width: 1024px) {
+            .desktop-nav { display: none !important; }
+            .nav-actions .mobile-menu-toggle { display: block !important; }
+            .header-bar { display: flex; justify-content: space-between; }
+            .legacy-stats { gap: 2rem; }
+            .price-lock { flex-direction: column; }
+        }
+        @media (max-width: 767px) {
+            .mobile-drawer { max-width: 100%; }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+<!-- ==================== HEADER (Centered Nav, No Client Login) ==================== -->
+<nav class="header-bar">
+    <a href="/TheHub/index.html" class="header-logo nav-logo" style="gap: 12px;">
+        <img src="/assets/images/Logomark_White_a.png" alt="Luis Gilberto" style="height: 32px; width: auto; opacity: 0.9;">
+        <div style="width: 1px; height: 20px; background: rgba(255,255,255,0.2); flex-shrink: 0;"></div>
+        <span style="font-family: 'Big Shoulders Display', sans-serif; font-size: 20px; font-weight: 700; color: #FFF; letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap;">The Hub.</span>
+    </a>
+
+    <!-- CENTERED MEGA MENU NAVIGATION -->
+    <nav class="desktop-nav">
+        <!-- Portfolio -->
+        <div class="nav-item has-dropdown group relative">
+            <button class="nav-link">
+                PORTFOLIO <i class="fas fa-chevron-down ml-1 text-[10px]"></i>
+            </button>
+            <div class="mega-panel">
+                <div class="grid grid-cols-2 gap-6">
+                    <a href="/myexperience.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all">
+                        <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-teal"><i class="fa-solid fa-briefcase"></i></div>
+                        <div><div class="mega-title-text font-bold">Experience</div><div class="mega-desc-text">Deep dives into key projects.</div></div>
+                    </a>
+                    <a href="/about.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all">
+                        <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-coral"><i class="fa-solid fa-user"></i></div>
+                        <div><div class="mega-title-text font-bold">About me</div><div class="mega-desc-text">The human behind the work.</div></div>
+                    </a>
+                    <a href="/identity.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all">
+                        <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-teal"><i class="fa-solid fa-fingerprint"></i></div>
+                        <div><div class="mega-title-text font-bold">Identity</div><div class="mega-desc-text">Brand book and visual DNA.</div></div>
+                    </a>
+                    <a href="/contact.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all">
+                        <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-coral"><i class="fa-solid fa-paper-plane"></i></div>
+                        <div><div class="mega-title-text font-bold">Contact</div><div class="mega-desc-text">Let's start a conversation.</div></div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Insights -->
+        <div class="nav-item has-dropdown group relative">
+            <a href="/insights/" class="nav-link">
+                INSIGHTS <i class="fas fa-chevron-down ml-1 text-[10px]"></i>
+            </a>
+            <div class="mega-panel">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <a href="/insights/series/#building" class="group/item" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                        <div style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;" class="icon-teal"><i class="fa-solid fa-layer-group"></i></div>
+                        <div><div class="mega-title-text" style="font-weight: 700;">Building Series</div><div class="mega-desc-text">Structural decisions behind the work.</div></div>
+                    </a>
+                    <a href="/insights/series/#use-cases" class="group/item" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                        <div style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;" class="icon-coral"><i class="fa-solid fa-rocket"></i></div>
+                        <div><div class="mega-title-text" style="font-weight: 700;">Use Cases</div><div class="mega-desc-text">Real-world applications & launches.</div></div>
+                    </a>
+                    <a href="/insights/series/#reflections" class="group/item" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                        <div style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;" class="icon-teal"><i class="fa-solid fa-lightbulb"></i></div>
+                        <div><div class="mega-title-text" style="font-weight: 700;">Reflections</div><div class="mega-desc-text">Creativity, pace, and momentum.</div></div>
+                    </a>
+                    <a href="/insights/" class="group/item" style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s;">
+                        <div style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 0.25rem;" class="icon-coral"><i class="fa-solid fa-newspaper"></i></div>
+                        <div><div class="mega-title-text" style="font-weight: 700;">Latest Stories</div><div class="mega-desc-text">Read the newest articles.</div></div>
+                    </a>
+                </div>
+                <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: flex-end;">
+                    <a href="/insights/series/" style="font-size: 0.75rem; font-weight: 700; color: #F96F6E; display: flex; align-items: center; gap: 0.25rem;">
+                        Browse All Series <span style="font-size: 1.125rem;">→</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- The Hub -->
+        <div class="nav-item has-dropdown group relative">
+            <a href="/TheHub/index.html" class="nav-link active-link">
+                THE HUB <i class="fas fa-chevron-down ml-1 text-[10px]"></i>
+            </a>
+            <div class="mega-panel">
+                <div class="grid grid-cols-2 gap-6">
+                    <a href="/TheHub/index.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all">
+                        <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-teal"><i class="fa-solid fa-house"></i></div>
+                        <div><div class="mega-title-text font-bold">Hub Home</div><div class="mega-desc-text">System overview.</div></div>
+                    </a>
+                    <a href="/TheHub/strategy-iq/index.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all">
+                        <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-coral"><i class="fa-solid fa-chart-line"></i></div>
+                        <div><div class="mega-title-text font-bold">StrategyIQ</div><div class="mega-desc-text">Benchmark maturity.</div></div>
+                    </a>
+                    <a href="/TheHub/advisory/index.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all" style="border: 1px solid rgba(249,111,110,0.55); background: rgba(249,111,110,0.06); border-radius: 0.5rem;">
+                        <div class="w-10 h-10 rounded flex items-center justify-center" style="background: var(--coral); color: #FFF;"><i class="fa-solid fa-compass"></i></div>
+                        <div><div class="mega-title-text font-bold">Advisory</div><div class="mega-desc-text">Strategic partnership.</div></div>
+                    </a>
+                    <a href="/TheHub/studio.html" class="group/item flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-all">
+                        <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center icon-coral"><i class="fa-solid fa-palette"></i></div>
+                        <div><div class="mega-title-text font-bold">The Studio</div><div class="mega-desc-text">Creative execution.</div></div>
+                    </a>
+                </div>
+                <div class="mt-6 pt-4 border-t border-white/10 flex justify-end">
+                    <a href="https://portal.luis-gilberto.com" target="_blank" class="text-xs font-bold text-coral flex items-center gap-1 hover:brightness-110">
+                        Enter The Portal <span class="text-lg">→</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <a href="https://portal.luis-gilberto.com" target="_blank" class="nav-link">PORTAL</a>
+    </nav>
+
+    <!-- RIGHT: Theme + Mobile Toggle (NO Client Login) -->
+    <div class="nav-actions">
+        <button id="themeToggle" class="theme-btn"><i class="fa-solid fa-moon"></i></button>
+        <button class="mobile-menu-toggle" id="mobileMenuToggle"><i class="fa-solid fa-bars"></i></button>
+    </div>
+</nav>
+
+<!-- ==================== MOBILE DRAWER (Standardized) ==================== -->
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<div class="mobile-drawer" id="mobileDrawer">
+    <div class="drawer-header">
+        <img src="/assets/images/Logomark_White_a.png" alt="Luis Gilberto">
+        <button class="drawer-close" id="drawerClose" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="drawer-content">
+        <div class="drawer-hub-section">
+            <div class="drawer-section-label"><i class="fa-solid fa-diagram-project"></i> The Hub</div>
+            <div class="drawer-hub-grid">
+                <a href="/TheHub/index.html" class="drawer-hub-card"><div class="drawer-hub-card-icon"><i class="fa-solid fa-house"></i></div><span class="drawer-hub-card-title">Home</span><span class="drawer-hub-card-sub">System overview</span></a>
+                <a href="/TheHub/strategy-iq/index.html" class="drawer-hub-card"><div class="drawer-hub-card-icon"><i class="fa-solid fa-chart-line"></i></div><span class="drawer-hub-card-title">StrategyIQ</span><span class="drawer-hub-card-sub">Diagnostic engine</span></a>
+                <a href="/TheHub/advisory/index.html" class="drawer-hub-card active"><div class="drawer-hub-card-icon"><i class="fa-solid fa-compass"></i></div><span class="drawer-hub-card-title">Advisory</span><span class="drawer-hub-card-sub">Strategic partnership</span></a>
+                <a href="/TheHub/studio.html" class="drawer-hub-card"><div class="drawer-hub-card-icon"><i class="fa-solid fa-palette"></i></div><span class="drawer-hub-card-title">The Studio</span><span class="drawer-hub-card-sub">Creative production</span></a>
+            </div>
+        </div>
+        <div class="drawer-global-section">
+            <div class="drawer-section-label">Ecosystem</div>
+            <a href="/index.html" class="drawer-global-link"><div class="drawer-global-icon"><i class="fa-solid fa-layer-group"></i></div><span class="drawer-global-text">Portfolio</span></a>
+            <a href="/insights/" class="drawer-global-link"><div class="drawer-global-icon"><i class="fa-solid fa-lightbulb"></i></div><span class="drawer-global-text">Insights</span></a>
+            <a href="/TheHub/index.html" class="drawer-global-link active"><div class="drawer-global-icon"><i class="fa-solid fa-diagram-project"></i></div><span class="drawer-global-text">The Hub</span></a>
+            <a href="https://portal.luis-gilberto.com" target="_blank" class="drawer-global-link"><div class="drawer-global-icon"><i class="fa-solid fa-arrow-up-right-from-square"></i></div><span class="drawer-global-text">The Portal</span></a>
+        </div>
+    </div>
+    <div class="drawer-footer">
+        <div class="drawer-footer-status"><span class="drawer-status-dot"></span> Accepting Projects</div>
+        <button class="drawer-theme-toggle" id="drawerThemeToggle" aria-label="Toggle theme"><i class="fa-regular fa-moon"></i></button>
+    </div>
+</div>
+
+<!-- SPACER -->
+<div style="height: 80px;"></div>
+
+<!-- ==================== MAIN CONTENT (Preserved) ==================== -->
+<main class="relative">
+    <div class="spine-container"><div class="central-spine"></div></div>
+
+    <!-- HERO -->
+    <section style="padding: 8rem 0 6rem; text-align: center;">
+        <div class="container" style="max-width: 800px;">
+            <div style="width: 150px; height: 150px; margin: 0 auto 2rem; border-radius: 50%; overflow: hidden; border: 1px solid var(--border-color); box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                <img src="/TheHub/assets/images/Luis_portrait_circle.png" alt="Luis Gilberto" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <div class="eyebrow">STRATEGIC PARTNERSHIP</div>
+            <h1 style="font-size: clamp(2.5rem, 5vw, 4.5rem); line-height: 1; margin-bottom: 1.5rem; color: var(--text-primary);">
+                From Insight to <span class="text-gradient">Action.</span>
+            </h1>
+            <p style="font-size: 1.25rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 2.5rem;">
+                Advisory is where signals are interpreted, options are pressure-tested, and leadership aligns on what to do next.
+            </p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="/contact.html?from=advisory" class="btn btn-primary">Book Strategy Session</a>
+                <a href="#capabilities" class="btn btn-ghost">How It Works</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CAPABILITIES -->
+    <section id="capabilities" style="padding: 6rem 0;">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 4rem;">
+                <h2 style="font-size: 3rem; color: var(--text-primary);">Decision Support.</h2>
+                <p style="color: var(--text-secondary);">Moving from "What is happening?" to "What do we do?"</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="card">
+                    <i class="fa-solid fa-chess-king text-2xl mb-6" style="color: var(--coral);"></i>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--text-primary);">Executive Counsel</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem;">Strategy often survives the market but dies in the boardroom. I act as a sounding board to navigate internal tradeoffs and align stakeholders.</p>
+                    <ul style="list-style: none; padding: 0; font-size: 0.9rem; color: var(--text-secondary);">
+                        <li style="margin-bottom: 8px;"><i class="fas fa-check text-xs" style="color: var(--teal); margin-right: 8px;"></i> Political alignment</li>
+                        <li style="margin-bottom: 8px;"><i class="fas fa-check text-xs" style="color: var(--teal); margin-right: 8px;"></i> Resource prioritization</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <i class="fa-solid fa-compass-drafting text-2xl mb-6" style="color: var(--teal);"></i>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--text-primary);">Narrative Authority</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem;">Data is useless without a story. We translate complex strategic decisions into a clear, compelling narrative that mobilizes teams.</p>
+                    <ul style="list-style: none; padding: 0; font-size: 0.9rem; color: var(--text-secondary);">
+                        <li style="margin-bottom: 8px;"><i class="fa-solid fa-check text-xs" style="color: var(--teal); margin-right: 8px;"></i> Positioning clarity</li>
+                        <li style="margin-bottom: 8px;"><i class="fa-solid fa-check text-xs" style="color: var(--teal); margin-right: 8px;"></i> Internal comms</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <i class="fa-solid fa-forward text-2xl mb-6 text-gradient"></i>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--text-primary);">Operational Momentum</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem;">The gap between strategy and execution is where value leaks. I ensure the decision gets made and the machine starts moving.</p>
+                    <ul style="list-style: none; padding: 0; font-size: 0.9rem; color: var(--text-secondary);">
+                        <li style="margin-bottom: 8px;"><i class="fa-solid fa-check text-xs" style="color: var(--teal); margin-right: 8px;"></i> Unblocking execution</li>
+                        <li style="margin-bottom: 8px;"><i class="fa-solid fa-check text-xs" style="color: var(--teal); margin-right: 8px;"></i> Vendor selection</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROCESS -->
+    <section class="section-alt" style="padding: 6rem 0;">
+        <div class="container">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <div>
+                    <div style="font-family: 'Big Shoulders Display'; font-size: 4rem; color: var(--coral); margin-bottom: 0.5rem;">01</div>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text-primary);">Interpret</h3>
+                    <p style="color: var(--text-secondary);">Separating signal from noise.</p>
+                </div>
+                <div>
+                    <div style="font-family: 'Big Shoulders Display'; font-size: 4rem; color: var(--coral); margin-bottom: 0.5rem;">02</div>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text-primary);">Decide</h3>
+                    <p style="color: var(--text-secondary);">Committing to a defensible path.</p>
+                </div>
+                <div>
+                    <div style="font-family: 'Big Shoulders Display'; font-size: 4rem; color: var(--coral); margin-bottom: 0.5rem;">03</div>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text-primary);">Direct</h3>
+                    <p style="color: var(--text-secondary);">Guiding The Studio to execute.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LEGACY -->
+    <section style="padding: 6rem 0;">
+        <div class="container" style="text-align: center; max-width: 800px;">
+            <div class="eyebrow">LEGACY</div>
+            <h2 style="font-size: 3rem; margin-bottom: 1rem; color: var(--text-primary);">15+ Years in Motion</h2>
+            <p style="color: var(--text-secondary); font-size: 1.2rem; margin-bottom: 3rem;">From Windows to Copilot, shaping brands and products across Microsoft.</p>
+            <div style="max-width: 500px; margin: 0 auto;">
+                <div class="logo-display"></div>
+                <div class="legacy-stats">
+                    <div style="text-align: center;"><div class="stat-val" style="color: var(--coral);">10+</div><div class="stat-lbl">Global Launches</div></div>
+                    <div style="text-align: center;"><div class="stat-val" style="color: var(--teal);">50M+</div><div class="stat-lbl">Users Reached</div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INVESTMENT -->
+    <section class="section-alt" style="padding: 6rem 0;" id="investment">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 3rem;">
+                <h2 style="font-size: 3rem; color: var(--text-primary);">Engagement Models</h2>
+                <p style="color: var(--text-secondary);">Flexible partnership tiers based on your stage.</p>
+                <div class="price-lock" id="priceLock">
+                    <span style="font-weight:600; color:var(--text-secondary); font-size: 0.9rem;"><i class="fa-solid fa-lock" style="margin-right: 6px;"></i> Pricing Locked</span>
+                    <input type="password" class="price-input" id="pricePassword" placeholder="Enter password (LG100)">
+                    <button class="btn btn-ghost" id="revealPriceBtn" style="padding: 8px 20px; font-size: 12px; min-height: 38px;">Reveal</button>
+                    <div id="priceStatus" style="font-size:0.85rem; color:var(--coral); width: 100%; text-align: center; display: none;">Incorrect Password</div>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="card" style="text-align: center;">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text-primary);">Calibration</h3>
+                    <div class="tier-price">$3K – $8K</div>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">Focused Decision Sprint</p>
+                    <hr style="border: 0; border-top: 1px solid var(--border-color); margin-bottom: 1.5rem;">
+                    <ul style="text-align: left; list-style: none; padding: 0; margin-bottom: 2rem; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.8;">
+                        <li><i class="fa-solid fa-check text-xs" style="color: var(--teal); width: 20px;"></i> Resolve one critical blocker</li>
+                        <li><i class="fa-solid fa-check text-xs" style="color: var(--teal); width: 20px;"></i> Review StrategyIQ results</li>
+                        <li><i class="fa-solid fa-check text-xs" style="color: var(--teal); width: 20px;"></i> Immediate next steps</li>
+                    </ul>
+                    <a href="/contact.html?from=advisory_calibration" class="btn btn-ghost" style="width: 100%;">Book Session</a>
+                </div>
+                <div class="card" style="text-align: center; border-color: var(--coral); position: relative;">
+                    <div style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--coral); color: white; padding: 4px 12px; border-radius: 99px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">Most Common</div>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text-primary);">Direction</h3>
+                    <div class="tier-price">$8K – $18K</div>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">Strategic Roadmap</p>
+                    <hr style="border: 0; border-top: 1px solid var(--border-color); margin-bottom: 1.5rem;">
+                    <ul style="text-align: left; list-style: none; padding: 0; margin-bottom: 2rem; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.8;">
+                        <li><i class="fa-solid fa-check text-xs" style="color: var(--teal); width: 20px;"></i> 6-week engagement</li>
+                        <li><i class="fa-solid fa-check text-xs" style="color: var(--teal); width: 20px;"></i> Full GTM/Brand definition</li>
+                        <li><i class="fa-solid fa-check text-xs" style="color: var(--teal); width: 20px;"></i> Stakeholder alignment</li>
+                    </ul>
+                    <a href="/contact.html?from=advisory_direction" class="btn btn-primary" style="width: 100%;">Get Started</a>
+                </div>
+                <div class="card" style="text-align: center;">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text-primary);">Partnership</h3>
+                    <div class="tier-price">$15K+ / mo</div>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">Fractional Leadership</p>
+                    <hr style="border: 0; border-top: 1px solid var(--border-color); margin-bottom: 1.5rem;">
+                    <ul style="text-align: left; list-style: none; padding: 0; margin-bottom: 2rem; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.8;">
+                        <li><i class="fa-solid fa-check text-xs" style="color: var(--teal); width: 20px;"></i> Embedded executive role</li>
+                        <li><i class="fa-solid fa-check text-xs" style="color: var(--teal); width: 20px;"></i> Weekly steering</li>
+                        <li><i class="fa-solid fa-check text-xs" style="color: var(--teal); width: 20px;"></i> Direct Studio oversight</li>
+                    </ul>
+                    <a href="/contact.html?from=advisory_partnership" class="btn btn-ghost" style="width: 100%;">Inquire</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- ==================== FOOTER (Nothing after this) ==================== -->
+<footer class="fixed-dark" style="border-top: 1px solid rgba(255,255,255,0.1); padding: 4rem 2rem; margin-top: auto; font-family: 'Inter', sans-serif;"> 
+    <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.5fr; gap: 3rem; align-items: start;"> 
+        <div> 
+            <a href="/index.html" style="display: flex; align-items: center; gap: 12px; text-decoration: none; margin-bottom: 1.5rem;"> 
+                <img src="/assets/images/Logomark_White_a.png" alt="Luis Gilberto" style="height: 32px; width: auto; opacity: 0.9;"> 
+                <span style="font-family: 'Big Shoulders Display', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: white;">LUIS GILBERTO</span> 
+            </a> 
+            <p style="font-size: 14px; line-height: 1.6; max-width: 280px; color: #888;">Making technology feel human through clarity, beautiful execution, and systems that scale.</p> 
+            <div style="margin-top: 1.5rem; font-size: 12px; color: #555;">&copy; <span id="year"></span> Luis Gilberto Ecosystem.</div> 
+        </div> 
+        <div>
+            <h4 style="font-family: 'Big Shoulders Display'; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 1.5rem; color: #555;">Ecosystem</h4>
+            <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px;">
+                <li><a href="/TheHub/index.html">The Hub</a></li>
+                <li><a href="/TheHub/strategy-iq/index.html">StrategyIQ</a></li>
+                <li><a href="/TheHub/studio.html">The Studio</a></li>
+                <li><a href="https://portal.luis-gilberto.com" target="_blank" class="highlight-text">The Portal &rarr;</a></li>
+            </ul>
+        </div>
+        <div>
+            <h4 style="font-family: 'Big Shoulders Display'; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 1.5rem; color: #555;">Connect</h4>
+            <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px;">
+                <li><a href="https://www.linkedin.com/in/luisgilberto00" target="_blank">LinkedIn</a></li>
+                <li><a href="/contact.html">Contact</a></li>
+                <li><a href="/about.html">About Me</a></li>
+            </ul>
+        </div>
+        <div> 
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 1.25rem;"> 
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;"> 
+                    <div style="width: 8px; height: 8px; background: #2ED3C6; border-radius: 50%; box-shadow: 0 0 8px rgba(46, 211, 198, 0.5);"></div> 
+                    <span style="font-size: 12px; font-weight: 700; color: white; letter-spacing: 0.5px; text-transform: uppercase;">Accepting Projects</span> 
+                </div> 
+                <p style="font-size: 13px; line-height: 1.4; margin: 0; color: #888;">Currently available for strategic consulting and creative direction.</p> 
+            </div> 
+        </div> 
+    </div>
+    <div style="border-top: 1px solid rgba(255,255,255,0.05); margin-top: 2rem; padding-top: 2rem; text-align: center;">
+        <p style="color: #666; font-size: 10px; line-height: 1.5; max-width: 600px; margin: 0 auto; font-family: 'Inter', sans-serif;">
+            <strong>INTELLECTUAL PROPERTY NOTICE:</strong> StrategyIQ™, The Hub™, and the associated diagnostic methodologies are proprietary intellectual property of Luis Gilberto. 
+            Unauthorized reproduction, reverse engineering, or distribution of the assessment logic is strictly prohibited. All rights reserved.
+        </p>
+    </div>
+</footer>
+
+<!-- ==================== ALL SCRIPTS (Inside body, nothing after footer visually) ==================== -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Theme System
+    var htmlEl = document.documentElement;
+    var themeToggle = document.getElementById('themeToggle');
+    var drawerThemeToggle = document.getElementById('drawerThemeToggle');
+    var initTheme = localStorage.getItem('theme') || 'dark';
+    htmlEl.setAttribute('data-theme', initTheme);
+    updateIcon(initTheme);
+
+    function updateIcon(theme) {
+        if (themeToggle) themeToggle.querySelector('i').className = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        if (drawerThemeToggle) drawerThemeToggle.querySelector('i').className = theme === 'dark' ? 'fa-regular fa-sun' : 'fa-regular fa-moon';
+    }
+    function toggle() {
+        var next = htmlEl.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        htmlEl.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+        updateIcon(next);
+    }
+    if (themeToggle) themeToggle.addEventListener('click', toggle);
+    if (drawerThemeToggle) drawerThemeToggle.addEventListener('click', toggle);
+
+    // Mobile Drawer
+    var mobileToggle = document.getElementById('mobileMenuToggle');
+    var mobileDrawer = document.getElementById('mobileDrawer');
+    var drawerOverlay = document.getElementById('drawerOverlay');
+    var drawerClose = document.getElementById('drawerClose');
+
+    function openDrawer() {
+        mobileDrawer.classList.add('active');
+        drawerOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        mobileToggle.querySelector('i').className = 'fa-solid fa-xmark';
+    }
+    function closeDrawer() {
+        mobileDrawer.classList.remove('active');
+        drawerOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+        mobileToggle.querySelector('i').className = 'fa-solid fa-bars';
+    }
+
+    if (mobileToggle) {
+        mobileToggle.addEventListener('click', function() {
+            mobileDrawer.classList.contains('active') ? closeDrawer() : openDrawer();
+        });
+    }
+    if (drawerClose) drawerClose.addEventListener('click', closeDrawer);
+    if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && mobileDrawer && mobileDrawer.classList.contains('active')) closeDrawer();
+    });
+
+    // Footer Year
+    var yearEl = document.getElementById('year');
+    if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+    // Password Reveal
+    var revealBtn = document.getElementById('revealPriceBtn');
+    var passwordInput = document.getElementById('pricePassword');
+    var statusDiv = document.getElementById('priceStatus');
+    var prices = document.querySelectorAll('.tier-price');
+
+    if (revealBtn) {
+        revealBtn.addEventListener('click', function() {
+            if (passwordInput.value === 'LG100') {
+                prices.forEach(function(p) { p.classList.add('revealed'); });
+                statusDiv.style.display = 'block';
+                statusDiv.textContent = 'Pricing Revealed';
+                statusDiv.style.color = 'var(--teal)';
+                document.getElementById('priceLock').style.borderColor = 'var(--teal)';
+            } else {
+                statusDiv.style.display = 'block';
+                statusDiv.textContent = 'Incorrect Password';
+                statusDiv.style.color = 'var(--coral)';
+                document.getElementById('priceLock').style.borderColor = 'var(--coral)';
+            }
+        });
+    }
+
+    // Logo Rotator
+    var logos = [
+        { name: 'Microsoft Copilot', path: '../../assets/images/logo-rotator/Copilot.png' },
+        { name: 'Copilot in Edge',   path: '../../assets/images/logo-rotator/Copilot_in_Edge.png' },
+        { name: 'Family Safety',     path: '../../assets/images/logo-rotator/familysafety.png' },
+        { name: 'M365 Free Apps',    path: '../../assets/images/logo-rotator/M365_Free_apps.png' },
+        { name: 'Microsoft Band',    path: '../../assets/images/logo-rotator/MicrosoftBand.png' },
+        { name: 'Microsoft 365',     path: '../../assets/images/logo-rotator/Microsoft365.png' },
+        { name: 'Office 365',        path: '../../assets/images/logo-rotator/O365.png' },
+        { name: 'Office 365 Legacy', path: '../../assets/images/logo-rotator/Office365.png' },
+        { name: 'Office 2016-19',    path: '../../assets/images/logo-rotator/Office2016-19.png' },
+        { name: 'Surface Pro',       path: '../../assets/images/logo-rotator/Surface-Pro.png' },
+        { name: 'Microsoft Teams',   path: '../../assets/images/logo-rotator/Teams.png' }
+    ];
+    var logoContainer = document.querySelector('.logo-display');
+    if (logoContainer) {
+        var currentIdx = 0;
+        logos.forEach(function(logo, index) {
+            var item = document.createElement('div');
+            item.className = 'logo-item' + (index === 0 ? ' active' : '');
+            item.innerHTML = '<img src="' + logo.path + '" alt="' + logo.name + '">';
+            logoContainer.appendChild(item);
+        });
+        setInterval(function() {
+            var items = document.querySelectorAll('.logo-item');
+            items[currentIdx].classList.remove('active');
+            currentIdx = (currentIdx + 1) % items.length;
+            items[currentIdx].classList.add('active');
+        }, 3000);
+    }
+});
+</script>
+</body>
+</html>

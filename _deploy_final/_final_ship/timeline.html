@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Journey — Luis Gilberto</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap" rel="stylesheet">
+  <style>
+    /* ═══════════════════════════════════════════════════════════
+       TOKENS
+    ═══════════════════════════════════════════════════════════ */
+    :root {
+      --coral:         #F96F6E;
+      --teal:          #2ED3C6;
+      --accent:        #2ED3C6; /* Default */
+      --header-height: 64px;
+
+      /* dark (default) */
+      --bg-primary:    #0E0E0F;
+      --bg-secondary:  #1A1A1A;
+      --bg-card:       #1E1E1F;
+      --text-primary:  rgba(245,245,245,0.94);
+      --text-secondary:rgba(245,245,245,0.75);
+      --text-muted:    rgba(245,245,245,0.5);
+      --border-subtle: rgba(255,255,255,0.07);
+      --border-card:   rgba(255,255,255,0.1);
+
+      /* canonical nav tokens — always dark */
+      --rule:          rgba(250,247,244,0.08);
+      --ink:           #FAF7F4;
+      --ink-soft:      rgba(250,247,244,0.55);
+      --ink-muted:     rgba(250,247,244,0.32);
+      --bg-canon:      #0E0C0A;
+      --bg-raised-canon:#161310;
+      --f-display:     'Big Shoulders Display', sans-serif;
+      --f-serif:       'Playfair Display', Georgia, serif;
+      --f-ui:          'Inter', sans-serif;
+    }
+    [data-theme="light"] {
+      --bg-primary:    #F5F5F4;
+      --bg-secondary:  #FFFFFF;
+      --bg-card:       #FFFFFF;
+      --text-primary:  rgba(10,10,10,0.94);
+      --text-secondary:rgba(10,10,10,0.7);
+      --text-muted:    rgba(10,10,10,0.5);
+      --border-subtle: rgba(0,0,0,0.07);
+      --border-card:   rgba(0,0,0,0.1);
+    }
+
+    /* Persona Paths */
+    body.path-teal    { --accent: var(--teal); }
+    body.path-coral   { --accent: var(--coral); }
+    body.path-mustard { --accent: #D48D3B; }
+
+    /* ═══════════════════════════════════════════════════════════
+       RESET
+    ═══════════════════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-primary); color: var(--text-primary);
+      line-height: 1.6; overflow-x: hidden;
+      transition: background 0.3s, color 0.3s;
+    }
+    a { text-decoration: none; color: inherit; transition: all 0.2s; }
+    img { max-width: 100%; height: auto; display: block; }
+
+
+    /* ═══════════════════════════════════════════════════════════
+       HERO
+    ═══════════════════════════════════════════════════════════ */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center;
+      padding: 120px 24px 100px;
+      overflow: hidden;
+      background:
+        linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6), var(--bg-primary)),
+        url('assets/hp/Timeline.jpg') center/cover no-repeat;
+      background-attachment: fixed;
+    }
+    @supports (-webkit-touch-callout: none) {
+      .hero { background-attachment: scroll; }
+    }
+
+    /* Ensure Hero content stays visible in both modes */
+    .hero h1,
+    .hero-desc,
+    .hero-eyebrow,
+    .hero-stat-val,
+    .hero-stat-lbl,
+    .scroll-hint {
+      color: #FFFFFF !important;
+    }
+    .hero-stat-sep {
+      background: rgba(255, 255, 255, 0.2) !important;
+    }
+
+    .hero-content { max-width: 860px; margin: 0 auto; position: relative; z-index: 2; }
+
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: 'Big Shoulders Display', sans-serif;
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--accent) !important; margin-bottom: 1.5rem;
+      opacity: 0; animation: fadeUp 0.7s ease forwards 0.1s;
+    }
+    .hero-eyebrow::before, .hero-eyebrow::after {
+      content: ''; width: 24px; height: 1px; background: var(--accent); opacity: 0.5;
+    }
+
+    .hero h1 {
+      font-family: 'Big Shoulders Display', sans-serif;
+      font-size: clamp(56px, 10vw, 100px); font-weight: 800;
+      letter-spacing: 0.02em; text-transform: uppercase;
+      line-height: 1.0; margin-bottom: 1.5rem; overflow: visible;
+      opacity: 0; animation: fadeUp 0.8s ease forwards 0.25s;
+    }
+    .hero h1 .journey-word {
+      display: block;
+      font-family: 'Playfair Display', serif; font-style: italic;
+      font-weight: 600; text-transform: none; letter-spacing: -0.02em; font-size: 0.9em;
+      background: linear-gradient(135deg, var(--accent) 0%, #FFFFFF 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      margin-top: 4px;
+    }
+    .hero-desc {
+      font-size: clamp(1rem, 1.8vw, 1.15rem); font-weight: 300; line-height: 1.75;
+      max-width: 580px; margin: 1.5rem auto 0; color: rgba(255,255,255,0.75) !important;
+      opacity: 0; animation: fadeUp 0.8s ease forwards 0.45s;
+    }
+    .hero-stats {
+      display: flex; gap: 40px; justify-content: center; margin-top: 3rem;
+      opacity: 0; animation: fadeUp 0.8s ease forwards 0.6s;
+    }
+    .hero-stat { text-align: center; }
+    .hero-stat-val { font-family: 'Big Shoulders Display', sans-serif; font-size: 2rem; font-weight: 800; color: var(--accent) !important; display: block; line-height: 1; }
+    .hero-stat-lbl { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.5) !important; margin-top: 4px; display: block; }
+    .hero-stat-sep { width: 1px; background: rgba(255,255,255,0.2); align-self: stretch; }
+
+    .scroll-hint {
+      position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      color: rgba(255,255,255,0.5) !important; cursor: pointer; z-index: 2;
+      animation: bob 3s ease-in-out infinite;
+    }
+    .scroll-hint span { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.15em; font-weight: 600; }
+    .scroll-hint svg { color: var(--accent) !important; }
+    @keyframes bob { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(-8px)} }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+
+    /* ═══════════════════════════════════════════════════════════
+       TIMELINE SECTION
+    ═══════════════════════════════════════════════════════════ */
+    .timeline-section { background: var(--bg-primary); padding: 80px 0 120px; }
+    .timeline-container { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
+
+    .section-header { text-align: center; margin-bottom: 64px; }
+    .section-header h2 {
+      font-family: 'Big Shoulders Display', sans-serif;
+      font-size: clamp(36px, 5vw, 52px); font-weight: 800;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      color: var(--text-primary); margin-bottom: 12px;
+    }
+    .section-header p { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-style: italic; color: var(--text-secondary); }
+
+    .carousel-hint-row {
+      text-align: center; margin-bottom: 28px; color: var(--text-muted);
+      font-size: 0.85rem; font-weight: 500;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .carousel-hint-row svg { color: var(--accent); animation: pls 2s ease-in-out infinite; }
+    @keyframes pls { 0%,100%{opacity:0.5;transform:scale(1)} 50%{opacity:1;transform:scale(1.15)} }
+
+    .carousel-wrapper { position: relative; padding: 0 72px; }
+    .carousel { overflow: hidden; padding: 20px 0; }
+    .carousel-track { display: flex; gap: 22px; transition: transform 0.6s cubic-bezier(0.4,0,0.2,1); }
+
+    .era-card {
+      flex: 0 0 calc(33.333% - 15px); min-width: 300px;
+      background: var(--bg-card); border-radius: 20px; overflow: hidden;
+      border: 1px solid var(--border-card); box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+      transition: all 0.4s cubic-bezier(0.4,0,0.2,1); cursor: pointer; position: relative;
+    }
+    .era-card::after {
+      content: ''; position: absolute; inset: 0; border-radius: 20px;
+      background: linear-gradient(135deg, var(--accent), #FFFFFF); padding: 1.5px;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+      opacity: 0; transition: opacity 0.35s ease; pointer-events: none;
+    }
+    .era-card:hover { transform: translateY(-10px); box-shadow: 0 20px 52px rgba(0,0,0,0.55); }
+    .era-card:hover::after { opacity: 1; }
+
+    [data-theme="light"] .era-card {
+      background: #FFFFFF;
+      border: 1px solid rgba(0,0,0,0.05);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+    [data-theme="light"] .era-title {
+      color: #0E0E0F;
+    }
+
+    .era-visual { height: 220px; position: relative; overflow: hidden; background: var(--bg-secondary); }
+    .era-visual::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 30%, rgba(0,0,0,0.5) 100%); }
+    .era-vis-inner { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; }
+    .era-icon-hover {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      z-index: 3; opacity: 0; transition: opacity 0.3s ease;
+    }
+    .era-card:hover .era-icon-hover { opacity: 1; }
+    .era-icon-hover svg { width: 44px; height: 44px; color: var(--accent); filter: drop-shadow(0 4px 14px rgba(0,0,0,0.3)); }
+
+    .era-content { padding: 24px 26px 26px; display: flex; flex-direction: column; gap: 10px; }
+    .era-period { font-family: 'Big Shoulders Display', sans-serif; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); }
+    .era-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 600; letter-spacing: -0.02em; color: var(--text-primary); line-height: 1.2; }
+    .era-description { font-size: 0.9rem; line-height: 1.6; color: var(--text-secondary); }
+    .era-cta { display: inline-flex; align-items: center; gap: 6px; color: var(--accent); font-size: 0.82rem; font-weight: 600; margin-top: 4px; opacity: 0; transform: translateX(-8px); transition: all 0.3s ease; }
+    .era-cta svg { width: 14px; height: 14px; }
+    .era-card:hover .era-cta { opacity: 1; transform: translateX(0); }
+
+    .carousel-btn {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      width: 52px; height: 52px; border-radius: 50%;
+      background: var(--bg-card); border: 1px solid var(--border-card);
+      color: var(--text-primary); font-size: 1.4rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; z-index: 10; transition: all 0.25s ease;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+    }
+    .carousel-btn:hover { background: var(--accent); border-color: var(--accent); color: #fff; transform: translateY(-50%) scale(1.08); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+    .carousel-btn.prev { left: 0; }
+    .carousel-btn.next { right: 0; }
+    .carousel-btn:disabled { opacity: 0.25; pointer-events: none; }
+
+    .carousel-progress { margin-top: 44px; height: 3px; background: rgba(0,0,0,0.08); border-radius: 2px; overflow: visible; }
+    [data-theme="dark"] .carousel-progress { background: rgba(255,255,255,0.08); }
+    .carousel-progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent), #FFFFFF); border-radius: 2px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); position: relative; }
+    .carousel-progress-bar::after { content: ''; position: absolute; right: -1px; top: 50%; transform: translateY(-50%); width: 10px; height: 10px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+
+    .carousel-dots { display: flex; justify-content: center; gap: 10px; margin-top: 28px; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--border-card); cursor: pointer; transition: all 0.3s ease; }
+    .dot:hover { background: var(--text-muted); transform: scale(1.2); }
+    .dot.active { background: var(--accent); width: 22px; border-radius: 4px; box-shadow: 0 0 10px var(--accent); }
+
+    /* ═══════════════════════════════════════════════════════════
+       MODAL
+    ═══════════════════════════════════════════════════════════ */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.88); backdrop-filter: blur(10px);
+      display: none; align-items: center; justify-content: center;
+      z-index: 10000; padding: 24px; opacity: 0; transition: opacity 0.3s ease;
+    }
+    .modal-overlay.active { display: flex; opacity: 1; }
+    .modal {
+      background: #121212; border: 1px solid var(--border-card); border-radius: 24px;
+      max-width: 860px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.85);
+      transform: scale(0.94) translateY(16px); transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+    .modal-overlay.active .modal { transform: scale(1) translateY(0); }
+    [data-theme="light"] .modal { background: #ffffff; }
+    .modal-close {
+      position: absolute; top: 20px; right: 20px; width: 38px; height: 38px; border-radius: 50%;
+      background: rgba(255,255,255,0.06); border: 1px solid var(--border-subtle);
+      color: var(--text-secondary); font-size: 1.2rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; z-index: 2; transition: all 0.2s ease;
+    }
+    .modal-close:hover { background: var(--accent); color: white; transform: rotate(90deg); }
+    .modal-hero { height: 280px; position: relative; overflow: hidden; border-radius: 24px 24px 0 0; background: var(--bg-secondary); }
+    .modal-hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.85) 100%); }
+    .modal-hero-vis { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+    .modal-hero-content { position: absolute; bottom: 28px; left: 36px; right: 36px; z-index: 2; }
+    .modal-period { font-family: 'Big Shoulders Display', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+    .modal-title { font-family: 'Playfair Display', serif; font-size: 2.8rem; font-weight: 600; letter-spacing: -0.02em; color: white; }
+    .modal-body { padding: 40px 36px 48px; }
+    .modal-quote { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-style: italic; line-height: 1.65; color: var(--accent); border-left: 3px solid var(--accent); padding-left: 28px; margin-bottom: 40px; }
+    .modal-description { font-size: 1.05rem; line-height: 1.8; color: var(--text-secondary); margin-bottom: 40px; }
+    .modal-section { margin-bottom: 40px; }
+    .modal-section h4 { font-family: 'Big Shoulders Display', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+    .modal-section h4::before { content: ''; width: 3px; height: 18px; background: linear-gradient(180deg, var(--accent), #FFFFFF); border-radius: 2px; }
+    .achievements-list { display: grid; gap: 12px; }
+    .achievement-item { display: flex; gap: 14px; padding: 18px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 12px; transition: all 0.25s ease; }
+    [data-theme="light"] .achievement-item { background: rgba(0,0,0,0.02); }
+    .achievement-item:hover { border-color: var(--accent); transform: translateX(6px); }
+    .achievement-icon { width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0; background: linear-gradient(135deg, var(--accent), #FFFFFF); display: flex; align-items: center; justify-content: center; color: white; }
+    .achievement-icon svg { width: 20px; height: 20px; stroke: #fff; fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+    .achievement-content h5 { font-size: 0.95rem; font-weight: 600; margin-bottom: 3px; color: var(--text-primary); }
+    .achievement-content p { font-size: 0.83rem; color: var(--text-muted); margin: 0; line-height: 1.5; }
+    .brands-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px,1fr)); gap: 12px; }
+    .brand-item { padding: 16px 12px; border-radius: 10px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); text-align: center; font-size: 0.85rem; font-weight: 500; color: var(--text-secondary); transition: all 0.25s ease; }
+    [data-theme="light"] .brand-item { background: rgba(0,0,0,0.02); }
+    .brand-item:hover { border-color: var(--teal); transform: translateY(-3px); }
+
+    /* ═══════════════════════════════════════════════════════════
+       SCROLLBAR
+    ═══════════════════════════════════════════════════════════ */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-secondary); }
+    ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+    @media (max-width: 1024px) {
+      .era-card { flex: 0 0 calc(50% - 11px); }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+    }
+    @media (max-width: 768px) {
+      .era-card { flex: 0 0 100%; }
+      .carousel-wrapper { padding: 0 20px; }
+      .hero-stats { gap: 24px; }
+      .modal-title { font-size: 2rem; }
+      .modal-body { padding: 28px 24px 36px; }
+      .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+      .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <div id="site-nav" data-active="timeline"></div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       HERO
+  ═══════════════════════════════════════════════════════ -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-eyebrow">15+ years · One story</div>
+      <h1>
+        MY
+        <span class="journey-word">Journey</span>
+      </h1>
+      <p class="hero-desc">
+        From Venezuela to Seattle. From scholarship student to strategic marketing leader.
+        From mobile entertainment pioneer to AI-powered consultant.
+      </p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="hero-stat-val">9</span>
+          <span class="hero-stat-lbl">Eras</span>
+        </div>
+        <div class="hero-stat-sep"></div>
+        <div class="hero-stat">
+          <span class="hero-stat-val">15+</span>
+          <span class="hero-stat-lbl">Years</span>
+        </div>
+        <div class="hero-stat-sep"></div>
+        <div class="hero-stat">
+          <span class="hero-stat-val">1</span>
+          <span class="hero-stat-lbl">Evolution</span>
+        </div>
+      </div>
+    </div>
+    <div class="scroll-hint" id="scrollHint">
+      <span>Explore</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       TIMELINE SECTION
+  ═══════════════════════════════════════════════════════ -->
+  <section class="timeline-section" id="timelineSection">
+    <div class="timeline-container">
+      <div class="section-header">
+        <h2>The Eras</h2>
+        <p>Nine chapters. One evolution.</p>
+      </div>
+
+      <div class="carousel-hint-row">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"/><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>
+        <span>Click any era to explore the full story</span>
+      </div>
+
+      <div class="carousel-wrapper">
+        <button class="carousel-btn prev" id="prevBtn" aria-label="Previous">&#8249;</button>
+        <div class="carousel">
+          <div class="carousel-track" id="carouselTrack">
+
+            <!-- Era 1: Genesis -->
+            <div class="era-card" data-era="genesis">
+              <div class="era-visual">
+                <div class="era-vis-inner" style="background: linear-gradient(135deg, #1a0a0a, #2a1010);">
+                  <div style="width: 28px; height: 28px; border-radius: 50%; background: #f96f6e; box-shadow: 0 0 30px rgba(249,111,110,0.6), 0 0 60px rgba(249,111,110,0.3);"></div>
+                </div>
+                <div class="era-icon-hover"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
+              </div>
+              <div class="era-content">
+                <div class="era-period">2000 – 2003</div>
+                <div class="era-title">Genesis</div>
+                <p class="era-description">Scholarship. Degree. New country. New possibilities.</p>
+                <span class="era-cta">Explore era <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+              </div>
+            </div>
+
+            <!-- Era 2: Emergence -->
+            <div class="era-card" data-era="emergence">
+              <div class="era-visual">
+                <div class="era-vis-inner" style="background: linear-gradient(135deg, #0e1a18, #0a2520);">
+                  <div style="display:flex; gap:5px; align-items:flex-end;">
+                    <div style="width:10px;height:30px;background:#f96f6e;border-radius:3px;opacity:0.7;"></div>
+                    <div style="width:10px;height:55px;background:#f96f6e;border-radius:3px;opacity:0.8;"></div>
+                    <div style="width:10px;height:80px;background:#f96f6e;border-radius:3px;opacity:0.9;"></div>
+                    <div style="width:10px;height:50px;background:#f96f6e;border-radius:3px;opacity:0.75;"></div>
+                    <div style="width:10px;height:65px;background:#f96f6e;border-radius:3px;opacity:0.85;"></div>
+                  </div>
+                </div>
+                <div class="era-icon-hover"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/></svg></div>
+              </div>
+              <div class="era-content">
+                <div class="era-period">2003 – 2007</div>
+                <div class="era-title">Emergence</div>
+                <p class="era-description">Startups. Mobile. Entertainment. Many hats.</p>
+                <span class="era-cta">Explore era <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+              </div>
+            </div>
+
+            <!-- Era 3: Convergence -->
+            <div class="era-card" data-era="convergence">
+              <div class="era-visual">
+                <div class="era-vis-inner" style="background: linear-gradient(135deg, #0d1a1f, #0a2028);">
+                  <svg width="100" height="80" viewBox="0 0 100 80" style="opacity:0.6;">
+                    <line x1="10" y1="40" x2="50" y2="20" stroke="#2ed3c6" stroke-width="1.5"/>
+                    <line x1="10" y1="40" x2="50" y2="40" stroke="#2ed3c6" stroke-width="1.5"/>
+                    <line x1="10" y1="40" x2="50" y2="60" stroke="#2ed3c6" stroke-width="1.5"/>
+                    <line x1="50" y1="20" x2="90" y2="30" stroke="#f96f6e" stroke-width="1.5"/>
+                    <line x1="50" y1="40" x2="90" y2="40" stroke="#f96f6e" stroke-width="1.5"/>
+                    <line x1="50" y1="60" x2="90" y2="50" stroke="#f96f6e" stroke-width="1.5"/>
+                    <circle cx="10" cy="40" r="4" fill="#2ed3c6"/>
+                    <circle cx="50" cy="20" r="3" fill="#f96f6e"/>
+                    <circle cx="50" cy="40" r="3" fill="#f96f6e"/>
+                    <circle cx="50" cy="60" r="3" fill="#f96f6e"/>
+                  </svg>
+                </div>
+                <div class="era-icon-hover"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
+              </div>
+              <div class="era-content">
+                <div class="era-period">2007 – 2012</div>
+                <div class="era-title">Convergence</div>
+                <p class="era-description">Content. Campaigns. Corporate scale. Microsoft calling.</p>
+                <span class="era-cta">Explore era <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+              </div>
+            </div>
+
+            <!-- Era 4: Foundations -->
+            <div class="era-card" data-era="foundations">
+              <div class="era-visual">
+                <div class="era-vis-inner" style="background: linear-gradient(135deg, #141018, #1a1028);">
+                  <div style="display:flex; flex-direction:column; gap:8px;">
+                    <div style="width:140px;height:8px;background:linear-gradient(90deg,#f96f6e,#2ed3c6);border-radius:4px;opacity:0.9;"></div>
+                    <div style="width:100px;height:8px;background:linear-gradient(90deg,#f96f6e,#2ed3c6);border-radius:4px;opacity:0.7;margin-left:20px;"></div>
+                    <div style="width:120px;height:8px;background:linear-gradient(90deg,#f96f6e,#2ed3c6);border-radius:4px;opacity:0.8;margin-left:10px;"></div>
+                  </div>
+                </div>
+                <div class="era-icon-hover"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+              </div>
+              <div class="era-content">
+                <div class="era-period">2012 – 2014</div>
+                <div class="era-title">Foundations</div>
+                <p class="era-description">Built my voice through editorial grit and early brand work.</p>
+                <span class="era-cta">Explore era <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+              </div>
+            </div>
+
+            <!-- Era 5: Ascent -->
+            <div class="era-card" data-era="ascent">
+              <div class="era-visual">
+                <div class="era-vis-inner" style="background: linear-gradient(135deg, #0e1a10, #102018);">
+                  <svg width="120" height="80" viewBox="0 0 120 80" style="opacity:0.7;">
+                    <polyline points="10,70 30,55 50,45 70,30 90,18 110,8" stroke="#f96f6e" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                    <polygon points="105,5 115,5 115,15" fill="#f96f6e"/>
+                  </svg>
+                </div>
+                <div class="era-icon-hover"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
+              </div>
+              <div class="era-content">
+                <div class="era-period">2014 – 2016</div>
+                <div class="era-title">Ascent</div>
+                <p class="era-description">Refined my craft; scaled impact; deepened expertise.</p>
+                <span class="era-cta">Explore era <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+              </div>
+            </div>
+
+            <!-- Era 6: Expansion -->
+            <div class="era-card" data-era="expansion">
+              <div class="era-visual">
+                <div class="era-vis-inner" style="background: linear-gradient(135deg, #10101a, #181020);">
+                  <div style="width:90px;height:90px;border:2px solid rgba(249,111,110,0.3);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+                    <div style="width:60px;height:60px;border:2px solid rgba(46,211,198,0.4);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+                      <div style="width:20px;height:20px;background:#f96f6e;border-radius:50%;box-shadow:0 0 14px rgba(249,111,110,0.7);"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="era-icon-hover"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></div>
+              </div>
+              <div class="era-content">
+                <div class="era-period">2016 – 2018</div>
+                <div class="era-title">Expansion</div>
+                <p class="era-description">Pushed boundaries; grew technically and creatively.</p>
+                <span class="era-cta">Explore era <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+              </div>
+            </div>
+
+            <!-- Era 7: Disruption -->
+            <div class="era-card" data-era="disruption">
+              <div class="era-visual">
+                <div class="era-vis-inner" style="background: linear-gradient(135deg, #1a1008, #200e08);">
+                  <svg width="100" height="80" viewBox="0 0 100 80" style="opacity:0.65;">
+                    <polyline points="10,40 35,15 45,55 60,25 75,50 90,30" stroke="#f96f6e" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                    <line x1="10" y1="70" x2="90" y2="70" stroke="rgba(249,111,110,0.2)" stroke-width="1"/>
+                  </svg>
+                </div>
+                <div class="era-icon-hover"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+              </div>
+              <div class="era-content">
+                <div class="era-period">2019 – 2020</div>
+                <div class="era-title">Disruption</div>
+                <p class="era-description">Faced setbacks; regenerated approach.</p>
+                <span class="era-cta">Explore era <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+              </div>
+            </div>
+
+            <!-- Era 8: Reinvention -->
+            <div class="era-card" data-era="reinvention">
+              <div class="era-visual">
+                <div class="era-vis-inner" style="background: linear-gradient(135deg, #0a1820, #081420);">
+                  <svg width="80" height="80" viewBox="0 0 80 80" style="opacity:0.7;">
+                    <path d="M 40,10 A 30,30 0 1 1 10,40" stroke="#2ed3c6" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                    <polygon points="10,40 4,32 18,34" fill="#2ed3c6"/>
+                    <circle cx="40" cy="40" r="8" fill="none" stroke="#f96f6e" stroke-width="2"/>
+                    <circle cx="40" cy="40" r="3" fill="#f96f6e"/>
+                  </svg>
+                </div>
+                <div class="era-icon-hover"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></div>
+              </div>
+              <div class="era-content">
+                <div class="era-period">2020 – 2022</div>
+                <div class="era-title">Reinvention</div>
+                <p class="era-description">Integrated new identity; clarified values.</p>
+                <span class="era-cta">Explore era <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+              </div>
+            </div>
+
+            <!-- Era 9: Integration -->
+            <div class="era-card" data-era="integration">
+              <div class="era-visual">
+                <div class="era-vis-inner" style="background: linear-gradient(135deg, #101828, #0a1220);">
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;width:80px;height:80px;">
+                    <div style="background:rgba(249,111,110,0.5);border-radius:6px;"></div>
+                    <div style="background:rgba(46,211,198,0.5);border-radius:6px;"></div>
+                    <div style="background:rgba(46,211,198,0.3);border-radius:6px;"></div>
+                    <div style="background:rgba(249,111,110,0.3);border-radius:6px;"></div>
+                  </div>
+                </div>
+                <div class="era-icon-hover"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div>
+              </div>
+              <div class="era-content">
+                <div class="era-period">2022 – Present</div>
+                <div class="era-title">Integration</div>
+                <p class="era-description">Merged experience with intention.</p>
+                <span class="era-cta">Explore era <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+              </div>
+            </div>
+
+          </div><!-- /track -->
+        </div><!-- /carousel -->
+        <button class="carousel-btn next" id="nextBtn" aria-label="Next">&#8250;</button>
+      </div>
+
+      <div class="carousel-progress"><div class="carousel-progress-bar" id="progressBar"></div></div>
+      <div class="carousel-dots" id="carouselDots"></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       MODAL
+  ═══════════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <button class="modal-close" id="modalClose">×</button>
+      <div class="modal-hero" id="modalHero">
+        <div class="modal-hero-vis" id="modalHeroVis"></div>
+        <div class="modal-hero-content">
+          <div class="modal-period" id="modalPeriod"></div>
+          <div class="modal-title" id="modalTitle"></div>
+        </div>
+      </div>
+      <div class="modal-body">
+        <blockquote class="modal-quote" id="modalQuote"></blockquote>
+        <p class="modal-description" id="modalDescription"></p>
+        <div class="modal-section">
+          <h4>Key Achievements</h4>
+          <div class="achievements-list" id="modalAchievements"></div>
+        </div>
+        <div class="modal-section">
+          <h4>Brands &amp; Contexts</h4>
+          <div class="brands-grid" id="modalBrands"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/assets/js/nav-component.js"></script>
+  <script>
+  (() => {
+    // Apply persona from localStorage
+    const savedPersona = localStorage.getItem('luxe-persona') || 'teal';
+    document.body.classList.add(`path-${savedPersona}`);
+
+    /* ── ERA DATA ── */
+    const erasData = {
+      genesis: {
+        period: '2000–2003', title: 'Genesis',
+        quote: 'It all began with one audacious bet on myself.',
+        description: 'Left Venezuela on a full scholarship, earned a Computer Science degree with an IT focus in 2003, then relocated to Seattle. New language, new culture, new career direction — pure transformation.',
+        bg: 'linear-gradient(135deg, #1a0a0a 0%, #2a1010 100%)',
+        achievements: [
+          { title: 'CS Degree', description: 'Computer Science with IT specialization' },
+          { title: 'Relocation to Seattle', description: 'Adapted culturally and professionally to the U.S. tech landscape' },
+          { title: 'Technology Foundation', description: 'Systems thinking, problem solving, early tech positioning' }
+        ],
+        brands: ['Seattle University']
+      },
+      emergence: {
+        period: '2003–2007', title: 'Emergence',
+        quote: 'In startups, being a jack of all trades was not a weakness — it was a weapon.',
+        description: "Cut my teeth in Seattle's early startup scene at Versaly Entertainment and Blue Frog Media. Merchandised Sir Mix-A-Lot's legendary ringtone (500K+ copies sold) and launched Bulla TV, the first interactive music channel for U.S. Hispanics.",
+        bg: 'linear-gradient(135deg, #0e1a18 0%, #0a2520 100%)',
+        achievements: [
+          { title: 'Versaly Entertainment (2005–2007)', description: 'Content Manager — mobile multimedia strategy and carrier partnerships across all major U.S. networks' },
+          { title: '500K+ Ringtone Sales', description: "Merchandised Sir Mix-A-Lot's 'Pick Up the Phone' — Versaly's biggest commercial success" },
+          { title: 'Bulla TV Launch', description: 'First interactive music channel for U.S. Hispanics — built licensing deals with Paramount, NBC, Experience Hendrix' }
+        ],
+        brands: ['Versaly Entertainment', 'Blue Frog Media', 'Paramount', 'NBC', 'Experience Hendrix']
+      },
+      convergence: {
+        period: '2007–2012', title: 'Convergence',
+        quote: 'From scrappy startup hustler to Microsoft marketer. Same creativity. Much larger canvas.',
+        description: 'Joined MSN Latino as Content Producer, shifted into email marketing for MSN and Bing, then moved into World Wide Retail Marketing supporting Windows Phone. Converted to full-time as Online Marketing Manager ahead of the Windows 8 launch.',
+        bg: 'linear-gradient(135deg, #0d1a1f 0%, #0a2028 100%)',
+        achievements: [
+          { title: 'MSN Latino', description: 'Content production and editorial leadership' },
+          { title: 'Email Marketing', description: 'Campaign management for MSN and Bing' },
+          { title: 'Windows Phone Retail', description: 'Contractor → full-time conversion as Online Marketing Manager, WW Retail Marketing' }
+        ],
+        brands: ['MSN Latino', 'Bing', 'Windows Phone', 'Microsoft']
+      },
+      foundations: {
+        period: '2012–2014', title: 'Foundations',
+        quote: "My entry into Microsoft's boldest bets.",
+        description: 'From the debut of Windows 8 and the first Surface devices to supporting the Office 2013 rollout, I guided in-store strategy and retail attach for Microsoft\'s most consequential hardware and software launches.',
+        bg: 'linear-gradient(135deg, #141018 0%, #1a1028 100%)',
+        achievements: [
+          { title: 'Windows 8 & Surface', description: 'Launch support across retail channels' },
+          { title: 'Office 2013', description: 'Retail attach strategy' },
+          { title: 'PC Accessories', description: 'Campaign optimizations and product storytelling online' }
+        ],
+        brands: ['Windows 8', 'Surface', 'Office 2013', 'PC Accessories']
+      },
+      ascent: {
+        period: '2014–2016', title: 'Ascent',
+        quote: 'Refined my craft; scaled impact; deepened expertise.',
+        description: 'Expanded Microsoft\'s in-store experiences — launching Surface Pro 3, HoloLens, and Microsoft Band — then moved into Integrated Marketing for Office, shaping cross-platform storytelling at scale.',
+        bg: 'linear-gradient(135deg, #0e1a10 0%, #102018 100%)',
+        achievements: [
+          { title: 'Surface Pro 3 & Office for iPad', description: 'Demo kit, campaign alignment, cross-platform narrative' },
+          { title: 'HoloLens & Microsoft Band', description: "Retail support for Microsoft's new device categories" },
+          { title: 'Windows 10 & Office GTM', description: 'Attach strategy and go-to-market coordination' }
+        ],
+        brands: ['Surface Pro 3', 'HoloLens', 'Microsoft Band', 'Office for iPad', 'Windows 10']
+      },
+      expansion: {
+        period: '2016–2018', title: 'Expansion',
+        quote: 'Pushed boundaries; grew technically and creatively.',
+        description: 'Led Office 365 campaigns, drove Microsoft Teams launch strategy, and pioneered AI-powered productivity narratives. This era defined my expertise in cross-platform storytelling and enterprise marketing.',
+        bg: 'linear-gradient(135deg, #10101a 0%, #181020 100%)',
+        achievements: [
+          { title: 'Office 365', description: 'Global campaign leadership' },
+          { title: 'Microsoft Teams Launch', description: 'Adoption strategy and go-to-market' },
+          { title: 'AI-Powered Productivity', description: "Narrative development for Microsoft's AI features" }
+        ],
+        brands: ['Office 365', 'Microsoft Teams', 'Microsoft 365']
+      },
+      disruption: {
+        period: '2018–2020', title: 'Disruption',
+        quote: 'Setbacks are setups for comebacks.',
+        description: 'Faced real challenges — professional and personal. Used this period to regenerate the approach, question assumptions, and rebuild with intention. Sometimes you need to break through by breaking down.',
+        bg: 'linear-gradient(135deg, #1a1008 0%, #200e08 100%)',
+        achievements: [
+          { title: 'Resilience', description: 'Navigated professional and personal disruption' },
+          { title: 'Strategic Pivot', description: 'Reassessed direction and rebuilt approach' },
+          { title: 'New Foundations', description: 'Laid the groundwork for the next chapter' }
+        ],
+        brands: ['Independent Projects', 'Microsoft']
+      },
+      reinvention: {
+        period: '2020–2022', title: 'Reinvention',
+        quote: 'True identity emerges when you stop performing.',
+        description: 'Integrated new personal identity with professional expertise. Clarified values, refined focus, and emerged with a clearer sense of purpose. Authenticity and alignment.',
+        bg: 'linear-gradient(135deg, #0a1820 0%, #081420 100%)',
+        achievements: [
+          { title: 'Authentic Integration', description: 'Merged personal identity with professional work' },
+          { title: 'Values Clarification', description: "Defined core principles and the work I'd say yes to" },
+          { title: 'Purpose Alignment', description: 'Work aligned with deeper purpose and honest strengths' }
+        ],
+        brands: ['Microsoft', 'Independent Consulting']
+      },
+      integration: {
+        period: '2022–Present', title: 'Integration',
+        quote: 'Experience + intention = impact.',
+        description: 'Synthesizing 15+ years of experience with clear intention. Strategic consulting and creative direction — helping brands leverage AI and modern marketing while staying genuinely human. This is what all the eras were building toward.',
+        bg: 'linear-gradient(135deg, #101828 0%, #0a1220 100%)',
+        achievements: [
+          { title: 'AI-Powered Marketing', description: 'Integrated AI into brand strategy and campaign development' },
+          { title: 'Strategic Consulting', description: 'Advising on Microsoft Edge, Copilot, and consumer AI products' },
+          { title: 'Full Circle', description: '15+ years of experience synthesized into The Hub ecosystem' }
+        ],
+        brands: ['Microsoft Edge', 'Copilot', 'Microsoft 365', 'The Hub']
+      }
+    };
+
+    /* ── CAROUSEL ── */
+    let current = 0;
+    const track = document.getElementById('carouselTrack');
+    const cards = document.querySelectorAll('.era-card');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const progressBar = document.getElementById('progressBar');
+    const dotsContainer = document.getElementById('carouselDots');
+    const total = cards.length;
+
+    for (let i = 0; i < total; i++) {
+      const d = document.createElement('div');
+      d.className = 'dot' + (i === 0 ? ' active' : '');
+      d.addEventListener('click', () => goTo(i));
+      dotsContainer.appendChild(d);
+    }
+    const dots = document.querySelectorAll('.dot');
+
+    function getVisible() { return window.innerWidth <= 768 ? 1 : window.innerWidth <= 1024 ? 2 : 3; }
+
+    function updateCarousel() {
+      const cardW = cards[0].offsetWidth;
+      const gap = 22;
+      track.style.transform = `translateX(${-(current * (cardW + gap))}px)`;
+      progressBar.style.width = `${((current + 1) / total) * 100}%`;
+      dots.forEach((d, i) => d.classList.toggle('active', i === current));
+      prevBtn.disabled = current === 0;
+      nextBtn.disabled = current >= total - getVisible();
+    }
+
+    function goTo(i) {
+      current = Math.max(0, Math.min(i, total - getVisible()));
+      updateCarousel();
+    }
+
+    prevBtn.addEventListener('click', () => { if (current > 0) { current--; updateCarousel(); } });
+    nextBtn.addEventListener('click', () => { if (current < total - getVisible()) { current++; updateCarousel(); } });
+    window.addEventListener('resize', () => updateCarousel());
+    updateCarousel();
+
+    /* ── MODAL ── */
+    const overlay   = document.getElementById('modalOverlay');
+    const modalClose = document.getElementById('modalClose');
+
+    const achievementIcons = [
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>',
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'
+    ];
+
+    function openModal(key) {
+      const e = erasData[key]; if (!e) return;
+      document.getElementById('modalPeriod').textContent = e.period;
+      document.getElementById('modalTitle').textContent = e.title;
+      document.getElementById('modalQuote').textContent = e.quote;
+      document.getElementById('modalDescription').textContent = e.description;
+      document.getElementById('modalHeroVis').style.cssText = `background: ${e.bg}; width:100%; height:100%;`;
+      document.getElementById('modalAchievements').innerHTML = e.achievements.map((a, i) => `
+        <div class="achievement-item">
+          <div class="achievement-icon">${achievementIcons[i % achievementIcons.length]}</div>
+          <div class="achievement-content"><h5>${a.title}</h5><p>${a.description}</p></div>
+        </div>`).join('');
+      document.getElementById('modalBrands').innerHTML = e.brands.map(b => `<div class="brand-item">${b}</div>`).join('');
+      overlay.style.display = 'flex';
+      requestAnimationFrame(() => overlay.style.opacity = '1');
+      overlay.querySelector('.modal').style.transform = 'scale(1) translateY(0)';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      overlay.style.opacity = '0';
+      overlay.querySelector('.modal').style.transform = 'scale(0.94) translateY(16px)';
+      setTimeout(() => { overlay.style.display = 'none'; document.body.style.overflow = ''; }, 300);
+    }
+
+    cards.forEach(c => c.addEventListener('click', () => openModal(c.dataset.era)));
+    modalClose.addEventListener('click', closeModal);
+    overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); } });
+
+    /* ── SCROLL HINT ── */
+    document.getElementById('scrollHint')?.addEventListener('click', () =>
+      document.getElementById('timelineSection').scrollIntoView({ behavior: 'smooth' })
+    );
+
+  })();
+  </script>
+</body>
+</html>

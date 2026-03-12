@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StrategyIQ Engine - Consultant Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --coral: #F96F6E;
+            --teal: #2ED3C6;
+            --ink: #FFFFFF;
+            --ink-dim: rgba(255,255,255,.85);
+            --gradient: linear-gradient(90deg, var(--coral), var(--teal));
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --card-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+            --subtle-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.25);
+        }
+
+        * { 
+            font-family: 'Inter', sans-serif; 
+        }
+        
+        .font-display { 
+            font-family: 'Playfair Display', serif; 
+        }
+        
+        .text-coral { color: var(--coral); }
+        .text-teal { color: var(--teal); }
+        .text-gradient { 
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .bg-coral { background-color: var(--coral); }
+        .bg-teal { background-color: var(--teal); }
+        .bg-gradient { background: var(--gradient); }
+        
+        .glass-card { 
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--card-shadow);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .dashboard-header {
+            background: linear-gradient(135deg, 
+                rgba(249, 111, 110, 0.3) 0%, 
+                rgba(46, 211, 198, 0.2) 50%, 
+                rgba(10, 10, 10, 0.8) 100%);
+        }
+        
+        .service-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .service-card.coral-hover:hover {
+            border-color: var(--coral);
+            box-shadow: 0 25px 50px -12px rgba(249, 111, 110, 0.3);
+        }
+        
+        .service-card.teal-hover:hover {
+            border-color: var(--teal);
+            box-shadow: 0 25px 50px -12px rgba(46, 211, 198, 0.3);
+        }
+        
+        .progress-bar {
+            background: var(--gradient);
+        }
+        
+        .assessment-flow {
+            min-height: 500px;
+            transition: all 0.5s ease-in-out;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .question-option {
+            transition: all 0.3s ease;
+            border: 2px solid #e5e7eb;
+        }
+        
+        .question-option:hover {
+            border-color: var(--coral);
+            background: rgba(249, 111, 110, 0.05);
+        }
+        
+        .question-option.selected {
+            border-color: var(--coral);
+            background: rgba(249, 111, 110, 0.1);
+        }
+        
+        .live-scoring {
+            position: sticky;
+            top: 20px;
+        }
+        
+        .consultant-note {
+            background: linear-gradient(135deg, rgba(255, 152, 0, 0.1) 0%, rgba(255, 152, 0, 0.05) 100%);
+            border-left: 4px solid #ff9800;
+            border: 1px solid rgba(255, 152, 0, 0.2);
+        }
+    </style>
+</head>
+<body class="text-white" style="background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%); min-height: 100vh;">
+
+    <!-- Dashboard Header -->
+    <header class="dashboard-header text-white py-8 relative overflow-hidden">
+        <div class="absolute inset-0 bg-black opacity-20"></div>
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="font-display text-3xl font-bold mb-2">
+                        Strategy<span class="text-yellow-200">IQ</span> Engine
+                    </h1>
+                    <p class="text-lg opacity-90">Live Consultation Assessment Framework</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-sm opacity-75 mb-1">Active Session</div>
+                    <div class="text-xl font-semibold" id="clientName">Client Assessment</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard -->
+    <div class="container mx-auto px-6 py-8">
+        
+        <!-- Client Context Panel -->
+        <section class="mb-8">
+            <div class="glass-card rounded-2xl p-6 mb-6">
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <h2 class="font-display text-xl font-semibold mb-2">Client Context</h2>
+                        <p class="text-ink-dim">Information from ScopeIQ Wizard integration</p>
+                    </div>
+                    <button class="bg-teal text-white px-4 py-2 rounded-lg text-sm font-medium" onclick="loadScopeIQData()">
+                        <i class="fas fa-sync mr-2"></i>Load ScopeIQ Data
+                    </button>
+                </div>
+                <div id="clientContext" class="grid md:grid-cols-4 gap-4">
+                    <div class="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                        <div class="text-sm text-gray-400 mb-1">Project Type</div>
+                        <div class="font-semibold text-white" id="projectType">--</div>
+                    </div>
+                    <div class="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                        <div class="text-sm text-gray-400 mb-1">Budget Range</div>
+                        <div class="font-semibold text-white" id="budgetRange">--</div>
+                    </div>
+                    <div class="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                        <div class="text-sm text-gray-400 mb-1">Timeline</div>
+                        <div class="font-semibold text-white" id="timeline">--</div>
+                    </div>
+                    <div class="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                        <div class="text-sm text-gray-400 mb-1">Company Size</div>
+                        <div class="font-semibold text-white" id="companySize">--</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="grid lg:grid-cols-4 gap-8">
+            
+            <!-- Assessment Interface -->
+            <div class="lg:col-span-3">
+                
+                <!-- Strategic Area Selection -->
+                <section id="serviceSelection" class="mb-8">
+                    <div class="glass-card rounded-2xl p-8">
+                        <div class="mb-6">
+                            <h2 class="font-display text-2xl font-semibold mb-3">
+                                Strategic <span class="text-coral">Assessment</span> Areas
+                            </h2>
+                            <p class="text-ink-dim">
+                                Select the primary strategic focus area to begin the intelligence assessment with your client.
+                            </p>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <!-- Go-to-Market Strategy -->
+                            <div class="service-card coral-hover glass-card rounded-xl p-6 cursor-pointer" onclick="startAssessment('gtm')">
+                                <div class="flex items-start">
+                                    <div class="w-12 h-12 bg-gray-800 rounded-lg flex items-center justify-center mr-4">
+                                        <i class="fas fa-rocket text-coral text-xl"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h3 class="font-display text-lg font-semibold mb-2">Go-to-Market <span class="text-coral">Strategy</span></h3>
+                                        <p class="text-ink-dim text-sm mb-3">Market mapping, positioning, and systematic launch approach.</p>
+                                        <div class="text-xs text-coral font-medium">Sprint Focus • 6-12 weeks</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Brand Positioning -->
+                            <div class="service-card teal-hover glass-card rounded-xl p-6 cursor-pointer" onclick="startAssessment('brand')">
+                                <div class="flex items-start">
+                                    <div class="w-12 h-12 bg-gray-800 rounded-lg flex items-center justify-center mr-4">
+                                        <i class="fas fa-bullhorn text-teal text-xl"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h3 class="font-display text-lg font-semibold mb-2">Brand <span class="text-teal">Intelligence</span></h3>
+                                        <p class="text-ink-dim text-sm mb-3">Positioning, messaging, and systematic brand development.</p>
+                                        <div class="text-xs text-teal font-medium">Strategic Build • 8-16 weeks</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Campaign Strategy -->
+                            <div class="service-card coral-hover glass-card rounded-xl p-6 cursor-pointer" onclick="startAssessment('campaign')">
+                                <div class="flex items-start">
+                                    <div class="w-12 h-12 bg-gray-800 rounded-lg flex items-center justify-center mr-4">
+                                        <i class="fas fa-chart-bar text-coral text-xl"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h3 class="font-display text-lg font-semibold mb-2">Strategic <span class="text-coral">Campaigns</span></h3>
+                                        <p class="text-ink-dim text-sm mb-3">End-to-end campaign strategy, creative, and optimization.</p>
+                                        <div class="text-xs text-coral font-medium">Campaign Build • 12-20 weeks</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Creative Strategy -->
+                            <div class="service-card teal-hover glass-card rounded-xl p-6 cursor-pointer" onclick="startAssessment('creative')">
+                                <div class="flex items-start">
+                                    <div class="w-12 h-12 bg-gray-800 rounded-lg flex items-center justify-center mr-4">
+                                        <i class="fas fa-palette text-teal text-xl"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h3 class="font-display text-lg font-semibold mb-2">Creative <span class="text-teal">Strategy</span></h3>
+                                        <p class="text-ink-dim text-sm mb-3">Content strategy, creative frameworks, and asset development.</p>
+                                        <div class="text-xs text-teal font-medium">Creative Focus • 4-12 weeks</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Assessment Flow -->
+                <section id="assessmentFlow" class="hidden">
+                    <div class="glass-card rounded-2xl p-8 mb-6">
+                        
+                        <!-- Progress Bar -->
+                        <div class="mb-8">
+                            <div class="flex items-center justify-between text-sm mb-2">
+                                <span id="progressText" class="font-medium">Strategic Assessment Progress</span>
+                                <span id="progressPercent" class="font-bold text-coral">0%</span>
+                            </div>
+                            <div class="w-full bg-gray-800 rounded-full h-3">
+                                <div id="progressBar" class="progress-bar h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Question Container -->
+                        <div id="questionContainer" class="assessment-flow">
+                            <!-- Questions will be dynamically loaded here -->
+                        </div>
+
+                        <!-- Consultant Notes -->
+                        <div class="consultant-note rounded-lg p-4 mb-6">
+                            <div class="flex items-start">
+                                <i class="fas fa-lightbulb text-orange-400 mr-3 mt-1"></i>
+                                <div>
+                                    <h4 class="font-semibold text-orange-300 mb-2">Consultant Insight</h4>
+                                    <div id="consultantNote" class="text-orange-200">
+                                        Use this assessment to demonstrate systematic thinking and build confidence in your strategic approach.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Navigation -->
+                        <div class="flex justify-between">
+                            <button id="prevBtn" class="bg-gray-800 text-white px-6 py-3 rounded-lg font-medium disabled:opacity-50 transition-all hover:bg-gray-700" onclick="previousQuestion()" disabled>
+                                <i class="fas fa-arrow-left mr-2"></i>Previous
+                            </button>
+                            <button id="nextBtn" class="bg-coral text-white px-6 py-3 rounded-lg font-medium hover:bg-red-600 transition-all" onclick="nextQuestion()">
+                                Next<i class="fas fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Results Section -->
+                <section id="resultsSection" class="hidden">
+                    <div class="glass-card rounded-2xl p-8">
+                        <div class="mb-6">
+                            <h2 class="font-display text-2xl font-semibold mb-3">
+                                Strategic <span class="text-gradient">Recommendation</span>
+                            </h2>
+                            <p class="text-ink-dim">Intelligence-driven engagement recommendation based on systematic assessment</p>
+                        </div>
+
+                        <!-- Service Recommendation -->
+                        <div id="serviceRecommendation" class="mb-8">
+                            <!-- Recommendation content will be populated here -->
+                        </div>
+
+                        <!-- Strategic Brief Preview -->
+                        <div id="strategicBrief" class="mb-8">
+                            <!-- Brief content will be populated here -->
+                        </div>
+
+                        <!-- Action Items -->
+                        <div class="bg-gradient-to-r from-blue-50 to-teal-50 rounded-xl p-6">
+                            <h4 class="font-display font-semibold text-lg mb-4">Next Steps</h4>
+                            <div class="grid md:grid-cols-3 gap-4">
+                                <button class="bg-coral text-white py-3 px-4 rounded-lg font-medium hover:bg-red-600 transition-colors" onclick="generateProposal()">
+                                    <i class="fas fa-file-invoice mr-2"></i>Generate Proposal
+                                </button>
+                                <button class="bg-teal text-white py-3 px-4 rounded-lg font-medium hover:bg-green-600 transition-colors" onclick="scheduleFollowUp()">
+                                    <i class="fas fa-calendar mr-2"></i>Schedule Follow-up
+                                </button>
+                                <button class="bg-gray-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-gray-700 transition-colors" onclick="exportAssessment()">
+                                    <i class="fas fa-download mr-2"></i>Export Assessment
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Live Scoring Sidebar -->
+            <div class="lg:col-span-1">
+                <div class="live-scoring space-y-6">
+                    
+                    <!-- Live Intelligence Score -->
+                    <div class="glass-card rounded-2xl p-6">
+                        <h3 class="font-display text-lg font-semibold mb-4 text-coral">
+                            <i class="fas fa-brain mr-2"></i>Intelligence Score
+                        </h3>
+                        <div class="text-center mb-4">
+                            <div id="intelligenceScore" class="text-4xl font-bold text-coral mb-2">0</div>
+                            <div class="text-sm text-ink-dim">Complexity Assessment</div>
+                        </div>
+                        <div class="mb-4">
+                            <canvas id="intelligenceChart" style="height: 150px;"></canvas>
+                        </div>
+                        <div id="complexityIndicators" class="space-y-2">
+                            <!-- Complexity indicators will be added here -->
+                        </div>
+                    </div>
+
+                    <!-- Service Tier Matching -->
+                    <div class="glass-card rounded-2xl p-6">
+                        <h3 class="font-display text-lg font-semibold mb-4 text-teal">
+                            <i class="fas fa-target mr-2"></i>Service Match
+                        </h3>
+                        <div id="serviceMatch" class="space-y-3">
+                            <div class="text-center text-ink-dim">
+                                Complete assessment for recommendation
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Revenue Projection -->
+                    <div class="glass-card rounded-2xl p-6">
+                        <h3 class="font-display text-lg font-semibold mb-4">
+                            <i class="fas fa-chart-line mr-2"></i>Revenue <span class="text-teal">Projection</span>
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-ink-dim">Project Value</span>
+                                <span id="projectValue" class="font-semibold text-coral">$0</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-ink-dim">Confidence Level</span>
+                                <span id="confidenceLevel" class="font-semibold text-teal">0%</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-ink-dim">Close Probability</span>
+                                <span id="closeProbability" class="font-semibold">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="glass-card rounded-2xl p-6">
+                        <h3 class="font-display text-lg font-semibold mb-4">
+                            <i class="fas fa-bolt mr-2"></i>Quick Actions
+                        </h3>
+                        <div class="space-y-3">
+                            <button class="w-full bg-gray-800 text-white py-2 px-4 rounded-lg text-sm font-medium hover:bg-gray-700 transition-colors" onclick="resetAssessment()">
+                                <i class="fas fa-redo mr-2"></i>Reset Assessment
+                            </button>
+                            <button class="w-full bg-gray-800 text-white py-2 px-4 rounded-lg text-sm font-medium hover:bg-gray-700 transition-colors" onclick="saveProgress()">
+                                <i class="fas fa-save mr-2"></i>Save Progress
+                            </button>
+                            <button class="w-full bg-gray-800 text-white py-2 px-4 rounded-lg text-sm font-medium hover:bg-gray-700 transition-colors" onclick="exportNotes()">
+                                <i class="fas fa-file-export mr-2"></i>Export Notes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentAssessmentType = '';
+        let currentQuestionIndex = 0;
+        let assessmentAnswers = {};
+        let totalScore = 0;
+        let intelligenceChart = null;
+
+        // Service tiers aligned with ScopeIQ
+        const serviceTiers = {
+            'creative': {
+                name: 'Creative Strategy',
+                price: 15000,
+                duration: '4-12 weeks',
+                description: 'Content strategy, creative frameworks, and asset development',
+                deliverables: ['Creative Brief', 'Content Strategy', 'Asset Templates', 'Brand Guidelines'],
+                complexity: 'medium'
+            },
+            'gtm': {
+                name: 'Go-to-Market Sprint',
+                price: 25000,
+                duration: '6-12 weeks',
+                description: 'Market mapping, positioning, and systematic launch approach',
+                deliverables: ['Market Analysis', 'Go-to-Market Plan', 'Launch Strategy', 'Performance Framework'],
+                complexity: 'high'
+            },
+            'brand': {
+                name: 'Brand Intelligence',
+                price: 35000,
+                duration: '8-16 weeks',
+                description: 'Positioning, messaging, and systematic brand development',
+                deliverables: ['Brand Strategy', 'Messaging Framework', 'Brand Architecture', 'Implementation Guide'],
+                complexity: 'high'
+            },
+            'campaign': {
+                name: 'Strategic Campaigns',
+                price: 45000,
+                duration: '12-20 weeks',
+                description: 'End-to-end campaign strategy, creative, and optimization',
+                deliverables: ['Campaign Strategy', 'Creative Development', 'Media Planning', 'Performance Analytics'],
+                complexity: 'very-high'
+            }
+        };
+
+        // Assessment questions for different strategic areas
+        const assessmentQuestions = {
+            'gtm': [
+                {
+                    question: "What is your current market position?",
+                    options: [
+                        { text: "Market leader with established presence", score: 3 },
+                        { text: "Strong competitor with growing market share", score: 5 },
+                        { text: "Emerging player seeking market entry", score: 8 },
+                        { text: "New entrant with innovative approach", score: 10 }
+                    ],
+                    insight: "Market position determines the complexity of your go-to-market strategy and resource requirements."
+                },
+                {
+                    question: "How well-defined is your target audience?",
+                    options: [
+                        { text: "Clearly defined with detailed personas", score: 2 },
+                        { text: "Generally defined with some specifics", score: 4 },
+                        { text: "Broadly defined, needs refinement", score: 7 },
+                        { text: "Unclear or multiple undefined segments", score: 10 }
+                    ],
+                    insight: "Audience clarity directly impacts messaging effectiveness and channel selection strategy."
+                },
+                {
+                    question: "What is your competitive landscape complexity?",
+                    options: [
+                        { text: "Few direct competitors, clear differentiation", score: 3 },
+                        { text: "Moderate competition with some overlap", score: 5 },
+                        { text: "Highly competitive with similar offerings", score: 8 },
+                        { text: "Saturated market requiring breakthrough positioning", score: 10 }
+                    ],
+                    insight: "Competitive intensity determines the sophistication needed in your positioning and messaging strategy."
+                }
+            ],
+            'brand': [
+                {
+                    question: "How established is your brand identity?",
+                    options: [
+                        { text: "Strong, consistent brand with clear identity", score: 2 },
+                        { text: "Developing brand with some inconsistencies", score: 5 },
+                        { text: "Fragmented brand requiring alignment", score: 8 },
+                        { text: "No clear brand identity or positioning", score: 10 }
+                    ],
+                    insight: "Brand maturity determines whether you need evolution or complete brand development."
+                },
+                {
+                    question: "What is your brand's market perception?",
+                    options: [
+                        { text: "Positive, well-understood positioning", score: 3 },
+                        { text: "Mixed perception with some clarity", score: 5 },
+                        { text: "Unclear or inconsistent market perception", score: 8 },
+                        { text: "Negative or no market awareness", score: 10 }
+                    ],
+                    insight: "Market perception indicates the level of brand repositioning or reputation management needed."
+                },
+                {
+                    question: "How complex is your brand architecture?",
+                    options: [
+                        { text: "Single brand with clear hierarchy", score: 2 },
+                        { text: "Multiple brands with some organization", score: 5 },
+                        { text: "Complex portfolio needing structure", score: 8 },
+                        { text: "Fragmented brands requiring complete overhaul", score: 10 }
+                    ],
+                    insight: "Brand complexity determines the strategic framework needed for coherent brand management."
+                }
+            ],
+            'campaign': [
+                {
+                    question: "What is your campaign objective complexity?",
+                    options: [
+                        { text: "Single, clear objective with defined metrics", score: 3 },
+                        { text: "Multiple related objectives", score: 5 },
+                        { text: "Complex, multi-layered campaign goals", score: 8 },
+                        { text: "Unclear or conflicting objectives", score: 10 }
+                    ],
+                    insight: "Objective clarity determines campaign strategy complexity and measurement framework requirements."
+                },
+                {
+                    question: "How sophisticated is your target segmentation?",
+                    options: [
+                        { text: "Single, well-defined target segment", score: 2 },
+                        { text: "2-3 clearly defined segments", score: 4 },
+                        { text: "Multiple segments requiring different approaches", score: 7 },
+                        { text: "Complex segmentation with micro-targeting needs", score: 10 }
+                    ],
+                    insight: "Segmentation complexity impacts creative development, media planning, and campaign orchestration."
+                },
+                {
+                    question: "What is your channel strategy complexity?",
+                    options: [
+                        { text: "Single channel focus with clear strategy", score: 2 },
+                        { text: "Multi-channel with integrated approach", score: 5 },
+                        { text: "Complex omnichannel requiring coordination", score: 8 },
+                        { text: "Experimental channels with unknown performance", score: 10 }
+                    ],
+                    insight: "Channel complexity determines the level of integration and optimization strategy required."
+                }
+            ]
+        };
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSampleScopeIQData();
+            initializeIntelligenceChart();
+        });
+
+        // Load sample ScopeIQ data
+        function loadSampleScopeIQData() {
+            document.getElementById('projectType').textContent = 'Brand Repositioning';
+            document.getElementById('budgetRange').textContent = '$25K - $50K';
+            document.getElementById('timeline').textContent = '3-6 months';
+            document.getElementById('companySize').textContent = '50-200 employees';
+        }
+
+        // Load ScopeIQ data (placeholder for integration)
+        function loadScopeIQData() {
+            // This would integrate with actual ScopeIQ data
+            alert('ScopeIQ integration would load real client data here');
+        }
+
+        // Start assessment for specific service type
+        function startAssessment(type) {
+            currentAssessmentType = type;
+            currentQuestionIndex = 0;
+            assessmentAnswers = {};
+            totalScore = 0;
+            
+            document.getElementById('serviceSelection').style.display = 'none';
+            document.getElementById('assessmentFlow').classList.remove('hidden');
+            document.getElementById('resultsSection').classList.add('hidden');
+            
+            loadQuestion();
+            updateProgress();
+        }
+
+        // Load current question
+        function loadQuestion() {
+            const questions = assessmentQuestions[currentAssessmentType];
+            const question = questions[currentQuestionIndex];
+            
+            const container = document.getElementById('questionContainer');
+            container.innerHTML = `
+                <div class="fade-in">
+                    <h3 class="font-display text-xl font-semibold mb-6">${question.question}</h3>
+                    <div class="space-y-3">
+                        ${question.options.map((option, index) => `
+                            <div class="question-option p-4 rounded-lg cursor-pointer" onclick="selectOption(${index}, ${option.score})">
+                                <div class="font-medium">${option.text}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('consultantNote').textContent = question.insight;
+            
+            // Update navigation buttons
+            document.getElementById('prevBtn').disabled = currentQuestionIndex === 0;
+            document.getElementById('nextBtn').style.display = 'block';
+        }
+
+        // Select option
+        function selectOption(optionIndex, score) {
+            // Remove previous selections
+            document.querySelectorAll('.question-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Add selection to clicked option
+            document.querySelectorAll('.question-option')[optionIndex].classList.add('selected');
+            
+            // Store answer
+            assessmentAnswers[currentQuestionIndex] = {
+                optionIndex: optionIndex,
+                score: score
+            };
+            
+            // Update live scoring
+            updateLiveScoring();
+        }
+
+        // Update live scoring
+        function updateLiveScoring() {
+            totalScore = Object.values(assessmentAnswers).reduce((sum, answer) => sum + answer.score, 0);
+            document.getElementById('intelligenceScore').textContent = totalScore;
+            
+            updateIntelligenceChart();
+            updateServiceMatch();
+            updateRevenueProjection();
+        }
+
+        // Next question
+        function nextQuestion() {
+            if (!assessmentAnswers[currentQuestionIndex]) {
+                alert('Please select an answer before proceeding.');
+                return;
+            }
+            
+            const questions = assessmentQuestions[currentAssessmentType];
+            
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+                updateProgress();
+            } else {
+                completeAssessment();
+            }
+        }
+
+        // Previous question
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+                updateProgress();
+            }
+        }
+
+        // Update progress
+        function updateProgress() {
+            const questions = assessmentQuestions[currentAssessmentType];
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressPercent').textContent = Math.round(progress) + '%';
+            document.getElementById('progressText').textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+        }
+
+        // Complete assessment
+        function completeAssessment() {
+            document.getElementById('assessmentFlow').classList.add('hidden');
+            document.getElementById('resultsSection').classList.remove('hidden');
+            
+            generateRecommendation();
+        }
+
+        // Generate recommendation
+        function generateRecommendation() {
+            const service = serviceTiers[currentAssessmentType];
+            const complexityLevel = getComplexityLevel(totalScore);
+            
+            document.getElementById('serviceRecommendation').innerHTML = `
+                <div class="glass-card rounded-xl p-6 mb-6">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="font-display text-xl font-semibold mb-2">${service.name}</h3>
+                            <p class="text-ink-dim">${service.description}</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-2xl font-bold text-coral">$${service.price.toLocaleString()}</div>
+                            <div class="text-sm text-ink-dim">${service.duration}</div>
+                        </div>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="font-semibold mb-2">Key Deliverables</h4>
+                            <ul class="text-sm text-ink-dim space-y-1">
+                                ${service.deliverables.map(item => `<li>• ${item}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold mb-2">Complexity Assessment</h4>
+                            <div class="text-sm text-ink-dim">
+                                <div class="flex items-center mb-1">
+                                    <span class="w-20">Score:</span>
+                                    <span class="font-semibold text-coral">${totalScore}/30</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="w-20">Level:</span>
+                                    <span class="font-semibold text-teal">${complexityLevel}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            generateStrategicBrief();
+        }
+
+        // Generate strategic brief preview
+        function generateStrategicBrief() {
+            const service = serviceTiers[currentAssessmentType];
+            
+            document.getElementById('strategicBrief').innerHTML = `
+                <div class="glass-card rounded-xl p-6">
+                    <h3 class="font-display text-xl font-semibold mb-4">Strategic Brief Preview</h3>
+                    <div class="prose prose-invert max-w-none">
+                        <p class="text-ink-dim mb-4">
+                            Based on your assessment responses, we recommend a ${service.name} engagement 
+                            to address your strategic challenges systematically.
+                        </p>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="font-semibold text-coral mb-2">Strategic Focus</h4>
+                                <p class="text-sm text-ink-dim">
+                                    ${getStrategicFocus(currentAssessmentType, totalScore)}
+                                </p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-teal mb-2">Success Metrics</h4>
+                                <p class="text-sm text-ink-dim">
+                                    ${getSuccessMetrics(currentAssessmentType)}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Get complexity level
+        function getComplexityLevel(score) {
+            if (score <= 10) return 'Low Complexity';
+            if (score <= 20) return 'Medium Complexity';
+            return 'High Complexity';
+        }
+
+        // Get strategic focus based on assessment
+        function getStrategicFocus(type, score) {
+            const focuses = {
+                'gtm': score > 20 ? 'Market entry strategy with competitive positioning' : 'Market expansion and optimization',
+                'brand': score > 20 ? 'Complete brand development and positioning' : 'Brand refinement and consistency',
+                'campaign': score > 20 ? 'Integrated omnichannel campaign strategy' : 'Focused campaign optimization',
+                'creative': score > 20 ? 'Comprehensive creative framework development' : 'Creative strategy enhancement'
+            };
+            return focuses[type];
+        }
+
+        // Get success metrics
+        function getSuccessMetrics(type) {
+            const metrics = {
+                'gtm': 'Market share growth, customer acquisition cost, time-to-market',
+                'brand': 'Brand awareness, perception scores, market positioning',
+                'campaign': 'Conversion rates, engagement metrics, ROI optimization',
+                'creative': 'Content performance, brand consistency, creative effectiveness'
+            };
+            return metrics[type];
+        }
+
+        // Initialize intelligence chart
+        function initializeIntelligenceChart() {
+            const ctx = document.getElementById('intelligenceChart').getContext('2d');
+            intelligenceChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Completed', 'Remaining'],
+                    datasets: [{
+                        data: [0, 100],
+                        backgroundColor: ['#F96F6E', '#374151'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update intelligence chart
+        function updateIntelligenceChart() {
+            const maxScore = assessmentQuestions[currentAssessmentType].length * 10;
+            const percentage = (totalScore / maxScore) * 100;
+            
+            intelligenceChart.data.datasets[0].data = [percentage, 100 - percentage];
+            intelligenceChart.update();
+        }
+
+        // Update service match
+        function updateServiceMatch() {
+            const service = serviceTiers[currentAssessmentType];
+            const matchPercentage = Math.min(95, 60 + (totalScore * 2));
+            
+            document.getElementById('serviceMatch').innerHTML = `
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-teal mb-1">${matchPercentage}%</div>
+                    <div class="text-xs text-ink-dim mb-3">Service Match</div>
+                    <div class="text-sm font-medium">${service.name}</div>
+                </div>
+            `;
+        }
+
+        // Update revenue projection
+        function updateRevenueProjection() {
+            const service = serviceTiers[currentAssessmentType];
+            const confidence = Math.min(95, 70 + totalScore);
+            const closeProbability = Math.min(90, 50 + (totalScore * 1.5));
+            
+            document.getElementById('projectValue').textContent = `$${service.price.toLocaleString()}`;
+            document.getElementById('confidenceLevel').textContent = `${confidence}%`;
+            document.getElementById('closeProbability').textContent = `${closeProbability}%`;
+        }
+
+        // Action functions
+        function generateProposal() {
+            alert('Proposal generation would integrate with your proposal system');
+        }
+
+        function scheduleFollowUp() {
+            alert('Calendar integration would schedule follow-up meeting');
+        }
+
+        function exportAssessment() {
+            alert('Assessment export functionality would generate PDF report');
+        }
+
+        function resetAssessment() {
+            if (confirm('Are you sure you want to reset the assessment?')) {
+                currentAssessmentType = '';
+                currentQuestionIndex = 0;
+                assessmentAnswers = {};
+                totalScore = 0;
+                
+                document.getElementById('serviceSelection').style.display = 'block';
+                document.getElementById('assessmentFlow').classList.add('hidden');
+                document.getElementById('resultsSection').classList.add('hidden');
+                
+                document.getElementById('intelligenceScore').textContent = '0';
+                updateIntelligenceChart();
+            }
+        }
+
+        function saveProgress() {
+            alert('Progress saved successfully');
+        }
+
+        function exportNotes() {
+            alert('Notes export functionality would generate consultant notes');
+        }
+    </script>
+</body>
+</html>

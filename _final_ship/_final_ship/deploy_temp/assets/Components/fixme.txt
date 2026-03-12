@@ -1,0 +1,227 @@
+<!-- CSS FIXES TO ADD/REPLACE IN YOUR STYLE SECTION -->
+<style>
+/* UPDATE: Reduce description text size and spacing */
+.hub-description {
+    text-align: center;
+    margin-bottom: 3rem; /* Reduced from 4rem */
+    max-width: 700px; /* Slightly wider for better readability */
+    margin-left: auto;
+    margin-right: auto;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 0 1rem; /* Add some padding */
+}
+
+.hub-description h2 {
+    font-size: 1.5rem; /* MUCH smaller - was 2.5rem */
+    font-weight: 600; /* Slightly lighter weight */
+    margin-bottom: 1rem; /* Reduced spacing */
+    color: var(--text-secondary); /* Use secondary color instead of gradient */
+    line-height: 1.4;
+}
+
+.hub-description p {
+    font-size: 1.1rem; /* Slightly smaller */
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+/* UPDATE: Reduce gap between header and content */
+.hub-header {
+    text-align: center;
+    margin-top: 2rem; /* Reduced from 3rem */
+    margin-bottom: 2rem; /* Reduced from 3rem */
+    position: relative;
+    z-index: 100;
+}
+
+/* FIX: Ensure navigation menu doesn't get stuck */
+.hub-nav-menu {
+    pointer-events: none; /* Disable pointer events when hidden */
+}
+
+.hub-header.nav-active .hub-nav-menu {
+    pointer-events: auto; /* Enable pointer events when visible */
+}
+</style>
+
+<!-- JAVASCRIPT FIX - REPLACE YOUR ENTIRE SCRIPT SECTION WITH THIS -->
+<script>
+// Get DOM elements
+const hubHeader = document.getElementById('hubHeader');
+const backdropBlur = document.getElementById('backdropBlur');
+const hubLogoMain = document.querySelector('.hub-logo-main');
+const navTriggerLine = document.querySelector('.nav-trigger-line');
+const navMenu = document.querySelector('.hub-nav-menu');
+
+let isNavActive = false;
+let hoverIntentTimer = null;
+let isMouseInHeader = false;
+let isMouseInMenu = false;
+
+// Check if mobile
+function isMobile() {
+    return window.innerWidth <= 768;
+}
+
+// Show navigation
+function showNavigation() {
+    if (!isNavActive) {
+        isNavActive = true;
+        hubHeader.classList.add('nav-active');
+        backdropBlur.classList.add('active');
+    }
+}
+
+// Hide navigation
+function hideNavigation() {
+    if (isNavActive) {
+        isNavActive = false;
+        hubHeader.classList.remove('nav-active');
+        backdropBlur.classList.remove('active');
+    }
+}
+
+// Toggle navigation (for mobile)
+function toggleNavigation() {
+    if (isNavActive) {
+        hideNavigation();
+    } else {
+        showNavigation();
+    }
+}
+
+// Desktop hover interactions
+if (!isMobile()) {
+    // Track mouse entering header
+    hubHeader.addEventListener('mouseenter', () => {
+        if (!isMobile()) {
+            isMouseInHeader = true;
+            clearTimeout(hoverIntentTimer);
+            hoverIntentTimer = setTimeout(() => {
+                if (isMouseInHeader) {
+                    showNavigation();
+                }
+            }, 150);
+        }
+    });
+
+    // Track mouse leaving header
+    hubHeader.addEventListener('mouseleave', () => {
+        if (!isMobile()) {
+            isMouseInHeader = false;
+            clearTimeout(hoverIntentTimer);
+            hoverIntentTimer = setTimeout(() => {
+                if (!isMouseInHeader && !isMouseInMenu) {
+                    hideNavigation();
+                }
+            }, 300);
+        }
+    });
+
+    // Track mouse in navigation menu
+    if (navMenu) {
+        navMenu.addEventListener('mouseenter', () => {
+            if (!isMobile()) {
+                isMouseInMenu = true;
+                clearTimeout(hoverIntentTimer);
+            }
+        });
+
+        navMenu.addEventListener('mouseleave', () => {
+            if (!isMobile()) {
+                isMouseInMenu = false;
+                clearTimeout(hoverIntentTimer);
+                hoverIntentTimer = setTimeout(() => {
+                    if (!isMouseInHeader && !isMouseInMenu) {
+                        hideNavigation();
+                    }
+                }, 300);
+            }
+        });
+    }
+}
+
+// Mobile click interactions
+hubLogoMain.addEventListener('click', (e) => {
+    if (isMobile()) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleNavigation();
+    }
+});
+
+navTriggerLine.addEventListener('click', (e) => {
+    if (isMobile()) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleNavigation();
+    }
+});
+
+// Close when clicking backdrop
+backdropBlur.addEventListener('click', () => {
+    hideNavigation();
+});
+
+// Close when clicking outside
+document.addEventListener('click', (e) => {
+    if (isNavActive && !hubHeader.contains(e.target)) {
+        hideNavigation();
+    }
+});
+
+// Close with Escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isNavActive) {
+        hideNavigation();
+    }
+});
+
+// IMPORTANT FIX: Properly handle navigation link clicks
+document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', (e) => {
+        // Don't prevent default - let the link work
+        // Immediately hide navigation
+        hideNavigation();
+    });
+});
+
+// Handle window resize
+window.addEventListener('resize', () => {
+    if (isMobile() && isNavActive) {
+        hideNavigation();
+    }
+});
+
+// Loading screen
+window.addEventListener('load', function() {
+    const loadingContainer = document.getElementById('loadingContainer');
+    if (loadingContainer) {
+        setTimeout(() => {
+            loadingContainer.classList.add('hidden');
+        }, 600);
+    }
+});
+
+// Card animations (keep existing)
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
+    });
+}, observerOptions);
+
+document.querySelectorAll('.nav-card').forEach(card => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(20px)';
+    card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    observer.observe(card);
+});
+</script>

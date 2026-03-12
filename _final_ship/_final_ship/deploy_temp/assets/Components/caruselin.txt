@@ -1,0 +1,414 @@
+IMPLEMENTATION GUIDE: Swiper.js 3D Carousel for Insights Stories Tab
+Execute these changes in exact order. Each step is atomic and precise.
+
+═══════════════════════════════════════════════════════════════════
+
+STEP 1: ADD SWIPER CSS LIBRARY
+───────────────────────────────────────────────────────────────────
+FILE: insights/index.html
+LOCATION: Inside <head>, immediately after the Google Fonts <link> tag
+ACTION: Insert new line
+
+BEFORE (you'll see this):
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+
+AFTER (add this line below it):
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+═══════════════════════════════════════════════════════════════════
+
+STEP 2: ADD CAROUSEL CSS STYLES
+───────────────────────────────────────────────────────────────────
+FILE: insights/index.html
+LOCATION: Inside <style> tag, after .story-description block, before .find-section
+ACTION: Insert new CSS block
+
+FIND THIS SECTION (around line 400-450):
+.story-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+}
+
+.read-link {
+
+INSERT THIS COMPLETE BLOCK BETWEEN THEM:
+
+/* ============================================
+   CAROUSEL STYLES
+   ============================================ */
+
+.carousel-section {
+    margin-top: 3rem;
+    position: relative;
+}
+
+.carousel-wrapper {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 2rem 0 4rem;
+}
+
+.swiper {
+    width: 100%;
+    padding-bottom: 60px !important;
+}
+
+.swiper-slide {
+    background-position: center;
+    background-size: cover;
+    width: 380px !important;
+    height: auto;
+}
+
+.swiper-slide img {
+    display: block;
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+    border-radius: 16px;
+}
+
+.swiper-3d .swiper-slide-shadow-left,
+.swiper-3d .swiper-slide-shadow-right {
+    background-image: none;
+}
+
+.carousel-story-card {
+    background: var(--bg-primary);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 2px solid var(--border-gray);
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.carousel-story-card:hover {
+    border-color: var(--coral-accent);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(249, 111, 110, 0.15);
+}
+
+.carousel-story-content {
+    padding: 2rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.carousel-story-title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+    color: var(--text-primary);
+}
+
+.carousel-story-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    flex: 1;
+}
+
+.carousel-read-link {
+    color: var(--coral-accent);
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.carousel-read-link:hover {
+    color: var(--text-primary);
+    transform: translateX(4px);
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+    color: var(--coral-accent) !important;
+    background: var(--bg-primary);
+    width: 50px !important;
+    height: 50px !important;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+    background: var(--coral-accent);
+    color: var(--bg-primary) !important;
+    transform: scale(1.1);
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+    font-size: 20px !important;
+    font-weight: 900;
+}
+
+.swiper-pagination-bullet {
+    background: var(--text-secondary) !important;
+    opacity: 0.5 !important;
+    width: 12px !important;
+    height: 12px !important;
+}
+
+.swiper-pagination-bullet-active {
+    background: var(--coral-accent) !important;
+    opacity: 1 !important;
+    transform: scale(1.3);
+}
+
+═══════════════════════════════════════════════════════════════════
+
+STEP 3: ADD RESPONSIVE CAROUSEL STYLES
+───────────────────────────────────────────────────────────────────
+FILE: insights/index.html
+LOCATION: Inside existing media query blocks
+ACTION: Append to existing @media rules
+
+3A. FIND: @media (max-width: 968px) {
+    ADD BEFORE THE CLOSING BRACE:
+
+    .swiper-slide {
+        width: 320px !important;
+    }
+    .swiper-slide img {
+        height: 420px;
+    }
+
+3B. FIND: @media (max-width: 768px) {
+    ADD BEFORE THE CLOSING BRACE:
+
+    .swiper-button-next,
+    .swiper-button-prev {
+        width: 40px !important;
+        height: 40px !important;
+    }
+    .swiper-button-next::after,
+    .swiper-button-prev::after {
+        font-size: 16px !important;
+    }
+
+3C. FIND: @media (max-width: 480px) {
+    ADD BEFORE THE CLOSING BRACE:
+
+    .swiper-slide {
+        width: 280px !important;
+    }
+    .swiper-slide img {
+        height: 380px;
+    }
+    .carousel-story-content {
+        padding: 1.5rem;
+    }
+
+═══════════════════════════════════════════════════════════════════
+
+STEP 4: REPLACE STORIES TAB HTML WITH CAROUSEL
+───────────────────────────────────────────────────────────────────
+FILE: insights/index.html
+LOCATION: Find <div class="tab-content active" id="stories-tab">
+ACTION: Replace entire contents between opening and closing div
+
+FIND THIS BLOCK (around line 900-950):
+<div class="tab-content active" id="stories-tab">
+    <div class="stories-grid">
+        ... existing story cards ...
+    </div>
+</div>
+
+REPLACE EVERYTHING BETWEEN THE <div class="tab-content active" id="stories-tab"> 
+AND ITS CLOSING </div> WITH:
+
+<div class="carousel-section">
+    <div class="carousel-wrapper">
+        <div class="swiper storiesSwiper">
+            <div class="swiper-wrapper">
+                <!-- Story 1: Building The Hub -->
+                <div class="swiper-slide">
+                    <div class="carousel-story-card">
+                        <img src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?w=800&q=80" alt="Building The Hub">
+                        <div class="carousel-story-content">
+                            <h3 class="carousel-story-title">Building The Hub</h3>
+                            <p class="carousel-story-description">A journey through the creative process of designing and developing a digital sanctuary for ideas and transformative experiences.</p>
+                            <a href="/insights/building-the-hub" class="carousel-read-link">Read Story →</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Story 2: Unlocking the Blank Page -->
+                <div class="swiper-slide">
+                    <div class="carousel-story-card">
+                        <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80" alt="Unlocking the Blank Page">
+                        <div class="carousel-story-content">
+                            <h3 class="carousel-story-title">Unlocking the Blank Page</h3>
+                            <p class="carousel-story-description">How I used AI to remember my own voice. A reflection on creative paralysis, momentum, and the tools that helped me begin again.</p>
+                            <a href="/insights/unlocking-the-blank-page" class="carousel-read-link">Read Story →</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Story 3: Move at Your Speed -->
+                <div class="swiper-slide">
+                    <div class="carousel-story-card">
+                        <img src="/insights/assets/images/move-at-your-speed-hero.jpg" alt="Move at Your Speed">
+                        <div class="carousel-story-content">
+                            <h3 class="carousel-story-title">Move at the Speed of What Matters</h3>
+                            <p class="carousel-story-description">Breaking free from productivity culture and finding a rhythm that feels like your own. A reflection on intention, curiosity, and building without burnout.</p>
+                            <a href="/insights/move-at-your-speed" class="carousel-read-link">Read Story →</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="swiper-pagination"></div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+        </div>
+    </div>
+</div>
+
+═══════════════════════════════════════════════════════════════════
+
+STEP 5: ADD SWIPER JAVASCRIPT LIBRARY
+───────────────────────────────────────────────────────────────────
+FILE: insights/index.html
+LOCATION: Before closing </body> tag, BEFORE existing <script> tag
+ACTION: Insert new line
+
+FIND (near end of file):
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+INSERT THIS LINE BETWEEN </footer> AND <script>:
+
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+═══════════════════════════════════════════════════════════════════
+
+STEP 6: INITIALIZE SWIPER IN JAVASCRIPT
+───────────────────────────────────────────────────────────────────
+FILE: insights/index.html
+LOCATION: Inside existing <script> tag, after theme toggle code
+ACTION: Insert initialization block
+
+FIND THIS SECTION (around line 1100):
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = htmlElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        htmlElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+    });
+
+INSERT THIS BLOCK IMMEDIATELY AFTER (before the Intersection Observer code):
+
+    // Initialize Swiper Carousel
+    const swiper = new Swiper('.storiesSwiper', {
+        effect: 'coverflow',
+        grabCursor: true,
+        centeredSlides: true,
+        loop: true,
+        slidesPerView: 'auto',
+        coverflowEffect: {
+            rotate: 0,
+            stretch: 0,
+            depth: 100,
+            modifier: 2.5,
+            slideShadows: false,
+        },
+        autoplay: {
+            delay: 3000,
+            disableOnInteraction: false,
+        },
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+        },
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+    });
+
+═══════════════════════════════════════════════════════════════════
+
+STEP 7: UPDATE CARD SELECTOR FOR MICRO-INTERACTIONS
+───────────────────────────────────────────────────────────────────
+FILE: insights/index.html
+LOCATION: In existing <script> tag, find card selector line
+ACTION: Replace line
+
+FIND THIS LINE:
+const cards = document.querySelectorAll('.find-card, .archive-card, .number-card, .story-card');
+
+REPLACE WITH:
+const cards = document.querySelectorAll('.find-card, .archive-card, .number-card, .story-card, .carousel-story-card');
+
+═══════════════════════════════════════════════════════════════════
+
+VERIFICATION CHECKLIST
+───────────────────────────────────────────────────────────────────
+After implementation, verify:
+□ Swiper CSS link appears in <head>
+□ All carousel styles added to <style> section
+□ Responsive styles added to all 3 @media queries
+□ Stories tab HTML completely replaced with carousel markup
+□ Swiper JS script tag added before existing <script>
+□ Swiper initialization code added to JavaScript
+□ Card selector includes .carousel-story-card
+□ Image path is correct: /insights/assets/images/move-at-your-speed-hero.jpg
+□ No console errors when page loads
+□ Carousel displays and auto-rotates
+□ Navigation arrows work
+□ Pagination dots are clickable
+□ Dark mode still functions
+□ Tab switching works between Stories and Numbers
+
+═══════════════════════════════════════════════════════════════════
+
+ROLLBACK INSTRUCTIONS (if needed)
+───────────────────────────────────────────────────────────────────
+If anything breaks:
+1. Remove Swiper CSS link from <head>
+2. Remove all carousel styles from <style>
+3. Restore original stories-grid HTML with story-card divs
+4. Remove Swiper JS script tag
+5. Remove Swiper initialization from JavaScript
+6. Restore original card selector
+
+═══════════════════════════════════════════════════════════════════
+
+EXECUTION NOTES FOR TRAE
+───────────────────────────────────────────────────────────────────
+- Execute steps in exact sequential order
+- Each step is independent and atomic
+- Do not skip or combine steps
+- Verify each step before proceeding to next
+- Preserve all existing code not mentioned in steps
+- Maintain exact indentation and formatting
+- Test after completing all 7 steps
+
+Save all changes when complete.
+Quick Reference: File Structure
+Luis Gilberto/
+└── insights/
+    ├── index.html                        ← Trae will edit this
+    └── assets/
+        ├── css/
+        │   ├── insights-global.css
+        │   └── insights-article.css
+        ├── icons/
+        │   └── favicon-32x32.png
+        └── images/                        ← Create this folder
+            └── move-at-your-speed-hero.jpg  ← Save image here

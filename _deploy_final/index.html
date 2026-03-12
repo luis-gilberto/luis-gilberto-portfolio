@@ -4,10 +4,11 @@
 <head>
 <script>
   (function() {
-    const t = localStorage.getItem('lg_theme') || localStorage.getItem('theme') || 'dark';
-    document.documentElement.setAttribute('data-theme', t);
+    const savedTheme = localStorage.getItem('lg_theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
   })();
 </script>
+  <!-- 🧬 Production Release: 2026-03-12 09:15:00 -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Luis Gilberto - Creative Strategist & Marketing Professional</title>
@@ -803,8 +804,8 @@
       padding: 1rem;
       background: rgba(var(--bg-rgb), 0.3);
       backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5), 
+      border: 1px solid var(--border-color);
+      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.3), 
                   0 0 40px var(--accent-dim);
       transition: transform 0.6s var(--ease-spring);
     }
@@ -1505,19 +1506,27 @@
         const urlParams = new URLSearchParams(window.location.search);
         const journeyParam = urlParams.get('journey');
         
+        let persona = localStorage.getItem('luxe-persona');
         let journey = journeyParam;
         
-        if (!journey) {
-          journey = localStorage.getItem('lg_journey');
+        // Map journey param to persona if present
+        const jMap = { hire: 'coral', partner: 'teal', explore: 'neutral' };
+        if (journey && jMap[journey]) {
+          persona = jMap[journey];
+          localStorage.setItem('luxe-persona', persona);
         }
         
-        if (!journey || !['partner', 'hire', 'explore'].includes(journey)) {
-          journey = 'partner';
+        // Final fallback
+        if (!persona || !['coral', 'teal', 'neutral'].includes(persona)) {
+          persona = 'neutral';
+          localStorage.setItem('luxe-persona', persona);
         }
+        
+        // Map persona back to journey for data-journey attribute
+        const pMap = { coral: 'hire', teal: 'partner', neutral: 'explore' };
+        journey = pMap[persona];
         
         document.body.setAttribute('data-journey', journey);
-        localStorage.setItem('lg_journey', journey);
-        
         return journey;
       }
 
@@ -1815,10 +1824,6 @@
           const persona = card.dataset.persona;
           
           localStorage.setItem('luxe-persona', persona);
-          // Also keep user-lens for backward compatibility with nav-component for now
-          const lensMap = { teal: 'partner', coral: 'assess', neutral: 'explore' };
-          localStorage.setItem('user-lens', lensMap[persona]);
-
           window.switchHeroLens(persona);
           
           // Trigger global storage event for other components
@@ -1840,24 +1845,18 @@
       // Initialization logic
       const savedPersona = localStorage.getItem('luxe-persona');
       const urlParams = new URLSearchParams(window.location.search);
-      const forceOpen = urlParams.get('open') === 'diagnostic' || urlParams.get('journey');
+      const isForced = urlParams.get('open') === 'diagnostic';
 
       // 🧬 Always initialize visual state immediately
-      // This ensures the video/image loads even if the gate is about to open
       const initialLens = savedPersona || 'neutral';
       setHeroState(initialLens);
 
-      if (!savedPersona || forceOpen) {
-        if (urlParams.get('journey')) {
-          const jMap = { hire: 'coral', partner: 'teal', explore: 'neutral' };
-          const p = jMap[urlParams.get('journey')];
-          if (p) {
-            localStorage.setItem('luxe-persona', p);
-            setHeroState(p);
-          }
-        } else {
-          setTimeout(window.intentGate.open, 800);
-        }
+      // ONLY open if there is NO saved persona AND it's not a forced skip
+      if (!savedPersona || isForced) {
+        setTimeout(window.intentGate.open, 800);
+      } else {
+        window.intentGate.close();
+        setHeroState(savedPersona); // Warm up the site with the saved preference
       }
 
       // Sync lens changes from other components (like nav-component)

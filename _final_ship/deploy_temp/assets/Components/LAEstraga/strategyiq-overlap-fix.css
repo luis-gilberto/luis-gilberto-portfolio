@@ -1,0 +1,348 @@
+/* ================================================
+   STRATEGYIQ OVERLAP FIX
+   Comprehensive solution for section overlapping issues
+   ================================================ */
+
+/* ================================================
+   1. BASE SECTION STRUCTURE & Z-INDEX MANAGEMENT
+   ================================================ */
+
+/* Reset base positioning and establish stacking context */
+body {
+    position: relative;
+    z-index: 1;
+}
+
+/* Ensure all sections have proper stacking context */
+section,
+.section {
+    position: relative;
+    z-index: 2;
+    isolation: isolate; /* Create new stacking context */
+    background: var(--ink, #0F0F0F); /* Ensure opaque background */
+    padding: 6rem 0; /* Increased padding for better separation */
+    margin: 0; /* Remove any conflicting margins */
+}
+
+/* Hero section specific positioning */
+.hero,
+.hero-section {
+    position: relative;
+    z-index: 3; /* Hero sits above other sections */
+    padding-top: 8rem; /* Compensate for fixed header + extra space */
+    padding-bottom: 6rem;
+    margin-bottom: 0;
+    isolation: isolate;
+}
+
+/* Fixed header management */
+.hub-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10002;
+    isolation: isolate;
+}
+
+/* ================================================
+   2. SECTION SPACING & SEPARATION
+   ================================================ */
+
+/* Add visual separation between sections */
+section + section,
+.section + .section {
+    margin-top: 2rem;
+}
+
+/* Ensure containers don't overlap */
+.container {
+    position: relative;
+    z-index: 1;
+}
+
+/* Section dividers with proper spacing */
+.section-divider,
+.divider {
+    margin: 4rem 0;
+    clear: both;
+    position: relative;
+    z-index: 1;
+}
+
+/* ================================================
+   3. CARD & ELEMENT TRANSFORM FIXES
+   ================================================ */
+
+/* Prevent card transforms from causing overlap */
+.service-card,
+.methodology-card,
+.comparison-card,
+.feature-card,
+.stat-card,
+.proof-point {
+    position: relative;
+    z-index: 1;
+    isolation: isolate;
+    transform-style: preserve-3d;
+    will-change: transform;
+}
+
+/* Limit hover transform to prevent overlap */
+.service-card:hover,
+.methodology-card:hover,
+.comparison-card:hover,
+.feature-card:hover,
+.stat-card:hover,
+.proof-point:hover {
+    z-index: 5; /* Elevate on hover */
+    transform: translateY(-5px) translateZ(10px);
+}
+
+/* ================================================
+   4. COMPARISON SECTION SPECIFIC FIXES
+   ================================================ */
+
+.comparison-section {
+    position: relative;
+    z-index: 2;
+    padding: 6rem 0;
+    margin: 4rem 0;
+    isolation: isolate;
+}
+
+.comparison-grid {
+    position: relative;
+    z-index: 1;
+    isolation: isolate;
+}
+
+/* Ensure VS badge doesn't cause overlap */
+.comparison-grid::before {
+    position: absolute;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.comparison-column {
+    position: relative;
+    z-index: 2;
+    isolation: isolate;
+}
+
+.comparison-column:hover {
+    z-index: 5;
+}
+
+/* ================================================
+   5. SCROLL BEHAVIOR ENHANCEMENTS
+   ================================================ */
+
+/* Smooth scroll with proper behavior */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Ensure smooth rendering during scroll */
+section,
+.section {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+}
+
+/* ================================================
+   6. PUBLIC MODE SPECIFIC FIXES
+   ================================================ */
+
+#publicMode section,
+.public-mode section {
+    position: relative;
+    z-index: 2;
+    padding: 6rem 2rem;
+    margin: 0;
+    isolation: isolate;
+}
+
+/* ================================================
+   7. GLASS MORPHISM & BACKDROP FIXES
+   ================================================ */
+
+/* Ensure glass cards don't create visual artifacts */
+.glass-card,
+.glassmorphism {
+    position: relative;
+    z-index: 1;
+    isolation: isolate;
+    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(24px);
+}
+
+/* ================================================
+   8. MODAL & OVERLAY Z-INDEX MANAGEMENT
+   ================================================ */
+
+.admin-modal {
+    z-index: 10003;
+    isolation: isolate;
+}
+
+.admin-toggle {
+    z-index: 900;
+}
+
+/* Mobile menu overlay */
+body.menu-open::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+    backdrop-filter: blur(5px);
+}
+
+.header-nav.open {
+    z-index: 10001;
+}
+
+/* ================================================
+   9. FOOTER POSITIONING
+   ================================================ */
+
+.hub-footer,
+footer {
+    position: relative;
+    z-index: 2;
+    margin-top: 6rem;
+    padding-top: 4rem;
+    isolation: isolate;
+}
+
+/* ================================================
+   10. FADE-IN ANIMATION FIXES
+   ================================================ */
+
+/* Ensure fade-in animations don't cause overlap */
+.fade-in {
+    position: relative;
+    z-index: 1;
+    isolation: isolate;
+}
+
+.fade-in.visible {
+    transform: translateY(0) translateZ(0);
+}
+
+/* ================================================
+   11. RESPONSIVE FIXES
+   ================================================ */
+
+@media (max-width: 1024px) {
+    section,
+    .section {
+        padding: 4rem 1.5rem;
+    }
+    
+    .hero,
+    .hero-section {
+        padding-top: 6rem;
+        padding-bottom: 4rem;
+    }
+}
+
+@media (max-width: 768px) {
+    section,
+    .section {
+        padding: 3rem 1rem;
+    }
+    
+    .hero,
+    .hero-section {
+        padding-top: 5rem;
+        padding-bottom: 3rem;
+    }
+    
+    /* Reduce transform intensity on mobile */
+    .service-card:hover,
+    .methodology-card:hover,
+    .comparison-card:hover {
+        transform: translateY(-3px) translateZ(5px);
+    }
+}
+
+/* ================================================
+   12. EMERGENCY OVERLAP PREVENTION
+   ================================================ */
+
+/* Nuclear option: force separation if issues persist */
+.section-overflow-fix {
+    overflow: hidden;
+    clear: both;
+}
+
+/* Clearfix for any floating elements */
+.clearfix::after,
+section::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* ================================================
+   13. BROWSER-SPECIFIC FIXES
+   ================================================ */
+
+/* Safari-specific fixes */
+@supports (-webkit-appearance: none) {
+    section,
+    .section {
+        -webkit-transform: translateZ(0);
+        -webkit-backface-visibility: hidden;
+    }
+}
+
+/* Firefox-specific fixes */
+@-moz-document url-prefix() {
+    section,
+    .section {
+        transform: translateZ(0);
+    }
+}
+
+/* ================================================
+   14. PERFORMANCE OPTIMIZATIONS
+   ================================================ */
+
+/* Enable GPU acceleration for smooth scrolling */
+section,
+.section,
+.glass-card,
+.service-card,
+.methodology-card {
+    will-change: transform;
+    transform: translate3d(0, 0, 0);
+}
+
+/* Remove will-change after animation */
+.section:not(:hover),
+.service-card:not(:hover) {
+    will-change: auto;
+}
+
+/* ================================================
+   15. PRINT FIXES (BONUS)
+   ================================================ */
+
+@media print {
+    section,
+    .section {
+        page-break-inside: avoid;
+        position: relative;
+        z-index: auto;
+    }
+    
+    .hub-header {
+        position: relative;
+    }
+}

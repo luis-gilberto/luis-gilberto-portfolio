@@ -1,0 +1,544 @@
+═══════════════════════════════════════════════════════════════════
+INSIGHTS VIDEO TITLE ANIMATION - IMPLEMENTATION GUIDE FOR TRAE
+═══════════════════════════════════════════════════════════════════
+
+PROJECT: Replace static "Insights" title with animated thread video
+FILES INCLUDED: insights-video.mp4, insights-poster.jpg
+TARGET LOCATION: /insights/assets/videos/
+
+═══════════════════════════════════════════════════════════════════
+QUICK START SUMMARY
+═══════════════════════════════════════════════════════════════════
+
+THIS IMPLEMENTATION WILL:
+1. Replace the static <h1>Insights</h1> with an animated video
+2. Show a coral thread elegantly weaving through the typography
+3. Auto-play, loop seamlessly, and be fully responsive
+4. Maintain accessibility with text fallback
+
+VIDEO SPECS (OPTIMIZED):
+- Format: MP4 (H.264 codec) ✓
+- Resolution: 1920x1080 (16:9 landscape)
+- File Size: 230KB (super optimized!)
+- Duration: 8 seconds
+- Frame Rate: 24fps
+- Audio: None (removed for size)
+
+═══════════════════════════════════════════════════════════════════
+STEP 1: UPLOAD VIDEO FILES TO SERVER
+═══════════════════════════════════════════════════════════════════
+
+Upload these two files to your server:
+
+SOURCE FILES (from this package):
+- insights-video.mp4 (230KB)
+- insights-poster.jpg (38KB)
+
+DESTINATION PATH:
+/insights/assets/videos/
+
+FINAL SERVER PATHS SHOULD BE:
+- /insights/assets/videos/insights-video.mp4
+- /insights/assets/videos/insights-poster.jpg
+
+VERIFICATION:
+After upload, verify the files are accessible at:
+https://luis-gilberto.com/insights/assets/videos/insights-video.mp4
+https://luis-gilberto.com/insights/assets/videos/insights-poster.jpg
+
+═══════════════════════════════════════════════════════════════════
+STEP 2: LOCATE AND OPEN YOUR HTML FILE
+═══════════════════════════════════════════════════════════════════
+
+FILE TO MODIFY: index.html (or your main page source file)
+
+FIND THIS SECTION (around line 50-80 in your HTML body):
+
+<section class="hero-section">
+    <div class="container">
+        <div class="content-wrapper">
+            <span class="editorial-label">Monthly Insights</span>
+            <h1>Insights</h1>
+            <p class="hero-subtitle">This is where I share...</p>
+            <span class="publish-cadence">Published monthly</span>
+        </div>
+    </div>
+</section>
+
+═══════════════════════════════════════════════════════════════════
+STEP 3: REPLACE THE <h1> TAG
+═══════════════════════════════════════════════════════════════════
+
+REMOVE THIS LINE:
+───────────────
+<h1>Insights</h1>
+
+
+REPLACE WITH THIS BLOCK:
+────────────────────────
+<!-- Video Title Animation -->
+<div class="insights-video-title">
+    <video 
+        autoplay 
+        muted 
+        playsinline
+        loop
+        class="insights-title-video"
+        poster="/insights/assets/videos/insights-poster.jpg">
+        <source src="/insights/assets/videos/insights-video.mp4" type="video/mp4">
+        <!-- Fallback for browsers that don't support video -->
+        <h1>Insights</h1>
+    </video>
+</div>
+
+
+AFTER REPLACEMENT, THE SECTION SHOULD LOOK LIKE:
+────────────────────────────────────────────────
+<section class="hero-section">
+    <div class="container">
+        <div class="content-wrapper">
+            <span class="editorial-label">Monthly Insights</span>
+            
+            <!-- Video Title Animation -->
+            <div class="insights-video-title">
+                <video 
+                    autoplay 
+                    muted 
+                    playsinline
+                    loop
+                    class="insights-title-video"
+                    poster="/insights/assets/videos/insights-poster.jpg">
+                    <source src="/insights/assets/videos/insights-video.mp4" type="video/mp4">
+                    <!-- Fallback for browsers that don't support video -->
+                    <h1>Insights</h1>
+                </video>
+            </div>
+            
+            <p class="hero-subtitle">This is where I share...</p>
+            <span class="publish-cadence">Published monthly</span>
+        </div>
+    </div>
+</section>
+
+
+VIDEO ATTRIBUTES EXPLAINED:
+──────────────────────────
+• autoplay: Video starts automatically when page loads
+• muted: REQUIRED for autoplay (browser security policy)
+• playsinline: Prevents fullscreen on mobile (iOS)
+• loop: Video repeats continuously
+• poster: Thumbnail shown while video loads (end frame with thread)
+
+═══════════════════════════════════════════════════════════════════
+STEP 4: ADD NEW CSS STYLES
+═══════════════════════════════════════════════════════════════════
+
+LOCATE THE <style> SECTION:
+Find the existing <style> tag in your HTML (around line 15-30)
+
+ADD THIS CSS CODE (place it AFTER the .hero-section styles):
+
+
+/* ════════════════════════════════════════════════════════════════
+   VIDEO TITLE ANIMATION STYLES
+   ════════════════════════════════════════════════════════════════ */
+
+.insights-video-title {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 2rem;
+    overflow: visible;
+}
+
+.insights-title-video {
+    width: 100%;
+    height: auto;
+    display: block;
+    max-width: 100%;
+    background: transparent;
+    /* Enable hardware acceleration for smooth playback */
+    will-change: transform;
+}
+
+/* Fallback h1 styling (displayed if video fails to load) */
+.insights-video-title h1 {
+    font-family: var(--font-display);
+    font-size: clamp(4.5rem, 10vw, 7rem);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    margin-bottom: 0;
+    color: var(--text-primary);
+    text-transform: uppercase;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   RESPONSIVE ADJUSTMENTS
+   ───────────────────────────────────────────────────────────────── */
+
+@media (max-width: 968px) {
+    .insights-title-video {
+        max-width: 90%;
+        margin: 0 auto 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .insights-video-title {
+        margin-bottom: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .insights-video-title {
+        margin-bottom: 1rem;
+    }
+}
+
+
+IMPORTANT: This CSS ensures:
+✓ Video scales responsively across all devices
+✓ Fallback text matches your original h1 styling
+✓ Smooth hardware-accelerated playback
+✓ Proper spacing on mobile, tablet, and desktop
+
+═══════════════════════════════════════════════════════════════════
+STEP 5: REMOVE OLD THREAD SVG ANIMATION CODE
+═══════════════════════════════════════════════════════════════════
+
+FIND AND DELETE THESE OLD CSS RULES:
+────────────────────────────────────
+
+/* OLD - DELETE THIS SECTION */
+.thread-svg {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    overflow: visible;
+    z-index: 5;
+    color: var(--text-primary);
+}
+
+.thread-path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0;
+}
+
+.thread-dot {
+    fill: currentColor;
+    opacity: 0;
+}
+
+/* DELETE all @media queries related to .thread-svg too */
+
+
+ALSO DELETE ANY <svg> ELEMENTS:
+───────────────────────────────
+If you find any <svg class="thread-svg"> elements in your HTML,
+remove them entirely. They're part of the old animation.
+
+
+WHY REMOVE THE OLD CODE:
+• Prevents conflicts with the new video
+• Improves page load performance
+• Reduces maintenance overhead
+• The video is the complete replacement
+
+═══════════════════════════════════════════════════════════════════
+STEP 6: SAVE AND TEST
+═══════════════════════════════════════════════════════════════════
+
+SAVE YOUR CHANGES:
+1. Save the modified HTML file
+2. Upload to your server (if editing locally)
+3. Clear your browser cache (Ctrl+Shift+R or Cmd+Shift+R)
+
+TEST CHECKLIST:
+───────────────
+Desktop Testing:
+□ Video plays automatically on page load
+□ Video is muted (no audio controls appear)
+□ Video loops seamlessly (no pause between loops)
+□ Video is horizontally centered
+□ "From the Trenches" subtitle appears correctly below
+
+Mobile Testing (iOS Safari):
+□ Video plays inline (doesn't go fullscreen)
+□ Video starts automatically
+□ No play button overlay appears
+□ Touch interactions don't trigger fullscreen
+
+Mobile Testing (Chrome Android):
+□ Video autoplays properly
+□ Responsive sizing works correctly
+□ No unwanted controls appear
+
+Performance Testing:
+□ Page loads within 3 seconds
+□ Video doesn't cause layout shift
+□ Smooth playback (no stuttering)
+
+Fallback Testing:
+□ Disable JavaScript and check if fallback <h1> appears
+□ Test in very old browsers (if needed for your audience)
+
+═══════════════════════════════════════════════════════════════════
+TROUBLESHOOTING GUIDE
+═══════════════════════════════════════════════════════════════════
+
+PROBLEM: Video doesn't autoplay
+─────────────────────────────────
+SOLUTION 1: Ensure "muted" attribute is present
+The <video> tag MUST have muted for browsers to allow autoplay.
+
+SOLUTION 2: Check browser console for errors
+Open DevTools (F12) and look for error messages.
+
+SOLUTION 3: Verify file path is correct
+Test by visiting the video URL directly in your browser:
+https://luis-gilberto.com/insights/assets/videos/insights-video.mp4
+
+
+PROBLEM: Video shows playback controls
+────────────────────────────────────────
+SOLUTION: Make sure you did NOT add "controls" attribute
+The <video> tag should NOT have controls attribute.
+
+
+PROBLEM: Video is too slow to load
+────────────────────────────────────
+SOLUTION 1: The video is already optimized (230KB)
+This is very small and should load quickly even on 3G.
+
+SOLUTION 2: Check your CDN/server configuration
+Ensure video is served with proper MIME type (video/mp4)
+
+SOLUTION 3: Enable compression on server
+Add gzip/brotli compression for .mp4 files in server config
+
+
+PROBLEM: Video doesn't loop smoothly
+──────────────────────────────────────
+SOLUTION: This is already handled in the optimized video
+The first and last frames match for seamless looping.
+
+If you see a flash, clear cache and reload.
+
+
+PROBLEM: Video looks pixelated/blurry
+───────────────────────────────────────
+SOLUTION: This is intentional for performance
+The video is 1920x1080 but compressed for web.
+If quality is insufficient, I can provide a higher-quality version
+(but it will be larger and load slower).
+
+
+PROBLEM: Mobile shows fullscreen button
+─────────────────────────────────────────
+SOLUTION: Ensure "playsinline" attribute is present
+This prevents iOS from forcing fullscreen.
+
+
+PROBLEM: Poster image doesn't appear
+──────────────────────────────────────
+SOLUTION: Check the poster image path
+Verify: /insights/assets/videos/insights-poster.jpg exists
+The poster shows while video loads (brief moment).
+
+
+PROBLEM: Fallback text styling is wrong
+─────────────────────────────────────────
+SOLUTION: Check .insights-video-title h1 CSS
+Ensure it matches your original .hero-section h1 styles.
+
+
+PROBLEM: Video is sideways/wrong orientation
+──────────────────────────────────────────────
+SOLUTION: The optimized video is already landscape
+If you see portrait orientation, you may be using the wrong file.
+Use "insights-video.mp4" (the optimized version).
+
+═══════════════════════════════════════════════════════════════════
+BROWSER COMPATIBILITY
+═══════════════════════════════════════════════════════════════════
+
+FULLY SUPPORTED BROWSERS:
+✓ Chrome 4+ (desktop & mobile)
+✓ Firefox 3.5+ (desktop & mobile)
+✓ Safari 3.1+ (desktop & mobile)
+✓ Edge (all versions)
+✓ iOS Safari 10+ (iPhone/iPad)
+✓ Chrome Android 4.4+
+✓ Samsung Internet
+✓ Opera (all modern versions)
+
+MP4 with H.264 codec has universal support.
+You do NOT need to provide WebM or OGG formats.
+
+═══════════════════════════════════════════════════════════════════
+ACCESSIBILITY NOTES
+═══════════════════════════════════════════════════════════════════
+
+WCAG COMPLIANCE:
+The implementation is accessible:
+
+1. TEXT FALLBACK:
+   The <h1>Insights</h1> inside <video> ensures screen readers
+   get the text content even if video is unsupported.
+
+2. AUTO-PLAY POLICY:
+   Video is muted, so it complies with WCAG guidelines for
+   auto-playing media (no unexpected audio).
+
+3. MOTION SENSITIVITY:
+   The animation is subtle and smooth. If you need to support
+   users with motion sensitivity, add this CSS:
+
+   @media (prefers-reduced-motion: reduce) {
+       .insights-video-title video {
+           display: none;
+       }
+       .insights-video-title h1 {
+           display: block !important;
+       }
+   }
+
+4. KEYBOARD NAVIGATION:
+   Video doesn't interfere with keyboard navigation.
+   Users can still tab through page elements normally.
+
+═══════════════════════════════════════════════════════════════════
+PERFORMANCE OPTIMIZATION NOTES
+═══════════════════════════════════════════════════════════════════
+
+VIDEO IS ALREADY OPTIMIZED:
+✓ File size: 230KB (very small!)
+✓ Codec: H.264 (universal browser support)
+✓ Bitrate: 231 kbps (balanced quality/size)
+✓ Audio: Removed (saves space)
+✓ Fast Start: Enabled (moov atom at beginning)
+
+ADDITIONAL OPTIMIZATIONS YOU CAN DO:
+
+1. LEVERAGE BROWSER CACHING:
+   Add cache headers for the video file (1 year):
+   Cache-Control: public, max-age=31536000
+
+2. USE A CDN:
+   Serve the video from a CDN for faster global delivery.
+   (CloudFlare, AWS CloudFront, etc.)
+
+3. LAZY LOADING (Optional):
+   If video is below the fold, add loading="lazy"
+   But for hero section, DON'T do this (video should load ASAP)
+
+4. PRELOAD STRATEGY:
+   Current default (preload="auto") is correct for hero section.
+   Browser loads video immediately for instant playback.
+
+═══════════════════════════════════════════════════════════════════
+ADVANCED: CONNECTION-AWARE LOADING (Optional)
+═══════════════════════════════════════════════════════════════════
+
+For users on slow connections, you can serve different quality:
+
+<script>
+// Detect slow connections and adjust quality
+if ('connection' in navigator) {
+    const connection = navigator.connection;
+    if (connection.effectiveType === 'slow-2g' || 
+        connection.effectiveType === '2g' || 
+        connection.effectiveType === '3g') {
+        // Serve static image instead of video on slow connections
+        document.querySelector('.insights-title-video').style.display = 'none';
+        document.querySelector('.insights-video-title h1').style.display = 'block';
+    }
+}
+</script>
+
+This is OPTIONAL and only needed if you have significant
+mobile traffic from areas with poor connectivity.
+
+═══════════════════════════════════════════════════════════════════
+FILE SUMMARY
+═══════════════════════════════════════════════════════════════════
+
+FILES INCLUDED IN THIS PACKAGE:
+1. insights-video.mp4 (230KB) - Optimized video for web
+2. insights-poster.jpg (38KB) - Thumbnail for loading state
+3. TRAE-IMPLEMENTATION-GUIDE.txt (this file)
+
+ORIGINAL VIDEO SPECS (before optimization):
+- Size: 2.07 MB
+- Resolution: 720x1280 (portrait)
+- Bitrate: 2070 kbps
+
+OPTIMIZED VIDEO SPECS:
+- Size: 230 KB (89% smaller!) ✓
+- Resolution: 1920x1080 (landscape, letterboxed) ✓
+- Bitrate: 231 kbps ✓
+- Fast Start: Enabled ✓
+- Audio: Removed ✓
+
+═══════════════════════════════════════════════════════════════════
+FINAL CHECKLIST
+═══════════════════════════════════════════════════════════════════
+
+BEFORE GOING LIVE:
+□ Both video files uploaded to /insights/assets/videos/
+□ Video paths in HTML match server location exactly
+□ Old .thread-svg CSS styles deleted
+□ Old <svg> HTML elements removed
+□ New .insights-video-title CSS styles added
+□ Tested on desktop Chrome/Firefox/Safari
+□ Tested on mobile iOS Safari
+□ Tested on mobile Chrome Android
+□ Page load time is acceptable (< 3 seconds)
+□ Video autoplays without user interaction
+□ Video loops seamlessly
+□ Fallback text appears when video disabled
+
+DEPLOYMENT NOTES:
+• Clear CDN cache after uploading new files
+• Test on staging environment first (if available)
+• Monitor Core Web Vitals after deployment
+• Check analytics for any browser-specific issues
+
+═══════════════════════════════════════════════════════════════════
+SUPPORT & QUESTIONS
+═══════════════════════════════════════════════════════════════════
+
+If you encounter any issues:
+
+1. Check the troubleshooting section above
+2. Verify file paths are exactly correct
+3. Check browser console for error messages (F12)
+4. Test the video URL directly in browser
+5. Ensure video files were uploaded successfully
+
+CONCEPT BEHIND THE ANIMATION:
+Single coral thread weaving through "Insights" typography from
+left to right, representing scattered thoughts and stories being
+unified by a continuous narrative thread. Subtle, editorial, and
+meaningful—aligned with your brand's premium aesthetic.
+
+═══════════════════════════════════════════════════════════════════
+END OF IMPLEMENTATION GUIDE
+═══════════════════════════════════════════════════════════════════
+
+This guide was created for AI IDE Trae to implement the video
+title animation on the Insights page at luis-gilberto.com/insights/
+
+Video optimization completed with 89% file size reduction while
+maintaining visual quality suitable for web delivery.
+
+Good luck with the implementation! 🎯

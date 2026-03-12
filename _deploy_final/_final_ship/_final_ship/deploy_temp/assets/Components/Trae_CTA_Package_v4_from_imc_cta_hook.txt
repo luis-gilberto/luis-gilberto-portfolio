@@ -1,0 +1,189 @@
+
+CTA Package — IMCServices ➜ Contact (v4)
+Param: from=imc | Anchor: #cta-hook | Inline-CSS Edition
+Author: ChatGPT for Luis Gilberto
+Date: 2025‑09‑21
+
+Repo Reality (from audit)
+-------------------------
+- Contact page file: assets\Contact\contact.html
+- IMC Services hub file: IMCServices\index.html
+- No external stylesheets detected (use inline/embedded CSS)
+
+Goal
+----
+When a user clicks “Start the conversation” on /IMCServices/:
+1) They land directly on the contact form (anchor).
+2) If they come from IMC, contact page shows a subtle variant (badge + glow + copy swap).
+3) Capture attribution via hidden field (lead_source=imc).
+
+What Trae Should Implement (Summary)
+-----------------------------------
+- ✅ Deep‑link CTA using `?from=imc#cta-hook`
+- ✅ Add `id="cta-hook"` + copy hooks + hidden field in contact.html
+- ✅ Add small <style> variant block in contact.html <head>
+- ✅ Add detection <script> in contact.html before </body>
+
+FILES TO EDIT
+-------------
+[1] IMCServices\index.html
+[2] assets\Contact\contact.html
+
+TASK 0 — Safety
+---------------
+Create a quick backup commit/branch before editing.
+
+TASK 1 — Update CTA on IMC Services (IMCServices\index.html)
+------------------------------------------------------------
+1A) OPEN: IMCServices\index.html
+1B) FIND: The final CTA with visible text “Start the conversation”.
+1C) SET its href to **ONE** of these (prefer the route that already works in production):
+
+Primary (preferred if route is available):
+/contact/?from=imc#cta-hook
+
+Fallback (if the site serves contact via file path):
+/assets/Contact/contact.html?from=imc#cta-hook
+
+👉 Example markup after:
+<a class="btn btn-primary" href="/contact/?from=imc#cta-hook" aria-label="Start the conversation — jump to contact form">
+  Start the conversation
+</a>
+
+(UTM option if wanted)
+/contact/?from=imc&utm_source=site&utm_medium=cta&utm_campaign=imcservices#cta-hook
+
+TASK 2 — Add anchor + hooks + hidden field (assets\Contact\contact.html)
+------------------------------------------------------------------------
+2A) OPEN: assets\Contact\contact.html
+
+2B) ADD an **anchor id** on the form or its closest wrapper (choose one):
+<!-- Option A: wrapper -->
+<section id="cta-hook">
+  <form ...> ... </form>
+</section>
+
+<!-- Option B: directly on form -->
+<form id="cta-hook" action="..." method="post"> ... </form>
+
+2C) ADD **copy hooks** near the hero/heading area so copy can swap:
+<h1 data-contact-headline>Start the conversation</h1>
+<p data-contact-subcopy>Tell me a bit about your project and goals.</p>
+
+2D) ADD a subtle **badge** above the form/title (optional but recommended):
+<span class="imc-badge" aria-hidden="true">IMC Services</span>
+
+2E) ADD a **hidden attribution field** INSIDE the <form>:
+<input type="hidden" name="lead_source" id="lead_source" value="">
+
+TASK 3 — Variant CSS (embed inside contact.html <head>)
+-------------------------------------------------------
+3A) In assets\Contact\contact.html, locate </head>.
+3B) **Insert before** </head> the following block (place after existing styles):
+
+
+<!-- ▾ IMC variant styles (from=imc) ▾ -->
+<style>
+  /* 🧭 Make the anchor land below sticky headers */
+  #cta-hook { scroll-margin-top: 96px; } /* adjust to actual header height */
+
+  /* 🌈 Subtle variant when arrival is IMC-sourced */
+  .from-imcservices #cta-hook {
+    border: 1px solid rgba(249,111,110,0.35); /* coral glow */
+    box-shadow: 0 18px 50px rgba(249,111,110,0.08);
+  }
+
+  .from-imcservices .imc-badge {
+    display: inline-flex;
+    font-size: 12px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #F96F6E, #2ED3C6); /* coral→teal */
+    color: #111;
+    margin-bottom: 8px;
+    box-shadow: 0 6px 24px rgba(249,111,110,.25);
+  }
+
+  /* ✨ Optional: tiny emphasis on primary CTA in variant state */
+  .from-imcservices .btn-primary { outline: 2px solid #F96F6E22; }
+</style>
+<!-- ▴ IMC variant styles end ▴ -->
+
+
+TASK 4 — Detection Script (embed before </body>)
+------------------------------------------------
+4A) In assets\Contact\contact.html, locate </body>.
+4B) **Insert before** </body> the following block:
+
+
+<!-- ▾ IMC arrival detection + copy swap + attribution ▾ -->
+<script>
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  var from = (params.get('from') || '').toLowerCase();
+
+  // 🧾 Attribution
+  var lead = document.getElementById('lead_source');
+  if (lead) lead.value = from || 'organic';
+
+  if (from === 'imc') {
+    // 🎭 Page-level class for variant styling
+    document.documentElement.classList.add('from-imcservices');
+
+    // 📝 Copy swap if hooks exist
+    var head = document.querySelector('[data-contact-headline]');
+    var sub  = document.querySelector('[data-contact-subcopy]');
+    if (head) head.textContent = "Let’s scope the right engagement.";
+    if (sub)  sub.textContent  = "You came from the IMC Services hub. Tell us where you are in your journey and we’ll map the smartest next step.";
+
+    // 🎯 Optional: preselect Reason dropdown by label
+    var reason = document.querySelector('select[name="reason"], #reason');
+    if (reason) {
+      var preferred = ["IMC Consulting","Integrated Marketing","ScopeIQ follow-up"];
+      var found = Array.prototype.find.call(reason.options, function(o){
+        return (o.text||'').trim() && preferred.indexOf((o.text||'').trim()) !== -1;
+      });
+      if (found) reason.value = found.value;
+    }
+
+    // 🎯 Ensure anchor lands perfectly with sticky header
+    if (window.location.hash === '#cta-hook') {
+      var el = document.getElementById('cta-hook');
+      if (el) {
+        requestAnimationFrame(function(){
+          var y = el.getBoundingClientRect().top + window.scrollY - 96; // tweak to header height
+          window.scrollTo({ top: y, behavior: 'auto' });
+        });
+      }
+    }
+  }
+})();
+</script>
+<!-- ▴ IMC detection end ▴ -->
+
+
+TASK 5 — QA / Test
+------------------
+1) From /IMCServices/, click “Start the conversation”.
+   EXPECT URL: /contact/?from=imc#cta-hook  (or the /assets/Contact/contact.html?from=imc#cta-hook fallback)
+   EXPECT: Page lands at form.
+2) Verify on /contact:
+   - <html> has class from-imcservices
+   - Hidden #lead_source value = "imc"
+   - Badge visible, copy swapped (if hooks added)
+3) Visit /contact/ directly (no params): default copy; no badge; lead_source = "organic".
+4) Adjust the `96px` offset in both CSS & JS if the anchor lands too high/low.
+
+Rollback
+--------
+- Revert the href change in IMCServices\index.html
+- Remove id="cta-hook" (if newly added)
+- Remove the inserted <style> and <script> blocks from assets\Contact\contact.html
+- Remove the hidden field #lead_source and copy hooks (optional)
+
+Notes
+-----
+- Keep the variant subtle and editorial; it’s a reassurance, not a hard sell.
+- Later, we can consolidate these styles/scripts into shared assets if you prefer.

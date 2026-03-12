@@ -1,0 +1,345 @@
+# Full-Viewport Snap Scrolling Implementation Guide
+
+## Overview
+Implement full-viewport sections with snap scrolling behavior, remove decorative circles from section dividers, and update section divider labels to be less redundant.
+
+---
+
+## CSS Changes
+
+### 1. Update Smooth Scrolling System (Line ~27)
+**FIND:**
+```css
+/* Smooth Scrolling System */
+html {
+    scroll-snap-type: y proximity;
+    scroll-behavior: smooth;
+}
+```
+
+**REPLACE WITH:**
+```css
+/* Full-Viewport Snap Scrolling System */
+html {
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+    overflow-y: scroll;
+}
+
+/* Each major section becomes a snap point */
+section {
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;
+}
+```
+
+---
+
+### 2. Update Section Divider Enhancement (Line ~52)
+**FIND:**
+```css
+/* Section Divider Enhancement */
+.section-divider {
+    padding: 4rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.section-divider::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--lg-coral), transparent);
+    opacity: 0.4;
+}
+
+.section-divider::after {
+    content: '';
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    border: 2px solid var(--lg-coral);
+    border-radius: 50%;
+    background: var(--lg-bg);
+    opacity: 0.6;
+}
+```
+
+**REPLACE WITH:**
+```css
+/* Section Divider Enhancement - Clean minimal style */
+.section-divider {
+    padding: 0;
+    height: 10vh;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.section-divider::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--lg-coral), transparent);
+    opacity: 0.4;
+}
+```
+
+---
+
+### 3. Update Hero Section (Line ~350)
+**FIND:**
+```css
+/* Hero Section */
+.hero {
+    min-height: calc(100vh - 60px); /* Full viewport minus nav offset */
+    padding: 3rem 0 8rem; /* Increased bottom padding for better separation */
+    margin-top: 60px;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+```
+
+**REPLACE WITH:**
+```css
+/* Hero Section - Full viewport with centered content */
+.hero {
+    min-height: 100vh;
+    height: 100vh;
+    padding: 0;
+    margin: 0;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+```
+
+---
+
+### 4. Update Services Section (Line ~600)
+**FIND:**
+```css
+/* Services Section */
+.services {
+    min-height: 100vh; /* Ensure full viewport height */
+    padding: 6rem 0 4rem; /* Increased top padding for better separation */
+    margin-top: 4rem; /* Additional top margin for clear separation from hero */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+```
+
+**REPLACE WITH:**
+```css
+/* Services Section - Full viewport */
+.services {
+    min-height: 100vh;
+    height: auto;
+    padding: 5vh 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+```
+
+---
+
+### 5. Update Investment Section (Line ~780)
+**FIND:**
+```css
+/* Investment Section */
+.investment {
+    min-height: 100vh; /* Ensure full viewport height */
+    padding: 6rem 0 4rem; /* Increased top padding for better separation */
+    background: rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+```
+
+**REPLACE WITH:**
+```css
+/* Investment Section - Full viewport */
+.investment {
+    min-height: 100vh;
+    height: auto;
+    padding: 5vh 0;
+    background: rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+```
+
+---
+
+### 6. Update Microsoft Legacy Section (Line ~1100)
+**FIND:**
+```css
+/* Microsoft Legacy Section - Condensed */
+.microsoft-legacy {
+    min-height: 80vh; /* Slightly smaller than other sections but still substantial */
+    padding: 4rem 0; /* Better spacing */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+```
+
+**REPLACE WITH:**
+```css
+/* Microsoft Legacy Section - Full viewport */
+.microsoft-legacy {
+    min-height: 100vh;
+    height: auto;
+    padding: 5vh 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+```
+
+---
+
+### 7. Update Integrated Testimonials Section (Line ~1200)
+**FIND:**
+```css
+/* Integrated Testimonials - Reduced Spacing */
+.testimonials-integrated {
+    padding: 2rem 0 0; /* Minimal top padding for tight integration */
+    margin-top: 2rem; /* Small margin from Microsoft section */
+}
+```
+
+**REPLACE WITH:**
+```css
+/* Integrated Testimonials - Reduced Spacing */
+.testimonials-integrated {
+    padding: 5vh 0;
+    margin-top: 0;
+}
+```
+
+---
+
+## HTML Changes
+
+### 8. Update First Section Divider (Line ~1650)
+**FIND:**
+```html
+<!-- Section Divider -->
+<div class="section-divider">
+    <div class="divider-line"></div>
+    <div class="divider-content">Strategic Services</div>
+    <div class="divider-line"></div>
+</div>
+```
+
+**REPLACE WITH:**
+```html
+<!-- Section Divider -->
+<div class="section-divider">
+    <div class="divider-line"></div>
+    <div class="divider-content">What I Offer</div>
+    <div class="divider-line"></div>
+</div>
+```
+
+---
+
+### 9. Update Second Section Divider (Line ~1750)
+**FIND:**
+```html
+<!-- Section Divider -->
+<div class="section-divider">
+    <div class="divider-line"></div>
+    <div class="divider-content">Investment Levels</div>
+    <div class="divider-line"></div>
+</div>
+```
+
+**REPLACE WITH:**
+```html
+<!-- Section Divider -->
+<div class="section-divider">
+    <div class="divider-line"></div>
+    <div class="divider-content">Flexible Engagement</div>
+    <div class="divider-line"></div>
+</div>
+```
+
+---
+
+### 10. Update Third Section Divider (Line ~1850)
+**FIND:**
+```html
+<!-- Elegant Section Divider -->
+<div class="section-divider">
+    <div class="divider-line"></div>
+    <div class="divider-content">Proven Impact</div>
+    <div class="divider-line"></div>
+</div>
+```
+
+**REPLACE WITH:**
+```html
+<!-- Elegant Section Divider -->
+<div class="section-divider">
+    <div class="divider-line"></div>
+    <div class="divider-content">Microsoft Legacy</div>
+    <div class="divider-line"></div>
+</div>
+```
+
+---
+
+## Testing & Verification
+
+After implementing all changes, verify the following behavior:
+
+1. **Snap Scrolling**: When you scroll with mouse wheel or trackpad, the page should snap cleanly to the next section
+2. **Full Viewport**: Each section should fill the entire viewport height (100vh)
+3. **No Circles**: Section dividers should only show a horizontal gradient line with text, no circular overlays
+4. **Centered Content**: All content in each section should be vertically centered
+5. **Better Labels**: Section divider labels should be:
+   - "What I Offer" (before Services)
+   - "Flexible Engagement" (before Investment)
+   - "Microsoft Legacy" (before Legacy section)
+
+---
+
+## Expected Result
+
+- Each section fills the entire viewport
+- Smooth snap-to-section scrolling behavior
+- Clean, minimal section dividers without decorative circles
+- No redundant section names
+- Professional, magazine-style scrolling experience
+- Content properly centered in each viewport
+
+---
+
+## Notes
+
+- The `scroll-snap-type: y mandatory` creates the snap-to-section behavior
+- The `height: 100vh` on sections ensures full-viewport coverage
+- The reduced padding (`5vh`) maintains spacing while allowing content to breathe
+- Section dividers are now minimal (`10vh` height) to act as visual breaks without wasting space

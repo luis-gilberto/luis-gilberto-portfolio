@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketing Scope Intelligence - Luis Gilberto</title>
+    <meta name="description" content="Discover the optimal marketing engagement for your business situation with our intelligent assessment tool.">
+    <link rel="canonical" href="https://luis-gilberto.com/scope-intelligence/">
+    
+    <!-- Licensed Brand Fonts (same as Paquet) -->
+    <link rel="stylesheet" href="../fonts/recoleta.css">
+    <link rel="stylesheet" href="../fonts/general-sans.css">
+    <link rel="stylesheet" href="../fonts/editorial-new.css">
+    
+    <style>
+        /* =============================
+           🌈 DESIGN TOKENS (Luis × Paquet)
+           ============================= */
+        :root{
+            /* Colors */
+            --coral: #F96F6E;               /* Luis – primary accent */
+            --teal: #1DD3B0;                /* Paquet-inspired accent */
+            --ink: #2A2A2A;                 /* Primary text */
+            --ink-2: #444;                  /* Secondary text */
+            --charcoal: #111111;            /* Dark bg */
+            --fog: #F5F5F5;                 /* Light bg */
+            --glass: rgba(255,255,255,0.08);
+
+            /* Typography */
+            --font-display: "Recoleta", ui-serif, Georgia, serif;
+            --font-body: "General Sans", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+            --font-accent: "Editorial New", ui-serif, Georgia, serif;
+
+            /* Type scale */
+            --display-min: 3.5rem;          /* Slightly smaller for content-heavy page */
+            --display-max: 7rem;
+            --lh-tight: 0.9;                /* Titles */
+            --lh-body: 1.6;                 /* Paragraphs */
+            --ls-tight: -0.04em;            /* Premium kerning */
+
+            /* Spacing (Paquet breathing room) */
+            --space-1: 1rem;
+            --space-2: 2rem;
+            --space-3: 3rem;
+            --space-4: 4rem;  /* card padding */
+            --space-8: 8rem;  /* section padding */
+
+            /* Radius & effects */
+            --radius-xl: 24px;
+            --radius-2xl: 32px;
+            --blur-lg: 20px; /* glass blur */
+            --shadow-soft: 0 10px 40px rgba(0,0,0,0.25);
+            --shadow-orb: 0 0 120px rgba(249,111,110,0.35);
+
+            /* Motion */
+            --bezier: cubic-bezier(0.4, 0, 0.2, 1);
+            --dur-fast: 220ms;
+            --dur-slow: 25s; /* floating orbs */
+        }
+
+        /* Global reset */
+        * { box-sizing: border-box; }
+        html, body { height: 100%; }
+        body{
+            margin: 0;
+            color: var(--fog);
+            background: radial-gradient(1200px 800px at 10% -10%, rgba(249,111,110,0.15), transparent 60%),
+                        radial-gradient(1000px 700px at 90% 10%, rgba(29,211,176,0.12), transparent 60%),
+                        var(--charcoal);
+            font-family: var(--font-body);
+            line-height: var(--lh-body);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+
+        /* Premium scrollbar */
+        ::-webkit-scrollbar{ width: 10px; }
+        ::-webkit-scrollbar-track{ background: #0b0b0b; }
+        ::-webkit-scrollbar-thumb{
+            background: linear-gradient(180deg, var(--coral), var(--teal));
+            border-radius: 8px;
+        }
+
+        /* =============================
+           🧭 Navigation (glass/blur)
+           ============================= */
+        .nav{
+            position: fixed; inset: 0 auto auto 0; right: 0; height: 72px;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 var(--space-2);
+            backdrop-filter: blur(12px) saturate(140%);
+            background: rgba(17,17,17,0.4);
+            border-bottom: 1px solid var(--glass);
+            z-index: 50;
+        }
+        .brand{ display: inline-flex; align-items: center; gap: .75rem; font-weight: 600; letter-spacing: .02em; }
+        .brand__mark{ width: 28px; height: 28px; border-radius: 8px;
+            background: linear-gradient(135deg, var(--coral), var(--teal));
+            box-shadow: var(--shadow-soft);
+        }
+        .nav a{ color: #EAEAEA; text-decoration: none; opacity: .9; padding: .5rem .75rem; border-radius: 10px; }
+        .nav a.active{ border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.02); }
+        .nav a:hover{ opacity: 1; }
+
+        /* Breadcrumb in nav */
+        .breadcrumb{ color: rgba(255,255,255,.7); font-size: .9rem; }
+        .breadcrumb a{ color: rgba(255,255,255,.9); }
+
+        /* =============================
+           🦋 Floating ambient orbs
+           ============================= */
+        .orbs{ position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+        .orb{ position: absolute; width: 420px; height: 420px; border-radius: 50%; filter: blur(60px) saturate(140%);
+            opacity: .18; mix-blend-mode: screen; will-change: transform;
+            animation: float var(--dur-slow) ease-in-out infinite alternate;
+        }
+        .orb--coral{ background: radial-gradient(circle at 30% 30%, rgba(249,111,110,.9), rgba(249,111,110,.15)); box-shadow: var(--shadow-orb); top: 10%; left: -120px; }
+        .orb--teal{ background: radial-gradient(circle at 60% 40%, rgba(29,211,176,.85), rgba(29,211,176,.12)); top: 65%; right: -140px; animation-delay: 3s; }
+        .orb--third{ background: radial-gradient(circle at 50% 50%, rgba(249,111,110,.6), rgba(29,211,176,.3)); top: 40%; left: 60%; animation-delay: 8s; width: 300px; height: 300px; }
+        @keyframes float{
+            from{ transform: translate3d(0,0,0) scale(1); }
+            to{ transform: translate3d(40px,-30px,0) scale(1.05); }
+        }
+
+        /* =============================
+           🦾 Cursor follower (premium glow)
+           ============================= */
+        .cursor{
+            position: fixed; width: 240px; height: 240px; border-radius: 50%; pointer-events: none; z-index: 20; opacity: 0; mix-blend-mode: screen;
+            background: radial-gradient(closest-side, rgba(249,111,110,0.35), rgba(249,111,110,0.0));
+            transition: opacity var(--dur-fast) var(--bezier), transform 60ms linear;
+        }
+        .cursor--active{ opacity: .6; }
+
+        /* =============================
+           🦸‍♂️ Hero (full-viewport)
+           ============================= */
+        .section{ position: relative; padding: var(--space-8) var(--space-2); z-index: 1; }
+        .hero{ min-height: 100svh; display: grid; place-items: center; text-align: center; }
+        .eyebrow{ color: rgba(255,255,255,.7); font-size: .9rem; letter-spacing: .15em; text-transform: uppercase; margin-bottom: var(--space-1); }
+        .display{
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: clamp(var(--display-min), 6vw, var(--display-max));
+            line-height: var(--lh-tight);
+            letter-spacing: var(--ls-tight);
+            margin: var(--space-2) 0;
+        }
+        .lead{ max-width: 70ch; margin: 0 auto var(--space-3); color: rgba(255,255,255,.88); font-size: 1.125rem; }
+        .cta-row{ display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: var(--space-3); }
+        .btn{ position: relative; display: inline-flex; align-items: center; gap: .5rem; padding: .9rem 1.2rem; border-radius: 14px; color: #111; font-weight: 600; text-decoration: none; background: linear-gradient(135deg, var(--coral), var(--teal)); border: none; cursor: pointer; }
+        .btn:hover{ transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,.35); transition: transform var(--dur-fast) var(--bezier), box-shadow var(--dur-fast) var(--bezier); }
+        .btn--ghost{ background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.15); }
+        .btn--ghost:hover{ background: rgba(255,255,255,.06); }
+
+        .cta-note{ font-size: .9rem; color: rgba(255,255,255,.6); margin-top: .5rem; }
+
+        /* Divider */
+        .divider{ height: 1px; margin: var(--space-8) auto; width: min(92vw, 1200px);
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,.14) 25%, rgba(255,255,255,.14) 75%, transparent);
+        }
+
+        /* =============================
+           🧩 Grid + Cards (glass morphism)
+           ============================= */
+        .grid{ width: min(1200px, 92vw); margin: 0 auto; display: grid; gap: var(--space-3); }
+        @media (min-width: 700px){ .grid{ grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 1024px){ .grid{ grid-template-columns: repeat(3, 1fr); gap: var(--space-4); } }
+
+        .card{
+            position: relative; padding: var(--space-4); border-radius: var(--radius-2xl);
+            backdrop-filter: blur(var(--blur-lg)) saturate(150%);
+            background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04));
+            border: 1px solid var(--glass);
+            box-shadow: var(--shadow-soft);
+            transform: translateY(0) scale(1);
+            transition: transform var(--dur-fast) var(--bezier), box-shadow var(--dur-fast) var(--bezier);
+        }
+        .card::before{ content: ""; position: absolute; inset: 0 0 auto 0; height: 4px; border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+            background: linear-gradient(90deg, var(--coral), var(--teal)); opacity: .95;
+        }
+        .card:hover{ transform: translateY(-8px) scale(1.02); box-shadow: 0 30px 80px rgba(0,0,0,0.35); }
+
+        .card h3{ font-family: var(--font-display); letter-spacing: var(--ls-tight); line-height: 1.1; margin: 0 0 .6rem; font-size: 1.5rem; }
+        .card p{ color: rgba(255,255,255,.82); margin: 0; }
+
+        .meta{ display: flex; gap: .6rem; align-items: center; color: rgba(255,255,255,.65); font-size: .9rem; margin-top: 1rem; }
+        .dot{ width: 8px; height: 8px; border-radius: 50%; background: var(--coral); box-shadow: 0 0 0 3px rgba(249,111,110,0.15); }
+
+        /* Process cards - numbered circles */
+        .process-number{ 
+            width: 56px; height: 56px; border-radius: 50%; 
+            background: linear-gradient(135deg, var(--coral), var(--teal));
+            color: #111; font-family: var(--font-display); font-weight: 700; font-size: 1.5rem;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Service cards with pricing */
+        .service-header{ display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
+        .service-title{ font-family: var(--font-display); font-size: 1.25rem; letter-spacing: var(--ls-tight); line-height: 1.2; margin: 0; }
+        .service-price{ 
+            font-family: var(--font-accent); font-size: .9rem; color: var(--coral); 
+            text-align: right; white-space: nowrap; font-weight: 600;
+        }
+
+        /* =============================
+           📱 Mobile excellence & Layout
+           ============================= */
+        .stack{ width: min(1100px, 92vw); margin: 0 auto; }
+        .section--roomy{ padding-top: var(--space-8); padding-bottom: var(--space-8); }
+        .section--hero{ padding-top: calc(72px + var(--space-4)); } /* Account for fixed nav */
+
+        /* Final CTA - dark section */
+        .final-cta{ 
+            background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
+            border-top: 1px solid var(--glass);
+        }
+
+        /* =============================
+           📝 Utility helpers
+           ============================= */
+        .muted{ color: rgba(255,255,255,.7); }
+        .accent{ color: var(--coral); }
+        .teal{ color: var(--teal); }
+        .visually-hidden{ position: absolute !important; height: 1px; width: 1px; overflow: hidden; clip: rect(1px,1px,1px,1px); white-space: nowrap; }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .nav{ padding: 0 1rem; }
+            .brand{ font-size: .9rem; }
+            .nav a{ padding: .4rem .6rem; font-size: .9rem; }
+            .section{ padding: var(--space-4) 1rem; }
+            .hero{ min-height: 90vh; }
+            .grid{ grid-template-columns: 1fr !important; gap: var(--space-2); }
+            .card{ padding: var(--space-3); }
+            .service-header{ flex-direction: column; gap: .5rem; }
+            .service-title{ font-size: 1.1rem; }
+            .cta-row{ flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+    <!-- ✨ Cursor follower glow -->
+    <div class="cursor" id="cursor"></div>
+
+    <!-- 🌫️ Ambient orbs (parallax handled in JS) -->
+    <div class="orbs" aria-hidden="true">
+        <div class="orb orb--coral" data-speed="0.6"></div>
+        <div class="orb orb--teal" data-speed="0.3"></div>
+        <div class="orb orb--third" data-speed="0.4"></div>
+    </div>
+
+    <!-- 🧭 Navigation (glass) -->
+    <nav class="nav">
+        <div class="brand">
+            <span class="brand__mark" aria-hidden="true"></span>
+            <span>LUIS GILBERTO</span>
+        </div>
+        <div class="breadcrumb">
+            <a href="/">Home</a> > <span>Scope Intelligence</span>
+        </div>
+    </nav>
+
+    <!-- 🦸‍♂️ HERO -->
+    <header class="section hero section--hero" id="top">
+        <div class="stack">
+            <p class="eyebrow">Marketing Intelligence</p>
+            <h1 class="display">Discover the <span class="accent">optimal marketing</span> engagement for your <span class="teal">business situation</span></h1>
+            <p class="lead">Our systematic evaluation analyzes your business stage, objectives, timeline, budget, team structure, and market complexity to match you with the perfect strategic approach.</p>
+            <div class="cta-row">
+                <a class="btn" href="assessment/">Start Strategic Assessment →</a>
+                <a class="btn btn--ghost" href="#process">How It Works</a>
+            </div>
+            <p class="cta-note">No commitment required • Immediate results</p>
+        </div>
+    </header>
+
+    <div class="divider" aria-hidden="true"></div>
+
+    <!-- 🔄 PROCESS SECTION -->
+    <section class="section section--roomy" id="process">
+        <div class="stack">
+            <p class="eyebrow">Intelligence Process</p>
+            <h2 class="display" style="font-size:clamp(2.5rem,4vw,4.5rem);">How It <span class="teal">Works</span></h2>
+            <p class="lead">Three strategic steps that transform complexity into clarity</p>
+        </div>
+        <div class="grid">
+            <article class="card">
+                <div class="process-number">1</div>
+                <h3>5-minute assessment</h3>
+                <p>Comprehensive evaluation of your business stage, objectives, timeline, and resources</p>
+                <div class="meta"><span class="dot"></span><span>Strategic Input</span></div>
+            </article>
+            <article class="card">
+                <div class="process-number">2</div>
+                <h3>Personalized recommendation</h3>
+                <p>Advanced algorithm matches your situation to optimal engagement type</p>
+                <div class="meta"><span class="dot"></span><span>AI-Powered Analysis</span></div>
+            </article>
+            <article class="card">
+                <div class="process-number">3</div>
+                <h3>Custom tactical plan</h3>
+                <p>Detailed project plans, timelines, and investment justification</p>
+                <div class="meta"><span class="dot"></span><span>Actionable Strategy</span></div>
+            </article>
+        </div>
+    </section>
+
+    <div class="divider" aria-hidden="true"></div>
+
+    <!-- 🎯 SERVICES SECTION -->
+    <section class="section section--roomy" id="services">
+        <div class="stack">
+            <p class="eyebrow">Strategic Engagements</p>
+            <h2 class="display" style="font-size:clamp(2.5rem,4vw,4.5rem);">Six <span class="accent">Engagement</span> Types</h2>
+            <p class="lead">Each engagement is designed for specific business stages and objectives, ensuring optimal resource allocation and measurable outcomes.</p>
+        </div>
+        <div class="grid">
+            <article class="card">
+                <div class="service-header">
+                    <h3 class="service-title">Quick-Start Sprint</h3>
+                    <div class="service-price">$4K-$8K<br>2-4 weeks</div>
+                </div>
+                <p>Rapid GTM foundation for startups needing immediate clarity and strategic direction.</p>
+                <div class="meta"><span class="dot"></span><span>Foundation Building</span></div>
+            </article>
+            <article class="card">
+                <div class="service-header">
+                    <h3 class="service-title">Launch Campaign</h3>
+                    <div class="service-price">$12K-$25K<br>6-12 weeks</div>
+                </div>
+                <p>Comprehensive launch strategy for new products/services with full market analysis.</p>
+                <div class="meta"><span class="dot"></span><span>Market Entry</span></div>
+            </article>
+            <article class="card">
+                <div class="service-header">
+                    <h3 class="service-title">Fractional Leadership</h3>
+                    <div class="service-price">$3K-$6K/mo<br>3-6 months</div>
+                </div>
+                <p>Part-time CMO expertise for growing companies requiring strategic marketing leadership.</p>
+                <div class="meta"><span class="dot"></span><span>Executive Guidance</span></div>
+            </article>
+            <article class="card">
+                <div class="service-header">
+                    <h3 class="service-title">Growth Partnership</h3>
+                    <div class="service-price">$8K-$15K/mo<br>Ongoing</div>
+                </div>
+                <p>Revenue-focused growth acceleration and optimization for established businesses.</p>
+                <div class="meta"><span class="dot"></span><span>Scale Strategy</span></div>
+            </article>
+            <article class="card">
+                <div class="service-header">
+                    <h3 class="service-title">Enterprise Consulting</h3>
+                    <div class="service-price">Custom<br>Variable</div>
+                </div>
+                <p>Strategic transformation for complex organizations requiring comprehensive change management.</p>
+                <div class="meta"><span class="dot"></span><span>Transformation</span></div>
+            </article>
+            <article class="card">
+                <div class="service-header">
+                    <h3 class="service-title">Founder's Ally</h3>
+                    <div class="service-price">$2K-$4K/mo<br>Flexible</div>
+                </div>
+                <p>Strategic coaching and tactical support for founders and marketing leaders.</p>
+                <div class="meta"><span class="dot"></span><span>Leadership Support</span></div>
+            </article>
+        </div>
+    </section>
+
+    <div class="divider" aria-hidden="true"></div>
+
+    <!-- ✉️ FINAL CTA -->
+    <section class="section section--roomy final-cta" id="cta">
+        <div class="stack" style="text-align: center;">
+            <h2 class="display" style="font-size:clamp(2.5rem,4vw,4.5rem);">Ready to Discover Your <span class="accent">Optimal Strategy</span>?</h2>
+            <p class="lead">Take our strategic assessment and receive a personalized recommendation with custom tactical plan.</p>
+            <div class="cta-row">
+                <a class="btn" href="assessment/">Start Assessment Now →</a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        /* =============================
+           🧠 Cursor follower logic
+           ============================= */
+        const cursor = document.getElementById('cursor');
+        let rafId;
+        let targetX = 0, targetY = 0;
+        let x = 0, y = 0;
+        const lerp = (a,b,t)=>a+(b-a)*t;
+
+        const activate = () => cursor.classList.add('cursor--active');
+        const deactivate = () => cursor.classList.remove('cursor--active');
+
+        window.addEventListener('pointermove', (e)=>{
+            targetX = e.clientX - 120; // center the 240px circle
+            targetY = e.clientY - 120;
+            activate();
+            if(!rafId){
+                const loop = () =>{
+                    x = lerp(x, targetX, 0.18);
+                    y = lerp(y, targetY, 0.18);
+                    cursor.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+                    rafId = requestAnimationFrame(loop);
+                };
+                rafId = requestAnimationFrame(loop);
+            }
+        });
+        window.addEventListener('pointerleave', deactivate);
+
+        /* =============================
+           🌫️ Parallax orbs on scroll
+           ============================= */
+        const orbs = document.querySelectorAll('.orb');
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY || window.pageYOffset;
+            orbs.forEach(orb => {
+                const speed = parseFloat(orb.dataset.speed || 0.5);
+                orb.style.transform = `translate3d(0, ${-scrollY * speed * 0.08}px, 0)`;
+            });
+        });
+
+        /* =============================
+           🔗 Enhanced scroll behavior
+           ============================= */
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        /* =============================
+           ⌨️ Keyboard navigation for sections
+           ============================= */
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+                e.preventDefault();
+                scrollToNextSection();
+            } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+                e.preventDefault();
+                scrollToPrevSection();
+            }
+        });
+
+        function scrollToNextSection() {
+            const sections = document.querySelectorAll('.section');
+            const currentScroll = window.scrollY;
+            
+            for (let i = 0; i < sections.length; i++) {
+                const sectionTop = sections[i].offsetTop;
+                if (sectionTop > currentScroll + 50) {
+                    sections[i].scrollIntoView({ behavior: 'smooth' });
+                    break;
+                }
+            }
+        }
+
+        function scrollToPrevSection() {
+            const sections = document.querySelectorAll('.section');
+            const currentScroll = window.scrollY;
+            
+            for (let i = sections.length - 1; i >= 0; i--) {
+                const sectionTop = sections[i].offsetTop;
+                if (sectionTop < currentScroll - 50) {
+                    sections[i].scrollIntoView({ behavior: 'smooth' });
+                    break;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

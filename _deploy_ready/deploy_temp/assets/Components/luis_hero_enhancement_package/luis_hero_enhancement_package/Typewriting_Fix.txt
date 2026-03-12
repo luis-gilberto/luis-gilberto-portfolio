@@ -1,0 +1,193 @@
+🚨 Issues Found:
+DOM Ready Conflict: You have multiple DOMContentLoaded listeners fighting each other
+Duplicate Code: The typewriter initialization is being called multiple times
+Element ID Mismatch: The code is looking for #typewriter but your HTML structure might not match
+Timing Issues: The initialization is happening before the DOM is fully ready
+🔧 The Fix:
+Replace ALL the typewriter JavaScript in your <script> section with this bulletproof version:
+
+Copy// BULLETPROOF TYPEWRITER - SINGLE IMPLEMENTATION
+(function() {
+    'use strict';
+    
+    let typewriterInstance = null;
+    let isInitialized = false;
+    
+    class TypewriterController {
+        constructor(elementId, taglines, options = {}) {
+            this.element = document.getElementById(elementId);
+            this.taglines = taglines;
+            this.options = {
+                typeSpeed: options.typeSpeed || 100,
+                deleteSpeed: options.deleteSpeed || 60,
+                pauseEnd: options.pauseEnd || 2000,
+                pauseStart: options.pauseStart || 800,
+                startDelay: options.startDelay || 1000
+            };
+            
+            this.currentIndex = 0;
+            this.charIndex = 0;
+            this.isDeleting = false;
+            this.isActive = false;
+            this.timeoutId = null;
+            this.isDestroyed = false;
+            
+            if (this.element) {
+                this.init();
+            } else {
+                console.error('Typewriter element not found:', elementId);
+            }
+        }
+        
+        init() {
+            if (this.isDestroyed || !this.element) return;
+            
+            this.element.textContent = '';
+            this.timeoutId = setTimeout(() => {
+                if (!this.isDestroyed) {
+                    this.isActive = true;
+                    this.type();
+                }
+            }, this.options.startDelay);
+        }
+        
+        type() {
+            if (this.isDestroyed || !this.element) return;
+            
+            const currentTagline = this.taglines[this.currentIndex];
+            let typeSpeed = this.options.typeSpeed;
+            
+            if (this.isDeleting) {
+                this.element.textContent = currentTagline.substring(0, this.charIndex - 1);
+                this.charIndex--;
+                typeSpeed = this.options.deleteSpeed;
+            } else {
+                this.element.textContent = currentTagline.substring(0, this.charIndex + 1);
+                this.charIndex++;
+            }
+            
+            if (!this.isDeleting && this.charIndex === currentTagline.length) {
+                typeSpeed = this.options.pauseEnd;
+                this.isDeleting = true;
+            } else if (this.isDeleting && this.charIndex === 0) {
+                this.isDeleting = false;
+                this.currentIndex = (this.currentIndex + 1) % this.taglines.length;
+                typeSpeed = this.options.pauseStart;
+            }
+            
+            this.timeoutId = setTimeout(() => {
+                if (!this.isDestroyed) this.type();
+            }, typeSpeed);
+        }
+        
+        destroy() {
+            this.isDestroyed = true;
+            this.isActive = false;
+            if (this.timeoutId) {
+                clearTimeout(this.timeoutId);
+                this.timeoutId = null;
+            }
+        }
+    }
+    
+    // Initialize function
+    function initTypewriter() {
+        if (isInitialized) return;
+        
+        console.log('Initializing typewriter...');
+        
+        const element = document.getElementById('typewriter');
+        if (!element) {
+            console.error('Typewriter element #typewriter not found in DOM');
+            return;
+        }
+        
+        if (typewriterInstance) {
+            typewriterInstance.destroy();
+        }
+        
+        const taglines = [
+            ' a Microsoft ecosystem strategist',
+            ' bringing AI campaigns to life',
+            ' a Venezuelan creative in Seattle',
+            ' bridging tech and storytelling',
+            ' a former magician turned marketer',
+            ' crafting Copilot narratives'
+        ];
+        
+        typewriterInstance = new TypewriterController('typewriter', taglines, {
+            typeSpeed: 100,
+            deleteSpeed: 60,
+            pauseEnd: 2000,
+            pauseStart: 800,
+            startDelay: 1500
+        });
+        
+        isInitialized = true;
+        console.log('Typewriter initialized successfully');
+    }
+    
+    // Safe initialization
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initTypewriter);
+    } else {
+        setTimeout(initTypewriter, 100);
+    }
+    
+    // Cleanup
+    window.addEventListener('beforeunload', () => {
+        if (typewriterInstance) {
+            typewriterInstance.destroy();
+        }
+    });
+    
+})();
+📝 For Trae - Complete Fix Instructions:
+Step 1: Clean Up the JavaScript Section
+In your <script> tag, REMOVE these conflicting sections:
+
+Copy// REMOVE ALL OF THIS:
+class TypewriterController {
+    // ... entire class definition
+}
+
+function initializeTypewriter() {
+    // ... entire function
+}
+
+function cleanupTypewriter() {
+    // ... entire function
+}
+
+// REMOVE duplicate DOMContentLoaded listeners
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(initializeTypewriter, 100);
+});
+Step 2: Replace with Clean Version
+Replace the removed code with the bulletproof version I provided above.
+
+Step 3: Verify HTML Structure
+Make sure your HTML has the correct structure:
+
+Copy<div class="dynamic-tagline">
+    <span class="tagline-prefix">I'm</span>
+    <span class="typewriter-text" id="typewriter"></span>
+    <span class="cursor">|</span>
+</div>
+Step 4: Test
+After making these changes:
+
+Clear browser cache
+Reload the page
+Open browser console (F12)
+Look for the message "Typewriter initialized successfully"
+🎯 Why This Fixes It:
+✅ Single Initialization: Prevents multiple competing instances
+✅ Proper DOM Checking: Waits for element to exist before starting
+✅ Clean Timeouts: Properly manages and cleans up all timeouts
+✅ Error Handling: Logs errors if elements aren't found
+✅ State Management: Prevents conflicts between different states
+
+The main issue was that you had multiple DOMContentLoaded listeners trying to initialize the typewriter at the same time, creating conflicts. This clean version uses an IIFE (Immediately Invoked Function Expression) to encapsulate everything and prevent global conflicts.
+
+This should fix the typewriter glitching completely! 🔥

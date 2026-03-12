@@ -1,0 +1,301 @@
+
+
+
+The Fully Wired Code:
+code
+Tsx
+'use client'
+
+import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+
+// StrategyIQ Logic Definitions (Aligned with ScopeIQ Data)
+const serviceTiers = {
+    creative: { name: 'Creative Strategy', price: '$3k-$8k', duration: '4-12 weeks', description: 'Content strategy, creative frameworks, and systematic asset development.', deliverables: ['Creative Framework', 'Content System'], complexity: [1, 3] },
+    gtm: { name: 'Go-to-Market Sprint', price: '$5k-$12k', duration: '6-12 weeks', description: 'Systematic market entry strategy with positioning and launch roadmap.', deliverables: ['Market Analysis', 'Launch Roadmap'], complexity: [2, 4] },
+    brand: { name: 'Brand Intelligence', price: '$8k-$18k', duration: '8-16 weeks', description: 'Comprehensive brand positioning, messaging, and systematic brand development.', deliverables: ['Brand Strategy', 'Messaging Architecture'], complexity: [3, 5] },
+    campaign: { name: 'Strategic Campaigns', price: '$12k-$25k', duration: '12-20 weeks', description: 'End-to-end campaign strategy, creative, and systematic optimization.', deliverables: ['Campaign Strategy', 'Media Planning'], complexity: [4, 6] }
+};
+
+// Mock Assessment Questions (for demonstration)
+const assessmentQuestions = {
+    gtm: [
+        { id: 'market_readiness', question: 'Market readiness strategy?', options: [{ label: 'Ready', score: 5 }, { label: 'In Concept', score: 2 }], insight: 'Market readiness dictates resource intensity.' },
+        { id: 'competitive_position', question: 'How do you differentiate from competitors?', options: [{ label: 'Unclear', score: 3 }, { label: 'Clear Value Prop', score: 5 }], insight: 'Differentiation clarity scopes positioning work.' }
+    ],
+    // (Note: More questions would be defined here in the full app)
+};
+
+// INITIAL STATE
+const initialClientContext = {
+  projectType: '--', budgetRange: '--', timeline: '--', companySize: '--'
+};
+
+// Helper function to render FontAwesome icons (using common class names)
+const Icon = ({ name, color }: { name: string, color: string }) => (
+  <i className={`fas fa-${name} text-${color} mr-2`} style={{ color: `var(--${color})` }} />
+);
+
+// Main Component
+export default function StrategyIQDashboard() {
+    const [clientContext, setClientContext] = useState(initialClientContext);
+    const [assessmentState, setAssessmentState] = useState({ 
+      type: '', 
+      index: 0, 
+      active: false, 
+      answers: {}, 
+      score: 0 
+    });
+
+    const loadScopeIQData = () => {
+        // This would be an API call to load the ScopeIQ data from the DB
+        const mockData = {
+            projectType: 'Brand Repositioning', budgetRange: '$25K - $50K', timeline: '3-6 months', companySize: '50-200 employees'
+        };
+        setClientContext(mockData);
+    };
+
+    const startAssessment = (type: string) => {
+        setAssessmentState({ type, index: 0, active: true, answers: {}, score: 0 });
+    };
+
+    const nextQuestion = () => {
+      const questions = assessmentQuestions[assessmentState.type as keyof typeof assessmentQuestions];
+      
+      // Check if answer is selected
+      const currentQId = questions[assessmentState.index].id;
+      if (!assessmentState.answers[currentQId]) {
+        alert('Please select an option before proceeding.');
+        return;
+      }
+
+      if (assessmentState.index < questions.length - 1) {
+        setAssessmentState(prev => ({ ...prev, index: prev.index + 1 }));
+      } else {
+        setAssessmentState(prev => ({ ...prev, active: false })); // End assessment
+      }
+    };
+
+    const handleOptionSelect = (qId: string, value: string, score: number) => {
+      setAssessmentState(prev => ({ 
+        ...prev, 
+        answers: { ...prev.answers, [qId]: { value, score } },
+        score: prev.score + score // Simple scoring
+      }));
+    };
+
+    const resetAssessment = () => {
+        if (window.confirm('Reset current assessment? This will clear all progress.')) {
+            setAssessmentState({ type: '', index: 0, active: false, answers: {}, score: 0 });
+        }
+    };
+
+    // Mock Render Function
+    const renderAssessment = () => {
+      const q = assessmentQuestions[assessmentState.type as keyof typeof assessmentQuestions]?.[assessmentState.index];
+      if (!q) return <div className="text-[var(--coral)]">Assessment Complete.</div>;
+
+      return (
+        <div className="space-y-4">
+          <h3 className="font-big-shoulders text-3xl font-bold mb-4">{q.question}</h3>
+          <p className="text-[var(--text-secondary)] mb-6">{q.insight}</p>
+          {q.options.map((opt, i) => (
+            <button 
+              key={i} 
+              className={`w-full text-left p-4 rounded-xl border border-[var(--border-strong)] bg-[var(--bg-alt)] hover:border-[var(--coral)] transition-all duration-200 ${assessmentState.answers[q.id]?.value === opt.value ? 'border-2 border-[var(--coral)]' : ''}`} 
+              onClick={() => handleOptionSelect(q.id, opt.value, opt.score)}
+            >
+                <span className="text-lg text-[var(--text-primary)]">{opt.label}</span>
+            </button>
+          ))}
+        </div>
+      );
+    };
+
+    return (
+        <div className="bg-[var(--bg-primary)] min-h-screen pt-12">
+            
+            {/* Dashboard Header - Unified Look */}
+            <header className="bg-[var(--bg-alt)] border-b border-[var(--border-strong)] text-[var(--text-primary)] py-8 relative">
+                <div className="max-w-7xl mx-auto px-6 relative z-10">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h1 className="font-big-shoulders text-3xl font-bold mb-2">
+                                Strategy<span className="text-[var(--coral)]">IQ</span> Engine
+                            </h1>
+                            <p className="text-lg text-[var(--text-secondary)]">Live Consultation Assessment Framework</p>
+                        </div>
+                        <div className="text-right">
+                            <div className="text-sm text-[var(--text-muted)] mb-1">Active Session</div>
+                            <div className="text-xl font-semibold" id="clientName">Client Assessment</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            {/* Main Dashboard Grid */}
+            <div className="max-w-7xl mx-auto px-6 py-8">
+                
+                {/* Client Context Panel */}
+                <section className="mb-8">
+                    <div className="p-6 rounded-2xl bg-[var(--card-bg)] border border-[var(--border-strong)] shadow-[var(--shadow-soft)]">
+                        <div className="flex items-start justify-between mb-4">
+                            <div>
+                                <h2 className="font-big-shoulders text-xl font-semibold mb-2">Client Context</h2>
+                                <p className="text-[var(--text-secondary)] text-sm">Information from ScopeIQ Wizard integration</p>
+                            </div>
+                            <Button className="bg-[var(--teal)] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#20A29C] transition-all" onClick={loadScopeIQData}>
+                                <i className="fas fa-sync mr-2"></i>Load ScopeIQ Data
+                            </Button>
+                        </div>
+                        <div id="clientContext" className="grid md:grid-cols-4 gap-4">
+                            {Object.entries(clientContext).map(([key, value]) => (
+                                <div key={key} className="bg-[var(--bg-alt)] rounded-lg p-3 border border-[var(--border-subtle)]">
+                                    <div className="text-xs text-[var(--text-muted)] mb-1 uppercase">{key.replace(/([A-Z])/g, ' $1').trim()}</div>
+                                    <div className="font-semibold text-[var(--text-primary)] text-sm">{value}</div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                <div className="grid lg:grid-cols-4 gap-8">
+                    
+                    {/* Assessment Interface */}
+                    <div className="lg:col-span-3">
+                        
+                        {/* Strategic Area Selection */}
+                        <section id="serviceSelection" className={`${assessmentState.active ? 'hidden' : ''} mb-8`}>
+                            <div className="p-8 rounded-2xl bg-[var(--card-bg)] border border-[var(--border-strong)] shadow-[var(--shadow-soft)]">
+                                <div className="mb-6">
+                                    <h2 className="font-big-shoulders text-2xl font-semibold mb-3">
+                                        Strategic <span className="text-[var(--coral)]">Assessment</span> Areas
+                                    </h2>
+                                    <p className="text-[var(--text-secondary)]">
+                                        Select the primary strategic focus area to begin the intelligence assessment with your client.
+                                    </p>
+                                </div>
+
+                                <div className="grid md:grid-cols-2 gap-6">
+                                    {Object.entries(serviceTiers).map(([key, service]) => (
+                                        <div key={key} className="p-6 rounded-xl cursor-pointer bg-[var(--bg-alt)] border border-[var(--border-subtle)] hover:border-[var(--coral)] transition-all duration-300" onClick={() => startAssessment(key)}>
+                                            <div className="flex items-start">
+                                                <div className="w-12 h-12 bg-[var(--card-bg)] rounded-lg flex items-center justify-center mr-4 border border-[var(--border-subtle)] shadow-inner">
+                                                    {key === 'gtm' && <Icon name="rocket" color="coral" />}
+                                                    {key === 'brand' && <Icon name="bullhorn" color="teal" />}
+                                                    {key === 'campaign' && <Icon name="chart-bar" color="coral" />}
+                                                    {key === 'creative' && <Icon name="palette" color="teal" />}
+                                                </div>
+                                                <div className="flex-1">
+                                                    <h3 className="font-big-shoulders text-lg font-semibold mb-2">{service.name}</h3>
+                                                    <p className="text-[var(--text-secondary)] text-sm mb-3">{service.description}</p>
+                                                    <div className="text-xs text-[var(--coral)] font-medium">{service.duration}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </section>
+
+                        {/* Live Assessment Flow */}
+                        <section id="assessmentFlow" className={`${assessmentState.active ? '' : 'hidden'}`}>
+                          <div className="p-8 rounded-2xl bg-[var(--card-bg)] border border-[var(--border-strong)] shadow-[var(--shadow-soft)]">
+                              {/* Progress Bar (Styling not fully wired but structural) */}
+                              <div className="mb-8">
+                                  <div className="flex items-center justify-between text-sm mb-2">
+                                      <span className="font-medium text-[var(--text-primary)]">Strategic Assessment Progress</span>
+                                      <span className="font-bold text-[var(--coral)]">{(assessmentState.index / 2) * 100}%</span>
+                                  </div>
+                                  <div className="w-full bg-[var(--bg-alt)] rounded-full h-3">
+                                      <div className="bg-[var(--coral)] h-3 rounded-full" style={{ width: `${(assessmentState.index / 2) * 100}%` }}></div>
+                                  </div>
+                              </div>
+
+                              {/* Question Content */}
+                              <div id="questionContainer">
+                                {renderAssessment()}
+                              </div>
+
+                              {/* Navigation */}
+                              <div className="flex justify-between mt-8">
+                                  <button className="bg-[var(--bg-alt)] text-[var(--text-primary)] px-6 py-3 rounded-lg font-medium hover:bg-[var(--border-strong)] transition-all disabled:opacity-50" onClick={() => setAssessmentState(prev => ({ ...prev, index: Math.max(0, prev.index - 1) }))} disabled={assessmentState.index === 0}>
+                                      <i className="fas fa-arrow-left mr-2"></i>Previous
+                                  </button>
+                                  <button className="bg-[var(--coral)] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#e55a5a] transition-all" onClick={nextQuestion}>
+                                      {assessmentState.index === assessmentQuestions[assessmentState.type as keyof typeof assessmentQuestions]?.length - 1 ? 'Complete' : 'Next'} <i className={`fas ${assessmentState.index === assessmentQuestions[assessmentState.type as keyof typeof assessmentQuestions]?.length - 1 ? 'fa-check' : 'fa-arrow-right'} ml-2`}></i>
+                                  </button>
+                              </div>
+                          </div>
+                        </section>
+                        
+                        {/* Results Section Placeholder */}
+                        <section id="resultsSection" className={`${assessmentState.active === false && assessmentState.index > 0 ? '' : 'hidden'}`}>
+                            <div className="p-8 rounded-2xl bg-[var(--card-bg)] border border-[var(--border-strong)] shadow-[var(--shadow-soft)]">
+                                <h2 className="font-big-shoulders text-2xl font-semibold mb-3">
+                                    Strategic <span className="text-[var(--teal)]">Recommendation</span>
+                                </h2>
+                                <p className="text-[var(--text-secondary)] mb-6">Intelligence-driven engagement recommendation based on systematic assessment.</p>
+                                <div className="bg-[var(--bg-alt)] p-6 rounded-xl">
+                                    <p className="text-[var(--text-primary)] font-semibold">Ready to generate your final strategic brief.</p>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                    {/* Live Scoring Sidebar */}
+                    <div className="lg:col-span-1">
+                        <div className="live-scoring space-y-6">
+                            
+                            {/* Live Intelligence Score */}
+                            <div className="p-6 rounded-2xl bg-[var(--card-bg)] border border-[var(--border-strong)] shadow-[var(--shadow-soft)]">
+                                <h3 className="font-big-shoulders text-lg font-semibold mb-4 text-[var(--coral)]">
+                                    <i className="fas fa-brain mr-2"></i>Intelligence Score
+                                </h3>
+                                <div className="text-center mb-4">
+                                    <div className="text-4xl font-bold text-[var(--coral)] mb-2">{assessmentState.score}</div>
+                                    <div className="text-sm text-[var(--text-secondary)]">Complexity Assessment</div>
+                                </div>
+                            </div>
+
+                            {/* Service Tier Matching */}
+                            <div className="p-6 rounded-2xl bg-[var(--card-bg)] border border-[var(--border-strong)] shadow-[var(--shadow-soft)]">
+                                <h3 className="font-big-shoulders text-lg font-semibold mb-4 text-[var(--teal)]">
+                                    <i className="fas fa-target mr-2"></i>Service Match
+                                </h3>
+                                <div className="text-center text-[var(--text-secondary)]">
+                                    Complete assessment for recommendation
+                                </div>
+                            </div>
+
+                            {/* Revenue Projection */}
+                            <div className="p-6 rounded-2xl bg-[var(--card-bg)] border border-[var(--border-strong)] shadow-[var(--shadow-soft)]">
+                                <h3 className="font-big-shoulders text-lg font-semibold mb-4">
+                                    <i className="fas fa-chart-line mr-2"></i>Revenue <span className="text-[var(--teal)]">Projection</span>
+                                </h3>
+                                <div className="space-y-3">
+                                    <div className="flex items-center justify-between text-[var(--text-secondary)]">
+                                        <span className="text-sm">Project Value</span>
+                                        <span className="font-bold text-[var(--teal)]">$0</span>
+                                    </div>
+                                    <div className="flex items-center justify-between text-[var(--text-secondary)]">
+                                        <span className="text-sm">Confidence Level</span>
+                                        <span className="font-bold">0%</span>
+                                    </div>
+                                    <div className="flex items-center justify-between text-[var(--text-secondary)]">
+                                        <span className="text-sm">Close Probability</span>
+                                        <span className="font-bold text-[var(--coral)]">0%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Quick Actions */}
+                            <div className="p-6 rounded-2xl bg-[var(--card-bg)] border border-[var(--border-strong)] shadow-[var(--shadow-soft)]">
+                                <h3 className="font-big-shoulders text-lg font-semibold mb-4">
+                                    <i className="fas fa-bolt mr-2"></i>Quick Actions
+                                </h3>
+                                <div className="space-y-3">
+                                    <Button className="w-full bg-[var(--bg-alt)] text-[var(--text-primary)] py-2 px-4 rounded-lg text-sm font-medium hover:bg-[var(--border-strong)] transition-colors" onClick={resetAssessment}>
+                                        <i className="fas fa-redo mr-2"></i>Reset Assessment
+                                    </Button>
+                          

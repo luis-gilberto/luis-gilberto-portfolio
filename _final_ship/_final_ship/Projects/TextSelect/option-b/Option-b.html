@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TextSelect.click - Copy what you mean. Not what breaks.</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+            background: #1a1a1a;
+            color: #f5f5f5;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 48px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #00d4ff, #0066ff);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #a0a0a0;
+            text-decoration: none;
+            transition: color 0.3s;
+            font-size: 15px;
+        }
+
+        .nav-links a:hover {
+            color: #00d4ff;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 48px 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 50%, rgba(0, 212, 255, 0.08), transparent 50%),
+                        radial-gradient(circle at 70% 50%, rgba(0, 102, 255, 0.06), transparent 50%);
+            z-index: 0;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            width: 100%;
+            z-index: 1;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 64px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 24px;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #ffffff, #a0a0a0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subheadline {
+            font-size: 20px;
+            color: #a0a0a0;
+            margin-bottom: 64px;
+            line-height: 1.6;
+            max-width: 600px;
+        }
+
+        /* Split Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            margin-bottom: 64px;
+        }
+
+        .comparison-side {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 48px;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .comparison-side:hover {
+            transform: translateY(-8px);
+        }
+
+        .comparison-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 24px;
+            font-weight: 600;
+        }
+
+        .before .comparison-label {
+            color: #ff4444;
+        }
+
+        .after .comparison-label {
+            color: #00d4ff;
+        }
+
+        .text-demo {
+            font-family: 'Courier New', monospace;
+            font-size: 24px;
+            padding: 24px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .selection {
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .selection-broken {
+            background: rgba(255, 68, 68, 0.3);
+            border: 2px solid #ff4444;
+        }
+
+        .selection-perfect {
+            background: rgba(0, 212, 255, 0.3);
+            border: 2px solid #00d4ff;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+        }
+
+        /* CTA Buttons */
+        .cta-group {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 500;
+            border-radius: 12px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            letter-spacing: 0.02em;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4ff, #0066ff);
+            color: #ffffff;
+            box-shadow: 0 8px 24px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(0, 212, 255, 0.5);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #00d4ff;
+            border: 2px solid rgba(0, 212, 255, 0.5);
+        }
+
+        .btn-secondary:hover {
+            border-color: #00d4ff;
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        /* Feature Section Intro */
+        .feature-intro {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 48px;
+            position: relative;
+        }
+
+        .feature-content {
+            max-width: 1200px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .feature-text h2 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            letter-spacing: -0.01em;
+        }
+
+        .feature-text p {
+            font-size: 18px;
+            color: #a0a0a0;
+            line-height: 1.7;
+        }
+
+        /* Code Editor Mockup */
+        .code-editor {
+            background: #0d1117;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transform: translateY(60px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .code-editor.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .editor-header {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .editor-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
+
+        .code-line {
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            font-size: 16px;
+            line-height: 1.8;
+            color: #c9d1d9;
+        }
+
+        .code-keyword { color: #ff7b72; }
+        .code-variable {
+            background: rgba(0, 212, 255, 0.3);
+            border: 2px solid #00d4ff;
+            border-radius: 4px;
+            padding: 2px 6px;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+        }
+        .code-operator { color: #79c0ff; }
+        .code-string { color: #a5d6ff; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 16px 24px;
+            }
+
+            h1 {
+                font-size: 40px;
+            }
+
+            .subheadline {
+                font-size: 18px;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .cta-group {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .feature-content {
+                grid-template-columns: 1fr;
+                gap: 48px;
+            }
+
+            .feature-text h2 {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">
+            <div class="logo-icon">TS</div>
+            <span>TextSelect.click</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#playground">Playground</a></li>
+            <li><a href="#donate">Donate</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-background"></div>
+        <div class="hero-content">
+            <h1>Copy what you mean.<br>Not what breaks.</h1>
+            <p class="subheadline">Double-click to select text with symbols—no wrestling with dashes, slashes, or code syntax.</p>
+            
+            <div class="comparison">
+                <div class="comparison-side before">
+                    <div class="comparison-label">❌ Before</div>
+                    <div class="text-demo">
+                        my-<span class="selection selection-broken">file</span>-name.js
+                    </div>
+                </div>
+                <div class="comparison-side after">
+                    <div class="comparison-label">✓ With TextSelect</div>
+                    <div class="text-demo">
+                        <span class="selection selection-perfect">my-file-name.js</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cta-group">
+                <a href="#install" class="btn btn-primary">Add to Chrome</a>
+                <a href="#browsers" class="btn btn-secondary">View All Browsers</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Feature Section: Code Editor -->
+    <section class="feature-intro">
+        <div class="feature-content">
+            <div class="feature-text">
+                <h2>Grab entire variables, file paths, and URLs.<br>One click. Zero frustration.</h2>
+                <p>No more triple-clicking, dragging, or fighting with your browser. TextSelect recognizes symbols like underscores, dashes, and slashes—so you can select complex strings instantly.</p>
+            </div>
+            
+            <div class="code-editor" id="codeEditor">
+                <div class="editor-header">
+                    <div class="editor-dot dot-red"></div>
+                    <div class="editor-dot dot-yellow"></div>
+                    <div class="editor-dot dot-green"></div>
+                </div>
+                <div class="code-line">
+                    <span class="code-keyword">const</span> <span class="code-variable">API_KEY_2024</span> <span class="code-operator">=</span> <span class="code-string">"xyz-789"</span>;
+                </div>
+                <div class="code-line">
+                    <span class="code-keyword">const</span> filePath <span class="code-operator">=</span> <span class="code-string">"/user/docs/report_v2.pdf"</span>;
+                </div>
+                <div class="code-line">
+                    <span class="code-keyword">const</span> endpoint <span class="code-operator">=</span> <span class="code-string">"api.example.com/v1"</span>;
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Scroll-triggered animation for code editor
+        function handleScroll() {
+            const codeEditor = document.getElementById('codeEditor');
+            const rect = codeEditor.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
+            
+            // Trigger animation when element is 20% into viewport
+            if (rect.top < windowHeight * 0.8) {
+                codeEditor.classList.add('visible');
+            }
+        }
+
+        window.addEventListener('scroll', handleScroll);
+        // Check on load in case already scrolled
+        handleScroll();
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

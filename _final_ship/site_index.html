@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ecosystem Mission Control Console v9.0</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=Playfair+Display:ital,wght@1,400&family=JetBrains+Mono:wght@400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-body: #0A0A0A;
+      --bg-card: #141414;
+      --bg-card-hover: #1A1A1A;
+      --text-primary: #F4F1ED;
+      --text-secondary: #888;
+      --text-muted: #555;
+      --border: rgba(255,255,255,0.08);
+      --teal: #2ED3C6;
+      --coral: #F96F6E;
+      --gray: #444;
+      --font-display: 'Big Shoulders Display', sans-serif;
+      --font-serif: 'Playfair Display', serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-sans: 'Inter', sans-serif;
+    }
+
+    body {
+      background: var(--bg-body);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* CONSOLE WRAPPER */
+    .console-wrapper {
+      padding: 2rem;
+      max-width: 1600px;
+      margin: 0 auto;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    /* CONSOLE HEADER & PANELS */
+    .console-header {
+      margin-bottom: 3rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 2rem;
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: 3rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 0 0 2rem 0;
+      line-height: 1;
+    }
+
+    .console-panels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    .panel {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+    }
+
+    .panel h3 {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin: 0 0 1rem 0;
+      letter-spacing: 0.1em;
+    }
+
+    /* PANEL A: STATUS BAR */
+    .status-metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1rem;
+    }
+    .metric-item {
+      display: flex;
+      flex-direction: column;
+    }
+    .metric-value {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      color: var(--text-primary);
+    }
+    .metric-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* PANEL B: UPGRADE QUEUE */
+    .upgrade-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      max-height: 120px;
+      overflow-y: auto;
+    }
+    .upgrade-item {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--coral);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .upgrade-item::before {
+      content: '';
+      display: block;
+      width: 4px;
+      height: 4px;
+      background: var(--coral);
+      border-radius: 50%;
+    }
+
+    /* DASHBOARD GRID */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+      width: 100%;
+      margin-bottom: 4rem;
+    }
+
+    @media (max-width: 1200px) { .dashboard-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 768px) { 
+      .dashboard-grid { grid-template-columns: 1fr; } 
+      .console-panels { grid-template-columns: 1fr; }
+    }
+
+    .engine-column { display: flex; flex-direction: column; gap: 2rem; }
+
+    /* ANCHOR CARD */
+    .anchor-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      min-height: 160px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+    .anchor-header {
+      font-family: var(--font-display);
+      font-size: 28pt;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-primary);
+      margin: 0;
+      line-height: 1;
+    }
+
+    /* SUBSYSTEMS & NODES */
+    .subsystem-container { display: flex; flex-direction: column; gap: 1.5rem; }
+    .subsystem-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+    }
+    .series-label {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 1.5rem;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.5rem;
+      display: block;
+    }
+
+    .node-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    /* ECOSYSTEM NODE */
+    .ecosystem-node {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid transparent;
+    }
+
+    .ecosystem-node:hover {
+      background: rgba(255,255,255,0.05);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      border-color: rgba(255,255,255,0.1);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-top: 6px;
+      flex-shrink: 0;
+    }
+
+    .node-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .node-title {
+      font-family: var(--font-sans);
+      font-weight: 500;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+    }
+
+    .node-path {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      word-break: break-all;
+    }
+
+    /* STATUS COLORS */
+    [data-status="complete"] .status-dot { background: var(--teal); box-shadow: 0 0 6px rgba(46, 211, 198, 0.4); }
+    [data-status="upgrade"] .status-dot { background: var(--coral); box-shadow: 0 0 6px rgba(249, 111, 110, 0.4); }
+    [data-status="archive"] .status-dot { background: var(--gray); opacity: 0.5; }
+    
+    [data-status="upgrade"]:hover { border-color: rgba(249, 111, 110, 0.3); }
+    [data-status="complete"]:hover { border-color: rgba(46, 211, 198, 0.3); }
+
+    /* INFRASTRUCTURE ROW */
+    .infrastructure-row {
+      border-top: 1px solid var(--border);
+      padding-top: 3rem;
+      margin-top: auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 4rem;
+    }
+    
+    .infra-section h3 {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+    }
+    
+    .infra-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- GLOBAL NAV SYNC -->
+  <div id="site-nav" data-active="portfolio"></div>
+
+  <main class="console-wrapper">
+    
+    <header class="console-header">
+      <h1>Ecosystem Mission Control Console</h1>
+      
+      <div class="console-panels">
+        <!-- Panel A: System Status -->
+        <div class="panel" id="panel-status">
+          <h3>System Status</h3>
+          <div class="status-metrics" id="status-metrics">
+            <!-- Injected via JS -->
+          </div>
+        </div>
+
+        <!-- Panel B: Upgrade Queue -->
+        <div class="panel" id="panel-queue">
+          <h3>Upgrade Queue</h3>
+          <ul class="upgrade-list" id="upgrade-list">
+            <!-- Injected via JS -->
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <div class="dashboard-grid">
+
+      <!-- LANE 1: PORTFOLIO -->
+      <section class="engine-column">
+        <div class="anchor-card">
+          <h2 class="anchor-header">PORTFOLIO</h2>
+          <div class="node-path" style="margin-top:0.5rem;">/index.html</div>
+        </div>
+
+        <div class="subsystem-container">
+          <div class="subsystem-card">
+            <span class="series-label">Strategic Lens</span>
+            <ul class="node-list">
+              <li class="ecosystem-node" data-path="/index.html" data-channel="portfolio" data-series="strategic-lens" data-status="complete">
+                <span class="status-dot"></span>
+                <div class="node-info">
+                  <span class="node-title">Portfolio Root</span>
+                  <span class="node-path">/index.html</span>
+                </div>
+              </li>
+              <li class="ecosystem-node" data-path="/work/case-study-family-safety.html" data-channel="portfolio" data-series="strategic-lens" data-status="complete">
+                <span class="status-dot"></span>
+                <div class="node-info">
+                  <span class="node-title">Family Safety</span>
+                  <span class="node-path">/work/case-study-family-safety.html</span>
+                </div>
+              </li>
+              <li class="ecosystem-node" data-path="/work/case-study-teams-launch.html" data-channel="portfolio" data-series="strategic-lens" data-status="complete">
+                <span class="status-dot"></span>
+                <div class="node-info">
+                  <span class="node-title">Teams Launch</span>
+                  <span class="node-path">/work/case-study-teams-launch.html</span>
+                </div>
+              </li>
+              <li class="ecosystem-node" data-path="/work/edge-ucational-blueprint.html" data-channel="portfolio" data-series="strategic-lens" data-status="complete">
+                <span class="status-dot"></span>
+                <div class="node-info">
+                  <span class="node-title">Edge Blueprint</span>
+                  <span class="node-path">/work/edge-ucational-blueprint.html</span>
+                </div>
+              </li>
+              <li class="ecosystem-node" data-path="/work/case-study-ai-browsing.html" data-channel="portfolio" data-series="strategic-lens" data-status="upgrade">
+                <span class="status-dot"></span>
+                <div class="node-info">
+                  <span class="node-title">AI Browsing</span>
+                  <span class="node-path">/work/case-study-ai-browsing.html</span>
+                </div>
+              </li>
+              <li class="ecosystem-node" data-path="/work/case-study_edge_mobile.html" data-channel="portfolio" data-series="strategic-lens" data-status="upgrade">
+                <span class="status-dot"></span>
+                <div class="node-info">
+                  <span class="node-title">Edge Mobile</span>
+                  <span class="node-path">/work/case-study_edge_mobile.html</span>
+                </div>
+              </li>
+              <li class="ecosystem-node" data-path="/work/case-study-free-to-be-free.html" data-channel="portfolio" data-series="strategic-lens" data-status="upgrade">
+                <span class="status-dot"></span>
+                <div class="node-info">
+                  <span class="node-title">Free to be Free</span>
+                  <span class="node-path">/work/case-study-free-to-be-free.html</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- LANE 2: INSIGHTS -->
+      <section class="engine-column">
+        <div class="anchor-card">
+          <h2 class="anchor-header">INSIGHTS</h2>
+          <div class="node-path" style="margin-top:0.5rem;">/insights/index.html</div>
+        </div>
+
+        <div class="subsystem-container">
+          <!-- Series 1 -->
+          <div class="subsystem-card">
+            <span class="series-label">Director’s Commentary</span>
+            <ul class="node-list">
+              <li class="ecosystem-node" data-path="/insights/family-safety-launch/index.html" data-channel="insights" data-series="commentary" data-status="complete">
+                <span class="status-dot"></span>
+                <div class="node-info">
+                  <span class="node-title">Family Safety Launch</span>
+                  <span class="node-path">/insights/family-safety-launch/index.html</span>
+                </div>
+              </li>
+              <li class="ecosystem-node" data-path="/insights/teams-consumer-launch/index.html" data-channel="insights" data-series="commentary" data-status="complete">
+                <span class="status-dot"></span>
+                <div class="node-info">
+                  <span class="node-title">Teams Consumer</span>
+                  <span class="node-path">/insights/teams-consumer-launch/index.html</span>
+                </div>
+              </li>
+              <li class="ecosystem-node" data-path="/insights/edge-ucational-series/index.html" data-channel="insights" data-series="commentary" data-status="complete">
+                <span class="status-dot"></span>
+                <div class="node-info">
+                  <span class="node-title">Edge-ucational</span>
+                  <span class="node-path">/insights/edge-ucational-series/index.html</span>
+                </div>
+              </li>
+              <li class="ecosystem-node" data-path="/insights/transforming-browsing-ai/index.html" data-channel="insights" data-series="commentary" data-status="upgrade">
+                <span class="status-dot"></span>
+                <div class="node-info">
+                  <span class="node-title">Transforming Browsing</span>
+                  <span class="node-path">/insights/transforming-browsing-ai/index.html</span>
+                </div>
+              </li>
+              <li class="ecosystem-node" data-path="/insights/edge-mobile-rebrand/index.html" data-channel="insights" data-series="commentary" data-status="upgrade">
+                <span class="status-dot"></span>
+                <div class="node-info">
+                  <span class="node-title">Edge Rebrand</span>
+                  <span class="node-path">/insights/edge-mobile-rebrand/index.html</span>
+                </div>
+              </li>
+              <li class="ecosystem-node" data-path="/insights/free-to-be-free/index.html" data-channel="insights" data-series="commentary" data-status="upgrade">
+                <span class="status-dot"></span>
+                <div class="node-info">
+                  <span class="node-title">Free to be Free</span>
+                  <span class="node-path">/insights/free-to-be-free/index.html</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Series 2 -->
+          <div class="subsystem-card">
+            <span class="series-label">The Building Series</span>
+            <ul class="node-list">
+              <li class="ecosystem-node" data-path="/insights/building-the-ecosystem/index.html" data-channel="insights" data-series="building" data-status="complete">
+                <span class="status-dot"></span>
+                <div class="node-info">
+                  <span class="node-title">Building Ecosystem</span>
+                  <span class="node-path">/insights/building-the-ecosystem/index.html</span>
+                </div>
+              </li>
+              <li class="ecosystem-node" data-path="/insights/building-insights/index.html" data-channel="insights" data-series="building" data-status="complete">
+                <span class="status-dot"></span>
+                <div class="node-info">
+                  <span class="node-title">Building Insights</span>
+                  <span class="node-path">/insights/building-insights/index.html</span>
+                </div>
+              </li>
+              <li class="ecosystem-node" data-path="/insights/building-the-hub/index.html" data-channel="insights" data-series="building" data-status="upgrade">
+                <span class="status-dot"></span>
+                <div class="node-info">
+                  <span class="node-title">Building The Hub</span>
+                  <span class="node-path">/insights/building-the-hub/index.html</span>
+                </div>
+              </li>
+              <li class="ecosystem-node" data-path="/insights/building-the-portfolio/index.html" data-channel="insights" data-series="building" data-status="upgrade">
+                <span class="status-dot"></span>
+                <div class="node-info">
+                  <span class="node-title">Building Portfolio</span>
+                  <span class="node-path">/insights/building-the-portfolio/index.html</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Series 3 -->
+          <div class="subsystem-card">
+            <span class="series-label">Reflections</span>
+            <ul class="node-list">
+              <li class="ecosystem-node" data-path="/insights/unlocking-the-blank-page/index.html" data-channel="insights" data-series="reflections" data-status="complete">
+                <span class="status-dot"></span>
+                <div class="node-info">
+                  <span class="node-title">Unlock Blank Page</span>
+                  <span class="node-path">/insights/unlocking-the-blank-page/index.html</span>
+                </div>
+              </li>
+              <li class="ecosystem-node" data-path="/insights/proof-of-life/index.html" data-channel="insights" data-series="reflections" data-status="upgrade">
+                <span class="status-dot"></span>
+                <div class="node-info">
+                  <span class="node-title">Proof of Life</span>
+                  <span class="node-path">/insights/proof-of-life/index.html</span>
+                </div>
+              </li>
+              <li class="ecosystem-node" data-path="/insights/move-at-your-speed/index.html" data-channel="insights" data-series="reflections" data-status="upgrade">
+                <span class="status-dot"></span>
+                <div class="node-info">
+                  <span class="node-title">Move at Your Speed</span>
+                  <span class="node-path">/insights/move-at-your-speed/index.html</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- LANE 3: THE HUB -->
+      <section class="engine-column">
+        <div class="anchor-card">
+          <h2 class="anchor-header">THE HUB</h2>
+          <div class="node-path" style="margin-top:0.5rem;">/TheHub/index.html</div>
+        </div>
+
+        <div class="subsystem-container">
+          <div class="subsystem-card">
+            <span class="series-label">Modules</span>
+            <ul class="node-list">
+              <li class="ecosystem-node" data-path="/TheHub/strategy-iq/index.html" data-channel="hub" data-series="none" data-status="complete">
+                <span class="status-dot"></span>
+                <div class="node-info">
+                  <span class="node-title">StrategyIQ</span>
+                  <span class="node-path">/TheHub/strategy-iq/index.html</span>
+                </div>
+              </li>
+              <li class="ecosystem-node" data-path="/TheHub/advisory/index.html" data-channel="hub" data-series="none" data-status="complete">
+                <span class="status-dot"></span>
+                <div class="node-info">
+                  <span class="node-title">Advisory</span>
+                  <span class="node-path">/TheHub/advisory/index.html</span>
+                </div>
+              </li>
+              <li class="ecosystem-node" data-path="/TheHub/studio.html" data-channel="hub" data-series="none" data-status="complete">
+                <span class="status-dot"></span>
+                <div class="node-info">
+                  <span class="node-title">The Studio</span>
+                  <span class="node-path">/TheHub/studio.html</span>
+                </div>
+              </li>
+              <li class="ecosystem-node" data-path="/TheHub/scopeiq/index.html" data-channel="hub" data-series="none" data-status="complete">
+                <span class="status-dot"></span>
+                <div class="node-info">
+                  <span class="node-title">ScopeIQ</span>
+                  <span class="node-path">/TheHub/scopeiq/index.html</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="subsystem-card">
+            <span class="series-label">Documentation</span>
+            <ul class="node-list">
+              <li class="ecosystem-node" data-path="/TheHub/styleguide.html" data-channel="hub" data-series="none" data-status="complete">
+                <span class="status-dot"></span>
+                <div class="node-info">
+                  <span class="node-title">Framework Styleguide</span>
+                  <span class="node-path">/TheHub/styleguide.html</span>
+                </div>
+              </li>
+              <li class="ecosystem-node" data-path="/system/index.html" data-channel="hub" data-series="none" data-status="complete">
+                <span class="status-dot"></span>
+                <div class="node-info">
+                  <span class="node-title">System Documentation</span>
+                  <span class="node-path">/system/index.html</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- LANE 4: THE PORTAL -->
+      <section class="engine-column">
+        <div class="anchor-card">
+          <h2 class="anchor-header">THE PORTAL</h2>
+          <div class="node-path" style="margin-top:0.5rem;">/portal/recruiters/</div>
+        </div>
+
+        <div class="subsystem-container">
+          <div class="subsystem-card">
+            <span class="series-label">Access</span>
+            <ul class="node-list">
+              <li class="ecosystem-node" data-path="/portal/recruiters/index.html" data-channel="portal" data-series="none" data-status="complete">
+                <span class="status-dot"></span>
+                <div class="node-info">
+                  <span class="node-title">Recruiter Bridge</span>
+                  <span class="node-path">/portal/recruiters/</span>
+                </div>
+              </li>
+              <li class="ecosystem-node" data-path="https://portal.luis-gilberto.com" data-channel="portal" data-series="none" data-status="complete">
+                <span class="status-dot"></span>
+                <div class="node-info">
+                  <span class="node-title">Client Environment ↗</span>
+                  <span class="node-path">https://portal.luis-gilberto.com</span>
+                </div>
+              </li>
+              <li class="ecosystem-node" data-path="/portal/index.html" data-channel="portal" data-series="legacy" data-status="archive">
+                <span class="status-dot"></span>
+                <div class="node-info">
+                  <span class="node-title">Original Landing</span>
+                  <span class="node-path">/portal/index.html</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- INFRASTRUCTURE ROW -->
+    <footer class="infrastructure-row">
+      <div class="infra-section">
+        <h3>Core Identity</h3>
+        <div class="infra-grid">
+          <div class="ecosystem-node" data-path="/about.html" data-channel="infrastructure" data-series="core" data-status="complete">
+            <span class="status-dot"></span>
+            <div class="node-info"><span class="node-title">About</span><span class="node-path">/about.html</span></div>
+          </div>
+          <div class="ecosystem-node" data-path="/contact.html" data-channel="infrastructure" data-series="core" data-status="complete">
+            <span class="status-dot"></span>
+            <div class="node-info"><span class="node-title">Contact</span><span class="node-path">/contact.html</span></div>
+          </div>
+          <div class="ecosystem-node" data-path="/cv.html" data-channel="infrastructure" data-series="core" data-status="complete">
+            <span class="status-dot"></span>
+            <div class="node-info"><span class="node-title">CV / Resume</span><span class="node-path">/cv.html</span></div>
+          </div>
+          <div class="ecosystem-node" data-path="/timeline.html" data-channel="infrastructure" data-series="core" data-status="complete">
+            <span class="status-dot"></span>
+            <div class="node-info"><span class="node-title">Timeline</span><span class="node-path">/timeline.html</span></div>
+          </div>
+          <div class="ecosystem-node" data-path="/brand/" data-channel="infrastructure" data-series="core" data-status="complete">
+            <span class="status-dot"></span>
+            <div class="node-info"><span class="node-title">Brand Guidelines</span><span class="node-path">/brand/</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="infra-section">
+        <h3>The Archive</h3>
+        <div class="infra-grid">
+          <div class="ecosystem-node" data-path="LEGACY" data-channel="archive" data-series="legacy" data-status="archive">
+            <span class="status-dot"></span>
+            <div class="node-info"><span class="node-title">insights_prod_index</span><span class="node-path">LEGACY</span></div>
+          </div>
+          <div class="ecosystem-node" data-path="LEGACY" data-channel="archive" data-series="legacy" data-status="archive">
+            <span class="status-dot"></span>
+            <div class="node-info"><span class="node-title">insights_pages_dev</span><span class="node-path">LEGACY</span></div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  </main>
+
+  <script src="/assets/js/nav-component.js"></script>
+  
+  <script>
+    // ─── CONSOLE LOGIC ──────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+      const nodes = document.querySelectorAll('.ecosystem-node');
+      const statusMetrics = document.getElementById('status-metrics');
+      const upgradeList = document.getElementById('upgrade-list');
+      const indexScript = document.createElement('script');
+      
+      const ecosystemData = {
+        generatedAt: new Date().toISOString(),
+        totalNodes: nodes.length,
+        nodes: []
+      };
+
+      const counts = {
+        total: nodes.length,
+        complete: 0,
+        upgrade: 0,
+        archive: 0,
+        channels: {}
+      };
+
+      // 1. Process Nodes
+      nodes.forEach(node => {
+        const data = node.dataset;
+        
+        // Count Status
+        if (counts[data.status] !== undefined) counts[data.status]++;
+        
+        // Count Channel
+        if (!counts.channels[data.channel]) counts.channels[data.channel] = { total: 0, complete: 0 };
+        counts.channels[data.channel].total++;
+        if (data.status === 'complete') counts.channels[data.channel].complete++;
+
+        // Add to JSON Index
+        ecosystemData.nodes.push({
+          title: node.querySelector('.node-title').textContent,
+          path: data.path,
+          channel: data.channel,
+          series: data.series,
+          status: data.status
+        });
+
+        // Interaction Logic: Click
+        node.addEventListener('click', () => {
+          if (data.path !== 'LEGACY') {
+            window.open(data.path, '_blank');
+          }
+        });
+
+        // Populate Upgrade Queue
+        if (data.status === 'upgrade') {
+          const li = document.createElement('li');
+          li.className = 'upgrade-item';
+          li.innerHTML = `<span class="upgrade-title">${node.querySelector('.node-title').textContent}</span>`;
+          upgradeList.appendChild(li);
+        }
+      });
+
+      // 2. Populate Status Metrics (Panel A)
+      const metricsHTML = `
+        <div class="metric-item">
+          <span class="metric-value">${Math.round((counts.complete / counts.total) * 100)}%</span>
+          <span class="metric-label">System Health</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-value" style="color:var(--coral)">${counts.upgrade}</span>
+          <span class="metric-label">Upgrade Queue</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-value">${counts.channels.portfolio?.complete || 0}/${counts.channels.portfolio?.total || 0}</span>
+          <span class="metric-label">Portfolio</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-value">${counts.channels.insights?.complete || 0}/${counts.channels.insights?.total || 0}</span>
+          <span class="metric-label">Insights</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-value">${counts.channels.hub?.complete || 0}/${counts.channels.hub?.total || 0}</span>
+          <span class="metric-label">The Hub</span>
+        </div>
+      `;
+      statusMetrics.innerHTML = metricsHTML;
+
+      // 3. Inject Machine-Readable Context (The AI Index)
+      indexScript.id = 'ecosystem-index';
+      indexScript.type = 'application/json';
+      indexScript.textContent = JSON.stringify(ecosystemData, null, 2);
+      document.body.appendChild(indexScript);
+    });
+  </script>
+</body>
+</html>
