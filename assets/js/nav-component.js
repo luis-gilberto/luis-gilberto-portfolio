@@ -542,7 +542,7 @@
     @media (max-width: 1024px) { .snav-footer-grid { grid-template-columns: 1fr 1fr; } }
     @media (max-width: 640px) { .snav-footer-grid { grid-template-columns: 1fr; } }
     
-    .snav-footer-logo img { height: 32px; margin-bottom: 1rem; }
+    .snav-footer-logo img { height: 48px; margin-bottom: 1rem; }
     .snav-footer-tagline { font-family: 'Inter', sans-serif; font-size: 0.9rem; color: rgba(250,247,244,0.4); line-height: 1.65; max-width: 280px; }
     .snav-footer-heading { font-family: 'Inter', sans-serif; font-size: 0.9rem; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(250,247,244,0.4); margin-bottom: 1.25rem; font-weight: 700; }
     .snav-footer-link { display: block; font-family: 'Inter', sans-serif; color: rgba(250,247,244,0.4); margin-bottom: 0.75rem; font-size: 0.9rem; text-decoration: none; transition: color 0.2s; }
@@ -942,7 +942,8 @@
   // These MUST go to the end of the body to ensure correct document flow.
   function placeBodyEndElements() {
     if (drawer) document.body.appendChild(drawer);
-    if (footer) document.body.appendChild(footer);
+    // 🧬 DUPLICATE FOOTER FIX: Only append if a site-footer doesn't already exist in the static HTML
+    if (footer && !document.querySelector('.site-footer')) document.body.appendChild(footer);
   }
 
   if (document.readyState === 'loading') {
