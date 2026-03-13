@@ -1573,26 +1573,20 @@
       function detectJourney() {
         const urlParams = new URLSearchParams(window.location.search);
         const journeyParam = urlParams.get('journey');
-        let persona = localStorage.getItem('luxe-persona');
-        let journey = journeyParam;
+        const savedPersona = localStorage.getItem('luxe-persona');
 
-        const jMap = { hire: 'coral', partner: 'teal', explore: 'neutral' };
-        if (journey && jMap[journey]) {
-          persona = jMap[journey];
-          localStorage.setItem('luxe-persona', persona);
+        if (journeyParam) {
+          const jMap = { hire: 'coral', partner: 'teal', explore: 'neutral' };
+          const p = jMap[journeyParam];
+          if (p) {
+            localStorage.setItem('luxe-persona', p);
+            return p;
+          }
         }
-
-        if (!persona || !['coral', 'teal', 'neutral'].includes(persona)) {
-          persona = null; // no write; require explicit user selection
-        }
-
-        const pMap = { coral: 'hire', teal: 'partner', neutral: 'explore' };
-        journey = persona ? pMap[persona] : null;
-        if (journey) document.body.setAttribute('data-journey', journey);
-        return journey;
+        return savedPersona || null;
       }
 
-      const activeJourney = detectJourney();
+      const activePersona = detectJourney();
 
       /* (removed scattered theme logic; unified engine will follow) */
 
@@ -1918,16 +1912,10 @@
         window.intentGate.close();
       });
 
-      // Initialization logic
-      const savedPersona = localStorage.getItem('luxe-persona');
-      const urlParams = new URLSearchParams(window.location.search);
-      const hasJourney = ['hire','partner','explore'].includes(urlParams.get('journey'));
-
-      if (!savedPersona && !hasJourney) {
-        window.intentGate.open();
+      if (!activePersona) {
+        setTimeout(() => { window.intentGate.open(); }, 500);
       } else {
-        const key = savedPersona || (hasJourney ? ({hire:'coral',partner:'teal',explore:'neutral'})[urlParams.get('journey')] : null);
-        if (key) setHeroState(key);
+        setHeroState(activePersona);
         window.intentGate.close();
       }
 
