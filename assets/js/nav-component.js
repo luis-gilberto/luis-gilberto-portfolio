@@ -699,7 +699,7 @@
                     ${panelItem('/TheHub/index.html','grid','The Hub Overview','How I productize strategy',['hub'])}
                     ${panelItem('/TheHub/strategy-iq/index.html','pulse','StrategyIQ','Diagnostic &amp; roadmap calibration',['strategy-iq'])}
                     ${panelItem('/system/index.html','book','The System','The owner\'s manual for my methodology',['system'])}
-                    ${panelItem('/contact.html','mail','Advisory','Fractional leadership &amp; consulting',['contact'])}
+                    ${panelItem('/TheHub/advisory/index.html','mail','Advisory','Fractional leadership &amp; consulting',['advisory'])}
                   </div>
                   <div class="snav-panel-footer">
                     <a href="/system/index.html" class="snav-panel-footer-link">How it all connects →</a>
@@ -796,7 +796,7 @@
             <a href="/system/index.html" class="snav-drawer-sublink${isActive('system')?' active':''}">
                <span class="snav-drawer-icon">${ICONS.book}</span> The System
             </a>
-            <a href="/contact.html" class="snav-drawer-sublink${isActive('contact')?' active':''}">
+            <a href="/TheHub/advisory/index.html" class="snav-drawer-sublink${isActive('advisory')?' active':''}">
                <span class="snav-drawer-icon">${ICONS.mail}</span> Advisory
             </a>
             <a href="https://portal.luis-gilberto.com/" target="_blank" class="snav-drawer-sublink${isActive('portal')?' active':''}">
