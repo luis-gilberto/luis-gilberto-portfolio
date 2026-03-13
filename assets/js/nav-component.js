@@ -536,59 +536,29 @@
     }
     @keyframes snavPulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
-    /* ── footer ── */
-    .snav-footer { background: #0E0C0A; border-top: 1px solid rgba(250,247,244,0.08); padding: 5rem 2rem 2rem; transition: background 0.3s; }
-    .snav-footer-grid { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 3rem; padding-bottom: 3rem; border-bottom: 1px solid rgba(250,247,244,0.08); }
-    @media (max-width: 1024px) { .snav-footer-grid { grid-template-columns: 1fr 1fr; } }
-    @media (max-width: 640px) { .snav-footer-grid { grid-template-columns: 1fr; } }
-    
-    .snav-footer-logo img { height: 48px; margin-bottom: 1rem; }
-    .snav-footer-tagline { font-family: 'Inter', sans-serif; font-size: 0.9rem; color: rgba(250,247,244,0.4); line-height: 1.65; max-width: 280px; }
-    .snav-footer-heading { font-family: 'Inter', sans-serif; font-size: 0.9rem; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(250,247,244,0.4); margin-bottom: 1.25rem; font-weight: 700; }
-    .snav-footer-link { display: block; font-family: 'Inter', sans-serif; color: rgba(250,247,244,0.4); margin-bottom: 0.75rem; font-size: 0.9rem; text-decoration: none; transition: color 0.2s; }
-    .snav-footer-link:hover { color: #FAF7F4; }
-    .snav-footer-status { background: rgba(250,247,244,0.03); border: 1px solid rgba(250,247,244,0.08); border-radius: 10px; padding: 1.25rem; }
-    .snav-footer-bottom { max-width: 1400px; margin: 2rem auto 0; display: flex; align-items: center; justify-content: space-between; font-family: 'Inter', sans-serif; font-size: 0.8rem; color: rgba(250,247,244,0.3); }
-    @media (max-width: 768px) { .snav-footer-bottom { flex-direction: column; gap: 0.75rem; text-align: center; } }
-
-    /* ── Editorial Footer (Insights) ── */
-    .snav-footer--editorial {
-      background: #F4F1ED; /* Cream */
-      border-top: 1px solid rgba(17, 17, 17, 0.08);
-      color: #111111;
-    }
-    .snav-footer--editorial .snav-footer-grid { border-bottom-color: rgba(17, 17, 17, 0.08); }
-    .snav-footer--editorial .snav-footer-logo-text {
-      font-family: 'Big Shoulders Display', sans-serif;
-      font-size: 32px; font-weight: 900; color: #4B367C; margin-bottom: 1rem; display: block;
-      text-decoration: none;
-    }
-    .snav-footer--editorial .snav-footer-tagline {
-      font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.1rem;
-      color: rgba(17, 17, 17, 0.7); max-width: 320px;
-    }
-    .snav-footer--editorial .snav-footer-heading { color: rgba(17, 17, 17, 0.4); }
-    .snav-footer--editorial .snav-footer-link { color: rgba(17, 17, 17, 0.6); }
-    .snav-footer--editorial .snav-footer-link:hover { color: #F96F6E; }
-    .snav-footer--editorial .snav-footer-status { background: #FFFFFF; border-color: rgba(17, 17, 17, 0.08); }
-    .snav-footer--editorial .snav-footer-status-label {
-      font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700;
-      letter-spacing: 0.08em; text-transform: uppercase; color: #111111;
-    }
-    .snav-footer--editorial .snav-footer-location {
-      font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.95rem;
-      color: rgba(17, 17, 17, 0.5); margin-top: 8px;
-    }
-    .snav-footer--editorial .snav-footer-bottom { color: rgba(17, 17, 17, 0.4); border-top: 1px solid rgba(17, 17, 17, 0.05); padding-top: 2rem; }
-    .snav-footer--editorial .snav-status-dot { background: #2ED3C6; box-shadow: 0 0 8px rgba(46, 211, 198, 0.4); }
-    .snav-footer--editorial .snav-social-icons { display: flex; gap: 12px; margin-top: 1.5rem; }
-    .snav-footer--editorial .snav-social-icon {
-      width: 36px; height: 36px; border-radius: 4px; border: 1px solid rgba(17, 17, 17, 0.1);
-      display: flex; align-items: center; justify-content: center; color: rgba(17, 17, 17, 0.6);
-      transition: all 0.2s; text-decoration: none; background: #fff;
-    }
-    .snav-footer--editorial .snav-social-icon:hover { border-color: #4B367C; color: #4B367C; transform: translateY(-2px); }
-    .snav-footer--editorial .snav-social-icon svg { width: 16px; height: 16px; }
+    /* ── Global Footer (site-footer) — Luxe v4.7 */
+    .site-footer { background-color: #030303 !important; color: #FFFFFF !important; padding: 64px 0 0; border-top: 1px solid rgba(255,255,255,0.05); scroll-snap-align: end; font-family: 'Inter', sans-serif; }
+    .footer-container { max-width: 1400px; margin: 0 auto; padding: 0 48px 48px; display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 64px; align-items: start; }
+    .footer-brand { display: flex; flex-direction: column; gap: 16px; }
+    .footer-logo-link { display: inline-block; width: fit-content; margin-bottom: 8px; }
+    .footer-logo-img { height: 32px; width: auto; opacity: 0.9; transition: opacity 0.3s ease; }
+    .footer-logo-link:hover .footer-logo-img { opacity: 1; }
+    .footer-tagline { font-size: 14px; line-height: 1.6; color: rgba(255,255,255,0.4) !important; margin: 0; max-width: 320px; }
+    .footer-copyright { font-size: 11px; color: rgba(255,255,255,0.2) !important; margin-top: 16px; }
+    .footer-column { display: flex; flex-direction: column; }
+    .footer-heading { font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.3) !important; margin: 0 0 20px 0; }
+    .footer-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
+    .footer-list a { font-size: 14px; color: rgba(255,255,255,0.4) !important; transition: color 0.2s ease; text-decoration: none; }
+    .footer-list a:hover { color: #FFFFFF !important; }
+    .footer-status { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+    .status-indicator { display: flex; align-items: center; gap: 10px; }
+    .status-dot { width: 8px; height: 8px; background: #2ED3C6; border-radius: 50%; box-shadow: 0 0 8px rgba(46,211,198,0.5); }
+    .status-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #FFFFFF !important; }
+    .status-desc { font-size: 13px; line-height: 1.5; color: rgba(255,255,255,0.4) !important; margin: 0; }
+    .footer-legal { background: #000000 !important; border-top: 1px solid rgba(255,255,255,0.04); padding: 24px 48px; }
+    .footer-legal p { max-width: 1400px; margin: 0 auto; font-size: 9px; letter-spacing: 0.05em; text-transform: uppercase; color: rgba(255,255,255,0.2) !important; text-align: center; }
+    @media (max-width: 1200px) { .footer-container { grid-template-columns: 1fr 1fr 1fr; gap: 48px; } .footer-brand { grid-column: 1 / -1; } }
+    @media (max-width: 768px)  { .footer-container { grid-template-columns: 1fr; gap: 32px; padding: 0 24px 32px; } .footer-brand { grid-column: auto; } }
   `;
 
   // ─── HTML builder ──────────────────────────────────────────────
@@ -606,85 +576,39 @@
   }
 
   /* ── Footer Logic ── */
-  const footerHtml = active === 'insights' ? `
-    <footer class="snav-footer snav-footer--editorial">
-      <div class="snav-footer-grid">
-        <div>
-          <a href="/index.html" class="snav-footer-logo-text">LG.</a>
-          <p class="snav-footer-tagline">Exploring the intersection of design, technology, and human experience.</p>
-          <div class="snav-social-icons">
-            <a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" class="snav-social-icon" aria-label="LinkedIn">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
-            </a>
-            <a href="/index.html" class="snav-social-icon" aria-label="Website">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-            </a>
-          </div>
+  const footerHtml = `
+    <footer class="site-footer">
+      <div class="footer-container">
+        <div class="footer-brand">
+          <a href="/index.html" class="footer-logo-link"><img src="${asset('/assets/images/Logomark_White_a.png')}" alt="Luis Gilberto" class="footer-logo-img"></a>
+          <p class="footer-tagline">Making technology feel human through clarity, beautiful execution, and systems that scale.</p>
+          <div class="footer-copyright">© <span id="currentYear"></span> Luis Gilberto Sanchez. All rights reserved.</div>
         </div>
-        <div>
-          <div class="snav-footer-heading">Ecosystem</div>
-          <a href="/index.html" class="snav-footer-link">Portfolio</a>
-          <a href="/insights/index.html" class="snav-footer-link">Insights</a>
-          <a href="/TheHub/index.html" class="snav-footer-link">The Hub</a>
-          <a href="/TheHub/strategy-iq/index.html" class="snav-footer-link">StrategyIQ</a>
+        <div class="footer-column">
+          <h4 class="footer-heading">ECOSYSTEM</h4>
+          <ul class="footer-list">
+            <li><a href="/timeline.html">Portfolio</a></li>
+            <li><a href="/insights/">Insights</a></li>
+            <li><a href="/TheHub/index.html">The Hub</a></li>
+            <li><a href="/portal/story/">The Portal</a></li>
+          </ul>
         </div>
-        <div>
-          <div class="snav-footer-heading">Connect</div>
-          <a href="/contact.html" class="snav-footer-link">Contact</a>
-          <a href="/about.html" class="snav-footer-link">About Me</a>
-          <a href="/insights/insights-brand.html" class="snav-footer-link">Brand Guidelines</a>
-          <a href="#" class="snav-footer-link" onclick="document.getElementById('aiCollabModal').style.display='flex'; return false;">About AI Collaboration</a>
+        <div class="footer-column">
+          <h4 class="footer-heading">CONNECT</h4>
+          <ul class="footer-list">
+            <li><a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" rel="noopener">LinkedIn</a></li>
+            <li><a href="/contact.html">Contact</a></li>
+            <li><a href="/about.html">About Me</a></li>
+            <li><a href="/brand/">Identity</a></li>
+          </ul>
         </div>
-        <div>
-          <div class="snav-footer-status">
-            <div style="display:flex; align-items:center; gap:10px;">
-              <span class="snav-status-dot"></span>
-              <span class="snav-footer-status-label">Available for projects</span>
-            </div>
-            <p class="snav-footer-location">Seattle, WA — Open to select engagements worldwide.</p>
-          </div>
+        <div class="footer-status">
+          <div class="status-indicator"><div class="status-dot"></div><span class="status-label">ACCEPTING PROJECTS</span></div>
+          <p class="status-desc">Currently available for strategic consulting and creative direction.</p>
         </div>
       </div>
-      <div class="snav-footer-bottom">
-        <span>© <span id="snav-year"></span> Luis Gilberto. All rights reserved.</span>
-        <span>Crafted with intention · Caracas meets Cascadia</span>
-      </div>
-    </footer>` : `
-    <footer class="snav-footer">
-      <div class="snav-footer-grid">
-        <div>
-          <a href="/index.html" class="snav-footer-logo">
-            <img id="snav-footer-logo-dark"  src="${asset('/assets/images/Logomark_White_a.png')}" alt="LG">
-            <img id="snav-footer-logo-light" src="${asset('/assets/images/Logomark_Dark_a.png')}"  alt="LG" style="display:none;">
-          </a>
-          <p class="snav-footer-tagline">Making technology feel human through clarity, beautiful execution, and systems that scale.</p>
-        </div>
-        <div>
-          <div class="snav-footer-heading">Ecosystem</div>
-          <a href="/index.html"          class="snav-footer-link">Portfolio</a>
-          <a href="/insights/index.html" class="snav-footer-link">Insights</a>
-          <a href="/TheHub/index.html"   class="snav-footer-link">The Hub</a>
-          <a href="https://portal.luis-gilberto.com" target="_blank" class="snav-footer-link">The Portal</a>
-        </div>
-        <div>
-          <div class="snav-footer-heading">Connect</div>
-          <a href="/contact.html" class="snav-footer-link">Contact</a>
-          <a href="/about.html"   class="snav-footer-link">About Me</a>
-          <a href="/brand/"       class="snav-footer-link">Identity</a>
-          ${active === 'hub' ? `<a href="${u('/TheHub/styleguide.html')}" class="snav-footer-link">Hub Editorial Guide</a>` : ''}
-          <a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" class="snav-footer-link">LinkedIn</a>
-        </div>
-        <div>
-          <div class="snav-footer-status">
-            <span class="snav-status-dot"></span>
-            <span style="font-weight:700;text-transform:uppercase;font-size:0.75rem;letter-spacing:0.08em;color:rgba(250,247,244,0.5);">Accepting Projects</span>
-            <p style="margin:0.5rem 0 0;color:rgba(250,247,244,0.4);font-size:0.875rem;line-height:1.5;font-family:'Inter',sans-serif;">Available for strategic consulting and creative direction.</p>
-          </div>
-        </div>
-      </div>
-      <div class="snav-footer-bottom">
-        <span>© <span id="snav-year"></span> Luis Gilberto. All Rights Reserved.</span>
-        <span>Caracas meets Cascadia</span>
+      <div class="footer-legal">
+        <p>INTELLECTUAL PROPERTY NOTICE: STRATEGYIQ™, THE HUB™, AND THE ASSOCIATED DIAGNOSTIC METHODOLOGIES ARE PROPRIETARY INTELLECTUAL PROPERTY OF LUIS GILBERTO.</p>
       </div>
     </footer>`;
 
@@ -943,7 +867,10 @@
   function placeBodyEndElements() {
     if (drawer) document.body.appendChild(drawer);
     // 🧬 DUPLICATE FOOTER FIX: Only append if a site-footer doesn't already exist in the static HTML
-    if (footer && !document.querySelector('.site-footer')) document.body.appendChild(footer);
+    if (footer && !document.querySelector('.site-footer')) {
+      document.body.appendChild(footer);
+      var yr = document.getElementById('currentYear'); if (yr) yr.textContent = new Date().getFullYear();
+    }
   }
 
   if (document.readyState === 'loading') {
