@@ -1,4 +1,4 @@
-// LG Timeline — Filmstrip logic
+﻿// LG Timeline.Filmstrip logic
 (function(){
   // Modal helpers
   function openTimelineModal(era){

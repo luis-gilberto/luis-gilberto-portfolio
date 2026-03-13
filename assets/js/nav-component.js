@@ -1,5 +1,5 @@
 /**
- * nav-component.js — Luis Gilberto site-wide navigation
+ * nav-component.js - Luis Gilberto site-wide navigation
  * ──────────────────────────────────────────────────────
  * Usage on any page:
  *
@@ -536,7 +536,7 @@
     }
     @keyframes snavPulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
-    /* ── Global Footer (site-footer) — Luxe v4.7 */
+    /* ── Global Footer (site-footer) - Luxe v4.7 */
     .site-footer { background-color: #050505 !important; color: #FFFFFF !important; padding: 64px 0 0; border-top: 1px solid rgba(255,255,255,0.05); scroll-snap-align: end; font-family: 'Inter', sans-serif; }
     .footer-container { max-width: 1400px; margin: 0 auto; padding: 0 60px 80px; display: flex; justify-content: space-between; align-items: flex-start; gap: 80px; }
     .footer-brand { display: flex; flex-direction: column; gap: 16px; }
@@ -658,7 +658,7 @@
                     ${panelItem('/index.html','grid','Portfolio Homepage','The complete overview of my work and methodology',['portfolio','home'])}
                     ${panelItem('/myexperience.html','briefcase','Work &amp; Experience','15+ years across Microsoft, startups, and beyond',['experience'])}
                     ${panelItem('/timeline.html','timeline','Career Timeline','The eras, pivots, and moments that shaped the work',['timeline'])}
-                    ${panelItem('/about.html','user','About Luis','From Caracas to Cascadia — the full story',['about'])}
+                    ${panelItem('/about.html','user','About Luis','From Caracas to Cascadia. the full story',['about'])}
                     ${panelItem('/brand/','brand','Brand Identity','The canonical system behind the ecosystem',['brand'])}
                     ${panelItem('/contact.html','mail','Contact','Start a project or ask a question',['contact'])}
                   </div>
@@ -676,7 +676,7 @@
                     <p class="snav-panel-title">Browse by Series</p>
                   </div>
                   <div class="snav-grid">
-                    ${panelItem('/insights/index.html','pencil','All Stories','Insights homepage — browse everything',['insights'])}
+                    ${panelItem('/insights/index.html','pencil','All Stories','Insights homepage. browse everything',['insights'])}
                     ${panelItem('/insights/series/#building','grid','The Building Series','Structural decisions, built in public','')}
                     ${panelItem('/insights/series/#use-cases','pulse','Use Cases','Real-world launches and product strategies','')}
                     ${panelItem('/insights/series/#reflections','book','Reflections','Personal thoughts on creativity, pace, and momentum','')}
