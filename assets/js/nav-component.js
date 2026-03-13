@@ -541,8 +541,10 @@
     .footer-container { max-width: 1400px; margin: 0 auto; padding: 0 60px 80px; display: flex; justify-content: space-between; align-items: flex-start; gap: 80px; }
     .footer-brand { display: flex; flex-direction: column; gap: 16px; }
     .footer-signature { flex: 1.5; display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
-    .footer-logo-lockup { width: 100%; max-width: 280px; height: auto; display: block; image-rendering: -webkit-optimize-contrast; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+    .footer-logo-lockup { width: 100%; max-width: 240px; height: auto; display: block; image-rendering: -webkit-optimize-contrast; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); margin-bottom: 1.25rem; }
     .footer-logo-lockup:hover { transform: translateY(-2px); }
+    .footer-tagline-text { font-family: 'Inter', sans-serif; font-size: 13px; line-height: 1.6; color: rgba(255,255,255,0.4) !important; max-width: 320px; margin-bottom: 1.5rem; }
+    .footer-copyright-text { font-family: 'Inter', sans-serif; font-size: 11px; letter-spacing: 0.02em; color: rgba(255,255,255,0.2) !important; }
     .footer-logo-link { display: inline-block; width: fit-content; margin-bottom: 8px; }
     .footer-logo-img { height: 32px; width: auto; opacity: 0.9; transition: opacity 0.3s ease; }
     .footer-logo-link:hover .footer-logo-img { opacity: 1; }
@@ -561,7 +563,7 @@
     .footer-legal { background: #000000 !important; border-top: 1px solid rgba(255,255,255,0.04); padding: 24px 48px; }
     .footer-legal p { max-width: 1400px; margin: 0 auto; font-size: 9px; letter-spacing: 0.05em; text-transform: uppercase; color: rgba(255,255,255,0.2) !important; text-align: center; }
     @media (max-width: 1200px) { .footer-container { flex-direction: column; align-items: center; gap: 40px; padding: 0 48px 48px; } }
-    @media (max-width: 1024px)  { .footer-signature { align-items: center; text-align: center; margin-bottom: 3rem; width: 100%; } .footer-logo-lockup { max-width: 240px; margin: 0 auto; } .footer-column, .footer-status { align-items: center; text-align: center; } }
+    @media (max-width: 1024px)  { .footer-signature { align-items: center !important; text-align: center !important; margin-bottom: 3rem; width: 100%; } .footer-logo-lockup { max-width: 240px; margin: 0 auto; } .footer-tagline-text { margin-left: auto; margin-right: auto; } .footer-column, .footer-status { align-items: center; text-align: center; } }
   `;
 
   // ─── HTML builder ──────────────────────────────────────────────
@@ -584,7 +586,8 @@
       <div class="footer-container">
         <div class="footer-signature">
           <a href="/index.html" class="footer-logo-link"><img src="${asset('/assets/images/LG-ecosystem-logo-lockup.png')}" alt="Luis Gilberto Ecosystem" class="footer-logo-lockup"></a>
-          <div class="footer-copyright">© <span id="currentYear"></span> Luis Gilberto Sanchez. All rights reserved.</div>
+          <p class="footer-tagline-text">Making technology feel human through clarity, beautiful execution, and systems that scale.</p>
+          <div class="footer-copyright-text">© <span id="currentYear"></span> Luis Gilberto Sanchez. All rights reserved.</div>
         </div>
         <div class="footer-column">
           <h4 class="footer-heading">ECOSYSTEM</h4>
