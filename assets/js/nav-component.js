@@ -612,7 +612,6 @@
             <div class="status-indicator"><div class="status-dot"></div><span class="status-label">ACCEPTING PROJECTS</span></div>
             <p class="status-desc">Currently available for strategic consulting and creative direction.</p>
           </div>
-          <div class="footer-copyright-text" style="margin-top: 0.75rem;">© <span id="currentYear"></span> Luis Gilberto Sanchez. All rights reserved.</div>
         </div>
       </div>
       <div class="footer-legal">
