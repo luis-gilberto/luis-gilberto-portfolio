@@ -551,7 +551,7 @@
     .footer-tagline { font-size: 14px; line-height: 1.6; color: rgba(255,255,255,0.4) !important; margin: 0; max-width: 320px; }
     .footer-copyright { font-size: 11px; color: rgba(255,255,255,0.2) !important; margin-top: 16px; }
     .footer-column { display: flex; flex-direction: column; }
-    .footer-heading { font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.3) !important; margin: 0 0 20px 0; }
+    .footer-heading { font-size: 12px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--coral, #F96F6E) !important; margin: 0 0 20px 0; }
     .footer-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
     .footer-list a { font-size: 14px; color: rgba(255,255,255,0.4) !important; transition: color 0.2s ease; text-decoration: none; }
     .footer-list a:hover { color: #FFFFFF !important; }
