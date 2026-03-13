@@ -167,8 +167,8 @@
       display: flex; align-items: center; justify-content: space-between;
       height: 100%; max-width: 1280px; margin: 0 auto; padding: 0 48px;
     }
-    .snav-logo { display: flex; align-items: center; height: 36px; }
-    .snav-logo img { height: 100%; width: auto; }
+    .snav-logo { display: flex; align-items: center; height: 48px; }
+    .snav-logo img { height: 48px !important; width: auto; transition: opacity 0.3s ease, transform 0.3s ease; }
     #snav-logo-mark { display: none; }
     @media (max-width: 1024px) {
       #snav-logo-desktop { display: none; }
@@ -537,9 +537,12 @@
     @keyframes snavPulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
     /* ── Global Footer (site-footer) — Luxe v4.7 */
-    .site-footer { background-color: #030303 !important; color: #FFFFFF !important; padding: 64px 0 0; border-top: 1px solid rgba(255,255,255,0.05); scroll-snap-align: end; font-family: 'Inter', sans-serif; }
-    .footer-container { max-width: 1400px; margin: 0 auto; padding: 0 48px 48px; display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 64px; align-items: start; }
+    .site-footer { background-color: #050505 !important; color: #FFFFFF !important; padding: 64px 0 0; border-top: 1px solid rgba(255,255,255,0.05); scroll-snap-align: end; font-family: 'Inter', sans-serif; }
+    .footer-container { max-width: 1400px; margin: 0 auto; padding: 0 60px 80px; display: flex; justify-content: space-between; align-items: flex-start; gap: 80px; }
     .footer-brand { display: flex; flex-direction: column; gap: 16px; }
+    .footer-signature { flex: 1.5; display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
+    .footer-logo-svg { width: 100%; max-width: 280px; height: auto; opacity: 1; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+    .footer-logo-svg:hover { transform: translateY(-2px); }
     .footer-logo-link { display: inline-block; width: fit-content; margin-bottom: 8px; }
     .footer-logo-img { height: 32px; width: auto; opacity: 0.9; transition: opacity 0.3s ease; }
     .footer-logo-link:hover .footer-logo-img { opacity: 1; }
@@ -557,8 +560,8 @@
     .status-desc { font-size: 13px; line-height: 1.5; color: rgba(255,255,255,0.4) !important; margin: 0; }
     .footer-legal { background: #000000 !important; border-top: 1px solid rgba(255,255,255,0.04); padding: 24px 48px; }
     .footer-legal p { max-width: 1400px; margin: 0 auto; font-size: 9px; letter-spacing: 0.05em; text-transform: uppercase; color: rgba(255,255,255,0.2) !important; text-align: center; }
-    @media (max-width: 1200px) { .footer-container { grid-template-columns: 1fr 1fr 1fr; gap: 48px; } .footer-brand { grid-column: 1 / -1; } }
-    @media (max-width: 768px)  { .footer-container { grid-template-columns: 1fr; gap: 32px; padding: 0 24px 32px; } .footer-brand { grid-column: auto; } }
+    @media (max-width: 1200px) { .footer-container { flex-direction: column; align-items: center; gap: 40px; padding: 0 48px 48px; } }
+    @media (max-width: 1024px)  { .footer-signature { align-items: center; text-align: center; margin-bottom: 3rem; width: 100%; } .footer-logo-svg { max-width: 240px; margin: 0 auto; } .footer-column, .footer-status { align-items: center; text-align: center; } }
   `;
 
   // ─── HTML builder ──────────────────────────────────────────────
@@ -579,9 +582,8 @@
   const footerHtml = `
     <footer class="site-footer">
       <div class="footer-container">
-        <div class="footer-brand">
-          <a href="/index.html" class="footer-logo-link"><img src="${asset('/assets/images/Logomark_White_a.png')}" alt="Luis Gilberto" class="footer-logo-img"></a>
-          <p class="footer-tagline">Making technology feel human through clarity, beautiful execution, and systems that scale.</p>
+        <div class="footer-signature">
+          <a href="/index.html" class="footer-logo-link"><img src="${asset('/assets/images/LG-ecosystem-logo-lockup.svg')}" alt="Luis Gilberto Ecosystem" class="footer-logo-svg"></a>
           <div class="footer-copyright">© <span id="currentYear"></span> Luis Gilberto Sanchez. All rights reserved.</div>
         </div>
         <div class="footer-column">
@@ -1011,6 +1013,19 @@
     const lensBadge = document.getElementById('snav-lens-badge');
     const lensLabel = document.getElementById('snav-lens-label');
 
+    function updateHeaderLogo(choice){
+      const map = {
+        teal:    u('/assets/hp/LG_Logomark_teal.png'),
+        coral:   u('/assets/hp/LG_Logomark_coral.png'),
+        neutral: u('/assets/images/Logomark_White_a.png')
+      };
+      const src = map[choice] || map.neutral;
+      const desktopLogo = document.getElementById('snav-logo-desktop');
+      const markLogo    = document.getElementById('snav-logo-mark');
+      if (desktopLogo) desktopLogo.src = src;
+      if (markLogo)    markLogo.src    = src;
+    }
+
     function applyPersona(choice) {
       const LABELS = { 
         coral:   'ASSESSING', 
@@ -1018,12 +1033,6 @@
         neutral: 'EXPLORING' 
       };
       
-      const LOGOS = {
-        teal:    u('/assets/hp/LG_Logo_teal.png'),
-        coral:   u('/assets/hp/LG_Ogo_coral.png'),
-        neutral: u('/assets/images/AUg_logo_White.png')
-      };
-
       const LOGOMARKS = {
         teal:    u('/assets/hp/LG_Logomark_teal.png'),
         coral:   u('/assets/hp/LG_Logomark_coral.png'),
@@ -1068,11 +1077,8 @@
          document.documentElement.style.setProperty('--badge-accent', accentColor);
       }
 
-      // Dynamic Logo Swap
-      const desktopLogo = document.getElementById('snav-logo-desktop');
-      if (desktopLogo) {
-        desktopLogo.src = LOGOS[choice] || LOGOS.neutral;
-      }
+      // Dynamic Header Logo Swap
+      updateHeaderLogo(choice);
 
       // Dynamic Drawer Mark Swap
       const drawerMark = document.getElementById('snav-drawer-mark');
