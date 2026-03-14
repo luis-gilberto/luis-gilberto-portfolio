@@ -1,8 +1,8 @@
-// Timeline data
+﻿// Timeline data
 const timelineData = {
     foundations: {
         title: "Foundations (2012–2014)",
-        quote: "This era was my entry into the tech world—and into Microsoft's boldest bets.",
+        quote: "This era was my entry into the tech world - and into Microsoft's boldest bets.",
         description: "From the debut of <strong>Windows 8</strong> and the first <strong>Surface</strong> devices to supporting the <strong>Office 2013</strong> rollout, I guided in-store strategy and retail attach for Microsoft's hardware and software milestones.",
         achievements: [
             "<strong>Windows 8 & Surface</strong> launch support across retail channels",
@@ -24,7 +24,7 @@ const timelineData = {
     ascent: {
         title: "Ascent (2014–2016)",
         quote: "From retail-ready demos to full campaign orchestration.",
-        description: "I expanded Microsoft's in-store experiences—launching categories like <strong>Surface Pro 3</strong>, <strong>HoloLens</strong>, and <strong>Microsoft Band</strong>—then moved into Integrated Marketing for <strong>Office</strong>, shaping cross-platform storytelling.",
+        description: "I expanded Microsoft's in-store experiences - launching categories like <strong>Surface Pro 3</strong>, <strong>HoloLens</strong>, and <strong>Microsoft Band</strong> - then moved into Integrated Marketing for <strong>Office</strong>, shaping cross-platform storytelling.",
         achievements: [
             "Office for iPad launch & cross-platform narrative",
             "Surface Pro 3 demo kit & campaign alignment",
@@ -86,7 +86,7 @@ const timelineData = {
     rise: {
         title: "Rise (2020–2023)",
         quote: "When the world shut down, storytelling became survival.",
-        description: "I created the '<strong><a href='case-study-free-to-be-free.html' target='_blank' style='color: inherit; text-decoration: underline;'>Free to Be Free</a></strong>' campaign celebrating digital liberation, and previewed <strong><a href='case-study-teams-final-dm.html' target='_blank' style='color: inherit; text-decoration: underline;'>Teams for Life</a></strong>—blending lifestyle marketing with product narratives.",
+        description: "I created the '<strong><a href='case-study-free-to-be-free.html' target='_blank' style='color: inherit; text-decoration: underline;'>Free to Be Free</a></strong>' campaign celebrating digital liberation, and previewed <strong><a href='case-study-teams-final-dm.html' target='_blank' style='color: inherit; text-decoration: underline;'>Teams for Life</a></strong> - blending lifestyle marketing with product narratives.",
         achievements: [
             "<strong><a href='case-study-free-to-be-free.html' target='_blank' style='color: inherit; text-decoration: underline;'>Free to Be Free</a></strong> brand campaign",
             "<strong><a href='case-study-teams-final-dm.html' target='_blank' style='color: inherit; text-decoration: underline;'>Teams for Life</a></strong> preview launch"
@@ -103,7 +103,7 @@ const timelineData = {
     reinvention: {
         title: "Reinvention (2023–2025)",
         quote: "Even AI needs a heartbeat.",
-        description: "I led Microsoft Edge's shift into the AI-powered browser and shaped Copilot narratives—making smart shopping and productivity tools approachable through integrated, human-centered campaigns.",
+        description: "I led Microsoft Edge's shift into the AI-powered browser and shaped Copilot narratives - making smart shopping and productivity tools approachable through integrated, human-centered campaigns.",
         achievements: [
             "<strong><a href='case-study-edge-ucational.html' target='_blank' style='color: inherit; text-decoration: underline;'>Edge-ucational Series</a></strong>",
             "<strong><a href='case-study-ai-browsing.html' target='_blank' style='color: inherit; text-decoration: underline;'>Edge AI Campaign</a></strong>",

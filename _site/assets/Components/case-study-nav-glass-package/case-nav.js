@@ -1,4 +1,4 @@
-// case-nav.js — Case Studies Navigation System (vanilla)
+﻿// case-nav.js. Case Studies Navigation System (vanilla)
 (function(){
   const sections = [...document.querySelectorAll('section[id]')];
   const toc = document.querySelector('.case-toc');
@@ -53,9 +53,9 @@
 
   const peekCopy = {
     'story':'The brief, the bet, and the creative spine.',
-    'highlights':'The crisp beats—assets, channels, and moments.',
+    'highlights':'The crisp beats - assets, channels, and moments.',
     'my-role':'Where I steered, unblocked, and shipped.',
-    'results':'Proof it worked—lifts, views, adoption.',
+    'results':'Proof it worked - lifts, views, adoption.',
     'gallery':'Motion, stills, and behind-the-scenes.',
     'credits':'Agencies, partners, and thanks.'
   };

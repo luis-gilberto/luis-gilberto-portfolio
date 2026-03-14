@@ -1,4 +1,4 @@
-/**
+﻿/**
  * MEGA MENU & NAVIGATION SYSTEM
  * Source: insights/unlocking-the-blank-page/index.html
  */
@@ -50,7 +50,7 @@
     applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
   });
 
-  // ── Mega menu — four channels ─────────────────────────────────
+  // ── Mega menu. four channels ─────────────────────────────────
   const viewportWrap  = document.getElementById('nav-viewport');
   const viewportInner = document.getElementById('nav-viewport-inner');
   const triggers      = document.querySelectorAll('[data-trigger]');

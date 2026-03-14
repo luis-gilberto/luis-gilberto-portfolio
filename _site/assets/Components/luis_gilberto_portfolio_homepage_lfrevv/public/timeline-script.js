@@ -1,4 +1,4 @@
-const erasData = {
+﻿const erasData = {
   genesis: {
     title: 'Genesis',
     years: '2000–2003',
@@ -15,7 +15,7 @@ const erasData = {
     title: 'Emergence',
     years: '2003–2007',
     quote: 'In chaos, I found my rhythm.',
-    description: 'Joined startups in mobile entertainment. Wore every hat imaginable—from content creation to business development. Learned to move fast and think strategically.',
+    description: 'Joined startups in mobile entertainment. Wore every hat imaginable - from content creation to business development. Learned to move fast and think strategically.',
     achievements: [
       'Pioneered mobile entertainment content strategies',
       'Managed cross-functional projects in fast-paced startup environments',
@@ -86,7 +86,7 @@ const erasData = {
   reinvention: {
     title: 'Reinvention',
     years: '2020–2022',
-    quote: 'Identity is not found—it is forged.',
+    quote: 'Identity is not found - it is forged.',
     description: 'Integrated new identity. Clarified my values. Built systems that reflected who I had become, not who I was.',
     achievements: [
       'Launched independent consulting practice',

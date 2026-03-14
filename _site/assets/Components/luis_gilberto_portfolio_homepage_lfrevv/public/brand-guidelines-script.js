@@ -1,4 +1,4 @@
-// ===================================
+﻿// ===================================
 // THEME TOGGLE
 // ===================================
 function initTheme() {
@@ -71,7 +71,7 @@ const perspectiveData = {
     title: 'The Storyteller',
     subtitle: 'The Systems Thinker',
     type: 'storyteller',
-    description: "This is the strategic lens—the one that asks why does this matter and where are we going. It's about seeing the whole system, understanding emotional resonance, and crafting narratives that move people. This perspective uses Playfair Display and Coral to signal depth, warmth, and strategic intent.",
+    description: "This is the strategic lens - the one that asks why does this matter and where are we going. It's about seeing the whole system, understanding emotional resonance, and crafting narratives that move people. This perspective uses Playfair Display and Coral to signal depth, warmth, and strategic intent.",
     characteristics: [
       'Sees the big picture and long-term vision',
       'Understands emotional drivers and human motivation',
@@ -83,7 +83,7 @@ const perspectiveData = {
     title: 'The Architect',
     subtitle: 'The Curator',
     type: 'architect',
-    description: "This is the craft lens—the one that obsesses over details, structure, and execution. It's about building with precision, curating with intention, and ensuring every element serves a purpose. This perspective uses Big Shoulders Display and Teal to signal strength, clarity, and structural integrity.",
+    description: "This is the craft lens - the one that obsesses over details, structure, and execution. It's about building with precision, curating with intention, and ensuring every element serves a purpose. This perspective uses Big Shoulders Display and Teal to signal strength, clarity, and structural integrity.",
     characteristics: [
       'Obsesses over details and execution quality',
       'Builds systems with structural integrity',
@@ -95,7 +95,7 @@ const perspectiveData = {
     title: 'The Translator',
     subtitle: 'The Bridge Builder',
     type: 'translator',
-    description: "This is the clarity lens—the one that makes complexity accessible. It's about connecting opposites, bridging gaps, and ensuring everyone can understand and engage. This perspective uses Inter and Cloud Dancer to signal inclusivity, readability, and universal accessibility.",
+    description: "This is the clarity lens - the one that makes complexity accessible. It's about connecting opposites, bridging gaps, and ensuring everyone can understand and engage. This perspective uses Inter and Cloud Dancer to signal inclusivity, readability, and universal accessibility.",
     characteristics: [
       'Makes complex ideas simple and accessible',
       'Bridges technical and non-technical audiences',

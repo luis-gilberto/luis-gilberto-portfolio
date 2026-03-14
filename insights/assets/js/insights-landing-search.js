@@ -1,4 +1,4 @@
-/**
+﻿/**
  * insights-landing-search.js  v2
  * Autocomplete dropdown search for the Insights landing page.
  *
@@ -6,7 +6,7 @@
  * - Searches: title, category, excerpt
  * - Keyboard navigable (↑ ↓ Enter Escape)
  * - X button properly centered
- * - Does NOT filter or hide the page cards — purely additive
+ * - Does NOT filter or hide the page cards. purely additive
  */
 
 (function () {
@@ -308,7 +308,7 @@
       }
 
       if (!scored.length) {
-        dropdown.innerHTML = `<div class="ins-dropdown-empty">No stories match "<strong>${escHtml(query)}</strong>" — try a different keyword</div>`;
+        dropdown.innerHTML = `<div class="ins-dropdown-empty">No stories match "<strong>${escHtml(query)}</strong>". try a different keyword</div>`;
         openDropdown();
         return;
       }

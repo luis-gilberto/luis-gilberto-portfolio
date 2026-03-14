@@ -1,5 +1,5 @@
-/**
- * Theme Toggle — Luis Gilberto Ecosystem
+﻿/**
+ * Theme Toggle. Luis Gilberto Ecosystem
  * Wires to nav's #snav-theme-toggle button.
  * Storage key: 'lg_theme'
  */
