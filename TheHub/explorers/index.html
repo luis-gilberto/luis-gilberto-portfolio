@@ -57,6 +57,64 @@
       // Footer tagline add (neutral)
       html = html.replace('Making technology feel human through clarity, beautiful execution, and systems that scale.', 'Making technology feel human through clarity, beautiful execution, and systems that scale.\n            <br>A laboratory for ideas about strategy, technology, and craft.');
 
+      // Inject Intent Gate markup and listeners for on-page persona switching
+      const gateInject = `
+<style>
+.intent-backdrop{position:fixed;inset:0;background:rgba(10,10,10,0.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:flex-start;justify-content:center;z-index:2147483647;opacity:0;pointer-events:none;transition:opacity .5s ease;overflow-y:auto;padding:2rem 0}
+.intent-backdrop.visible{opacity:1;pointer-events:auto}
+.intent-container{background:rgba(14,12,10,0.95);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:3rem 2rem;max-width:900px;width:90%;text-align:center;margin:auto}
+.intent-header{font-family:Inter, sans-serif;font-weight:300;font-size:1.6rem;color:#fff;margin-bottom:1.25rem;letter-spacing:.05em;text-transform:uppercase}
+.intent-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1rem 0 0}
+.intent-card{padding:1.25rem;border-radius:12px;border:1px solid rgba(255,255,255,0.08);cursor:pointer;transition:transform .2s ease,border-color .2s ease}
+.intent-card:hover{transform:translateY(-2px)}
+.card-keyword{font-family:'Playfair Display',serif;font-size:1.25rem;color:#fff;margin:0 0 .25rem}
+.card-microline{font-family:Inter,sans-serif;font-size:.85rem;color:rgba(255,255,255,.7);margin:0}
+@media(max-width:768px){.intent-cards{grid-template-columns:1fr}}
+</style>
+<div id="intentGate" class="intent-backdrop">
+  <div class="intent-container">
+    <h2 class="intent-header">How <span class="emphasis">can we</span> work together?</h2>
+    <div class="intent-cards">
+      <div class="intent-card intent-card--assess" data-persona="coral">
+        <p class="card-keyword">Assessing</p>
+        <p class="card-microline">Recruiting managers exploring fit</p>
+      </div>
+      <div class="intent-card intent-card--partner" data-persona="teal">
+        <p class="card-keyword">Partnering</p>
+        <p class="card-microline">Clients aligning on roadmap</p>
+      </div>
+      <div class="intent-card intent-card--explore" data-persona="neutral">
+        <p class="card-keyword">Exploring</p>
+        <p class="card-microline">General audience</p>
+      </div>
+    </div>
+    <p style="margin-top:1rem;"><a href="#" id="intentSkip" style="color:rgba(255,255,255,0.6)">Skip</a></p>
+  </div>
+</div>
+<script>
+ (function(){
+  document.addEventListener('click', (e)=>{
+    const badge = e.target.closest && e.target.closest('.audience-badge');
+    if (badge){ const g = document.getElementById('intentGate'); if (g) g.classList.add('visible'); }
+    if (e.target && e.target.id === 'intentSkip'){ e.preventDefault(); const g=document.getElementById('intentGate'); if (g) g.classList.remove('visible'); }
+  });
+  function wire(){
+    const cards = document.querySelectorAll('.intent-card');
+    cards.forEach(card=>{
+      card.addEventListener('click', ()=>{
+        const persona = card.getAttribute('data-persona');
+        try { localStorage.setItem('luxe-persona', persona); } catch(e){}
+        const hubMap = { coral: '/TheHub/hiring-managers/', teal: '/TheHub/clients/', neutral: '/TheHub/explorers/' };
+        window.location.href = hubMap[persona] || '/TheHub/';
+      });
+    });
+  }
+  if (document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', wire); } else { wire(); }
+ })();
+</script>
+`;
+      html = html.replace('</body>', gateInject + '</body>');
+
       document.open();
       document.write(html);
       document.close();
