@@ -923,6 +923,7 @@
       const persona = localStorage.getItem('luxe-persona');
       const anchor = document.getElementById('header-audience-anchor');
       if (!anchor) return;
+      if (!persona) { anchor.innerHTML = ''; return; }
       const config = {
         coral:   { label: 'ASSESSING', class: 'badge-hire' },
         teal:    { label: 'PARTNERING', class: 'badge-partner' },
