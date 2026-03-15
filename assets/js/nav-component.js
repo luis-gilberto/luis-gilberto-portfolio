@@ -565,6 +565,23 @@
     @media (max-width: 1200px) { .footer-container { flex-direction: column; align-items: center; gap: 40px; padding: 0 48px 48px; } }
     @media (max-width: 1024px)  { .footer-signature { align-items: center !important; text-align: center !important; margin-bottom: 3rem; width: 100%; } .footer-logo-lockup { max-width: 240px; margin: 0 auto; } .footer-tagline-text { margin-left: auto; margin-right: auto; } .footer-column, .footer-status { align-items: center; text-align: center; } }
 
+    /* 🏷️ Pill Audience Badge (Global) */
+    .audience-badge { display:inline-flex; align-items:center; font-family:'Inter',sans-serif; font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; padding:6px 16px; border-radius:999px; position:relative; z-index:10; cursor:pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; user-select:none; }
+    .audience-badge:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+    .audience-badge:active { transform: translateY(0); }
+    .badge-dot { width:6px; height:6px; border-radius:50%; margin-right:10px; display:inline-block; }
+    .badge-hire   { color:#F96F6E !important; border:1px solid rgba(249,111,110,0.2); background:rgba(249,111,110,0.08); }
+    .badge-hire .badge-dot { background:#F96F6E; box-shadow:0 0 8px #F96F6E; }
+    .badge-partner{ color:#2ED3C6 !important; border:1px solid rgba(46,211,198,0.2); background:rgba(46,211,198,0.08); }
+    .badge-partner .badge-dot { background:#2ED3C6; box-shadow:0 0 8px #2ED3C6; }
+    .badge-explore{ color:#FFFFFF !important; border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.08); }
+    .badge-explore .badge-dot { background:#FFFFFF; box-shadow:0 0 8px #FFFFFF; }
+    [data-theme="light"] .badge-explore { color:#0A0A0A !important; border-color:rgba(0,0,0,0.15); }
+    [data-theme="light"] .badge-explore .badge-dot { background:#0A0A0A; box-shadow:none; }
+    /* Header integration */
+    .snav-ctas .audience-badge { margin-bottom:0; padding:4px 12px; font-size:9px; height:28px; margin-right:8px; }
+    .snav-ctas .badge-dot { width:5px; height:5px; margin-right:8px; }
+
     /* 🧬 Hybrid Social Buttons */
     .social-btn { width: 34px; height: 34px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; color: rgba(255, 255, 255, 0.4); transition: all 0.2s ease; }
     .social-btn:hover { color: #FFFFFF; border-color: var(--coral, #F96F6E); background: rgba(249, 111, 110, 0.1); }
@@ -741,6 +758,7 @@
           </div><!-- /viewport -->
         </nav>
         <div class="snav-ctas">
+          <div id="header-audience-anchor"></div>
           <!-- 🧬 LENS BADGE INJECTED HERE -->
           <div id="lens-badge-container">
             <button id="lens-reset-trigger" class="lens-badge">
@@ -898,6 +916,31 @@
   } else {
     placeBodyEndElements();
   }
+
+  // Audience badge in header based on stored persona
+  function updateHeaderAudience(){
+    try {
+      const persona = localStorage.getItem('luxe-persona');
+      const anchor = document.getElementById('header-audience-anchor');
+      if (!anchor) return;
+      const config = {
+        coral:   { label: 'ASSESSING', class: 'badge-hire' },
+        teal:    { label: 'PARTNERING', class: 'badge-partner' },
+        neutral: { label: 'EXPLORING', class: 'badge-explore' }
+      };
+      const active = config[persona] || config.neutral;
+      anchor.innerHTML = `<div class="audience-badge ${active.class}" id="header-switch-trigger"><span class="badge-dot"></span>${active.label}</div>`;
+    } catch(e) {}
+  }
+  function wireHeaderBadge(){
+    updateHeaderAudience();
+    window.addEventListener('storage', (e)=>{ if (e.key === 'luxe-persona') updateHeaderAudience(); });
+    document.addEventListener('click', (e)=>{
+      const t = e.target && e.target.closest && e.target.closest('#header-switch-trigger');
+      if (t){ if (window.intentGate && window.intentGate.open) { window.intentGate.open(); } else { const g=document.getElementById('intentGate'); if (g) g.classList.add('visible'); } }
+    });
+  }
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', wireHeaderBadge); } else { wireHeaderBadge(); }
 
   // ── Insights Hybrid Footer augmentation and AI modal injection
   (function attachInsightsUtilities(){
