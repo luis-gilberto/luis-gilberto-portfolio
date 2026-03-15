@@ -975,7 +975,7 @@
       editorial.innerHTML = `
         <h4 class="footer-heading">EDITORIAL</h4>
         <ul class="footer-list">
-          <li><a href="/TheHub/styleguide.html">Style Guide</a></li>
+          <li><a href="/insights/insights-brand.html">Style Guide</a></li>
           <li><a href="#" id="open-ai-modal">AI Collaboration</a></li>
         </ul>`;
       // Insert before status column when available
