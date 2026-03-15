@@ -564,6 +564,19 @@
     .footer-legal p { max-width: 1400px; margin: 0 auto; font-size: 9px; letter-spacing: 0.05em; text-transform: uppercase; color: rgba(255,255,255,0.2) !important; text-align: center; }
     @media (max-width: 1200px) { .footer-container { flex-direction: column; align-items: center; gap: 40px; padding: 0 48px 48px; } }
     @media (max-width: 1024px)  { .footer-signature { align-items: center !important; text-align: center !important; margin-bottom: 3rem; width: 100%; } .footer-logo-lockup { max-width: 240px; margin: 0 auto; } .footer-tagline-text { margin-left: auto; margin-right: auto; } .footer-column, .footer-status { align-items: center; text-align: center; } }
+
+    /* 🧬 Hybrid Social Buttons */
+    .social-btn { width: 34px; height: 34px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; color: rgba(255, 255, 255, 0.4); transition: all 0.2s ease; }
+    .social-btn:hover { color: #FFFFFF; border-color: var(--coral, #F96F6E); background: rgba(249, 111, 110, 0.1); }
+
+    /* 🧬 AI Collaboration Modal */
+    #ai-collab-modal { position: fixed; inset: 0; display: none; place-items: center; background: rgba(5,5,5,0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 2147483647; }
+    #ai-collab-modal.open { display: grid; }
+    .ai-modal-card { width: min(720px, 92vw); background: #0A0A0A; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 28px; color: #fff; box-shadow: 0 24px 60px rgba(0,0,0,0.5); }
+    .ai-modal-head { display:flex; align-items:center; justify-content: space-between; margin-bottom: 8px; }
+    .ai-modal-title { font-family: 'Big Shoulders Display', sans-serif; font-size: 1.35rem; letter-spacing: 0.02em; text-transform: uppercase; }
+    .ai-modal-close { width: 36px; height: 36px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.12); background: transparent; color: rgba(255,255,255,0.7); cursor: pointer; }
+    .ai-modal-body { font-family: 'Inter', sans-serif; color: rgba(255,255,255,0.76); line-height: 1.6; }
   `;
 
   // ─── HTML builder ──────────────────────────────────────────────
@@ -885,6 +898,57 @@
   } else {
     placeBodyEndElements();
   }
+
+  // ── Insights Hybrid Footer augmentation and AI modal injection
+  (function attachInsightsUtilities(){
+    const inInsights = window.location.pathname.includes('/insights/');
+    // Inject AI collab modal once
+    if (!document.getElementById('ai-collab-modal')) {
+      const modalHtml = `
+        <div id="ai-collab-modal" aria-hidden="true">
+          <div class="ai-modal-card" role="dialog" aria-modal="true" aria-label="AI Collaboration Modal">
+            <div class="ai-modal-head">
+              <div class="ai-modal-title">AI Collaboration</div>
+              <button class="ai-modal-close" id="close-ai-modal" aria-label="Close">✕</button>
+            </div>
+            <div class="ai-modal-body">
+              <p>This page may use AI assistance for editing or ideation. Core strategy and narrative remain authored by Luis Gilberto.</p>
+            </div>
+          </div>
+        </div>`;
+      document.body.insertAdjacentHTML('beforeend', modalHtml);
+      document.addEventListener('click', (e) => {
+        const t = e.target;
+        if (t && t.id === 'open-ai-modal') { e.preventDefault(); const m = document.getElementById('ai-collab-modal'); if (m) m.classList.add('open'); }
+        if (t && (t.id === 'close-ai-modal' || t.id === 'ai-collab-modal')) { const m = document.getElementById('ai-collab-modal'); if (m) m.classList.remove('open'); }
+      });
+    }
+    if (!inInsights) return;
+    const container = document.querySelector('.site-footer .footer-container');
+    if (container && !document.getElementById('footer-editorial-col')) {
+      const editorial = document.createElement('div');
+      editorial.className = 'footer-column';
+      editorial.id = 'footer-editorial-col';
+      editorial.innerHTML = `
+        <h4 class="footer-heading">EDITORIAL</h4>
+        <ul class="footer-list">
+          <li><a href="/TheHub/styleguide.html">Style Guide</a></li>
+          <li><a href="#" id="open-ai-modal">AI Collaboration</a></li>
+        </ul>`;
+      // Insert before status column when available
+      container.insertBefore(editorial, container.lastElementChild);
+      // Add social buttons to status card when present
+      const status = container.querySelector('.footer-status');
+      if (status && !status.querySelector('.social-btn')) {
+        const row = document.createElement('div');
+        row.style.display = 'flex'; row.style.gap = '8px'; row.style.marginTop = '8px';
+        row.innerHTML = `
+          <a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" rel="noopener" class="social-btn" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="mailto:hello@luis-gilberto.com" class="social-btn" aria-label="Email"><i class="fas fa-envelope"></i></a>`;
+        status.appendChild(row);
+      }
+    }
+  })();
 
   // Clean up the hook
   mount.remove();
