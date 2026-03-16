@@ -163,164 +163,197 @@
       background: rgba(5,5,5,0.92); backdrop-filter: blur(12px);
       border-bottom-color: rgba(250,247,244,0.08);
     }
-    .snav-inner {
-      display: flex; align-items: center; justify-content: space-between;
-      height: 100%; max-width: 1280px; margin: 0 auto; padding: 0 48px;
-    }
-    .snav-logo { display: flex; align-items: center; height: 48px; }
-    .snav-logo img { height: 48px !important; width: auto; transition: opacity 0.3s ease, transform 0.3s ease; }
-    #snav-logo-mark { display: none; }
-    @media (max-width: 1024px) {
-      #snav-logo-desktop { display: none; }
-      #snav-logo-mark    { display: block; }
-    }
-    @media (max-width: 768px) { .snav-inner { padding: 0 24px; } }
+    .nav-container, 
+    .snav-inner { 
+      display: grid !important; 
+      /* 🧬 Column 1 (Logo) | Column 2 (Nav) | Column 3 (Actions) */ 
+      grid-template-columns: 1.5fr auto 1.5fr !important; 
+      align-items: center; 
+      max-width: 1400px; 
+      margin: 0 auto; 
+      width: 100%; 
+      height: 100%;
+      padding: 0 48px;
+    } 
 
-    /* ── lens badge ── */
-    .snav-lens-badge {
-      display: flex; align-items: center; gap: 8px; padding: 4px 12px;
-      background: rgba(250,247,244,0.05); border: 1px solid rgba(250,247,244,0.1);
-      border-radius: 99px; cursor: pointer; transition: all 0.2s;
-      font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 700;
-      letter-spacing: 0.05em; text-transform: uppercase; color: rgba(250,247,244,0.6);
-    }
-    .snav-lens-badge:hover { background: rgba(250,247,244,0.08); border-color: var(--accent-lens); color: #fff; }
-    .snav-lens-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-lens); box-shadow: 0 0 8px var(--accent-lens); }
+    .nav-logo, 
+    .snav-logo { 
+      justify-self: start; /* 🧬 Hard-lock to the left */ 
+      display: flex; 
+      align-items: center; 
+      height: 48px; 
+    } 
+    .nav-logo img, 
+    .snav-logo img { height: 48px !important; width: auto; transition: opacity 0.3s ease, transform 0.3s ease; } 
+    #snav-logo-mark { display: none; } 
+    @media (max-width: 1024px) { 
+      .nav-container, .snav-inner { 
+        display: flex !important; 
+        justify-content: space-between; 
+        padding: 0 24px; 
+      } 
+      #snav-logo-desktop { display: none; } 
+      #snav-logo-mark    { display: block; } 
+      .snav-desktop, .desktop-nav { display: none; } 
+    } 
 
-    /* ── desktop nav ── */
-    .snav-desktop {
-      display: flex; align-items: center; gap: 2px; position: relative;
-    }
-    @media (max-width: 1024px) { .snav-desktop { display: none; } }
+    /* ── lens badge ── */ 
+    .snav-lens-badge { 
+      display: flex; align-items: center; gap: 8px; padding: 4px 12px; 
+      background: rgba(250,247,244,0.05); border: 1px solid rgba(250,247,244,0.1); 
+      border-radius: 99px; cursor: pointer; transition: all 0.2s; 
+      font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 700; 
+      letter-spacing: 0.05em; text-transform: uppercase; color: rgba(250,247,244,0.6); 
+    } 
+    .snav-lens-badge:hover { background: rgba(250,247,244,0.08); border-color: var(--accent-lens); color: #fff; } 
+    .snav-lens-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-lens); box-shadow: 0 0 8px var(--accent-lens); } 
 
-    .nav-link {
-      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
-      letter-spacing: 0.04em; color: rgba(250,247,244,0.45);
-      padding: 8px 14px; border-radius: 6px;
-      display: inline-flex; align-items: center; gap: 4px;
-      background: none; border: none; cursor: pointer;
-      transition: color 0.15s, background 0.15s; white-space: nowrap;
-    }
-    .nav-link:hover { color: #FAF7F4; background: rgba(250,247,244,0.08); }
-    .nav-link-active { color: var(--accent-lens) !important; }
-    .nav-link[aria-expanded="true"] { color: #FAF7F4; background: rgba(250,247,244,0.08); }
-    .nav-chevron { width: 12px; height: 12px; transition: transform 300ms; flex-shrink: 0; }
-    .nav-link[aria-expanded="true"] .nav-chevron { transform: rotate(180deg); }
+    /* ── desktop nav ── */ 
+    .desktop-nav, 
+    .snav-desktop { 
+      justify-self: center; /* 🧬 Hard-lock to the center */ 
+      display: flex; 
+      align-items: center; 
+      gap: 24px; /* Refined from 2px to 24px per v12.5 instructions */ 
+      position: relative; 
+    } 
+    @media (max-width: 1024px) { .snav-desktop, .desktop-nav { display: none; } } 
 
-    /* ── viewport / panels ── */
-    .snav-viewport {
-      position: absolute; left: 50%; top: calc(100% + 8px);
-      transform: translateX(-50%); pointer-events: none; z-index: 300;
-    }
-    .snav-viewport-inner {
-      background: #050505; border: 1px solid rgba(250,247,244,0.12);
-      border-radius: 10px; box-shadow: 0 12px 40px rgba(0,0,0,0.4);
-      opacity: 0; transform: scale(0.96) translateY(-6px); pointer-events: none;
-      transition: opacity 180ms ease, transform 180ms ease; overflow: hidden;
-    }
-    .snav-viewport-inner.open {
-      opacity: 1; transform: scale(1) translateY(0); pointer-events: auto;
-    }
-    .snav-panel { display: none; }
-    .snav-panel.active { display: block; }
+    .nav-link { 
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; 
+      letter-spacing: 0.04em; color: rgba(250,247,244,0.45); 
+      padding: 8px 14px; border-radius: 6px; 
+      display: inline-flex; align-items: center; gap: 4px; 
+      background: none; border: none; cursor: pointer; 
+      transition: color 0.15s, background 0.15s; white-space: nowrap; 
+    } 
+    .nav-link:hover { color: #FAF7F4; background: rgba(250,247,244,0.08); } 
+    .nav-link-active { color: var(--accent-lens) !important; } 
+    .nav-link[aria-expanded="true"] { color: #FAF7F4; background: rgba(250,247,244,0.08); } 
+    .nav-chevron { width: 12px; height: 12px; transition: transform 300ms; flex-shrink: 0; } 
+    .nav-link[aria-expanded="true"] .nav-chevron { transform: rotate(180deg); } 
 
-    .snav-panel-wrap { padding: 6px; }
-    .snav-panel-wrap[data-ch="portfolio"] { --ch: var(--accent-lens); width: 480px; }
-    .snav-panel-wrap[data-ch="insights"]  { --ch: var(--accent-lens); width: 520px; }
-    .snav-panel-wrap[data-ch="hub"]       { --ch: var(--accent-lens); width: 560px; }
-    .snav-panel-wrap[data-ch="portal"]    { --ch: var(--accent-lens); width: 400px; }
+    /* ── viewport / panels ── */ 
+    .snav-viewport { 
+      position: absolute; left: 50%; top: calc(100% + 8px); 
+      transform: translateX(-50%); pointer-events: none; z-index: 300; 
+    } 
+    .snav-viewport-inner { 
+      background: #050505; border: 1px solid rgba(250,247,244,0.12); 
+      border-radius: 10px; box-shadow: 0 12px 40px rgba(0,0,0,0.4); 
+      opacity: 0; transform: scale(0.96) translateY(-6px); pointer-events: none; 
+      transition: opacity 180ms ease, transform 180ms ease; overflow: hidden; 
+    } 
+    .snav-viewport-inner.open { 
+      opacity: 1; transform: scale(1) translateY(0); pointer-events: auto; 
+    } 
+    .snav-panel { display: none; } 
+    .snav-panel.active { display: block; } 
 
-    .snav-panel-header {
-      padding: 16px 16px 10px;
-      border-bottom: 1px solid rgba(250,247,244,0.08);
-      margin-bottom: 6px;
-    }
-    .snav-panel-label {
-      font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 600;
-      letter-spacing: 0.15em; text-transform: uppercase; color: var(--ch);
-      display: flex; align-items: center; gap: 8px; margin-bottom: 4px;
-    }
-    .snav-panel-label::before { content: ''; display: block; width: 20px; height: 1px; background: var(--ch); }
-    .snav-panel-title {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 22px; font-weight: 500; color: #FAF7F4; line-height: 1.2;
-    }
-    .snav-grid      { display: grid; grid-template-columns: 1fr;     gap: 4px; padding: 4px; }
-    .snav-grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; }
+    .snav-panel-wrap { padding: 6px; } 
+    .snav-panel-wrap[data-ch="portfolio"] { --ch: var(--accent-lens); width: 480px; } 
+    .snav-panel-wrap[data-ch="insights"]  { --ch: var(--accent-lens); width: 520px; } 
+    .snav-panel-wrap[data-ch="hub"]       { --ch: var(--accent-lens); width: 560px; } 
+    .snav-panel-wrap[data-ch="portal"]    { --ch: var(--accent-lens); width: 400px; } 
 
-    .snav-item {
-      display: flex; align-items: flex-start; gap: 12px; padding: 12px;
-      border-radius: 8px; text-decoration: none; transition: background 0.15s;
-    }
-    .snav-item:hover { background: rgba(250,247,244,0.05); }
-    .snav-item:hover .snav-item-icon { border-color: var(--ch); color: var(--ch); }
-    .snav-item-icon {
-      flex-shrink: 0; width: 40px; height: 40px;
-      display: flex; align-items: center; justify-content: center;
-      border: 1px solid rgba(250,247,244,0.08); border-radius: 8px;
-      background: #0E0C0A; color: rgba(250,247,244,0.45);
-      transition: border-color 0.15s, color 0.15s;
-    }
-    .snav-item-icon svg { width: 18px; height: 18px; }
-    .snav-item-text { flex: 1; min-width: 0; }
-    .snav-item-title {
-      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
-      color: #FAF7F4; margin-bottom: 2px;
-    }
-    .snav-item-desc  {
-      font-family: 'Inter', sans-serif; font-size: 11px;
-      color: rgba(250,247,244,0.5); line-height: 1.5;
-    }
-    .snav-item-role {
-      display: inline-block; margin-top: 4px;
-      font-family: 'Inter', sans-serif; font-size: 9px; font-weight: 700;
-      letter-spacing: 0.12em; text-transform: uppercase;
-      color: var(--ch); opacity: 0.8;
-    }
+    .snav-panel-header { 
+      padding: 16px 16px 10px; 
+      border-bottom: 1px solid rgba(250,247,244,0.08); 
+      margin-bottom: 6px; 
+    } 
+    .snav-panel-label { 
+      font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 600; 
+      letter-spacing: 0.15em; text-transform: uppercase; color: var(--ch); 
+      display: flex; align-items: center; gap: 8px; margin-bottom: 4px; 
+    } 
+    .snav-panel-label::before { content: ''; display: block; width: 20px; height: 1px; background: var(--ch); } 
+    .snav-panel-title { 
+      font-family: 'Playfair Display', Georgia, serif; 
+      font-size: 22px; font-weight: 500; color: #FAF7F4; line-height: 1.2; 
+    } 
+    .snav-grid      { display: grid; grid-template-columns: 1fr;     gap: 4px; padding: 4px; } 
+    .snav-grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; } 
 
-    .snav-panel-footer {
-      border-top: 1px solid rgba(250,247,244,0.08); padding: 12px 16px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .snav-panel-footer-text {
-      font-family: 'Inter', sans-serif; font-size: 12px; color: rgba(250,247,244,0.4);
-    }
-    .snav-panel-footer-link {
-      font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600;
-      color: var(--ch); display: flex; align-items: center; gap: 4px;
-      text-decoration: none; transition: gap 0.15s;
-    }
-    .snav-panel-footer-link:hover { gap: 8px; }
+    .snav-item { 
+      display: flex; align-items: flex-start; gap: 12px; padding: 12px; 
+      border-radius: 8px; text-decoration: none; transition: background 0.15s; 
+    } 
+    .snav-item:hover { background: rgba(250,247,244,0.05); } 
+    .snav-item:hover .snav-item-icon { border-color: var(--ch); color: var(--ch); } 
+    .snav-item-icon { 
+      flex-shrink: 0; width: 40px; height: 40px; 
+      display: flex; align-items: center; justify-content: center; 
+      border: 1px solid rgba(250,247,244,0.08); border-radius: 8px; 
+      background: #0E0C0A; color: rgba(250,247,244,0.45); 
+      transition: border-color 0.15s, color 0.15s; 
+    } 
+    .snav-item-icon svg { width: 18px; height: 18px; } 
+    .snav-item-text { flex: 1; min-width: 0; } 
+    .snav-item-title { 
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; 
+      color: #FAF7F4; margin-bottom: 2px; 
+    } 
+    .snav-item-desc  { 
+      font-family: 'Inter', sans-serif; font-size: 11px; 
+      color: rgba(250,247,244,0.5); line-height: 1.5; 
+    } 
+    .snav-item-role { 
+      display: inline-block; margin-top: 4px; 
+      font-family: 'Inter', sans-serif; font-size: 9px; font-weight: 700; 
+      letter-spacing: 0.12em; text-transform: uppercase; 
+      color: var(--ch); opacity: 0.8; 
+    } 
 
-    /* portal specifics */
-    .snav-portal-features { padding: 12px 16px 8px; display: flex; flex-direction: column; gap: 2px; }
-    .snav-portal-feature {
-      display: flex; align-items: center; gap: 10px; padding: 9px 6px;
-      border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 12px;
-      color: rgba(250,247,244,0.55); transition: background 0.15s;
-    }
-    .snav-portal-feature:hover { background: rgba(250,247,244,0.04); }
-    .snav-portal-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--nav-teal); flex-shrink: 0; }
-    .snav-portal-cta {
-      margin: 8px 10px 10px; background: #FAF7F4; border-radius: 6px;
-      padding: 14px 16px; display: flex; align-items: center;
-      justify-content: space-between; gap: 12px;
-    }
-    .snav-portal-cta-label {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 16px; font-style: italic; color: #1A1714; line-height: 1.2;
-    }
-    .snav-portal-cta-btn {
-      font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700;
-      letter-spacing: 0.08em; text-transform: uppercase;
-      color: #1A1714; background: var(--nav-teal); padding: 8px 14px;
-      border-radius: 4px; white-space: nowrap; text-decoration: none;
-      transition: background 0.15s;
-    }
-    .snav-portal-cta-btn:hover { background: #3dc9bc; }
+    .snav-panel-footer { 
+      border-top: 1px solid rgba(250,247,244,0.08); padding: 12px 16px; 
+      display: flex; align-items: center; justify-content: space-between; 
+    } 
+    .snav-panel-footer-text { 
+      font-family: 'Inter', sans-serif; font-size: 12px; color: rgba(250,247,244,0.4); 
+    } 
+    .snav-panel-footer-link { 
+      font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; 
+      color: var(--ch); display: flex; align-items: center; gap: 4px; 
+      text-decoration: none; transition: gap 0.15s; 
+    } 
+    .snav-panel-footer-link:hover { gap: 8px; } 
 
-    /* ── header CTAs ── */
-    .snav-ctas { display: flex; align-items: center; gap: 8px; }
+    /* portal specifics */ 
+    .snav-portal-features { padding: 12px 16px 8px; display: flex; flex-direction: column; gap: 2px; } 
+    .snav-portal-feature { 
+      display: flex; align-items: center; gap: 10px; padding: 9px 6px; 
+      border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 12px; 
+      color: rgba(250,247,244,0.55); transition: background 0.15s; 
+    } 
+    .snav-portal-feature:hover { background: rgba(250,247,244,0.04); } 
+    .snav-portal-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--nav-teal); flex-shrink: 0; } 
+    .snav-portal-cta { 
+      margin: 8px 10px 10px; background: #FAF7F4; border-radius: 6px; 
+      padding: 14px 16px; display: flex; align-items: center; 
+      justify-content: space-between; gap: 12px; 
+    } 
+    .snav-portal-cta-label { 
+      font-family: 'Playfair Display', Georgia, serif; 
+      font-size: 16px; font-style: italic; color: #1A1714; line-height: 1.2; 
+    } 
+    .snav-portal-cta-btn { 
+      font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700; 
+      letter-spacing: 0.08em; text-transform: uppercase; 
+      color: #1A1714; background: var(--nav-teal); padding: 8px 14px; 
+      border-radius: 4px; white-space: nowrap; text-decoration: none; 
+      transition: background 0.15s; 
+    } 
+    .snav-portal-cta-btn:hover { background: #3dc9bc; } 
+
+    /* ── header CTAs ── */ 
+    .nav-actions, 
+    .snav-ctas { 
+      justify-self: end; /* 🧬 Hard-lock to the right */ 
+      display: flex; 
+      align-items: center; 
+      gap: 16px; 
+    } 
+
 
     /* 🧬 LENS BADGE STYLES */
     .lens-badge { 
@@ -536,15 +569,17 @@
     }
     @keyframes snavPulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
-    /* ── Global Footer (site-footer) - Luxe v4.7 */
+    /* ════════════════════════════════════════ 
+       🧬 REFINED FOOTER SYSTEM (Luxe v4.7) 
+    ════════════════════════════════════════ */ 
     .site-footer { background-color: #050505 !important; color: #FFFFFF !important; padding: 64px 0 0; border-top: 1px solid rgba(255,255,255,0.05); scroll-snap-align: end; font-family: 'Inter', sans-serif; }
     .footer-container { max-width: 1400px; margin: 0 auto; padding: 0 60px 80px; display: flex; justify-content: space-between; align-items: flex-start; gap: 80px; }
-    .footer-brand { display: flex; flex-direction: column; gap: 16px; }
     .footer-signature { flex: 1.5; display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
-    .footer-logo-lockup { width: 100%; max-width: 240px; height: auto; display: block; image-rendering: -webkit-optimize-contrast; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); margin-bottom: 1.25rem; }
+    .footer-logo-lockup { width: 100%; max-width: 240px; height: auto; display: block; image-rendering: -webkit-optimize-contrast; transition: transform 0.4s var(--ease-spring); margin-bottom: 1.25rem; }
     .footer-logo-lockup:hover { transform: translateY(-2px); }
     .footer-tagline-text { font-family: 'Inter', sans-serif; font-size: 13px; line-height: 1.6; color: rgba(255,255,255,0.4) !important; max-width: 320px; margin-bottom: 1.5rem; }
     .footer-copyright-text { font-family: 'Inter', sans-serif; font-size: 11px; letter-spacing: 0.02em; color: rgba(255,255,255,0.2) !important; }
+    .footer-brand { display: flex; flex-direction: column; gap: 16px; }
     .footer-logo-link { display: inline-block; width: fit-content; margin-bottom: 8px; }
     .footer-logo-img { height: 32px; width: auto; opacity: 0.9; transition: opacity 0.3s ease; }
     .footer-logo-link:hover .footer-logo-img { opacity: 1; }
@@ -563,28 +598,7 @@
     .footer-legal { background: #000000 !important; border-top: 1px solid rgba(255,255,255,0.04); padding: 24px 48px; }
     .footer-legal p { max-width: 1400px; margin: 0 auto; font-size: 9px; letter-spacing: 0.05em; text-transform: uppercase; color: rgba(255,255,255,0.2) !important; text-align: center; }
     @media (max-width: 1200px) { .footer-container { flex-direction: column; align-items: center; gap: 40px; padding: 0 48px 48px; } }
-    @media (max-width: 1024px)  { .footer-signature { align-items: center !important; text-align: center !important; margin-bottom: 3rem; width: 100%; } .footer-logo-lockup { max-width: 240px; margin: 0 auto; } .footer-tagline-text { margin-left: auto; margin-right: auto; } .footer-column, .footer-status { align-items: center; text-align: center; } }
-
-    /* 🏷️ Pill Audience Badge (Global) */
-    .audience-badge { display:inline-flex; align-items:center; font-family:'Inter',sans-serif; font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; padding:6px 16px; border-radius:999px; position:relative; z-index:10; cursor:pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; user-select:none; }
-    .audience-badge:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-    .audience-badge:active { transform: translateY(0); }
-    .badge-dot { width:6px; height:6px; border-radius:50%; margin-right:10px; display:inline-block; }
-    .badge-hire   { color:#F96F6E !important; border:1px solid rgba(249,111,110,0.2); background:rgba(249,111,110,0.08); }
-    .badge-hire .badge-dot { background:#F96F6E; box-shadow:0 0 8px #F96F6E; }
-    .badge-partner{ color:#2ED3C6 !important; border:1px solid rgba(46,211,198,0.2); background:rgba(46,211,198,0.08); }
-    .badge-partner .badge-dot { background:#2ED3C6; box-shadow:0 0 8px #2ED3C6; }
-    .badge-explore{ color:#FFFFFF !important; border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.08); }
-    .badge-explore .badge-dot { background:#FFFFFF; box-shadow:0 0 8px #FFFFFF; }
-    [data-theme="light"] .badge-explore { color:#0A0A0A !important; border-color:rgba(0,0,0,0.15); }
-    [data-theme="light"] .badge-explore .badge-dot { background:#0A0A0A; box-shadow:none; }
-    /* Header integration */
-    .snav-ctas .audience-badge { margin-bottom:0; padding:4px 12px; font-size:9px; height:28px; margin-right:8px; }
-    .snav-ctas .badge-dot { width:5px; height:5px; margin-right:8px; }
-
-    /* 🧬 Hybrid Social Buttons */
-    .social-btn { width: 34px; height: 34px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; color: rgba(255, 255, 255, 0.4); transition: all 0.2s ease; }
-    .social-btn:hover { color: #FFFFFF; border-color: var(--coral, #F96F6E); background: rgba(249, 111, 110, 0.1); }
+    @media (max-width: 1024px) { .footer-signature { align-items: center !important; text-align: center !important; margin-bottom: 3rem; width: 100%; } .footer-logo-lockup { max-width: 240px; margin: 0 auto; } .footer-tagline-text { margin-left: auto; margin-right: auto; } .footer-column, .footer-status { align-items: center; text-align: center; } }
 
     /* 🧬 AI Collaboration Modal */
     #ai-collab-modal { position: fixed; inset: 0; display: none; place-items: center; background: rgba(5,5,5,0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 2147483647; }
@@ -610,55 +624,53 @@
       </a>`;
   }
 
-  /* ── Footer Logic ── */
-  const footerHtml = `
-    <footer class="site-footer">
-      <div class="footer-container">
-        <div class="footer-signature">
-          <a href="/index.html" class="footer-logo-link"><img src="${asset('/assets/images/LG-ecosystem-logo-lockup.png')}" alt="Luis Gilberto Ecosystem" class="footer-logo-lockup"></a>
-          <p class="footer-tagline-text">Making technology feel human through clarity, beautiful execution, and systems that scale.</p>
-          <div class="footer-copyright-text">© <span id="currentYear"></span> Luis Gilberto Sanchez. All rights reserved.</div>
-        </div>
-        <div class="footer-column">
-          <h4 class="footer-heading">ECOSYSTEM</h4>
-          <ul class="footer-list">
-            <li><a href="/timeline.html">Portfolio</a></li>
-            <li><a href="/insights/">Insights</a></li>
-            <li><a href="/TheHub/index.html">The Hub</a></li>
-            <li><a href="/portal/story/">The Portal</a></li>
-          </ul>
-        </div>
-        <div class="footer-column">
-          <h4 class="footer-heading">CONNECT</h4>
-          <ul class="footer-list">
-            <li><a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" rel="noopener">LinkedIn</a></li>
-            <li><a href="/contact.html">Contact</a></li>
-            <li><a href="/about.html">About Me</a></li>
-            <li><a href="/brand/">Identity</a></li>
-          </ul>
-        </div>
-        <div class="footer-column">
-          <div class="footer-status">
-            <div class="status-indicator"><div class="status-dot"></div><span class="status-label">ACCEPTING PROJECTS</span></div>
-            <p class="status-desc">Currently available for strategic consulting and creative direction.</p>
-          </div>
-        </div>
-      </div>
-      <div class="footer-legal">
-        <p>INTELLECTUAL PROPERTY NOTICE: STRATEGYIQ™, THE HUB™, AND THE ASSOCIATED DIAGNOSTIC METHODOLOGIES ARE PROPRIETARY INTELLECTUAL PROPERTY OF LUIS GILBERTO.</p>
-      </div>
+  /* ── Footer Logic ── */ 
+  const footerHtml = ` 
+    <footer class="site-footer"> 
+      <div class="footer-container"> 
+        <div class="footer-signature"> 
+          <a href="${u('/index.html')}" class="footer-logo-link"><img src="${asset('/assets/images/LG-ecosystem-logo-lockup.png')}" alt="Luis Gilberto Ecosystem" class="footer-logo-lockup"></a> 
+          <p class="footer-tagline-text">Making technology feel human through clarity, beautiful execution, and systems that scale.</p> 
+        </div> 
+        <div class="footer-column"> 
+          <h4 class="footer-heading">ECOSYSTEM</h4> 
+          <ul class="footer-list"> 
+            <li><a href="${u('/timeline.html')}">Portfolio</a></li> 
+            <li><a href="${u('/insights/')}">Insights</a></li> 
+            <li><a href="${u('/TheHub/index.html')}">The Hub</a></li> 
+            <li><a href="${u('/portal/story/')}">The Portal</a></li> 
+          </ul> 
+        </div> 
+        <div class="footer-column"> 
+          <h4 class="footer-heading">CONNECT</h4> 
+          <ul class="footer-list"> 
+            <li><a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" rel="noopener">LinkedIn</a></li> 
+            <li><a href="${u('/contact.html')}">Contact</a></li> 
+            <li><a href="${u('/about.html')}">About Me</a></li> 
+            <li><a href="${u('/brand/')}">Identity</a></li> 
+          </ul> 
+        </div> 
+        <div class="footer-column"> 
+          <div class="footer-status"> 
+            <div class="status-indicator"><div class="status-dot"></div><span class="status-label">ACCEPTING PROJECTS</span></div> 
+            <p class="status-desc">Currently available for strategic consulting and creative direction.</p> 
+          </div> 
+          <div class="footer-copyright-text" style="margin-top: 0.75rem;">© <span id="currentYearFooter"></span> Luis Gilberto Sanchez. All rights reserved.</div> 
+        </div> 
+      </div> 
+      <div class="footer-legal"><p>INTELLECTUAL PROPERTY NOTICE: STRATEGYIQ™, THE HUB™, AND THE ASSOCIATED DIAGNOSTIC METHODOLOGIES ARE PROPRIETARY INTELLECTUAL PROPERTY OF LUIS GILBERTO.</p></div> 
     </footer>`;
 
   const html = `
     <style>${css}</style>
     <!-- ── HEADER ── -->
     <header class="snav-header" id="snav-header">
-      <div class="snav-inner">
-        <a href="/index.html" class="snav-logo">
+      <div class="snav-inner nav-container">
+        <a href="/index.html" class="snav-logo nav-logo">
           <img id="snav-logo-desktop" src="${asset('/assets/images/AUg_logo_White.png')}" alt="Luis Gilberto">
           <img id="snav-logo-mark"    src="${asset('/assets/images/Logomark_White_a.png')}" alt="Luis Gilberto">
         </a>
-        <nav class="snav-desktop" id="snav-desktop" aria-label="Main navigation">
+        <nav class="snav-desktop desktop-nav" id="snav-desktop" aria-label="Main navigation">
           <button id="snav-trigger-portfolio" class="${navLinkClass(['portfolio','experience','timeline','about','brand','contact'])}"
             aria-haspopup="true" aria-expanded="false" aria-controls="snav-panel-portfolio" data-snav-trigger>
             Portfolio ${CHEVRON}
@@ -757,15 +769,8 @@
             </div><!-- /viewport-inner -->
           </div><!-- /viewport -->
         </nav>
-        <div class="snav-ctas">
-          <div id="header-audience-anchor"></div>
-          <!-- 🧬 LENS BADGE INJECTED HERE -->
-          <div id="lens-badge-container">
-            <button id="lens-reset-trigger" class="lens-badge">
-              <span class="lens-dot"></span>
-              <span id="lens-label">EXPLORING</span>
-            </button>
-          </div>
+        <div class="snav-ctas nav-actions">
+          <div id="header-audience-anchor" style="display:inline-block;"></div>
 
           <button class="snav-theme-btn" id="snav-theme-toggle" aria-label="Toggle theme">
             <span>${ICONS.moon}</span>
@@ -889,7 +894,7 @@
 
   const header = fragment.querySelector(".snav-header");
   const drawer = fragment.querySelector(".snav-drawer");
-  const footer = fragment.querySelector(".snav-footer");
+  const footer = fragment.querySelector(".site-footer");
 
   // 3. Perform placements
   const mountParent = mount.parentNode;
@@ -907,7 +912,7 @@
     // 🧬 DUPLICATE FOOTER FIX: Only append if a site-footer doesn't already exist in the static HTML
     if (footer && !document.querySelector('.site-footer')) {
       document.body.appendChild(footer);
-      var yr = document.getElementById('currentYear'); if (yr) yr.textContent = new Date().getFullYear();
+      var yr = document.getElementById('currentYearFooter'); if (yr) yr.textContent = new Date().getFullYear();
     }
   }
 
@@ -935,6 +940,7 @@
   }
   function wireHeaderBadge(){
     updateHeaderAudience();
+    setTimeout(updateHeaderAudience, 100);
     window.addEventListener('storage', (e)=>{ if (e.key === 'luxe-persona') updateHeaderAudience(); });
     document.addEventListener('click', (e)=>{
       const t = e.target && e.target.closest && e.target.closest('#header-switch-trigger');
