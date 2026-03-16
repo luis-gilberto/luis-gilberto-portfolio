@@ -185,15 +185,33 @@
     } 
     .nav-logo img, 
     .snav-logo img { height: 48px !important; width: auto; transition: opacity 0.3s ease, transform 0.3s ease; } 
-    #snav-logo-mark { display: none; } 
+
+    /* --- v13.0 LOGO RESPONSIVE ENGINE --- */ 
+    .full-signature { display: none !important; } 
+    .logomark-only { display: block !important; } 
+
+    @media (min-width: 1024px) { 
+      .logomark-only { display: none !important; } 
+      .full-signature { 
+        display: block !important; 
+        image-rendering: -webkit-optimize-contrast; 
+      } 
+    } 
+
+    .brand-link { 
+      height: 48px; 
+      display: flex; 
+      align-items: center; 
+      transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+    } 
+    .brand-link:hover { opacity: 0.85; } 
+
     @media (max-width: 1024px) { 
       .nav-container, .snav-inner { 
         display: flex !important; 
         justify-content: space-between; 
         padding: 0 24px; 
       } 
-      #snav-logo-desktop { display: none; } 
-      #snav-logo-mark    { display: block; } 
       .snav-desktop, .desktop-nav { display: none; } 
     } 
 
@@ -666,9 +684,18 @@
     <!-- ── HEADER ── -->
     <header class="snav-header" id="snav-header">
       <div class="snav-inner nav-container">
-        <a href="/index.html" class="snav-logo nav-logo">
-          <img id="snav-logo-desktop" src="${asset('/assets/images/AUg_logo_White.png')}" alt="Luis Gilberto">
-          <img id="snav-logo-mark"    src="${asset('/assets/images/Logomark_White_a.png')}" alt="Luis Gilberto">
+        <a href="${u('/index.html')}" class="brand-link snav-logo nav-logo">
+          <!-- Mobile Logomark (Visible < 1024px) --> 
+          <img id="snav-logo-mark" src="${asset('/assets/images/white-3d_logomark.png')}" 
+               class="nav-logo logomark-only" 
+               alt="LG" 
+               style="height: 48px; width: auto; object-fit: contain;"> 
+  
+          <!-- Desktop Signature (Visible > 1024px) --> 
+          <img id="snav-logo-desktop" src="${asset('/assets/images/white_lg-portfolio-logo.png')}" 
+               class="nav-logo full-signature" 
+               alt="Luis Gilberto Portfolio" 
+               style="height: 48px; width: auto; object-fit: contain;"> 
         </a>
         <nav class="snav-desktop desktop-nav" id="snav-desktop" aria-label="Main navigation">
           <button id="snav-trigger-portfolio" class="${navLinkClass(['portfolio','experience','timeline','about','brand','contact'])}"
@@ -927,7 +954,22 @@
     try {
       const persona = localStorage.getItem('luxe-persona');
       const anchor = document.getElementById('header-audience-anchor');
-      if (!anchor) return;
+      
+      // 🧬 DUPLICATE SUPPRESSION: If modern anchor exists, ensure legacy labels are hidden
+      const legacyLabel = document.getElementById('lens-label');
+      const legacyBadge = document.querySelector('.lens-badge');
+      if (anchor && legacyLabel) legacyLabel.style.display = 'none';
+      if (anchor && legacyBadge) legacyBadge.style.display = 'none';
+
+      if (!anchor) {
+        // Fallback for static pages: update legacy label if anchor is missing
+        if (legacyLabel) {
+          const LABELS = { coral: 'ASSESSING', teal: 'PARTNERING', neutral: 'EXPLORING' };
+          legacyLabel.textContent = LABELS[persona] || LABELS.neutral;
+        }
+        return;
+      }
+
       if (!persona) { anchor.innerHTML = ''; return; }
       const config = {
         coral:   { label: 'ASSESSING', class: 'badge-hire' },
@@ -1133,16 +1175,29 @@
     const lensLabel = document.getElementById('snav-lens-label');
 
     function updateHeaderLogo(choice){
-      const map = {
-        teal:    u('/assets/hp/LG_Logomark_teal.png'),
-        coral:   u('/assets/hp/LG_Logomark_coral.png'),
-        neutral: u('/assets/images/Logomark_White_a.png')
+      const journeyMap = { teal: 'partner', coral: 'hire', neutral: 'explore' };
+      const activePersona = journeyMap[choice] || 'explore';
+
+      const logoMap = { 
+          hire: { 
+              full: 'coral_lg-portfolio-logo.png', 
+              mark: 'coral-3d_logomark.png' 
+          }, 
+          partner: { 
+              full: 'teal_lg-portfolio-logo.png', 
+              mark: 'teal-3d_logomark.png' 
+          }, 
+          explore: { 
+              full: 'white_lg-portfolio-logo.png', 
+              mark: 'white-3d_logomark.png' 
+          } 
       };
-      const src = map[choice] || map.neutral;
+
       const desktopLogo = document.getElementById('snav-logo-desktop');
       const markLogo    = document.getElementById('snav-logo-mark');
-      if (desktopLogo) desktopLogo.src = src;
-      if (markLogo)    markLogo.src    = src;
+      
+      if (desktopLogo) desktopLogo.src = asset(`/assets/images/${logoMap[activePersona].full}`);
+      if (markLogo)    markLogo.src    = asset(`/assets/images/${logoMap[activePersona].mark}`);
     }
 
     function applyPersona(choice) {
@@ -1152,49 +1207,15 @@
         neutral: 'EXPLORING' 
       };
       
-      const LOGOMARKS = {
-        teal:    u('/assets/hp/LG_Logomark_teal.png'),
-        coral:   u('/assets/hp/LG_Logomark_coral.png'),
-        neutral: u('/assets/images/Logomark_White_a.png')
-      };
-
       document.body.classList.remove('path-teal', 'path-coral', 'path-neutral');
       document.body.classList.add(`path-${choice}`);
       
-      const badge = document.getElementById('snav-lens-badge');
-      if (badge) {
-        if (choice === 'teal') {
-          badge.style.background = 'var(--nav-teal)';
-          badge.style.borderColor = 'var(--nav-teal)';
-          badge.style.color = '#050505';
-        } else {
-          badge.style.background = '';
-          badge.style.borderColor = '';
-          badge.style.color = '';
-        }
-      }
-      
-      if (lensLabel) lensLabel.textContent = LABELS[choice] || 'EXPLORING';
-
       // 🧬 Handle body[data-journey] for index.html token sync
       const journeyMap = { teal: 'partner', coral: 'hire', neutral: 'explore' };
       document.body.setAttribute('data-journey', journeyMap[choice] || 'explore');
 
-      // 🧬 Update Header Badge
-      const headerLabel = document.getElementById('lens-label');
-      const headerBadge = document.querySelector('.lens-badge');
-      const headerDot = document.querySelector('.lens-dot');
-      
-      if (headerLabel) {
-         headerLabel.textContent = LABELS[choice] || 'EXPLORING';
-         if (choice === 'teal') headerLabel.textContent = 'PARTNERING'; // Override for Partner Journey
-         
-         let accentColor = '#FFFFFF';
-         if (choice === 'teal') accentColor = '#2ED3C6';
-         if (choice === 'coral') accentColor = '#F96F6E';
-         
-         document.documentElement.style.setProperty('--badge-accent', accentColor);
-      }
+      // 🧬 Update Header Badge (Consolidated)
+      updateHeaderAudience();
 
       // Dynamic Header Logo Swap
       updateHeaderLogo(choice);
@@ -1202,6 +1223,11 @@
       // Dynamic Drawer Mark Swap
       const drawerMark = document.getElementById('snav-drawer-mark');
       if (drawerMark) {
+        const LOGOMARKS = {
+          teal:    u('/assets/hp/LG_Logomark_teal.png'),
+          coral:   u('/assets/hp/LG_Logomark_coral.png'),
+          neutral: u('/assets/images/Logomark_White_a.png')
+        };
         drawerMark.src = LOGOMARKS[choice] || LOGOMARKS.neutral;
       }
       
