@@ -647,7 +647,7 @@
     <footer class="site-footer"> 
       <div class="footer-container"> 
         <div class="footer-signature"> 
-          <a href="${u('/index.html')}" class="footer-logo-link"><img src="${asset('/assets/images/LG-ecosystem-logo-lockup.png')}" alt="Luis Gilberto Ecosystem" class="footer-logo-lockup"></a> 
+          <a href="${u('/index.html')}" class="footer-logo-link"><img src="${asset('/assets/images/LG-ecosystem-logo-lockup.png')}" alt="Luis Gilberto Ecosystem" class="footer-logo-lockup" width="240" height="48" style="width: 240px; height: auto; aspect-ratio: 5/1;"></a> 
           <p class="footer-tagline-text">Making technology feel human through clarity, beautiful execution, and systems that scale.</p> 
         </div> 
         <div class="footer-column"> 
@@ -665,7 +665,7 @@
             <li><a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" rel="noopener">LinkedIn</a></li> 
             <li><a href="${u('/contact.html')}">Contact</a></li> 
             <li><a href="${u('/about.html')}">About Me</a></li> 
-            <li><a href="${u('/brand/')}">Identity</a></li> 
+            <li><a href="https://www.luis-gilberto.com/brand/">Identity</a></li> 
           </ul> 
         </div> 
         <div class="footer-column"> 
@@ -686,15 +686,19 @@
       <div class="snav-inner nav-container">
         <a href="${u('/index.html')}" class="brand-link snav-logo nav-logo">
           <!-- Mobile Logomark (Visible < 1024px) --> 
-          <img id="snav-logo-mark" src="${asset('/assets/images/white-3d_logomark.png')}" 
+          <img id="snav-logo-mark" src="${asset('/assets/images/white-3d_logomark.webp')}" 
                class="nav-logo logomark-only" 
                alt="LG" 
-               style="height: 48px; width: auto; object-fit: contain;"> 
+               width="48"
+               height="48"
+               style="height: 48px; width: auto; aspect-ratio: 1/1; object-fit: contain;"> 
   
           <!-- Desktop Signature (Visible > 1024px) --> 
-          <img id="snav-logo-desktop" src="${asset('/assets/images/white_lg-portfolio-logo.png')}" 
+          <img id="snav-logo-desktop" src="${asset('/assets/images/white_lg-portfolio-logo.webp')}" 
                class="nav-logo full-signature" 
                alt="Luis Gilberto Portfolio" 
+               width="48"
+               height="48"
                style="height: 48px; width: auto; object-fit: contain;"> 
         </a>
         <nav class="snav-desktop desktop-nav" id="snav-desktop" aria-label="Main navigation">
@@ -728,7 +732,7 @@
                     ${panelItem('/myexperience.html','briefcase','Work &amp; Experience','15+ years across Microsoft, startups, and beyond',['experience'])}
                     ${panelItem('/timeline.html','timeline','Career Timeline','The eras, pivots, and moments that shaped the work',['timeline'])}
                     ${panelItem('/about.html','user','About Luis','From Caracas to Cascadia. the full story',['about'])}
-                    ${panelItem('/brand/','brand','Brand Identity','The canonical system behind the ecosystem',['brand'])}
+                    ${panelItem('https://www.luis-gilberto.com/brand/','brand','Identity','Brand philosophy & design DNA.',['brand'])}
                     ${panelItem('/contact.html','mail','Contact','Start a project or ask a question',['contact'])}
                   </div>
                   <div class="snav-panel-footer">
@@ -812,7 +816,7 @@
     <div class="snav-drawer" id="snav-drawer">
       <div class="snav-drawer-series" style="border-bottom:none; padding-bottom:0;">
         <div style="display:flex; justify-content:center; padding: 20px 0;">
-          <img id="snav-drawer-mark" src="${asset('/assets/images/Logomark_White_a.png')}" alt="LG" style="height:40px; width:auto;">
+          <img id="snav-drawer-mark" src="${asset('/assets/images/white-3d_logomark.webp')}" alt="LG" width="48" height="48" style="height:48px; width:auto; aspect-ratio: 1/1;">
         </div>
       </div>
 
@@ -836,7 +840,7 @@
             <a href="/about.html" class="snav-drawer-sublink${isActive('about')?' active':''}">
                <span class="snav-drawer-icon">${ICONS.user}</span> About Me
             </a>
-            <a href="/brand/" class="snav-drawer-sublink${isActive('brand')?' active':''}">
+            <a href="https://www.luis-gilberto.com/brand/" class="snav-drawer-sublink${isActive('brand')?' active':''}">
                <span class="snav-drawer-icon">${ICONS.brand}</span> Identity
             </a>
           </div>
@@ -1179,19 +1183,19 @@
       const activePersona = journeyMap[choice] || 'explore';
 
       const logoMap = { 
-          hire: { 
-              full: 'coral_lg-portfolio-logo.png', 
-              mark: 'coral-3d_logomark.png' 
-          }, 
-          partner: { 
-              full: 'teal_lg-portfolio-logo.png', 
-              mark: 'teal-3d_logomark.png' 
-          }, 
-          explore: { 
-              full: 'white_lg-portfolio-logo.png', 
-              mark: 'white-3d_logomark.png' 
-          } 
-      };
+        hire: { 
+            full: 'coral_lg-portfolio-logo.webp', 
+            mark: 'coral-3d_logomark.webp' 
+        }, 
+        partner: { 
+            full: 'LG_Portfolio_logo_teal.webp', 
+            mark: 'teal-3d_logomark.webp' 
+        }, 
+        explore: { 
+            full: 'white_lg-portfolio-logo.webp', 
+            mark: 'white-3d_logomark.webp' 
+        } 
+    };
 
       const desktopLogo = document.getElementById('snav-logo-desktop');
       const markLogo    = document.getElementById('snav-logo-mark');
@@ -1224,9 +1228,9 @@
       const drawerMark = document.getElementById('snav-drawer-mark');
       if (drawerMark) {
         const LOGOMARKS = {
-          teal:    u('/assets/hp/LG_Logomark_teal.png'),
-          coral:   u('/assets/hp/LG_Logomark_coral.png'),
-          neutral: u('/assets/images/Logomark_White_a.png')
+          teal:    asset('/assets/images/teal-3d_logomark.webp'),
+          coral:   asset('/assets/images/coral-3d_logomark.webp'),
+          neutral: asset('/assets/images/white-3d_logomark.webp')
         };
         drawerMark.src = LOGOMARKS[choice] || LOGOMARKS.neutral;
       }
