@@ -60,9 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <button class="nav-link" data-trigger="portfolio">Portfolio</button>
                 <button class="nav-link" data-trigger="insights">Insights</button>
                 <button class="nav-link" data-trigger="hub">The Hub</button>
-                <a href="https://portal.luis-gilberto.com" class="portal-nav-link" target="_blank" rel="noopener" style="display:flex;align-items:center;padding:4px 8px;border-radius:6px;transition:opacity 0.2s;opacity:0.85;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.85'">
-                    <img id="portal-nav-logo" height="36" style="height:36px;width:auto;display:block;" alt="The LG Portal">
-                </a>
+                <a href="https://portal.luis-gilberto.com" class="nav-link" style="color:var(--teal) !important;font-weight:700;">The Portal</a>
 
                 <div class="nav-viewport" id="master-viewport">
                     <div class="nav-viewport-inner">
@@ -97,16 +95,8 @@ document.addEventListener('DOMContentLoaded', function() {
             <div style="display:flex;align-items:center;gap:16px;">
                 <div id="master-badge-anchor" class="desktop-badge-anchor"></div>
                 <button id="masterThemeToggle" style="background:none;border:1px solid rgba(255,255,255,0.15);color:#FFF;width:36px;height:36px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;"></button>
-                <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Open navigation"> 
-                    <svg class="hamburger-icon" width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg"> 
-                        <line class="hline h1" x1="0" y1="1" x2="16" y2="1" stroke-width="1.5" stroke-linecap="round"/> 
-                        <line class="hline h2" x1="0" y1="6" x2="16" y2="6" stroke-width="1.5" stroke-linecap="round"/> 
-                        <line class="hline h3" x1="0" y1="11" x2="16" y2="11" stroke-width="1.5" stroke-linecap="round"/> 
-                    </svg> 
-                    <svg class="close-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:none;"> 
-                        <line x1="1" y1="1" x2="13" y2="13" stroke-width="1.5" stroke-linecap="round"/> 
-                        <line x1="13" y1="1" x2="1" y2="13" stroke-width="1.5" stroke-linecap="round"/> 
-                    </svg> 
+                <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Open navigation">
+                    <span></span><span></span><span></span>
                 </button>
             </div>
         </div>
@@ -129,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <a href="/index.html" class="drawer-nav-link"><span>Portfolio</span><span class="dnl-arrow">›</span></a>
             <a href="/insights/" class="drawer-nav-link"><span>Insights</span><span class="dnl-arrow">›</span></a>
             <a href="/TheHub/index.html" class="drawer-nav-link"><span>The Hub</span><span class="dnl-arrow">›</span></a>
-            <a href="https://portal.luis-gilberto.com" class="drawer-nav-link" target="_blank" rel="noopener" style="padding:14px 0;"><span><img id="portal-drawer-logo" height="24" style="height:24px;width:auto;display:block;" alt="The LG Portal"></span><span class="dnl-arrow">›</span></a>
+            <a href="https://portal.luis-gilberto.com" class="drawer-nav-link"><span>The Portal</span><span class="dnl-arrow">›</span></a>
         </div>
         <div class="drawer-section" style="border-bottom:none;padding-bottom:8px;">
             <div class="drawer-section-label" style="color:#F96F6E;margin-bottom:12px;">Get in touch<span style="flex:1;height:1px;background:rgba(249,111,110,0.15);display:block;margin-left:8px;"></span></div>
@@ -185,22 +175,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
         /* ── DESKTOP/MOBILE LOGO SWAP ── */
         .mobile-logo-mark { display: none; }
-        .mobile-logo-mark img { height: 36px !important; width: 36px !important; object-fit: contain; }
-        .audience-badge-wrap { display: none; }
-        .is-homepage .audience-badge-wrap { display: flex; }
         .desktop-logo { display: block; }
 
         /* ── MOBILE HAMBURGER ── */
         .mobile-menu-btn { display: none; width: 36px; height: 36px; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; background: none; cursor: pointer; flex-direction: column; align-items: center; justify-content: center; gap: 5px; padding: 0; }
-        .mobile-menu-btn svg { display: block; } 
-        .mobile-menu-btn svg line, .mobile-menu-btn svg path { stroke: rgba(255,255,255,0.75); transition: stroke 0.2s; } 
-        .mobile-menu-btn:hover svg line, .mobile-menu-btn:hover svg path { stroke: rgba(255,255,255,1); } 
-        [data-theme="light"] .mobile-menu-btn svg line, 
-        [data-theme="light"] .mobile-menu-btn svg path { stroke: rgba(17,17,17,0.7); } 
-        [data-theme="light"] .mobile-menu-btn:hover svg line, 
-        [data-theme="light"] .mobile-menu-btn:hover svg path { stroke: rgba(17,17,17,1); } 
-        .hamburger-icon { transition: opacity 0.2s; } 
-        .close-icon { transition: opacity 0.2s; } 
+        .mobile-menu-btn span { display: block; height: 1.5px; background: rgba(255,255,255,0.7); border-radius: 1px; transition: all 0.25s; }
+        .mobile-menu-btn span:nth-child(1) { width: 16px; }
+        .mobile-menu-btn span:nth-child(2) { width: 16px; }
+        .mobile-menu-btn span:nth-child(3) { width: 10px; align-self: flex-end; margin-right: 10px; }
+        .mobile-menu-btn.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+        .mobile-menu-btn.open span:nth-child(2) { opacity: 0; }
+        .mobile-menu-btn.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); width: 16px; margin-right: 0; }
+        [data-theme="light"] .mobile-menu-btn span { background: rgba(17,17,17,0.7); }
 
         .desktop-badge-anchor { display: flex; }
 
@@ -321,21 +307,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 markImg.src = `/assets/images/${(currentTheme === 'light' ? portMarkLight : portMarkDark)[mk]}`;
             }
         }
-
-        // Portal nav logo swap 
-        const portalLogo = document.getElementById('portal-nav-logo');
-        if (portalLogo) {
-            portalLogo.src = currentTheme === 'dark'
-                ? '/assets/images/TheLGPortal_dark-mode.png'
-                : '/assets/images/TheLGPortal_light-mode.png';
-        }
-
-        const portalDrawerLogo = document.getElementById('portal-drawer-logo');
-        if (portalDrawerLogo) {
-            portalDrawerLogo.src = currentTheme === 'dark'
-                ? '/assets/images/TheLGPortal_dark-mode.png'
-                : '/assets/images/TheLGPortal_light-mode.png';
-        }
     };
 
     if (toggle) {
@@ -369,21 +340,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 8. LUXE BADGE INJECTION
     const badgeMap = {
-        hire:    `<div class="audience-badge-wrap"><div class="audience-badge" id="reopenIntent" style="color:var(--coral);border-color:rgba(249,111,110,0.3);background:rgba(249,111,110,0.05);"><span class="badge-dot" style="background:var(--coral);box-shadow:0 0 10px var(--coral);"></span>HIRE · ASSESS</div></div>`,
-        partner: `<div class="audience-badge-wrap"><div class="audience-badge" id="reopenIntent" style="color:var(--teal);border-color:rgba(46,211,198,0.3);background:rgba(46,211,198,0.05);"><span class="badge-dot" style="background:var(--teal);box-shadow:0 0 10px var(--teal);"></span>PARTNER</div></div>`,
-        explore: `<div class="audience-badge-wrap"><div class="audience-badge" id="reopenIntent" style="color:#FFF;border-color:rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);"><span class="badge-dot" style="background:#FFF;box-shadow:0 0 10px #FFF;"></span>EXPLORE</div></div>`
+        hire:    `<div class="audience-badge" id="reopenIntent" style="color:var(--coral);border-color:rgba(249,111,110,0.3);background:rgba(249,111,110,0.05);"><span class="badge-dot" style="background:var(--coral);box-shadow:0 0 10px var(--coral);"></span>HIRE · ASSESS</div>`,
+        partner: `<div class="audience-badge" id="reopenIntent" style="color:var(--teal);border-color:rgba(46,211,198,0.3);background:rgba(46,211,198,0.05);"><span class="badge-dot" style="background:var(--teal);box-shadow:0 0 10px var(--teal);"></span>PARTNER</div>`,
+        explore: `<div class="audience-badge" id="reopenIntent" style="color:#FFF;border-color:rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);"><span class="badge-dot" style="background:#FFF;box-shadow:0 0 10px #FFF;"></span>EXPLORE</div>`
     };
     const mapped = (persona === 'coral' || persona === 'hire') ? 'hire' : (persona === 'teal' || persona === 'partner') ? 'partner' : 'explore';
     const anchor = document.getElementById('master-badge-anchor');
-    const isHomepage = (path === '/' || path === '/index.html' || path.endsWith('/index.html')) && !isInsights && !isHub;
-    if (isHomepage) document.documentElement.classList.add('is-homepage');
-    if (anchor && isHomepage) {
+    if (anchor) {
         anchor.innerHTML = badgeMap[mapped];
         const ri = document.getElementById('reopenIntent');
-        if (ri) ri.addEventListener('click', () => { 
-            const gate = document.getElementById('intentGate'); 
-            if (gate) gate.classList.add('visible'); 
-        });
+        if (ri) ri.addEventListener('click', () => { const gate = document.getElementById('intentGate'); if (gate) gate.classList.add('visible'); });
     }
 
     // 9. MOBILE DRAWER
@@ -436,16 +402,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     const drawerBadge = document.getElementById('drawer-badge-anchor');
-    if (drawerBadge && isHomepage) { 
-        drawerBadge.innerHTML = badgeMap[mapped] || ''; 
-        const drawerReopenBtn = drawerBadge.querySelector('#reopenIntent'); 
-        if (drawerReopenBtn) { 
-            drawerReopenBtn.addEventListener('click', () => { 
-                const gate = document.getElementById('intentGate'); 
-                if (gate) gate.classList.add('visible'); 
-            }); 
-        } 
-    }
+    if (drawerBadge) drawerBadge.innerHTML = badgeMap[mapped] || '';
 
     function openDrawer() {
         if (!drawer || !overlay || !menuBtn) return;
@@ -453,8 +410,6 @@ document.addEventListener('DOMContentLoaded', function() {
         overlay.style.display = 'block';
         requestAnimationFrame(() => overlay.classList.add('visible'));
         menuBtn.classList.add('open');
-        menuBtn.querySelector('.hamburger-icon').style.display = 'none'; 
-        menuBtn.querySelector('.close-icon').style.display = 'block'; 
         document.body.style.overflow = 'hidden';
     }
 
@@ -463,8 +418,6 @@ document.addEventListener('DOMContentLoaded', function() {
         drawer.classList.remove('open');
         overlay.classList.remove('visible');
         menuBtn.classList.remove('open');
-        menuBtn.querySelector('.hamburger-icon').style.display = 'block'; 
-        menuBtn.querySelector('.close-icon').style.display = 'none'; 
         document.body.style.overflow = '';
         setTimeout(() => { if (overlay) overlay.style.display = 'none'; }, 300);
     }
