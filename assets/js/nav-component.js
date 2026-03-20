@@ -289,7 +289,18 @@ document.addEventListener('DOMContentLoaded', function() {
         // Insights logo swap
         if (isInsights) {
             const logo = document.querySelector('.desktop-logo img');
-            if (logo) logo.src = `/insights/assets/images/insights_logo_${currentTheme === 'dark' ? 'white' : 'black'}_desktop.webp`;
+            if (logo) {
+                const insLogo = (currentTheme === 'dark') ? 'insights_logo_white_desktop.webp' : 'insights_logo_black_desktop.webp';
+                logo.src = `/insights/assets/images/${insLogo}`;
+            }
+        }
+
+        // The Hub logo text color swap
+        if (isHub) {
+            const hubText = document.querySelector('.desktop-logo span');
+            const hubDivider = document.querySelector('.desktop-logo div[style*="width:1px"]');
+            if (hubText) hubText.style.color = (currentTheme === 'dark') ? '#FFF' : '#000';
+            if (hubDivider) hubDivider.style.background = (currentTheme === 'dark') ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)';
         }
 
         // Portfolio logo swap

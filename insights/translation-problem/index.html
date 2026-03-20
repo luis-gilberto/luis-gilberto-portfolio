@@ -29,6 +29,105 @@
       --accent-bg:  rgba(26,23,20,0.06);
       --header-h:   64px;
     }
+
+    /* ── Hero illustration ── */ 
+    .hero-illustration-wrap { 
+      position: relative; width: 100%; 
+      overflow: hidden; background: var(--ink); 
+      max-height: 600px; 
+    } 
+    .hero-theme-img { 
+      width: 100%; display: block; object-fit: cover; 
+      max-height: 600px; 
+      opacity: 0; animation: fadeUp 0.8s ease 0.5s forwards; 
+    } 
+    
+    /* ── Visual break images ── */ 
+    .visual-break { 
+      margin: 48px 0; position: relative; 
+    } 
+    .visual-break-frame { 
+      position: relative; display: block; 
+      line-height: 0; overflow: hidden; 
+      border-radius: 4px; border: 1px solid var(--rule); 
+    } 
+    .visual-break-frame img.break-img { 
+      width: 100%; height: auto; display: block; 
+    } 
+    .visual-break figcaption, .visual-break .caption { 
+      font-family: 'Inter', sans-serif; font-size: 11px; 
+      color: var(--ink-soft); text-align: center; 
+      margin-top: 14px; letter-spacing: 0.04em; font-style: italic; 
+    } 
+    
+    /* ── Theme switching ── */ 
+    [data-theme="light"]  .hero-theme-img.dark  { display: none; } 
+    [data-theme="dark"]   .hero-theme-img.light { display: none; } 
+    [data-theme="dark"]   .hero-theme-img.dark  { display: block; } 
+    [data-theme="light"]  .break-img.dark       { display: none; } 
+    [data-theme="dark"]   .break-img.light      { display: none; } 
+    [data-theme="dark"]   .break-img.dark       { display: block; } 
+
+    /* ── Signature sticker ── */
+    .sig-sticker-wrap {
+      position: absolute; bottom: 5%; right: 5%;
+      z-index: 10; cursor: help;
+    }
+    .sig-sticker-wrap img {
+      width: clamp(80px, 12%, 145px);
+      transform: rotate(-2.5deg);
+      opacity: 0.85;
+      display: block;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .sig-sticker-wrap:hover img { opacity: 1; transform: rotate(-1deg) scale(1.04); }
+    [data-theme="light"] .sig-sticker-wrap .sticker-dark { display: none; }
+    [data-theme="dark"]  .sig-sticker-wrap .sticker-light { display: none; }
+    [data-theme="dark"]  .sig-sticker-wrap .sticker-dark  { display: block; }
+    [data-theme="light"] .sig-sticker-wrap .sticker-light { mix-blend-mode: multiply; }
+    [data-theme="dark"]  .sig-sticker-wrap .sticker-dark  { mix-blend-mode: screen; }
+
+    .sig-tooltip {
+      position: absolute; bottom: calc(100% + 10px); right: 0;
+      background: rgba(0,0,0,0.88);
+      color: #fff; border: 1px solid rgba(255,255,255,0.15);
+      padding: 8px 12px; border-radius: 6px;
+      font-family: 'Inter', sans-serif; font-size: 11px; line-height: 1.4;
+      width: max-content; max-width: 220px;
+      opacity: 0; transform: translateY(6px);
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none; white-space: normal;
+    }
+    .sig-sticker-wrap:hover .sig-tooltip { opacity: 1; transform: translateY(0); }
+
+    /* Sig sticker on break images */
+    .break-sig {
+      position: absolute; bottom: 5%; right: 5%; z-index: 5; cursor: help;
+    }
+    .break-sig img {
+      width: clamp(60px, 10%, 120px);
+      transform: rotate(-2.5deg); opacity: 0.85; display: block;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .break-sig:hover img { opacity: 1; transform: rotate(-1deg) scale(1.05); }
+    [data-theme="light"] .break-sig .sticker-dark  { display: none; }
+    [data-theme="dark"]  .break-sig .sticker-light { display: none; }
+    [data-theme="dark"]  .break-sig .sticker-dark  { display: block; }
+    [data-theme="light"] .break-sig .sticker-light { mix-blend-mode: multiply; }
+    [data-theme="dark"]  .break-sig .sticker-dark  { mix-blend-mode: screen; }
+    .break-tooltip {
+      position: absolute; bottom: calc(100% + 8px); right: 0;
+      background: rgba(0,0,0,0.88); color: #fff;
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 7px 11px; border-radius: 6px;
+      font-family: 'Inter', sans-serif; font-size: 10px; line-height: 1.4;
+      width: max-content; max-width: 200px;
+      opacity: 0; transform: translateY(5px);
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none;
+    }
+    .break-sig:hover .break-tooltip { opacity: 1; transform: translateY(0); }
+
     [data-theme="dark"] {
       --bg:         #1A1714;
       --ink:        #FAF7F4;
@@ -427,66 +526,15 @@
     }
 
     /* ═══════════════════════════════════════
-       HERO BAND — text-based, no image needed
-    ═══════════════════════════════════════ */
-    .hero-band {
-      background: var(--ink);
-      padding: 56px 48px;
-      position: relative;
-      overflow: hidden;
-      opacity: 0; animation: fadeUp 0.8s ease 0.5s forwards;
-    }
-    .hero-band::before {
-      content: '';
-      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-      background: repeating-linear-gradient(
-        90deg,
-        transparent,
-        transparent 80px,
-        rgba(255,255,255,0.015) 80px,
-        rgba(255,255,255,0.015) 81px
-      );
-      pointer-events: none;
-    }
-    .hero-band-inner {
-      max-width: 1280px; margin: 0 auto;
-      display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;
-    }
-    .hero-band-stat {
-      border-left: 2px solid var(--coral); padding-left: 24px;
-    }
-    .hero-band-stat-num {
-      font-family: 'Big Shoulders Display', sans-serif;
-      font-size: clamp(48px, 6vw, 80px); font-weight: 900;
-      color: var(--cream); line-height: 1; letter-spacing: -0.02em;
-    }
-    .hero-band-stat-num em { color: var(--coral); font-style: normal; }
-    .hero-band-stat-label {
-      font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500;
-      letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft);
-      margin-top: 8px;
-    }
-    .hero-band-quote {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(20px, 2.4vw, 28px); font-weight: 300; font-style: italic;
-      color: rgba(250,247,244,0.7); line-height: 1.5;
-    }
-    .hero-band-quote strong { color: var(--cream); font-weight: 500; font-style: normal; }
-    @media (max-width: 768px) {
-      .hero-band { padding: 40px 24px; }
-      .hero-band-inner { grid-template-columns: 1fr; gap: 32px; }
-    }
-
-    /* ═══════════════════════════════════════
        ARTICLE LAYOUT
     ═══════════════════════════════════════ */
     .article-layout {
       display: grid; grid-template-columns: 240px 1fr; gap: 64px;
-      max-width: 1280px; margin: 0 auto; padding: 72px 48px 96px;
+      max-width: 1280px; margin: 0 auto; padding: 92px 48px 96px;
       align-items: start;
     }
     @media (max-width: 1024px) {
-      .article-layout { grid-template-columns: 1fr; gap: 40px; padding: 48px 24px 72px; }
+      .article-layout { grid-template-columns: 1fr; gap: 40px; padding: 60px 24px 72px; }
     }
 
     /* ── Sidebar ── */
@@ -709,10 +757,21 @@
     .inset-card p { font-size: 17px; color: var(--ink-soft); margin-bottom: 0; }
 
     /* ── Verbatim list (the "familiar sentences") ── */
-    .verbatim-block {
-      margin: 36px 0; padding: 28px 32px;
-      background: var(--ink); border-radius: 4px; position: relative;
-    }
+    .verbatim-block { 
+      margin: 36px 0; padding: 28px 32px; 
+      background: var(--ink); border-radius: 4px; position: relative; 
+    } 
+    [data-theme="dark"] .verbatim-block { 
+      background: rgba(250,247,244,0.06); 
+      border: 1px solid var(--rule); 
+    } 
+    [data-theme="dark"] .verbatim-item { 
+      color: rgba(250,247,244,0.75); 
+      border-bottom-color: rgba(255,255,255,0.07); 
+    } 
+    [data-theme="dark"] .verbatim-label { 
+      color: var(--coral); 
+    } 
     .verbatim-label {
       font-family: 'Inter', sans-serif; font-size: 9px; font-weight: 700;
       letter-spacing: 0.18em; text-transform: uppercase;
@@ -766,6 +825,27 @@
     }
     .request-cta svg { width: 13px; height: 13px; transition: transform 0.2s; }
     .request-cta:hover svg { transform: translateX(3px); }
+
+    /* ── Subtle CTA ── */
+    .insight-cta {
+      margin-top: 24px;
+      text-align: left;
+    }
+    .subtle-link {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink);
+      text-decoration: none;
+      opacity: 0.75;
+      transition: opacity 0.2s, color 0.2s;
+      border-bottom: none !important;
+    }
+    .subtle-link:hover {
+      opacity: 1;
+      color: var(--coral);
+      text-decoration: underline;
+    }
 
     /* ── Closing text ── */
     .closing-para { font-style: italic; color: var(--ink-soft); font-size: 19px; }
@@ -1179,16 +1259,19 @@
   </div>
 </div>
 
-<!-- Hero band. typographic, no image needed -->
-<div class="hero-band">
-  <div class="hero-band-inner">
-    <div class="hero-band-stat">
-      <div class="hero-band-stat-num">The<br><em>Gap.</em></div>
-      <div class="hero-band-stat-label">Between thinking and doing</div>
-    </div>
-    <p class="hero-band-quote">Strategy lives up high. Execution lives down low.<br><strong>Failure happens in the conversion layer between them.</strong></p>
-  </div>
-</div>
+<div class="hero-illustration-wrap"> 
+   <img class="hero-theme-img light fade-up" 
+        src="/insights/assets/images/conversion-light.png" 
+        alt="The Conversion Layer: strategy and execution gap"> 
+   <img class="hero-theme-img dark" 
+        src="/insights/assets/images/conversion-dark.png" 
+        alt="The Conversion Layer: strategy and execution gap (Dark Mode)"> 
+   <div class="sig-sticker-wrap" id="hero-sig"> 
+     <img class="sticker-light" src="/insights/assets/images/signature-AI.png" alt="Luis Gilberto / AI"> 
+     <img class="sticker-dark"  src="/insights/assets/images/signature-AI-dark.png" alt="Luis Gilberto / AI"> 
+     <div class="sig-tooltip">Visuals conceptualized by Luis Gilberto, refined via AI partnership.</div> 
+   </div> 
+ </div> 
 
 <!-- ═══════════════════════════════════════════
      ARTICLE BODY
@@ -1260,24 +1343,27 @@
     <!-- Strategy vs. Execution -->
     <div class="reading-section fade-up" id="the-gap">
       <h2 class="section-heading">Strategy Lives Up High. Execution Lives Down Low.</h2>
-      <p>Strategy is altitude — direction, intent, possibility. Execution is ground truth — precision, prioritization, trade-offs, ownership, timing.</p>
+      <p>Strategy is altitude: direction, intent, possibility. Execution is ground truth: precision, prioritization, trade-offs, ownership, timing.</p>
       <p>Failure doesn't usually happen on either side. It happens in the conversion layer between them.</p>
 
       <p>We assume:</p>
 
-      <div class="chain-break fade-up">
-        <div class="chain-break-label">The assumption chain</div>
-        <div class="chain-row">
-          <div class="chain-node">Communicated</div>
-          <div class="chain-connector"></div>
-          <div class="chain-node">Understood</div>
-          <div class="chain-connector broken"></div>
-          <div class="chain-node broken">Acted on</div>
-          <div class="chain-connector broken"></div>
-          <div class="chain-node broken">Executed as intended</div>
-        </div>
-        <p class="chain-caption">This chain breaks constantly. Not because people aren't capable. Because translation is a system — and most teams treat it like a vibe.</p>
-      </div>
+<figure class="visual-break fade-up"> 
+   <div class="visual-break-frame"> 
+     <img class="break-img light" 
+          src="/insights/assets/images/relay-light.png" 
+          alt="The dropped baton: where the assumption chain breaks"> 
+     <img class="break-img dark" 
+          src="/insights/assets/images/relay-dark.png" 
+          alt="The dropped baton: where the assumption chain breaks (Dark Mode)"> 
+     <div class="break-sig"> 
+       <img class="sticker-light" src="/insights/assets/images/signature-AI.png" alt="Luis Gilberto / AI"> 
+       <img class="sticker-dark"  src="/insights/assets/images/signature-AI-dark.png" alt="Luis Gilberto / AI"> 
+       <div class="break-tooltip">Visuals conceptualized by Luis Gilberto, refined via AI partnership.</div> 
+     </div> 
+   </div> 
+   <figcaption>The assumption chain breaks exactly here: between hand and hand.</figcaption> 
+ </figure> 
     </div>
 
     <!-- The Anti-Pattern -->
@@ -1293,7 +1379,24 @@
       <p>Until someone forgets. Until something changes. Until someone leaves. Until someone's on vacation. Until you scale.</p>
       <p>Humans are essential. But they're not a scalable operating system. That's why things feel fragile. Rework is constant. Momentum is hard to maintain. Execution feels high-effort even when the team is strong.</p>
 
-      <div class="inset-card fade-up">
+<figure class="visual-break fade-up"> 
+   <div class="visual-break-frame"> 
+     <img class="break-img light" 
+          src="/insights/assets/images/human-light.png" 
+          alt="The Human API: one person holding all the threads"> 
+     <img class="break-img dark" 
+          src="/insights/assets/images/human-dark.png" 
+          alt="The Human API: one person holding all the threads (Dark Mode)"> 
+     <div class="break-sig"> 
+       <img class="sticker-light" src="/insights/assets/images/signature-AI.png" alt="Luis Gilberto / AI"> 
+       <img class="sticker-dark"  src="/insights/assets/images/signature-AI-dark.png" alt="Luis Gilberto / AI"> 
+       <div class="break-tooltip">Visuals conceptualized by Luis Gilberto, refined via AI partnership.</div> 
+     </div> 
+   </div> 
+   <figcaption>Humans become the API. It works until it doesn't.</figcaption> 
+ </figure> 
+ 
+       <div class="inset-card fade-up">
         <strong>The Diagnosis</strong>
         <p>Capability isn't missing. Structure is.</p>
       </div>
@@ -1303,10 +1406,10 @@
     <div class="reading-section fade-up" id="ladder">
       <h2 class="section-heading">The Translation Ladder</h2>
       <p>Translation is not making it simpler. It's making it actionable. It's turning a high-level idea into a low-level reality without losing the thread. That means converting direction to decisions to priorities to trade-offs to actions to measurable progress.</p>
-      <p>Most teams don't do this explicitly. They compress it. Skip steps. Assume it's happening via meetings and conversations. But it's happening inside people's heads — unevenly, inconsistently, and invisibly.</p>
+      <p>Most teams don't do this explicitly. They compress it. Skip steps. Assume it's happening via meetings and conversations. But it's happening inside people's heads: unevenly, inconsistently, and invisibly.</p>
 
       <div class="ladder-wrap fade-up">
-        <div class="ladder-header">The Translation Ladder — A scaffold you can actually use</div>
+        <div class="ladder-header">The Translation Ladder: A scaffold you can actually use</div>
         <div class="ladder-step">
           <div class="ladder-num">1</div>
           <div class="ladder-content">
@@ -1354,7 +1457,7 @@
 
       <div class="inset-card coral fade-up">
         <strong>What's Missing</strong>
-        <p>The decisions log. The trade-off record. The "what must be true" list. The ownership map. The review cadence. Without those, strategy becomes a moment in time — a phase, a deliverable, a "hit send."</p>
+        <p>The decisions log. The trade-off record. The "what must be true" list. The ownership map. The review cadence. Without those, strategy becomes a moment in time: a phase, a deliverable, a "hit send."</p>
       </div>
 
       <p>Execution isn't that. Execution is a living system. And until we build systems that connect thinking to doing, friction is guaranteed.</p>
@@ -1363,7 +1466,27 @@
         <p>Strategy becomes a moment in time.<br>Execution is a living system.<br><em>We confuse the two constantly.</em></p>
       </div>
 
-      <p class="closing-para">The teams that close the gap aren't smarter or more aligned by nature. They've simply built the scaffold. They've stopped treating translation as a vibe and started treating it as a system.</p>
+      <p>The problem isn’t that we don’t know how to think.<br>
+It’s that we haven’t built systems that can carry our thinking forward.</p>
+
+<p>So the work isn’t more strategy.<br>
+It’s better translation.</p>
+
+<p>I’ve been building something that lives in that space.</p>
+
+<p>Not a framework.<br>
+Not a deck.<br>
+Not another layer of interpretation.</p>
+
+<p>Something that actually processes strategy and connects it to execution.</p>
+
+<p>It’s not ready to be named yet.</p>
+
+<p>But it’s coming.</p>
+
+<p class="insight-cta">
+  <a href="/portal/" class="subtle-link">If you're curious, start here →</a>
+</p>
 
       <div class="request-cta-wrap">
         <a href="https://www.luis-gilberto.com/TheHub/advisory/" class="request-cta">
