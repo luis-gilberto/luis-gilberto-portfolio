@@ -65,8 +65,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 <button class="nav-link" data-trigger="insights">Insights</button>
                 <button class="nav-link" data-trigger="hub">The Hub</button>
                 <a href="https://portal.luis-gilberto.com" class="nav-link nav-portal-lockup" style="padding:0 8px;">
-                    <img class="portal-logo-dark"  src="/assets/images/TheLGPortal_dark-mode.png"  alt="The Portal" style="height:22px;width:auto;display:block;">
-                    <img class="portal-logo-light" src="/assets/images/TheLGPortal_light-mode.png" alt="The Portal" style="height:22px;width:auto;display:none;">
+                    <img class="portal-logo-dark"  src="/assets/images/TheLGPortal_dark-mode.png"  alt="The Portal" style="height:32px;width:auto;display:block;">
+                    <img class="portal-logo-light" src="/assets/images/TheLGPortal_light-mode.png" alt="The Portal" style="height:32px;width:auto;display:none;">
                 </a>
 
                 <div class="nav-viewport" id="master-viewport">
@@ -126,8 +126,8 @@ document.addEventListener('DOMContentLoaded', function() {
             <a href="/insights/" class="drawer-nav-link"><span>Insights</span><span class="dnl-arrow">›</span></a>
             <a href="/TheHub/index.html" class="drawer-nav-link"><span>The Hub</span><span class="dnl-arrow">›</span></a>
             <a href="https://portal.luis-gilberto.com" class="drawer-nav-link drawer-portal-lockup" style="padding:11px 0;">
-                <img class="portal-logo-dark"  src="/assets/images/TheLGPortal_dark-mode.png"  alt="The Portal" style="height:28px;width:auto;display:block;">
-                <img class="portal-logo-light" src="/assets/images/TheLGPortal_light-mode.png" alt="The Portal" style="height:28px;width:auto;display:none;">
+                <img class="portal-logo-dark"  src="/assets/images/TheLGPortal_dark-mode.png"  alt="The Portal" style="height:32px;width:auto;display:block;">
+                <img class="portal-logo-light" src="/assets/images/TheLGPortal_light-mode.png" alt="The Portal" style="height:32px;width:auto;display:none;">
             </a>
         </div>
         <div class="drawer-section" style="border-bottom:none;padding-bottom:8px;">

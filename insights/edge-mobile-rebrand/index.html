@@ -1,866 +1,1030 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edge Mobile App Store Refresh - Luis Gilberto</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/insights/assets/css/insights-article.css">
-    <style>
-        :root {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8f9fa;
-            --bg-tertiary: #ffffff;
-            --text-primary: #1a1a1a;
-            --text-secondary: #4a4a4a;
-            --text-tertiary: #6a6a6a;
-            --accent-color: #722ed1;
-            --border-color: #e0e0e0;
-            --statement-bg: rgba(114, 46, 209, 0.08);
-            --accent-coral: #ff6b6b; /* used by breadcrumb & nav */
-        }
-
-        [data-theme="dark"] {
-            --bg-primary: #0a0a0a;
-            --bg-secondary: #111111;
-            --bg-tertiary: #1a1a1a;
-            --text-primary: #e8e8e8;
-            --text-secondary: #b8b8b8;
-            --text-tertiary: #888888;
-            --accent-color: #722ed1;
-            --border-color: #2a2a2a;
-            --statement-bg: rgba(114, 46, 209, 0.15);
-            --accent-coral: #ff6b6b; /* used by breadcrumb & nav */
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        /* Hero Section - Updated Design */
-        .hero-section {
-            position: relative;
-            width: 100%;
-            min-height: 70vh;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            overflow: hidden;
-            margin-bottom: 0;
-            background: #2a3f4f;
-        }
-
-        /* Diagonal Slices with Dark Overlay */
-        .diagonal-slices {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-
-        .diagonal-slice {
-            position: absolute;
-            width: 60%;
-            height: 120%;
-            transform: skewY(-8deg);
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* Edge Mobile Blue/Purple Palette */
-        .diagonal-slice:nth-child(1) {
-            background: linear-gradient(135deg, #0078d4 0%, rgba(0, 120, 212, 0.8) 100%);
-            top: -10%;
-            left: -5%;
-        }
-
-        .diagonal-slice:nth-child(2) {
-            background: linear-gradient(135deg, #40a9ff 0%, rgba(64, 169, 255, 0.8) 100%);
-            top: 5%;
-            left: 15%;
-        }
-
-        .diagonal-slice:nth-child(3) {
-            background: linear-gradient(135deg, #722ed1 0%, rgba(114, 46, 209, 0.8) 100%);
-            top: -5%;
-            left: 35%;
-        }
-
-        .diagonal-slice:nth-child(4) {
-            background: linear-gradient(135deg, #b37feb 0%, rgba(179, 127, 235, 0.8) 100%);
-            top: 10%;
-            left: 50%;
-        }
-
-        /* Dark Overlay for Readability */
-        .hero-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background:
-              linear-gradient(to bottom,
-                rgba(26,23,20,0.55) 0%,
-                rgba(26,23,20,0.30) 30%,
-                rgba(26,23,20,0.65) 60%,
-                rgba(26,23,20,0.96) 100%
-              );
-            z-index: 2;
-        }
-
-        /* Hero Content */
-        .hero-content {
-            position: relative;
-            z-index: 3;
-            color: white;
-            padding: 4rem 3rem;
-            max-width: 800px;
-        }
-
-        .article-category {
-            display: inline-block;
-            padding: 0.5rem 1.5rem;
-            background: rgba(255, 255, 255, 0.15);
-            color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 30px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            margin-bottom: 1.5rem;
-            backdrop-filter: blur(10px);
-        }
-
-        .hero-title {
-            font-family: 'Big Shoulders Display', sans-serif;
-            font-size: clamp(2.5rem, 6vw, 4.5rem);
-            font-weight: 900;
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
-            letter-spacing: -0.02em;
-            color: #FFFFFF;
-        }
-
-        .hero-subtitle {
-            font-size: clamp(1rem, 2vw, 1.3rem);
-            font-weight: 300;
-            line-height: 1.6;
-            max-width: 650px;
-            opacity: 0.95;
-        }
-
-        /* Hero Image - Offset Square */
-        .hero-image-container {
-            position: absolute;
-            bottom: 8px;
-            right: 8px;
-            width: 350px;
-            height: 350px;
-            z-index: 3;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-            /* Consistent rounded corners across devices */
-            border-radius: 8px;
-            -webkit-border-radius: 8px; /* vendor prefix for legacy WebKit */
-            -moz-border-radius: 8px;    /* vendor prefix for legacy Firefox */
-            overflow: hidden;
-        }
-
-        .hero-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            /* Ensure image corners match container radius */
-            border-radius: 8px;
-            -webkit-border-radius: 8px;
-            -moz-border-radius: 8px;
-        }
-
-        /* Decorative Color Break */
-        .color-break {
-            width: 100%;
-            height: 10px;
-            display: flex;
-            margin-bottom: 4rem;
-        }
-
-        .color-break-segment {
-            flex: 1;
-            height: 100%;
-        }
-
-        .color-break-segment:nth-child(1) {
-            background: #0078d4;
-        }
-
-        .color-break-segment:nth-child(2) {
-            background: #40a9ff;
-        }
-
-        .color-break-segment:nth-child(3) {
-            background: #722ed1;
-        }
-
-        .color-break-segment:nth-child(4) {
-            background: #b37feb;
-        }
-
-        /* Article Content Layout */
-        .article-layout {
-            display: grid;
-            grid-template-columns: 250px 1fr 300px;
-            gap: 4rem;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 2rem 6rem 2rem;
-        }
-
-        /* Left Sidebar - Metadata */
-        .article-sidebar {
-            position: sticky;
-            top: 2rem;
-            height: fit-content;
-        }
-
-        .metadata-item {
-            margin-bottom: 2rem;
-        }
-
-        .metadata-label {
-            font-size: 0.75rem;
-            font-weight: 600;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--text-tertiary);
-            margin-bottom: 0.5rem;
-        }
-
-        .metadata-value {
-            font-size: 0.95rem;
-            color: var(--text-primary);
-            font-weight: 500;
-        }
-
-        /* Center Content */
-        .article-content {
-            max-width: 700px;
-        }
-
-        .content-section {
-            margin-bottom: 3rem;
-        }
-
-        .section-title {
-            font-family: 'Big Shoulders Display', sans-serif;
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin-bottom: 1.5rem;
-            letter-spacing: -0.01em;
-            color: var(--text-primary);
-        }
-
-        .section-text {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            color: var(--text-secondary);
-            margin-bottom: 1.5rem;
-        }
-
-        .feature-list {
-            list-style: none;
-            margin: 2rem 0;
-        }
-
-        .feature-item {
-            padding: 1.5rem;
-            background: var(--bg-secondary);
-            border-left: 3px solid var(--accent-color);
-            margin-bottom: 1rem;
-            transition: transform 0.2s ease;
-        }
-
-        .feature-item:hover {
-            transform: translateX(5px);
-        }
-
-        .feature-title {
-            font-weight: 600;
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
-            color: var(--text-primary);
-        }
-
-        .feature-description {
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
-        /* Right Sidebar - Statement Cards */
-        .statement-sidebar {
-            position: sticky;
-            top: 2rem;
-            height: fit-content;
-        }
-
-        .statement-card {
-            background: var(--statement-bg);
-            padding: 2rem;
-            border-radius: 8px;
-            margin-bottom: 2rem;
-            border: 1px solid var(--border-color);
-        }
-
-        .statement-number {
-            font-family: 'Big Shoulders Display', sans-serif;
-            font-size: 3rem;
-            font-weight: 900;
-            color: var(--accent-color);
-            line-height: 1;
-            margin-bottom: 0.5rem;
-        }
-
-        .statement-label {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            line-height: 1.4;
-        }
-
-        .reflection-card {
-            background: var(--bg-tertiary);
-            padding: 2rem;
-            border-radius: 8px;
-            border-left: 4px solid var(--accent-color);
-            font-style: italic;
-            color: var(--text-secondary);
-            line-height: 1.7;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 1200px) {
-            .article-layout {
-                grid-template-columns: 200px 1fr 250px;
-                gap: 3rem;
-            }
-
-            .hero-image-container {
-                width: 300px;
-                height: 300px;
-                bottom: 7px;
-                right: 7px;
-            }
-        }
-
-        @media (max-width: 968px) {
-            .article-layout {
-                grid-template-columns: 1fr;
-                gap: 3rem;
-            }
-
-            .article-sidebar,
-            .statement-sidebar {
-                position: static;
-            }
-
-            /* Update 2025-11: Tablet spacing to ensure first heading clears overlapping hero tile */
-            .article-content {
-                margin-top: 3.5rem;
-            }
-
-            .hero-section {
-                min-height: 60vh;
-            }
-
-            .hero-content {
-                text-align: center;
-                padding: 3rem 2rem 20rem 2rem;
-                max-width: 100%;
-            }
-
-            .hero-subtitle {
-                max-width: 100%;
-            }
-
-            /* Mobile: Hero Image Centered Bottom */
-            .hero-image-container {
-                width: 280px;
-                height: 280px;
-                bottom: 6px;
-                right: 50%;
-                transform: translateX(50%);
-                box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
-            }
-
-            /* Mobile: Narrower Diagonal Slices */
-            .diagonal-slice {
-                width: 40%;
-                transform: skewY(-6deg);
-            }
-
-            .diagonal-slice:nth-child(1) { left: 0%; }
-            .diagonal-slice:nth-child(2) { left: 20%; }
-            .diagonal-slice:nth-child(3) { left: 40%; }
-            .diagonal-slice:nth-child(4) { left: 60%; }
-
-            .color-break {
-                height: 8px;
-                margin-bottom: 3rem;
-            }
-        }
-
-        @media (max-width: 640px) {
-            .container {
-                padding: 0 1rem;
-            }
-
-            .article-layout {
-                padding: 0 1rem 3rem 1rem;
-            }
-
-            .hero-content {
-                padding: 2rem 1.5rem 18rem 1.5rem;
-            }
-
-            .diagonal-slice {
-                width: 35%;
-            }
-
-            .hero-image-container {
-                width: 240px;
-                height: 240px;
-            }
-        }
-
-        /* ==================== NAVIGATION SYSTEM ==================== */
-
-        /* Breadcrumb Navigation */
-        .breadcrumb-nav {
-            background: var(--bg-primary);
-            border-bottom: 1px solid var(--border-color);
-            padding: 1rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.95);
-        }
-
-        [data-theme="dark"] .breadcrumb-nav {
-            background: rgba(10, 10, 10, 0.95);
-        }
-
-        .breadcrumb-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            font-size: 0.875rem;
-        }
-
-        .breadcrumb-link {
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: color 0.2s ease;
-        }
-
-        .breadcrumb-link:hover {
-            color: var(--accent-coral);
-        }
-
-        .breadcrumb-separator {
-            color: var(--text-tertiary);
-            user-select: none;
-        }
-
-        .breadcrumb-current {
-            color: var(--text-primary);
-            font-weight: 500;
-        }
-
-        /* ================================
-           CASE STUDY NAVIGATION (CLEAN)
-           ================================ */
-        .case-study-navigation {
-            background: var(--accent-color); /* Per-page brand background */
-            border-top: 1px solid var(--border-color);
-            padding: 3rem 0;
-            margin-top: 4rem;
-            width: 100%;
-            max-width: none;
-        }
-
-        .nav-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            max-width: 1400px;
-            width: 100%; /* Ensure full-width grid that stays centered */
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        .nav-card {
-            background: rgba(255, 255, 255, 0.1); /* Glassmorphism on accent background */
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            padding: 2rem;
-            text-decoration: none;
-            color: inherit;
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            min-height: 120px;
-            justify-content: center;
-        }
-
-        .nav-card:hover {
-            transform: translateY(-2px);
-            background: rgba(255, 255, 255, 0.15);
-            border-color: rgba(255, 255, 255, 0.3);
-        }
-
-        .nav-card.nav-prev { text-align: left; }
-        .nav-card.nav-next { text-align: right; }
-
-        .nav-label {
-            font-size: 0.75rem;
-            font-weight: 600;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 0.75rem;
-            display: block;
-        }
-
-        .nav-title {
-            font-family: 'Big Shoulders Display', sans-serif;
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #ffffff;
-            line-height: 1.3;
-            display: block;
-        }
-
-        @media (max-width: 768px) {
-            .nav-grid { grid-template-columns: 1fr; gap: 1.5rem; padding: 0 1.5rem; }
-            .nav-card.nav-next { text-align: left; }
-            .nav-card { min-height: 100px; padding: 1.5rem; }
-            .nav-title { font-size: 1.1rem; }
-        }
-
-        [data-theme="dark"] .nav-card { background: rgba(255, 255, 255, 0.1); }
-        [data-theme="dark"] .nav-card:hover { background: rgba(255, 255, 255, 0.15); }
-    </style>
-    <link rel="stylesheet" href="/insights/assets/css/insights-mobile-fixes.css">
-
-<style>
-/* Mega Menu System (Phase 117+118) */
-.desktop-nav .nav-item {
-  position: relative; /* Task 1: Positional Anchor */
-}
-
-.desktop-nav .mega-panel {
-  display: block;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.2s ease;
-  transition-delay: 100ms; /* Task 3: Hover Intent */
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%) translateY(10px) translateZ(0); /* Task 1: Alignment & GPU */
-  backface-visibility: hidden;
-  width: 520px; /* Slightly wider for padding */
-  background: #0A0A0A; /* Task 2: Always Dark */
-  border: 1px solid rgba(255, 255, 255, 0.1); /* Task 2: Subtle Border */
-  padding: 1.5rem; /* Task 3: Spacing */
-  border-radius: 0.75rem;
-  z-index: 50;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  margin-top: 1rem;
-}
-
-/* Safe Tunnel */
-.desktop-nav .mega-panel::before {
-  content: "";
-  position: absolute;
-  top: -20px;
-  left: 0;
-  right: 0;
-  height: 20px;
-  background: transparent;
-}
-
-.desktop-nav .nav-item:hover .mega-panel {
-  opacity: 1;
-  visibility: visible;
-  transform: translateX(-50%) translateY(0) translateZ(0);
-}
-
-.desktop-nav .group\/item:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-}
-
-/* Task 3: Icon Colors */
-.desktop-nav .group\/item .icon-teal { color: #2ED3C6; }
-.desktop-nav .group\/item .icon-coral { color: #F96F6E; }
-
-.desktop-nav .group\/item:hover .icon-teal,
-.desktop-nav .group\/item:hover .icon-coral {
-  filter: brightness(1.2);
-}
-
-/* Task 4: Typography & Case */
-.desktop-nav .mega-title-text {
-  font-family: 'Big Shoulders Display', sans-serif;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-size: 1.1rem;
-  color: #F4F1ED; /* Task 2: White/Paper */
-}
-
-.desktop-nav .mega-desc-text {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.75rem;
-  color: #A1A1AA; /* Task 2: Muted Zinc */
-  margin-top: 0.25rem;
-}
-
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Smallest Canvas | Insights by Luis Gilberto</title>
+  <meta name="description" content="Director's commentary on rebranding Edge Mobile's app store presence, and what a three-second window taught me about precision, platform, and what it means to make a utility feel like a want.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Big+Shoulders+Display:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Design tokens ── */
+    :root {
+      --bg:         #F5F0EB;
+      --ink:        #1A1714;
+      --ink-soft:   #6B6560;
+      --coral:      #F96F6E;
+      --teal:       #4BADA8;
+      --cream:      #FAF7F4;
+      --rule:       #D9D2CB;
+      --card-bg:    #FFFFFF;
+      --popover-bg: #FFFFFF;
+      --accent-bg:  rgba(26,23,20,0.05);
+
+      --display: 'Cormorant Garamond', Georgia, serif;
+      --ui:      'Inter', sans-serif;
+      --body:    'Cormorant Garamond', Georgia, serif;
+    }
+
+    [data-theme="dark"] {
+      --bg:        #1A1714;
+      --ink:       #FAF7F4;
+      --ink-soft:  #A09890;
+      --cream:     #221E1B;
+      --card-bg:   #2A2420;
+      --rule:      #3A3430;
+      --popover-bg: #2A2420;
+      --accent-bg: rgba(250,247,244,0.06);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--body);
+      font-size: 20px;
+      line-height: 1.75;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    /* ══════════════════════════════════════
+       HEADER
+    ══════════════════════════════════════ */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      width: 100%;
+      background: rgba(245,240,235,0.97);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--rule);
+      transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+    }
+    header.scrolled {
+      background: rgba(245,240,235,0.99);
+      box-shadow: 0 1px 0 var(--rule);
+    }
+    [data-theme="dark"] header,
+    [data-theme="dark"] header.scrolled {
+      background: rgba(26,23,20,0.97);
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+
+    /* Logo */
+    .logo-link { text-decoration: none; display: flex; align-items: center; }
+    #logo-desktop { display: block; height: 32px; width: auto; }
+    #logo-mark    { display: none;  height: 32px; width: auto; }
+
+    /* Desktop Nav */
+    .desktop-nav {
+      display: flex; align-items: center; gap: 2px; position: relative;
+    }
+    .nav-link {
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
+      letter-spacing: 0.04em; color: var(--ink-soft); text-decoration: none;
+      padding: 8px 14px; border-radius: 6px;
+      transition: color 0.15s, background 0.15s;
+      display: inline-flex; align-items: center; gap: 4px;
+      background: none; border: none; cursor: pointer; white-space: nowrap;
+    }
+    .nav-link:hover { color: var(--ink); background: var(--accent-bg); }
+    .nav-link.active { color: var(--coral); }
+    .nav-link .chevron { width: 12px; height: 12px; transition: transform 300ms ease; flex-shrink: 0; }
+    .nav-link[aria-expanded="true"] { color: var(--ink); background: var(--accent-bg); }
+    .nav-link[aria-expanded="true"] .chevron { transform: rotate(180deg); }
+
+    /* Header CTAs */
+    .header-ctas { display: flex; align-items: center; gap: 8px; }
+    .theme-btn {
+      background: none; border: 1px solid var(--rule); border-radius: 6px;
+      width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--ink-soft); transition: all 0.15s; flex-shrink: 0;
+    }
+    .theme-btn:hover { border-color: var(--ink-soft); color: var(--ink); }
+    .mobile-toggle {
+      display: none; background: none; border: 1px solid var(--rule);
+      border-radius: 6px; width: 36px; height: 36px;
+      align-items: center; justify-content: center;
+      cursor: pointer; color: var(--ink-soft);
+    }
+
+    /* Dropdown Viewport */
+    .nav-viewport {
+      position: absolute; left: 50%; top: calc(100% + 8px);
+      transform: translateX(-50%); pointer-events: none; z-index: 200;
+    }
+    .nav-viewport-inner {
+      background: var(--popover-bg); border: 1px solid var(--rule);
+      border-radius: 10px;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.28), 0 4px 12px rgba(0,0,0,0.16);
+      transform-origin: top center;
+      opacity: 0; transform: scale(0.96) translateY(-6px);
+      pointer-events: none; transition: opacity 180ms ease, transform 180ms ease; overflow: hidden;
+    }
+    .nav-viewport-inner.open { opacity: 1; transform: scale(1) translateY(0); pointer-events: auto; }
+    .nav-content { display: none; }
+    .nav-content.active { display: block; }
+
+    /* Insights dropdown panel */
+    .insights-panel { width: 560px; padding: 6px; }
+    .panel-header { padding: 16px 16px 10px; border-bottom: 1px solid var(--rule); margin-bottom: 6px; }
+    .panel-header-label {
+      font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 600;
+      letter-spacing: 0.15em; text-transform: uppercase; color: var(--coral);
+      display: flex; align-items: center; gap: 8px; margin-bottom: 4px;
+    }
+    .panel-header-label::before { content: ''; display: block; width: 20px; height: 1px; background: var(--coral); }
+    .panel-header-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 500; color: var(--ink); line-height: 1.2; }
+    .panel-grid { display: grid; grid-template-columns: 1fr; gap: 4px; padding: 4px; }
+    .panel-item {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 12px; border-radius: 8px; text-decoration: none; transition: background 0.15s;
+    }
+    .panel-item:hover { background: var(--accent-bg); }
+    .panel-item:hover .item-icon { border-color: var(--coral); color: var(--coral); }
+    .item-icon {
+      flex-shrink: 0; width: 40px; height: 40px;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid var(--rule); border-radius: 8px;
+      background: var(--bg); color: var(--ink-soft);
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .item-icon svg { width: 18px; height: 18px; }
+    .item-text { flex: 1; min-width: 0; }
+    .item-title { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+    .item-desc  { font-family: 'Inter', sans-serif; font-size: 11px; color: var(--ink-soft); line-height: 1.5; }
+    .panel-footer {
+      border-top: 1px solid var(--rule); padding: 12px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .panel-footer-text { font-family: 'Inter', sans-serif; font-size: 12px; color: var(--ink-soft); }
+    .panel-footer-link {
+      font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600;
+      color: var(--coral); text-decoration: none;
+      display: flex; align-items: center; gap: 4px; transition: gap 0.15s;
+    }
+    .panel-footer-link:hover { gap: 8px; }
+
+    /* Mobile menu */
+    .mobile-menu {
+      display: none; position: fixed; inset: 0; top: 64px; z-index: 99;
+      background: rgba(245,240,235,0.97); backdrop-filter: blur(12px);
+      flex-direction: column; border-top: 1px solid var(--rule);
+    }
+    .mobile-menu.open { display: flex; }
+    [data-theme="dark"] .mobile-menu { background: rgba(26,23,20,0.97); }
+    .mobile-menu nav { flex: 1; display: flex; flex-direction: column; gap: 4px; padding: 20px 24px; }
+    .mobile-menu nav a {
+      font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 500;
+      color: var(--ink-soft); text-decoration: none; padding: 12px 16px;
+      border-radius: 8px; transition: all 0.15s;
+    }
+    .mobile-menu nav a:hover { color: var(--ink); background: var(--accent-bg); }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      font-family: 'Inter', sans-serif; font-size: 11px; color: var(--ink-soft);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb a { color: var(--ink-soft); text-decoration: none; transition: color 0.15s; }
+    .breadcrumb a:hover { color: var(--coral); }
+    .breadcrumb-sep { opacity: 0.4; }
+    .breadcrumb-current { color: var(--ink); }
+
+    /* ══════════════════════════════════════
+       HERO
+    ══════════════════════════════════════ */
+    .article-hero {
+      position: relative; min-height: 88vh;
+      display: flex; align-items: flex-end; overflow: hidden;
+    }
+    .hero-media { position: absolute; inset: 0; }
+    .hero-media img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom,
+        rgba(10,8,6,0.72) 0%, rgba(10,8,6,0.55) 25%,
+        rgba(10,8,6,0.78) 60%, rgba(10,8,6,0.97) 100%);
+    }
+    .hero-glow {
+      position: absolute; top: -80px; right: -80px;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(249,111,110,0.18) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-content {
+      position: relative; z-index: 2;
+      max-width: 1280px; width: 100%;
+      margin: 0 auto; padding: 0 48px 96px;
+    }
+    .hero-series {
+      font-family: var(--ui); font-size: 11px; font-weight: 600;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--coral);
+      display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+      opacity: 0; animation: fadeUp 0.7s ease 0.1s forwards;
+    }
+    .hero-series::before { content: ''; display: block; width: 28px; height: 1px; background: var(--coral); }
+    .hero-title {
+      font-family: var(--display); font-size: clamp(52px, 7vw, 100px);
+      font-weight: 300; line-height: 0.93; color: #FAF7F4;
+      letter-spacing: -0.025em; margin-bottom: 28px; max-width: 900px;
+      opacity: 0; animation: fadeUp 0.7s ease 0.22s forwards;
+    }
+    .hero-title em { font-style: italic; color: var(--coral); }
+    .hero-dek {
+      font-family: var(--display); font-size: 20px; font-weight: 300; font-style: italic;
+      color: rgba(250,247,244,0.65); max-width: 560px; line-height: 1.6; margin-bottom: 36px;
+      opacity: 0; animation: fadeUp 0.7s ease 0.34s forwards;
+    }
+    .hero-byline {
+      font-family: var(--ui); font-size: 12px; color: rgba(250,247,244,0.5);
+      letter-spacing: 0.08em; display: flex; align-items: center; gap: 16px;
+      opacity: 0; animation: fadeUp 0.7s ease 0.44s forwards;
+    }
+    .hero-byline strong { color: rgba(250,247,244,0.85); font-weight: 500; }
+    .byline-dot { width: 3px; height: 3px; background: rgba(250,247,244,0.3); border-radius: 50%; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-scroll {
+      position: absolute; bottom: 32px; right: 48px;
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      font-family: var(--ui); font-size: 9px; letter-spacing: 0.2em;
+      text-transform: uppercase; color: rgba(250,247,244,0.3);
+    }
+    .scroll-line {
+      width: 1px; height: 44px;
+      background: linear-gradient(to bottom, rgba(250,247,244,0.3), transparent);
+      animation: pulse 2.2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+
+    /* ══════════════════════════════════════
+       ARTICLE LAYOUT
+    ══════════════════════════════════════ */
+    .article-wrap {
+      max-width: 1280px; margin: 0 auto; padding: 88px 48px 120px;
+      display: grid; grid-template-columns: 220px 1fr; gap: 80px; align-items: start;
+    }
+
+    /* Sidebar */
+    .article-sidebar { position: sticky; top: 88px; }
+    .toc-label {
+      font-family: var(--ui); font-size: 10px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-soft);
+      padding-bottom: 14px; border-bottom: 1px solid var(--rule); margin-bottom: 16px;
+    }
+    .toc-list { list-style: none; }
+    .toc-list li { margin-bottom: 2px; }
+    .toc-list a {
+      font-family: var(--ui); font-size: 13px; color: var(--ink-soft);
+      text-decoration: none; padding: 6px 12px;
+      border-left: 2px solid transparent;
+      display: block; transition: all 0.15s; line-height: 1.4;
+    }
+    .toc-list a:hover, .toc-list a.active { color: var(--ink); border-left-color: var(--coral); }
+
+    .sidebar-card {
+      margin-top: 40px; padding: 24px;
+      background: var(--card-bg); border: 1px solid var(--rule);
+      border-radius: 2px; border-top: 3px solid var(--coral);
+    }
+    .sidebar-card-label {
+      font-family: var(--ui); font-size: 10px; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase; color: var(--coral); margin-bottom: 14px;
+    }
+    .sidebar-stat { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--rule); }
+    .sidebar-stat:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .stat-num {
+      font-family: var(--display); font-size: 32px; font-weight: 300;
+      color: var(--teal); line-height: 1; letter-spacing: -0.02em;
+    }
+    .stat-lbl {
+      font-family: var(--ui); font-size: 11px; color: var(--ink-soft);
+      letter-spacing: 0.06em; margin-top: 2px;
+    }
+
+    /* Article body */
+    .article-body { min-width: 0; }
+    .section-anchor { padding-top: 16px; }
+    .section-num {
+      font-family: var(--ui); font-size: 10px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--coral);
+      display: flex; align-items: center; gap: 12px; margin-bottom: 24px;
+    }
+    .section-num::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
+    .article-body h2 {
+      font-family: var(--display); font-size: clamp(32px, 3.5vw, 48px);
+      font-weight: 400; line-height: 1.1; color: var(--ink);
+      letter-spacing: -0.02em; margin-bottom: 28px;
+    }
+    .article-body h2 em { font-style: italic; color: var(--coral); }
+    .article-body p {
+      font-family: var(--display); font-size: 20px; font-weight: 300;
+      color: var(--ink); line-height: 1.8; margin-bottom: 24px; max-width: 68ch;
+    }
+    .article-body p.lead {
+      font-size: 24px; font-weight: 400; color: var(--ink); line-height: 1.65; margin-bottom: 32px;
+    }
+    .article-body p strong { font-weight: 600; }
+
+    .inset-card {
+      background: var(--card-bg); border: 1px solid var(--rule);
+      border-left: 4px solid var(--coral); border-radius: 2px;
+      padding: 32px 36px; margin: 40px 0;
+    }
+    .inset-card h4 {
+      font-family: var(--ui); font-size: 11px; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase; color: var(--coral); margin-bottom: 12px;
+    }
+    .inset-card p {
+      font-family: var(--display); font-size: 18px; font-weight: 300;
+      color: var(--ink); line-height: 1.7; margin: 0; max-width: none;
+    }
+
+    .pull-quote {
+      margin: 56px 0; padding: 48px 0;
+      border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); position: relative;
+    }
+    .pull-quote::before {
+      content: '"'; font-family: var(--display); font-size: 160px; line-height: 0.7;
+      color: var(--coral); opacity: 0.15;
+      position: absolute; top: 32px; left: -16px; pointer-events: none; font-weight: 300;
+    }
+    .pull-quote p {
+      font-family: var(--display); font-size: clamp(24px, 3vw, 36px);
+      font-weight: 300; font-style: italic; color: var(--ink);
+      line-height: 1.4; letter-spacing: -0.01em; margin: 0; max-width: none; position: relative;
+    }
+
+    /* Metrics block */
+    .stats-band {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1px; background: var(--rule);
+      border: 1px solid var(--rule); border-radius: 2px;
+      margin: 48px 0; overflow: hidden;
+    }
+    .stat-cell {
+      background: var(--card-bg); padding: 40px 32px;
+      text-align: center; transition: background 0.25s;
+    }
+    .stat-cell:hover { background: var(--ink); }
+    .stat-cell:hover .stat-big, .stat-cell:hover .stat-sub { color: var(--cream); }
+    .stat-big {
+      font-family: var(--display); font-size: 56px; font-weight: 300;
+      line-height: 1; color: var(--teal); letter-spacing: -0.03em; transition: color 0.25s;
+    }
+    .stat-big sup { font-size: 28px; color: var(--coral); }
+    .stat-sub {
+      font-family: var(--ui); font-size: 11px; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--ink-soft); margin-top: 10px; transition: color 0.25s;
+    }
+
+    .editorial-note {
+      margin-top: 64px; padding: 28px 32px;
+      background: var(--accent-bg); border-radius: 2px; border: 1px solid var(--rule);
+    }
+    .editorial-label {
+      font-family: var(--ui); font-size: 10px; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--ink-soft); display: block; margin-bottom: 10px;
+    }
+    .editorial-note p { font-family: var(--ui); font-size: 13px; color: var(--ink-soft); line-height: 1.7; margin: 0; max-width: none; }
+
+    /* Bridge section */
+    .bridge-section { background: var(--ink); padding: 96px 48px; }
+    .bridge-inner { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .bridge-eyebrow {
+      font-family: var(--ui); font-size: 10px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--coral);
+      display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
+    }
+    .bridge-eyebrow::before { content: ''; display: block; width: 20px; height: 1px; background: var(--coral); }
+    .bridge-title {
+      font-family: var(--display); font-size: clamp(36px, 4vw, 56px);
+      font-weight: 300; color: #FAF7F4; line-height: 1.05;
+      letter-spacing: -0.02em; margin-bottom: 20px;
+    }
+    .bridge-title em { font-style: italic; color: var(--coral); }
+    .bridge-desc {
+      font-family: var(--display); font-size: 18px; font-weight: 300;
+      color: rgba(250,247,244,0.55); line-height: 1.75; margin-bottom: 36px; max-width: none;
+    }
+    .bridge-cta {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: var(--ui); font-size: 12px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--ink); background: var(--coral); padding: 13px 26px;
+      border-radius: 4px; text-decoration: none; transition: all 0.25s;
+    }
+    .bridge-cta:hover { background: #FAF7F4; transform: translateY(-2px); }
+    .bridge-cta svg { width: 14px; height: 14px; transition: transform 0.2s; }
+    .bridge-cta:hover svg { transform: translateX(3px); }
+    .bridge-image { aspect-ratio: 4/3; border-radius: 2px; overflow: hidden; border: 1px solid rgba(255,255,255,0.07); }
+    .bridge-image img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* Keep reading */
+    .keep-reading {
+      background: var(--cream); border-top: 1px solid var(--rule);
+      padding: 88px 48px; text-align: center;
+    }
+    .keep-reading-eyebrow {
+      font-family: var(--ui); font-size: 10px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--coral); margin-bottom: 16px;
+    }
+    .keep-reading h2 {
+      font-family: var(--display); font-size: 48px; font-weight: 300;
+      color: var(--ink); letter-spacing: -0.02em; margin-bottom: 12px;
+    }
+    .keep-reading p {
+      font-family: var(--display); font-size: 18px; font-weight: 300;
+      font-style: italic; color: var(--ink-soft); margin-bottom: 36px;
+    }
+    .back-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--ui); font-size: 11px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink);
+      text-decoration: none; border-bottom: 1px solid var(--ink);
+      padding-bottom: 2px; transition: color 0.2s, border-color 0.2s;
+    }
+    .back-link:hover { color: var(--coral); border-color: var(--coral); }
+    .back-link svg { width: 13px; transition: transform 0.2s; }
+    .back-link:hover svg { transform: translateX(-3px); }
+
+    /* Footer */
+    footer {
+      background: var(--cream); border-top: 1px solid var(--rule);
+      padding: 80px 48px 48px;
+    }
+    .footer-inner { max-width: 1280px; margin: 0 auto; }
+    .footer-top {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 64px; padding-bottom: 56px;
+      border-bottom: 1px solid var(--rule); margin-bottom: 36px;
+    }
+    .footer-tagline {
+      font-family: var(--display); font-size: 15px; font-style: italic;
+      color: var(--ink-soft); margin: 10px 0 24px; line-height: 1.6;
+    }
+    .social-row { display: flex; gap: 10px; }
+    .social-btn {
+      width: 34px; height: 34px; border: 1px solid var(--rule);
+      border-radius: 4px; display: flex; align-items: center; justify-content: center;
+      color: var(--ink-soft); text-decoration: none; transition: all 0.15s;
+    }
+    .social-btn:hover { border-color: var(--coral); color: var(--coral); }
+    .social-btn svg { width: 14px; height: 14px; }
+    .footer-col h4 {
+      font-family: var(--ui); font-size: 10px; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink); margin-bottom: 18px;
+    }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 8px; }
+    .footer-col ul li a {
+      font-family: var(--display); font-size: 16px; color: var(--ink-soft);
+      text-decoration: none; transition: color 0.15s;
+    }
+    .footer-col ul li a:hover { color: var(--coral); }
+    .footer-bottom { display: flex; align-items: center; justify-content: space-between; }
+    .footer-copy { font-family: var(--ui); font-size: 11px; color: var(--ink-soft); }
+    .footer-copy span { color: var(--coral); }
+    .dot-green {
+      width: 7px; height: 7px; background: #4CAF6E; border-radius: 50%;
+      display: inline-block; animation: blink 2s infinite; margin-right: 6px;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    /* Reading progress */
+    .progress-bar {
+      position: fixed; top: 0; left: 0; height: 2px;
+      background: var(--coral); z-index: 200; width: 0%; transition: width 0.1s linear;
+    }
+
+    /* Fade up */
+    .fade-up {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── Responsive ── */
+    @media (max-width: 1024px) {
+      .article-wrap { grid-template-columns: 1fr; gap: 0; }
+      .article-sidebar { position: static; margin-bottom: 48px; display: flex; gap: 32px; align-items: flex-start; }
+      .toc-list { display: none; }
+      .bridge-inner { grid-template-columns: 1fr; gap: 48px; }
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 40px; }
+      #logo-desktop { display: none; }
+      #logo-mark    { display: block; }
+      .desktop-nav  { display: none; }
+      .header-ctas .mobile-toggle { display: flex; }
+    }
+    @media (max-width: 768px) {
+      .header-inner { padding: 0 24px; }
+      .article-wrap { padding: 56px 24px 80px; }
+      .hero-content { padding: 0 24px 72px; }
+      .bridge-section { padding: 64px 24px; }
+      .keep-reading { padding: 64px 24px; }
+      footer { padding: 56px 24px 32px; }
+      .footer-top { grid-template-columns: 1fr; gap: 36px; }
+      .stats-band { grid-template-columns: 1fr; margin: 36px 0; }
+      .stat-cell { padding: 28px 16px; }
+      .stat-big { font-size: 42px; }
+      .article-body p { max-width: 100%; }
+      .pull-quote { margin: 40px 0; padding: 36px 0; }
+      .pull-quote::before { font-size: 100px; left: 0; }
+    }
+  </style>
 </head>
 <body>
-    <header class="lg-site-header" role="banner">
-      <div class="lg-site-header-inner">
-        <a href="/insights" class="lg-logo" aria-label="Insights">
-          <picture class="theme-picture lg-logo-picture">
-            <source type="image/svg+xml" data-role="light" media="(prefers-color-scheme: light)" srcset="/insights/assets/images/insights_logo_light.svg">
-            <source type="image/svg+xml" data-role="dark" media="(prefers-color-scheme: dark)" srcset="/insights/assets/images/insights_logo_light.svg">
-            <img src="/insights/assets/images/insights_logo_light.svg" alt="Insights logo" class="lg-logo-img" loading="eager" decoding="async">
-          </picture>
-        </a>
-        <nav class="lg-main-nav" id="lgMainNav" aria-label="Main navigation">
-          <button class="lg-nav-close" aria-label="Close menu" type="button"></button>
-          <a href="https://luis-gilberto.com" class="lg-nav-link">Portfolio</a>
-          <div class="nav-item has-dropdown group relative" id="hubMega">
-    <a href="/TheHub/" class="nav-link">
-        THE HUB <i class="fas fa-chevron-down chevron"></i>
+
+<!-- Reading Progress -->
+<div class="progress-bar" id="progress"></div>
+
+<!-- ══════════════════════════════════════
+     HEADER
+══════════════════════════════════════ -->
+<header id="site-header">
+  <div class="header-inner">
+    <a href="/insights/" class="logo-link">
+      <img id="logo-desktop" src="/insights/assets/images/Insights_logo_black.png" alt="Insights by Luis Gilberto">
+      <img id="logo-mark"    src="/insights/assets/images/LG-logomark-BlackCoral.png" alt="Insights">
     </a>
-    
+
+    <nav class="desktop-nav" id="desktop-nav" aria-label="Main navigation"> 
+      <button id="trigger-portfolio" class="nav-link" aria-haspopup="true" aria-expanded="false" aria-controls="content-portfolio" data-trigger> 
+        Portfolio 
+        <svg class="chevron" viewBox="0 0 15 15" fill="none" aria-hidden="true"><path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"/></svg> 
+      </button> 
+      <button id="trigger-insights" class="nav-link active" aria-haspopup="true" aria-expanded="false" aria-controls="content-insights" data-trigger> 
+        Insights 
+        <svg class="chevron" viewBox="0 0 15 15" fill="none" aria-hidden="true"><path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"/></svg> 
+      </button> 
+      <button id="trigger-hub" class="nav-link" aria-haspopup="true" aria-expanded="false" aria-controls="content-hub" data-trigger> 
+        The Hub 
+        <svg class="chevron" viewBox="0 0 15 15" fill="none" aria-hidden="true"><path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"/></svg> 
+      </button> 
+      <button id="trigger-portal" class="nav-link" aria-haspopup="true" aria-expanded="false" aria-controls="content-portal" data-trigger style="padding:4px 8px;"> 
+        <img id="portal-logo-nav" src="/assets/images/TheLGPortal_dark-mode.png" alt="The Portal" style="height:32px; width:auto; display:block;"> 
+        <svg class="chevron" viewBox="0 0 15 15" fill="none" aria-hidden="true"><path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"/></svg> 
+      </button> 
+ 
+      <div class="nav-viewport" id="nav-viewport"> 
+        <div class="nav-viewport-inner" id="nav-viewport-inner"> 
+ 
+          <!-- PORTFOLIO panel --> 
+          <div id="content-portfolio" class="nav-content"> 
+            <div class="insights-panel"> 
+              <div class="panel-header"><p class="panel-header-label">Portfolio</p><p class="panel-header-title">Work, story &amp; process</p></div> 
+              <div class="panel-grid"> 
+                <a href="/myexperience.html" class="panel-item"><div class="item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></div><div class="item-text"><p class="item-title">Work &amp; Experience</p><p class="item-desc">15+ years across Microsoft, startups, and beyond</p></div></a> 
+                <a href="/timeline.html" class="panel-item"><div class="item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="4"/><polyline points="6 10 12 4 18 10"/></svg></div><div class="item-text"><p class="item-title">Career Timeline</p><p class="item-desc">The eras, pivots, and moments that shaped the work</p></div></a> 
+                <a href="/about.html" class="panel-item"><div class="item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div><div class="item-text"><p class="item-title">About Luis</p><p class="item-desc">From Caracas to Cascadia. the full story</p></div></a> 
+                <a href="/contact.html" class="panel-item"><div class="item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><div class="item-text"><p class="item-title">Contact</p><p class="item-desc">Start a conversation or collaboration</p></div></a> 
+              </div> 
+              <div class="panel-footer"><span class="panel-footer-text">Caracas meets Cascadia</span><a href="/" class="panel-footer-link">Visit portfolio <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div> 
+            </div> 
+          </div> 
+ 
+          <!-- INSIGHTS panel --> 
+          <div id="content-insights" class="nav-content"> 
+            <div class="insights-panel"> 
+              <div class="panel-header"><p class="panel-header-label">Insights</p><p class="panel-header-title">Browse by Series</p></div> 
+              <div class="panel-grid"> 
+                <a href="/insights/series/#building" class="panel-item"><div class="item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div><div class="item-text"><p class="item-title">The Building Series</p><p class="item-desc">Architecture, systems, and editorial decisions</p></div></a> 
+                <a href="/insights/series/#strategic" class="panel-item"><div class="item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="item-text"><p class="item-title">Strategic Lens</p><p class="item-desc">IMC blueprints and real product launch strategies</p></div></a> 
+                <a href="/insights/series/#directors" class="panel-item"><div class="item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div><div class="item-text"><p class="item-title">Director's Commentary</p><p class="item-desc">What I was actually thinking behind the decisions</p></div></a> 
+                <a href="/insights/series/#reflections" class="panel-item"><div class="item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div><div class="item-text"><p class="item-title">Reflections</p><p class="item-desc">Creativity, pace, and the quiet decisions</p></div></a> 
+              </div> 
+              <div class="panel-footer"><span class="panel-footer-text">4 series · 13 articles</span><a href="/insights/series/" class="panel-footer-link">Browse all series <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div> 
+            </div> 
+          </div> 
+ 
+          <!-- HUB panel --> 
+          <div id="content-hub" class="nav-content"> 
+            <div class="insights-panel"> 
+              <div class="panel-header"><p class="panel-header-label">The Hub</p><p class="panel-header-title">Three arms. One system.</p></div> 
+              <div class="panel-grid"> 
+                <a href="/TheHub/advisory/" class="panel-item"><div class="item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div class="item-text"><p class="item-title">Advisory</p><p class="item-desc">Direct access to Luis. leadership alignment and clarity</p></div></a> 
+                <a href="/TheHub/studio.html" class="panel-item"><div class="item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div class="item-text"><p class="item-title">The Studio</p><p class="item-desc">High-fidelity execution. ideas into tangible assets</p></div></a> 
+                <a href="https://portal.luis-gilberto.com/" target="_blank" rel="noopener" class="panel-item"><div class="item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><div class="item-text"><p class="item-title">The Portal ↗</p><p class="item-desc">Secure command center. where client work lives</p></div></a> 
+              </div> 
+              <div class="panel-footer"><span class="panel-footer-text">Intelligence over intuition</span><a href="/TheHub/" class="panel-footer-link">Explore The Hub <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div> 
+            </div> 
+          </div> 
+ 
+          <!-- PORTAL panel --> 
+          <div id="content-portal" class="nav-content"> 
+            <div class="insights-panel" style="width:400px;"> 
+              <div class="panel-header"><p class="panel-header-label">The Portal</p><p class="panel-header-title">Your command center</p></div> 
+              <div style="padding:12px 16px 8px; display:flex; flex-direction:column; gap:8px;"> 
+                <div style="display:flex; align-items:center; gap:10px; padding:9px 6px; font-family:'Inter',sans-serif; font-size:12px; color:var(--ink-soft);"><div style="width:5px;height:5px;border-radius:50%;background:var(--teal);flex-shrink:0;"></div>Shared project workspaces</div> 
+                <div style="display:flex; align-items:center; gap:10px; padding:9px 6px; font-family:'Inter',sans-serif; font-size:12px; color:var(--ink-soft);"><div style="width:5px;height:5px;border-radius:50%;background:var(--teal);flex-shrink:0;"></div>Direct access to Luis &amp; Advisory</div> 
+                <div style="display:flex; align-items:center; gap:10px; padding:9px 6px; font-family:'Inter',sans-serif; font-size:12px; color:var(--ink-soft);"><div style="width:5px;height:5px;border-radius:50%;background:var(--teal);flex-shrink:0;"></div>Progress tracking &amp; deliverables</div> 
+              </div> 
+              <div style="margin:8px 10px 10px; background:var(--ink); border-radius:6px; padding:14px 16px; display:flex; align-items:center; justify-content:space-between; gap:12px;"> 
+                <p style="font-family:'Cormorant Garamond',serif; font-size:16px; font-style:italic; color:var(--cream); line-height:1.2;">Ready to enter<br>the ecosystem?</p> 
+                <a href="https://portal.luis-gilberto.com/auth/signup" target="_blank" rel="noopener" style="font-family:'Inter',sans-serif; font-size:11px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#080808; background:var(--teal); padding:8px 14px; border-radius:4px; text-decoration:none; white-space:nowrap;">Request Access</a> 
+              </div> 
+              <div class="panel-footer"><span class="panel-footer-text">Existing client?</span><a href="https://portal.luis-gilberto.com/auth/signin" target="_blank" rel="noopener" class="panel-footer-link">Sign in <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div> 
+            </div> 
+          </div> 
+ 
+        </div> 
+      </div> 
+    </nav> 
+
+
+    <div class="header-ctas">
+      <button class="theme-btn" id="theme-toggle" aria-label="Toggle light/dark mode">
+        <svg id="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg id="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <svg id="menu-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobile-menu">
+  <nav>
+    <a href="/">Portfolio</a>
+    <a href="/insights/">Insights</a>
+    <a href="/TheHub/">The Hub</a>
+    <a href="/portal/">Portal</a>
+  </nav>
 </div>
 
-              <a href="https://luis-gilberto.com/contact" class="lg-nav-link">Contact</a>
-        </nav>
-        <div class="lg-nav-backdrop" aria-hidden="true" tabindex="-1"></div>
-        <button class="lg-nav-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="lgMainNav">
-          <span class="lg-nav-toggle-bar"></span>
-          <span class="lg-nav-toggle-bar"></span>
-          <span class="lg-nav-toggle-bar"></span>
-        </button>
+<!-- ══════════════════════════════════════
+     HERO
+══════════════════════════════════════ -->
+<section class="article-hero">
+  <div class="hero-media">
+    <img src="/insights/assets/images/Edge_mobile_tile.jpg" alt="Edge Mobile App Store Rebrand">
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-glow"></div>
+
+  <div class="hero-content">
+    <div class="breadcrumb" style="margin-bottom:32px; opacity:0; animation:fadeUp 0.6s ease 0.05s forwards;">
+      <a href="/insights/">Insights</a>
+      <span class="breadcrumb-sep">/</span>
+      <a href="/insights/series/#directors">Director's Commentary</a>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current" style="color:rgba(250,247,244,0.6);">Edge Mobile</span>
+    </div>
+
+    <p class="hero-series">Director's Commentary</p>
+    <h1 class="hero-title">The Smallest<br><em>Canvas</em></h1>
+    <p class="hero-dek">The director's commentary on rebranding Edge Mobile's app store presence, and what a three-second window taught me about precision, platform, and making a utility feel like a want.</p>
+    <div class="hero-byline">
+      <strong>By Luis Gilberto</strong>
+      <div class="byline-dot"></div>
+      <span>Sep 2024 – Early 2025</span>
+      <div class="byline-dot"></div>
+      <span>6 min read</span>
+    </div>
+  </div>
+
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span>Read</span>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     ARTICLE BODY
+══════════════════════════════════════ -->
+<div class="article-wrap">
+  <aside class="article-sidebar">
+    <div>
+      <p class="toc-label">Contents</p>
+      <ul class="toc-list">
+        <li><a href="#problem" class="active">The Problem</a></li>
+        <li><a href="#constraint">The Constraint</a></li>
+        <li><a href="#bet">The Creative Bet</a></li>
+        <li><a href="#results">The Results</a></li>
+      </ul>
+    </div>
+    <div class="sidebar-card">
+      <p class="sidebar-card-label">At a Glance</p>
+      <div class="sidebar-stat"> 
+        <div class="stat-num">↑</div> 
+        <div class="stat-lbl">Download Growth</div> 
+      </div> 
+
+      <div class="sidebar-stat">
+        <div class="stat-num">2</div>
+        <div class="stat-lbl">Platforms Rebuilt</div>
       </div>
-    </header>
-    <!-- Breadcrumb Navigation -->
-    <nav class="breadcrumb-nav" aria-label="Breadcrumb">
-        <div class="breadcrumb-container">
-            <a href="/insights" class="breadcrumb-link">Insights</a>
-            <span class="breadcrumb-separator">/</span>
-            <a href="/insights#work-that-mattered" class="breadcrumb-link">Work That Mattered</a>
-            <span class="breadcrumb-separator">/</span>
-            <span class="breadcrumb-current">Edge Mobile App Store Refresh</span>
-        </div>
-    </nav>
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="diagonal-slices">
-            <div class="diagonal-slice"></div>
-            <div class="diagonal-slice"></div>
-            <div class="diagonal-slice"></div>
-            <div class="diagonal-slice"></div>
-        </div>
-        <div class="hero-overlay"></div>
-        <div class="hero-content">
-            <div class="article-category">Platform Rebrand</div>
-            <h1 class="hero-title">Edge Mobile App Store Refresh</h1>
-            <p class="hero-subtitle">Strategic rebrand transforming Edge Mobile's app store presence across iOS and Android - optimizing for platform-native discovery and driving 185% download growth</p>
-        </div>
-        <div class="hero-image-container">
-<img src="../assets/images/Edge-mobile_hero_image_BG.jpg" alt="Edge Mobile App Store Refresh" class="hero-image">
-        </div>
-    </section>
+      <div class="sidebar-stat">
+        <div class="stat-num">'24–'25</div> 
+         <div class="stat-lbl">Sep 2024 – Early 2025</div> 
 
-    <!-- Decorative Color Break -->
-    <div class="color-break">
-        <div class="color-break-segment"></div>
-        <div class="color-break-segment"></div>
-        <div class="color-break-segment"></div>
-        <div class="color-break-segment"></div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="article-body">
+
+    <!-- 01 THE PROBLEM -->
+    <div class="section-anchor fade-up" id="problem">
+      <p class="section-num">01 · The Problem</p>
+      <h2>The <em>Least Exciting</em> Real Estate in Tech</h2>
+      <p class="lead"><strong>There is no format in modern marketing more brutally honest than the app store listing.</strong></p>
+      <p>No loading animation. No ambient video. No scroll-triggered reveal. Just a handful of screenshots, a video preview, and about three seconds of someone's divided attention before they swipe away or tap install. It is the most unforgiving canvas in the industry. For a browser, it is even harder.</p>
+      <p>Because a browser, by definition, is not the experience. It is the vehicle.</p>
+      <p>When I took on the Edge Mobile app store rebrand in September 2024, the core challenge was not aesthetic. It was existential: how do you make a utility feel like a want? How do you make something people use <em>through</em> feel like something worth choosing?</p>
+      <div class="inset-card">
+        <h4>The Core Insight</h4>
+        <p>Everyone on the team agreed the existing store presence looked <strong>fine</strong>. That was the problem. Fine does not convert. Fine does not stop the scroll. Fine is the enemy of a tap.</p>
+      </div>
     </div>
 
-    <!-- Article Content -->
-    <div class="article-layout">
-        <!-- Left Sidebar -->
-        <aside class="article-sidebar">
-            <div class="metadata-item">
-                <div class="metadata-label">Timeline</div>
-                <div class="metadata-value">2023 Launch</div>
-            </div>
-            <div class="metadata-item">
-                <div class="metadata-label">Role</div>
-                <div class="metadata-value">Strategic Rebrand Lead</div>
-            </div>
-            <div class="metadata-item">
-                <div class="metadata-label">Disciplines</div>
-                <div class="metadata-value">App Store Optimization, Platform-Native Adaptation, Cross-Platform Strategy</div>
-            </div>
-        </aside>
+    <!-- 02 THE CONSTRAINT -->
+    <div class="section-anchor fade-up" id="constraint">
+      <p class="section-num">02 · The Constraint</p>
+      <h2>Three Seconds, <em>Two Platforms</em>, One Brand</h2>
+      <p>The app store is the first impression for mobile users who have never touched Edge on desktop. For those who have, it is the moment we either confirm or betray their expectations.</p>
+      <p>What made this genuinely difficult was not the creative. It was the geometry.</p>
+      <p>Apple and Google do not play by the same rules. Apple's App Store has strict guidelines around UI accuracy: you show what the product actually does, as it actually looks. Google Play gives you more latitude for motion, storytelling, and brand expression. So you are not building one campaign. You are building two distinct creative systems that have to feel like the same conversation.</p>
+      <p>This is where a lot of app store refreshes fail. They pick one approach and flatten it across both platforms, sacrificing native resonance for operational convenience. We refused that shortcut.</p>
+      <div class="pull-quote">
+        <p>"You are not building one campaign. You are building two distinct creative systems that have to feel like the same conversation."</p>
+      </div>
+      <p>And underneath all of it, one constraint never changed: three seconds. That was the real brief.</p>
+    </div>
 
-        <!-- Center Content -->
-        <main class="article-content">
-            <div class="content-section">
-                <h2 class="section-title">The Challenge</h2>
-                <p class="section-text">Microsoft Edge Mobile needed to stand out in crowded app stores where first impressions determine success. The existing presence felt generic and failed to communicate Edge's unique AI-powered capabilities, resulting in missed discovery opportunities and lower-than-expected download rates.</p>
-            </div>
+    <!-- 03 THE CREATIVE BET -->
+    <div class="section-anchor fade-up" id="bet">
+      <p class="section-num">03 · The Creative Bet</p>
+      <h2>The Browser <em>Is</em> the Story</h2>
+      <p>The breakthrough came from a reframe that sounds simple in retrospect.</p>
+      <p>We stopped trying to make Edge look exciting <em>despite</em> being a browser. We started treating the browser itself — the interface, the gestures, the Copilot integration — as the visual content. The product, shown honestly and with intention, was more compelling than any abstract 3D motion could have been.</p>
+      <p>This is the insight that unlocked the Koto collaboration. Koto had already helped define Edge's visual identity system at the brand level. Bringing them into the app store work meant we were not translating the brand. We were extending it. Their motion team understood that the goal was not to make the screenshots cinematic. It was to make them <em>clear</em>, <em>fast</em>, and <em>purposeful</em>.</p>
+      <p>For Google Play, we gave ourselves permission to tell a story: motion graphics, pacing, personality. For Apple, we built something closer to choreography: a precise walkthrough that respected the platform's norms while still feeling unmistakably Edge.</p>
+      <p>The result was a dual-platform system that did not feel like a compromise. It felt like craft.</p>
+      <p>And the hardest creative call? Resisting the impulse to show <em>everything</em>. Three seconds means you pick one truth and you commit to it. We chose AI. Not features, not speed, not sync. Just the simple, durable promise that Edge makes you smarter while you browse. Everything else was edited out.</p>
+      <div class="inset-card">
+        <h4>The Creative Discipline</h4>
+        <p>Three seconds means you pick one truth and commit to it. <strong>We chose AI.</strong> Not features, not speed, not sync. Everything else was edited out.</p>
+      </div>
+    </div>
 
-            <div class="content-section">
-                <h2 class="section-title">Strategic Approach</h2>
-                <p class="section-text">Led comprehensive app store rebrand across iOS and Android, optimizing every touchpoint for platform-native discovery while maintaining brand consistency. The strategy focused on translating Edge's AI capabilities into compelling visual language that resonated with mobile-first users.</p>
-                
-                <ul class="feature-list">
-                    <li class="feature-item">
-                        <div class="feature-title">Platform-Native Optimization</div>
-                        <div class="feature-description">Tailored visual identity and messaging for iOS App Store and Google Play Store algorithms, maximizing organic discoverability while respecting each platform's unique design language</div>
-                    </li>
-                    <li class="feature-item">
-                        <div class="feature-title">Visual Identity Refresh</div>
-                        <div class="feature-description">Developed refreshed icon system, app screenshots, and preview videos that clearly communicated AI-powered browsing benefits in under 3 seconds of user attention</div>
-                    </li>
-                    <li class="feature-item">
-                        <div class="feature-title">Cross-Platform Consistency</div>
-                        <div class="feature-description">Ensured brand cohesion across iOS and Android while optimizing for each platform's specific requirements and user expectations</div>
-                    </li>
-                    <li class="feature-item">
-                        <div class="feature-title">Data-Driven Iteration</div>
-                        <div class="feature-description">Implemented A/B testing framework for app store assets, continuously refining based on conversion data and user feedback</div>
-                    </li>
-                </ul>
-            </div>
+    <!-- 04 THE RESULTS -->
+    <div class="section-anchor fade-up" id="results">
+      <p class="section-num">04 · The Results</p>
+      <h2>When Precision <em>Becomes</em> Performance</h2>
 
-            <div class="content-section">
-                <h2 class="section-title">Impact & Results</h2>
-                <p class="section-text">The rebrand delivered immediate and sustained impact across both platforms. Download rates increased 185% in the first quarter post-launch, while app store search rankings improved significantly for key AI-related terms. User acquisition costs decreased as organic discovery improved, and app store ratings climbed as the new presentation better set expectations for the user experience.</p>
-            </div>
+      <div class="stats-band">
+        <div class="stat-cell"> 
+          <div class="stat-big">↑</div> 
+          <div class="stat-sub">Download Growth</div> 
+        </div> 
 
-            <div class="content-section">
-                <h2 class="section-title">Key Learnings</h2>
-                <p class="section-text">This rebrand reinforced that app store presence is about precision and clarity - users make snap decisions based on visual first impressions. Success required balancing Microsoft's premium brand standards with platform-specific optimization, proving that strategic adaptation doesn't mean compromising brand integrity.</p>
-            </div>
-        </main>
+        <div class="stat-cell">
+          <div class="stat-big">2</div>
+          <div class="stat-sub">Platforms Optimized</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-big">↑<sup>Organic</sup></div>
+          <div class="stat-sub">Search Ranking</div>
+        </div>
+      </div>
 
-        <!-- Right Sidebar -->
-        <aside class="statement-sidebar">
-            <div class="statement-card">
-                <div class="statement-number">185%</div>
-                <div class="statement-label">Download increase post-rebrand</div>
-            </div>
+      <p>The results came quickly, and they were unambiguous. Downloads climbed. Organic search rankings improved for the AI-related terms that mattered most. But what stayed with me was not the headline number. It was what each install actually represented.</p>
+      <p>Every download is a moment where the canvas worked. Where someone paused long enough for the story to land. On a surface most marketers treat as a checklist, we treated it as a craft problem, and it performed like one.</p>
+      <p>The deeper lesson from this project: the smallest touchpoints carry the most weight precisely because no one expects them to. App store presence is not marketing support. For mobile users, it <em>is</em> the launch.</p>
+      <p>We did not rebuild Edge. We rebuilt the first impression, and the market responded to the impression first.</p>
 
-            <div class="statement-card">
-                <div class="statement-number">2 Platforms</div>
-                <div class="statement-label">iOS & Android optimization</div>
-            </div>
-
-            <div class="statement-card">
-                <div class="statement-number">Organic</div>
-                <div class="statement-label">Improved search ranking & discoverability</div>
-            </div>
-
-            <div class="reflection-card">
-                "App store presence is about precision and clarity - users make snap decisions in under 3 seconds. This rebrand proved that strategic platform-native adaptation doesn't mean compromising brand integrity."
-            </div>
-        </aside>
+      <p>I should be transparent: I left Microsoft in early 2025 before the full rollout completed. The work I did was to architect the strategy, define the creative system, align the dual-platform approach, and bring in the right partners. What happened after I handed off is a testament to the team who carried it forward. I built something strong enough to finish without me. That, too, is a kind of result.</p> 
+ 
+       <div class="editorial-note"> 
+         <span class="editorial-label">Perspective &amp; Sourcing</span> 
+         <p>This article reflects professional experience and strategic opinion from firsthand involvement in the project through early 2025. Results reflect outcomes reported after handoff. It draws from real-world practice and firsthand strategic decisions made during my tenure.</p> 
+       </div> 
 
     </div>
-    <!-- Case Study Navigation -->
-    <nav class="case-study-navigation" aria-label="Case study navigation">
-        <div class="nav-grid">
-            <a href="/insights/transforming-browsing-ai" class="nav-card nav-prev">
-                <span class="nav-label">← Previous Case Study</span>
-                <span class="nav-title">Transforming Browsing with AI</span>
-            </a>
-            <a href="/insights/teams-consumer-launch" class="nav-card nav-next">
-                <span class="nav-label">Next Case Study →</span>
-                <span class="nav-title">Teams Consumer Launch</span>
-            </a>
+
+  </main>
+</div>
+
+<!-- ══════════════════════════════════════
+     PROJECT BRIDGE
+══════════════════════════════════════ -->
+<section class="bridge-section fade-up">
+  <div class="bridge-inner">
+    <div>
+      <p class="bridge-eyebrow">The Execution</p>
+      <h2 class="bridge-title">See the Full<br><em>Technical Blueprint</em></h2>
+      <p class="bridge-desc">You've read the philosophy. Now see the production. Explore the dual-platform creative system, the Koto partnership, and the detailed performance metrics.</p>
+      <a href="/work/edge-mobile-technical-blueprint.html" class="bridge-cta">
+        View Project Portfolio
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+    <div class="bridge-image">
+      <img src="/insights/assets/images/Edge_mobile_tile.jpg" alt="Edge Mobile Rebrand">
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     KEEP READING
+══════════════════════════════════════ -->
+<section class="keep-reading">
+  <p class="keep-reading-eyebrow">Continue Reading</p>
+  <h2>More from Insights</h2>
+  <p>Explore more on creative strategy, brand systems, and the ideas behind the work.</p>
+  <a href="/insights/" class="back-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Back to Insights
+  </a>
+</section>
+
+<!-- ══════════════════════════════════════
+     FOOTER
+══════════════════════════════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <a href="/insights/" class="logo-link">
+          <img src="/insights/assets/images/Insights_logo_black.png" alt="Insights" id="footer-logo" style="height:28px; width:auto;">
+        </a>
+        <p class="footer-tagline">Making sense of design, technology,<br>and the choices behind them.</p>
+        <div class="social-row">
+          <a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" rel="noopener" class="social-btn" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          </a>
         </div>
-    </nav>
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const header = document.querySelector(".lg-site-header");
-        const toggle = document.querySelector(".lg-nav-toggle");
-        const nav = document.querySelector(".lg-main-nav");
-        const backdrop = document.querySelector(".lg-nav-backdrop");
-        const closeBtn = document.querySelector(".lg-nav-close");
-        if (!header) return;
-        let previousFocus = null;
-        function getFocusable(container) {
-          return Array.from(container.querySelectorAll('a[href], button:not([disabled]), [tabindex="0"], input, select, textarea'));
-        }
-        function trapFocusKeydown(e) {
-          if (!header.classList.contains('is-open')) return;
-          if (e.key === 'Escape') { e.preventDefault(); closeNav(); return; }
-          if (e.key !== 'Tab') return;
-          const focusables = getFocusable(nav);
-          if (!focusables.length) return;
-          const first = focusables[0];
-          const last = focusables[focusables.length - 1];
-          const active = document.activeElement;
-          if (e.shiftKey) { if (active === first) { e.preventDefault(); last.focus(); } }
-          else { if (active === last) { e.preventDefault(); first.focus(); } }
-        }
-        function openNav() {
-          previousFocus = document.activeElement;
-          header.classList.add('is-open');
-          toggle.setAttribute('aria-expanded', 'true');
-          nav.setAttribute('aria-hidden', 'false');
-          document.body.style.overflow = 'hidden';
-          if (closeBtn) closeBtn.focus();
-          document.addEventListener('keydown', trapFocusKeydown);
-        }
-        function closeNav() {
-          header.classList.remove('is-open');
-          toggle.setAttribute('aria-expanded', 'false');
-          nav.setAttribute('aria-hidden', 'true');
-          document.body.style.overflow = 'auto';
-          document.removeEventListener('keydown', trapFocusKeydown);
-          if (previousFocus) previousFocus.focus();
-        }
-        if (toggle && nav) {
-          toggle.addEventListener('click', function () { if (header.classList.contains('is-open')) { closeNav(); } else { openNav(); } });
-        }
-        if (backdrop) { backdrop.addEventListener('click', function () { if (header.classList.contains('is-open')) closeNav(); }); }
-        if (closeBtn) { closeBtn.addEventListener('click', function () { closeNav(); }); }
-      });
-    </script>
-    <script src="/assets/js/mobile-menu-loader.js"></script>
+      </div>
+      <div class="footer-col">
+        <h4>Ecosystem</h4>
+        <ul>
+          <li><a href="/">Portfolio</a></li>
+          <li><a href="/insights/">Insights</a></li>
+          <li><a href="/TheHub/">The Hub</a></li>
+          <li><a href="https://portal.luis-gilberto.com">The Portal</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="/contact.html">Contact</a></li>
+          <li><a href="/about.html">About</a></li>
+          <li><a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" rel="noopener">LinkedIn</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Status</h4>
+        <p style="font-family:var(--ui); font-size:12px; color:#4CAF6E; margin-bottom:8px;"><span class="dot-green"></span>Available for projects</p>
+        <p class="footer-tagline" style="font-size:13px; margin:0;">Seattle, WA. Open to select engagements worldwide.</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 <span>Luis Gilberto</span>. All rights reserved.</p>
+      <p class="footer-copy">Crafted with intention · Caracas meets Cascadia</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ══════════════════════════════════════
+     SCRIPTS
+══════════════════════════════════════ -->
+<script>
+(() => {
+  // ── Reading progress
+  const bar = document.getElementById('progress');
+  window.addEventListener('scroll', () => {
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = (window.scrollY / total * 100) + '%';
+  }, { passive: true });
+
+  // ── Header scroll state
+  const header = document.getElementById('site-header');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 10);
+  }, { passive: true });
+  if (window.scrollY > 10) header.classList.add('scrolled');
+
+  // ── Dropdown nav
+  const viewport   = document.getElementById('nav-viewport-inner');
+  const triggers   = document.querySelectorAll('[data-trigger]');
+  const desktopNav = document.getElementById('desktop-nav');
+  let activeId = null, closeTimer = null;
+
+  function openDropdown(trigger) {
+    clearTimeout(closeTimer);
+    const panel = document.getElementById(trigger.id.replace('trigger-', 'content-'));
+    if (!panel) return;
+    document.querySelectorAll('.nav-content').forEach(p => p.classList.remove('active'));
+    panel.classList.add('active');
+    viewport.classList.add('open');
+    triggers.forEach(t => t.setAttribute('aria-expanded', 'false'));
+    trigger.setAttribute('aria-expanded', 'true');
+    activeId = trigger.id;
+  }
+  function closeDropdown() {
+    closeTimer = setTimeout(() => {
+      viewport.classList.remove('open');
+      document.querySelectorAll('.nav-content').forEach(p => p.classList.remove('active'));
+      triggers.forEach(t => t.setAttribute('aria-expanded', 'false'));
+      activeId = null;
+    }, 120);
+  }
+  triggers.forEach(t => {
+    t.addEventListener('mouseenter', () => openDropdown(t));
+    t.addEventListener('click', e => { e.stopPropagation(); activeId === t.id ? closeDropdown() : openDropdown(t); });
+  });
+  desktopNav.addEventListener('mouseleave', closeDropdown);
+  viewport.addEventListener('mouseenter', () => clearTimeout(closeTimer));
+  viewport.addEventListener('mouseleave', closeDropdown);
+  document.addEventListener('click', e => { if (!desktopNav.contains(e.target)) closeDropdown(); });
+
+  // ── Theme toggle
+  const themeToggle = document.getElementById('theme-toggle');
+  const iconSun     = document.getElementById('icon-sun');
+  const iconMoon    = document.getElementById('icon-moon');
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('lg-theme', theme);
+    iconSun.style.display  = theme === 'dark' ? 'none'  : 'block';
+    iconMoon.style.display = theme === 'dark' ? 'block' : 'none';
+    const ld = document.getElementById('logo-desktop');
+    if (ld) ld.src = theme === 'dark' ? '/insights/assets/images/Insights_logo_white.png' : '/insights/assets/images/Insights_logo_black.png';
+    const lm = document.getElementById('logo-mark');
+    if (lm) lm.src = theme === 'dark' ? '/insights/assets/images/Symbol_mobile.png' : '/insights/assets/images/LG-logomark-BlackCoral.png';
+    const fl = document.getElementById('footer-logo'); 
+     if (fl) fl.src = theme === 'dark' ? '/insights/assets/images/Insights_logo_white.png' : '/insights/assets/images/Insights_logo_black.png'; 
+     const pn = document.getElementById('portal-logo-nav'); 
+     if (pn) pn.src = theme === 'dark' ? '/assets/images/TheLGPortal_dark-mode.png' : '/assets/images/TheLGPortal_light-mode.png'; 
+
+  }
+  applyTheme(localStorage.getItem('lg-theme') || 'dark');
+  themeToggle?.addEventListener('click', () => {
+    applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+
+  // ── Mobile menu
+  const mobileToggle = document.getElementById('mobile-toggle');
+  const mobileMenu   = document.getElementById('mobile-menu');
+  const menuIcon     = document.getElementById('menu-icon');
+  let menuOpen = false;
+  mobileToggle?.addEventListener('click', () => {
+    menuOpen = !menuOpen;
+    mobileMenu.classList.toggle('open', menuOpen);
+    mobileToggle.setAttribute('aria-expanded', String(menuOpen));
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    menuIcon.innerHTML = menuOpen
+      ? '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>'
+      : '<line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>';
+  });
+
+  // ── Scroll fade-up
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+
+  // ── Active TOC
+  const sections = document.querySelectorAll('.section-anchor');
+  const links    = document.querySelectorAll('.toc-list a');
+  const tocObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const a = document.querySelector(`.toc-list a[href="#${e.target.id}"]`);
+        if (a) a.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => tocObs.observe(s));
+
+})();
+</script>
+
 </body>
 </html>
