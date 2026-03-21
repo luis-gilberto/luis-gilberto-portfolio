@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ecosystem Governance & Stabilization — v1 | Luis Gilberto</title>
+  <meta name="description" content="The operating manual, anti-chaos layer, and channel governance model for the Luis Gilberto ecosystem. Documented March 20, 2026.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Big+Shoulders+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #F5F0EB;
+      --ink:        #1A1714;
+      --ink-soft:   #6B6560;
+      --coral:      #F96F6E;
+      --teal:       #4BADA8;
+      --cream:      #FAF7F4;
+      --rule:       #D9D2CB;
+      --card-bg:    #FFFFFF;
+      --accent-bg:  rgba(26,23,20,0.06);
+    }
+
+    [data-theme="dark"] {
+      --bg:         #1A1714;
+      --ink:        #FAF7F4;
+      --ink-soft:   #A09890;
+      --cream:      #221E1B;
+      --card-bg:    #2A2420;
+      --rule:       #3A3430;
+      --accent-bg:  rgba(250,247,244,0.06);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 18px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    /* ── Header ── */
+    .doc-header {
+      background: var(--cream);
+      border-bottom: 1px solid var(--rule);
+      padding: 0 48px;
+    }
+    .doc-header-inner {
+      max-width: 1280px; margin: 0 auto;
+      height: 64px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .doc-logo {
+      font-family: 'Big Shoulders Display', sans-serif;
+      font-size: 20px; font-weight: 900;
+      color: var(--ink); text-decoration: none; letter-spacing: 0.04em;
+    }
+    .doc-logo span { color: var(--coral); }
+    .doc-back {
+      font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--ink-soft); text-decoration: none;
+      display: flex; align-items: center; gap: 6px;
+      transition: color 0.15s;
+    }
+    .doc-back:hover { color: var(--coral); }
+
+    /* ── Hero ── */
+    .doc-hero {
+      max-width: 860px; margin: 0 auto;
+      padding: 80px 48px 0;
+    }
+    .doc-eyebrow {
+      display: flex; align-items: center; gap: 10px;
+      font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 600;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--coral); margin-bottom: 24px;
+    }
+    .doc-eyebrow::before {
+      content: ''; display: block; width: 20px; height: 1px; background: var(--coral);
+    }
+    .doc-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(40px, 5vw, 68px); font-weight: 300;
+      line-height: 0.96; color: var(--ink); letter-spacing: -0.025em;
+      margin-bottom: 24px;
+    }
+    .doc-title em { font-style: italic; color: var(--coral); }
+    .doc-subtitle {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px; font-weight: 300; font-style: italic;
+      color: var(--ink-soft); line-height: 1.6; margin-bottom: 32px;
+      max-width: 620px;
+    }
+    .doc-meta {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+      font-family: 'Inter', sans-serif; font-size: 11px; color: var(--ink-soft);
+      letter-spacing: 0.04em;
+      padding-top: 24px; border-top: 1px solid var(--rule);
+      margin-bottom: 64px;
+    }
+    .meta-dot { width: 3px; height: 3px; background: var(--rule); border-radius: 50%; }
+    .meta-tag {
+      font-family: 'Inter', sans-serif; font-size: 9px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--teal); background: rgba(75,173,168,0.1);
+      padding: 4px 10px; border-radius: 3px;
+    }
+
+    /* ── Body layout ── */
+    .doc-body {
+      max-width: 860px; margin: 0 auto;
+      padding: 0 48px 96px;
+    }
+
+    /* ── Section headings ── */
+    .section-heading {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px; font-weight: 500; line-height: 1.15;
+      color: var(--ink); letter-spacing: -0.015em;
+      margin-bottom: 20px; margin-top: 56px;
+      padding-top: 56px; border-top: 1px solid var(--rule);
+    }
+    .section-heading:first-child { margin-top: 0; padding-top: 0; border-top: none; }
+
+    .section-sub {
+      font-family: 'Big Shoulders Display', sans-serif;
+      font-size: 16px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--ink); margin: 32px 0 12px;
+    }
+
+    p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px; font-weight: 300; line-height: 1.8;
+      color: var(--ink); margin-bottom: 20px;
+    }
+    p:last-child { margin-bottom: 0; }
+    strong { font-weight: 600; }
+
+    /* ── Governance table ── */
+    .gov-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--rule);
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 32px 0;
+    }
+    .gov-cell {
+      background: var(--card-bg);
+      padding: 24px 28px;
+    }
+    .gov-cell-label {
+      font-family: 'Inter', sans-serif; font-size: 9px; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .gov-cell-label.coral { color: var(--coral); }
+    .gov-cell-label.teal  { color: var(--teal); }
+    .gov-cell-title {
+      font-family: 'Big Shoulders Display', sans-serif;
+      font-size: 22px; font-weight: 900; text-transform: uppercase;
+      color: var(--ink); margin-bottom: 10px; letter-spacing: 0.02em;
+    }
+    .gov-cell p {
+      font-size: 14px; line-height: 1.6; color: var(--ink-soft); margin-bottom: 0;
+    }
+
+    /* ── Status table ── */
+    .status-table {
+      width: 100%; border-collapse: collapse;
+      font-family: 'Inter', sans-serif; font-size: 13px;
+      margin: 32px 0;
+    }
+    .status-table th {
+      text-align: left; font-size: 9px; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--ink-soft); padding: 0 16px 12px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+    .status-table td {
+      padding: 14px 16px 14px 0;
+      border-bottom: 1px solid var(--rule);
+      color: var(--ink-soft); vertical-align: top;
+    }
+    .status-table td:first-child { color: var(--ink); font-weight: 500; }
+    .status-table tr:last-child td { border-bottom: none; }
+    .badge {
+      display: inline-block;
+      font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 3px 8px; border-radius: 3px;
+    }
+    .badge-done    { background: rgba(75,173,168,0.12); color: var(--teal); }
+    .badge-progress{ background: rgba(249,111,110,0.12); color: var(--coral); }
+    .badge-pending { background: var(--accent-bg); color: var(--ink-soft); }
+
+    /* ── Rule inset ── */
+    .rule-card {
+      margin: 32px 0; padding: 24px 28px;
+      background: var(--cream); border: 1px solid var(--rule);
+      border-left: 3px solid var(--teal);
+      border-radius: 0 4px 4px 0;
+    }
+    .rule-card.coral { border-left-color: var(--coral); }
+    .rule-card strong {
+      font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--ink); display: block; margin-bottom: 8px;
+    }
+    .rule-card p { font-size: 17px; color: var(--ink-soft); margin-bottom: 0; }
+
+    /* ── Change log ── */
+    .change-item {
+      display: grid; grid-template-columns: 160px 1fr;
+      gap: 0; border-bottom: 1px solid var(--rule);
+      padding: 16px 0;
+    }
+    .change-item:last-child { border-bottom: none; }
+    .change-file {
+      font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600;
+      color: var(--ink); padding-right: 24px; padding-top: 2px;
+      word-break: break-all;
+    }
+    .change-desc {
+      font-family: 'Inter', sans-serif; font-size: 13px;
+      color: var(--ink-soft); line-height: 1.6;
+    }
+    .change-desc ul { padding-left: 16px; margin-top: 4px; }
+    .change-desc li { margin-bottom: 4px; }
+
+    /* ── Pull quote ── */
+    .pull-quote {
+      margin: 48px 0; padding: 36px 44px;
+      background: var(--ink); border-radius: 2px; position: relative; overflow: hidden;
+    }
+    .pull-quote::before {
+      content: '"'; position: absolute; top: -20px; left: 28px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 140px; font-weight: 300;
+      color: rgba(249,111,110,0.15); line-height: 1; pointer-events: none;
+    }
+    .pull-quote p {
+      font-family: 'Big Shoulders Display', sans-serif;
+      font-size: clamp(20px, 2.5vw, 28px); font-weight: 700;
+      line-height: 1.2; color: var(--cream);
+      position: relative; z-index: 1; margin-bottom: 0; letter-spacing: -0.01em;
+    }
+    .pull-quote p em { color: var(--coral); font-style: normal; }
+
+    /* ── Footer ── */
+    .doc-footer {
+      background: var(--cream); border-top: 1px solid var(--rule);
+      padding: 48px;
+    }
+    .doc-footer-inner {
+      max-width: 860px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+    }
+    .doc-footer p {
+      font-family: 'Inter', sans-serif; font-size: 11px;
+      color: var(--ink-soft); margin: 0;
+    }
+    .doc-footer span { color: var(--coral); }
+
+    @media (max-width: 768px) {
+      .doc-header { padding: 0 24px; }
+      .doc-hero, .doc-body { padding-left: 24px; padding-right: 24px; }
+      .gov-grid { grid-template-columns: 1fr; }
+      .change-item { grid-template-columns: 1fr; gap: 8px; }
+      .doc-footer { padding: 32px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="doc-header">
+  <div class="doc-header-inner">
+    <a href="/" class="doc-logo">LG<span>.</span></a>
+    <a href="/insights/" class="doc-back">
+      ← Back to Insights
+    </a>
+  </div>
+</header>
+
+<div class="doc-hero">
+  <div class="doc-eyebrow">Internal Documentation</div>
+  <h1 class="doc-title">Ecosystem Governance<br>&amp; Stabilization<br><em>Version 1</em></h1>
+  <p class="doc-subtitle">The operating manual, anti-chaos layer, and channel governance model for the Luis Gilberto ecosystem.</p>
+  <div class="doc-meta">
+    <span>Luis Gilberto</span>
+    <div class="meta-dot"></div>
+    <span>March 20, 2026</span>
+    <div class="meta-dot"></div>
+    <span class="meta-tag">Governance</span>
+    <div class="meta-dot"></div>
+    <span class="meta-tag">Architecture</span>
+    <div class="meta-dot"></div>
+    <span class="meta-tag">v1.0</span>
+  </div>
+</div>
+
+<div class="doc-body">
+
+  <!-- WHY THIS EXISTS -->
+  <h2 class="section-heading">Why This Document Exists</h2>
+  <p>For months the ecosystem was built fast. Pages were created, components were shared, and a single JavaScript file gradually absorbed too many responsibilities. The result was a system that worked but could not be trusted. A fix in one place caused a regression somewhere else. The nav component was injecting footers, logos, CSS, persona logic, and ecosystem messaging all at once. Any change to it could touch everything.</p>
+  <p>This document captures the decisions made to stabilize that system, the governance model that now governs what can appear where, and the architectural changes that prevent the same failure modes from recurring.</p>
+  <p>This is not a session summary. It is an operating manual.</p>
+
+  <div class="pull-quote">
+    <p>You were operating a system<br>without system rules.<br><em>Now you have them.</em></p>
+  </div>
+
+  <!-- ROOT PROBLEM -->
+  <h2 class="section-heading">The Root Problem</h2>
+  <p>The instability traced back to a single file: <strong>nav-component.js</strong>. Over time it had evolved from a navigation helper into a monolithic runtime override system. It was doing all of the following simultaneously:</p>
+
+  <div class="rule-card coral">
+    <strong>What nav-component.js was doing</strong>
+    <p>Injecting the header. Injecting the footer. Injecting a full CSS system. Managing theme state. Managing persona switching. Injecting the mobile drawer. Modifying logo assets. Injecting audience badges. Referencing StrategyIQ and The Hub by name in injected content. Applying Insights-specific modal logic. Running on every page across every channel.</p>
+  </div>
+
+  <p>This meant every Portal page, Hub page, and Insights article was inheriting decisions made inside one file. When that file was edited, mutations appeared everywhere. Double footers. Wrong logos. Leaked architecture. Styling regressions. None of them were random. They were all symptoms of the same root cause.</p>
+
+  <div class="rule-card">
+    <strong>The fix</strong>
+    <p>nav-component.js was replaced with a clean v14.2 that does exactly three things: renders the header, renders the mobile drawer, and manages theme state. It injects no footer. It makes no content decisions. It references no product names. It is infrastructure, not a brain.</p>
+  </div>
+
+  <!-- CHANNEL GOVERNANCE MODEL -->
+  <h2 class="section-heading">Channel Governance Model</h2>
+  <p>The four ecosystem channels now have explicit rules about what they can and cannot say, reference, or expose. These rules exist to prevent accidental leaks of architecture, product naming, and system relationships into contexts where they do not belong.</p>
+
+  <div class="gov-grid">
+    <div class="gov-cell">
+      <div class="gov-cell-label teal">Channel 01</div>
+      <div class="gov-cell-title">The Hub</div>
+      <p>The ecosystem explainer. The only channel allowed to name and describe all components publicly, including StrategyIQ, Advisory, Studio, and Portal. This is where the full architecture is explained. Users arrive here to understand how everything fits together.</p>
+    </div>
+    <div class="gov-cell">
+      <div class="gov-cell-label coral">Channel 02</div>
+      <div class="gov-cell-title">The Portal</div>
+      <p>Product-first, singular. StrategyIQ is never named publicly here. The Hub is not foregrounded. The Portal presents itself as a complete operating environment. Users arrive here to engage with the product, not to understand the system.</p>
+    </div>
+    <div class="gov-cell">
+      <div class="gov-cell-label teal">Channel 03</div>
+      <div class="gov-cell-title">Insights</div>
+      <p>Selective and editorial. StrategyIQ and Hub references are allowed only in articles specifically about building the ecosystem. General articles, reflections, and use cases avoid system architecture language entirely.</p>
+    </div>
+    <div class="gov-cell">
+      <div class="gov-cell-label coral">Channel 04</div>
+      <div class="gov-cell-title">Portfolio</div>
+      <p>Contextual and restrained. StrategyIQ does not appear here at all until it is publicly trademarked and launched. The Portfolio is about Luis the professional. The Hub and Portal can be linked but the Portfolio does not read like a product brochure.</p>
+    </div>
+  </div>
+
+  <div class="rule-card">
+    <strong>Navigation governance rule</strong>
+    <p>Navigation makes the Portal discoverable. Content makes it desirable. Only send users to the Portal when they are ready to arrive.</p>
+  </div>
+
+  <!-- ARCHITECTURAL DECISIONS -->
+  <h2 class="section-heading">Architectural Decisions</h2>
+
+  <div class="section-sub">Decision 1 — nav-component.js is infrastructure only</div>
+  <p>The nav component is responsible for exactly three things: rendering the header, rendering the mobile drawer, and managing theme state. It is never the place where ecosystem messaging decisions are made. If a decision changes based on which channel you are on, that decision lives in the page HTML, not in the nav component.</p>
+
+  <div class="section-sub">Decision 2 — Portal gets its own dedicated nav</div>
+  <p>Portal pages no longer use nav-component.js. A dedicated portal-nav.js was created from scratch. This means changes to nav-component.js can never accidentally affect Portal pages. Changes to portal-nav.js can never affect Hub pages. Each file has a single, clear responsibility.</p>
+
+  <div class="rule-card coral">
+    <strong>Why this matters</strong>
+    <p>The previous architecture used nav-component.js path detection to conditionally change behavior per channel. Every new condition added fragility. The dedicated nav removes that fragility entirely. Portal equals Portal. Hub equals Hub. Nothing leaks accidentally.</p>
+  </div>
+
+  <div class="section-sub">Decision 3 — StrategyIQ is a hidden engine until trademark</div>
+  <p>StrategyIQ is the diagnostic intelligence at the core of the system. It is not publicly named on Portal pages, Portfolio pages, or in general Insights articles. It is named only on Hub pages, where the full architecture is intentionally explained. This decision is in place until a trademark is secured and a public launch is planned.</p>
+
+  <!-- FILES CHANGED -->
+  <h2 class="section-heading">Files Changed — Session Log</h2>
+
+  <div class="change-item">
+    <div class="change-file">assets/js/<br>nav-component.js</div>
+    <div class="change-desc">
+      Replaced mutated version with clean v14.2. Changes: StrategyIQ removed from Hub megamenu and mobile drawer. localStorage key corrected from lg_theme to lg-theme (3 occurrences). isHub path detection fixed to handle URLs without trailing slash. Portal nav item replaced with brand asset image lockup with theme switching. Hamburger open state fixed to produce a centered, clean X.
+    </div>
+  </div>
+
+  <div class="change-item">
+    <div class="change-file">assets/js/<br>portal-nav.js</div>
+    <div class="change-desc">
+      Created from scratch. Dedicated Portal channel header. Desktop: Portal logo lockup, Overview / Recruiters / Partners links, Start a Conversation CTA, theme toggle. Mobile drawer: Portal logo, primary links, secondary quiet links (The Hub, About Luis). No megamenu, no StrategyIQ, no ecosystem architecture language. SVG-drawn X close button. Theme-aware logo swap.
+    </div>
+  </div>
+
+  <div class="change-item">
+    <div class="change-file">portal/index.html<br>portal/recruiters/<br>portal/partners/</div>
+    <div class="change-desc">
+      Nav hook updated from site-nav to portal-nav on all three pages. Script reference updated from nav-component.js to portal-nav.js on all three pages.
+    </div>
+  </div>
+
+  <div class="change-item">
+    <div class="change-file">TheHub/<br>index.html</div>
+    <div class="change-desc">
+      Ecosystem analogy copy updated: "StrategyIQ creates the blueprint" replaced with "the intelligence layer creates the blueprint." StrategyIQ removed from footer Hub column. Portal entry point added after four pillars grid linking to /portal/partners/.
+    </div>
+  </div>
+
+  <div class="change-item">
+    <div class="change-file">TheHub/advisory/<br>index.html</div>
+    <div class="change-desc">
+      Nine surgical edits. Hero headline and subhead replaced with standalone capability language. StrategyIQ and Portal removed as dependency references throughout. Process band steps rewritten to be outcome-oriented. Ecosystem section renamed to "How Advisory shows up." Closing CTA updated to link to /portal/partners/. StrategyIQ removed from footer. localStorage key corrected.
+    </div>
+  </div>
+
+  <div class="change-item">
+    <div class="change-file">insights/<br>5 article files</div>
+    <div class="change-desc">
+      In progress. Each file receives: StrategyIQ panel item removed from Hub megamenu. StrategyIQ removed from footer Ecosystem list. Hub panel header updated from "Four arms. One system." to "Three arms. One system." Footer taglines updated to new editorial copy. One file at a time, confirmed clean before proceeding.
+    </div>
+  </div>
+
+  <!-- CURRENT STATE -->
+  <h2 class="section-heading">Current State</h2>
+
+  <table class="status-table">
+    <thead>
+      <tr>
+        <th>Component</th>
+        <th>Status</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>nav-component.js</td>
+        <td><span class="badge badge-done">Stable</span></td>
+        <td>v14.2 deployed. Clean, versioned, no content decisions.</td>
+      </tr>
+      <tr>
+        <td>portal-nav.js</td>
+        <td><span class="badge badge-done">Stable</span></td>
+        <td>v1.0 deployed to all three Portal pages.</td>
+      </tr>
+      <tr>
+        <td>Hub main page</td>
+        <td><span class="badge badge-done">Clean</span></td>
+        <td>Analogy copy updated. Footer clean. Entry point added.</td>
+      </tr>
+      <tr>
+        <td>Advisory page</td>
+        <td><span class="badge badge-done">Clean</span></td>
+        <td>Standalone governance model applied. 9 edits.</td>
+      </tr>
+      <tr>
+        <td>Portal pages (3)</td>
+        <td><span class="badge badge-done">Nav clean</span></td>
+        <td>Content governance pass not yet started.</td>
+      </tr>
+      <tr>
+        <td>Insights articles (5)</td>
+        <td><span class="badge badge-progress">In progress</span></td>
+        <td>One file at a time. Nav and footer cleanup per file.</td>
+      </tr>
+      <tr>
+        <td>Portal content pass</td>
+        <td><span class="badge badge-pending">Pending</span></td>
+        <td>After Insights cleanup is complete.</td>
+      </tr>
+      <tr>
+        <td>Portfolio entry point</td>
+        <td><span class="badge badge-pending">Pending</span></td>
+        <td>Entry point 3 from the Portal entry strategy.</td>
+      </tr>
+      <tr>
+        <td>Insights index page</td>
+        <td><span class="badge badge-pending">Pending</span></td>
+        <td>Featured article module and carousel updates.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- WHAT IS NEXT -->
+  <h2 class="section-heading">What Comes Next</h2>
+
+  <div class="section-sub">Step 1 — Finish Insights cleanup</div>
+  <p>Four article files remain. Each receives the same four operations: StrategyIQ removed from megamenu, StrategyIQ removed from footer, Hub panel header updated, footer taglines updated. One file at a time. Confirmed clean before moving to the next.</p>
+
+  <div class="section-sub">Step 2 — Insights index page</div>
+  <p>Once Insights articles are clean, the Insights index page receives a featured article module for the flagship article and any carousel or series updates that have been defined.</p>
+
+  <div class="section-sub">Step 3 — Portal content governance pass</div>
+  <p>A messaging and identity alignment pass across the three Portal pages. Goal: remove any lingering Hub voice, sharpen product positioning, align the recruiter and partner flows with the governance model.</p>
+
+  <div class="section-sub">Step 4 — Portfolio entry point</div>
+  <p>Entry point 3 from the Portal entry strategy. At the end of case study or experience content, a single closing line and button: "See the system behind the work." linking to /portal/recruiters/.</p>
+
+  <!-- FAILURE MODES -->
+  <h2 class="section-heading">Failure Modes</h2>
+  <p>These are the specific breakdowns that occur when governance rules are violated. Each one has been observed or narrowly avoided during the stabilization session that produced this document.</p>
+
+  <div class="rule-card coral">
+    <strong>StrategyIQ appears on Portal pages</strong>
+    <p>Product clarity collapses. The Portal is supposed to feel like a complete, self-contained operating environment. Naming the engine that runs it breaks the product illusion and forces users to understand architecture before they can understand value.</p>
+  </div>
+
+  <div class="rule-card coral">
+    <strong>nav-component.js makes content decisions</strong>
+    <p>The system becomes unstable. This is the root cause of the double footers, logo regressions, and mutation cascades that triggered this stabilization session. The moment the nav file starts deciding what to show based on channel context, every edit to it becomes a potential regression across every channel simultaneously.</p>
+  </div>
+
+  <div class="rule-card coral">
+    <strong>Advisory page references upstream or downstream dependencies</strong>
+    <p>The capability reads as a step in a process rather than a standalone service. Dependency language shifts the frame from outcomes to architecture — and architecture is not what a client is buying.</p>
+  </div>
+
+  <div class="rule-card coral">
+    <strong>Portfolio references the ecosystem architecture</strong>
+    <p>Credibility dilutes. The Portfolio is proof of professional capability. The moment it starts explaining The Hub, The Portal, or StrategyIQ, it stops being evidence and starts being a sales document. These are different audiences with different questions. Mixing them weakens both.</p>
+  </div>
+
+  <div class="rule-card coral">
+    <strong>Portal and Hub share a nav component with conditional logic</strong>
+    <p>Fragility accumulates silently. Every new channel-specific condition added to a shared nav file is a hidden coupling between channels that should be independent. The failure mode does not announce itself until a change intended for one channel breaks another.</p>
+  </div>
+
+  <div class="rule-card coral">
+    <strong>Insights articles name StrategyIQ outside the Building Series</strong>
+    <p>The editorial voice becomes promotional. Insights authority comes from the quality of thinking, not from promoting products. Introducing product architecture into editorial articles shifts the reader's trust relationship with the content.</p>
+  </div>
+
+  <!-- GOVERNANCE RULES REFERENCE -->
+  <h2 class="section-heading">Governance Rules — Quick Reference</h2>
+
+  <div class="rule-card">
+    <strong>nav-component.js scope</strong>
+    <p>Header rendering. Mobile drawer. Theme state. Nothing else. If a decision changes based on channel, it lives in the page HTML, not in this file.</p>
+  </div>
+
+  <div class="rule-card">
+    <strong>portal-nav.js scope</strong>
+    <p>Portal header rendering. Portal mobile drawer. Theme state. No ecosystem messaging. No StrategyIQ. No Hub sub-pages. No megamenu.</p>
+  </div>
+
+  <div class="rule-card coral">
+    <strong>StrategyIQ naming rule</strong>
+    <p>Named only on Hub pages. Not on Portal pages, Portfolio pages, or in general Insights articles. This rule holds until trademark is secured and public launch is planned.</p>
+  </div>
+
+  <div class="rule-card">
+    <strong>Portal CTA language rule</strong>
+    <p>Every Portal CTA should imply that something intentional and structured is on the other side. The user should feel like they are being admitted into something, not clicking a link. Avoid: "Learn more", "Explore the Portal", "Visit the Portal." Prefer: "Enter the system", "See how this operates", "This is where strategy runs."</p>
+  </div>
+
+  <div class="rule-card coral">
+    <strong>Advisory standalone rule</strong>
+    <p>Advisory must read as a complete, standalone capability. No dependency language. No references to StrategyIQ as an upstream input. No references to The Portal or The Studio as downstream steps. Replace process language with outcome language: decisions, clarity, direction, outcomes.</p>
+  </div>
+
+</div>
+
+<div style="max-width:860px; margin:0 auto; padding:0 48px 64px; text-align:center;">
+  <p style="font-family:'Big Shoulders Display',sans-serif; font-size:clamp(22px,3vw,32px); font-weight:700; color:var(--ink); letter-spacing:-0.01em; line-height:1.2;">This system is now stable.<br><span style="color:var(--coral);">All future work builds on this foundation.</span></p>
+</div>
+
+<footer class="doc-footer">
+  <div class="doc-footer-inner">
+    <p>Ecosystem Governance &amp; Stabilization — <span>v1.0</span></p>
+    <p>Documented March 20, 2026 · <span>Luis Gilberto</span></p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <link rel="canonical" href="/insights/index.html">
@@ -19,6 +19,7 @@
       --teal: #2ED3C6;
       --cream: #F5F3F0;
       --card-bg: #FFFFFF;
+      --popover-bg: #FFFFFF;
       --accent-bg: #F9F8F6;
       --header-height: 80px;
     }
@@ -40,6 +41,135 @@
     /* ─────────────────────────────────────────────
        HERO
     ───────────────────────────────────────────── */
+    /* ── INSIGHTS NAV ── */
+    .site-header {
+      position: sticky; top: 0; z-index: 100; width: 100%;
+      transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+      border-bottom: 1px solid transparent;
+    }
+    .site-header.scrolled {
+      background: rgba(245,240,235,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom-color: var(--rule);
+      box-shadow: 0 1px 0 var(--rule);
+    }
+    [data-theme="dark"] .site-header.scrolled { background: rgba(26,23,20,0.95); }
+    .header-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px; max-width: 1280px; margin: 0 auto; padding: 0 48px;
+    }
+    .logo-link { text-decoration: none; display: flex; align-items: center; }
+    #logo-desktop { display: block; height: 32px; width: auto; }
+    #logo-mark    { display: none;  height: 32px; width: auto; }
+    .desktop-nav { display: flex; align-items: center; gap: 2px; position: relative; }
+    .nav-link {
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
+      letter-spacing: 0.04em; color: var(--ink-soft); text-decoration: none;
+      padding: 8px 14px; border-radius: 6px;
+      transition: color 0.15s, background 0.15s;
+      display: inline-flex; align-items: center; gap: 4px;
+      background: none; border: none; cursor: pointer; white-space: nowrap;
+    }
+    .nav-link:hover { color: var(--ink); background: var(--accent-bg); }
+    .nav-link.active { color: var(--coral); }
+    .nav-link .chevron { width: 12px; height: 12px; transition: transform 300ms ease; flex-shrink: 0; }
+    .nav-link[aria-expanded="true"] { color: var(--ink); background: var(--accent-bg); }
+    .nav-link[aria-expanded="true"] .chevron { transform: rotate(180deg); }
+    .nav-viewport {
+      position: absolute; left: 50%; top: calc(100% + 8px);
+      transform: translateX(-50%); pointer-events: none; z-index: 200;
+    }
+    .nav-viewport-inner {
+      background: var(--popover-bg); border: 1px solid var(--rule);
+      border-radius: 10px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
+      transform-origin: top center;
+      opacity: 0; transform: scale(0.96) translateY(-6px);
+      pointer-events: none; transition: opacity 180ms ease, transform 180ms ease; overflow: hidden;
+    }
+    .nav-viewport-inner.open { opacity: 1; transform: scale(1) translateY(0); pointer-events: auto; }
+    .nav-content { display: none; }
+    .nav-content.active { display: block; }
+    .panel-wrap { padding: 6px; }
+    .panel-wrap[data-channel="insights"]  { --ch: var(--coral); width: 520px; }
+    .panel-wrap[data-channel="hub"]       { --ch: var(--teal);  width: 560px; }
+    .panel-wrap[data-channel="portfolio"] { --ch: var(--coral); width: 480px; }
+    .panel-wrap[data-channel="portal"]    { --ch: var(--teal);  width: 400px; }
+    .panel-header { padding: 16px 16px 10px; border-bottom: 1px solid var(--rule); margin-bottom: 6px; }
+    .panel-header-label {
+      font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 600;
+      letter-spacing: 0.15em; text-transform: uppercase; color: var(--ch);
+      display: flex; align-items: center; gap: 8px; margin-bottom: 4px;
+    }
+    .panel-header-label::before { content: ''; display: block; width: 20px; height: 1px; background: var(--ch); }
+    .panel-header-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 500; color: var(--ink); line-height: 1.2; }
+    .panel-grid      { display: grid; grid-template-columns: 1fr;     gap: 4px; padding: 4px; }
+    .panel-grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; }
+    .panel-item {
+      display: flex; align-items: flex-start; gap: 12px; padding: 12px;
+      border-radius: 8px; text-decoration: none; transition: background 0.15s;
+    }
+    .panel-item:hover { background: var(--accent-bg); }
+    .item-icon {
+      flex-shrink: 0; width: 40px; height: 40px;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid var(--rule); border-radius: 8px;
+      background: var(--bg); color: var(--ink-soft);
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+    .item-icon svg { width: 18px; height: 18px; }
+    .panel-item:hover .item-icon { border-color: var(--ch); color: var(--ch); }
+    .panel-item:hover .item-icon.hub-advisory { background: rgba(75,173,168,0.08); border-color: var(--teal); color: var(--teal); }
+    .panel-item:hover .item-icon.hub-studio   { background: rgba(249,111,110,0.08); border-color: var(--coral); color: var(--coral); }
+    .panel-item:hover .item-icon.hub-portal   { background: rgba(75,173,168,0.08); border-color: var(--teal); color: var(--teal); }
+    .item-text { flex: 1; min-width: 0; }
+    .item-title { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+    .item-desc  { font-family: 'Inter', sans-serif; font-size: 11px; color: var(--ink-soft); line-height: 1.5; }
+    .item-role  { display: inline-block; margin-top: 4px; font-family: 'Inter', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ch); opacity: 0.8; }
+    .panel-footer { border-top: 1px solid var(--rule); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; }
+    .panel-footer-text { font-family: 'Inter', sans-serif; font-size: 12px; color: var(--ink-soft); }
+    .panel-footer-link { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; color: var(--ch); text-decoration: none; display: flex; align-items: center; gap: 4px; transition: gap 0.15s; }
+    .panel-footer-link:hover { gap: 8px; }
+    .portal-features { padding: 12px 16px 8px; display: flex; flex-direction: column; gap: 2px; }
+    .portal-feature { display: flex; align-items: center; gap: 10px; padding: 9px 6px; border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 12px; color: var(--ink-soft); transition: background 0.15s; }
+    .portal-feature:hover { background: var(--accent-bg); color: var(--ink); }
+    .portal-feature-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--teal); flex-shrink: 0; }
+    .portal-cta-strip { margin: 8px 10px 10px; background: var(--ink); border-radius: 6px; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    [data-theme="dark"] .portal-cta-strip { background: rgba(250,247,244,0.08); border: 1px solid var(--rule); }
+    .portal-cta-label { font-family: 'Cormorant Garamond', serif; font-size: 16px; font-style: italic; color: var(--cream); line-height: 1.2; }
+    .portal-cta-btn { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink); background: var(--teal); padding: 8px 14px; border-radius: 4px; text-decoration: none; white-space: nowrap; transition: background 0.15s; }
+    .portal-cta-btn:hover { background: #3d9e9a; }
+    /* ── MEGAMENU PANEL ALWAYS LIGHT ── */
+    .nav-viewport-inner {
+      --bg: #F5F0EB;
+      --ink: #1A1714;
+      --ink-soft: #6B6560;
+      --rule: #D9D2CB;
+      --card-bg: #FFFFFF;
+      --accent-bg: rgba(26,23,20,0.06);
+    }
+    .nav-viewport-inner .item-icon {
+      background: #F5F0EB;
+      border-color: #D9D2CB;
+      color: #6B6560;
+    }
+    .nav-viewport-inner .panel-header-title { color: #1A1714; }
+    .nav-viewport-inner .item-title { color: #1A1714; }
+    .nav-viewport-inner .item-desc  { color: #6B6560; }
+    .nav-viewport-inner .panel-footer-text { color: #6B6560; }
+    .nav-viewport-inner .portal-cta-label { color: #FAF7F4; }
+    .header-ctas { display: flex; align-items: center; gap: 8px; }
+    .theme-btn { background: none; border: 1px solid var(--rule); border-radius: 6px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--ink-soft); transition: all 0.15s; flex-shrink: 0; }
+    .theme-btn:hover { border-color: var(--ink-soft); color: var(--ink); }
+    .mobile-toggle { display: none; background: none; border: 1px solid var(--rule); border-radius: 6px; width: 36px; height: 36px; align-items: center; justify-content: center; cursor: pointer; color: var(--ink-soft); }
+    @media (max-width: 1024px) {
+      .desktop-nav { display: none; }
+      .header-ctas .mobile-toggle { display: flex; }
+      #logo-desktop { display: none; }
+      #logo-mark    { display: block; }
+    }
+    @media (max-width: 768px) { .header-inner { padding: 0 24px; } }
+
     .hero {
       position: relative;
       width: 100%;
@@ -70,7 +200,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      background-image: url('/assets/images/insights-hero-illustration_dm.png');
+      background-image: url('/insights/assets/images/baton_landscape.png');
       background-position: right center;
       background-size: auto 100%;
       background-repeat: no-repeat;
@@ -102,7 +232,7 @@
         opacity: 0.8;
       }
       [data-theme="light"] .hero-bg::after {
-        background-image: url('/assets/images/insights-hero-illustration_mobile.png') !important;
+        background-image: url('/insights/assets/images/baton-mobile.png') !important;
       }
     }
     .hero-grain {
@@ -323,12 +453,13 @@
     .featured-card:hover { box-shadow: 0 20px 56px rgba(0,0,0,0.1); }
     .featured-img {
       position: relative;
-      aspect-ratio: 4/3;
+      aspect-ratio: 16/10;
       overflow: hidden;
     }
     .featured-img img {
       width: 100%; height: 100%;
       object-fit: cover;
+      object-position: center center;
       transition: transform 0.65s cubic-bezier(0.25,0.46,0.45,0.94);
     }
     .featured-img video { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -550,6 +681,170 @@
     ───────────────────────────────────────────── */
     .work-bg { background: var(--ink); }
     [data-theme="light"] .work-bg { background: #1A1714; }
+    /* ── START HERE STRIP ── */
+    .start-here-strip {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 48px 64px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    .start-card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 28px 32px;
+      background: var(--card-bg);
+      border: 1px solid var(--rule);
+      border-radius: 2px;
+      text-decoration: none;
+      color: inherit;
+      transition: box-shadow 0.25s, border-color 0.25s;
+    }
+    .start-card:hover {
+      box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+      border-color: rgba(249,111,110,0.3);
+    }
+    .start-card-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--coral);
+    }
+    .start-card-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 500;
+      line-height: 1.2;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+    }
+    .start-card-desc {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      color: var(--ink-soft);
+      line-height: 1.6;
+    }
+    .start-card-cta {
+      font-family: 'Inter', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin-top: 4px;
+    }
+    @media (max-width: 768px) {
+      .start-here-strip { grid-template-columns: 1fr; padding: 0 24px 48px; }
+    }
+
+    /* ── SUPPORT MODULE WRAPPER ── */ 
+    .insights-support-wrapper { 
+      position: relative; 
+      margin: 4rem auto 2rem; 
+      padding: 3rem 2rem; 
+      max-width: 1200px; 
+      border-radius: 12px; 
+      overflow: hidden; 
+    } 
+    .insights-support-wrapper::before { 
+      content: ""; 
+      position: absolute; 
+      inset: 0; 
+      background: radial-gradient(circle at 50% 30%, rgba(249,111,110,0.08), transparent 60%); 
+      pointer-events: none; 
+    } 
+    .insights-support-wrapper::after { 
+      content: ""; 
+      position: absolute; 
+      inset: 0; 
+      background: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), 
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px); 
+      background-size: 60px 60px; 
+      opacity: 0.15; 
+      pointer-events: none; 
+    } 
+
+    /* ── INSIGHT SUPPORT CARDS ── */ 
+    .insight-card { 
+      position: relative; 
+      display: flex; 
+      flex-direction: column; 
+      gap: 6px; 
+      padding: 1.25rem; 
+      border-radius: 10px; 
+      background: rgba(255,255,255,0.02); 
+      border: 1px solid rgba(255,255,255,0.06); 
+      text-decoration: none; 
+      color: inherit; 
+      transition: all 0.25s ease; 
+    } 
+    .insight-card:hover { 
+      transform: translateY(-4px); 
+      background: rgba(249,111,110,0.05); 
+      border-color: rgba(249,111,110,0.35); 
+      box-shadow: 0 8px 24px rgba(249,111,110,0.08); 
+    } 
+    .insight-card-eyebrow { 
+      font-family: 'Inter', sans-serif; 
+      font-size: 0.65rem; 
+      letter-spacing: 0.12em; 
+      text-transform: uppercase; 
+      color: var(--ink-soft); 
+      margin-bottom: 0.2rem; 
+    } 
+    .insight-card-title { 
+      font-family: 'Cormorant Garamond', serif; 
+      font-size: 20px; 
+      font-weight: 500; 
+      color: var(--ink); 
+      line-height: 1.2; 
+      transition: color 0.2s; 
+    } 
+    .insight-card:hover .insight-card-title { color: var(--ink); } 
+    .insight-card-desc { 
+      font-family: 'Inter', sans-serif; 
+      font-size: 12px; 
+      color: var(--ink-soft); 
+      line-height: 1.5; 
+      transition: color 0.2s; 
+    } 
+    .insight-card:hover .insight-card-desc { color: var(--ink-soft); } 
+    .insight-card-cta { 
+      margin-top: 0.4rem; 
+      font-size: 0.9rem; 
+      color: var(--coral); 
+      opacity: 0.6; 
+      transition: opacity 0.2s ease; 
+    } 
+    .insight-card:hover .insight-card-cta { opacity: 1; } 
+
+    /* ── INSIGHTS DIVIDER ── */ 
+    .insights-divider { 
+      text-align: center; 
+      margin: 3rem auto 2rem; 
+      font-family: 'Inter', sans-serif; 
+      font-size: 0.7rem; 
+      letter-spacing: 0.18em; 
+      text-transform: uppercase; 
+      color: var(--ink-soft); 
+      position: relative; 
+    } 
+    .insights-divider::before, 
+    .insights-divider::after { 
+      content: ""; 
+      position: absolute; 
+      top: 50%; 
+      width: 30%; 
+      height: 1px; 
+      background: var(--rule); 
+    } 
+    .insights-divider::before { left: 0; } 
+    .insights-divider::after  { right: 0; } 
+
     .work-bg .section-label { color: var(--coral); }
     .work-bg .section-label::after { background: rgba(255,255,255,0.08); }
     .work-title {
@@ -691,7 +986,7 @@
 
   /* Dark Mode Hero Illustration */
   [data-theme="dark"] .hero-bg::after {
-    background-image: url('/assets/images/insights-hero-illustration_dm.png');
+    background-image: url('/insights/assets/images/baton_landscape.png');
     opacity: 0.9;
   }
   
@@ -730,7 +1025,95 @@
   </style>
 </head>
 <body>
-  <div id="site-nav" data-base="/" data-active="insights"></div>
+  <header class="site-header" id="site-header">
+  <div class="header-inner">
+    <a href="https://www.luis-gilberto.com/insights/" class="logo-link">
+      <img id="logo-desktop" src="/insights/assets/images/Insights_logo_black.png" alt="Insights by Luis Gilberto">
+      <img id="logo-mark" src="/insights/assets/images/LG-logomark-BlackCoral.png" alt="Insights">
+    </a>
+    <nav class="desktop-nav" id="desktop-nav" aria-label="Main navigation">
+      <button id="trigger-portfolio" class="nav-link" aria-haspopup="true" aria-expanded="false" aria-controls="content-portfolio" data-trigger>
+        Portfolio
+        <svg class="chevron" viewBox="0 0 15 15" fill="none" aria-hidden="true"><path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"/></svg>
+      </button>
+      <button id="trigger-insights" class="nav-link active" aria-haspopup="true" aria-expanded="false" aria-controls="content-insights" data-trigger>
+        Insights
+        <svg class="chevron" viewBox="0 0 15 15" fill="none" aria-hidden="true"><path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"/></svg>
+      </button>
+      <button id="trigger-hub" class="nav-link" aria-haspopup="true" aria-expanded="false" aria-controls="content-hub" data-trigger>
+        The Hub
+        <svg class="chevron" viewBox="0 0 15 15" fill="none" aria-hidden="true"><path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"/></svg>
+      </button>
+      <button id="trigger-portal" class="nav-link" aria-haspopup="true" aria-expanded="false" aria-controls="content-portal" data-trigger>
+        Portal
+        <svg class="chevron" viewBox="0 0 15 15" fill="none" aria-hidden="true"><path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"/></svg>
+      </button>
+      <div class="nav-viewport" id="nav-viewport">
+        <div class="nav-viewport-inner" id="nav-viewport-inner">
+          <!-- PORTFOLIO panel -->
+          <div id="content-portfolio" class="nav-content">
+            <div class="panel-wrap" data-channel="portfolio">
+              <div class="panel-header"><p class="panel-header-label">Portfolio</p><p class="panel-header-title">Work, story &amp; process</p></div>
+              <div class="panel-grid">
+                <a href="/myexperience.html" class="panel-item"><div class="item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></div><div class="item-text"><p class="item-title">Work &amp; Experience</p><p class="item-desc">15+ years across Microsoft, startups, and beyond</p></div></a>
+                <a href="/timeline.html" class="panel-item"><div class="item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="4"/><polyline points="6 10 12 4 18 10"/></svg></div><div class="item-text"><p class="item-title">Career Timeline</p><p class="item-desc">The eras, pivots, and moments that shaped the work</p></div></a>
+                <a href="/about.html" class="panel-item"><div class="item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div><div class="item-text"><p class="item-title">About Luis</p><p class="item-desc">From Caracas to Cascadia. the full story</p></div></a>
+                <a href="/contact.html" class="panel-item"><div class="item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><div class="item-text"><p class="item-title">Contact</p><p class="item-desc">Start a conversation or collaboration</p></div></a>
+              </div>
+              <div class="panel-footer"><span class="panel-footer-text">Caracas meets Cascadia</span><a href="https://www.luis-gilberto.com/" class="panel-footer-link">Visit portfolio <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
+            </div>
+          </div>
+          <!-- INSIGHTS panel -->
+          <div id="content-insights" class="nav-content">
+            <div class="panel-wrap" data-channel="insights">
+              <div class="panel-header"><p class="panel-header-label">Insights</p><p class="panel-header-title">Browse by Series</p></div>
+              <div class="panel-grid">
+                <a href="/insights/series/#building" class="panel-item"><div class="item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div><div class="item-text"><p class="item-title">The Building Series</p><p class="item-desc">Building in public. structural decisions behind the work</p></div></a>
+                <a href="/insights/series/#use-cases" class="panel-item"><div class="item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="item-text"><p class="item-title">Use Cases</p><p class="item-desc">Real-world launches and product strategies</p></div></a>
+                <a href="/insights/series/#reflections" class="panel-item"><div class="item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div><div class="item-text"><p class="item-title">Reflections</p><p class="item-desc">Personal thoughts on creativity, pace, and momentum</p></div></a>
+              </div>
+              <div class="panel-footer"><span class="panel-footer-text">3 series · 12 articles</span><a href="https://www.luis-gilberto.com/insights/series/" class="panel-footer-link">Browse all series <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
+            </div>
+          </div>
+          <!-- HUB panel -->
+          <div id="content-hub" class="nav-content">
+            <div class="panel-wrap" data-channel="hub">
+              <div class="panel-header"><p class="panel-header-label">The Hub</p><p class="panel-header-title">Three arms. One system.</p></div>
+              <div class="panel-grid-2col">
+                <a href="/TheHub/advisory/" class="panel-item"><div class="item-icon hub-advisory"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div class="item-text"><p class="item-title">Advisory</p><p class="item-desc">Direct access to Luis. leadership alignment and clarity</p><span class="item-role">Partnership</span></div></a>
+                <a href="/TheHub/studio.html" class="panel-item"><div class="item-icon hub-studio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div class="item-text"><p class="item-title">The Studio</p><p class="item-desc">High-fidelity execution. ideas into tangible assets</p><span class="item-role">Creative Production</span></div></a>
+                <a href="https://portal.luis-gilberto.com/" target="_blank" rel="noopener" class="panel-item"><div class="item-icon hub-portal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><div class="item-text"><p class="item-title">The Portal ↗</p><p class="item-desc">Secure command center. where client work lives</p><span class="item-role">Client Access</span></div></a>
+              </div>
+              <div class="panel-footer"><span class="panel-footer-text">Intelligence over intuition</span><a href="https://www.luis-gilberto.com/TheHub/" class="panel-footer-link">Explore The Hub <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
+            </div>
+          </div>
+          <!-- PORTAL panel -->
+          <div id="content-portal" class="nav-content">
+            <div class="panel-wrap" data-channel="portal">
+              <div class="panel-header"><p class="panel-header-label">The Portal</p><p class="panel-header-title">Your command center</p></div>
+              <div class="portal-features">
+                <div class="portal-feature"><div class="portal-feature-dot"></div>Shared project workspaces</div>
+                <div class="portal-feature"><div class="portal-feature-dot"></div>Direct access to Luis &amp; Advisory</div>
+                <div class="portal-feature"><div class="portal-feature-dot"></div>Progress tracking &amp; deliverables</div>
+              </div>
+              <div class="portal-cta-strip"><p class="portal-cta-label">Ready to enter<br>the ecosystem?</p><a href="https://portal.luis-gilberto.com/auth/signup" target="_blank" rel="noopener" class="portal-cta-btn">Request Access</a></div>
+              <div class="panel-footer"><span class="panel-footer-text">Existing client?</span><a href="https://portal.luis-gilberto.com/auth/signin" target="_blank" rel="noopener" class="panel-footer-link">Sign in <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <div class="header-ctas">
+      <button class="theme-btn" id="theme-toggle" aria-label="Toggle light/dark mode">
+        <svg id="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg id="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <svg id="menu-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
 
 <!-- ═══════════════════════════════════════════════════
      HERO
@@ -741,11 +1124,11 @@
   <div class="hero-glow-coral"></div>
   <div class="hero-glow-teal"></div>
   <div class="hero-content">
-    <p class="hero-eyebrow">Brand Strategy · AI · Creative Leadership</p>
-    <h1 class="hero-title">Insights &<br><em>Stories</em></h1>
-    <p class="hero-sub">Brand strategy, AI-powered launches, and creative leadership. Real thinking from the trenches.</p>
-    <a href="#featured" class="hero-cta">
-      Explore Articles
+    <p class="hero-eyebrow">Now Reading · Use Cases</p>
+    <h1 class="hero-title">You Don't Have a<br><em>Strategy Problem.</em></h1>
+    <p class="hero-sub">Most teams don't fail at strategy. They fail at translation. The space between thinking and doing is wildly underscaffolded.</p>
+    <a href="/insights/translation-problem/" class="hero-cta">
+      Read the Article
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
     </a>
   </div>
@@ -768,41 +1151,76 @@
   </div>
 </div>
 
+<!-- ═══════════════════════════════════════════════════ 
+     WHERE THIS THINKING SHOWS UP 
+════════════════════════════════════════════════════ --> 
+<div class="insights-support-wrapper"> 
+<section style="max-width:1200px;margin:0 auto;padding:0 2rem;"> 
+
+    <div style="margin-bottom:2rem;"> 
+        <div style="font-size:0.75rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:0.5rem;"> 
+            Where this thinking shows up 
+        </div> 
+        <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:500;color:var(--ink);max-width:520px;margin:0;line-height:1.2;"> 
+            Strategy doesn't fail in theory. It fails in translation. 
+        </h2> 
+    </div> 
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;"> 
+
+        <a href="/insights/family-safety-launch/" class="insight-card"> 
+            <div class="insight-card-eyebrow">Use Cases</div> 
+            <div class="insight-card-title">Family Safety Launch</div> 
+            <div class="insight-card-desc">Clarity under pressure across product, story, and execution.</div> 
+            <div class="insight-card-cta">→</div> 
+        </a> 
+
+        <a href="/insights/teams-consumer-launch/" class="insight-card"> 
+            <div class="insight-card-eyebrow">Use Cases</div> 
+            <div class="insight-card-title">Teams Consumer Launch</div> 
+            <div class="insight-card-desc">Alignment across a multi-surface, high-stakes launch.</div> 
+            <div class="insight-card-cta">→</div> 
+        </a> 
+
+        <a href="/insights/building-the-ecosystem/" class="insight-card"> 
+            <div class="insight-card-eyebrow">Building Series</div> 
+            <div class="insight-card-title">Building the Ecosystem</div> 
+            <div class="insight-card-desc">Designing the system that carries strategy forward.</div> 
+            <div class="insight-card-cta">→</div> 
+        </a> 
+
+    </div> 
+
+</section> 
+</div>
+
 <!-- ═══════════════════════════════════════════════════
-     FEATURED. Latest Insight
+     START HERE STRIP 
 ════════════════════════════════════════════════════ -->
-<div style="background: var(--bg);" id="featured">
-  <div class="section">
-    <p class="section-label">Latest Insight</p>
-    <a href="/insights/building-the-ecosystem/" class="featured-card fade-up" style="text-decoration:none; color:inherit; display:grid;">
-      <div class="featured-img">
-        <video autoplay loop muted playsinline style="width:100%; height:100%; object-fit:cover; display:block;">
-          <source src="/insights/assets/videos/insights_featured_loop_final_023f96ef.mp4" type="video/mp4">
-        </video>
-      </div>
-      <div class="featured-body">
-        <span class="tag">Building Series · January 2026</span>
-        <h2 class="featured-title">Building The Ecosystem</h2>
-        <p class="featured-excerpt">I didn't want to just freelance. I wanted to productize how I think. A look at the architecture behind StrategyIQ, The Studio, and The Portal. and why systems thinking changed everything.</p>
-        <span class="read-link">
-          Read Full Story
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </span>
-        <div class="featured-meta">
-          <span>Luis Gilberto</span>
-          <div class="meta-dot"></div>
-          <span>January 2026</span>
-          <div class="meta-dot"></div>
-          <span>Building Series</span>
-        </div>
-      </div>
+<div style="background: var(--bg);">
+  <div class="start-here-strip">
+    <a href="/insights/building-the-ecosystem/" class="start-card fade-up">
+      <span class="start-card-label">Building Series · Foundation</span>
+      <span class="start-card-title">Building the Ecosystem.</span>
+      <span class="start-card-desc">From Microsoft strategist to systems architect. How I productized how I think.</span>
+      <span class="start-card-cta">Read the article →</span>
+    </a>
+    <a href="/insights/building-insights/" class="start-card fade-up">
+      <span class="start-card-label">Building Series · Editorial</span>
+      <span class="start-card-title">Building Insights.</span>
+      <span class="start-card-desc">Thinking in structures. How I designed an editorial space that thinks before it talks.</span>
+      <span class="start-card-cta">Read the article →</span>
     </a>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     STORIES / IMPACT TABS
-════════════════════════════════════════════════════ -->
+<!-- ── DIVIDER ── --> 
+ <div class="insights-divider"> 
+   <span>All insights</span> 
+ </div> 
+ <!-- ═══════════════════════════════════════════════════ 
+      STORIES / IMPACT TABS 
+ ════════════════════════════════════════════════════ -->
 <div class="grid-bg">
   <div class="section">
     <div class="tabs-row">
@@ -814,7 +1232,7 @@
     <div id="stories-panel">
       <div class="stories-grid">
 
-        <!-- ── Story Card 1 ── -->
+        <!-- ── Story Card 1 ── --> 
         <a href="/insights/building-the-ecosystem/" class="story-card fade-up" style="text-decoration:none; color:inherit;">
           <div class="story-img">
             <!-- IMAGE PATH → /insights/assets/images/ecosystem-design.png -->
@@ -1237,7 +1655,71 @@ document.getElementById('aiCollabModal').addEventListener('click', function(e) {
    if (footerYear) footerYear.textContent = new Date().getFullYear(); 
  </script> 
 
-  <script src="/assets/js/nav-component.js"></script>
 
-</body>
+
+<script> 
+ (() => { 
+   const themeToggle = document.getElementById('theme-toggle'); 
+   const iconSun     = document.getElementById('icon-sun'); 
+   const iconMoon    = document.getElementById('icon-moon'); 
+   function applyTheme(theme) { 
+     document.documentElement.setAttribute('data-theme', theme); 
+     localStorage.setItem('lg-theme', theme); 
+     iconSun.style.display  = theme === 'dark' ? 'none'  : 'block'; 
+     iconMoon.style.display = theme === 'dark' ? 'block' : 'none'; 
+     const ld = document.getElementById('logo-desktop'); 
+     if (ld) ld.src = theme === 'dark' ? '/insights/assets/images/Insights_logo_white.png' : '/insights/assets/images/Insights_logo_black.png'; 
+     const lm = document.getElementById('logo-mark'); 
+     if (lm) lm.src = theme === 'dark' ? '/insights/assets/images/Symbol_mobile.png' : '/insights/assets/images/LG-logomark-BlackCoral.png'; 
+   } 
+   applyTheme(localStorage.getItem('lg-theme') || 'dark'); 
+   themeToggle?.addEventListener('click', () => 
+     applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark') 
+   ); 
+   const viewportWrap  = document.getElementById('nav-viewport'); 
+   const viewportInner = document.getElementById('nav-viewport-inner'); 
+   const triggers      = document.querySelectorAll('[data-trigger]'); 
+   const desktopNav    = document.getElementById('desktop-nav'); 
+   let activeId = null, closeTimer = null; 
+   function openDropdown(trigger) { 
+     clearTimeout(closeTimer); 
+     const panel = document.getElementById(trigger.id.replace('trigger-', 'content-')); 
+     if (!panel) return; 
+     document.querySelectorAll('.nav-content').forEach(p => p.classList.remove('active')); 
+     panel.classList.add('active'); 
+     const mid = trigger.getBoundingClientRect().left + trigger.getBoundingClientRect().width / 2 - desktopNav.getBoundingClientRect().left; 
+     viewportWrap.style.left = mid + 'px'; 
+     viewportInner.classList.add('open'); 
+     triggers.forEach(t => t.setAttribute('aria-expanded', 'false')); 
+     trigger.setAttribute('aria-expanded', 'true'); 
+     activeId = trigger.id; 
+   } 
+   function closeDropdown() { 
+     closeTimer = setTimeout(() => { 
+       viewportInner.classList.remove('open'); 
+       document.querySelectorAll('.nav-content').forEach(p => p.classList.remove('active')); 
+       triggers.forEach(t => t.setAttribute('aria-expanded', 'false')); 
+       activeId = null; 
+     }, 120); 
+   } 
+   triggers.forEach(t => { 
+     t.addEventListener('mouseenter', () => openDropdown(t)); 
+     t.addEventListener('click', e => { e.stopPropagation(); activeId === t.id ? closeDropdown() : openDropdown(t); }); 
+   }); 
+   desktopNav.addEventListener('mouseleave', closeDropdown); 
+   viewportInner.addEventListener('mouseenter', () => clearTimeout(closeTimer)); 
+   viewportInner.addEventListener('mouseleave', closeDropdown); 
+   document.addEventListener('click', e => { if (!desktopNav.contains(e.target)) closeDropdown(); }); 
+   const mobileToggle = document.getElementById('mobile-toggle'); 
+   const mobileMenu   = document.getElementById('mobile-menu'); 
+   let menuOpen = false; 
+   mobileToggle?.addEventListener('click', () => { 
+     menuOpen = !menuOpen; 
+     mobileMenu?.classList.toggle('open', menuOpen); 
+     mobileToggle.setAttribute('aria-expanded', menuOpen); 
+     document.body.style.overflow = menuOpen ? 'hidden' : ''; 
+   }); 
+ })(); 
+ </script> 
+ </body>
 </html>

@@ -1,0 +1,182 @@
+# .github/workflows/ecosystem-status.yml
+# ─────────────────────────────────────────────────────────────────
+# Ecosystem Status Updater
+# Runs on every push to main branch.
+# Scans known ecosystem file paths, determines status based on
+# last commit activity, and writes ecosystem-status.json.
+# site_index.html reads this JSON on load to show live statuses.
+# ─────────────────────────────────────────────────────────────────
+
+name: Ecosystem Status Updater
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:  # Allow manual trigger from GitHub UI
+
+jobs:
+  update-status:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Needed to commit ecosystem-status.json
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history needed for git log dates
+
+      - name: Generate ecosystem status
+        run: |
+          python3 << 'PYEOF'
+          import subprocess
+          import json
+          import os
+          from datetime import datetime, timezone
+
+          NOW = datetime.now(timezone.utc)
+
+          # ── KNOWN ECOSYSTEM PATHS ──────────────────────────────
+          # Each entry: path, channel, series, featured
+          PATHS = [
+            # Portfolio
+            { "path": "index.html",                                          "channel": "portfolio",      "series": "core",          "featured": True },
+            { "path": "myexperience.html",                                   "channel": "portfolio",      "series": "core",          "featured": False },
+            { "path": "timeline.html",                                       "channel": "portfolio",      "series": "core",          "featured": False },
+            { "path": "about.html",                                          "channel": "portfolio",      "series": "core",          "featured": False },
+            { "path": "contact.html",                                        "channel": "portfolio",      "series": "core",          "featured": False },
+            { "path": "work/case-study-family-safety.html",                  "channel": "portfolio",      "series": "case-studies",  "featured": False },
+            { "path": "work/case-study-teams-launch.html",                   "channel": "portfolio",      "series": "case-studies",  "featured": False },
+            { "path": "work/edge-ucational-blueprint.html",                  "channel": "portfolio",      "series": "case-studies",  "featured": False },
+            { "path": "work/case-study-ai-browsing.html",                    "channel": "portfolio",      "series": "case-studies",  "featured": False },
+            { "path": "work/case-study_edge_mobile.html",                    "channel": "portfolio",      "series": "case-studies",  "featured": False },
+            { "path": "work/case-study-free-to-be-free.html",                "channel": "portfolio",      "series": "case-studies",  "featured": False },
+            # Insights
+            { "path": "insights/index.html",                                 "channel": "insights",       "series": "channel",       "featured": True },
+            { "path": "insights/translation-problem/index.html",             "channel": "insights",       "series": "use-cases",     "featured": True },
+            { "path": "insights/teams-consumer-launch/index.html",           "channel": "insights",       "series": "use-cases",     "featured": False },
+            { "path": "insights/family-safety-launch/index.html",            "channel": "insights",       "series": "use-cases",     "featured": False },
+            { "path": "insights/building-the-ecosystem/index.html",          "channel": "insights",       "series": "building",      "featured": False },
+            { "path": "insights/building-insights/index.html",               "channel": "insights",       "series": "building",      "featured": False },
+            { "path": "insights/unlocking-the-blank-page/index.html",        "channel": "insights",       "series": "reflections",   "featured": False },
+            # Hub
+            { "path": "TheHub/index.html",                                   "channel": "hub",            "series": "hub-pages",     "featured": True },
+            { "path": "TheHub/advisory/index.html",                          "channel": "hub",            "series": "hub-pages",     "featured": False },
+            { "path": "TheHub/studio.html",                                  "channel": "hub",            "series": "hub-pages",     "featured": False },
+            { "path": "TheHub/strategy-iq/index.html",                       "channel": "hub",            "series": "hub-pages",     "featured": False },
+            { "path": "TheHub/clients/index.html",                           "channel": "hub",            "series": "hub-pages",     "featured": False },
+            # Portal
+            { "path": "portal/index.html",                                   "channel": "portal",         "series": "portal-pages",  "featured": True },
+            { "path": "portal/recruiters/index.html",                        "channel": "portal",         "series": "portal-pages",  "featured": False },
+            { "path": "portal/partners/index.html",                          "channel": "portal",         "series": "portal-pages",  "featured": False },
+            # Infrastructure
+            { "path": "assets/js/nav-component.js",                          "channel": "infrastructure", "series": "infra",         "featured": False },
+            { "path": "assets/js/portal-nav.js",                             "channel": "infrastructure", "series": "infra",         "featured": False },
+            { "path": "docs/ecosystem-governance-v1.html",                   "channel": "infrastructure", "series": "docs",          "featured": False },
+            { "path": "docs/trae-governance-rules.md",                       "channel": "infrastructure", "series": "docs",          "featured": False },
+            { "path": "cv.html",                                             "channel": "infrastructure", "series": "core",          "featured": False },
+            { "path": "brand/index.html",                                    "channel": "infrastructure", "series": "core",          "featured": False },
+          ]
+
+          def get_last_modified(path):
+            """Get ISO date of last git commit that touched this file."""
+            try:
+              result = subprocess.run(
+                ["git", "log", "-1", "--format=%cI", "--", path],
+                capture_output=True, text=True
+              )
+              date_str = result.stdout.strip()
+              if date_str:
+                return date_str
+              return None
+            except Exception:
+              return None
+
+          def get_days_since_modified(path):
+            """Return number of days since file was last modified in git."""
+            date_str = get_last_modified(path)
+            if not date_str:
+              return None
+            try:
+              last = datetime.fromisoformat(date_str)
+              if last.tzinfo is None:
+                last = last.replace(tzinfo=timezone.utc)
+              delta = NOW - last
+              return delta.days
+            except Exception:
+              return None
+
+          def infer_status(path, days):
+            """
+            Infer status from recency of last commit.
+            - File missing: needs-content
+            - Modified in last 3 days: in-progress
+            - Modified in last 30 days: stable
+            - Not modified in 30+ days: stable (assumed settled)
+            """
+            if not os.path.exists(path):
+              return "needs-content"
+            if days is None:
+              return "stable"
+            if days <= 3:
+              return "in-progress"
+            return "stable"
+
+          # ── BUILD STATUS ENTRIES ──────────────────────────────
+          entries = []
+          channel_counts = {}
+
+          for item in PATHS:
+            p = item["path"]
+            days = get_days_since_modified(p)
+            last_modified = get_last_modified(p)
+            status = infer_status(p, days)
+            ch = item["channel"]
+
+            if ch not in channel_counts:
+              channel_counts[ch] = {"total": 0, "stable": 0, "in-progress": 0, "needs-content": 0}
+            channel_counts[ch]["total"] += 1
+            if status in channel_counts[ch]:
+              channel_counts[ch][status] += 1
+
+            entries.append({
+              "path": "/" + p,
+              "channel": ch,
+              "series": item["series"],
+              "featured": item["featured"],
+              "status": status,
+              "lastModified": last_modified,
+              "daysSinceModified": days
+            })
+
+          # ── WRITE JSON ────────────────────────────────────────
+          output = {
+            "generatedAt": NOW.isoformat(),
+            "generatedBy": "github-actions/ecosystem-status-updater",
+            "commitSha": os.environ.get("GITHUB_SHA", "unknown")[:8],
+            "ref": os.environ.get("GITHUB_REF_NAME", "unknown"),
+            "summary": {
+              "total": len(entries),
+              "byChannel": channel_counts
+            },
+            "nodes": entries
+          }
+
+          os.makedirs("docs", exist_ok=True)
+          with open("docs/ecosystem-status.json", "w") as f:
+            json.dump(output, f, indent=2)
+
+          print(f"✓ Written docs/ecosystem-status.json ({len(entries)} nodes)")
+          for ch, c in channel_counts.items():
+            print(f"  {ch}: {c['stable']} stable / {c['total']} total")
+
+          PYEOF
+
+      - name: Commit ecosystem status
+        run: |
+          git config user.name  "ecosystem-bot"
+          git config user.email "ecosystem-bot@luis-gilberto.com"
+          git add docs/ecosystem-status.json
+          # Only commit if there are changes
+          git diff --staged --quiet || git commit -m "chore: update ecosystem-status.json [skip ci]"
+          git push
