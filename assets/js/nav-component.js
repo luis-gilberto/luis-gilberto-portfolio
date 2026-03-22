@@ -33,13 +33,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (isInsights) {
         const insLogo = (theme === 'dark') ? 'insights_logo_white_desktop.webp' : 'insights_logo_black_desktop.webp';
-        logoHTML = `<img src="/insights/assets/images/${insLogo}" alt="Insights" height="48" style="height:48px;width:auto;">`;
+        logoHTML = `<img id="snav-logo-desktop" src="/insights/assets/images/${insLogo}" alt="Insights" height="48" style="height:48px;width:auto;">`;
     } else if (isHub) {
         const hubMarkMap = { hire: 'coral-3d_logomark.webp', partner: 'teal-3d_logomark.webp', explore: 'white-3d_logomark.webp' };
         const hubMark = hubMarkMap[persona] || 'white-3d_logomark.webp';
         logoHTML = `
             <div style="display:flex;align-items:center;gap:12px;">
-                <img src="/assets/images/${hubMark}" alt="LG" height="48" style="height:48px;width:auto;">
+                <img id="snav-logo-desktop" src="/assets/images/${hubMark}" alt="LG" height="48" style="height:48px;width:auto;">
                 <div style="width:1px;height:24px;background:rgba(255,255,255,0.2);"></div>
                 <span style="font-family:'Big Shoulders Display';font-size:18px;font-weight:700;color:#FFF;text-transform:uppercase;letter-spacing:1px;">The Hub.</span>
             </div>`;
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const portMapDark  = { hire: 'coral_lg-portfolio-logo.webp', partner: 'LG_Portfolio_logo_teal.webp', explore: 'white_lg-portfolio-logo.webp' };
         const portMapLight = { hire: 'coral_lg-portfolio-logo_black.webp', partner: 'teal_lg-portfolio-logo_black.webp', explore: 'black_lg-portfolio-logo_black.webp' };
         const portLogo = (theme === 'light' ? portMapLight : portMapDark)[persona] || (theme === 'light' ? 'black_lg-portfolio-logo_black.webp' : 'white_lg-portfolio-logo.webp');
-        logoHTML = `<img src="/assets/images/${portLogo}" alt="Luis Gilberto Portfolio" height="48" style="height:48px;width:auto;">`;
+        logoHTML = `<img id="snav-logo-desktop" src="/assets/images/${portLogo}" alt="Luis Gilberto Portfolio" height="48" style="height:48px;width:auto;">`;
     }
 
     // 3. GENERATE MASTER HTML
@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             <a href="/" style="text-decoration:none;" class="desktop-logo">${logoHTML}</a>
             <a href="/" style="text-decoration:none;" class="mobile-logo-mark">
-                <img id="mobile-mark-img" height="40" style="height:40px;width:auto;display:block;" alt="LG">
+                <img id="snav-logo-mobile" height="40" style="height:40px;width:auto;display:block;" alt="LG">
             </a>
 
             <nav class="desktop-nav" style="display:flex;gap:8px;position:relative;">
@@ -315,7 +315,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Mobile logomark swap
-        const markImg = document.getElementById('mobile-mark-img');
+        const markImg = document.getElementById('snav-logo-mobile');
         if (markImg) {
             if (isInsights) {
                 markImg.src = `/insights/assets/images/${currentTheme === 'dark' ? 'white' : 'black'}-3d_logomark.webp`;
@@ -363,15 +363,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 8. LUXE BADGE INJECTION
     const badgeMap = {
-        hire:    `<div class="audience-badge" id="reopenIntent" style="color:var(--coral);border-color:rgba(249,111,110,0.3);background:rgba(249,111,110,0.05);"><span class="badge-dot" style="background:var(--coral);box-shadow:0 0 10px var(--coral);"></span>HIRE · ASSESS</div>`,
-        partner: `<div class="audience-badge" id="reopenIntent" style="color:var(--teal);border-color:rgba(46,211,198,0.3);background:rgba(46,211,198,0.05);"><span class="badge-dot" style="background:var(--teal);box-shadow:0 0 10px var(--teal);"></span>PARTNER</div>`,
-        explore: `<div class="audience-badge" id="reopenIntent" style="color:#FFF;border-color:rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);"><span class="badge-dot" style="background:#FFF;box-shadow:0 0 10px #FFF;"></span>EXPLORE</div>`
+        hire:    `<div id="snav-badge" class="audience-badge" style="color:var(--coral);border-color:rgba(249,111,110,0.3);background:rgba(249,111,110,0.05);"><span class="badge-dot" style="background:var(--coral);box-shadow:0 0 10px var(--coral);"></span><span id="snav-badge-text">HIRE · ASSESS</span></div>`,
+        partner: `<div id="snav-badge" class="audience-badge" style="color:var(--teal);border-color:rgba(46,211,198,0.3);background:rgba(46,211,198,0.05);"><span class="badge-dot" style="background:var(--teal);box-shadow:0 0 10px var(--teal);"></span><span id="snav-badge-text">PARTNER</span></div>`,
+        explore: `<div id="snav-badge" class="audience-badge" style="color:#FFF;border-color:rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);"><span class="badge-dot" style="background:#FFF;box-shadow:0 0 10px #FFF;"></span><span id="snav-badge-text">EXPLORE</span></div>`
     };
     const mapped = (persona === 'coral' || persona === 'hire') ? 'hire' : (persona === 'teal' || persona === 'partner') ? 'partner' : 'explore';
     const anchor = document.getElementById('master-badge-anchor');
     if (anchor) {
         anchor.innerHTML = badgeMap[mapped];
-        const ri = document.getElementById('reopenIntent');
+        const ri = document.getElementById('snav-badge');
         if (ri) ri.addEventListener('click', () => { const gate = document.getElementById('intentGate'); if (gate) gate.classList.add('visible'); });
     }
 
