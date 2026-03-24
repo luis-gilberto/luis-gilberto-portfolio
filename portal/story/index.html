@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
 <script>
   (function() {
-    const savedTheme = localStorage.getItem('lg_theme') || 'dark';
+    const savedTheme = localStorage.getItem('lg-theme') || 'dark';
     document.documentElement.setAttribute('data-theme', savedTheme);
   })();
 </script>
@@ -120,13 +120,13 @@
                 rgba(5, 5, 5, 0) 95%
             ) !important;
         }
-        .portal-hero-content {
-            position: relative; z-index: 1;
-            max-width: 780px;
-            padding: 8rem 2rem 7rem;
-            margin: 0 auto 0 calc((100vw - 1200px) / 2);
-        }
-        @media (max-width: 1240px) { .portal-hero-content { margin: 0 auto; padding: 7rem 2rem 6rem; } }
+        .portal-hero-content { 
+            position: relative; z-index: 1; 
+            max-width: 780px; 
+            padding: 8rem 2rem 7rem; 
+            margin: 0 auto; 
+        } 
+        @media (min-width: 1240px) { .portal-hero-content { margin: 0 auto 0 calc((100vw - 1200px) / 2); } } 
 
         .hero-eyebrow {
             display: inline-flex; align-items: center; gap: 10px;
@@ -822,11 +822,11 @@
                 font-size: 1.5rem !important; 
             } 
         }
-        @media (max-width: 600px) {
-            .container { padding: 0 1.25rem; }
-            .portal-hero-content { padding: 5rem 1.25rem 4rem; }
-            .hero-ctas { flex-direction: column; align-items: flex-start; }
-        }
+        @media (max-width: 768px) { 
+            .container { padding: 0 1.25rem; } 
+            .portal-hero-content { padding: 5rem 1.25rem 4rem; } 
+            .hero-ctas { flex-direction: column; align-items: flex-start; } 
+        } 
 
         /* =========================================
            TERMINAL EDITORIAL MODULE
@@ -890,12 +890,14 @@
             animation: em-typing 2.5s steps(40, end) forwards; animation-delay: 1s;
         }
         @keyframes em-typing { from { width: 0; } to { width: 100%; } }
-        @media (max-width: 767px) {
-            .editorial-moment { min-height: 300px; background-attachment: scroll; }
-            .editorial-moment .quote-container { padding: 40px 28px; }
-            .editorial-line.secondary { white-space: normal; width: auto !important; border-right: none; }
-            .editorial-moment.is-visible .editorial-line.secondary { animation: em-fade-in 0.8s ease-out 1s forwards; }
-        }
+        @media (max-width: 767px) { 
+            .editorial-moment { min-height: 300px; background-attachment: scroll; } 
+            .editorial-moment .quote-container { padding: 40px 20px; max-width: 100vw; } 
+            .editorial-line { white-space: normal !important; word-break: break-word; overflow-wrap: break-word; } 
+            .editorial-line.primary { font-size: clamp(0.9rem, 4vw, 1.4rem) !important; } 
+            .editorial-line.secondary { white-space: normal !important; width: auto !important; border-right: none; font-size: clamp(0.85rem, 3.5vw, 1.3rem) !important; } 
+            .editorial-moment.is-visible .editorial-line.secondary { animation: em-fade-in 0.8s ease-out 1s forwards; } 
+        } 
         @keyframes em-fade-in { from { opacity: 0; } to { opacity: 1; } }
         /* =========================================
            CASE STUDY. ELEVATED TIMELINE
@@ -1063,17 +1065,92 @@
         /* =========================================
            MOBILE SCROLL SNAP SAFEGUARD
            ========================================= */
-        @media (max-width: 480px) {
-            html {
-                scroll-snap-type: y proximity;
-            }
-        }
+        @media (max-width: 900px) { 
+            html { 
+                scroll-snap-type: y proximity; 
+            } 
+        } 
 
         .proof-strip {
             scroll-snap-align: start;
             scroll-snap-stop: normal;
         }
 
+    /* ── PORTAL SCREENS ANIMATION ── */ 
+    .portal-screens-wrap { 
+      position: relative; 
+      border-radius: 12px; 
+      overflow: hidden; 
+    } 
+    .portal-screens-wrap img { 
+      width: 100%; display: block; border-radius: 12px; 
+      opacity: 0; 
+      transition: opacity 0.8s ease; 
+    } 
+    .portal-screens-wrap.animate img { opacity: 1; } 
+    @media (max-width: 768px) { 
+      .portal-screens-wrap { border-radius: 8px; } 
+      .teal-glow, .coral-glow { opacity: 0.7; } 
+    } 
+    @media (max-width: 768px) { 
+      .portal-screens-wrap { border-radius: 8px; } 
+      .teal-glow, .coral-glow { opacity: 0.7; } 
+    } 
+    .flow-overlay { 
+      position: absolute; inset: 0; 
+      pointer-events: none; border-radius: 12px; overflow: hidden; 
+    } 
+    .glow-sweep { 
+      position: absolute; top: 0; bottom: 0; left: -40%; width: 35%; 
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 30%, rgba(255,255,255,0.09) 50%, rgba(255,255,255,0.04) 70%, transparent 100%); 
+      opacity: 0; transform: skewX(-8deg); 
+    } 
+    .portal-screens-wrap.animate .glow-sweep { 
+      animation: sweep-flow 2s cubic-bezier(0.4,0,0.2,1) 0.6s forwards; 
+    } 
+    @keyframes sweep-flow { 
+      0%   { left: -40%; opacity: 0; } 
+      10%  { opacity: 1; } 
+      85%  { opacity: 1; } 
+      100% { left: 130%; opacity: 0; } 
+    } 
+    .teal-glow { 
+      position: absolute; top: 5%; left: 2%; width: 42%; height: 90%; 
+      border-radius: 8px; 
+      background: radial-gradient(ellipse at center, rgba(46,211,198,0.12) 0%, transparent 70%); 
+      opacity: 0; 
+    } 
+    .coral-glow { 
+      position: absolute; top: 5%; right: 2%; width: 42%; height: 90%; 
+      border-radius: 8px; 
+      background: radial-gradient(ellipse at center, rgba(249,111,110,0.14) 0%, transparent 70%); 
+      opacity: 0; 
+    } 
+    .portal-screens-wrap.animate .teal-glow { 
+      animation: panel-glow 2s ease 0.4s forwards; 
+    } 
+    .portal-screens-wrap.animate .coral-glow { 
+      animation: panel-glow 2s ease 1.0s forwards; 
+    } 
+    @keyframes panel-glow { 
+      0%   { opacity: 0; } 
+      30%  { opacity: 1; } 
+      70%  { opacity: 1; } 
+      100% { opacity: 0; } 
+    } 
+    @media (max-width: 1023px) { 
+      div.ft-responsive-grid { grid-template-columns: 1fr 1fr !important; padding: 40px 24px 0 !important; gap: 24px !important; } 
+      div.ft-responsive-legal { flex-direction: column !important; align-items: center !important; gap: 8px !important; padding: 20px 24px 28px !important; text-align: center !important; } 
+      div.ft-responsive-legal span { text-align: center !important; max-width: 100% !important; } 
+    } 
+    @media (max-width: 640px) { 
+      div.ft-responsive-grid { grid-template-columns: 1fr 1fr !important; padding: 32px 20px 0 !important; gap: 16px !important; } 
+      div.ft-responsive-grid > div:first-child { grid-column: 1 / -1 !important; } 
+      div.ft-responsive-grid > div:first-child img { height: 48px !important; max-width: 160px !important; } 
+      div.ft-responsive-grid > div:first-child p { display: none !important; } 
+      div.ft-responsive-legal { padding: 16px 20px 24px !important; } 
+      div.ft-responsive-legal span:last-child { display: none !important; } 
+    } 
     </style>
 </head>
 <body>
@@ -1093,16 +1170,19 @@
             </div>
             <h1 class="reveal reveal-d1" style="font-family:'Big Shoulders Display',sans-serif;font-weight:900;">HOW I HELP TEAMS GO FROM<br>A BIG IDEA TO A <em>FINISHED PRODUCT</em></h1>
 
-            <p class="hero-subhead reveal reveal-d3" style="line-height: 1.6; max-width: 560px;">
-                <span style="font-family:'Big Shoulders Display',sans-serif; font-weight:800; font-size:1.1em; letter-spacing:0.04em; display:inline-flex; align-items:center; vertical-align:middle; margin-top:-2px;">
-                  <span style="color:var(--coral);">LG</span>
-                  <span style="color:rgba(255,255,255,0.3); margin:0 6px; font-weight:300;">|</span>
-                  <span style="color:#FFFFFF;">PORTAL</span>
-                </span>
-                <span style="font-family:'Playfair Display',serif; font-style:italic; font-weight:400; margin-left:6px; opacity:0.85;">
-                  is a digital system that helps teams take big ideas and turn them into work that actually gets finished.
-                </span>
-            </p>
+            <p class="hero-subhead reveal reveal-d3" style="line-height: 1.6; max-width: 560px;"> 
+                <span style="font-family:'Big Shoulders Display',sans-serif; font-weight:800; font-size:1.1em; letter-spacing:0.04em; display:inline-flex; align-items:center; vertical-align:middle; margin-top:-2px;"> 
+                  <span style="color:var(--coral);">LG</span> 
+                  <span style="color:rgba(255,255,255,0.3); margin:0 6px; font-weight:300;">|</span> 
+                  <span style="color:#FFFFFF; font-style:italic;">PORTAL</span> 
+                </span> 
+                <span style="font-family:'Playfair Display',serif; font-style:italic; font-weight:400; margin-left:6px; opacity:0.85;"> 
+                  is a system that helps teams take big ideas and turn them into work that actually gets finished. 
+                </span> 
+            </p> 
+            <p class="hero-subhead reveal reveal-d3" style="line-height: 1.7; max-width: 560px; margin-top: 1rem; font-size: 0.95rem;"> 
+                Whether you're a team of three or a company of thousands, the challenge is usually the same: good ideas stall before they become finished work. Whether it's launching a new product, fixing a broken process, or finally finishing the initiative everyone keeps talking about, the challenge is turning intention into coordinated action. That's what the <em style="font-style:italic; color:rgba(255,255,255,0.85);">Portal</em> was built for. 
+            </p> 
 
             <div class="hero-ctas reveal reveal-d4">
                 <a href="/myexperience.html" class="btn-coral">See the work <i class="fas fa-arrow-right"></i></a>
@@ -1144,7 +1224,7 @@
                 <div>
                     <span class="section-eyebrow reveal">The Real Problem</span>
                     <h2 class="section-h2 reveal reveal-d1">Most teams are great<br>at ideas. Not at <em>finishing</em></h2>
-                    <p class="section-body reveal reveal-d2">Companies don't fail because they lack good ideas. They fail because nobody owns the path from the idea to the finished thing. That gap is what the Portal was built to close.</p>
+                    <p class="section-body reveal reveal-d2">Most teams have no shortage of good ideas. What they lack is a clear path from decision to finished work. That gap is what the Portal was built to close.</p> 
                 </div>
                 <div class="problem-statements">
                     <div class="problem-item reveal reveal-d1">
@@ -1177,19 +1257,19 @@
         <div class="container">
             <span class="section-eyebrow reveal">The System</span>
             <h2 class="section-h2 reveal reveal-d1">A digital command center<br>for getting things <em>done</em></h2>
-            <p class="section-body reveal reveal-d2">Think of it as a health check, a shared map, and a progress tracker all in one place. Luis built the Portal so leaders can see how a project is really going, spot where things are quietly breaking down, and keep the work moving until it's actually finished.</p>
+            <p class="section-body reveal reveal-d2">Think of it as one place to see what is stuck, what matters most, and what needs to happen next. Luis built it so leaders can understand how a project is really going and keep things moving until the work is actually finished.</p> 
             <div class="system-diagram-wrap reveal reveal-d2">
                 <img src="/assets/images/portal/StrategyIQ_Hero_3D.png" alt="StrategyIQ Engine 3D Interface - The core operating environment of The Portal" onerror="this.onerror=null; this.src='/TheHub/assets/images/StrategyIQ_Hero_3D.png';">
                 <div class="system-diagram-caption">
-                    <span>Portal Interface v1.0</span>
-                    <span class="teal">The Command Center → <strong style="color:#fff;">Live View</strong></span>
+                    <span>The Portal System</span> 
+                    <span class="teal">One view of the work → <strong style="color:#fff;">Always current</strong></span> 
                 </div>
             </div>
 
             <div class="portfolio-bridge reveal reveal-d3">
-                <p class="portfolio-bridge-intro">
-                    <strong>This isn't a concept.</strong> Luis has used this system to lead real product launches and marketing campaigns at Microsoft and beyond. The results speak for themselves.
-                </p>
+                <p class="portfolio-bridge-intro"> 
+                    <strong>This isn't a concept.</strong> Luis has used this system to lead real product launches and marketing campaigns. Here are a few examples. 
+                </p> 
                 <div class="portfolio-bridge-links">
                     <a href="/work/edge-ucational-blueprint.html" class="bridge-case-link">
                         Edge-ucational Series <i class="fas fa-arrow-right"></i>
@@ -1251,33 +1331,30 @@
                 </div>
             </div>
 
-            <!-- Workbench screenshot -->
-            <div class="product-reveal-grid reveal reveal-d3">
-                <div>
-                    <span class="section-eyebrow">The Command Center</span>
-                    <h2 class="section-h2" style="margin-top:1rem;">One screen.<br>The full <em>picture</em></h2>
-                    <p class="section-body">This is Luis's digital workbench where he can see the pulse of a project at a glance, spot where things are going sideways, and help teams stay organized until the work is done.</p>
-                </div>
-                <div>
-                    <div class="screenshot-frame">
-                        <img src="/assets/images/workbench.png" alt="Strategy Workbench Interface" onerror="this.style.display='none'; this.parentElement.querySelector('.img-fallback').style.display='flex';">
-                        <div class="img-fallback assistant-placeholder" style="display:none;">
-                            <i class="fas fa-table-columns"></i>
-                            <span style="font-family:'Inter'; font-size:10px; opacity:0.5; letter-spacing:2px;">COMMAND CENTER</span>
-                        </div>
-                    </div>
-                    <span class="screenshot-caption">The Command Center: live project view</span>
-                </div>
-            </div>
+            <!-- ONE SCREEN. THE FULL PICTURE — System Reveal --> 
+            <div class="reveal reveal-d3" style="margin-top: 2rem;"> 
+                <div style="text-align:center; margin-bottom: 2.5rem;"> 
+                    <span class="section-eyebrow">The Full System</span> 
+                    <h2 class="section-h2" style="margin-top:1rem;">One screen.<br>The full <em>picture</em></h2> 
+                    <p class="section-body" style="margin: 1rem auto 0; max-width: 560px; text-align:center;">Two environments. One connected system. Strategy Workbench shows where things stand. Execution Roadmap shows what needs to happen next. Together, they keep the work moving from idea to finished.</p> 
+                </div> 
+                <div class="portal-screens-wrap" id="portal-screens" style="max-width: 900px; margin: 0 auto;"> 
+                  <img src="/assets/images/portal_hero-screens.png" 
+                       alt="Strategy Workbench and Execution Roadmap — the full system"> 
+                  <div class="flow-overlay"> 
+                    <div class="teal-glow"></div> 
+                    <div class="coral-glow"></div> 
+                    <div class="glow-sweep"></div> 
+                  </div> 
+                </div> 
+                <div style="display:flex; justify-content:center; gap:2rem; margin-top:1.5rem; margin-bottom:2rem;"> 
+                  <span style="font-family:'Inter',sans-serif; font-size:10px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:rgba(46,211,198,0.6);">Strategy Workbench</span> 
+                  <span style="font-family:'Inter',sans-serif; font-size:10px; color:rgba(255,255,255,0.2); letter-spacing:0.1em;">→</span> 
+                  <span style="font-family:'Inter',sans-serif; font-size:10px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:rgba(249,111,110,0.6);">Execution Roadmap</span> 
+                </div> 
+            </div> 
 
-            <!-- Roadmap screenshot -->
-            <div class="roadmap-center-reveal reveal reveal-d1" style="margin-top:5rem;">
-                <span class="section-eyebrow" style="margin-bottom:1.5rem; display:inline-block;">The Roadmap</span>
-                <div class="roadmap-frame">
-                    <img src="/assets/images/roadmap.png" alt="Execution Roadmap Module" onerror="this.style.display='none'; this.parentElement.innerHTML += '<div style=\'padding:3rem; text-align:center; color:var(--teal); font-family:var(--font-strategist); font-size:1.5rem; letter-spacing:0.1em;\'>ROADMAP MODULE</div>';">
-                </div>
-                <p class="section-body" style="margin: 0 auto; text-align:center;">The master timeline. <strong style="color:var(--text-primary);">What's happening now, what comes next</strong>, and how everything connects toward the finish line.</p>
-            </div>
+            <!-- Roadmap module removed — system reveal above is the payoff --> 
 
         </div>
     </section>
@@ -1286,34 +1363,26 @@
     <section class="portal-section enables-section">
         <div class="container">
             <span class="section-eyebrow reveal">Why It Matters</span>
-            <h2 class="section-h2 reveal reveal-d1">It helps companies go<br>from talk to <em>action</em></h2>
-            <p class="section-body reveal reveal-d1" style="margin-bottom:0;">These aren't abstract ideas. Each one is a real problem Luis has solved, on real teams, with real deadlines.</p>
-            <div class="enables-list">
-                <div class="enable-item reveal reveal-d1">
-                    <div class="enable-dot"></div>
-                    <p class="enable-text">Keep everyone working from the same plan, even when things change.</p>
-                </div>
-                <div class="enable-item reveal reveal-d2">
-                    <div class="enable-dot"></div>
-                    <p class="enable-text">Turn decisions made in meetings into actual work that moves forward.</p>
-                </div>
-                <div class="enable-item reveal reveal-d1">
-                    <div class="enable-dot"></div>
-                    <p class="enable-text">See the full picture of a project without chasing people for updates.</p>
-                </div>
-                <div class="enable-item reveal reveal-d2">
-                    <div class="enable-dot"></div>
-                    <p class="enable-text">Keep track of progress without losing sight of why the work matters.</p>
-                </div>
-                <div class="enable-item reveal reveal-d1">
-                    <div class="enable-dot"></div>
-                    <p class="enable-text">Move faster, without the team falling out of sync.</p>
-                </div>
-                <div class="enable-item reveal reveal-d2">
-                    <div class="enable-dot"></div>
-                    <p class="enable-text">Make sure a good idea doesn't die between the meeting room and the real world.</p>
-                </div>
-            </div>
+            <h2 class="section-h2 reveal reveal-d1">It helps teams go<br>from talk to <em>action</em></h2> 
+            <p class="section-body reveal reveal-d1" style="margin-bottom:0;">Each one is a real problem Luis has solved, on real teams, with real deadlines.</p> 
+            <div class="enables-list"> 
+                <div class="enable-item reveal reveal-d1"> 
+                    <div class="enable-dot"></div> 
+                    <p class="enable-text">Spot what is actually slowing the work down, before it becomes a bigger problem.</p> 
+                </div> 
+                <div class="enable-item reveal reveal-d2"> 
+                    <div class="enable-dot"></div> 
+                    <p class="enable-text">Get the right people working from the same plan, even when things change.</p> 
+                </div> 
+                <div class="enable-item reveal reveal-d1"> 
+                    <div class="enable-dot"></div> 
+                    <p class="enable-text">Turn a stalled initiative into clear next steps with real ownership.</p> 
+                </div> 
+                <div class="enable-item reveal reveal-d2"> 
+                    <div class="enable-dot"></div> 
+                    <p class="enable-text">Keep progress visible from the first decision to the finished work.</p> 
+                </div> 
+            </div> 
         </div>
     </section>
 
@@ -1330,8 +1399,8 @@
         <div class="container">
             <span class="section-eyebrow reveal">Want to know more?</span>
             <h2 class="section-h2 reveal reveal-d1">Curious about the<br>work behind <em>the system?</em></h2>
-            <p class="cta-lead reveal reveal-d2">"I built a system called the Portal that helps companies take big ideas and actually turn them into finished work. It helps teams see where their problems are, agree on what to do next, and keep projects moving so nothing gets stuck."</p>
-            <p class="cta-sub reveal reveal-d2">Luis Gilberto</p>
+            <p class="cta-lead reveal reveal-d2">"I built the Portal because I kept watching good teams lose momentum not from lack of effort, but from lack of a clear path forward. This system gives teams one place to see what matters, agree on what is next, and keep moving until the work is done."</p> 
+            <p class="cta-sub reveal reveal-d2">Luis Gilberto</p> 
             <div class="cta-actions reveal reveal-d3">
                 <a href="/myexperience.html" class="btn-coral-lg">See the work <i class="fas fa-arrow-right"></i></a>
                 <a href="/about.html" class="btn-ghost">About Luis</a>
@@ -1353,12 +1422,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const drawerThemeBtn = document.getElementById('drawerThemeToggle');
     function setTheme(t) {
         root.setAttribute('data-theme', t);
-        localStorage.setItem('lg_theme', t);
+        localStorage.setItem('lg-theme', t);
         const icon = t === 'light' ? 'fa-regular fa-sun' : 'fa-regular fa-moon';
         if (themeBtn) themeBtn.querySelector('i').className = icon;
         if (drawerThemeBtn) drawerThemeBtn.querySelector('i').className = icon;
     }
-    const saved = localStorage.getItem('lg_theme') || 'dark';
+    const saved = localStorage.getItem('lg-theme') || 'dark';
     setTheme(saved);
     if (themeBtn) themeBtn.addEventListener('click', () => setTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
     if (drawerThemeBtn) drawerThemeBtn.addEventListener('click', () => setTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
@@ -1398,5 +1467,84 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 </script>
-</body>
+<script> 
+ (function() { 
+   var el = document.getElementById('portal-screens'); 
+   if (!el) return; 
+   var obs = new IntersectionObserver(function(entries) { 
+     entries.forEach(function(entry) { 
+       if (entry.isIntersecting) { 
+         el.classList.add('animate'); 
+         obs.unobserve(el); 
+       } 
+     }); 
+   }, { threshold: 0.3 }); 
+   obs.observe(el); 
+ })(); 
+ </script> 
+  <footer style="background:#050505; font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased;"> 
+ 
+    <div class="ft-responsive-grid" style="max-width:1400px; margin:0 auto; padding:72px 72px 0; display:grid; grid-template-columns:1.6fr 1fr 1fr 1.4fr; gap:56px; align-items:start;"> 
+ 
+      <div> 
+        <a href="/index.html" style="display:inline-block; margin-bottom:20px;"> 
+          <img src="/assets/images/LG-ecosystem-logo-lockup.png" 
+               alt="Luis Gilberto Ecosystem" 
+               style="height:88px; width:auto; max-width:220px; object-fit:contain; display:block; opacity:0.92;"> 
+        </a> 
+        <p style="font-family:'Cormorant Garamond',serif; font-size:15px; font-weight:300; font-style:italic; color:rgba(255,255,255,0.38); line-height:1.65; max-width:260px; margin:0;"> 
+          Making technology feel human through clarity, beautiful execution, and systems that scale. 
+        </p> 
+      </div> 
+ 
+      <div> 
+        <p style="font-size:10px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:#F96F6E; margin:0 0 22px;">Ecosystem</p> 
+        <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:13px;"> 
+          <li><a href="/timeline.html" style="font-size:13px; color:rgba(255,255,255,0.45); text-decoration:none;">Portfolio</a></li> 
+          <li><a href="/insights/" style="font-size:13px; color:rgba(255,255,255,0.45); text-decoration:none;">Insights</a></li> 
+          <li><a href="/TheHub/index.html" style="font-size:13px; color:rgba(255,255,255,0.45); text-decoration:none;">The Hub</a></li> 
+          <li><a href="https://portal.luis-gilberto.com" style="font-size:13px; color:rgba(255,255,255,0.45); text-decoration:none;">The Portal</a></li> 
+        </ul> 
+      </div> 
+ 
+      <div> 
+        <p style="font-size:10px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:#F96F6E; margin:0 0 22px;">Connect</p> 
+        <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:13px;"> 
+          <li><a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" rel="noopener" style="font-size:13px; color:rgba(255,255,255,0.45); text-decoration:none;">LinkedIn</a></li> 
+          <li><a href="/contact.html" style="font-size:13px; color:rgba(255,255,255,0.45); text-decoration:none;">Contact</a></li> 
+          <li><a href="/about.html" style="font-size:13px; color:rgba(255,255,255,0.45); text-decoration:none;">About me</a></li> 
+          <li><a href="/brand/" style="font-size:13px; color:rgba(255,255,255,0.45); text-decoration:none;">Brand identity</a></li> 
+        </ul> 
+      </div> 
+ 
+      <div> 
+        <p style="font-size:10px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:#F96F6E; margin:0 0 22px;">Portal</p> 
+        <ul style="list-style:none; padding:0; margin:0 0 28px; display:flex; flex-direction:column; gap:13px;"> 
+          <li><a href="/portal/" style="font-size:13px; color:rgba(249,111,110,0.65); text-decoration:none;">The Portal</a></li> 
+          <li><a href="/portal/recruiters/" style="font-size:13px; color:rgba(255,255,255,0.45); text-decoration:none;">For Recruiters</a></li> 
+          <li><a href="/portal/partners/" style="font-size:13px; color:rgba(255,255,255,0.45); text-decoration:none;">For Partners</a></li> 
+          <li><a href="/portal/story/" style="font-size:13px; color:rgba(255,255,255,0.45); text-decoration:none;">The Human Version</a></li> 
+        </ul> 
+        <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07); border-radius:8px; padding:18px 20px;"> 
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;"> 
+            <div style="width:7px; height:7px; background:#2ED3C6; border-radius:50%; flex-shrink:0;"></div> 
+            <span style="font-size:10px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:rgba(255,255,255,0.7);">Accepting projects</span> 
+          </div> 
+          <p style="font-size:12px; color:rgba(255,255,255,0.32); line-height:1.55; margin:0;">Available for strategic consulting and creative direction.</p> 
+        </div> 
+      </div> 
+ 
+    </div> 
+ 
+    <div class="ft-responsive-legal" style="max-width:1400px; margin:0 auto; padding:20px 72px 28px; display:flex; align-items:center; justify-content:space-between; border-top:1px solid rgba(255,255,255,0.05); margin-top:0;"> 
+      <span style="font-size:11px; color:rgba(255,255,255,0.22); letter-spacing:0.02em;">© <span id="footerYear"></span> Luis Gilberto Sanchez. All rights reserved.</span> 
+      <span style="font-size:10px; color:rgba(255,255,255,0.14); letter-spacing:0.04em; max-width:500px; text-align:right; line-height:1.5;">Intellectual property notice: StrategyIQ™, The Hub™, and the associated diagnostic methodologies are proprietary intellectual property of Luis Gilberto.</span> 
+    </div> 
+ 
+  </footer> 
+  <script> 
+    var fy = document.getElementById('footerYear'); 
+    if (fy) fy.textContent = new Date().getFullYear(); 
+  </script> 
+ </body>
 </html>
