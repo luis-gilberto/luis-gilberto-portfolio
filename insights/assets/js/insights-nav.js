@@ -9,8 +9,8 @@
  *        <script src="/insights/assets/js/insights-nav.js"></script>
  *   3. Pass optional config via data attributes on the script tag:
  *        data-active="insights"      — highlights the active nav item (insights|portfolio|hub|portal)
- *        data-series="use-cases"     — highlights the active series card in mobile drawer
- *                                      (building|use-cases|reflections)
+ *        data-series="strategic"     — highlights the active series card in mobile drawer
+ *                                      (building|strategic|directors|reflections)
  *        data-breadcrumb             — JSON array: [["label","url"],["label","url"],"Current Page"]
  *
  * Tokens injected automatically:
@@ -139,7 +139,7 @@
 
     /* Panel sizing */
     .ins-panel-wrap { padding: 6px; }
-    .ins-panel-wrap[data-channel="insights"]  { --ch: var(--ins-coral); width: 520px; }
+    .ins-panel-wrap[data-channel="insights"]  { --ch: var(--ins-coral); width: 560px; }
     .ins-panel-wrap[data-channel="hub"]       { --ch: var(--ins-teal);  width: 600px; }
     .ins-panel-wrap[data-channel="portfolio"] { --ch: var(--ins-coral); width: 480px; }
     .ins-panel-wrap[data-channel="portal"]    { --ch: var(--ins-teal);  width: 400px; }
@@ -491,15 +491,19 @@
                 <div class="ins-panel-grid">
                   <a href="/insights/series/#building" class="ins-panel-item">
                     <div class="ins-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
-                    <div class="ins-item-text"><p class="ins-item-title">The Building Series</p><p class="ins-item-desc">Building in public. structural decisions behind the work</p></div>
+                    <div class="ins-item-text"><p class="ins-item-title">The Building Series</p><p class="ins-item-desc">Building in public. Structural decisions behind the work</p></div>
                   </a>
-                  <a href="/insights/series/#use-cases" class="ins-panel-item">
+                  <a href="/insights/series/#strategic" class="ins-panel-item">
                     <div class="ins-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-                    <div class="ins-item-text"><p class="ins-item-title">Use Cases</p><p class="ins-item-desc">Real-world launches and product strategies</p></div>
+                    <div class="ins-item-text"><p class="ins-item-title">Strategic Lens</p><p class="ins-item-desc">IMC blueprints and real product launch strategies</p></div>
+                  </a>
+                  <a href="/insights/series/#directors" class="ins-panel-item">
+                    <div class="ins-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
+                    <div class="ins-item-text"><p class="ins-item-title">Director's Commentary</p><p class="ins-item-desc">What I was actually thinking behind the decisions</p></div>
                   </a>
                   <a href="/insights/series/#reflections" class="ins-panel-item">
                     <div class="ins-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
-                    <div class="ins-item-text"><p class="ins-item-title">Reflections</p><p class="ins-item-desc">Personal thoughts on creativity, pace, and momentum</p></div>
+                    <div class="ins-item-text"><p class="ins-item-title">Reflections</p><p class="ins-item-desc">Creativity, pace, and the quiet decisions</p></div>
                   </a>
                 </div>
                 <div class="ins-panel-footer">
@@ -600,9 +604,13 @@
           <div class="ins-drawer-series-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
           <div><div class="ins-drawer-series-title">The Building Series</div><div class="ins-drawer-series-desc">Structural decisions</div></div>
         </a>
-        <a href="/insights/series/#use-cases" class="ins-drawer-series-card${activeSeries === 'use-cases' ? ' active' : ''}">
+        <a href="/insights/series/#strategic" class="ins-drawer-series-card${activeSeries === 'strategic' ? ' active' : ''}">
           <div class="ins-drawer-series-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-          <div><div class="ins-drawer-series-title">Use Cases</div><div class="ins-drawer-series-desc">Launches &amp; strategy</div></div>
+          <div><div class="ins-drawer-series-title">Strategic Lens</div><div class="ins-drawer-series-desc">Launches &amp; strategy</div></div>
+        </a>
+        <a href="/insights/series/#directors" class="ins-drawer-series-card${activeSeries === 'directors' ? ' active' : ''}">
+          <div class="ins-drawer-series-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
+          <div><div class="ins-drawer-series-title">Director's Commentary</div><div class="ins-drawer-series-desc">Behind the decisions</div></div>
         </a>
         <a href="/insights/series/#reflections" class="ins-drawer-series-card${activeSeries === 'reflections' ? ' active' : ''}">
           <div class="ins-drawer-series-icon"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
