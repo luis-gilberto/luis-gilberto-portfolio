@@ -402,7 +402,8 @@ document.addEventListener('DOMContentLoaded', function() {
         hub: [
             { label: 'Hub home',   href: '/TheHub/index.html',          active: path.endsWith('/TheHub/') || path.endsWith('/TheHub/index.html') },
             { label: 'Advisory',   href: '/TheHub/advisory/index.html', active: path.includes('advisory') },
-            { label: 'The Studio', href: '/TheHub/studio.html',         active: path.includes('studio') },
+            { label: 'The Studio',   href: '/TheHub/studio.html',  active: path.includes('studio') },
+            { label: 'How It Works', href: '/portal/story/',      active: path.includes('/portal/story') },
         ],
         portfolio: [
             { label: 'Experience',     href: '/myexperience.html', active: path.includes('myexperience') },
