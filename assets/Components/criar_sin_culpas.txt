@@ -1,0 +1,501 @@
+File Structure
+
+Create the following structure inside the Hub repository.
+
+TheHub/
+  clients/
+    nari/
+      index.html
+      dashboard.html
+      assets/
+        nari.css
+      files/
+        brand-review.pdf
+        session-notes.pdf
+
+Descriptions:
+
+index.html
+Password gate page.
+
+dashboard.html
+Authenticated client workspace.
+
+assets/nari.css
+Minimal styling overrides specific to this microsite.
+
+files/brand-review.pdf
+Placeholder PDF file.
+
+files/session-notes.pdf
+Placeholder PDF file.
+
+No additional folders should be created.
+
+Design System (Do Not Deviate)
+
+The microsite must use the same visual language as The Hub.
+
+Color Tokens
+--coral: #F96F6E
+--teal: #2ED3C6
+--obsidian: #080808
+--surface: #0f0f11
+--border: #1e1e22
+--text-primary: #f5efe8
+--text-secondary: #908880
+Typography
+
+Use the following fonts.
+
+Big Shoulders Display
+Weight: 900 only
+
+Playfair Display
+
+Inter
+
+Google Fonts import for every page:
+
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@900&family=Playfair+Display:ital,wght@0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+Spacing Tokens
+--space-1: 8px
+--space-2: 16px
+--space-3: 24px
+--space-4: 32px
+--space-5: 48px
+Theme Rules
+
+• Dark background only (#080808)
+• No light mode
+• No theme toggle
+• No alternate themes
+
+Page 1 — Password Gate
+
+File: index.html
+
+Purpose: Accept a password and allow entry to the client workspace.
+
+Layout
+
+Full viewport layout.
+
+Background color: #080808
+
+Center a card both vertically and horizontally.
+
+Add a subtle coral radial glow behind the card to match Hub hero styling.
+
+Card Layout
+
+Top to bottom order:
+
+Eyebrow
+
+Font: Big Shoulders Display
+Size: 11px
+Color: coral
+Letter spacing: 2.5px
+Uppercase
+
+Text:
+
+PRIVATE CLIENT PORTAL
+
+Headline
+
+Font: Playfair Display italic
+Size: 36px
+Color: #f5efe8
+
+Text:
+
+Welcome, Nari.
+
+Subline
+
+Font: Inter
+Size: 15px
+Color: #908880
+
+Text:
+
+Enter your access code to continue.
+
+Password Input
+
+Full width input field.
+
+Style:
+
+background: #0f0f11
+border: 1px solid #1e1e22
+border-radius: 12px
+padding: 14px 18px
+font-family: Inter
+font-size: 16px
+color: #f5efe8
+
+Focus state:
+
+border-color: #F96F6E
+
+CTA Button
+
+Full width button.
+
+Style:
+
+background: #F96F6E
+color: white
+font-family: Big Shoulders Display
+font-weight: 900
+font-size: 13px
+letter-spacing: 2px
+text-transform: uppercase
+border-radius: 999px
+padding: 14px
+
+Error Message
+
+Hidden by default.
+
+Font: Inter
+Size: 13px
+Color: coral
+
+Text:
+
+Incorrect code. Try again.
+
+Show this message when the password is wrong.
+
+Also trigger a small shake animation on the password input.
+
+Footer Text
+
+Font: Inter
+Size: 12px
+Color: #4a4a50
+
+Text:
+
+A private space by Luis Gilberto · luis-gilberto.com
+
+Password Logic
+
+Place JavaScript at the bottom of the body, just before </body>.
+
+Do not place scripts in the head.
+
+Hardcode the password constant.
+
+const ACCESS_CODE = "YOUR_PASSWORD_HERE";
+
+Behavior:
+
+If password matches:
+
+sessionStorage.setItem('nari-auth','true');
+window.location.href = 'dashboard.html';
+
+If password is incorrect:
+
+• display the error message
+• trigger shake animation on the input
+
+Implementation rules:
+
+• Do not use a <form> element
+• Use button click handler
+• Support Enter key submission on input field
+• Authentication state stored only in sessionStorage
+
+Page 2 — Client Workspace
+
+File: dashboard.html
+
+Authentication Guard
+
+At the top of the script add:
+
+if (sessionStorage.getItem('nari-auth') !== 'true') {
+  window.location.href = 'index.html';
+}
+
+This prevents direct access to the page.
+
+Layout
+
+Centered content container.
+
+max-width: 860px
+margin: auto
+
+Background remains #080808.
+
+Top Bar
+
+Minimal header.
+
+Left side text:
+
+LUIS GILBERTO · CLIENT PORTAL
+
+Font: Big Shoulders Display
+Size: 13px
+Letter spacing: 3px
+
+Right side:
+
+Sign out link.
+
+Font: Inter
+Size: 13px
+Color: #4a4a50
+
+Sign out behavior:
+
+sessionStorage.clear();
+window.location.href = 'index.html';
+
+Bottom border:
+
+1px solid #1e1e22
+
+Padding:
+
+20px 48px
+
+Hero Section
+Eyebrow
+
+Coral dot + label
+
+Text:
+
+PRIVATE · NARI
+
+Font: Big Shoulders Display
+
+Headline
+
+Font: Playfair Display italic
+Size: 42px
+
+Text:
+
+Your strategy workspace.
+
+Subline
+
+Font: Inter
+Size: 15px
+Color: #908880
+
+Text:
+
+Everything for our engagement lives here – your brand review, session notes, and next steps. Updated as we go.
+
+Max width: 480px.
+
+Divider
+
+Below the hero add:
+
+height: 1px
+background: #1e1e22
+margin: 40px 0
+
+Content Cards
+
+Cards appear stacked vertically.
+
+Card style:
+
+background: #0f0f11
+border: 1px solid #1e1e22
+border-radius: 20px
+padding: 28px 32px
+margin-bottom: 24px
+
+Card 1 — Brand Review
+
+Eyebrow:
+
+BRAND REVIEW
+
+Title:
+
+Your outside-in assessment
+
+Body text:
+
+My read on your current brand presence, messaging, and audience signals – with the growth opportunities I see from the outside.
+
+CTA button:
+
+Link to:
+
+files/brand-review.pdf
+
+Open in new tab.
+
+Status badge text:
+
+COMING SOON
+
+Card 2 — Intake Questionnaire
+
+Eyebrow:
+
+INTAKE
+
+Title:
+
+Tell me what only you know
+
+Body text:
+
+A short form covering your goals, what’s working, and what success looks like. Takes 15–20 minutes.
+
+Embed placeholder exactly as follows:
+
+<!-- INTAKE FORM: Replace this div with your Tally or Typeform embed code -->
+<div class="form-placeholder">
+  <p>Intake form embed goes here.</p>
+</div>
+
+Style placeholder box:
+
+border: 1px dashed #1e1e22
+padding: 40px
+border-radius: 12px
+color: #4a4a50
+text-align: center
+
+Card 3 — Session Notes
+
+Title:
+
+After our conversation
+
+Body text:
+
+Key decisions, action items, and what we agreed to focus on next. I’ll update this after each session.
+
+CTA link:
+
+files/session-notes.pdf
+
+Status badge text:
+
+COMING SOON
+
+Card 4 — Next Steps
+
+Editable HTML block:
+
+<ul class="next-steps-list">
+<li>Complete the intake questionnaire above</li>
+<li>Review the brand assessment once it’s ready</li>
+<li>We’ll confirm our session date by email</li>
+</ul>
+
+Bullet styling:
+
+• coral circular bullets
+• font: Inter
+• size: 15px
+• color: #908880
+• line height: 1.8
+
+Footer
+
+Centered footer.
+
+Font: Inter
+Size: 12px
+Color: #2a2a2e
+
+Text:
+
+A private space created by Luis Gilberto · luis-gilberto.com
+
+Padding:
+
+48px top
+32px bottom
+
+Files Folder
+
+Create placeholder files.
+
+files/brand-review.pdf
+
+files/session-notes.pdf
+
+Each can contain simple text:
+
+Brand Review — Coming Soon
+
+Session Notes — Coming Soon
+
+Luis will later replace these via GitHub commit.
+
+Constraints
+
+Mandatory rules:
+
+• Vanilla HTML/CSS/JS only
+• No frameworks
+• No nav-component.js usage
+• No references to StrategyIQ
+• sessionStorage only (not localStorage)
+• No <form> elements
+• No light mode
+• Do not rewrite any provided copy
+• Mobile responsive required
+
+Mobile Rules
+
+Below 640px:
+
+• cards become full width
+• hero headline reduces to 28px
+• page padding reduces to 24px
+• password input and CTA remain full width
+
+Deliverables
+
+Trae must create exactly:
+
+TheHub/clients/nari/index.html
+TheHub/clients/nari/dashboard.html
+TheHub/clients/nari/assets/nari.css
+TheHub/clients/nari/files/brand-review.pdf
+TheHub/clients/nari/files/session-notes.pdf
+
+No other files.
+
+Testing Checklist
+
+Test the following behavior.
+
+Visiting
+hub.luis-gilberto.com/clients/nari/
+shows password gate.
+Enter incorrect password
+shows error message and shake animation.
+Enter correct password
+redirects to dashboard.html.
+Refresh dashboard page
+remains authenticated.
+Opening dashboard.html directly
+redirects to index.html.
+Clicking Sign out
+clears session and returns to gate.
+Reloading index page after login
+requires password again.
+End of Implementation Brief
