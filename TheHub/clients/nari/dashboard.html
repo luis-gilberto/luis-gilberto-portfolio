@@ -1,0 +1,1567 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ─────────────────────────────────────────────────────────────────
+       CONFIGURABLE METADATA
+       Update the title/description here if needed.
+  ───────────────────────────────────────────────────────────────── -->
+  <title>Pre-Strategy Intake | Luis Gilberto</title>
+  <meta name="description" content="Private pre-session intake. Complete this before we meet so we can skip straight to strategy." />
+  <meta name="robots" content="noindex, nofollow" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=Cormorant+Garamond:ital,wght@0,700;1,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ═══════════════════════════════════════════════════════════════
+       BRAND TOKENS
+       Single source of truth for all design values.
+    ═══════════════════════════════════════════════════════════════ */
+    :root {
+      --coral:              #F96F6E;
+      --teal:               #2ED3C6;
+      --gold:               #C9A84C;
+
+      --bg:                 #080808;
+      --surface:            rgba(255, 255, 255, 0.04);
+      --surface-2:          rgba(255, 255, 255, 0.07);
+      --surface-3:          rgba(255, 255, 255, 0.11);
+      --border:             rgba(255, 255, 255, 0.08);
+      --border-2:           rgba(255, 255, 255, 0.13);
+
+      --text:               #F0EDE8;
+      --text-muted:         rgba(240, 237, 232, 0.52);
+      --text-dim:           rgba(240, 237, 232, 0.30);
+
+      --font-strategist:    'Big Shoulders Display', sans-serif;
+      --font-storyteller:   'Cormorant Garamond', serif;
+      --font-orchestrator:  'Inter', sans-serif;
+
+      --header-height:      80px;
+      --max:                1200px;
+      --radius-xl:          24px;
+      --radius-lg:          16px;
+      --radius-md:          10px;
+
+      --transition-page:    opacity 480ms cubic-bezier(0.4, 0, 0.2, 1),
+                            transform 480ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: var(--font-orchestrator);
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--text);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ───────────────────────────────────────────────────────────────
+       NOISE TEXTURE
+    ─────────────────────────────────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       PASSWORD GATE
+    ═══════════════════════════════════════════════════════════════ */
+    #gate {
+      position: fixed;
+      inset: 0;
+      z-index: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      padding: 24px;
+      transition: opacity 500ms ease, visibility 500ms ease;
+    }
+
+    #gate.unlocking {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .gate-card {
+      width: 100%;
+      max-width: 420px;
+      background: var(--surface);
+      border: 1px solid var(--border-2);
+      border-radius: var(--radius-xl);
+      padding: 44px 40px 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .gate-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-orchestrator);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--coral);
+      margin-bottom: 20px;
+    }
+
+    .gate-eyebrow-line {
+      width: 20px;
+      height: 1px;
+      background: var(--coral);
+      opacity: 0.6;
+    }
+
+    .gate-title {
+      font-family: var(--font-storyteller);
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin: 0 0 10px;
+    }
+
+    .gate-subtitle {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text-muted);
+      margin: 0 0 28px;
+    }
+
+    .gate-field-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+
+    .gate-input-wrap {
+      position: relative;
+      margin-bottom: 16px;
+    }
+
+    .gate-input {
+      width: 100%;
+      background: var(--surface-2);
+      border: 1px solid var(--border-2);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      font-family: var(--font-orchestrator);
+      font-size: 15px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 200ms;
+      -webkit-appearance: none;
+    }
+
+    .gate-input::placeholder { color: var(--text-dim); }
+
+    .gate-input:focus {
+      border-color: rgba(249, 111, 110, 0.5);
+      box-shadow: 0 0 0 3px rgba(249, 111, 110, 0.08);
+    }
+
+    .gate-input.error {
+      border-color: rgba(249, 111, 110, 0.7);
+      animation: shake 300ms ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25%       { transform: translateX(-6px); }
+      75%       { transform: translateX(6px); }
+    }
+
+    .gate-error {
+      font-size: 13px;
+      color: var(--coral);
+      margin-bottom: 14px;
+      min-height: 18px;
+      opacity: 0;
+      transition: opacity 200ms;
+    }
+
+    .gate-error.visible { opacity: 1; }
+
+    .gate-btn {
+      width: 100%;
+      background: var(--coral);
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      padding: 15px 24px;
+      font-family: var(--font-orchestrator);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      box-shadow: 0 8px 28px rgba(249, 111, 110, 0.28);
+      transition: transform 160ms ease, box-shadow 160ms ease, opacity 160ms ease;
+    }
+
+    .gate-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 36px rgba(249, 111, 110, 0.38);
+    }
+
+    .gate-btn:active { transform: translateY(0); }
+
+    .gate-footer {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text-dim);
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    /* ambient glow behind gate card */
+    .gate-glow {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(249,111,110,0.05) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       MAIN CONTENT — hidden until unlocked
+    ═══════════════════════════════════════════════════════════════ */
+    #main-content {
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: var(--transition-page);
+    }
+
+    #main-content.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .container {
+      width: min(calc(100% - 32px), var(--max));
+      margin: 0 auto;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       NAV
+    ═══════════════════════════════════════════════════════════════ */
+    .site-nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--header-height);
+      background: rgba(8, 8, 8, 0.9);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      width: 100%;
+    }
+
+    .nav-brand {
+      font-family: var(--font-strategist);
+      font-weight: 900;
+      font-size: 14px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--coral);
+      flex-shrink: 0;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       CONFIDENTIALITY BAR — subtle top-of-page treatment
+    ═══════════════════════════════════════════════════════════════ */
+    .confidential-bar {
+      background: rgba(249, 111, 110, 0.05);
+      border-bottom: 1px solid rgba(249, 111, 110, 0.12);
+      padding: 9px 0;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      margin-top: var(--header-height);
+    }
+
+    .confidential-bar span {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(249, 111, 110, 0.6);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       SHARED UTILITIES
+    ═══════════════════════════════════════════════════════════════ */
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-orchestrator);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--coral);
+    }
+
+    .eyebrow-line {
+      width: 24px; height: 1px;
+      background: var(--coral);
+      opacity: 0.6;
+    }
+
+    .section-divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border-2), transparent);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 26px;
+      border-radius: 999px;
+      font-family: var(--font-orchestrator);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      background: var(--coral);
+      color: #fff;
+      box-shadow: 0 8px 28px rgba(249, 111, 110, 0.28);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 12px 38px rgba(249, 111, 110, 0.40);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border-2);
+    }
+
+    .btn-ghost:hover {
+      color: var(--text);
+      border-color: rgba(255, 255, 255, 0.22);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       HERO
+    ═══════════════════════════════════════════════════════════════ */
+    .hero {
+      padding: 72px 0 96px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-ambient {
+      position: absolute;
+      top: -140px; right: -180px;
+      width: 680px; height: 680px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(249,111,110,0.055) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-ambient-2 {
+      position: absolute;
+      bottom: -80px; left: -120px;
+      width: 480px; height: 480px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(46,211,198,0.035) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 24px;
+      align-items: stretch;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-copy {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 46px 48px;
+      backdrop-filter: blur(12px);
+    }
+
+    .hero-copy .eyebrow { margin-bottom: 20px; }
+
+    .hero-h1 {
+      font-family: var(--font-storyteller);
+      font-size: clamp(38px, 5.5vw, 64px);
+      font-weight: 800;
+      line-height: 1.02;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin: 0 0 22px;
+    }
+
+    .hero-h1 em {
+      font-style: italic;
+      color: var(--coral);
+    }
+
+    .hero-lede {
+      font-size: 16.5px;
+      line-height: 1.68;
+      color: var(--text-muted);
+      max-width: 56ch;
+      margin: 0 0 30px;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+
+    .meta-pill {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 7px 14px;
+      border: 1px solid var(--border-2);
+      border-radius: 999px;
+      background: var(--surface-2);
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .microcopy {
+      margin-top: 14px;
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+
+    /* Hero aside card */
+    .hero-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 34px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 26px;
+      backdrop-filter: blur(12px);
+    }
+
+    .card-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 16px;
+    }
+
+    .checklist {
+      list-style: none;
+      margin: 0; padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+    }
+
+    .checklist li {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .checkmark {
+      color: var(--teal);
+      font-size: 11px;
+      font-weight: 700;
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .note-card {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+    }
+
+    .note-card p {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.65;
+      color: var(--text-muted);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       SECTIONS
+    ═══════════════════════════════════════════════════════════════ */
+    section {
+      padding: 80px 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .section-header {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 48px;
+      align-items: start;
+      margin-bottom: 52px;
+    }
+
+    .section-header h2 {
+      font-family: var(--font-storyteller);
+      font-size: clamp(28px, 3.8vw, 44px);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin: 0;
+    }
+
+    .section-header p {
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--text-muted);
+      margin: 0;
+      padding-top: 4px;
+    }
+
+    /* 3-col cards */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 26px;
+      transition: border-color 200ms, background 200ms;
+    }
+
+    .card:hover {
+      border-color: var(--border-2);
+      background: var(--surface-2);
+    }
+
+    .card-kicker {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--coral);
+      margin-bottom: 12px;
+    }
+
+    .card h3 {
+      font-family: var(--font-storyteller);
+      font-size: 19px;
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--text);
+      margin: 0 0 8px;
+    }
+
+    .card p {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    /* 2-col scope grid */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .bullets {
+      list-style: none;
+      margin: 0; padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+
+    .bullets li {
+      display: flex;
+      gap: 13px;
+      align-items: flex-start;
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .bullet-num {
+      font-family: var(--font-strategist);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--teal);
+      letter-spacing: 0.04em;
+      margin-top: 1px;
+      flex-shrink: 0;
+      opacity: 0.8;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       CTA BAND
+    ═══════════════════════════════════════════════════════════════ */
+    .cta-band { padding: 0; }
+
+    .cta-shell {
+      background: linear-gradient(140deg, #0e0e0e 0%, #111111 50%, #0b0b14 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 52px 56px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 48px;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-shell::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(249,111,110,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .cta-copy .eyebrow { margin-bottom: 18px; }
+
+    .cta-shell h2 {
+      font-family: var(--font-storyteller);
+      font-size: clamp(26px, 3.8vw, 44px);
+      font-weight: 800;
+      line-height: 1.06;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin: 0 0 14px;
+    }
+
+    .cta-shell p {
+      font-size: 15.5px;
+      line-height: 1.65;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    .cta-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .cta-actions .btn { justify-content: center; }
+
+    /* ═══════════════════════════════════════════════════════════════
+       FAQ
+    ═══════════════════════════════════════════════════════════════ */
+    .faq-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+    }
+
+    .faq-header {
+      padding: 34px 40px 26px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .faq-header h2 {
+      font-family: var(--font-storyteller);
+      font-size: clamp(24px, 3.2vw, 36px);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin: 0 0 8px;
+    }
+
+    .faq-header p {
+      font-size: 14.5px;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    .faq-item {
+      padding: 22px 40px;
+      border-bottom: 1px solid var(--border);
+      transition: background 180ms;
+    }
+
+    .faq-item:last-child { border-bottom: none; }
+    .faq-item:hover { background: var(--surface-2); }
+
+    .faq-q {
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .faq-a {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--text-muted);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       FORM EMBED SECTION
+    ═══════════════════════════════════════════════════════════════ */
+    .embed-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+    }
+
+    .embed-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 34px 40px 26px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .embed-head h3 {
+      font-family: var(--font-storyteller);
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin: 0 0 5px;
+    }
+
+    .embed-head p {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    .form-inner { padding: 28px; }
+
+    /* Fillout Fullscreen Overlay */
+    .fillout-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #ffffff;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    .fillout-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .overlay-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.05);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10001;
+      transition: background 0.2s ease;
+    }
+
+    .overlay-close:hover {
+      background: rgba(0,0,0,0.1);
+    }
+
+    /* Launch Card Style */
+    .launch-card {
+      background: linear-gradient(145deg, #121212 0%, #080808 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 64px 48px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .launch-card::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(249,111,110,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .launch-card .btn-primary {
+      padding: 18px 44px;
+      font-size: 16px;
+    }
+
+    /* ─── STRATEGY SIGNALS ─── */
+    .strategy-signals {
+      margin: 80px auto;
+      max-width: 1100px;
+    }
+
+    .signals-label {
+      font-size: 12px;
+      letter-spacing: 2px;
+      color: #F96F6E;
+      text-transform: uppercase;
+    }
+
+    .signals-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 24px;
+    }
+
+    .signal-card {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 28px;
+      border-radius: 14px;
+    }
+
+    .signal-card-header {
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:8px;
+    }
+
+    .signal-tag.new {
+      background:#F96F6E;
+      color:white;
+      font-size:11px;
+      padding:3px 8px;
+      border-radius:6px;
+      letter-spacing:.5px;
+    }
+
+    .signal-btn {
+      display:inline-block;
+      margin-top:10px;
+      color:#F96F6E;
+      font-weight:500;
+      text-decoration:none;
+    }
+
+    @media (max-width: 768px) {
+      .launch-card { padding: 48px 24px; }
+      .signals-cards { grid-template-columns: 1fr; }
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       FOOTER
+    ═══════════════════════════════════════════════════════════════ */
+    .site-footer {
+      padding: 36px 0 52px;
+      border-top: 1px solid var(--border);
+      position: relative;
+      z-index: 1;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .footer-brand {
+      font-family: var(--font-strategist);
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .footer-note {
+      font-size: 13px;
+      color: var(--text-dim);
+      text-align: center;
+    }
+
+    .footer-badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--teal);
+      opacity: 0.6;
+      border: 1px solid rgba(46,211,198,0.18);
+      padding: 4px 10px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════════════════════════════ */
+    @media (max-width: 980px) {
+      .hero-grid,
+      .grid-3,
+      .grid-2,
+      .section-header,
+      .cta-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-copy,
+      .hero-card { padding: 30px; }
+      .cta-shell  { padding: 36px 30px; }
+
+      .faq-header,
+      .faq-item,
+      .embed-head { padding-left: 26px; padding-right: 26px; }
+
+      .footer-inner { flex-direction: column; align-items: flex-start; gap: 10px; }
+
+      .nav-links { display: none; }
+    }
+
+    @media (max-width: 600px) {
+      .hero { padding: 56px 0 72px; }
+      .hero-copy { padding: 24px; }
+      section { padding: 56px 0; }
+      .gate-card { padding: 32px 24px 28px; }
+    }
+
+    @media (max-width: 480px) {
+      .nav-badge { display: none !important; }
+      .hero-h1 { font-size: 34px !important; }
+      .cta-row { flex-direction: column; }
+      .cta-row .btn { width: 100%; justify-content: center; }
+      .cta-actions .btn { width: 100%; }
+      .hero-copy, .hero-card, .cta-shell, .faq-header, .faq-item, .embed-head, .form-inner {
+        padding: 20px !important;
+      }
+      .section-header { margin-bottom: 32px; }
+      .hero-copy .eyebrow { margin-bottom: 12px; }
+      .hero-lede { margin-bottom: 20px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       PASSWORD GATE
+       Appears on top of everything until the correct password is entered.
+  ═══════════════════════════════════════════════════════════════ -->
+  <div id="gate" role="dialog" aria-modal="true" aria-label="Private access">
+    <div class="gate-glow" aria-hidden="true"></div>
+
+    <div class="gate-card">
+      <div class="gate-eyebrow">
+        <span class="gate-eyebrow-line" aria-hidden="true"></span>
+        Private intake
+      </div>
+
+      <!-- ─────────────────────────────────────────────────────────
+           CLIENT NAME — update "Nari" here if personalizing later
+      ───────────────────────────────────────────────────────────── -->
+      <h1 class="gate-title">You're in the<br>right place, Nari.</h1>
+      <p class="gate-subtitle">This page is private. Enter the access code I sent you to continue.</p>
+
+      <label class="gate-field-label" for="gate-password-input">Access code</label>
+      <div class="gate-input-wrap">
+        <input
+          type="password"
+          id="gate-password-input"
+          class="gate-input"
+          placeholder="Enter access code"
+          autocomplete="current-password"
+          aria-describedby="gate-error-msg"
+        />
+      </div>
+
+      <div id="gate-error-msg" class="gate-error" role="alert" aria-live="polite"></div>
+
+      <button class="gate-btn" id="gate-submit-btn" type="button">
+        Continue →
+      </button>
+
+      <div class="gate-footer">
+        This page is confidential and prepared specifically for you.<br>
+        Questions? Reach out to Luis directly.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       MAIN CONTENT
+       Hidden until password gate is cleared.
+  ═══════════════════════════════════════════════════════════════ -->
+  <div id="main-content" aria-hidden="true">
+
+    <!-- ── NAV ──────────────────────────────────────────────────── -->
+    <nav class="site-nav">
+      <div class="container">
+        <div class="nav-inner">
+          <div class="nav-brand">
+            <span class="nav-dot" aria-hidden="true"></span>
+            Luis — Strategy Intake
+          </div>
+          <div class="nav-links" role="list">
+            <a href="#why" role="listitem">Why this exists</a>
+            <a href="#covers" role="listitem">What this covers</a>
+            <a href="#faq" role="listitem">FAQ</a>
+          </div>
+          <span class="nav-badge">Private &amp; confidential</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ── CONFIDENTIALITY BAR ───────────────────────────────────── -->
+    <div class="confidential-bar" role="note">
+      <span>Confidential pre-session materials · Prepared for Nari Fateha · Not for distribution</span>
+    </div>
+
+    <!-- ── HERO ─────────────────────────────────────────────────── -->
+    <header class="hero">
+      <div class="hero-ambient" aria-hidden="true"></div>
+      <div class="hero-ambient-2" aria-hidden="true"></div>
+      <div class="container">
+        <div class="hero-grid">
+
+          <div class="hero-copy">
+            <div class="eyebrow">
+              <span class="eyebrow-line" aria-hidden="true"></span>
+              Pre-Strategy Intake
+            </div>
+            <h1 class="hero-h1">Skip the obvious.<br><em>Get to the smart strategy.</em></h1>
+            <p class="hero-lede">Before we meet, I want a sharper read on your brand, goals, audience, current performance, and growth potential. This helps me come in with stronger questions, better observations, and an actual point of view — not generic consultant wallpaper.</p>
+            <div class="meta-row">
+              <div class="meta-pill">⏱ Estimated time: 15–20 min</div>
+              <div class="meta-pill">📅 Best completed: 24 hours before our session</div>
+              <div class="meta-pill">📋 Format: simple questionnaire</div>
+            </div>
+            <div class="cta-row">
+              <a class="btn btn-primary" href="#start">Start intake →</a>
+              <a class="btn btn-ghost" href="#covers">See what's included</a>
+            </div>
+            <p class="microcopy">Don't worry if you don't know every number exactly — your best estimate is completely fine.</p>
+          </div>
+
+          <aside class="hero-card">
+            <div>
+              <div class="card-label">What this gives us</div>
+              <ul class="checklist">
+                <li><span class="checkmark" aria-hidden="true">✓</span><span>A clean read on what your brand is actually trying to become</span></li>
+                <li><span class="checkmark" aria-hidden="true">✓</span><span>Clarity on your audience, goals, positioning, and growth priorities</span></li>
+                <li><span class="checkmark" aria-hidden="true">✓</span><span>Context on content performance, capacity, and monetization readiness</span></li>
+                <li><span class="checkmark" aria-hidden="true">✓</span><span>A much sharper first session with less setup and more strategy</span></li>
+              </ul>
+            </div>
+            <div class="note-card">
+              <div class="card-label">Quick note</div>
+              <p>If you have recent Instagram Insights screenshots, links to your top-performing posts, or active offer pages — have those nearby. It's a huge shortcut and I'll know exactly what to look at before we even start.</p>
+            </div>
+          </aside>
+
+        </div>
+      </div>
+    </header>
+
+    <div class="section-divider" aria-hidden="true"></div>
+
+    <main>
+
+      <!-- ── WHY THIS EXISTS ───────────────────────────────────── -->
+      <section id="why">
+        <div class="container">
+          <div class="section-header">
+            <div>
+              <div class="eyebrow" style="margin-bottom:12px;">
+                <span class="eyebrow-line" aria-hidden="true"></span>
+                Why this exists
+              </div>
+              <h2>Less setup.<br>More strategy.</h2>
+            </div>
+            <p>I'd rather spend our time on what actually matters: what's working, what isn't, where the opportunities are, and how to build a smarter strategy around your life, your audience, and your goals. Not on basic backstory and 42 rounds of throat-clearing.</p>
+          </div>
+          <div class="grid-3">
+            <div class="card">
+              <div class="card-kicker">Clarity</div>
+              <h3>Less intro, more signal</h3>
+              <p>This intake surfaces the information that actually changes strategy — not random filler questions dressed up as depth.</p>
+            </div>
+            <div class="card">
+              <div class="card-kicker">Efficiency</div>
+              <h3>Smarter first session</h3>
+              <p>I come in already knowing the shape of the brand, the current pain points, and the likely opportunity areas.</p>
+            </div>
+            <div class="card">
+              <div class="card-kicker">Strategy</div>
+              <h3>Built for real decisions</h3>
+              <p>The questions clarify positioning, growth priorities, monetization direction, and what to actually tackle first.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="section-divider" aria-hidden="true"></div>
+
+      <!-- ── WHAT THIS COVERS ──────────────────────────────────── -->
+      <section id="covers">
+        <div class="container">
+          <div class="section-header">
+            <div>
+              <div class="eyebrow" style="margin-bottom:12px;">
+                <span class="eyebrow-line" aria-hidden="true"></span>
+                What this covers
+              </div>
+              <h2>The full<br>operating picture.</h2>
+            </div>
+            <p>Nothing dramatic. Just the stuff that gives me a real read on the brand so we can stop guessing and start diagnosing.</p>
+          </div>
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-kicker">Business + brand</div>
+              <ul class="bullets">
+                <li><span class="bullet-num">01</span><span>Brand basics and current stage</span></li>
+                <li><span class="bullet-num">02</span><span>Growth goals and success metrics</span></li>
+                <li><span class="bullet-num">03</span><span>Audience clarity and positioning</span></li>
+                <li><span class="bullet-num">04</span><span>Market and language expansion goals</span></li>
+              </ul>
+            </div>
+            <div class="card">
+              <div class="card-kicker">Execution + performance</div>
+              <ul class="bullets">
+                <li><span class="bullet-num">05</span><span>Content system and weekly capacity</span></li>
+                <li><span class="bullet-num">06</span><span>Monetization status and future offers</span></li>
+                <li><span class="bullet-num">07</span><span>Metrics, KPIs, and proof points</span></li>
+                <li><span class="bullet-num">08</span><span>What you want from our session</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="section-divider" aria-hidden="true"></div>
+
+      <!-- ── CTA BAND ──────────────────────────────────────────── -->
+      <section class="cta-band">
+        <div class="container">
+          <div class="cta-shell">
+            <div class="cta-copy">
+              <div class="eyebrow" style="color: var(--text-muted); margin-bottom: 18px;">
+                <span class="eyebrow-line" style="background: var(--text-dim);" aria-hidden="true"></span>
+                Quick, simple, actually useful
+              </div>
+              <h2>Short enough to finish.<br>Detailed enough to matter.</h2>
+              <p>This should take about <strong style="color: var(--text);">15–20 minutes</strong>. If you don't know an answer exactly, estimates are fine. If you have analytics screenshots or links to recent top-performing content, even better.</p>
+            </div>
+            <div class="cta-actions">
+              <a class="btn btn-primary" href="#start">Start intake →</a>
+              <a class="btn btn-ghost" href="#faq">View FAQs</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="section-divider" aria-hidden="true"></div>
+
+      <!-- ── FAQ ──────────────────────────────────────────────── -->
+      <section id="faq">
+        <div class="container">
+          <div class="faq-wrap">
+            <div class="faq-header">
+              <div class="eyebrow" style="margin-bottom: 10px;">
+                <span class="eyebrow-line" aria-hidden="true"></span>
+                FAQ
+              </div>
+              <h2>Quick answers,<br>no corporate fog machine.</h2>
+              <p style="margin-top:8px;">Things people usually wonder about before they start.</p>
+            </div>
+            <div class="faq-item">
+              <div class="faq-q">How long does this take?</div>
+              <div class="faq-a">Usually about 15–20 minutes. If you have recent metrics or post links handy, even faster.</div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-q">What if I don't know my exact numbers?</div>
+              <div class="faq-a">Totally fine. Best estimates are enough for now. We'll sharpen the picture together during the session — I just need a starting point, not a spreadsheet.</div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-q">Do I need to have a website or offers already?</div>
+              <div class="faq-a">No. This intake works whether you're already monetizing or just starting to think about what that could look like.</div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-q">What happens after I submit?</div>
+              <div class="faq-a">I'll review your answers before we meet so we can spend our time on strategy, priorities, and next moves. No recap of basics. We go straight to the interesting part.</div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-q">Is this page private?</div>
+              <div class="faq-a">Yes. This page is password-protected and prepared specifically for you. It's not publicly indexed or linked anywhere.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="section-divider" aria-hidden="true"></div>
+
+      <!-- ── PRELIMINARY STRATEGY SIGNALS ────────────────────────── -->
+      <section class="strategy-signals">
+
+        <div class="signals-header">
+            <span class="signals-label">EARLY SIGNALS</span>
+            <h2>Preliminary strategic read</h2>
+            <p>
+            Before reviewing internal analytics or intake responses, I conducted a quick
+            scan of publicly visible signals around the brand. These notes are early
+            hypotheses, not conclusions — something we can validate together during
+            our strategy session.
+            </p>
+        </div>
+
+        <div class="signals-cards">
+
+            <div class="signal-card">
+                <div class="signal-card-header">
+                    <span class="signal-tag new">NEW</span>
+                    <h3>Public Strategy Brief (English)</h3>
+                </div>
+                <p>
+                Early strategic read covering positioning, content architecture,
+                audience hypothesis, and monetization potential based on public signals.
+                </p>
+                <a href="/clients/nari/files/CSC_preliminary_strategy_EN.pdf" target="_blank" class="signal-btn">
+                    View brief →
+                </a>
+            </div>
+
+            <div class="signal-card">
+                <div class="signal-card-header">
+                    <span class="signal-tag new">NEW</span>
+                    <h3>Informe estratégico preliminar (Español)</h3>
+                </div>
+                <p>
+                La misma lectura estratégica preliminar disponible en español para
+                facilitar el contexto cultural y de audiencia.
+                </p>
+                <a href="/clients/nari/files/CSC_preliminary_strategy_ES.pdf" target="_blank" class="signal-btn">
+                    Abrir informe →
+                </a>
+            </div>
+
+        </div>
+
+      </section>
+
+      <!-- ── FILLOUT FORM EMBED ─────────────────────────────────── -->
+      <section id="start">
+        <div class="container">
+          <div class="embed-wrap">
+
+            <div class="embed-head">
+              <div>
+                <h3>Complete your intake below</h3>
+                <p>This gives me the context I need to make our first strategy session focused, useful, and tailored to where your brand actually is right now.</p>
+              </div>
+              <div class="meta-pill">Takes about 15–20 min</div>
+            </div>
+
+            <div class="form-inner">
+
+              <!-- Intake Launch Card -->
+              <div class="launch-card">
+                <div class="eyebrow" style="margin-bottom: 24px;">
+                  <span class="eyebrow-line"></span>
+                  Ready to begin
+                </div>
+                <h3 style="font-family: var(--font-storyteller); font-size: 32px; margin-bottom: 16px;">Open the Strategy Intake</h3>
+                <p style="color: var(--text-muted); max-width: 480px; margin: 0 auto 32px;">The intake will open in a fullscreen secure view. Your progress is saved automatically as you go.</p>
+                
+                <button class="btn btn-primary" id="launch-intake">
+                  Launch intake form →
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ── FOOTER ────────────────────────────────────────────────── -->
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-inner">
+          <div class="footer-brand">Luis Gilberto</div>
+          <div class="footer-note">Built to make the first strategy session sharper, faster, and a lot less surface-level.</div>
+          <div class="footer-badge">Private · v1 · 2026</div>
+        </div>
+      </div>
+    </footer>
+
+  </div><!-- /main-content -->
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       FILLOUT FULLSCREEN OVERLAY
+  ═══════════════════════════════════════════════════════════════ -->
+  <div id="fillout-overlay" class="fillout-overlay">
+    <button class="overlay-close" id="close-intake" aria-label="Close form">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div
+      style="width:100%;height:100%;"
+      data-zite-id="ixiqru8zmd"
+      data-zite-embed-type="standard"
+      data-zite-inherit-parameters
+    ></div>
+    <script src="https://server.fillout.com/embed/v2-zite/"></script>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       JAVASCRIPT — PASSWORD GATE LOGIC
+  ═══════════════════════════════════════════════════════════════ -->
+  <script>
+    (function () {
+
+      /* ─────────────────────────────────────────────────────────────
+         CONFIGURATION
+         Change the password here. Keep it simple but not obvious.
+         sessionStorage key: 'lg_intake_unlocked'
+      ───────────────────────────────────────────────────────────── */
+      var INTAKE_PASSWORD = 'NariLuis2026';     // ← CHANGE PASSWORD HERE
+
+      /* ─────────────────────────────────────────────────────────────
+         ELEMENTS
+      ───────────────────────────────────────────────────────────── */
+      var gate        = document.getElementById('gate');
+      var mainContent = document.getElementById('main-content');
+      var input       = document.getElementById('gate-password-input');
+      var submitBtn   = document.getElementById('gate-submit-btn');
+      var errorMsg    = document.getElementById('gate-error-msg');
+
+      /* ─────────────────────────────────────────────────────────────
+         CHECK SESSION — if already unlocked this session, skip gate
+      ───────────────────────────────────────────────────────────── */
+      if (sessionStorage.getItem('lg_intake_unlocked') === 'true') {
+        revealContent(false); // instant, no animation needed
+      } else {
+        // Focus the input for immediate keyboard entry
+        setTimeout(function () { input.focus(); }, 120);
+      }
+
+      /* ─────────────────────────────────────────────────────────────
+         UNLOCK FUNCTION
+      ───────────────────────────────────────────────────────────── */
+      function tryUnlock() {
+        var val = input.value.trim().toLowerCase();
+
+        if (val === INTAKE_PASSWORD.toLowerCase()) {
+          sessionStorage.setItem('lg_intake_unlocked', 'true');
+          revealContent(true);
+        } else {
+          showError('That code doesn\'t match. Double-check and try again.');
+          input.classList.add('error');
+          input.value = '';
+          setTimeout(function () {
+            input.classList.remove('error');
+            input.focus();
+          }, 500);
+        }
+      }
+
+      /* ─────────────────────────────────────────────────────────────
+         REVEAL MAIN CONTENT
+         animated=true triggers the fade transition
+      ───────────────────────────────────────────────────────────── */
+      function revealContent(animated) {
+        if (animated) {
+          gate.classList.add('unlocking');
+          setTimeout(function () {
+            gate.setAttribute('hidden', '');
+            showMain();
+          }, 520);
+        } else {
+          gate.setAttribute('hidden', '');
+          showMain();
+        }
+      }
+
+      function showMain() {
+        mainContent.removeAttribute('aria-hidden');
+        mainContent.classList.add('visible');
+        document.documentElement.style.overflow = ''; // restore scroll
+      }
+
+      /* ─────────────────────────────────────────────────────────────
+         ERROR MESSAGE
+      ───────────────────────────────────────────────────────────── */
+      function showError(msg) {
+        errorMsg.textContent = msg;
+        errorMsg.classList.add('visible');
+      }
+
+      function clearError() {
+        errorMsg.textContent = '';
+        errorMsg.classList.remove('visible');
+      }
+
+      /* ─────────────────────────────────────────────────────────────
+         EVENT LISTENERS
+      ───────────────────────────────────────────────────────────── */
+      submitBtn.addEventListener('click', tryUnlock);
+
+      input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') tryUnlock();
+      });
+
+      input.addEventListener('input', function () {
+        if (errorMsg.classList.contains('visible')) clearError();
+      });
+
+      /* ─── FILLOUT OVERLAY LOGIC ─── */
+      var overlay   = document.getElementById('fillout-overlay');
+      var launchBtn = document.getElementById('launch-intake');
+      var closeBtn  = document.getElementById('close-intake');
+
+      if (launchBtn && overlay) {
+        launchBtn.addEventListener('click', function () {
+          overlay.classList.add('active');
+          document.documentElement.style.overflow = 'hidden'; // Lock scroll
+        });
+      }
+
+      if (closeBtn && overlay) {
+        closeBtn.addEventListener('click', function () {
+          overlay.classList.remove('active');
+          // Only restore scroll if the gate is already gone
+          if (sessionStorage.getItem('lg_intake_unlocked') === 'true') {
+            document.documentElement.style.overflow = '';
+          }
+        });
+      }
+
+      /* Prevent page scroll while gate is visible */
+      if (!sessionStorage.getItem('lg_intake_unlocked')) {
+        document.documentElement.style.overflow = 'hidden';
+      }
+
+    })();
+  </script>
+
+</body>
+</html>
