@@ -585,12 +585,73 @@
       color: var(--text-muted);
     }
 
-    /* ─── Form embed ────────────────────────────────────────────── */
-    .embed-wrap {
-      background: var(--surface);
+    /* Fillout Fullscreen Overlay */
+    .fillout-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #ffffff;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    .fillout-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .overlay-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.05);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10001;
+      transition: background 0.2s ease;
+    }
+
+    .overlay-close:hover {
+      background: rgba(0,0,0,0.1);
+    }
+
+    /* Launch Card Style */
+    .launch-card {
+      background: linear-gradient(145deg, #121212 0%, #080808 100%);
       border: 1px solid var(--border);
       border-radius: var(--radius-xl);
+      padding: 64px 48px;
+      text-align: center;
+      position: relative;
       overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .launch-card::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(249,111,110,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .launch-card .btn-primary {
+      padding: 18px 44px;
+      font-size: 16px;
+    }
+
+    @media (max-width: 768px) {
+      .launch-card { padding: 48px 24px; }
     }
 
     .embed-head {
@@ -958,54 +1019,20 @@
           </div>
           <div class="form-inner">
 
-            <!-- ╔════════════════════════════════════════════════════╗
-                 ║  REPLACE THIS PLACEHOLDER WITH YOUR TALLY EMBED   ║
-                 ║                                                    ║
-                 ║  <iframe                                           ║
-                 ║    data-tally-src="https://tally.so/r/YOUR_ID     ║
-                 ║      ?source=website                               ║
-                 ║      &intake_version=v1_2026_03                   ║
-                 ║      &consultant=luis"                             ║
-                 ║    loading="lazy"                                  ║
-                 ║    width="100%"                                    ║
-                 ║    height="1200"                                   ║
-                 ║    frameborder="0"                                 ║
-                 ║    title="Pre-Strategy Intake">                    ║
-                 ║  </iframe>                                         ║
-                 ║  <script>                                          ║
-                 ║    var d=document,                                 ║
-                 ║    w="https://tally.so/widgets/embed.js",          ║
-                 ║    v=function(){                                   ║
-                 ║      if(typeof Tally!=="undefined")                ║
-                 ║        {Tally.loadEmbeds();}                       ║
-                 ║      else{d.querySelectorAll(                      ║
-                 ║        "iframe[data-tally-src]:not([src])")        ║
-                 ║        .forEach(function(e){                       ║
-                 ║          e.src=e.dataset.tallySrc;});              ║
-                 ║      }                                             ║
-                 ║    };                                              ║
-                 ║    if(typeof Tally!=="undefined"){v();}            ║
-                 ║    else if(d.querySelector(                        ║
-                 ║      'script[src="'+w+'"]')==null){                ║
-                 ║      var s=d.createElement("script");              ║
-                 ║      s.src=w;s.onload=v;s.onerror=v;              ║
-                 ║      d.body.appendChild(s);                        ║
-                 ║    }                                               ║
-                 ║  </script>                                         ║
-                 ╚════════════════════════════════════════════════════╝ -->
-
-            <div class="form-placeholder">
-              <div>
-                <strong>Tally form embed</strong>
-                <p>Drop your live Tally embed here or replace with an iframe using your hosted form URL.</p>
-                <div>
-                  Hidden fields to include:
-                  <span class="code-tag">source=website</span>
-                  <span class="code-tag">intake_version=v1_2026_03</span>
-                  <span class="code-tag">consultant=luis</span>
-                </div>
+            <!-- Intake Launch Card -->
+            <div class="launch-card">
+              <div class="eyebrow" style="margin-bottom: 24px;">
+                <span class="eyebrow-line"></span>
+                Ready to begin
               </div>
+              <h3 style="font-family: var(--font-storyteller); font-size: 32px; margin-bottom: 16px;">Open the Strategy Intake</h3>
+              <p style="color: var(--text-muted); max-width: 480px; margin: 0 auto 32px;">The intake will open in a fullscreen secure view. Your progress is saved automatically as you go.</p>
+              
+              <button class="btn btn-primary" id="launch-intake">
+                Launch intake form →
+              </button>
             </div>
+
           </div>
         </div>
       </div>
@@ -1023,6 +1050,45 @@
       </div>
     </div>
   </footer>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       FILLOUT FULLSCREEN OVERLAY
+  ═══════════════════════════════════════════════════════════════ -->
+  <div id="fillout-overlay" class="fillout-overlay">
+    <button class="overlay-close" id="close-intake" aria-label="Close form">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div
+      style="width:100%;height:100%;"
+      data-zite-id="ixiqru8zmd"
+      data-zite-embed-type="standard"
+      data-zite-inherit-parameters
+    ></div>
+    <script src="https://server.fillout.com/embed/v2-zite/"></script>
+  </div>
+
+  <script>
+    (function() {
+      /* ─── FILLOUT OVERLAY LOGIC ─── */
+      var overlay   = document.getElementById('fillout-overlay');
+      var launchBtn = document.getElementById('launch-intake');
+      var closeBtn  = document.getElementById('close-intake');
+
+      if (launchBtn && overlay) {
+        launchBtn.addEventListener('click', function () {
+          overlay.classList.add('active');
+          document.documentElement.style.overflow = 'hidden'; // Lock scroll
+        });
+      }
+
+      if (closeBtn && overlay) {
+        closeBtn.addEventListener('click', function () {
+          overlay.classList.remove('active');
+          document.documentElement.style.overflow = ''; // Unlock scroll
+        });
+      }
+    })();
+  </script>
 
 </body>
 </html>
