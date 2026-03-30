@@ -28,7 +28,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const isInsights = path.includes('/insights/');
     const isHub = window.location.pathname.toLowerCase().includes('/thehub');
 
-    // 2. LOGO ENGINE
+    // 2.5 PERSONA ROUTING ENGINE
+    let expLink = `${base}myexperience.html`;
+    let timelineLink = `${base}timeline.html`;
+    if (persona === 'coral' || persona === 'hire' || persona === 'assess') {
+        expLink = `${base}timeline.html`; // hire/assess persona routes Experience -> Timeline
+    }
+
+    // 3. LOGO ENGINE
     let logoHTML = '';
 
     if (isInsights) {
@@ -73,8 +80,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="nav-viewport-inner">
                         <div id="view-portfolio" class="view-content" style="display:none;">
                             <div class="grid-2">
-                                <a href="${base}myexperience.html" class="mega-link"><div class="mega-icon"><i class="fas fa-briefcase"></i></div><div class="mega-text"><b>Experience</b><span>15+ years of leadership</span></div></a>
-                                <a href="${base}timeline.html" class="mega-link"><div class="mega-icon"><i class="fas fa-stream"></i></div><div class="mega-text"><b>Timeline</b><span>Career pivots & eras</span></div></a>
+                                <a href="${expLink}" class="mega-link"><div class="mega-icon"><i class="fas fa-briefcase"></i></div><div class="mega-text"><b>Experience</b><span>15+ years of leadership</span></div></a>
+                                <a href="${timelineLink}" class="mega-link"><div class="mega-icon"><i class="fas fa-stream"></i></div><div class="mega-text"><b>Timeline</b><span>Career pivots & eras</span></div></a>
                                 <a href="${base}about.html" class="mega-link"><div class="mega-icon"><i class="fas fa-user"></i></div><div class="mega-text"><b>About Me</b><span>The human story</span></div></a>
                                 <a href="https://www.luis-gilberto.com/brand/" class="mega-link"><div class="mega-icon" style="color:var(--teal);"><i class="fas fa-fingerprint"></i></div><div class="mega-text"><b>Identity</b><span>Canonical guidelines</span></div></a>
                             </div>
@@ -406,10 +413,10 @@ document.addEventListener('DOMContentLoaded', function() {
             { label: 'How It Works', href: '/portal/story/',      active: path.includes('/portal/story') },
         ],
         portfolio: [
-            { label: 'Experience',     href: '/myexperience.html', active: path.includes('myexperience') },
-            { label: 'Timeline',       href: '/timeline.html',     active: path.includes('timeline') },
-            { label: 'About me',       href: '/about.html',        active: path.includes('about') },
-            { label: 'Brand identity', href: '/brand/',            active: path.includes('brand') },
+            { label: 'Experience',     href: expLink,      active: path.includes('myexperience') || (expLink.includes('timeline') && path.includes('timeline')) },
+            { label: 'Timeline',       href: timelineLink, active: path.includes('timeline') && !expLink.includes('timeline') },
+            { label: 'About me',       href: `${base}about.html`,        active: path.includes('about') },
+            { label: 'Brand identity', href: `${base}brand/`,            active: path.includes('brand') },
         ]
     };
 
