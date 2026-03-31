@@ -1,11 +1,12 @@
 /* =============================================================
-   🧬 v14.2 SOVEREIGN ENGINE · Luis Gilberto Ecosystem
+   🧬 v14.3 SOVEREIGN ENGINE · Luis Gilberto Ecosystem
    CHANNELS: Insights (Theme-Aware) | The Hub (Channel-Signature) | Portfolio (Persona-Aware)
-   CHANGES FROM v14.1:
-   - StrategyIQ removed from desktop Hub megamenu
-   - StrategyIQ removed from mobile drawer Hub links
-   - localStorage key corrected from lg_theme to lg-theme (3 occurrences)
+   CHANGES FROM v14.2:
+   - Hub megamenu restructured for canonical parity (3operating arms + orientation links)
+   - Version bump to v14.3
    ============================================================= */
+// nav-component.js — v14.3 — last updated: 2026-03-30 
+console.log('[nav-component] v14.3 loaded');
 document.addEventListener('DOMContentLoaded', function() {
 
     // 0. DEPENDENCY INJECTION: Force FontAwesome for icons
@@ -87,13 +88,31 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <a href="${base}insights/series/#reflections" class="mega-link"><div class="mega-icon"><i class="fas fa-feather"></i></div><div class="mega-text"><b>Reflections</b><span>Creativity, pace, and momentum</span></div></a>
                             </div>
                         </div>
-                        <div id="view-hub" class="view-content" style="display:none;">
-                            <div class="grid-2">
-                                <a href="${base}TheHub/index.html" class="mega-link"><div class="mega-icon"><i class="fas fa-home"></i></div><div class="mega-text"><b>Hub Home</b><span>System overview</span></div></a>
-                                <a href="${base}TheHub/advisory/index.html" class="mega-link"><div class="mega-icon"><i class="fas fa-compass"></i></div><div class="mega-text"><b>Advisory</b><span>Leadership alignment</span></div></a>
-                                <a href="${base}TheHub/studio.html" class="mega-link"><div class="mega-icon"><i class="fas fa-paint-brush"></i></div><div class="mega-text"><b>The Studio</b><span>Creative production</span></div></a>
-                            </div>
-                        </div>
+                        <div id="view-hub" class="view-content" style="display:none;"> 
+                          <div class="mega-panel-header"> 
+                            <span class="mega-panel-label">The Hub</span> 
+                            <p class="mega-panel-tagline">Three arms. One system.</p> 
+                          </div> 
+                          <div class="grid-3"> 
+                            <a href="${base}TheHub/advisory/index.html" class="mega-link"> 
+                              <div class="mega-icon"><i class="fas fa-compass"></i></div> 
+                              <div class="mega-text"><b>Advisory</b><span>Strategic leadership guidance. Alignment and clarity for complex decisions.</span></div> 
+                            </a> 
+                            <a href="${base}TheHub/studio.html" class="mega-link"> 
+                              <div class="mega-icon"><i class="fas fa-paint-brush"></i></div> 
+                              <div class="mega-text"><b>The Studio</b><span>High-fidelity execution. Ideas into tangible assets.</span></div> 
+                            </a> 
+                            <a href="https://portal.luis-gilberto.com/" target="_blank" rel="noopener" class="mega-link"> 
+                              <div class="mega-icon"><i class="fas fa-lock"></i></div> 
+                              <div class="mega-text"><b>The Portal ↗</b><span>Secure command center. Where strategy becomes operational.</span></div> 
+                            </a> 
+                          </div> 
+                          <div class="mega-divider"></div> 
+                          <div class="mega-orientation"> 
+                            <a href="${base}TheHub/index.html" class="mega-orientation-link">Hub Overview</a> 
+                            <a href="/portal/story/" class="mega-orientation-link">How It Works</a> 
+                          </div> 
+                        </div> 
                     </div>
                 </div>
             </nav>
@@ -178,6 +197,67 @@ document.addEventListener('DOMContentLoaded', function() {
         .badge-dot { width: 5px; height: 5px; border-radius: 50%; animation: status-breath 2.5s infinite ease-in-out; }
         @keyframes status-breath { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.8); } }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .grid-3 { 
+          display: grid; 
+          grid-template-columns: repeat(3, minmax(0, 1fr)); 
+          gap: 8px; 
+        } 
+  
+        .mega-panel-header { 
+          padding: 4px 4px 12px; 
+          border-bottom: 1px solid rgba(255,255,255,0.06); 
+          margin-bottom: 8px; 
+        } 
+  
+        .mega-panel-label { 
+          font-size: 0.6rem; 
+          font-weight: 700; 
+          text-transform: uppercase; 
+          letter-spacing: 0.14em; 
+          color: var(--teal, #4BADA8); 
+          display: block; 
+          margin-bottom: 4px; 
+        } 
+  
+        .mega-panel-tagline { 
+          font-size: 0.85rem; 
+          font-weight: 600; 
+          color: rgba(255,255,255,0.85); 
+          margin: 0; 
+        } 
+  
+        .mega-divider { 
+          height: 1px; 
+          background: rgba(255,255,255,0.08); 
+          margin: 8px 0; 
+        } 
+  
+        .mega-orientation { 
+          display: flex; 
+          gap: 1.5rem; 
+          padding: 4px 4px 0; 
+          flex-wrap: wrap; 
+        } 
+  
+        .mega-orientation-link { 
+          font-size: 0.65rem; 
+          font-weight: 500; 
+          text-transform: uppercase; 
+          letter-spacing: 0.12em; 
+          color: rgba(255,255,255,0.3); 
+          text-decoration: none; 
+          transition: color 0.2s; 
+        } 
+  
+        .mega-orientation-link:hover { 
+          color: var(--teal, #4BADA8); 
+        } 
+  
+        .mega-orientation-link:focus-visible { 
+          outline: 1px solid var(--teal, #4BADA8); 
+          outline-offset: 2px; 
+          color: var(--teal, #4BADA8); 
+        } 
 
         .section-eyebrow, .pillars-eyebrow { font-family: 'Big Shoulders Display', sans-serif !important; font-weight: 900 !important; font-size: 14px !important; letter-spacing: 0.15em !important; text-transform: uppercase !important; }
         [data-theme="light"] .section-eyebrow, [data-theme="light"] .pillars-eyebrow { color: #050505 !important; }
