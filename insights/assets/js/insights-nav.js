@@ -1,3 +1,5 @@
+// insights-nav.js — v2.2 — last updated: 2026-03-30 
+console.log('[insights-nav] v2.2 loaded'); 
 /**
  * insights-nav.js
  * Canonical navigation component for the Insights channel.
@@ -167,6 +169,46 @@
     /* Panel grids */
     .ins-panel-grid      { display: grid; grid-template-columns: 1fr;     gap: 4px; padding: 4px; }
     .ins-panel-grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; }
+
+    .ins-panel-grid-3col { 
+      display: grid; 
+      grid-template-columns: repeat(3, minmax(0, 1fr)); 
+      gap: 0.5rem; 
+    } 
+  
+    .ins-panel-divider { 
+      height: 1px; 
+      background: rgba(255,255,255,0.08); 
+      margin: 0.75rem 0; 
+    } 
+  
+    .ins-panel-orientation { 
+      display: flex; 
+      gap: 1.5rem; 
+      padding: 0 0.25rem; 
+      flex-wrap: wrap; 
+    } 
+  
+    .ins-orientation-link { 
+      font-family: var(--font-orchestrator, 'Inter', sans-serif); 
+      font-size: 0.65rem; 
+      font-weight: 500; 
+      text-transform: uppercase; 
+      letter-spacing: 0.12em; 
+      color: var(--text-muted, rgba(255,255,255,0.3)); 
+      text-decoration: none; 
+      transition: color 0.2s; 
+    } 
+  
+    .ins-orientation-link:hover { 
+      color: var(--teal, #4BADA8); 
+    } 
+  
+    .ins-orientation-link:focus-visible { 
+      outline: 1px solid var(--teal, #4BADA8); 
+      outline-offset: 2px; 
+      color: var(--teal, #4BADA8); 
+    } 
 
     /* Panel item */
     .ins-panel-item {
@@ -520,26 +562,25 @@
                   <p class="ins-panel-header-label">The Hub</p>
                   <p class="ins-panel-header-title">Three arms. One system.</p>
                 </div>
-                <div class="ins-panel-grid-2col" style="grid-template-columns:1fr 1fr;">
-
-                  <a href="/TheHub/" class="ins-panel-item">
-                    <div class="ins-item-icon hub-home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-                    <div class="ins-item-text"><p class="ins-item-title">Hub Home</p><p class="ins-item-desc">Overview of the full system</p><span class="ins-item-role">The Hub</span></div>
-                  </a>
-
-                  <a href="/TheHub/advisory/" class="ins-panel-item">
-                    <div class="ins-item-icon hub-advisory"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-                    <div class="ins-item-text"><p class="ins-item-title">Advisory</p><p class="ins-item-desc">Direct access to Luis. leadership alignment and clarity</p><span class="ins-item-role">Partnership</span></div>
-                  </a>
-
-                  <a href="/TheHub/studio.html" class="ins-panel-item">
-                    <div class="ins-item-icon hub-studio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-                    <div class="ins-item-text"><p class="ins-item-title">The Studio</p><p class="ins-item-desc">High-fidelity execution. ideas into tangible assets</p><span class="ins-item-role">Production</span></div>
-                  </a>
-
-                  <a href="https://portal.luis-gilberto.com/" target="_blank" rel="noopener" class="ins-panel-item"><div class="ins-item-icon hub-portal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><div class="ins-item-text"><p class="ins-item-title">The Portal ↗</p><p class="ins-item-desc">Secure command center. where client work lives</p><span class="ins-item-role">Client Access</span></div></a><a href="/portal/story/" class="ins-panel-item"><div class="ins-item-icon hub-portal-landing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div><div class="ins-item-text"><p class="ins-item-title">How It Works</p><p class="ins-item-desc">The human story behind the system and how it runs</p><span class="ins-item-role">The Story</span></div></a>
-
-                </div>
+                <div class="ins-panel-grid-3col"> 
+   <a href="/TheHub/advisory/" class="ins-panel-item"> 
+     <div class="ins-item-icon hub-advisory"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div> 
+     <div class="ins-item-text"><p class="ins-item-title">Advisory</p><p class="ins-item-desc">Strategic leadership guidance. Alignment and clarity for complex decisions.</p><span class="ins-item-role">Partnership</span></div> 
+   </a> 
+   <a href="/TheHub/studio.html" class="ins-panel-item"> 
+     <div class="ins-item-icon hub-studio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div> 
+     <div class="ins-item-text"><p class="ins-item-title">The Studio</p><p class="ins-item-desc">High-fidelity execution. Ideas into tangible assets</p><span class="ins-item-role">Production</span></div> 
+   </a> 
+   <a href="https://portal.luis-gilberto.com/" target="_blank" rel="noopener" class="ins-panel-item"> 
+     <div class="ins-item-icon hub-portal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div> 
+     <div class="ins-item-text"><p class="ins-item-title">The Portal ↗</p><p class="ins-item-desc">Secure command center. Where strategy becomes operational.</p><span class="ins-item-role">Client Access</span></div> 
+   </a> 
+ </div> 
+ <div class="ins-panel-divider"></div> 
+ <div class="ins-panel-orientation"> 
+   <a href="/TheHub/" class="ins-orientation-link">Hub Overview</a> 
+   <a href="/portal/story/" class="ins-orientation-link">How It Works</a> 
+ </div> 
                 <div class="ins-panel-footer">
                   <span class="ins-panel-footer-text">Intelligence over intuition</span>
                   <a href="/TheHub/" class="ins-panel-footer-link">Explore The Hub ${arrow}</a>
