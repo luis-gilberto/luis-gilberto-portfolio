@@ -103,9 +103,11 @@
 
     /* Dropdown viewport */
     .wn-viewport {
-      position: absolute; top: calc(100% + 8px);
+      position: absolute;
+      top: 100%;
       left: 0;
-      transform: none;
+      right: 0;
+      width: 100%;
       pointer-events: none; z-index: 600;
     }
     .wn-viewport-inner {
@@ -701,14 +703,21 @@
     document.querySelectorAll('.wn-panel').forEach(p => p.classList.remove('wn-active'));
     panel.classList.add('wn-active');
 
-    // Position viewport under trigger — anchor to trigger left edge 
+    // Viewport spans full header width — position inner content under trigger 
     const tRect     = trigger.getBoundingClientRect(); 
     const nRect     = desktopNav.getBoundingClientRect(); 
-    const panelWidth = viewportEl.offsetWidth || 640; 
-    let panelLeft   = tRect.left - nRect.left; 
-    const maxLeft   = nRect.width - panelWidth; 
-    panelLeft       = Math.min(Math.max(0, panelLeft), maxLeft); 
-    viewportEl.style.left = panelLeft + 'px'; 
+    const inner     = viewportEl.querySelector('.wn-viewport-inner'); 
+    if (inner) { 
+      const panelWidth = inner.offsetWidth || 640; 
+      let panelLeft = tRect.left - nRect.left + (tRect.width / 2) - (panelWidth / 2); 
+      const maxLeft = nRect.width - panelWidth; 
+      panelLeft = Math.min(Math.max(0, panelLeft), maxLeft); 
+      inner.style.position = 'absolute'; 
+      inner.style.left = panelLeft + 'px'; 
+      inner.style.transform = 'none'; 
+    } 
+    viewportEl.style.left = '0'; 
+    viewportEl.style.right = '0'; 
     viewportEl.style.transform = 'none'; 
 
     viewportInner.classList.add('wn-open');
