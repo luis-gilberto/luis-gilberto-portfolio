@@ -30,7 +30,7 @@
     }
 
     #work-nav-header {
-      position: sticky;
+      position: fixed;
       top: 0;
       left: 0;
       z-index: 500;
@@ -104,6 +104,8 @@
     /* Dropdown viewport */
     .wn-viewport {
       position: absolute; top: calc(100% + 8px);
+      left: 0;
+      transform: none;
       pointer-events: none; z-index: 600;
     }
     .wn-viewport-inner {
@@ -707,6 +709,7 @@
     const maxLeft   = nRect.width - panelWidth; 
     panelLeft       = Math.min(Math.max(0, panelLeft), maxLeft); 
     viewportEl.style.left = panelLeft + 'px'; 
+    viewportEl.style.transform = 'none'; 
 
     viewportInner.classList.add('wn-open');
     triggers.forEach(t => t.setAttribute('aria-expanded', 'false'));
