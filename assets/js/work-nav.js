@@ -691,6 +691,7 @@
   const viewportEl    = document.getElementById('wn-viewport');
   const viewportInner = document.getElementById('wn-viewport-inner');
   const desktopNav    = document.getElementById('wn-desktop-nav');
+  const headerEl      = document.getElementById('work-nav-header');
   const triggers      = document.querySelectorAll('[data-wn-trigger]');
   let   activeId = null, closeTimer = null;
 
@@ -703,22 +704,18 @@
     document.querySelectorAll('.wn-panel').forEach(p => p.classList.remove('wn-active'));
     panel.classList.add('wn-active');
 
-    // Viewport spans full header width — position inner content under trigger 
-    const tRect     = trigger.getBoundingClientRect(); 
-    const nRect     = desktopNav.getBoundingClientRect(); 
-    const inner     = viewportEl.querySelector('.wn-viewport-inner'); 
+    const tRect      = trigger.getBoundingClientRect(); 
+    const hRect      = headerEl.getBoundingClientRect(); 
+    const inner      = viewportEl.querySelector('.wn-viewport-inner'); 
     if (inner) { 
       const panelWidth = inner.offsetWidth || 640; 
-      let panelLeft = tRect.left - nRect.left + (tRect.width / 2) - (panelWidth / 2); 
-      const maxLeft = nRect.width - panelWidth; 
-      panelLeft = Math.min(Math.max(0, panelLeft), maxLeft); 
-      inner.style.position = 'absolute'; 
-      inner.style.left = panelLeft + 'px'; 
+      const triggerMid = tRect.left - hRect.left + tRect.width / 2; 
+      let panelLeft    = triggerMid - panelWidth / 2; 
+      panelLeft        = Math.min(Math.max(0, panelLeft), hRect.width - panelWidth); 
+      inner.style.position  = 'absolute'; 
+      inner.style.left      = panelLeft + 'px'; 
       inner.style.transform = 'none'; 
     } 
-    viewportEl.style.left = '0'; 
-    viewportEl.style.right = '0'; 
-    viewportEl.style.transform = 'none'; 
 
     viewportInner.classList.add('wn-open');
     triggers.forEach(t => t.setAttribute('aria-expanded', 'false'));
