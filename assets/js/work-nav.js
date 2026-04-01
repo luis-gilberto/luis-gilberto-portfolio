@@ -103,8 +103,8 @@
 
     /* Dropdown viewport */
     .wn-viewport {
-      position: absolute; left: 50%; top: calc(100% + 8px);
-      transform: translateX(-50%); pointer-events: none; z-index: 600;
+      position: absolute; top: calc(100% + 8px);
+      pointer-events: none; z-index: 600;
     }
     .wn-viewport-inner {
       background: #1A1714;
@@ -699,11 +699,14 @@
     document.querySelectorAll('.wn-panel').forEach(p => p.classList.remove('wn-active'));
     panel.classList.add('wn-active');
 
-    // Position viewport under trigger
-    const tRect  = trigger.getBoundingClientRect();
-    const nRect  = desktopNav.getBoundingClientRect();
-    const mid    = tRect.left + tRect.width / 2 - nRect.left;
-    viewportEl.style.left = mid + 'px';
+    // Position viewport under trigger — anchor to trigger left edge 
+    const tRect     = trigger.getBoundingClientRect(); 
+    const nRect     = desktopNav.getBoundingClientRect(); 
+    const panelWidth = viewportEl.offsetWidth || 640; 
+    let panelLeft   = tRect.left - nRect.left; 
+    const maxLeft   = nRect.width - panelWidth; 
+    panelLeft       = Math.min(Math.max(0, panelLeft), maxLeft); 
+    viewportEl.style.left = panelLeft + 'px'; 
 
     viewportInner.classList.add('wn-open');
     triggers.forEach(t => t.setAttribute('aria-expanded', 'false'));
