@@ -27,14 +27,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const path     = window.location.pathname;
 
     const isInsights = path.includes('/insights/');
-    const isHub = window.location.pathname.toLowerCase().includes('/thehub');
+    const isHub = window.location.pathname.toLowerCase().includes('/thehub') || window.location.pathname.toLowerCase().includes('/portal/story/');
 
     // 3. LOGO ENGINE
     let logoHTML = '';
 
     if (isInsights) {
-        const insLogo = (theme === 'dark') ? 'insights_logo_white_desktop.webp' : 'insights_logo_black_desktop.webp';
-        logoHTML = `<img id="snav-logo-desktop" src="/insights/assets/images/${insLogo}" alt="Insights" height="48" style="height:48px;width:auto;">`;
+        // Insights logo is always white because header is always dark
+        logoHTML = `<img id="snav-logo-desktop" src="/insights/assets/images/insights_logo_white_desktop.webp" alt="Insights" height="48" style="height:48px;width:auto;">`;
     } else if (isHub) {
         const hubMarkMap = { hire: 'coral-3d_logomark.webp', partner: 'teal-3d_logomark.webp', explore: 'white-3d_logomark.webp' };
         const hubMark = hubMarkMap[persona] || 'white-3d_logomark.webp';
@@ -46,14 +46,13 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>`;
     } else {
         const portMapDark  = { hire: 'coral_lg-portfolio-logo.webp', partner: 'LG_Portfolio_logo_teal.webp', explore: 'white_lg-portfolio-logo.webp' };
-        const portMapLight = { hire: 'coral_lg-portfolio-logo_black.webp', partner: 'teal_lg-portfolio-logo_black.webp', explore: 'black_lg-portfolio-logo_black.webp' };
-        const portLogo = (theme === 'light' ? portMapLight : portMapDark)[persona] || (theme === 'light' ? 'black_lg-portfolio-logo_black.webp' : 'white_lg-portfolio-logo.webp');
+        const portLogo = portMapDark[persona] || 'white_lg-portfolio-logo.webp';
         logoHTML = `<img id="snav-logo-desktop" src="/assets/images/${portLogo}" alt="Luis Gilberto Portfolio" height="48" style="height:48px;width:auto;">`;
     }
 
     // 3. GENERATE MASTER HTML
     navHook.innerHTML = `
-    <header class="site-header" style="border-bottom:1px solid rgba(255,255,255,0.08);height:80px;display:flex;align-items:center;position:fixed;top:0;width:100%;z-index:10000;">
+    <header class="${isHub ? 'site-header site-header--hub' : 'site-header'}" style="border-bottom:1px solid rgba(255,255,255,0.08);height:80px;display:flex;align-items:center;position:fixed;top:0;width:100%;z-index:10000;">
         <div class="nav-container" style="max-width:1400px;margin:0 auto;width:100%;padding:0 48px;display:flex;justify-content:space-between;align-items:center;">
 
             <a href="/" style="text-decoration:none;" class="desktop-logo">${logoHTML}</a>
@@ -174,15 +173,13 @@ document.addEventListener('DOMContentLoaded', function() {
         [data-theme="light"] .site-footer, [data-theme="light"] .site-footer * { color: #FFFFFF !important; opacity: 1 !important; }
         [data-theme="light"] .site-footer { background: #050505 !important; }
 
-        .site-header { background: #F4F1ED !important; }
-        [data-theme="dark"] .site-header { background: #080808 !important; }
+        .site-header { background: #080808 !important; }
 
         .nav-link { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.6) !important; background: none; border: none; cursor: pointer; padding: 8px 16px; transition: 0.2s; display: flex; align-items: center; gap: 6px; }
         .nav-link:hover, .nav-link.active { color: #FFF !important; background: rgba(255,255,255,0.05); border-radius: 6px; }
-        [data-theme="light"] .nav-link { color: rgba(17,17,17,0.65) !important; }
-        [data-theme="light"] .nav-link:hover, [data-theme="light"] .nav-link.active { color: #111111 !important; }
-        [data-theme="light"] #masterThemeToggle { border-color: rgba(17,17,17,0.25) !important; color: #111 !important; background: rgba(17,17,17,0.06) !important; }
-        [data-theme="light"] #drawerThemeToggle { border-color: rgba(17,17,17,0.25) !important; color: #111 !important; background: rgba(17,17,17,0.06) !important; }
+        
+        #masterThemeToggle { border-color: rgba(255,255,255,0.15) !important; color: #FFF !important; background: none !important; }
+        #drawerThemeToggle { border-color: rgba(255,255,255,0.15) !important; color: #FFF !important; background: none !important; }
 
         .nav-viewport { position: absolute; top: 80px; left: 50%; transform: translateX(-50%); display: none; z-index: 10001; padding-top: 10px; }
         .nav-viewport-inner { background: #111; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; box-shadow: 0 40px 80px rgba(0,0,0,0.6); width: 580px; padding: 12px; }
@@ -272,13 +269,22 @@ document.addEventListener('DOMContentLoaded', function() {
         .mobile-menu-btn.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
         .mobile-menu-btn.open span:nth-child(2) { opacity: 0; }
         .mobile-menu-btn.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
-        [data-theme="light"] .mobile-menu-btn span { background: rgba(17,17,17,0.7); }
+        [data-theme="light"] .mobile-menu-btn span,
+        [data-theme="light"] .snav-toggle span, 
+        [data-theme="light"] .nav-hamburger span, 
+        [data-theme="light"] .nav-toggle span { 
+          background: #FFF !important; 
+        } 
 
         .desktop-badge-anchor { display: flex; }
 
         /* ── PORTAL LOCKUP THEME SWAP ── */
         [data-theme="light"] .portal-logo-dark  { display: none !important; }
         [data-theme="light"] .portal-logo-light { display: block !important; }
+
+        /* Hub pages: nav is always dark — lock Portal logo to dark variant */ 
+        html[data-theme="light"] .site-header--hub .portal-logo-dark  { display: block !important; } 
+        html[data-theme="light"] .site-header--hub .portal-logo-light { display: none !important; } 
         [data-theme="dark"]  .portal-logo-light { display: none !important; }
         [data-theme="dark"]  .portal-logo-dark  { display: block !important; }
 
@@ -352,6 +358,21 @@ document.addEventListener('DOMContentLoaded', function() {
     const overlay     = document.getElementById('drawer-overlay');
     const drawerTheme = document.getElementById('drawerThemeToggle');
 
+    // 5.5 INITIALIZE MOBILE LOGOMARK
+    const markImg = document.getElementById('snav-logo-mobile');
+    if (markImg) {
+        const mk = (persona === 'coral' || persona === 'hire') ? 'hire' : (persona === 'teal' || persona === 'partner') ? 'partner' : 'explore';
+        if (isInsights) {
+            markImg.src = `/insights/assets/images/white-3d_logomark.webp`;
+        } else if (isHub) {
+            const hubMarkMap = { hire: 'coral-3d_logomark.webp', partner: 'teal-3d_logomark.webp', explore: 'white-3d_logomark.webp' };
+            markImg.src = `/assets/images/${hubMarkMap[mk]}`;
+        } else {
+            const portMarkDark = { hire: 'coral-3d_logomark.webp', partner: 'teal-3d_logomark.webp', explore: 'white-3d_logomark.webp' };
+            markImg.src = `/assets/images/${portMarkDark[mk]}`;
+        }
+    }
+
     // 6. THEME BRAIN
     const toggle = document.getElementById('masterThemeToggle');
 
@@ -366,50 +387,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (toggle) toggle.innerHTML = icon;
         if (drawerTheme) drawerTheme.innerHTML = icon;
 
-        // Insights logo swap
-        if (isInsights) {
-            const logo = document.querySelector('.desktop-logo img');
-            if (logo) {
-                const insLogo = (currentTheme === 'dark') ? 'insights_logo_white_desktop.webp' : 'insights_logo_black_desktop.webp';
-                logo.src = `/insights/assets/images/${insLogo}`;
-            }
-        }
-
-        // The Hub logo text color swap
-        if (isHub) {
-            const hubText = document.querySelector('.desktop-logo span');
-            const hubDivider = document.querySelector('.desktop-logo div[style*="width:1px"]');
-            if (hubText) hubText.style.color = (currentTheme === 'dark') ? '#FFF' : '#000';
-            if (hubDivider) hubDivider.style.background = (currentTheme === 'dark') ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)';
-        }
-
-        // Portfolio logo swap
-        if (!isInsights && !isHub) {
-            const logo = document.querySelector('.desktop-logo img');
-            if (logo) {
-                const darkMap  = { hire: 'coral_lg-portfolio-logo.webp', partner: 'LG_Portfolio_logo_teal.webp', explore: 'white_lg-portfolio-logo.webp' };
-                const lightMap = { hire: 'coral_lg-portfolio-logo_black.webp', partner: 'teal_lg-portfolio-logo_black.webp', explore: 'black_lg-portfolio-logo_black.webp' };
-                const mk = (persona === 'coral' || persona === 'hire') ? 'hire' : (persona === 'teal' || persona === 'partner') ? 'partner' : 'explore';
-                logo.src = `/assets/images/${(currentTheme === 'light' ? lightMap : darkMap)[mk]}`;
-            }
-        }
-
-        // Mobile logomark swap
-        const markImg = document.getElementById('snav-logo-mobile');
-        if (markImg) {
-            if (isInsights) {
-                markImg.src = `/insights/assets/images/${currentTheme === 'dark' ? 'white' : 'black'}-3d_logomark.webp`;
-            } else if (isHub) {
-                const hubMarkMap = { hire: 'coral-3d_logomark.webp', partner: 'teal-3d_logomark.webp', explore: 'white-3d_logomark.webp' };
-                const mk = (persona === 'coral' || persona === 'hire') ? 'hire' : (persona === 'teal' || persona === 'partner') ? 'partner' : 'explore';
-                markImg.src = `/assets/images/${hubMarkMap[mk]}`;
-            } else {
-                const portMarkDark  = { hire: 'coral-3d_logomark.webp', partner: 'teal-3d_logomark.webp', explore: 'white-3d_logomark.webp' };
-                const portMarkLight = { hire: 'coral-3d_logomark.webp', partner: 'teal-3d_logomark.webp', explore: 'black-3d_logomark.webp' };
-                const mk = (persona === 'coral' || persona === 'hire') ? 'hire' : (persona === 'teal' || persona === 'partner') ? 'partner' : 'explore';
-                markImg.src = `/assets/images/${(currentTheme === 'light' ? portMarkLight : portMarkDark)[mk]}`;
-            }
-        }
+        // Logos are now static because the header is always dark
+        // Swapping is only needed for the Portal logo which is in the nav-links
     };
 
     if (toggle) {

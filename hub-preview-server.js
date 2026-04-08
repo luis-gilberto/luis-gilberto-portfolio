@@ -114,9 +114,11 @@ const server = http.createServer((req, res) => {
         'X-Env': NODE_ENV,
       };
 
-      // Basic caching: long cache for assets, no-cache for HTML
-      if (ext === '.html') {
-        headers['Cache-Control'] = 'no-cache';
+      // Basic caching: no-cache for development, long cache for production assets
+      if (ext === '.html' || NODE_ENV === 'development') {
+        headers['Cache-Control'] = 'no-cache, no-store, must-revalidate';
+        headers['Pragma'] = 'no-cache';
+        headers['Expires'] = '0';
       } else {
         headers['Cache-Control'] = 'public, max-age=31536000, immutable';
       }

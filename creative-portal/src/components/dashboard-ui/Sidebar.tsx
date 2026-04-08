@@ -18,7 +18,7 @@ const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard', role: 'CLIENT' },
   { icon: LayoutDashboard, label: 'Dashboard', path: '/admin', role: 'ADMIN' },
   { icon: Radio, label: 'Mission control', path: '/admin/mission-control', role: 'ADMIN_ONLY' }, 
-  { icon: Rocket, label: 'Strategy engine', path: '/strategy-iq' },
+  { icon: Rocket, label: 'Strategy engine', path: '/strategy-iq-engine' },
   { icon: Briefcase, label: 'The war room', path: '/war-room' }, 
   { icon: ShieldCheck, label: 'The vault', path: '/vault' },
   { icon: FolderKanban, label: 'Projects', path: '/admin/projects' },
