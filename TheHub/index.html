@@ -1592,6 +1592,64 @@
       opacity: 1; 
       animation: powerFlow 0.7s ease-in forwards; 
     }
+
+    /* ── STRATEGYIQ INITIALIZATION OVERLAY ── */
+    #strategyiq-overlay { 
+      position: fixed; 
+      inset: 0; 
+      background: rgba(14,12,10,0.92); 
+      backdrop-filter: blur(3px); 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      z-index: 9999; 
+      opacity: 0; 
+      pointer-events: none; 
+      transition: opacity 0.35s ease; 
+    } 
+    
+    .strategyiq-active #strategyiq-overlay { 
+      opacity: 1; 
+      pointer-events: all; 
+    } 
+    
+    .strategyiq-overlay-content { 
+      text-align: center; 
+    } 
+    
+    .strategyiq-overlay-label { 
+      font-family: var(--font-display); 
+      font-size: 20px; 
+      letter-spacing: 0.08em; 
+      text-transform: uppercase; 
+      color: var(--teal); 
+      margin-bottom: 10px; 
+    } 
+    
+    .strategyiq-overlay-sub { 
+      font-family: var(--font-ui); 
+      font-size: 13px; 
+      color: var(--text-muted); 
+    }
+
+    /* ── STRATEGYIQ PULSE ── */
+    .strategyiq-pulse #ht-foundation-group { 
+      filter: drop-shadow(0 0 10px rgba(75,173,168,0.35)); 
+    } 
+    
+    .strategyiq-pulse #ht-foundation-glow { 
+      fill: rgba(75,173,168,0.16); 
+      transition: fill 0.25s ease; 
+    } 
+    
+    .strategyiq-pulse #foundationRect { 
+      stroke: rgba(75,173,168,0.95); 
+      transition: stroke 0.25s ease; 
+    } 
+    
+    .strategyiq-pulse #ht-scan-line { 
+      opacity: 0.8 !important; 
+    }
   </style>
 </head>
 <body>
@@ -1751,7 +1809,7 @@
         
         <!-- FOUNDATION SLAB --> 
         <g id="ht-foundation-group"> 
-          <rect x="52" y="298" width="376" height="42" rx="3" 
+          <rect id="foundationRect" x="52" y="298" width="376" height="42" rx="3" 
                 fill="url(#foundationGrad)" stroke="rgba(75,173,168,0.60)" stroke-width="1" 
                 filter="url(#glowTeal)"/> 
           <rect id="ht-foundation-glow" x="52" y="298" width="376" height="42" rx="3" 
@@ -1888,7 +1946,7 @@
             <br><br> 
             <strong>This does two things immediately:</strong> it filters whether the engagement is a fit, and it feeds directly into the StrategyIQ diagnostic. 
           </p> 
-          <a href="/TheHub/intake/" class="ht-flow-step-tag ht-flow-step-tag--coral" style="text-decoration:none;"> 
+          <a href="/TheHub/intake/" class="ht-flow-step-tag ht-flow-step-tag--coral js-start-intake" style="text-decoration:none;"> 
             Start the intake 
             <svg width="10" height="10" viewBox="0 0 16 16" fill="none" style="margin-left:4px;vertical-align:middle;"> 
               <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/> 
@@ -2258,7 +2316,7 @@
     <h2 class="htr-closing-heading">Ready to engage the system?</h2>
     <p class="htr-closing-support">Start with the intake. StrategyIQ prepares the diagnostic before we meet.</p>
     <div class="htr-closing-actions">
-      <a href="/TheHub/intake/" class="htr-btn-primary">
+      <a href="/TheHub/intake/" class="htr-btn-primary js-start-intake">
         START AN ENGAGEMENT
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -2632,5 +2690,27 @@
     } 
   </script>
 
+  <script> 
+    document.querySelectorAll(".js-start-intake").forEach(link => { 
+      link.addEventListener("click", function(e) { 
+        e.preventDefault(); 
+        document.body.classList.add("strategyiq-active"); 
+        document.body.classList.add("strategyiq-pulse"); 
+        const target = this.href; 
+        setTimeout(() => { 
+          window.location.href = target; 
+        }, 550); 
+      }); 
+    }); 
+  </script>
+
+  <div id="strategyiq-overlay"> 
+    <div class="strategyiq-overlay-content"> 
+      <div class="strategyiq-overlay-label">StrategyIQ initializing…</div> 
+      <div class="strategyiq-overlay-sub"> 
+        Preparing your diagnostic intake 
+      </div> 
+    </div> 
+  </div> 
 </body>
 </html>
