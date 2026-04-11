@@ -30,33 +30,54 @@
        Single source of truth for all design values.
     ═══════════════════════════════════════════════════════════════ */
     :root {
-      --coral:              #F96F6E;
-      --teal:               #2ED3C6;
-      --gold:               #C9A84C;
+      /* ─── COLORS ─── */
+      --coral-primary:      #F96F6E;
+      --teal-primary:       #2ED3C6;
+      --gold-primary:       #C9A84C;
+      
+      --bg-deep:            #050505;
+      --bg-sidebar:         #0A0A0A;
+      --bg-card:            #121212;
+      
+      /* Text Hierarchy */
+      --text-primary:       rgba(240, 237, 232, 0.95);
+      --text-secondary:     rgba(240, 237, 232, 0.72);
+      --text-tertiary:      rgba(240, 237, 232, 0.50);
+      --text-disabled:      rgba(240, 237, 232, 0.32);
 
-      --bg:                 #080808;
-      --surface:            rgba(255, 255, 255, 0.04);
-      --surface-2:          rgba(255, 255, 255, 0.07);
-      --surface-3:          rgba(255, 255, 255, 0.11);
-      --border:             rgba(255, 255, 255, 0.08);
-      --border-2:           rgba(255, 255, 255, 0.13);
+      /* ─── SPACING SCALE ─── */
+      --space-xs:           8px;
+      --space-sm:           12px;
+      --space-md:           16px;
+      --space-lg:           24px;
+      --space-xl:           32px;
+      --space-2xl:          48px;
+      --space-3xl:          64px;
 
-      --text:               #F0EDE8;
-      --text-muted:         rgba(240, 237, 232, 0.52);
-      --text-dim:           rgba(240, 237, 232, 0.30);
+      /* ─── RADII ─── */
+      --radius-sm:          8px;
+      --radius-md:          12px;
+      --radius-lg:          16px;
+      --radius-xl:          20px;
 
+      /* ─── SHADOWS (Multi-layered ambient occlusions) ─── */
+      --shadow-sm:          0 2px 4px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+      --shadow-md:          0 10px 15px -3px rgba(0,0,0,0.2), 0 4px 6px -2px rgba(0,0,0,0.1);
+      --shadow-lg:          0 20px 25px -5px rgba(0,0,0,0.3), 0 10px 10px -5px rgba(0,0,0,0.2);
+
+      /* ─── FONTS ─── */
       --font-strategist:    'Big Shoulders Display', sans-serif;
       --font-storyteller:   'Cormorant Garamond', serif;
       --font-orchestrator:  'Inter', sans-serif;
 
-      --header-height:      80px;
-      --max:                1200px;
-      --radius-xl:          24px;
-      --radius-lg:          16px;
-      --radius-md:          10px;
-
-      --transition-page:    opacity 480ms cubic-bezier(0.4, 0, 0.2, 1),
-                            transform 480ms cubic-bezier(0.4, 0, 0.2, 1);
+      /* Legacy support mapping */
+      --coral: var(--coral-primary);
+      --teal: var(--teal-primary);
+      --text: var(--text-primary);
+      --text-muted: var(--text-secondary);
+      --text-dim: var(--text-tertiary);
+      --border: rgba(255, 255, 255, 0.08);
+      --surface: var(--bg-card);
     }
 
     *, *::before, *::after { box-sizing: border-box; }
@@ -65,31 +86,617 @@
     body {
       margin: 0;
       font-family: var(--font-orchestrator);
-      font-size: 16px;
-      line-height: 1.6;
-      color: var(--text);
-      background: var(--bg);
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text-primary);
+      background: var(--bg-deep);
       -webkit-font-smoothing: antialiased;
-      min-height: 100vh;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
     }
 
-    a { color: inherit; text-decoration: none; }
-
-    /* ───────────────────────────────────────────────────────────────
-       NOISE TEXTURE
-    ─────────────────────────────────────────────────────────────── */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 0;
+    @media (max-width: 1024px) {
+      body {
+        height: auto;
+        overflow: auto;
+      }
     }
 
     /* ═══════════════════════════════════════════════════════════════
-       PASSWORD GATE
+       DASHBOARD COCKPIT (v18.0)
     ═══════════════════════════════════════════════════════════════ */
+    #main-content {
+      display: grid !important;
+      grid-template-columns: 280px 1fr !important;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: opacity 500ms ease, transform 500ms ease;
+    }
+
+    #main-content.visible {
+      opacity: 1 !important;
+      visibility: visible !important;
+      transform: translateY(0) !important;
+    }
+
+    @media (max-width: 1024px) {
+      #main-content {
+        grid-template-columns: 1fr !important;
+        height: auto;
+        overflow: auto;
+      }
+    }
+
+    .sidebar {
+      background: var(--bg-sidebar);
+      border-right: 0.5px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      padding: var(--space-2xl) var(--space-lg);
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .main-workspace {
+      width: 100% !important;
+      min-width: 0;
+      overflow-y: auto;
+      background: var(--bg-deep);
+      padding: var(--space-3xl);
+      position: relative;
+    }
+
+    /* Force Section Expansion (Void Killer) */
+    .main-workspace section, 
+    .main-workspace .tab-content, 
+    .main-workspace .container,
+    .main-workspace .editorial-header,
+    .main-workspace .input-room-grid,
+    .main-workspace .production-zone {
+      width: 100% !important;
+      max-width: none !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+    }
+
+    .container {
+      width: 100% !important;
+      max-width: none !important;
+    }
+
+    /* Calibrate Hero Card */
+    .focus-card {
+      width: 100% !important;
+      max-width: none !important;
+      background: linear-gradient(135deg, #121212 0%, #0F0F0F 100%);
+      border: 0.5px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-xl);
+      padding: var(--space-2xl);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-2xl);
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .focus-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.08), transparent);
+      pointer-events: none;
+    }
+
+    .hero-title {
+      font-family: var(--font-strategist);
+      font-size: 48px;
+      font-weight: 700;
+      text-transform: uppercase;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin: var(--space-xs) 0 var(--space-md);
+      color: var(--text-primary);
+    }
+
+    .section-label {
+      font-family: var(--font-orchestrator);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+    }
+
+    /* Glass Elements */
+    .glass-effect {
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      background: rgba(255, 255, 255, 0.03);
+      border: 0.5px solid rgba(255, 255, 255, 0.12);
+    }
+
+    /* Fix Input Room Grid Expansion */
+    .input-room-grid {
+      display: grid !important;
+      grid-template-columns: repeat(3, 1fr) !important;
+      gap: 32px !important;
+      width: 100% !important;
+      max-width: none !important;
+    }
+
+    .submit-container {
+      width: 100% !important;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-top: 64px;
+    }
+
+    .editorial-header {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 48px !important;
+      width: 100% !important;
+      max-width: none !important;
+    }
+
+    /* Eliminate Horizontal Scroll */
+    .main-workspace * {
+      max-width: none !important;
+    }
+
+    .hero-lede, .focus-desc, .gateway-col p {
+      max-width: 800px !important; /* Controlled readability for text blocks only */
+    }
+
+    /* Melanin-Tan Light Mode */
+    [data-theme="light"] {
+      --bg: #E8E4DF;
+      --text: #1A1A1A;
+      --text-muted: rgba(26, 26, 26, 0.6);
+      --text-dim: rgba(26, 26, 26, 0.4);
+      --border: rgba(0, 0, 0, 0.08);
+      --surface: rgba(0, 0, 0, 0.02);
+      --surface-2: rgba(0, 0, 0, 0.04);
+    }
+
+    [data-theme="light"] body {
+      background: #E8E4DF !important;
+    }
+
+    [data-theme="light"] .main-workspace {
+      background: #E8E4DF;
+    }
+
+    [data-theme="light"] .sidebar {
+      background: #DEDAD5;
+      border-right: 0.5px solid rgba(0, 0, 0, 0.1);
+    }
+
+    @media (max-width: 768px) {
+      .main-workspace {
+        padding: 32px 24px;
+      }
+    }
+
+    /* Sidebar Components */
+    .sidebar-top {
+      margin-bottom: 48px;
+    }
+
+    .sidebar svg {
+        color: #FFFFFF !important;
+        stroke: #FFFFFF !important;
+    }
+
+    .sidebar-nav {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: 12px var(--space-md);
+      border-radius: var(--radius-sm);
+      color: var(--text-tertiary);
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .nav-item:hover, .nav-item.active {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .nav-item.active {
+      background: rgba(46, 211, 198, 0.12);
+      box-shadow: inset 3px 0 0 var(--teal-primary);
+    }
+
+    .nav-item svg {
+      width: 18px;
+      height: 18px;
+      opacity: 0.6;
+    }
+
+    .sidebar-profile {
+      margin-top: auto;
+      padding-top: 24px;
+      border-top: 0.5px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .profile-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--teal);
+    }
+
+    .profile-info .name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      display: block;
+    }
+
+    .profile-actions {
+      display: flex;
+      gap: 12px;
+      color: var(--text-dim);
+    }
+
+    .profile-actions svg {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    .profile-actions svg:hover {
+      color: var(--text);
+    }
+
+    /* Vertical Progress Rail (Sidebar) */
+    .vertical-rail {
+      margin: 32px 0;
+      padding-left: 12px;
+      position: relative;
+    }
+
+    .vertical-rail::before {
+      content: '';
+      position: absolute;
+      left: 15px;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .rail-step {
+      position: relative;
+      padding-left: 28px;
+      margin-bottom: 24px;
+    }
+
+    .rail-step:last-child { margin-bottom: 0; }
+
+    .rail-dot {
+      position: absolute;
+      left: 0;
+      top: 4px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--text-dim);
+      border: 2px solid #0A0A0A;
+      z-index: 1;
+    }
+
+    .rail-step.complete .rail-dot { background: var(--coral); }
+    .rail-step.active .rail-dot { 
+      background: var(--teal);
+      box-shadow: 0 0 10px rgba(46, 211, 198, 0.4);
+    }
+
+    .rail-label {
+      font-family: var(--font-orchestrator);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .rail-step.active .rail-label { color: var(--teal); }
+    .rail-step.complete .rail-label { color: var(--text-muted); }
+
+    /* Compact Focus Card */
+    .focus-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 0.5px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      padding: 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .focus-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: radial-gradient(circle at top left, rgba(46, 211, 198, 0.03), transparent 70%);
+      pointer-events: none;
+    }
+
+    .focus-content {
+      width: 100%;
+    }
+
+    .focus-content h2 {
+      font-family: var(--font-strategist);
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 1.1;
+      margin: 12px 0 16px;
+    }
+
+    .focus-meta {
+      font-family: var(--font-orchestrator);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--teal);
+    }
+
+    .focus-desc {
+      font-size: 16px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    /* Completion Circle */
+    .completion-container {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .circle-bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.05);
+      stroke-width: 8;
+    }
+
+    .circle-progress {
+      fill: none;
+      stroke: var(--teal);
+      stroke-width: 8;
+      stroke-linecap: round;
+      stroke-dasharray: 283;
+      stroke-dashoffset: 170; /* 40% complete */
+      transform: rotate(-90deg);
+      transform-origin: 50% 50%;
+      animation: circle-pulse 2s infinite;
+    }
+
+    @keyframes circle-pulse {
+      0% { filter: drop-shadow(0 0 0px rgba(46, 211, 198, 0)); }
+      50% { filter: drop-shadow(0 0 8px rgba(46, 211, 198, 0.4)); }
+      100% { filter: drop-shadow(0 0 0px rgba(46, 211, 198, 0)); }
+    }
+
+    .percent-text {
+      position: absolute;
+      font-family: var(--font-strategist);
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--text);
+    }
+
+    /* Production Zone (Action & Asset Row) */
+    .production-zone {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-bottom: 32px;
+    }
+
+    @media (max-width: 980px) {
+      .production-zone { grid-template-columns: 1fr; }
+    }
+
+    .production-card {
+      background: var(--bg-card);
+      border: 0.5px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-lg);
+      padding: var(--space-lg);
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .production-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.06), transparent);
+      pointer-events: none;
+    }
+
+    .production-card.next-action {
+      border-color: rgba(249, 111, 110, 0.2);
+      background: linear-gradient(135deg, rgba(249, 111, 110, 0.03) 0%, rgba(18, 18, 18, 1) 100%);
+    }
+
+    .list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .mini-artifact {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-sm);
+      background: rgba(255, 255, 255, 0.02);
+      border: 0.5px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-xs);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .mini-artifact:hover {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(255, 255, 255, 0.12);
+      transform: translateX(2px);
+    }
+
+    .mini-artifact:hover svg {
+      stroke: var(--teal-primary) !important;
+    }
+
+    .artifact-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .artifact-info svg {
+      width: 20px;
+      height: 20px;
+      color: var(--text-dim);
+    }
+
+    .artifact-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /* Activity Feed */
+    .activity-feed {
+      margin-top: 16px;
+    }
+
+    .feed-capsules {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+    }
+
+    .feed-capsules::-webkit-scrollbar { height: 2px; }
+    .feed-capsules::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); }
+
+    .capsule {
+      flex-shrink: 0;
+      height: 32px;
+      padding: 0 14px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 0.5px solid rgba(255, 255, 255, 0.06);
+      border-radius: 99px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    svg {
+      stroke-width: 1.5px;
+    }
+
+    .capsule .dot {
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: var(--teal);
+    }
+
+    .main-workspace .container {
+      width: 100%;
+      max-width: none;
+      margin: 0;
+    }
+
+    /* Tab System */
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       LEGIBILITY LAW (v18.0)
+    ═══════════════════════════════════════════════════════════════ */
+    .ui-label, .rail-label, .nav-item, .btn, .focus-meta, .artifact-pedigree, .kicker, .status-certified, .status-active, .phase-status, .input-field-label, .gate-eyebrow, .gate-field-label, .footer-brand, .footer-badge, .artifact-info .artifact-name {
+      font-family: var(--font-orchestrator) !important;
+      font-size: 12px !important;
+      font-weight: 600 !important;
+      letter-spacing: 0.12em !important;
+      text-transform: uppercase !important;
+    }
+
+    .nav-item {
+      font-size: 12px !important;
+      letter-spacing: 0.08em !important;
+    }
+
+    /* Punctuation Standard: Zero em-dashes. Middle Dots (·) only. */
+    
     #gate {
       position: fixed;
       inset: 0;
@@ -261,113 +868,6 @@
     }
 
     /* ═══════════════════════════════════════════════════════════════
-       MAIN CONTENT — hidden until unlocked
-    ═══════════════════════════════════════════════════════════════ */
-    #main-content {
-      opacity: 0;
-      visibility: hidden;
-      transform: translateY(10px);
-      transition: var(--transition-page);
-    }
-
-    #main-content.visible {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0);
-    }
-
-    .container {
-      width: min(calc(100% - 32px), var(--max));
-      margin: 0 auto;
-    }
-
-    /* ═══════════════════════════════════════════════════════════════
-       NAV
-    ═══════════════════════════════════════════════════════════════ */
-    .site-nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      height: var(--header-height);
-      background: rgba(8, 8, 8, 0.9);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border-bottom: 1px solid var(--border);
-      z-index: 100;
-      display: flex;
-      align-items: center;
-    }
-
-    .nav-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-      width: 100%;
-    }
-
-    .nav-brand {
-      font-family: var(--font-strategist);
-      font-weight: 900;
-      font-size: 14px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--text);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .nav-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--coral);
-      flex-shrink: 0;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 28px;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-muted);
-    }
-
-    .nav-links a:hover { color: var(--text); }
-
-    .nav-badge {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      border: 1px solid var(--border);
-      padding: 5px 12px;
-      border-radius: 999px;
-      white-space: nowrap;
-    }
-
-    /* ═══════════════════════════════════════════════════════════════
-       CONFIDENTIALITY BAR — subtle top-of-page treatment
-    ═══════════════════════════════════════════════════════════════ */
-    .confidential-bar {
-      background: rgba(249, 111, 110, 0.05);
-      border-bottom: 1px solid rgba(249, 111, 110, 0.12);
-      padding: 9px 0;
-      text-align: center;
-      position: relative;
-      z-index: 1;
-      margin-top: var(--header-height);
-    }
-
-    .confidential-bar span {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: rgba(249, 111, 110, 0.6);
-    }
-
-    /* ═══════════════════════════════════════════════════════════════
        SHARED UTILITIES
     ═══════════════════════════════════════════════════════════════ */
     .eyebrow {
@@ -397,29 +897,31 @@
     .btn {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 14px 26px;
+      gap: var(--space-xs);
+      padding: 14px 28px;
       border-radius: 999px;
       font-family: var(--font-orchestrator);
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: 0.02em;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
       cursor: pointer;
       border: none;
       text-decoration: none;
-      transition: transform 160ms ease, box-shadow 160ms ease;
+      transition: all 0.2s ease;
     }
 
     .btn:hover { transform: translateY(-1px); }
 
     .btn-primary {
-      background: var(--coral);
+      background: var(--coral-primary);
       color: #fff;
-      box-shadow: 0 8px 28px rgba(249, 111, 110, 0.28);
+      box-shadow: var(--shadow-md);
     }
 
     .btn-primary:hover {
-      box-shadow: 0 12px 38px rgba(249, 111, 110, 0.40);
+      box-shadow: var(--shadow-lg);
+      background: #fa8382;
     }
 
     .btn-ghost {
@@ -520,7 +1022,6 @@
       font-size: 16.5px;
       line-height: 1.68;
       color: var(--text-muted);
-      max-width: 56ch;
       margin: 0 0 30px;
     }
 
@@ -623,6 +1124,7 @@
       padding: 80px 0;
       position: relative;
       z-index: 1;
+      width: 100% !important;
     }
 
     .section-header {
@@ -631,6 +1133,7 @@
       gap: 48px;
       align-items: start;
       margin-bottom: 52px;
+      width: 100%;
     }
 
     .section-header h2 {
@@ -946,7 +1449,7 @@
     /* ─── STRATEGY SIGNALS ─── */
     .strategy-signals {
       margin: 80px auto;
-      max-width: 1100px;
+      width: 100%;
     }
 
     .signals-label {
@@ -1909,10 +2412,10 @@
       color: var(--bg);
       border-radius: 12px;
       font-family: var(--font-orchestrator);
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 700;
       letter-spacing: 0.05em;
-      text-transform: uppercase;
+      text-transform: none;
       transition: all 0.3s ease;
       display: flex;
       align-items: center;
@@ -2003,6 +2506,62 @@
       border-color: var(--coral) !important;
       box-shadow: 0 0 10px rgba(249, 111, 110, 0.2) !important;
     }
+
+    /* ─── CONTEXTUAL TOOLTIPS (v18.3) ─── */
+    .info-trigger { 
+        display: inline-flex; 
+        align-items: center; 
+        justify-content: center; 
+        width: 14px; 
+        height: 14px; 
+        border-radius: 50%; 
+        border: 1px solid rgba(255,255,255,0.3); 
+        color: rgba(255,255,255,0.5); 
+        font-size: 9px; 
+        cursor: help; 
+        margin-left: 6px; 
+        transition: all 0.2s ease; 
+        vertical-align: middle;
+        text-transform: none !important;
+    } 
+    
+    .info-trigger:hover { 
+        border-color: var(--teal); 
+        color: var(--teal); 
+        background: rgba(46,211,198,0.05); 
+    } 
+    
+    /* The Tooltip UI */ 
+    [data-tooltip] { position: relative; } 
+    [data-tooltip]::after { 
+        content: attr(data-tooltip); 
+        position: absolute; 
+        bottom: 125%; 
+        left: 50%; 
+        transform: translateX(-50%) translateY(10px); 
+        width: 220px; 
+        padding: 12px; 
+        background: #111; 
+        border: 1px solid rgba(255,255,255,0.1); 
+        border-radius: 8px; 
+        color: rgba(255,255,255,0.8); 
+        font-size: 11px; 
+        font-family: 'Inter', sans-serif; 
+        font-weight: 400;
+        line-height: 1.5; 
+        text-transform: none; 
+        letter-spacing: 0; 
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+        opacity: 0; 
+        pointer-events: none; 
+        transition: all 0.3s ease; 
+        z-index: 1000; 
+    } 
+    
+    [data-tooltip]:hover::after { 
+        opacity: 1; 
+        transform: translateX(-50%) translateY(0); 
+    } 
   </style>
 </head>
 
@@ -2058,515 +2617,364 @@
   ═══════════════════════════════════════════════════════════════ -->
   <div id="main-content" aria-hidden="true">
 
-    <!-- ── NAV (Simplified) ── -->
-    <nav class="site-nav">
-      <div class="container">
-        <div class="nav-inner">
-          <a href="https://strategyiq.com" class="nav-brand-link" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
-            <img src="/assets/images/favicon.png" style="width:18px;">
-            <span style="font-family: var(--font-strategist); font-weight: 900; font-size: 14px; letter-spacing: 0.05em; color: var(--text);">STRATEGYIQ <span style="color: var(--text-dim); font-weight: 400; font-family: var(--font-orchestrator); margin: 0 4px;">›</span> NARI WORKSPACE</span>
+    <!-- ── SIDEBAR (Orientation Zone) ── -->
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <div class="nav-brand" style="margin-bottom: 24px;">
+          <img src="/assets/images/StrategyIQlogo_dark-mode.png" style="height: 32px; display: block;">
+        </div>
+        <h1 style="margin: 0; line-height: 1; display: flex; align-items: baseline;">
+          <span class="signature-flourish" style="font-size: 1.4em !important;">Nari's</span>
+          <span style="font-family: var(--font-orchestrator); font-weight: 400; color: white; font-size: 0.8em; margin-left: 10px;">Workspace</span>
+        </h1>
+      </div>
+
+      <!-- Methodology Rail -->
+      <div class="vertical-rail">
+        <div class="rail-step complete">
+          <div class="rail-dot"></div>
+          <div class="rail-label">01 · Diagnosis <span class="ui-label" style="font-size: 8px; opacity: 0.5;">(Checked)</span></div>
+        </div>
+        <div class="rail-step active">
+          <img src="/assets/images/icon-192.png" style="position: absolute; left: -6px; top: -2px; width: 20px; height: 20px; z-index: 2; border-radius: 4px; box-shadow: 0 0 15px rgba(249, 111, 110, 0.3);">
+          <div class="rail-dot" style="opacity: 0;"></div>
+          <div class="rail-label">02 · Framework <span class="ui-label" style="font-size: 8px; color: var(--teal);">Active · Pulse</span></div>
+        </div>
+        <div class="rail-step">
+          <div class="rail-dot"></div>
+          <div class="rail-label">03 · Roadmap <span class="ui-label" style="font-size: 8px; opacity: 0.5;">Upcoming</span></div>
+        </div>
+        <div class="rail-step">
+          <div class="rail-dot"></div>
+          <div class="rail-label">04 · Narrative</div>
+        </div>
+        <div class="rail-step">
+          <div class="rail-dot"></div>
+          <div class="rail-label">05 · Activation</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="#overview" class="nav-item active" data-tab="overview">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Overview
+        </a>
+        <a href="#artifacts" class="nav-item" data-tab="artifacts">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Artifacts
+        </a>
+        <a href="#activity" class="nav-item" data-tab="activity">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Activity
+        </a>
+        <a href="#evolution" class="nav-item" data-tab="evolution">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          Strategic Record
+        </a>
+        <a href="#input-room" class="nav-item" data-tab="input-room">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Input Room
+        </a>
+      </nav>
+
+      <div class="sidebar-profile">
+        <div class="profile-card">
+          <img src="/assets/images/nari-daria.png" alt="Nari Fateha" class="avatar" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border);">
+          <div class="profile-info">
+            <span class="name">Nari Fateha</span>
+            <span class="ui-label" style="font-size: 9px; opacity: 0.5;">Strategy Partner</span>
+          </div>
+        </div>
+        <div class="profile-actions">
+          <a href="/TheHub/index.html" title="Return Home">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
           </a>
-          <div class="nav-links">
-            <a href="#top">Overview</a>
-            <a href="#summary">Summary</a>
-            <a href="#artifacts">Artifacts</a>
-            <a href="#next-steps">Next Steps</a>
-          </div>
-          <span class="nav-badge">StrategyIQ · Phase: Diagnosis Complete</span>
         </div>
       </div>
-    </nav>
+    </aside>
 
-    <!-- ── CONFIDENTIALITY BAR (Updated with Bonus Indicator) ── -->
-    <div class="confidential-bar">
-      <div class="container" style="display: flex; justify-content: center; gap: 20px;">
-        <span>Private StrategyIQ Engagement · Criar Sin Culpas</span>
-        <span style="opacity: 0.4;">|</span>
-        <span style="color: var(--teal);">Status: Diagnosis Delivered</span>
+    <!-- ── MAIN WORKSPACE ── -->
+    <main class="main-workspace">
+      
+      <!-- Dependency Action Bar (v18.1) -->
+      <div class="action-bar" style="background: rgba(249,111,110,0.15); border-left: 4px solid var(--coral); color: white; padding: 12px 20px; font-size: 12px; font-weight: 700; margin-bottom: 32px; border-radius: 4px; display: flex; align-items: center; gap: 12px; font-family: var(--font-orchestrator); text-transform: uppercase; letter-spacing: 0.05em;">
+        <span style="color: var(--coral); animation: pulse-coral 2s infinite;">●</span> REQUIRED FOR APRIL 15 · WORKSHOP CATALOG & VIMEO ACCESS
       </div>
-    </div>
+      
+      <style>
+        @keyframes pulse-coral {
+          0% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.5; transform: scale(1.2); }
+          100% { opacity: 1; transform: scale(1); }
+        }
+      </style>
 
-    <!-- ── SECTION 1: HERO / ENGAGEMENT STATUS ── -->
-    <header class="hero" id="top">
-      <div class="hero-ambient"></div>
-      <div class="container">
-        <div class="hero-grid">
-          <div class="hero-copy">
-            <span class="workbench-label">STRATEGYIQ WORKSPACE · STRATEGIC ENGAGEMENT ENVIRONMENT</span>
-            <img src="/assets/images/StrategyIQlogo_dark-mode.png" alt="StrategyIQ" style="height: 42px; width: auto; margin-bottom: 1rem; display: block;">
-            <h1 class="hero-h1"><span class="signature-flourish">Nari's</span> STRATEGY WORKSPACE</h1>
-            <p style="font-size: 14px; color: var(--text-dim); margin-top: -10px; margin-bottom: 24px;">Private StrategyIQ Engagement · Criar Sin Culpas</p>
-
-            <!-- Current Focus Card -->
-            <div class="matte-card">
-              <div class="focus-title">CURRENT FOCUS · DECISION FRAMEWORK</div>
-              <p class="focus-objective">Define the entry offer and platform structure for Criar Sin Culpas.</p>
-            </div>
-
-            <!-- Workbench Timeline -->
-            <div class="progress-rail">
-              <div class="rail-node complete">
-                <div class="node-dot"></div>
-                <div class="node-meta">01 · Diagnosis</div>
-                <div class="node-label">✓ Complete</div>
-              </div>
-              <div class="rail-node active">
-                <div class="node-glow"></div>
-                <div class="node-dot"></div>
-                <div class="node-meta">02 · Framework</div>
-                <div class="node-label">→ Active</div>
-              </div>
-              <div class="rail-node">
-                <div class="node-dot"></div>
-                <div class="node-meta">03 · Roadmap</div>
-                <div class="node-label">Pending</div>
-              </div>
-              <div class="rail-node">
-                <div class="node-dot"></div>
-                <div class="node-meta">04 · Narrative</div>
-                <div class="node-label">Pending</div>
-              </div>
-              <div class="rail-node">
-                <div class="node-dot"></div>
-                <div class="node-meta">05 · Activation</div>
-                <div class="node-label">Pending</div>
-              </div>
-            </div>
+      <!-- TAB: OVERVIEW -->
+      <div id="overview-tab" class="tab-content active">
+        <!-- Focus Card (Hero Reframe) -->
+        <section class="focus-card">
+          <div class="focus-content">
+            <div class="section-label" style="color: var(--teal-primary);">Current Focus · Phase 02</div>
+            <h2 class="hero-title">Decision Framework.</h2>
+            <p class="focus-desc">We are defining the entry offer and platform architecture for Criar Sin Culpas. Review the initial draft below.</p>
+            <a href="#artifacts" class="btn btn-primary js-tab-trigger" data-tab="artifacts">Continue Framework →</a>
           </div>
 
-          <aside class="hero-card">
-            <div>
-              <div class="card-label">Engagement Progress</div>
-              <ul class="checklist">
-                <li><span class="checkmark">✓</span><span>Diagnostic Signal Capture</span></li>
-                <li><span class="checkmark">✓</span><span>Strategic Diagnosis Delivery</span></li>
-                <li style="opacity: 0.5;"><span class="checkmark" style="color: var(--text-dim);">○</span><span>Decision Framework Alignment</span></li>
-                <li style="opacity: 0.5;"><span class="checkmark" style="color: var(--text-dim);">○</span><span>Execution Roadmap Activation</span></li>
-              </ul>
-            </div>
-            <div class="note-card">
-              <div class="card-label">Active Focus</div>
-              <p>We are currently transitioning from initial diagnosis into the Decision Framework phase. Review the brief below before our next walkthrough.</p>
-            </div>
-          </aside>
-        </div>
-      </div>
-    </header>
+          <div class="completion-container">
+            <svg width="120" height="120">
+              <circle class="circle-bg" cx="60" cy="60" r="45"></circle>
+              <circle class="circle-progress" cx="60" cy="60" r="45" style="stroke-dashoffset: 113;"></circle> <!-- 60% complete: (283 * (1 - 0.6)) = 113.2 -->
+            </svg>
+            <div class="percent-text">60%</div>
+          </div>
+        </section>
 
-    <!-- ── SECTION 2: STRATEGIC SUMMARY CARD ── -->
-    <section id="summary" style="background: var(--bg-alt); border-top: 1px solid var(--border);">
-      <div class="container">
-        <div class="eyebrow" style="margin-bottom: 24px;"><span class="eyebrow-line"></span>Strategic Summary</div>
-        <div class="grid-3" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+        <!-- Action & Asset Row -->
+        <div class="production-zone">
           
-          <div class="card">
-            <div class="card-kicker">Situation</div>
-            <p>Criar Sin Culpas has achieved strong audience trust and resonance around difficult parenting moments.</p>
-          </div>
-
-          <div class="card" style="border: 1px solid var(--coral); background: rgba(249, 111, 110, 0.08); border-left: 4px solid var(--coral);">
-            <div class="ui-label" style="font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--coral); margin-bottom: 8px;">CORE INSIGHT</div>
-            <div class="card-kicker" style="color: var(--coral);">Strategic Constraint</div>
-            <p>The challenge is architectural translation · transforming existing knowledge into a structured transformation journey.</p>
-          </div>
-
-          <div class="card">
-            <div class="card-kicker">Audience Truth</div>
-            <p>The audience seeks relief, interpretation, and permission rather than generic parenting advice.</p>
-          </div>
-
-          <div class="card">
-            <div class="card-kicker">Strategic Opportunity</div>
-            <p>Position Criar Sin Culpas as the most trusted Spanish-language guide for families navigating escalation cycles.</p>
-          </div>
-
-          <div class="card" style="border-color: var(--teal); background: rgba(46, 211, 198, 0.03);">
-            <div class="card-kicker" style="color: var(--teal);">First Strategic Move</div>
-            <p>Define a signature entry workshop that leads families into a structured 4-month program.</p>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- ── SECTION 2.5: STRATEGY EVOLUTION ── -->
-    <section id="evolution" style="border-top: 1px solid var(--border);">
-      <div class="container">
-        <div class="section-header">
-          <div>
-            <div class="eyebrow" style="margin-bottom:12px;"><span class="eyebrow-line"></span>STRATEGYIQ · STRATEGY EVOLUTION</div>
-            <h2 style="font-family: var(--font-strategist); font-weight: 900; text-transform: uppercase;">Tracking the strategic pivot.</h2>
-          </div>
-          <p>Visualizing the shift from content production to architectural transformation.</p>
-        </div>
-
-        <div class="evolution-rail">
-          <div class="evolution-node complete">
-            <div class="ui-label" style="font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal);">INTAKE</div>
-          </div>
-          <div class="evolution-node active">
-            <div class="ui-label" style="font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal);">DISCOVERY · ACTIVE</div>
+          <!-- Latest Artifacts -->
+          <div class="production-card">
+            <div class="list-header">
+              <div class="section-label">Latest Artifacts</div>
+              <a href="#artifacts" class="section-label js-tab-trigger" data-tab="artifacts" style="color: var(--teal-primary); opacity: 1;">View All →</a>
+            </div>
             
-            <div class="pivot-card" style="margin-top: 24px; max-width: 800px;">
-              <div class="ui-label" style="font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--coral); margin-bottom: 16px;">Strategic Pivot · April 10</div>
-              <h3 style="font-family: var(--font-strategist); font-weight: 900; font-size: 24px; margin: 0 0 24px; text-transform: uppercase;">Content Creation → Architectural Translation</h3>
-              
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
-                <div>
-                  <div class="ui-label" style="margin-bottom: 8px; font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;">Previous Assumption</div>
-                  <p style="font-size: 14px; color: var(--text-muted); margin: 0;">The primary need is more content production to maintain audience engagement.</p>
-                </div>
-                <div>
-                  <div class="ui-label" style="margin-bottom: 8px; font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;">Discovery</div>
-                  <p style="font-size: 14px; color: var(--text-muted); margin: 0;">50+ workshops already exist in the IP library. Content volume is not the constraint.</p>
-                </div>
-                <div>
-                  <div class="ui-label" style="margin-bottom: 8px; font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;">Strategic Reframe</div>
-                  <p style="font-size: 14px; color: var(--text-muted); margin: 0;">Shift focus from 'creating' to 'curating' and 'structuring' existing knowledge.</p>
-                </div>
-                <div>
-                  <div class="ui-label" style="margin-bottom: 8px; font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;">Strategic Direction</div>
-                  <p style="font-size: 14px; color: var(--text-muted); margin: 0;">Build a signature entry point that funnels into a high-ticket 4-month architecture.</p>
-                </div>
+            <a href="files/StrategyIQ_Strategic_Diagnosis_NariFateha.pdf" target="_blank" class="mini-artifact" style="padding: 16px; display: flex; align-items: center; gap: 20px;">
+              <div class="pdf-preview" style="width: 48px; height: 64px; background: rgba(0,0,0,0.4); border: 0.5px solid rgba(255,255,255,0.1); border-radius: 4px; position: relative; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <div style="font-family: var(--font-orchestrator); font-size: 10px; font-weight: 900; color: rgba(255,255,255,0.2); text-transform: uppercase;">PDF</div>
+                <div style="position: absolute; bottom: 4px; right: 4px; background: var(--coral); width: 8px; height: 8px; border-radius: 1px;"></div>
               </div>
+              <div class="artifact-info" style="flex-grow: 1;">
+                <span class="artifact-name" style="font-size: 14px; color: white;">Strategic Diagnosis</span>
+                <div class="status-badge" style="color: var(--coral-primary); background: rgba(249, 111, 110, 0.1); margin-top: 4px; width: fit-content;">CERTIFIED ARTIFACT</div>
+              </div>
+              <div style="display: flex; gap: 16px; align-items: center;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" style="width: 18px; height: 18px !important; color: #FFFFFF !important;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              </div>
+            </a>
+
+            <a href="files/Weekend_Content_Capture_Guide_CSC_StrategyIQ.pdf" target="_blank" class="mini-artifact" style="padding: 16px; display: flex; align-items: center; gap: 20px;">
+              <div class="pdf-preview" style="width: 48px; height: 64px; background: rgba(0,0,0,0.4); border: 0.5px solid rgba(255,255,255,0.1); border-radius: 4px; position: relative; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <div style="font-family: var(--font-orchestrator); font-size: 10px; font-weight: 900; color: rgba(255,255,255,0.2); text-transform: uppercase;">PDF</div>
+                <div style="position: absolute; bottom: 4px; right: 4px; background: var(--teal); width: 8px; height: 8px; border-radius: 1px;"></div>
+              </div>
+              <div class="artifact-info" style="flex-grow: 1;">
+                <span class="artifact-name" style="font-size: 14px; color: white;">Content Capture Guide</span>
+                <div class="status-badge" style="color: var(--teal-primary); background: rgba(46, 211, 198, 0.1); margin-top: 4px; width: fit-content;">STRATEGY NOTE</div>
+              </div>
+              <div style="display: flex; gap: 16px; align-items: center;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" style="width: 18px; height: 18px !important; color: #FFFFFF !important;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              </div>
+            </a>
+          </div>
+
+          <!-- Next Actions -->
+          <div class="production-card next-action">
+            <div class="list-header">
+              <div class="section-label" style="color: var(--coral-primary);">Next Strategic Move</div>
+            </div>
+            <h3 style="font-family: var(--font-strategist); font-size: 24px; font-weight: 900; text-transform: uppercase; margin-bottom: 4px;">BUILDING: YOUR BUSINESS LOGIC.</h3>
+            <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 24px;">Luis is currently architecting the pathway for your 50+ workshops. We are defining the 'Front Door' and the 'Expansion Path' for your parents.</p>
+            <button class="btn btn-ghost" style="width: 100%; justify-content: center; opacity: 0.5; cursor: not-allowed;">LOCKED · IN PROGRESS</button>
+            <div class="ui-label" style="font-size: 11px; margin-top: 20px; text-align: center; color: var(--text-muted); border-top: 0.5px solid rgba(255,255,255,0.08); padding-top: 16px;">
+              Next Strategy Session · Wednesday, April 15.
             </div>
           </div>
-          <div class="evolution-node">
-            <div class="ui-label" style="font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;">FRAMEWORK</div>
-          </div>
-          <div class="evolution-node">
-            <div class="ui-label" style="font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;">EXECUTION</div>
+
+        </div>
+
+        <!-- Activity Feed (Quick View) -->
+        <div class="activity-feed">
+          <div class="section-label" style="margin-bottom: 16px;">Recent Activity</div>
+          <div class="feed-capsules">
+            <div class="capsule"><div class="dot"></div> Strategic Pivot Logged · Apr 10</div>
+            <div class="capsule"><div class="dot"></div> Artifact 01 Certified · Apr 09</div>
+            <div class="capsule"><div class="dot"></div> Diagnosis Session Complete · Apr 08</div>
           </div>
         </div>
       </div>
-    </section>
 
-    <!-- ── SECTION 3: STRATEGYIQ ACTIVE STRATEGIC BUILD ── -->
-    <section id="artifacts">
-      <div class="container">
-        <div class="section-header">
-          <div>
-            <div class="eyebrow" style="margin-bottom:12px;"><span class="eyebrow-line"></span>STRATEGYIQ · ACTIVE STRATEGIC BUILD</div>
-            <h2 style="font-family: var(--font-strategist); font-weight: 900; text-transform: uppercase;">High-fidelity artifacts and architectural blueprints.</h2>
-          </div>
-          <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 12px;">
-            <button class="btn btn-ghost" style="padding: 8px 16px; font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.6;">SHARE STRATEGY SNAPSHOT →</button>
-            <p style="text-align: right;">The core documents produced throughout the StrategyIQ engagement. These represent the "Source of Truth" for the Criar Sin Culpas business architecture.</p>
-          </div>
-        </div>
-
-        <div style="display: flex; flex-direction: column; gap: 12px;">
-          
-          <!-- Artifact 01 -->
-          <div class="artifact-card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+      <!-- TAB: ARTIFACTS -->
+      <div id="artifacts-tab" class="tab-content">
+        <section id="artifacts">
+          <div class="section-header">
             <div>
-              <div class="card-kicker" style="margin-bottom: 4px;">Artifact 01</div>
-              <h3 class="artifact-title" style="font-weight: 900;">Strategic Diagnosis</h3>
-              <div class="artifact-pedigree" style="margin-top: 12px; font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;">
-                ORIGIN · STRATEGYIQ METHODOLOGY<br>
-                PREPARED FOR · CRIAR SIN CULPAS<br>
-                PREPARED BY · LUIS GILBERTO<br>
-                DATE · APRIL 10, 2026
-              </div>
-            </div>
-            <div style="display: flex; align-items: center; gap: 24px;">
-              <span class="status-certified" style="font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;">CERTIFIED</span>
-              <a href="files/StrategyIQ_Strategic_Diagnosis_NariFateha.pdf" target="_blank" class="btn btn-ghost" style="padding: 8px 20px; font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;">Open PDF →</a>
+              <div class="eyebrow" style="margin-bottom:12px;"><span class="eyebrow-line"></span>STRATEGYIQ · ACTIVE STRATEGIC BUILD</div>
+              <h2 style="font-family: var(--font-strategist); font-weight: 900; text-transform: uppercase;">Strategic Artifacts.</h2>
             </div>
           </div>
 
-          <!-- Strategy Note: Weekend Content Capture Guide -->
-          <div class="artifact-card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
-            <div>
-              <div class="card-kicker" style="margin-bottom: 4px;">Strategy Note</div>
-              <h3 class="artifact-title" style="font-weight: 900;">Weekend Content Capture Guide</h3>
-              <div class="ui-label" style="margin-top: 4px; font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;">Criar Sin Culpas · Strategy Note</div>
-            </div>
-            <div style="display: flex; align-items: center; gap: 24px;">
-              <div class="ui-label" style="line-height: 1.4; text-align: right; font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;">
-                StrategyIQ Engagement
-              </div>
-              <span class="status-certified" style="font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;">CERTIFIED</span>
-              <a href="files/Weekend_Content_Capture_Guide_CSC_StrategyIQ.pdf" target="_blank" class="btn btn-ghost" style="padding: 8px 20px; font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;">Open →</a>
-            </div>
-          </div>
-
-          <!-- Artifact 02 -->
-          <div class="artifact-card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
-            <div>
-              <div class="card-kicker" style="margin-bottom: 4px;">Artifact 02</div>
-              <h3 class="artifact-title" style="opacity: 0.6; font-weight: 900;">Decision Framework</h3>
-            </div>
-            <div style="display: flex; align-items: center; gap: 24px;">
-              <span class="status-active" style="font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;">ACTIVE BUILD</span>
-              <span class="btn btn-ghost" style="padding: 8px 20px; font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.3; cursor: not-allowed;">Locked</span>
-            </div>
-          </div>
-
-          <!-- Artifact 03 -->
-          <div class="artifact-card" style="display: flex; justify-content: space-between; align-items: center; opacity: 0.5;">
-            <div>
-              <div class="card-kicker" style="margin-bottom: 4px;">Artifact 03</div>
-              <h3 class="artifact-title" style="font-weight: 900;">Execution Roadmap</h3>
-            </div>
-            <span class="status-active" style="opacity: 0.5; font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;">Pending</span>
-          </div>
-
-          <!-- Artifact 04 -->
-          <div class="artifact-card" style="display: flex; justify-content: space-between; align-items: center; opacity: 0.5;">
-            <div>
-              <div class="card-kicker" style="margin-bottom: 4px;">Artifact 04</div>
-              <h3 class="artifact-title" style="font-weight: 900;">Messaging Architecture</h3>
-            </div>
-            <span class="status-active" style="opacity: 0.5; font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;">Pending</span>
-          </div>
-
-          <!-- Artifact 05 -->
-          <div class="artifact-card" style="display: flex; justify-content: space-between; align-items: center; opacity: 0.5;">
-            <div>
-              <div class="card-kicker" style="margin-bottom: 4px;">Artifact 05</div>
-              <h3 class="artifact-title" style="font-weight: 900;">Campaign System</h3>
-            </div>
-            <span class="status-active" style="opacity: 0.5; font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;">Pending</span>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- ── SECTION 7: STRATEGIC INPUT ROOM ── -->
-    <section id="input-room" class="input-room-section">
-      <div class="container">
-        <div class="editorial-header">
-          <div>
-            <div class="eyebrow" style="margin-bottom:12px;"><span class="eyebrow-line"></span>CLIENT INPUT ROOM</div>
-            <h2 style="font-family: var(--font-strategist); font-weight: 900; text-transform: uppercase; font-size: clamp(32px, 4vw, 48px); margin: 0;">STRATEGIC INPUT ROOM.</h2>
-          </div>
-          <p style="font-family: var(--font-orchestrator); font-size: 16px; color: var(--text-muted); line-height: 1.6; margin: 0;">A secure space for submitting workshop data, intellectual property assets, and strategic reflections. This section transforms the portal into a two-way strategic environment where you can contribute materials and insights.</p>
-        </div>
-
-        <div class="input-room-grid">
-          
-          <!-- Card 1: Workshop Library (Interactive) -->
-          <div class="input-card">
-            <div class="input-field-label">STRUCTURED INPUT · WORKSHOP TITLES</div>
-            <p class="input-description">Add workshop titles to your strategic library.</p>
-            
-            <div class="workshop-input-group">
-              <input type="text" id="workshop-input-field" class="matte-input" placeholder="Enter workshop title.">
-              <button id="add-workshop-btn" class="btn-add-workshop">Add Workshop</button>
-            </div>
-
-            <ul id="workshop-list" class="workshop-list">
-              <!-- Dynamically populated -->
-            </ul>
-          </div>
-
-          <!-- Card 2: Strategic Assets -->
-          <div class="input-card">
-            <div class="input-field-label">FILE DEPOSITORY · RECORDINGS & DOCUMENTS</div>
-            <p class="input-description">Upload workshop recordings, outlines, or documents to the Strategic Vault.</p>
-            <div style="flex-grow: 1; display: flex; align-items: center;">
-              <a href="#" target="_blank" class="vault-btn">
-                OPEN STRATEGIC VAULT →
-              </a>
-            </div>
-          </div>
-
-          <!-- Card 3: Open Intelligence -->
-          <div class="input-card">
-            <div class="input-field-label">UNSTRUCTURED INPUT · STRATEGIC NOTES</div>
-            <p class="input-description">Use this space to share ideas, questions, or insights related to your audience and workshops.</p>
-            <textarea 
-              id="strategic-notes" 
-              class="matte-textarea" 
-              placeholder="Examples:&#10;• themes you notice parents struggling with.&#10;• questions for our next strategy session.&#10;• workshop ideas you want to explore.&#10;• patterns you are seeing in families."
-            ></textarea>
-          </div>
-
-        </div>
-
-        <div class="submit-container">
-          <button id="submit-inputs" class="btn-submit-room">
-            SYNC DATA · UPDATE WORKSPACE
-          </button>
-          <div id="submit-status-room" class="status-msg-room"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── SECTION 4: STRATEGYIQ STRATEGIC MEMORY ── -->
-    <section id="log" style="background: var(--bg-alt); border-top: 1px solid var(--border);">
-      <div class="container">
-        <div class="section-header">
-          <div>
-            <div class="eyebrow" style="margin-bottom:12px;"><span class="eyebrow-line"></span>STRATEGYIQ · STRATEGIC MEMORY</div>
-            <h2 style="font-family: var(--font-strategist); font-weight: 900; text-transform: uppercase;">A chronological record of high-leverage insights and architectural implications.</h2>
-          </div>
-        </div>
-
-        <div style="display: flex; flex-direction: column; gap: 12px;">
-          
-          <!-- Session 01 -->
-          <div class="memory-card">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div class="artifact-card" style="display: flex; justify-content: space-between; align-items: center; padding: 20px;">
               <div>
-                <div class="card-kicker" style="margin-bottom: 4px;">Session 01 · Platform Direction</div>
-                <h3 class="artifact-title">IP Discovery & Architecture</h3>
-                <div style="font-family: var(--font-orchestrator); font-size: 11px; color: var(--text-dim); margin-top: 4px;">April 10, 2026</div>
+                <h3 class="artifact-title" style="font-size: 20px;">Strategic Diagnosis</h3>
+                <div class="ui-label" style="font-size: 10px; margin-top: 4px;">CERTIFIED · APRIL 10</div>
               </div>
-              <div style="display: flex; align-items: center; gap: 24px;">
-                <div style="text-align: right; max-width: 400px;">
-                  <span class="insight-label insight-coral">STRATEGIC INSIGHT</span>
-                  <p style="font-size: 13px; color: var(--text-muted); margin: 0;">Criar Sin Culpas contains an intellectual property library of 50+ specialized workshops.</p>
-                </div>
-                <button class="btn btn-ghost js-toggle-notes" style="padding: 8px 20px; font-size: 12px;">
-                  VIEW SESSION LOG →
-                </button>
-              </div>
+              <a href="files/StrategyIQ_Strategic_Diagnosis_NariFateha.pdf" target="_blank" class="btn btn-ghost" style="padding: 8px 16px; font-size: 11px;">Open PDF →</a>
             </div>
 
-            <!-- Hidden Details -->
-            <div class="session-details"> 
-                <div class="note-grid"> 
-                    <div> 
-                        <span class="insight-label insight-teal">STRATEGIC IMPLICATION</span>
-                        <p style="font-size: 14px; color: var(--text);">The challenge is not content production, but the architectural translation of existing knowledge into a structured program.</p>
-                    </div> 
-                    <div> 
-                        <span class="insight-label insight-coral">Core Transformation</span> 
-                        <p style="font-size: 14px; color: var(--text-muted);">Moving families from behavioral escalation to emotional regulation through 5-minute daily daily communication rebuilds.</p> 
-                    </div> 
-                </div> 
-                
-                <div class="kicker" style="color: var(--teal); opacity: 0.8;">Potential Platform Model</div> 
-                <div class="platform-diagram">
-                  <div class="flow-step-ui-v16">
-                    <span>CONTENT</span>
-                    <div style="font-size: 18px;">→</div>
-                    <span>SIGNATURE WORKSHOP</span>
-                    <div style="font-size: 18px;">→</div>
-                    <span>4-MONTH PARENT PROGRAM</span>
-                    <div style="font-size: 18px;">→</div>
-                    <span>COMMUNITY</span>
-                    <div style="font-size: 18px;">→</div>
-                    <span>LIVE EVENTS</span>
-                  </div>
-                </div>
+            <div class="artifact-card" style="display: flex; justify-content: space-between; align-items: center; padding: 20px;">
+              <div>
+                <h3 class="artifact-title" style="font-size: 20px;">Content Capture Guide</h3>
+                <div class="ui-label" style="font-size: 10px; margin-top: 4px;">STRATEGY NOTE</div>
+              </div>
+              <a href="files/Weekend_Content_Capture_Guide_CSC_StrategyIQ.pdf" target="_blank" class="btn btn-ghost" style="padding: 8px 16px; font-size: 11px;">Open PDF →</a>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- TAB: ACTIVITY -->
+      <div id="activity-tab" class="tab-content">
+        <section id="activity">
+          <div class="section-header">
+            <div>
+              <div class="eyebrow" style="margin-bottom:12px;"><span class="eyebrow-line"></span>STRATEGYIQ · ENGAGEMENT ACTIVITY</div>
+              <h2 style="font-family: var(--font-strategist); font-weight: 900; text-transform: uppercase;">Activity Log.</h2>
+            </div>
+          </div>
+          <div class="activity-feed-full">
+            <!-- Full activity list here -->
+            <div class="capsule" style="margin-bottom: 12px; width: fit-content;"><div class="dot"></div> Strategic Pivot Logged · Apr 10</div>
+            <div class="capsule" style="margin-bottom: 12px; width: fit-content;"><div class="dot"></div> Artifact 01 Certified · Apr 09</div>
+            <div class="capsule" style="margin-bottom: 12px; width: fit-content;"><div class="dot"></div> Diagnosis Session Complete · Apr 08</div>
+            <div class="capsule" style="margin-bottom: 12px; width: fit-content; opacity: 0.5;"><div class="dot" style="background: var(--text-dim);"></div> Intake Signal Capture · Apr 05</div>
+          </div>
+        </section>
+      </div>
+
+      <!-- TAB: EVOLUTION (Strategic Record) -->
+      <div id="evolution-tab" class="tab-content">
+        <!-- ── SECTION 2: STRATEGIC SUMMARY ── -->
+        <section id="summary" style="padding-top: 0;">
+          <div class="section-header">
+            <div>
+              <div class="eyebrow" style="margin-bottom:12px;"><span class="eyebrow-line"></span>STRATEGYIQ · STRATEGIC SUMMARY</div>
+              <h2 style="font-family: var(--font-strategist); font-weight: 900; text-transform: uppercase;">Strategic Logic.</h2>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="card" style="border: 1px solid var(--coral); background: rgba(249, 111, 110, 0.08); border-left: 4px solid var(--coral);">
+              <div class="ui-label" style="color: var(--coral); margin-bottom: 8px;">CORE INSIGHT</div>
+              <p style="font-size: 14px;">The challenge is architectural translation · transforming existing knowledge into a structured journey.</p>
+            </div>
+
+            <div class="card" style="border: 1px solid var(--teal); background: rgba(46, 211, 198, 0.08); border-left: 4px solid var(--teal);">
+              <div class="ui-label" style="color: var(--teal); margin-bottom: 8px;">NEXT MOVE</div>
+              <p style="font-size: 14px;">Define a signature entry workshop that leads families into a 4-month program.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── SECTION 2.5: STRATEGY EVOLUTION ── -->
+        <section id="evolution" style="border-top: 1px solid var(--border);">
+          <div class="section-header">
+            <div>
+              <div class="eyebrow" style="margin-bottom:12px;"><span class="eyebrow-line"></span>STRATEGYIQ · STRATEGY EVOLUTION</div>
+              <h2 style="font-family: var(--font-strategist); font-weight: 900; text-transform: uppercase;">Tracking the Pivot.</h2>
+            </div>
+          </div>
+
+          <div class="pivot-card">
+            <div class="ui-label" style="color: var(--coral); margin-bottom: 16px;">Strategic Pivot · April 10</div>
+            <h3 style="font-family: var(--font-strategist); font-weight: 900; font-size: 24px; margin: 0 0 24px; text-transform: uppercase;">Content Creation → Architectural Translation</h3>
             
-                <div class="action-items-box"> 
-          <div class="ai-col"> 
-            <span class="action-label" style="font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #EDEDED;">IMMEDIATE SESSION INPUTS</span> 
-            <ul> 
-                <li>Catalog all 50 workshop titles</li> 
-                <li>Provide Vimeo access links</li> 
-            </ul> 
-          </div> 
-          <div class="ai-col"> 
-            <span class="action-label" style="font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--coral);">FOR LUIS</span> 
-            <ul> 
-                <li>Analyze workshop categories</li> 
-                <li>Identify the "Signature" entry point</li> 
-                <li>Map the Decision Framework</li> 
-            </ul> 
-          </div> 
-                </div> 
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
+              <div>
+                <div class="ui-label" style="margin-bottom: 8px;">Discovery</div>
+                <p style="font-size: 14px; color: var(--text-muted); margin: 0;">50+ workshops already exist in the IP library.</p>
+              </div>
+              <div>
+                <div class="ui-label" style="margin-bottom: 8px;">Strategic Direction</div>
+                <p style="font-size: 14px; color: var(--text-muted); margin: 0;">Build a signature entry point funnel.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── SECTION 4: STRATEGIC MEMORY ── -->
+        <section id="log-section" style="border-top: 1px solid var(--border);">
+          <div class="section-header">
+            <div class="eyebrow" style="margin-bottom:12px;"><span class="eyebrow-line"></span>STRATEGYIQ · STRATEGIC MEMORY</div>
+            <h2 style="font-family: var(--font-strategist); font-weight: 900; text-transform: uppercase;">Session Log.</h2>
+          </div>
+
+          <div class="memory-card" style="padding: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <h3 class="artifact-title" style="font-size: 18px;">Session 01</h3>
+                <div class="ui-label" style="font-size: 10px;">APRIL 10 · ARCHITECTURE</div>
+              </div>
+              <button class="btn btn-ghost js-toggle-notes" style="padding: 6px 12px; font-size: 11px;">VIEW LOG →</button>
+            </div>
+            <div class="session-details">
+              <p style="font-size: 13px; color: var(--text-muted); margin-top: 12px;">Translation of existing knowledge into a structured program.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- TAB: INPUT ROOM -->
+      <div id="input-room-tab" class="tab-content">
+        <section id="input-room" class="input-room-section" style="padding-top: 0; border-top: none;">
+          <div class="editorial-header">
+            <div>
+              <div class="eyebrow" style="margin-bottom:12px;"><span class="eyebrow-line"></span>CLIENT INPUT ROOM</div>
+              <h2 style="font-family: var(--font-strategist); font-weight: 900; text-transform: uppercase; font-size: 32px;">STRATEGIC INPUT ROOM.</h2>
+            </div>
+            <p style="font-size: 14px; color: var(--text-muted);">Securely submit workshop data and insights.</p>
+          </div>
+
+          <div class="input-room-grid">
+            <div class="input-card">
+              <div class="section-label" style="margin-bottom: var(--space-md);">
+                WORKSHOP TITLES
+                <span class="info-trigger" data-tooltip="Your Strategic Library. Enter the titles of your 50+ existing workshops. This is the foundation we need to architect your business logic and define the 'front door' of your platform.">i</span>
+              </div>
+              <div class="workshop-input-group">
+                <input type="text" id="workshop-input-field" class="matte-input" placeholder="Enter title.">
+                <button id="add-workshop-btn" class="btn-add-workshop">Add</button>
+              </div>
+              <ul id="workshop-list" class="workshop-list"></ul>
+            </div>
+
+            <div class="input-card">
+              <div class="section-label" style="margin-bottom: var(--space-md);">
+                STRATEGIC ASSETS
+                <span class="info-trigger" data-tooltip="Asset Depository. Upload recordings, Vimeo links, and session guides. This allows me to analyze the depth of your curriculum and extract the core transformation for our next session.">i</span>
+              </div>
+              <a href="https://strategyiq-my.sharepoint.com/:f:/g/personal/luisgilberto_strategyiq_onmicrosoft_com/IgClC2LpkoruS6OX65Qtc3unAdBXoHkMJoE1UuICgIp7kXw?e=agORcT" target="_blank" class="vault-btn">Open Strategic Vault →</a>
+            </div>
+
+            <div class="input-card">
+              <div class="section-label" style="margin-bottom: var(--space-md);">
+                STRATEGIC NOTES
+                <span class="info-trigger" data-tooltip="Intelligence Journal. Share random insights, family patterns, or questions. These inputs ensure our strategy remains grounded in the real-world behavior of your audience.">i</span>
+              </div>
+              <textarea id="strategic-notes" class="matte-textarea" style="min-height: 100px;" placeholder="Share insights."></textarea>
             </div>
           </div>
 
-        </div>
+          <div class="submit-container" style="margin-top: 32px;">
+            <button id="submit-inputs" class="btn-submit-room" style="padding: 14px 32px; font-size: 12px;">SYNC DATA</button>
+            <div id="submit-status-room" class="status-msg-room"></div>
+          </div>
+        </section>
       </div>
-    </section>
 
-    <!-- ── SECTION 6: STRATEGIC EXECUTION ── -->
-    <section id="execution" style="border-top: 1px solid var(--border);">
-      <div class="container">
-        <div class="section-header">
-          <div>
-            <div class="eyebrow" style="margin-bottom:12px;"><span class="eyebrow-line"></span>STRATEGIC EXECUTION</div>
-            <h2 style="font-family: var(--font-strategist); font-weight: 900; text-transform: uppercase;">Activating the Strategy.</h2>
-          </div>
-          <p>The operational sequence required to move from diagnosis to market.</p>
+      <!-- ── FOOTER (v18.0) ── -->
+      <footer style="padding: 32px 0; background: transparent; border-top: 0.5px solid rgba(255,255,255,0.06);">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-family: var(--font-strategist); font-weight: 900; font-size: 14px; text-transform: uppercase; color: var(--text-dim);">Luis Gilberto</div>
+          <div class="ui-label" style="opacity: 0.5; font-size: 10px;">v18.0 · 2026</div>
         </div>
+      </footer>
 
-        <div class="roadmap-tracker">
-          <div class="roadmap-phase">
-            <div class="ui-label" style="font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;">Phase 01 · Strategic Diagnosis</div>
-            <div class="phase-status" style="font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--coral);">✓ CERTIFIED</div>
-          </div>
-          <div class="roadmap-phase active">
-            <div class="ui-label" style="font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;">Phase 02 · Decision Framework</div>
-            <div class="phase-status" style="font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal);">
-              <div class="status-pulse"></div>
-              → IN DEVELOPMENT
-            </div>
-          </div>
-          <div class="roadmap-phase" style="opacity: 0.5;">
-            <div class="ui-label" style="font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;">Phase 03 · Offer Architecture</div>
-            <div class="phase-status" style="font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;">○ PENDING</div>
-          </div>
-          <div class="roadmap-phase" style="opacity: 0.5;">
-            <div class="ui-label" style="font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;">Phase 04 · Execution Roadmap</div>
-            <div class="phase-status" style="font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;">○ UPCOMING</div>
-          </div>
-        </div>
-
-        <div class="inputs-panel">
-          <div class="ui-label" style="margin-bottom: 20px; font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim);">INPUTS REQUIRED FROM NARI</div>
-          <div class="input-item">
-            <div class="ui-label" style="font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #EDEDED;">FOR NARI · UPLOAD WORKSHOP TITLES</div>
-          </div>
-          <div class="input-item">
-            <div class="ui-label" style="font-family: var(--font-orchestrator); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #EDEDED;">FOR NARI · PROVIDE RECORDING ACCESS</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── SECTION 5: ECOSYSTEM GATEWAY ── -->
-    <section id="bridge" style="padding-top: 0;">
-      <div class="container">
-        <div class="ecosystem-gateway">
-          
-          <!-- Column 1: Strategic Memory -->
-          <div class="gateway-col">
-            <div class="ui-label" style="margin-bottom: 12px; color: var(--teal);">STRATEGIC CONTEXT</div>
-            <h3>Strategic Memory.</h3>
-            <p>While this workspace holds your immediate strategic assets, the broader ecosystem provides the frameworks for continuous execution and architectural scale.</p>
-            <a href="/TheHub/index.html" class="gateway-link">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/></svg>
-              Return to The Hub →
-            </a>
-          </div>
-
-          <!-- Column 2: StrategyIQ Ecosystem -->
-          <div class="gateway-col">
-            <div class="ui-label" style="margin-bottom: 12px; color: var(--coral);">THE OPERATING ENVIRONMENT</div>
-            <h3>StrategyIQ Ecosystem.</h3>
-            <p>Access the core methodology, specialized diagnostic engines, and high-fidelity frameworks that power the StrategyIQ system.</p>
-            <a href="https://strategyiq.com" target="_blank" class="gateway-link">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-              Explore the Platform →
-            </a>
-          </div>
-
-          <div class="gateway-badge">STRATEGYIQ ENVIRONMENT</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── FOOTER ── -->
-    <footer class="site-footer" style="background: #050505;">
-      <div class="container">
-        <div class="footer-inner">
-          <div class="footer-brand" style="color: #fff; opacity: 1;">Luis Gilberto</div>
-          <div class="footer-note" style="color: #fff; opacity: 0.5;">Confidential Strategy Workspace · Criar Sin Culpas · 2026</div>
-          <div class="footer-badge">StrategyIQ System v1.7</div>
-        </div>
-      </div>
-    </footer>
+    </main>
 
   </div><!-- /main-content -->
+
 
   <!-- ═══════════════════════════════════════════════════════════════
        FILLOUT FULLSCREEN OVERLAY
@@ -2594,7 +3002,7 @@
       /* ─────────────────────────────────────────────────────────────
          CONFIGURATION
          Change the password here. Keep it simple but not obvious.
-         sessionStorage key: 'lg_intake_unlocked'
+         localStorage key: 'lg_intake_unlocked'
       ───────────────────────────────────────────────────────────── */
       var INTAKE_PASSWORD = 'NariLuis2026';     // ← CHANGE PASSWORD HERE
 
@@ -2602,15 +3010,14 @@
          ELEMENTS
       ───────────────────────────────────────────────────────────── */
       var gate        = document.getElementById('gate');
-      var mainContent = document.getElementById('main-content');
       var input       = document.getElementById('gate-password-input');
       var submitBtn   = document.getElementById('gate-submit-btn');
       var errorMsg    = document.getElementById('gate-error-msg');
 
       /* ─────────────────────────────────────────────────────────────
-         CHECK SESSION — if already unlocked this session, skip gate
+         CHECK SESSION — if already unlocked, skip gate
       ───────────────────────────────────────────────────────────── */
-      if (sessionStorage.getItem('lg_intake_unlocked') === 'true') {
+      if (localStorage.getItem('lg_intake_unlocked') === 'true') {
         revealContent(false); // instant, no animation needed
       } else {
         // Focus the input for immediate keyboard entry
@@ -2624,7 +3031,7 @@
         var val = input.value.trim().toLowerCase();
 
         if (val === INTAKE_PASSWORD.toLowerCase()) {
-          sessionStorage.setItem('lg_intake_unlocked', 'true');
+          localStorage.setItem('lg_intake_unlocked', 'true');
           revealContent(true);
         } else {
           showError('That code doesn\'t match. Double-check and try again.');
@@ -2646,18 +3053,41 @@
           gate.classList.add('unlocking');
           setTimeout(function () {
             gate.setAttribute('hidden', '');
+            gate.style.display = 'none'; // Extra insurance
             showMain();
           }, 520);
         } else {
           gate.setAttribute('hidden', '');
+          gate.style.display = 'none'; // Extra insurance
           showMain();
         }
       }
 
       function showMain() {
-        mainContent.removeAttribute('aria-hidden');
-        mainContent.classList.add('visible');
+        const content = document.getElementById('main-content');
+        if (!content) {
+          console.error('CRITICAL: #main-content not found');
+          return;
+        }
+        
+        console.log('Revealing main content cockpit...');
+        
+        // Remove aria-hidden and add visible class
+        content.removeAttribute('aria-hidden');
+        content.classList.add('visible');
+        
+        // Force the cockpit display properties
+        content.style.display = 'grid';
+        content.style.opacity = '1';
+        content.style.visibility = 'visible';
+        
         document.documentElement.style.overflow = ''; // restore scroll
+        document.body.style.overflow = '';
+        
+        // Initialize the tab system
+        requestAnimationFrame(() => {
+          switchTab('overview');
+        });
       }
 
       /* ─────────────────────────────────────────────────────────────
@@ -2686,6 +3116,62 @@
         if (errorMsg.classList.contains('visible')) clearError();
       });
 
+    /* ─── NAVIGATION LOGIC (v18.0 COCKPIT) ─── */
+    function switchTab(tabId) {
+      console.log('Switching to tab:', tabId);
+      
+      // Update Nav
+      document.querySelectorAll('.nav-item').forEach(item => {
+        const itemTabId = item.getAttribute('data-tab');
+        item.classList.toggle('active', itemTabId === tabId);
+      });
+
+      // Update Content
+      const targetTabId = `${tabId}-tab`;
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        const isActive = tab.id === targetTabId;
+        tab.classList.toggle('active', isActive);
+        
+        // Explicitly handle display and visibility
+        if (isActive) {
+          tab.style.display = 'block';
+          tab.style.width = '100%';
+          tab.style.opacity = '1';
+          tab.style.visibility = 'visible';
+        } else {
+          tab.style.display = 'none';
+          tab.style.opacity = '0';
+          tab.style.visibility = 'hidden';
+        }
+      });
+
+      // Reset Scroll
+      const workspace = document.querySelector('.main-workspace');
+      if (workspace) workspace.scrollTop = 0;
+    }
+
+      document.querySelectorAll('.nav-item').forEach(link => {
+        link.addEventListener('click', function(e) {
+          const tabId = this.getAttribute('data-tab');
+          if (tabId) {
+            e.preventDefault();
+            switchTab(tabId);
+          }
+        });
+      });
+
+      // Handle triggers within content (e.g., "View All" links)
+      document.addEventListener('click', function(e) {
+        const trigger = e.target.closest('.js-tab-trigger');
+        if (trigger) {
+          const tabId = trigger.getAttribute('data-tab');
+          if (tabId) {
+            e.preventDefault();
+            switchTab(tabId);
+          }
+        }
+      });
+
       /* ─── FILLOUT OVERLAY LOGIC ─── */
       var overlay   = document.getElementById('fillout-overlay');
       var launchBtn = document.getElementById('launch-intake');
@@ -2702,7 +3188,7 @@
         closeBtn.addEventListener('click', function () {
           overlay.classList.remove('active');
           // Only restore scroll if the gate is already gone
-          if (sessionStorage.getItem('lg_intake_unlocked') === 'true') {
+          if (localStorage.getItem('lg_intake_unlocked') === 'true') {
             document.documentElement.style.overflow = '';
           }
         });
@@ -2839,7 +3325,7 @@
       }
 
       /* Prevent page scroll while gate is visible */
-      if (!sessionStorage.getItem('lg_intake_unlocked')) {
+      if (!localStorage.getItem('lg_intake_unlocked')) {
         document.documentElement.style.overflow = 'hidden';
       }
 
