@@ -797,17 +797,19 @@
 
     /* Punctuation Standard: Zero em-dashes. Middle Dots (·) only. */
     
-    #gate {
-      position: fixed;
-      inset: 0;
-      z-index: 900;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--bg);
-      padding: 24px;
-      transition: opacity 500ms ease, visibility 500ms ease;
-    }
+    #gate { 
+      position: fixed; 
+      inset: 0; 
+      z-index: 900; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      background: rgba(5, 5, 5, 0.75); 
+      backdrop-filter: blur(20px); 
+      -webkit-backdrop-filter: blur(20px); 
+      padding: 24px; 
+      transition: opacity 500ms ease, visibility 500ms ease; 
+    } 
 
     #gate.unlocking {
       opacity: 0;
@@ -3247,7 +3249,7 @@
           </div>
 
           <div class="submit-container" style="margin-top: 32px;">
-            <button id="submit-inputs" class="btn-submit-room" style="padding: 14px 32px; font-size: 12px;">SUBMIT TO INBOX →</button>
+            <button type="button" id="submit-inputs" class="btn-submit-room" style="padding: 14px 32px; font-size: 12px;">SUBMIT TO INBOX →</button>
             <div id="submit-status-room" class="status-msg-room"></div>
           </div>
         </section>
@@ -3528,8 +3530,6 @@
       const workshopList = document.getElementById('workshop-list');
       const submitBtnRoom = document.getElementById('submit-inputs');
       const statusMsgRoom = document.getElementById('submit-status-room');
-      const notesInput = document.getElementById('strategy-inbox-input');
-      const webhookUrl = 'https://hook.us2.make.com/9k9nuttlyzx6xm36971nel7spc5o7mmq';
 
       let workshops = [];
 
@@ -3581,65 +3581,54 @@
         });
       }
 
-      if (submitBtnRoom) {
-        submitBtnRoom.addEventListener('click', async function() {
-          const signalData = document.getElementById('strategy-inbox-input').value.trim();
-
-          if (workshops.length === 0 && !signalData) {
-            showSubmitStatus('Please provide some input before updating.', 'error');
-            return;
-          }
-
-          // Reset states
-          submitBtnRoom.classList.add('loading');
-          submitBtnRoom.disabled = true;
-          statusMsgRoom.classList.remove('visible', 'error', 'success');
-
-          try {
-            const response = await fetch(webhookUrl, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
+      if (submitBtnRoom) { 
+        submitBtnRoom.addEventListener('click', async function(e) { 
+          e.preventDefault(); 
+          const inputField = document.getElementById('strategy-inbox-input'); 
+          const signalData = inputField ? inputField.value.trim() : ''; 
+   
+          if (!signalData) { 
+            showSubmitStatus('Please enter a signal before submitting.', 'error'); 
+            return; 
+          } 
+   
+          submitBtnRoom.classList.add('loading'); 
+          submitBtnRoom.innerText = 'SYNCING...'; 
+          submitBtnRoom.disabled = true; 
+   
+          try { 
+            const response = await fetch('https://hook.us2.make.com/9k9nuttlyzx6xm36971nel7spc5o7mmq', { 
+              method: 'POST', 
+              headers: { 'Content-Type': 'application/json' }, 
               body: JSON.stringify({ 
                 signal: signalData, 
-                timestamp: new Date().toISOString(), 
                 client: 'Nari Fateha', 
-                source: 'StrategyIQ Signal Room' 
-              }),
-            });
-
-            if (response.ok) {
-              submitBtnRoom.classList.remove('loading');
-              submitBtnRoom.classList.add('success');
-              showSubmitStatus('SIGNAL CAPTURED · LUIS IS CATEGORIZING THIS NOW', 'success');
-              
-              // Clear inputs after success
-              workshops = [];
-              renderWorkshops();
-              document.getElementById('strategy-inbox-input').value = '';
-              
-              // Remove success state after 5 seconds
-              setTimeout(() => {
-                submitBtnRoom.classList.remove('success');
-                submitBtnRoom.disabled = false;
-                statusMsgRoom.classList.remove('visible');
-              }, 5000);
-            } else {
-              throw new Error('Submission failed');
-            }
-          } catch (error) {
-            submitBtnRoom.classList.remove('loading');
-            submitBtnRoom.disabled = false;
-            showSubmitStatus('Unable to submit inputs. Please try again.', 'error');
-            
-            // Error handling polish: clear message after 3 seconds
-            setTimeout(() => {
-              statusMsgRoom.classList.remove('visible');
-            }, 3000);
-          }
-        });
-      }
+                timestamp: new Date().toISOString() 
+              }) 
+            }); 
+   
+            if (response.ok) { 
+              submitBtnRoom.classList.add('success'); 
+              submitBtnRoom.innerText = 'SYNCED'; 
+              showSubmitStatus('SIGNAL CAPTURED · LUIS NOTIFIED', 'success'); 
+              if(inputField) inputField.value = '';  
+            } else { 
+              throw new Error('Server responded with ' + response.status); 
+            } 
+          } catch (error) { 
+            console.error('Submission Error:', error); 
+            showSubmitStatus('UNABLE TO SUBMIT INPUTS. PLEASE TRY AGAIN.', 'error'); 
+          } finally { 
+            setTimeout(() => { 
+              submitBtnRoom.classList.remove('loading', 'success'); 
+              submitBtnRoom.innerText = 'SUBMIT TO INBOX →'; 
+              submitBtnRoom.disabled = false; 
+              const statusEl = document.getElementById('submit-status-room'); 
+              if(statusEl) statusEl.classList.remove('visible'); 
+            }, 3000); 
+          } 
+        }); 
+      } 
 
       function showSubmitStatus(msg, type) {
         statusMsgRoom.textContent = msg;
