@@ -103,6 +103,45 @@
       }
     }
 
+    /* ─── DARIA SUCCESS STATE ─── */ 
+    .daria-success-bg { 
+      position: absolute; 
+      inset: 0; 
+      z-index: 0; /* Behind the card, on top of the noise */ 
+      opacity: 0; 
+      background-image: url('/assets/images/collage-daria-wallpaper.jpg'); 
+      background-size: cover; 
+      background-position: center; 
+      pointer-events: none; 
+      transition: opacity 0.4s ease; 
+    } 
+    
+    .daria-overlay { 
+      position: absolute; 
+      inset: 0; 
+      background: rgba(5, 5, 5, 0.4); /* Darkens the collage slightly */ 
+      backdrop-filter: blur(2px); 
+    } 
+    
+    .daria-success-bg.active { 
+      opacity: 1; 
+      animation: dariaFlash 2s ease-in-out forwards; 
+    } 
+    
+    @keyframes dariaFlash { 
+      0% { opacity: 0; } 
+      20% { opacity: 0.5; } 
+      40% { opacity: 0.3; } 
+      60% { opacity: 0.5; } 
+      100% { opacity: 0; } 
+    } 
+    
+    /* Success Button State */ 
+    .gate-btn.success { 
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important; 
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.4) !important; 
+    }
+
     /* ═══════════════════════════════════════════════════════════════
        DASHBOARD COCKPIT (v18.0)
     ═══════════════════════════════════════════════════════════════ */
@@ -2848,6 +2887,51 @@
         display: flex;
         align-items: center;
     }
+
+    /* ─── RECENT ACTIVITY TICKER (v18.9) ─── */
+    .recent-activity-ticker { 
+      width: 100%; 
+      background: #050505; /* Obsidian Base */ 
+      padding: 12px 0; 
+      overflow: hidden; 
+      white-space: nowrap; 
+      border-top: 1px solid rgba(255, 255, 255, 0.05); 
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
+      border-radius: 8px;
+      margin-top: 16px;
+    } 
+    
+    .ticker-content { 
+      display: inline-block; 
+      /* Speed reduced by 50% (increased from 30s to 60s) */ 
+      animation: activity-loop 60s linear infinite; 
+    } 
+    
+    .ticker-item { 
+      display: inline-block; 
+      padding: 0 50px; 
+      font-family: 'Inter', sans-serif; 
+      font-size: 11px; 
+      font-weight: 600; 
+      letter-spacing: 1px; 
+      text-transform: uppercase; 
+      color: #FFFFFF; 
+    } 
+    
+    .ticker-item .label-tag { 
+      color: #2ED3C6; /* Teal accent */ 
+      margin-right: 8px; 
+    } 
+    
+    .ticker-item .timestamp { 
+      color: rgba(255, 255, 255, 0.3); 
+      margin-right: 12px; 
+    } 
+    
+    @keyframes activity-loop { 
+      0% { transform: translateX(0); } 
+      100% { transform: translateX(-50%); } /* Ensure content is duplicated in HTML for seamless loop */ 
+    }
   </style>
 </head>
 
@@ -2858,6 +2942,9 @@
        Appears on top of everything until the correct password is entered.
   ═══════════════════════════════════════════════════════════════ -->
   <div id="gate" role="dialog" aria-modal="true" aria-label="Private access">
+    <!-- ── DARIA SUCCESS LAYER (EASTER EGG) ── -->
+    <div class="daria-success-bg" id="dariaBackground"><div class="daria-overlay"></div></div>
+    
     <div class="gate-glow" aria-hidden="true"></div>
 
     <div class="gate-card">
@@ -2988,6 +3075,9 @@
           </div>
         </div>
         <div class="profile-actions">
+          <button id="logout-btn" title="Logout" style="background: none; border: none; padding: 0; cursor: pointer; color: var(--text-tertiary); margin-right: 12px; display: flex; align-items: center; transition: color 0.2s ease;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          </button>
           <a href="/TheHub/index.html" title="Return Home">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
           </a>
@@ -3120,12 +3210,31 @@
         <!-- Activity Feed (Quick View) -->
         <div class="activity-feed">
           <div class="section-label" style="margin-bottom: 16px;">Recent Activity</div>
-          <div class="feed-capsules">
-            <div class="capsule"><div class="dot"></div> <span class="tag-luis">FOR LUIS</span> · Content Resonance Pattern Identified · Apr 12</div> 
-            <div class="capsule"><div class="dot"></div> <span class="tag-nari">FOR NARI</span> · 3 New Workshop Assets Processed · Apr 12</div> 
-            <div class="capsule"><div class="dot"></div> <span class="tag-luis">FOR LUIS</span> · Signature Workshop Architecture Initiated · Apr 11</div> 
-
-          </div>
+          
+          <div class="recent-activity-ticker"> 
+              <div class="ticker-content"> 
+                  <!-- ITEM 01 --> 
+                  <div class="ticker-item"> 
+                      <span class="timestamp">APR 12</span> 
+                      <span class="label-tag">FOR LUIS</span> · CONTENT RESONANCE PATTERN IDENTIFIED 
+                  </div> 
+                  <!-- ITEM 02 --> 
+                  <div class="ticker-item"> 
+                      <span class="timestamp">APR 12</span> 
+                      <span class="label-tag">FOR NARI</span> · 3 NEW WORKSHOP ASSETS PROCESSED 
+                  </div> 
+                  <!-- ITEM 03 --> 
+                  <div class="ticker-item"> 
+                      <span class="timestamp">APR 11</span> 
+                      <span class="label-tag">SYSTEM</span> · STRATEGIC SIGNAL CAPTURED → DIAGNOSTIC GENERATED 
+                  </div> 
+                  
+                  <!-- DUPLICATE ITEMS HERE FOR SEAMLESS LOOP --> 
+                  <div class="ticker-item"><span class="timestamp">APR 12</span><span class="label-tag">FOR LUIS</span> · CONTENT RESONANCE PATTERN IDENTIFIED</div> 
+                  <div class="ticker-item"><span class="timestamp">APR 12</span><span class="label-tag">FOR NARI</span> · 3 NEW WORKSHOP ASSETS PROCESSED</div> 
+                  <div class="ticker-item"><span class="timestamp">APR 11</span><span class="label-tag">SYSTEM</span> · STRATEGIC SIGNAL CAPTURED → DIAGNOSTIC GENERATED</div> 
+              </div> 
+          </div> 
         </div>
       </div>
 
@@ -3340,7 +3449,7 @@
       </nav> 
       
       <!-- ── FOOTER (v18.0) ── -->
-      <footer style="padding: 32px 0; background: transparent; border-top: 0.5px solid rgba(255,255,255,0.06);">
+      <footer style="padding: 32px 0; background: transparent; border-top: 0.5px solid rgba(255,255,255,0.06); margin-bottom: 40px;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
           <div style="font-family: var(--font-strategist); font-weight: 900; font-size: 14px; text-transform: uppercase; color: var(--text-dim);">Luis Gilberto</div>
           <div class="ui-label" style="opacity: 0.5; font-size: 10px;">v18.0 · 2026</div>
@@ -3378,7 +3487,7 @@
       /* ─────────────────────────────────────────────────────────────
          CONFIGURATION
          Change the password here. Keep it simple but not obvious.
-         localStorage key: 'lg_intake_unlocked'
+         localStorage key: 'authSession'
       ───────────────────────────────────────────────────────────── */
       var INTAKE_PASSWORD = 'NariLuis2026';     // ← CHANGE PASSWORD HERE
 
@@ -3389,11 +3498,12 @@
       var input       = document.getElementById('gate-password-input');
       var submitBtn   = document.getElementById('gate-submit-btn');
       var errorMsg    = document.getElementById('gate-error-msg');
+      var logoutBtn   = document.getElementById('logout-btn');
 
       /* ─────────────────────────────────────────────────────────────
          CHECK SESSION — if already unlocked, skip gate
       ───────────────────────────────────────────────────────────── */
-      if (localStorage.getItem('lg_intake_unlocked') === 'true') {
+      if (localStorage.getItem('authSession') === 'active') {
         revealContent(false); // instant, no animation needed
       } else {
         // Focus the input for immediate keyboard entry
@@ -3403,21 +3513,43 @@
       /* ─────────────────────────────────────────────────────────────
          UNLOCK FUNCTION
       ───────────────────────────────────────────────────────────── */
-      function tryUnlock() {
-        var val = input.value.trim().toLowerCase();
+      function tryUnlock() { 
+        var val = input.value.trim().toLowerCase(); 
 
-        if (val === INTAKE_PASSWORD.toLowerCase()) {
-          localStorage.setItem('lg_intake_unlocked', 'true');
-          revealContent(true);
-        } else {
-          showError('That code doesn\'t match. Double-check and try again.');
-          input.classList.add('error');
-          input.value = '';
-          setTimeout(function () {
-            input.classList.remove('error');
-            input.focus();
-          }, 500);
-        }
+        if (val === INTAKE_PASSWORD.toLowerCase()) { 
+          // 1. Trigger the Daria Easter Egg 
+          const daria = document.getElementById('dariaBackground'); 
+          if (daria) daria.classList.add('active'); 
+
+          // 2. Transform the button 
+          submitBtn.innerText = 'ACCESS GRANTED ✓'; 
+          submitBtn.classList.add('success'); 
+          
+          // 3. Save session 
+          localStorage.setItem('authSession', 'active'); 
+
+          // 4. WAIT 2 SECONDS (so she sees the flash) then reveal 
+          setTimeout(function() { 
+            revealContent(true); 
+          }, 2000); 
+
+        } else { 
+          showError('That code doesn\'t match. Double-check and try again.'); 
+          input.classList.add('error'); 
+          input.value = ''; 
+          setTimeout(function () { 
+            input.classList.remove('error'); 
+            input.focus(); 
+          }, 500); 
+        } 
+      }
+
+      /* ─────────────────────────────────────────────────────────────
+         LOGOUT FUNCTION
+      ───────────────────────────────────────────────────────────── */
+      function logout() {
+        localStorage.removeItem('authSession');
+        window.location.reload(); // Returns to login state
       }
 
       /* ─────────────────────────────────────────────────────────────
@@ -3486,6 +3618,13 @@
          EVENT LISTENERS
       ───────────────────────────────────────────────────────────── */
       submitBtn.addEventListener('click', tryUnlock);
+
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          logout();
+        });
+      }
 
       input.addEventListener('keydown', function (e) {
         if (e.key === 'Enter') tryUnlock();
