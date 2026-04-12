@@ -3036,7 +3036,7 @@
           </div> 
        
           <div class="action-footer" style="margin-top: 35px;"> 
-              <a href="#input-room" class="btn-primary js-tab-trigger" data-tab="input-room" style="display: inline-block; background: #FFFFFF; color: #050505; padding: 14px 28px; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 12px; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; border-radius: 4px;"> 
+              <a href="#strategic-signal-room" class="btn-primary js-tab-trigger" data-tab="input-room" style="display: inline-block; background: #FFFFFF; color: #050505; padding: 14px 28px; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 12px; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; border-radius: 4px;"> 
                   Submit Required Inputs → 
               </a> 
               <p style="font-family: 'Inter', sans-serif; font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 12px;">Takes about 5–10 minutes.</p> 
@@ -3280,7 +3280,7 @@
 
       <!-- TAB: INPUT ROOM -->
       <div id="input-room-tab" class="tab-content">
-        <section id="input-room" class="input-room-section" style="padding-top: 0; border-top: none;">
+        <section id="strategic-signal-room" class="input-room-section" style="padding-top: 0; border-top: none;">
           <div class="editorial-header">
             <div>
               <div class="eyebrow" style="margin-bottom:12px;"><span class="eyebrow-line"></span>CLIENT INPUT ROOM</div>
@@ -3304,12 +3304,12 @@
                   <span style="font-family: var(--font-orchestrator); font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal-primary);">Engine Active</span> 
                 </div> 
               </div> 
-              <textarea id="strategy-inbox-input" class="matte-textarea" style="min-height: 280px; font-size: 15px; line-height: 1.7; resize: vertical;" placeholder="Paste anything here: Vimeo links, workshop titles, content scripts, or random thoughts. I will process and categorize these into the system for you."></textarea> 
+              <textarea id="signal-input" class="matte-textarea" style="min-height: 280px; font-size: 15px; line-height: 1.7; resize: vertical;" placeholder="Paste anything here: Vimeo links, workshop titles, content scripts, or random thoughts. I will process and categorize these into the system for you."></textarea> 
             </div> 
           </div>
 
           <div class="submit-container" style="margin-top: 32px;">
-            <button type="button" id="submit-inputs" class="btn-submit-room" style="padding: 14px 32px; font-size: 12px;">SUBMIT TO INBOX →</button>
+            <button type="button" id="submit-signal-btn" class="btn-submit-room" style="padding: 14px 32px; font-size: 12px;">SUBMIT TO INBOX →</button>
             <div id="submit-status-room" class="status-msg-room"></div>
           </div>
         </section>
@@ -3584,111 +3584,60 @@
         });
       });
 
-      /* ─── CLIENT INPUT ROOM LOGIC (v17.0) ─── */
-      const workshopInput = document.getElementById('workshop-input-field');
-      const addWorkshopBtn = document.getElementById('add-workshop-btn');
-      const workshopList = document.getElementById('workshop-list');
-      const submitBtnRoom = document.getElementById('submit-inputs');
+      /* ─── CLIENT INPUT ROOM LOGIC (v18.9) ─── */
+      const submitBtnRoom = document.getElementById('submit-signal-btn');
       const statusMsgRoom = document.getElementById('submit-status-room');
 
-      let workshops = [];
-
-      function renderWorkshops() {
-        workshopList.innerHTML = '';
-        workshops.forEach((ws, index) => {
-          const li = document.createElement('li');
-          li.className = 'workshop-item';
-          li.innerHTML = `
-            <div class="workshop-content">${ws}</div>
-            <div class="workshop-actions">
-              <span class="action-link" onclick="editWorkshop(${index})">Edit</span>
-              <span class="action-link remove" onclick="removeWorkshop(${index})">Remove</span>
-            </div>
-          `;
-          workshopList.appendChild(li);
-        });
-      }
-
-      window.addWorkshop = function() {
-        const val = workshopInput.value.trim();
-        if (val) {
-          workshops.push(val);
-          workshopInput.value = '';
-          renderWorkshops();
-        }
-      };
-
-      window.removeWorkshop = function(index) {
-        workshops.splice(index, 1);
-        renderWorkshops();
-      };
-
-      window.editWorkshop = function(index) {
-        const newVal = prompt('Edit workshop title:', workshops[index]);
-        if (newVal !== null && newVal.trim() !== '') {
-          workshops[index] = newVal.trim();
-          renderWorkshops();
-        }
-      };
-
-      if (addWorkshopBtn) {
-        addWorkshopBtn.addEventListener('click', addWorkshop);
-      }
-
-      if (workshopInput) {
-        workshopInput.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter') addWorkshop();
-        });
-      }
-
-      if (submitBtnRoom) { 
-        submitBtnRoom.addEventListener('click', async function(e) { 
-          e.preventDefault(); 
-          const inputField = document.getElementById('strategy-inbox-input'); 
-          const signalData = inputField ? inputField.value.trim() : ''; 
-   
-          if (!signalData) { 
-            showSubmitStatus('Please enter a signal before submitting.', 'error'); 
-            return; 
+      async function submitStrategicSignal() { 
+          const signalInput = document.getElementById('signal-input');
+          const signalText = signalInput ? signalInput.value.trim() : ''; 
+          const webhookURL = 'https://hook.us2.make.com/9k9nuttlyzx6xm36971nel7spc5o7mmq'; 
+       
+          if (!signalText) { 
+              showSubmitStatus('Please enter a strategic signal before submitting.', 'error'); 
+              return; 
           } 
-   
+       
           submitBtnRoom.classList.add('loading'); 
           submitBtnRoom.innerText = 'SYNCING...'; 
           submitBtnRoom.disabled = true; 
-   
+       
           try { 
-            const response = await fetch('https://hook.us2.make.com/9k9nuttlyzx6xm36971nel7spc5o7mmq', { 
-              method: 'POST', 
-              headers: { 'Content-Type': 'application/json' }, 
-              body: JSON.stringify({ 
-                signal: signalData, 
-                client: 'Nari Fateha', 
-                timestamp: new Date().toISOString() 
-              }) 
-            }); 
-   
-            if (response.ok) { 
-              submitBtnRoom.classList.add('success'); 
-              submitBtnRoom.innerText = 'SYNCED'; 
-              showSubmitStatus('SIGNAL CAPTURED · LUIS NOTIFIED', 'success'); 
-              if(inputField) inputField.value = '';  
-            } else { 
-              throw new Error('Server responded with ' + response.status); 
-            } 
+              const response = await fetch(webhookURL, { 
+                  method: 'POST', 
+                  headers: { 'Content-Type': 'application/json' }, 
+                  body: JSON.stringify({ 
+                      client: "Nari", 
+                      organization: "Criar Sin Culpas", 
+                      signal: signalText, 
+                      timestamp: new Date().toISOString() 
+                  }) 
+              }); 
+       
+              if (response.ok) { 
+                  submitBtnRoom.classList.add('success'); 
+                  submitBtnRoom.innerText = 'SIGNAL CAPTURED · LUIS NOTIFIED'; 
+                  showSubmitStatus('SIGNAL CAPTURED · LUIS NOTIFIED', 'success'); 
+                  if (signalInput) signalInput.value = ''; 
+              } else {
+                  throw new Error('Server responded with ' + response.status);
+              }
           } catch (error) { 
-            console.error('Submission Error:', error); 
-            showSubmitStatus('UNABLE TO SUBMIT INPUTS. PLEASE TRY AGAIN.', 'error'); 
-          } finally { 
-            setTimeout(() => { 
-              submitBtnRoom.classList.remove('loading', 'success'); 
-              submitBtnRoom.innerText = 'SUBMIT TO INBOX →'; 
-              submitBtnRoom.disabled = false; 
-              const statusEl = document.getElementById('submit-status-room'); 
-              if(statusEl) statusEl.classList.remove('visible'); 
-            }, 3000); 
-          } 
-        }); 
-      } 
+              console.error('Intelligence Pipe Error:', error); 
+              showSubmitStatus('UNABLE TO SUBMIT INPUTS. PLEASE TRY AGAIN.', 'error');
+          } finally {
+              setTimeout(() => { 
+                  submitBtnRoom.classList.remove('loading', 'success'); 
+                  submitBtnRoom.innerText = 'SUBMIT TO INBOX →'; 
+                  submitBtnRoom.disabled = false; 
+                  if (statusMsgRoom) statusMsgRoom.classList.remove('visible'); 
+              }, 3000); 
+          }
+      }
+
+      if (submitBtnRoom) {
+        submitBtnRoom.addEventListener('click', submitStrategicSignal);
+      }
 
       function showSubmitStatus(msg, type) {
         statusMsgRoom.textContent = msg;
