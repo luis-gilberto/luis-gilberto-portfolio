@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Strategic Artifacts — Criar Sin Culpas — StrategyIQ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --obs:    #0A0908;
+  --card:   #111010;
+  --inner:  #161413;
+  --deep:   #0D0C0B;
+  --coral:  #F96F6E;
+  --teal:   #2ED3C6;
+  --amber:  #D4933A;
+  --cloud:  #F5F0EB;
+  --slate:  #A8A099;
+  --mid:    #6B6560;
+  --rule:   rgba(255,255,255,0.07);
+  --rteal:  rgba(46,211,198,0.2);
+  --rcoral: rgba(249,111,110,0.2);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--obs);
+  color: var(--cloud);
+  padding: 32px 24px;
+  min-height: 100vh;
+}
+.artifacts-wrap { max-width: 900px; margin: 0 auto; }
+
+/* ── PAGE HEADER ─────────────────────────────────────────────── */
+.page-header {
+  margin-bottom: 28px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--rule);
+}
+.page-eyebrow {
+  font-size: 9px; font-weight: 700; color: var(--coral);
+  letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 6px;
+}
+.page-title {
+  font-size: 22px; font-weight: 700; color: var(--cloud);
+  letter-spacing: -0.01em;
+}
+
+/* ── SHARED CARD SHELL ───────────────────────────────────────── */
+.artifact-card {
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+/* ── ACCORDION HEADER (clickable) ────────────────────────────── */
+.ac-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 22px;
+  cursor: pointer;
+  border-bottom: 1px solid transparent;
+  transition: background 0.15s;
+  gap: 14px;
+  user-select: none;
+}
+.ac-header:hover { background: rgba(255,255,255,0.02); }
+.ac-header.open { border-bottom-color: var(--rule); }
+
+.ac-header-left { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; }
+
+.ac-num {
+  font-size: 10px; font-weight: 700; color: var(--mid);
+  letter-spacing: 0.1em; min-width: 24px; flex-shrink: 0;
+}
+
+.ac-title-block { min-width: 0; }
+
+.ac-eyebrow {
+  font-size: 8px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; margin-bottom: 3px;
+}
+.ac-eyebrow.coral { color: var(--coral); }
+.ac-eyebrow.teal  { color: var(--teal);  }
+.ac-eyebrow.mid   { color: var(--mid);   }
+
+.ac-title {
+  font-size: 14px; font-weight: 600; color: var(--cloud);
+  line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.ac-header-right {
+  display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+}
+
+.ac-status {
+  font-size: 8px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; padding: 3px 8px; border-radius: 2px;
+}
+.ac-status.certified  { background: rgba(46,211,198,0.1);  border: 1px solid var(--rteal);  color: var(--teal); }
+.ac-status.active     { background: rgba(249,111,110,0.1); border: 1px solid var(--rcoral); color: var(--coral); }
+.ac-status.upcoming   { background: rgba(255,255,255,0.03); border: 1px solid var(--rule);  color: var(--mid); }
+.ac-status.note       { background: rgba(46,211,198,0.1);  border: 1px solid var(--rteal);  color: var(--teal); }
+
+.ac-chevron {
+  width: 16px; height: 16px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--mid); transition: transform 0.2s;
+  font-size: 10px;
+}
+.ac-chevron.open { transform: rotate(180deg); }
+
+/* ── ACCORDION BODY ──────────────────────────────────────────── */
+.ac-body { display: none; }
+.ac-body.open { display: block; }
+
+/* ── SHARED SECTION INSIDE BODY ──────────────────────────────── */
+.ac-section {
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--rule);
+}
+.ac-section:last-child { border-bottom: none; }
+
+.sec-label {
+  font-size: 8px; font-weight: 700; color: var(--teal);
+  letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 10px;
+}
+.sec-label.coral { color: var(--coral); }
+.sec-label.mid   { color: var(--mid);   }
+.sec-label.amber { color: var(--amber); }
+
+/* ── DATA ROWS ───────────────────────────────────────────────── */
+.data-rows { display: flex; flex-direction: column; }
+.data-row {
+  display: flex; gap: 12px; padding: 7px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04); align-items: baseline;
+}
+.data-row:last-child { border-bottom: none; }
+.data-key {
+  font-size: 8px; font-weight: 700; color: var(--mid);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  min-width: 120px; flex-shrink: 0;
+}
+.data-val { font-size: 11.5px; color: var(--slate); line-height: 1.55; flex: 1; }
+.data-val strong { color: var(--cloud); font-weight: 600; }
+
+/* ── TWO COL ─────────────────────────────────────────────────── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 580px) { .two-col { grid-template-columns: 1fr; } }
+
+.mini-card {
+  background: var(--inner);
+  border: 1px solid var(--rule);
+  padding: 12px 14px;
+}
+.mini-label {
+  font-size: 8px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; margin-bottom: 8px;
+}
+.mini-label.teal  { color: var(--teal);  }
+.mini-label.coral { color: var(--coral); }
+.mini-label.mid   { color: var(--mid);   }
+
+.mini-card ul { list-style: none; padding: 0; margin: 0; }
+.mini-card ul li {
+  font-size: 11px; color: var(--slate); line-height: 1.6;
+  padding: 4px 0 4px 12px; position: relative;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.mini-card ul li:last-child { border-bottom: none; }
+.mini-card ul li::before { content: "—"; position: absolute; left: 0; color: var(--teal); font-size: 10px; }
+.mini-card ul li.c::before { color: var(--coral); }
+
+/* ── SIGNAL BRIDGE ───────────────────────────────────────────── */
+.signal-bridge {
+  display: grid; grid-template-columns: 1fr 28px 1fr;
+  margin-bottom: 10px;
+}
+.sig-col { padding: 11px 14px; }
+.sig-col.client { background: rgba(249,111,110,0.07); border: 1px solid rgba(249,111,110,0.2); border-right: none; }
+.sig-col.diag   { background: rgba(46,211,198,0.06);  border: 1px solid rgba(46,211,198,0.2);  border-left: none; }
+.sig-arrow { display: flex; align-items: center; justify-content: center; background: var(--deep); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); color: var(--mid); font-size: 11px; }
+.sig-label { font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 5px; }
+.sig-label.coral { color: var(--coral); }
+.sig-label.teal  { color: var(--teal);  }
+.sig-text { font-size: 11px; line-height: 1.55; }
+.sig-col.client .sig-text { color: var(--slate); }
+.sig-col.diag .sig-text   { color: var(--cloud); font-weight: 500; }
+
+/* ── FINDING BLOCK ───────────────────────────────────────────── */
+.finding {
+  background: var(--deep); border-left: 2px solid var(--coral);
+  padding: 12px 16px; margin-bottom: 10px;
+}
+.finding-head { font-size: 12.5px; font-weight: 600; color: var(--cloud); line-height: 1.5; margin-bottom: 5px; }
+.finding-body { font-size: 11px; color: var(--slate); line-height: 1.6; }
+
+/* ── STATES ROW ──────────────────────────────────────────────── */
+.states-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+@media (max-width: 580px) { .states-row { grid-template-columns: 1fr; } }
+.state-block {
+  background: var(--inner); border: 1px solid var(--rule);
+  border-top: 2px solid var(--teal); padding: 10px 12px;
+}
+.state-num { font-size: 8px; font-weight: 700; color: var(--teal); letter-spacing: 0.1em; margin-bottom: 4px; }
+.state-title { font-size: 11px; font-weight: 600; color: var(--cloud); margin-bottom: 3px; }
+.state-body { font-size: 10px; color: var(--mid); line-height: 1.55; }
+
+/* ── FN ROW ──────────────────────────────────────────────────── */
+.fn-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+@media (max-width: 580px) { .fn-row { grid-template-columns: 1fr; } }
+.fn-block { background: var(--deep); border-left: 2px solid var(--teal); padding: 10px 12px; }
+.fn-title { font-size: 10px; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+.fn-body { font-size: 10px; color: var(--slate); line-height: 1.55; }
+
+/* ── OPPORTUNITY ─────────────────────────────────────────────── */
+.opportunity {
+  background: var(--inner); border: 1px solid var(--rteal); padding: 14px 16px;
+}
+.opp-head { font-size: 12px; font-weight: 600; color: var(--cloud); line-height: 1.5; margin-bottom: 5px; }
+.opp-cat  { font-size: 11px; color: var(--teal); line-height: 1.5; font-style: italic; }
+
+/* ── QUOTE ───────────────────────────────────────────────────── */
+.quote-block { background: var(--deep); border-left: 2px solid var(--coral); padding: 12px 16px; }
+.quote-label { font-size: 8px; font-weight: 700; color: var(--coral); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+.quote-text  { font-size: 12px; color: var(--cloud); font-style: italic; line-height: 1.6; }
+
+/* ── IMPLICATION ROW ─────────────────────────────────────────── */
+.impl-row {
+  padding: 11px 22px; background: rgba(0,0,0,0.2);
+  border-top: 1px solid var(--rule);
+  display: flex; gap: 12px; align-items: baseline;
+}
+.impl-key { font-size: 8px; font-weight: 700; color: var(--amber); letter-spacing: 0.1em; text-transform: uppercase; min-width: 90px; flex-shrink: 0; }
+.impl-text { font-size: 11px; color: var(--slate); line-height: 1.6; }
+
+/* ── CHAIN ───────────────────────────────────────────────────── */
+.chain-row { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+.chain-item { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.chain-num { font-size: 7px; font-weight: 700; color: var(--mid); letter-spacing: 0.08em; }
+.chain-pill {
+  font-size: 9px; font-weight: 600; padding: 3px 8px;
+  border-radius: 2px; white-space: nowrap;
+}
+.chain-pill.active  { background: rgba(249,111,110,0.15); border: 1px solid var(--coral); color: var(--coral); }
+.chain-pill.pending { background: var(--inner); border: 1px solid var(--rule); color: var(--mid); }
+.chain-arrow { font-size: 10px; color: var(--mid); padding-bottom: 12px; }
+
+/* ── SOURCE CARD ─────────────────────────────────────────────── */
+.source-card { background: var(--deep); border: 1px solid var(--rule); padding: 13px 16px; }
+.source-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; gap: 8px; flex-wrap: wrap; }
+.source-title { font-size: 11.5px; font-weight: 600; color: var(--cloud); }
+.source-sub { font-size: 9px; color: var(--mid); margin-top: 2px; }
+.source-link {
+  font-size: 9px; font-weight: 700; color: var(--teal); letter-spacing: 0.06em;
+  text-transform: uppercase; text-decoration: none;
+  border: 1px solid rgba(46,211,198,0.3); padding: 4px 10px; border-radius: 2px;
+  background: rgba(46,211,198,0.06); flex-shrink: 0;
+}
+.source-excerpts { border-top: 1px solid var(--rule); padding-top: 10px; display: flex; flex-direction: column; gap: 7px; }
+.excerpt-row { display: flex; gap: 12px; align-items: baseline; }
+.excerpt-key { font-size: 8px; font-weight: 700; color: var(--mid); letter-spacing: 0.08em; text-transform: uppercase; min-width: 120px; flex-shrink: 0; }
+.excerpt-val { font-size: 11px; color: var(--slate); line-height: 1.6; }
+.excerpt-val.quote { color: var(--cloud); font-style: italic; font-weight: 500; }
+.excerpt-val ul { list-style: none; padding: 0; margin: 0; }
+.excerpt-val ul li { padding: 2px 0 2px 10px; position: relative; font-size: 11px; color: var(--slate); }
+.excerpt-val ul li::before { content: "·"; position: absolute; left: 0; color: var(--teal); font-weight: 700; }
+
+/* ── OBS TAG ─────────────────────────────────────────────────── */
+.obs-tag {
+  display: inline-block; font-size: 7px; font-weight: 700; color: var(--mid);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  border: 1px solid rgba(255,255,255,0.1); padding: 1px 5px; border-radius: 2px;
+  margin-left: 5px; vertical-align: middle; position: relative; top: -1px;
+}
+
+/* ── PDF LINK ROW ────────────────────────────────────────────── */
+.pdf-row {
+  padding: 14px 22px;
+  display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.pdf-info { display: flex; flex-direction: column; gap: 3px; }
+.pdf-title { font-size: 12px; font-weight: 600; color: var(--cloud); }
+.pdf-meta  { font-size: 10px; color: var(--mid); }
+.pdf-link {
+  font-size: 9px; font-weight: 700; color: var(--teal); letter-spacing: 0.06em;
+  text-transform: uppercase; text-decoration: none;
+  border: 1px solid rgba(46,211,198,0.3); padding: 6px 12px; border-radius: 2px;
+  background: rgba(46,211,198,0.06); flex-shrink: 0;
+}
+.pdf-link.coral {
+  color: var(--coral);
+  border-color: rgba(249,111,110,0.3);
+  background: rgba(249,111,110,0.06);
+}
+
+/* ── DECISION PREVIEW ────────────────────────────────────────── */
+.decision-preview {
+  background: var(--inner); border: 1px solid var(--rule);
+  padding: 12px 14px; margin-bottom: 8px;
+}
+.dp-id    { font-size: 8px; font-weight: 700; color: var(--teal); letter-spacing: 0.08em; margin-bottom: 4px; }
+.dp-title { font-size: 11px; font-weight: 600; color: var(--cloud); margin-bottom: 5px; }
+.dp-text  { font-size: 11px; color: var(--slate); line-height: 1.6; }
+
+/* ── PROGRESS BAR ────────────────────────────────────────────── */
+.progress-wrap { margin-top: 6px; }
+.progress-label { font-size: 8px; color: var(--mid); margin-bottom: 4px; display: flex; justify-content: space-between; }
+.progress-track { height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+.progress-fill  { height: 100%; background: var(--coral); border-radius: 2px; }
+
+/* ── CARD FOOTER ─────────────────────────────────────────────── */
+.card-footer {
+  padding: 10px 22px; border-top: 1px solid var(--rule);
+  display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;
+  background: var(--deep);
+}
+.footer-text { font-size: 8px; color: var(--mid); letter-spacing: 0.05em; text-transform: uppercase; }
+
+/* ── LOCKED OVERLAY ──────────────────────────────────────────── */
+.locked-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 8px; font-weight: 700; color: var(--mid); letter-spacing: 0.08em; text-transform: uppercase;
+  background: rgba(255,255,255,0.03); border: 1px solid var(--rule); padding: 3px 8px; border-radius: 2px;
+}
+
+/* ── INNER SECTION COLLAPSE ──────────────────────────────────── */
+.sec-toggle-row {
+  display: flex; justify-content: space-between; align-items: center;
+  cursor: pointer; user-select: none;
+  padding: 14px 22px; border-bottom: 1px solid transparent;
+}
+.sec-toggle-row:hover { background: rgba(255,255,255,0.015); }
+.sec-toggle-row.open { border-bottom-color: var(--rule); }
+.sec-toggle-inner { display: flex; align-items: center; gap: 10px; }
+.sec-toggle-label { font-size: 8px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.sec-toggle-label.teal  { color: var(--teal);  }
+.sec-toggle-label.coral { color: var(--coral); }
+.sec-toggle-label.mid   { color: var(--mid);   }
+.sec-mini-chev { font-size: 9px; color: var(--mid); transition: transform 0.2s; }
+.sec-mini-chev.open { transform: rotate(180deg); }
+.sec-body { padding: 0 22px 16px; }
+.sec-body.sec-collapsed { display: none; }
+/* Tactical notes */
+.tactical-heading {
+  font-size: 8px; font-weight: 700; color: var(--mid);
+  letter-spacing: 0.14em; text-transform: uppercase;
+  margin: 28px 0 10px; padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule);
+}
+/* ── SIQ SEAL ────────────────────────────────────────────────── */
+.siq-seal {
+  width: 36px; height: 36px; flex-shrink: 0; opacity: 0.82;
+}
+.siq-seal img {
+  width: 36px; height: 36px; display: block;
+  border-radius: 50%;
+}
+</style>
+</head>
+<body>
+<div class="artifacts-wrap">
+
+  <div class="page-header">
+    <p class="page-eyebrow">StrategyIQ &nbsp;·&nbsp; Active Strategic Build</p>
+    <h1 class="page-title">Strategic Artifacts.</h1>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════
+       ARTIFACT 00 — ACCORDION
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="artifact-card">
+    <div class="ac-header" onclick="toggle('a00')">
+      <div class="ac-header-left">
+        <span class="ac-num">00</span>
+        <div class="ac-title-block">
+          <p class="ac-eyebrow coral">Intake Brief + Initial Diagnosis</p>
+          <p class="ac-title">Strategic Intake &amp; Initial Diagnosis</p>
+        </div>
+      </div>
+      <div class="ac-header-right">
+        <span class="ac-status certified">Certified</span>
+        <div class="siq-seal"><img src="/assets/images/siq-certified.png" alt="SiQ Certified"></div>
+        <span class="ac-chevron" id="chev-a00">▼</span>
+      </div>
+    </div>
+    <div class="ac-body" id="a00">
+
+      <!-- Core Finding — OPEN by default -->
+      <div class="sec-toggle-row open" data-sec="s00-finding" onclick="toggleSection('s00-finding')">
+        <div class="sec-toggle-inner">
+          <span class="sec-toggle-label coral">Core Diagnostic Finding</span>
+        </div>
+        <span class="sec-mini-chev open" id="chev-s00-finding">▼</span>
+      </div>
+      <div class="sec-body" id="s00-finding">
+        <div style="padding-top:14px;">
+        <div class="signal-bridge">
+          <div class="sig-col client">
+            <p class="sig-label coral">Client Signal</p>
+            <p class="sig-text">"The biggest obstacle right now is not having a clear monetization strategy." — Intake, April 8, 2026</p>
+          </div>
+          <div class="sig-arrow">→</div>
+          <div class="sig-col diag">
+            <p class="sig-label teal">Strategic Diagnosis</p>
+            <p class="sig-text">Trust and demand exist but lack structured conversion architecture. No defined mechanism to translate accumulated trust into paid transformation or revenue.</p>
+          </div>
+        </div>
+        <div class="finding">
+          <p class="finding-head">Criar Sin Culpas already delivers meaningful transformation for parents during moments of escalation, shame, and loss of control.</p>
+          <p class="finding-body">That transformation currently exists as fragmented content rather than a structured pathway parents can follow. No structured pathway → no offer architecture → no monetization mechanism.</p>
+        </div>
+        <div class="two-col">
+          <div class="mini-card">
+            <p class="mini-label teal">What Is Structurally Strong</p>
+            <ul>
+              <li>High emotional trust — audience engages during shame, escalation, and loss of control</li>
+              <li>Distinct positioning — honesty without judgment paired with PCIT and RUBI frameworks</li>
+              <li>Crisis-moment relevance — inbound questions arrive while situations are actively escalating</li>
+              <li>Proven resonance pattern — content naming invisible cycles scales rapidly</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <p class="mini-label coral">What Is Structurally Absent</p>
+            <ul>
+              <li class="c">No monetization strategy — explicitly named as primary obstacle by client</li>
+              <li class="c">No first offer clarity — no defined entry point for paid transformation</li>
+              <li class="c">No conversion path — no route from follower to client to community</li>
+              <li class="c">Content layer built upward — trust accumulates faster than it can be received <span class="obs-tag">Strategic Observation</span></li>
+            </ul>
+          </div>
+        </div>
+        </div>
+      </div>
+
+      <!-- Engagement Context — COLLAPSED -->
+      <div class="sec-toggle-row" data-sec="s00-context" onclick="toggleSection('s00-context')">
+        <div class="sec-toggle-inner">
+          <span class="sec-toggle-label teal">Engagement Context</span>
+        </div>
+        <span class="sec-mini-chev" id="chev-s00-context">▼</span>
+      </div>
+      <div class="sec-body sec-collapsed" id="s00-context">
+        <div style="padding-top:14px;">
+        <div class="data-rows">
+          <div class="data-row"><span class="data-key">Platform Tenure</span><span class="data-val">5 years active</span></div>
+          <div class="data-row"><span class="data-key">Followers at Intake</span><span class="data-val"><strong>~26,900</strong> &nbsp;·&nbsp; US + Latin America &nbsp;·&nbsp; Spanish-language</span></div>
+          <div class="data-row"><span class="data-key">Posting Cadence</span><span class="data-val">~5× per week &nbsp;·&nbsp; Single-image posts + Stories</span></div>
+          <div class="data-row"><span class="data-key">Available Capacity</span><span class="data-val">5–10 hours per week</span></div>
+          <div class="data-row"><span class="data-key">Frameworks</span><span class="data-val">PCIT (Parent-Child Interaction Therapy) &nbsp;·&nbsp; RUBI Behavioral Intervention</span></div>
+        </div>
+        </div>
+      </div>
+
+      <!-- Primary Source — COLLAPSED -->
+      <div class="sec-toggle-row" data-sec="s00-source" onclick="toggleSection('s00-source')">
+        <div class="sec-toggle-inner">
+          <span class="sec-toggle-label teal">Primary Source — Strategic Intake</span>
+        </div>
+        <span class="sec-mini-chev" id="chev-s00-source">▼</span>
+      </div>
+      <div class="sec-body sec-collapsed" id="s00-source">
+        <div style="padding-top:14px;">
+        <div class="source-card">
+          <div class="source-header">
+            <div>
+              <p class="source-title">Client Strategic Intake Submission</p>
+              <p class="source-sub">Captured: April 8, 2026 &nbsp;·&nbsp; Source: StrategyIQ Intake Form &nbsp;·&nbsp; Verbatim Historical Record</p>
+            </div>
+            <a href="https://www.luis-gilberto.com/TheHub/clients/nari/files/Strategic%20Intake%20%E2%80%94%20Criar%20Sin%20Culpas%20%E2%80%94%20StrategyIQ-rawresponses.pdf" class="source-link" target="_blank">View Intake Responses &nbsp;→</a>
+          </div>
+          <div class="source-excerpts">
+            <div class="excerpt-row"><span class="excerpt-key">Brand Description</span><span class="excerpt-val">Parents raising disruptive or neurodivergent children who are overwhelmed and struggling to regulate behavior at home.</span></div>
+            <div class="excerpt-row"><span class="excerpt-key">Audience Pain Points</span><span class="excerpt-val"><ul><li>Losing control — yelling, reacting, sometimes hitting</li><li>Not knowing how to de-escalate behavior in the moment</li><li>Lack of structure and consistency at home</li><li>Communication breakdowns between parent and child</li><li>Confusion around neurodivergence</li><li>Guilt, shame, and fear of judgment</li></ul></span></div>
+            <div class="excerpt-row"><span class="excerpt-key">Primary Constraint</span><span class="excerpt-val quote">"The biggest obstacle right now is not having a clear monetization strategy."</span></div>
+          </div>
+        </div>
+        </div>
+      </div>
+
+      <!-- Audience States + Functions — COLLAPSED -->
+      <div class="sec-toggle-row" data-sec="s00-audience" onclick="toggleSection('s00-audience')">
+        <div class="sec-toggle-inner">
+          <span class="sec-toggle-label teal">Audience-State Diagnosis</span>
+        </div>
+        <span class="sec-mini-chev" id="chev-s00-audience">▼</span>
+      </div>
+      <div class="sec-body sec-collapsed" id="s00-audience">
+        <div style="padding-top:14px;">
+        <div class="states-row">
+          <div class="state-block"><p class="state-num">State 01</p><p class="state-title">Active Escalation</p><p class="state-body">Parent is inside a crisis moment — seeking immediate intervention.</p></div>
+          <div class="state-block"><p class="state-num">State 02</p><p class="state-title">Post-Event Reflection</p><p class="state-body">Emerging from a crisis, seeking to understand the pattern and prevent recurrence.</p></div>
+          <div class="state-block"><p class="state-num">State 03</p><p class="state-title">Chronic Stress</p><p class="state-body">Living with persistent dysregulation — exhaustion and shame as a baseline state.</p></div>
+        </div>
+        <div style="margin-top:10px;">
+        <div class="fn-row">
+          <div class="fn-block"><p class="fn-title">Relief</p><p class="fn-body">Immediate, usable intervention. Something that works right now — not in theory.</p></div>
+          <div class="fn-block"><p class="fn-title">Interpretation</p><p class="fn-body">Decoding why the pattern keeps repeating. The translator-of-chaos role is the platform's most defensible asset.</p></div>
+          <div class="fn-block"><p class="fn-title">Permission</p><p class="fn-body">Confirmation they are not failures and that change is possible from exactly where they are.</p></div>
+        </div>
+        </div>
+        </div>
+      </div>
+
+      <!-- Vision + Opportunity — COLLAPSED -->
+      <div class="sec-toggle-row" data-sec="s00-vision" onclick="toggleSection('s00-vision')">
+        <div class="sec-toggle-inner">
+          <span class="sec-toggle-label teal">Vision &amp; Strategic Opportunity</span>
+        </div>
+        <span class="sec-mini-chev" id="chev-s00-vision">▼</span>
+      </div>
+      <div class="sec-body sec-collapsed" id="s00-vision">
+        <div style="padding-top:14px;">
+        <div class="data-rows" style="margin-bottom:12px;">
+          <div class="data-row"><span class="data-key">Growth Target</span><span class="data-val"><strong>100,000+</strong> followers with a highly engaged community</span></div>
+          <div class="data-row"><span class="data-key">Business Goal</span><span class="data-val">Live from the platform — workshops, media, storytelling, and scalable educational resources</span></div>
+        </div>
+        <div class="opportunity">
+          <p class="opp-head">The opportunity is not expansion. It is translation. Formalizing the transformation Criar Sin Culpas already delivers informally into a structured, navigable value ladder.</p>
+          <p class="opp-cat">Breaking escalation cycles and helping families build structures that function under real-world stress — the ownable category this platform is already building toward.</p>
+        </div>
+        </div>
+      </div>
+
+      <!-- Artifact chain — COLLAPSED -->
+      <div class="sec-toggle-row" data-sec="s00-chain" onclick="toggleSection('s00-chain')">
+        <div class="sec-toggle-inner">
+          <span class="sec-toggle-label mid">Artifact Chain</span>
+        </div>
+        <span class="sec-mini-chev" id="chev-s00-chain">▼</span>
+      </div>
+      <div class="sec-body sec-collapsed" id="s00-chain">
+        <div style="padding-top:14px;">
+        <div class="chain-row">
+          <div class="chain-item"><span class="chain-num">00</span><span class="chain-pill active">Intake Brief</span></div>
+          <span class="chain-arrow">→</span>
+          <div class="chain-item"><span class="chain-num">01</span><span class="chain-pill pending">Diagnosis</span></div>
+          <span class="chain-arrow">→</span>
+          <div class="chain-item"><span class="chain-num">02</span><span class="chain-pill pending">Framework</span></div>
+          <span class="chain-arrow">→</span>
+          <div class="chain-item"><span class="chain-num">03</span><span class="chain-pill pending">Roadmap</span></div>
+          <span class="chain-arrow">→</span>
+          <div class="chain-item"><span class="chain-num">04</span><span class="chain-pill pending">Messaging</span></div>
+          <span class="chain-arrow">→</span>
+          <div class="chain-item"><span class="chain-num">05</span><span class="chain-pill pending">Campaigns</span></div>
+        </div>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <span class="footer-text">Luis Gilberto &nbsp;·&nbsp; StrategyIQ &nbsp;·&nbsp; The Hub</span>
+        <span class="footer-text">Artifact 00 &nbsp;·&nbsp; Intake Brief + Initial Diagnosis &nbsp;·&nbsp; April 2026</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════════════════
+       ARTIFACT 01 — STRATEGIC DIAGNOSIS
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="artifact-card">
+    <div class="ac-header" onclick="toggle('a01')">
+      <div class="ac-header-left">
+        <span class="ac-num">01</span>
+        <div class="ac-title-block">
+          <p class="ac-eyebrow teal">Analysis</p>
+          <p class="ac-title">Strategic Diagnosis</p>
+        </div>
+      </div>
+      <div class="ac-header-right">
+        <span class="ac-status certified">Certified &nbsp;·&nbsp; April 10</span>
+        <div class="siq-seal"><img src="/assets/images/siq-certified.png" alt="SiQ Certified"></div>
+        <span class="ac-chevron" id="chev-a01">▼</span>
+      </div>
+    </div>
+    <div class="ac-body" id="a01">
+
+      <div class="ac-section">
+        <p class="sec-label coral">Strategic Interpretation</p>
+        <p style="font-size:11px; color:var(--slate); line-height:1.65; margin-bottom:10px;">Artifact 00 proved the problem. This artifact interprets it — explaining <em>why</em> the constraint exists, what makes the positioning defensible, and what category Criar Sin Culpas is actually occupying.</p>
+        <div class="finding">
+          <p class="finding-head">Why the audience responds the way it does.</p>
+          <p class="finding-body">Parents arrive during moments of crisis — not to learn, but to survive the next 10 minutes. They are not seeking aspirational parenting content. They are seeking relief, interpretation, and permission. Content that names invisible cycles (e.g., "your child only listens after you scream because that's the threshold you've trained them to") goes viral because it does all three jobs at once: it de-shames, decodes, and gives forward momentum.</p>
+        </div>
+        <div class="finding" style="border-color: var(--teal);">
+          <p class="finding-head">What makes the positioning defensible.</p>
+          <p class="finding-body">Most parenting creators occupy aspirational territory — calm routines, positive reinforcement, ideal outcomes. Criar Sin Culpas occupies the opposite: the moment everything has already broken down. This is a harder space to enter authentically, which makes it harder to replicate. The combination of lived experience, PCIT-grounded tools, and non-shaming honesty creates a positioning that cannot be copied by credential alone or by warmth alone — it requires both.</p>
+        </div>
+        <div class="finding" style="border-color: var(--amber);">
+          <p class="finding-head">What category she is actually occupying.</p>
+          <p class="finding-body">Not "parenting advice." Not "neurodivergent parenting content." The actual category is: <strong style="color:var(--cloud);">crisis-moment intervention for Spanish-speaking families navigating escalation and dysregulation.</strong> This category has no dominant voice. It is underserved in Spanish. It is exploding in cultural awareness as neurodivergent diagnosis rates rise. First-mover positioning in this category is the real strategic prize.</p>
+        </div>
+      </div>
+
+      <div class="ac-section">
+        <p class="sec-label">Why Translation Is the Right Frame</p>
+        <div class="data-rows">
+          <div class="data-row"><span class="data-key">The Asset</span><span class="data-val">50+ workshops and sessions of real parenting intervention — not theory, lived practice.</span></div>
+          <div class="data-row"><span class="data-key">The Gap</span><span class="data-val">That knowledge exists as isolated events, not as a navigable system parents can enter and progress through.</span></div>
+          <div class="data-row"><span class="data-key">The Frame</span><span class="data-val">Translation: converting existing knowledge into structured architecture. This is not a content creation problem — it is an architecture problem. The content already exists.</span></div>
+          <div class="data-row"><span class="data-key">The Implication</span><span class="data-val">The first offer should not be new content. It should be a structured entry point into content and expertise that already exists.</span></div>
+        </div>
+      </div>
+
+      <div class="ac-section">
+        <p class="sec-label">Strategic Decisions Produced</p>
+        <div class="decision-preview">
+          <p class="dp-id">SR-001 &nbsp;·&nbsp; Core Constraint Identified</p>
+          <p class="dp-text">Strategy will focus on translating existing parenting frameworks into a structured learning architecture — not on increasing content output or audience size.</p>
+        </div>
+        <div class="decision-preview">
+          <p class="dp-id">SR-002 &nbsp;·&nbsp; Strategic Framing — Translation, Not Expansion</p>
+          <p class="dp-text">The platform's strategic direction is architectural translation. The 50+ existing workshops are the raw material. Structure is the product.</p>
+        </div>
+      </div>
+
+      <div class="ac-section">
+        <p class="sec-label">Three Audience Segments &amp; Conversion Logic</p>
+        <div class="states-row">
+          <div class="state-block"><p class="state-num">Segment A — Highest Volume</p><p class="state-title">Ashamed &amp; Overwhelmed</p><p class="state-body">Responds to de-shaming content. Permission is the primary job. Entry offer must feel like rescue, not curriculum.</p></div>
+          <div class="state-block"><p class="state-num">Segment B — Growing Fast</p><p class="state-title">Suspecting Neurodivergence</p><p class="state-body">Responds to pattern recognition. Reframes like "it's not defiance — it's a dysregulated nervous system" are high-conversion signals.</p></div>
+          <div class="state-block"><p class="state-num">Segment C — Highest Intent</p><p class="state-title">Under-Equipped &amp; Aware</p><p class="state-body">Already diagnosed. Already motivated. Needs structure and systems. Most likely to pay first, most likely to stay.</p></div>
+        </div>
+      </div>
+
+      <div class="pdf-row">
+        <div class="pdf-info">
+          <p class="pdf-title">Strategic Diagnosis — Full Document</p>
+          <p class="pdf-meta">Certified &nbsp;·&nbsp; April 10, 2026 &nbsp;·&nbsp; 11-page executive brief</p>
+        </div>
+        <a href="https://www.luis-gilberto.com/TheHub/clients/nari/files/StrategyIQ_Strategic_Diagnosis_NariFateha.pdf" class="pdf-link" target="_blank">Open PDF &nbsp;→</a>
+      </div>
+
+      <div class="card-footer">
+        <span class="footer-text">Artifact 01 &nbsp;·&nbsp; Strategic Diagnosis &nbsp;·&nbsp; April 2026</span>
+        <span class="footer-text">Shapes Artifacts 02, 03, 04, 05</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════════════════
+       ARTIFACT 02 — DECISION FRAMEWORK (ACTIVE)
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="artifact-card" style="border-color: rgba(249,111,110,0.35);">
+    <div class="ac-header" onclick="toggle('a02')">
+      <div class="ac-header-left">
+        <span class="ac-num">02</span>
+        <div class="ac-title-block">
+          <p class="ac-eyebrow coral">Framework &nbsp;·&nbsp; Active</p>
+          <p class="ac-title">Decision Framework</p>
+        </div>
+      </div>
+      <div class="ac-header-right">
+        <span class="ac-status active">In Progress</span>
+        <span class="ac-chevron" id="chev-a02">▼</span>
+      </div>
+    </div>
+    <div class="ac-body" id="a02">
+
+      <div class="ac-section">
+        <p class="sec-label">What This Artifact Defines</p>
+        <div class="data-rows">
+          <div class="data-row"><span class="data-key">Purpose</span><span class="data-val">A structured model for evaluating the monetization and growth pathways available to the platform. Produces the Signature Workshop definition and value ladder architecture.</span></div>
+          <div class="data-row"><span class="data-key">Triggered By</span><span class="data-val">SR-001 and SR-002 — core constraint identified, translation strategy committed</span></div>
+          <div class="data-row"><span class="data-key">Inputs Required</span><span class="data-val">Workshop inventory &nbsp;·&nbsp; Sample recordings (received) &nbsp;·&nbsp; Top 5 parent problems</span></div>
+          <div class="data-row"><span class="data-key">Deliverable</span><span class="data-val">Decision matrix + Signature Workshop definition + value ladder map</span></div>
+        </div>
+      </div>
+
+      <div class="ac-section">
+        <p class="sec-label">Progress</p>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>Workshop library analysis</span><span style="color:var(--coral);">60%</span></div>
+          <div class="progress-track"><div class="progress-fill" style="width:60%"></div></div>
+        </div>
+        <div style="margin-top: 10px;">
+          <div class="data-rows">
+            <div class="data-row"><span class="data-key">Completed</span><span class="data-val">Content resonance pattern identified &nbsp;·&nbsp; 3 workshop recordings reviewed</span></div>
+            <div class="data-row"><span class="data-key">In Progress</span><span class="data-val">Signature Workshop definition &nbsp;·&nbsp; Entry offer architecture</span></div>
+            <div class="data-row"><span class="data-key">Pending</span><span class="data-val">Workshop inventory submission &nbsp;·&nbsp; Top 5 parent problems</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ac-section">
+        <p class="sec-label">Working Hypothesis — SR-003 (Draft)</p>
+        <div class="decision-preview">
+          <p class="dp-id">SR-003 &nbsp;·&nbsp; Entry Offer — Pending Confirmation</p>
+          <p class="dp-text">The "bilingual parenting" insight suggests framing the work as neurological translation rather than behavior correction. Title and final format TBD after full workshop library review.</p>
+        </div>
+      </div>
+
+      <div class="ac-section">
+        <p class="sec-label mid">Next Session</p>
+        <div class="data-rows">
+          <div class="data-row"><span class="data-key">Date</span><span class="data-val">Wednesday, April 15</span></div>
+          <div class="data-row"><span class="data-key">Focus</span><span class="data-val">Finalize Signature Workshop definition &nbsp;·&nbsp; Define value ladder &nbsp;·&nbsp; Map monetization sequence</span></div>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <span class="footer-text">Artifact 02 &nbsp;·&nbsp; Decision Framework &nbsp;·&nbsp; In Progress</span>
+        <span class="footer-text">Required before April 15</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════════════════
+       ARTIFACT 03 — EXECUTION ROADMAP
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="artifact-card">
+    <div class="ac-header" onclick="toggle('a03')">
+      <div class="ac-header-left">
+        <span class="ac-num">03</span>
+        <div class="ac-title-block">
+          <p class="ac-eyebrow mid">Execution &nbsp;·&nbsp; Upcoming</p>
+          <p class="ac-title">Execution Roadmap</p>
+        </div>
+      </div>
+      <div class="ac-header-right">
+        <span class="ac-status upcoming">Upcoming</span>
+        <span class="ac-chevron" id="chev-a03">▼</span>
+      </div>
+    </div>
+    <div class="ac-body" id="a03">
+      <div class="ac-section">
+        <p class="sec-label mid">What This Artifact Defines</p>
+        <div class="data-rows">
+          <div class="data-row"><span class="data-key">Purpose</span><span class="data-val">A sequenced, dependency-mapped plan aligned to strategic goals. Shows what to build, in what order, and how each piece connects — given 5–10 hours per week of available capacity.</span></div>
+          <div class="data-row"><span class="data-key">Triggered By</span><span class="data-val">Completion of Artifact 02 — entry offer and value ladder must be defined first</span></div>
+          <div class="data-row"><span class="data-key">Deliverable</span><span class="data-val">Phased execution plan + milestone map + capacity allocation model</span></div>
+        </div>
+      </div>
+      <div class="ac-section">
+        <p class="sec-label mid">Strategic Constraints It Must Honor</p>
+        <div class="mini-card" style="margin-top:0;">
+          <p class="mini-label mid">From SR-001 &amp; SR-002</p>
+          <ul>
+            <li>Initiatives must be sequenced to prevent dilution of limited capacity (5–10 hrs/week)</li>
+            <li>Increasing output or growth without resolving offer architecture will compound imbalance</li>
+            <li>Every phase must route trust intentionally — not accumulate it passively</li>
+            <li><strong style="color:#F5F0EB;">Must prioritize low-friction implementation</strong> — current capacity is limited and workshop translation is still in progress. No phase should require building infrastructure and creating content simultaneously.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="footer-text">Artifact 03 &nbsp;·&nbsp; Execution Roadmap &nbsp;·&nbsp; Locked</span>
+        <span class="locked-badge">Unlocks after Artifact 02</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════════════════
+       ARTIFACT 04 — MESSAGING ARCHITECTURE
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="artifact-card">
+    <div class="ac-header" onclick="toggle('a04')">
+      <div class="ac-header-left">
+        <span class="ac-num">04</span>
+        <div class="ac-title-block">
+          <p class="ac-eyebrow mid">Narrative &nbsp;·&nbsp; Upcoming</p>
+          <p class="ac-title">Messaging Architecture</p>
+        </div>
+      </div>
+      <div class="ac-header-right">
+        <span class="ac-status upcoming">Upcoming</span>
+        <span class="ac-chevron" id="chev-a04">▼</span>
+      </div>
+    </div>
+    <div class="ac-body" id="a04">
+      <div class="ac-section">
+        <p class="sec-label mid">What This Artifact Defines</p>
+        <div class="data-rows">
+          <div class="data-row"><span class="data-key">Purpose</span><span class="data-val">The strategic narrative behind Criar Sin Culpas — why it exists, who it's for, and how it speaks from brand positioning to channel tone.</span></div>
+          <div class="data-row"><span class="data-key">Triggered By</span><span class="data-val">Completion of Artifact 02 — brand voice must align to the defined offer and audience</span></div>
+          <div class="data-row"><span class="data-key">Deliverable</span><span class="data-val">Messaging house document + copy guidelines + content voice framework</span></div>
+        </div>
+      </div>
+      <div class="ac-section">
+        <p class="sec-label mid">Strategic Constraints It Must Honor</p>
+        <div class="mini-card" style="margin-top:0;">
+          <p class="mini-label mid">From SR-001 &amp; SR-002</p>
+          <ul>
+            <li>Messaging must consistently deliver relief, interpretation, and permission — the three audience functions identified in the diagnosis</li>
+            <li>Must reframe "parenting tips account" → "escalation cycle specialist"</li>
+            <li>Money beliefs ("I feel bad charging") must be reframed through messaging — not avoided</li>
+            <li><strong style="color:#F5F0EB;">Must preserve her non-shaming tone while increasing clarity around paid transformation</strong> — the voice that built the audience must carry through to the offers, or conversion will feel jarring.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="footer-text">Artifact 04 &nbsp;·&nbsp; Messaging Architecture &nbsp;·&nbsp; Locked</span>
+        <span class="locked-badge">Unlocks after Artifact 02</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════════════════
+       ARTIFACT 05 — CAMPAIGN SYSTEM
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="artifact-card">
+    <div class="ac-header" onclick="toggle('a05')">
+      <div class="ac-header-left">
+        <span class="ac-num">05</span>
+        <div class="ac-title-block">
+          <p class="ac-eyebrow mid">Activation &nbsp;·&nbsp; Upcoming</p>
+          <p class="ac-title">Campaign System</p>
+        </div>
+      </div>
+      <div class="ac-header-right">
+        <span class="ac-status upcoming">Upcoming</span>
+        <span class="ac-chevron" id="chev-a05">▼</span>
+      </div>
+    </div>
+    <div class="ac-body" id="a05">
+      <div class="ac-section">
+        <p class="sec-label mid">What This Artifact Defines</p>
+        <div class="data-rows">
+          <div class="data-row"><span class="data-key">Purpose</span><span class="data-val">A scalable activation framework: channel logic, audience mapping, cadence structure, and performance signal design. Turns the strategy into repeatable execution.</span></div>
+          <div class="data-row"><span class="data-key">Triggered By</span><span class="data-val">Completion of Artifacts 03 and 04 — roadmap and messaging must be defined first</span></div>
+          <div class="data-row"><span class="data-key">Deliverable</span><span class="data-val">Channel playbook + content calendar template + activation sequence</span></div>
+        </div>
+      </div>
+      <div class="ac-section">
+        <p class="sec-label mid">Strategic Constraints It Must Honor</p>
+        <div class="mini-card" style="margin-top:0;">
+          <p class="mini-label mid">From SR-002</p>
+          <ul>
+            <li>Trust must be routed intentionally — not accumulated passively</li>
+            <li>Campaign design must serve offer conversion, not just reach or engagement</li>
+            <li>Content system must operate within 5–10 hours per week of available capacity</li>
+            <li><strong style="color:#F5F0EB;">Campaigns should convert crisis-moment trust into workshop entry</strong> — not optimize for reach or follower growth alone. The audience is already there. The campaign system moves them forward.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="footer-text">Artifact 05 &nbsp;·&nbsp; Campaign System &nbsp;·&nbsp; Locked</span>
+        <span class="locked-badge">Unlocks after Artifacts 03 &amp; 04</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TACTICAL NOTES -->
+  <p class="tactical-heading">Tactical Notes</p>
+
+  <!-- CONTENT CAPTURE GUIDE -->
+  <div class="artifact-card">
+    <div class="ac-header" onclick="toggle('acc')">
+      <div class="ac-header-left">
+        <span class="ac-num">—</span>
+        <div class="ac-title-block">
+          <p class="ac-eyebrow teal">Strategy Note</p>
+          <p class="ac-title">Content Capture Guide</p>
+        </div>
+      </div>
+      <div class="ac-header-right">
+        <span class="ac-status note">Certified</span>
+        <span class="ac-chevron" id="chev-acc">▼</span>
+      </div>
+    </div>
+    <div class="ac-body" id="acc">
+      <div class="ac-section">
+        <p class="sec-label mid">What This Document Is</p>
+        <div class="data-rows">
+          <div class="data-row"><span class="data-key">Type</span><span class="data-val">Tactical note — not a core strategy artifact. Produced to support a specific weekend of travel.</span></div>
+          <div class="data-row"><span class="data-key">Purpose</span><span class="data-val">A short guide for capturing authentic parenting moments while traveling. Five content themes aligned to the platform's resonance formula.</span></div>
+          <div class="data-row"><span class="data-key">Status</span><span class="data-val">Delivered and available for use</span></div>
+        </div>
+      </div>
+      <div class="pdf-row">
+        <div class="pdf-info">
+          <p class="pdf-title">Weekend Content Capture Guide</p>
+          <p class="pdf-meta">Strategy Note &nbsp;·&nbsp; April 2026</p>
+        </div>
+        <a href="https://www.luis-gilberto.com/TheHub/clients/nari/files/Weekend_Content_Capture_Guide_CSC_StrategyIQ.pdf" class="pdf-link" target="_blank">Open PDF &nbsp;→</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const CARDS = ['a00','a01','a02','a03','a04','a05','acc'];
+
+function toggle(id) {
+  const isCard = CARDS.includes(id);
+  if (isCard) {
+    // Single-open: close all other top-level cards first
+    CARDS.forEach(cid => {
+      if (cid !== id) {
+        const b = document.getElementById(cid);
+        const c = document.getElementById('chev-' + cid);
+        const h = c ? c.closest('.ac-header') : null;
+        if (b) b.classList.remove('open');
+        if (c) c.classList.remove('open');
+        if (h) h.classList.remove('open');
+      }
+    });
+  }
+  // Toggle the target
+  const body   = document.getElementById(id);
+  const chev   = document.getElementById('chev-' + id);
+  const header = chev ? chev.closest('.ac-header') : null;
+  if (!body) return;
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  if (chev)   chev.classList.toggle('open', !isOpen);
+  if (header) header.classList.toggle('open', !isOpen);
+}
+
+function toggleSection(id) {
+  // Multi-open inner sections
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.toggle('sec-collapsed');
+  const btn = document.querySelector('[data-sec="' + id + '"]');
+  if (btn) btn.classList.toggle('open');
+}
+
+// Open Artifact 02 by default (active)
+toggle('a02');
+</script>
+</body>
+</html>
