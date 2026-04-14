@@ -1,6 +1,6 @@
 // src/lib/staging-data.ts
 
-export const STAGING_MODE = true; // Toggle this to false to disable staging mode
+export const STAGING_MODE = false; // Toggle this to false to disable staging mode
 
 export const STAGING_DATA = {
   diagnosis: {

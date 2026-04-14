@@ -20,27 +20,18 @@ export async function GET() {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    // 2. Fetch Active Project (Prioritize cmlu1efbz0004nkth4pn0w1lb)
-    const targetProjectId = 'cmlu1efbz0004nkth4pn0w1lb';
-    let project = await prisma.project.findUnique({
-      where: { id: targetProjectId },
-      include: { client: true }
+    // 2. Fetch Active Project (Prioritize latest active)
+    let project = await prisma.project.findFirst({
+        where: { 
+            OR: [
+                { userId: user.id },
+                { clientId: user.clientId } // Include Client Org projects
+            ],
+            status: { in: ['ACTIVE', 'DISCOVERY', 'PLANNING'] }
+        },
+        orderBy: { updatedAt: 'desc' },
+        include: { client: true }
     })
-
-    // If target doesn't exist or belong to user/client, fallback to latest active
-    if (!project || (project.userId !== user.id && project.clientId !== user.clientId)) {
-        project = await prisma.project.findFirst({
-            where: { 
-                OR: [
-                    { userId: user.id },
-                    { clientId: user.clientId } // Include Client Org projects
-                ],
-                status: { in: ['ACTIVE', 'DISCOVERY', 'PLANNING'] }
-            },
-            orderBy: { updatedAt: 'desc' },
-            include: { client: true }
-        })
-    }
 
     if (!project) {
         return NextResponse.json({ user, project: null })
