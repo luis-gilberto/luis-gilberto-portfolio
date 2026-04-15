@@ -2118,7 +2118,7 @@
        } 
  
        /* Textarea height on mobile */ 
-       #signal-input { 
+       #strategy-inbox-input { 
          min-height: 200px !important; 
        } 
  
@@ -5692,12 +5692,12 @@
                   <span style="font-family: var(--font-orchestrator); font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal-primary);">Engine Active</span> 
                 </div> 
               </div> 
-              <textarea id="signal-input" class="matte-textarea" style="min-height: 280px; font-size: 15px; line-height: 1.7; resize: vertical;" placeholder="Paste anything here: Vimeo links, workshop titles, content scripts, or random thoughts. I will process and categorize these into the system for you."></textarea> 
+              <textarea id="strategy-inbox-input" class="matte-textarea" style="min-height: 280px; font-size: 15px; line-height: 1.7; resize: vertical;" placeholder="Paste anything here: Vimeo links, workshop titles, content scripts, or random thoughts. I will process and categorize these into the system for you."></textarea> 
             </div> 
           </div>
 
           <div class="submit-container" style="margin-top: 32px;">
-            <button type="button" id="submit-signal-btn" class="btn-submit-room" style="padding: 14px 32px; font-size: 12px;">SUBMIT TO INBOX →</button>
+            <button type="button" id="submit-signal-btn" class="btn-submit-room" style="padding: 14px 32px; font-size: 12px; font-family: 'Inter', sans-serif !important; letter-spacing: 1px; min-width: 220px;">SUBMIT TO INBOX →</button>
             <div id="submit-status-room" class="status-msg-room"></div>
           </div>
         </section>
@@ -6015,62 +6015,48 @@
 
       /* ─── CLIENT INPUT ROOM LOGIC (v18.9) ─── */
       const submitBtnRoom = document.getElementById('submit-signal-btn');
-      const statusMsgRoom = document.getElementById('submit-status-room');
 
-      async function submitStrategicSignal() { 
-          const signalInput = document.getElementById('signal-input');
-          const signalText = signalInput ? signalInput.value.trim() : ''; 
-          const webhookURL = 'https://hook.us2.make.com/9k9nuttlyzx6xm36971nel7spc5o7mmq'; 
+      if (submitBtnRoom) { 
+          submitBtnRoom.addEventListener('click', async function(e) { 
+              e.preventDefault(); 
+              const inputElement = document.getElementById('strategy-inbox-input'); 
+              const signalData = inputElement.value.trim(); 
        
-          if (!signalText) { 
-              showSubmitStatus('Please enter a strategic signal before submitting.', 'error'); 
-              return; 
-          } 
+              // DEBUG CHECK: This will tell us if the text was caught 
+              if (!signalData) { 
+                  alert('CRITICAL ERROR: No text found in textarea.'); 
+                  return; 
+              } 
        
-          submitBtnRoom.classList.add('loading'); 
-          submitBtnRoom.innerText = 'SYNCING...'; 
-          submitBtnRoom.disabled = true; 
+              submitBtnRoom.innerText = 'SYNCING...'; 
+              submitBtnRoom.disabled = true; 
        
-          try { 
-              const response = await fetch(webhookURL, { 
-                  method: 'POST', 
-                  headers: { 'Content-Type': 'application/json' }, 
-                  body: JSON.stringify({ 
-                      client: "Nari", 
-                      organization: "Criar Sin Culpas", 
-                      signal: signalText, 
-                      timestamp: new Date().toISOString() 
-                  }) 
-              }); 
+              try { 
+                  const response = await fetch('https://hook.us2.make.com/9k9nuttlyzx6xm36971nel7spc5o7mmq', { 
+                      method: 'POST', 
+                      headers: { 'Content-Type': 'application/json' }, 
+                      // FORCE the key to be "signal" 
+                      body: JSON.stringify({  
+                          signal: signalData,  
+                          client: 'Nari Fateha'  
+                      }) 
+                  }); 
        
-              if (response.ok) { 
-                  submitBtnRoom.classList.add('success'); 
-                  submitBtnRoom.innerText = 'SIGNAL CAPTURED · LUIS NOTIFIED'; 
-                  showSubmitStatus('SIGNAL CAPTURED · LUIS NOTIFIED', 'success'); 
-                  if (signalInput) signalInput.value = ''; 
-              } else {
-                  throw new Error('Server responded with ' + response.status);
-              }
-          } catch (error) { 
-              console.error('Intelligence Pipe Error:', error); 
-              showSubmitStatus('UNABLE TO SUBMIT INPUTS. PLEASE TRY AGAIN.', 'error');
-          } finally {
-              setTimeout(() => { 
-                  submitBtnRoom.classList.remove('loading', 'success'); 
-                  submitBtnRoom.innerText = 'SUBMIT TO INBOX →'; 
-                  submitBtnRoom.disabled = false; 
-                  if (statusMsgRoom) statusMsgRoom.classList.remove('visible'); 
-              }, 3000); 
-          }
-      }
-
-      if (submitBtnRoom) {
-        submitBtnRoom.addEventListener('click', submitStrategicSignal);
-      }
-
-      function showSubmitStatus(msg, type) {
-        statusMsgRoom.textContent = msg;
-        statusMsgRoom.className = `status-msg-room visible ${type}`;
+                  if (response.ok) { 
+                      submitBtnRoom.innerText = 'SYNCED'; 
+                      inputElement.value = ''; 
+                  } else { 
+                      alert('SERVER ERROR: ' + response.status); 
+                  } 
+              } catch (err) { 
+                  alert('CONNECTION ERROR: Check your internet or CORS policy.'); 
+              } finally { 
+                  setTimeout(() => { 
+                      submitBtnRoom.innerText = 'SUBMIT TO INBOX →'; 
+                      submitBtnRoom.disabled = false; 
+                  }, 3000); 
+              } 
+          }); 
       }
 
       /* ─── MOBILE DRAWER LOGIC (v18.2) ─── */ 
