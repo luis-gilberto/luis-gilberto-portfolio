@@ -5692,12 +5692,35 @@
                   <span style="font-family: var(--font-orchestrator); font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal-primary);">Engine Active</span> 
                 </div> 
               </div> 
+
+              <!-- Metadata Lineage (v26.2) -->
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 24px; margin-bottom: 12px;">
+                <div>
+                  <label for="user-persona-select" class="ui-label" style="display: block; margin-bottom: 8px; font-size: 9px; color: var(--text-tertiary);">USER / PERSONA</label>
+                  <select id="user-persona-select" class="matte-select" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 12px; border-radius: 4px; font-family: var(--font-orchestrator); font-size: 13px; cursor: pointer; transition: border-color 0.2s;">
+                    <option value="" disabled selected>Select Persona...</option>
+                    <option value="nari-fateha">Nari Fateha (Primary)</option>
+                    <option value="luis-gilberto">Luis Gilberto (Strategist)</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="context-select" class="ui-label" style="display: block; margin-bottom: 8px; font-size: 9px; color: var(--text-tertiary);">PROJECT / WORKSHOP CONTEXT</label>
+                  <select id="context-select" class="matte-select" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 12px; border-radius: 4px; font-family: var(--font-orchestrator); font-size: 13px; cursor: pointer; transition: border-color 0.2s;">
+                    <option value="" disabled selected>Select Context...</option>
+                    <option value="criar-sin-culpas">Criar Sin Culpas · General Strategy</option>
+                    <option value="workshop-translation">Workshop Translation · Pillar 01</option>
+                    <option value="content-resonance">Content Resonance · Pillar 02</option>
+                    <option value="signature-workshop">Signature Workshop · Product Design</option>
+                  </select>
+                </div>
+              </div>
+
               <textarea id="strategy-inbox-input" class="matte-textarea" style="min-height: 280px; font-size: 15px; line-height: 1.7; resize: vertical;" placeholder="Paste anything here: Vimeo links, workshop titles, content scripts, or random thoughts. I will process and categorize these into the system for you."></textarea> 
             </div> 
           </div>
 
           <div class="submit-container" style="margin-top: 32px;">
-            <button type="button" id="submit-signal-btn" class="btn-submit-room" style="padding: 14px 32px; font-size: 12px; font-family: 'Inter', sans-serif !important; letter-spacing: 1px; min-width: 220px;">SUBMIT TO INBOX →</button>
+            <button type="button" id="submit-signal-btn" class="btn-submit-room" style="padding: 14px 32px; font-size: 12px; font-family: 'Inter', sans-serif !important; letter-spacing: 1px; min-width: 220px; opacity: 0.5; cursor: not-allowed; color: #999;" disabled>SUBMIT TO INBOX →</button>
             <div id="submit-status-room" class="status-msg-room"></div>
           </div>
         </section>
@@ -6013,18 +6036,43 @@
         });
       });
 
-      /* ─── CLIENT INPUT ROOM LOGIC (v18.9) ─── */
+      /* ─── CLIENT INPUT ROOM LOGIC (v26.2) ─── */
       const submitBtnRoom = document.getElementById('submit-signal-btn');
+      const userPersonaSelect = document.getElementById('user-persona-select');
+      const contextSelect = document.getElementById('context-select');
+      const signalInput = document.getElementById('strategy-inbox-input');
+
+      function validateSignalRoom() {
+          const isUserValid = userPersonaSelect && userPersonaSelect.value !== "";
+          const isContextValid = contextSelect && contextSelect.value !== "";
+          const isTextValid = signalInput && signalInput.value.trim().length >= 50;
+
+          if (isUserValid && isContextValid && isTextValid) {
+              submitBtnRoom.disabled = false;
+              submitBtnRoom.style.opacity = "1";
+              submitBtnRoom.style.cursor = "pointer";
+              submitBtnRoom.style.color = "#FFFFFF";
+          } else {
+              submitBtnRoom.disabled = true;
+              submitBtnRoom.style.opacity = "0.5";
+              submitBtnRoom.style.cursor = "not-allowed";
+              submitBtnRoom.style.color = "#999";
+          }
+      }
+
+      if (userPersonaSelect) userPersonaSelect.addEventListener('change', validateSignalRoom);
+      if (contextSelect) contextSelect.addEventListener('change', validateSignalRoom);
+      if (signalInput) signalInput.addEventListener('input', validateSignalRoom);
 
       if (submitBtnRoom) { 
           submitBtnRoom.addEventListener('click', async function(e) { 
               e.preventDefault(); 
-              const inputElement = document.getElementById('strategy-inbox-input'); 
-              const signalData = inputElement.value.trim(); 
+              const signalData = signalInput.value.trim(); 
+              const userVal = userPersonaSelect.value;
+              const contextText = contextSelect.options[contextSelect.selectedIndex].text;
        
-              // DEBUG CHECK: This will tell us if the text was caught 
-              if (!signalData) { 
-                  alert('CRITICAL ERROR: No text found in textarea.'); 
+              if (!signalData || !userVal || !contextText) { 
+                  alert('CRITICAL ERROR: Required data missing for submission.'); 
                   return; 
               } 
        
@@ -6035,16 +6083,21 @@
                   const response = await fetch('https://hook.us2.make.com/9k9nuttlyzx6xm36971nel7spc5o7mmq', { 
                       method: 'POST', 
                       headers: { 'Content-Type': 'application/json' }, 
-                      // FORCE the key to be "signal" 
                       body: JSON.stringify({  
-                          signal: signalData,  
+                          signal_text: signalData,  
+                          user_id: userVal,
+                          workshop_title: contextText,
+                          submit_timestamp: new Date().toISOString(),
                           client: 'Nari Fateha'  
                       }) 
                   }); 
        
                   if (response.ok) { 
                       submitBtnRoom.innerText = 'SYNCED'; 
-                      inputElement.value = ''; 
+                      signalInput.value = ''; 
+                      userPersonaSelect.selectedIndex = 0;
+                      contextSelect.selectedIndex = 0;
+                      validateSignalRoom(); // Re-disable button
                   } else { 
                       alert('SERVER ERROR: ' + response.status); 
                   } 
@@ -6053,7 +6106,7 @@
               } finally { 
                   setTimeout(() => { 
                       submitBtnRoom.innerText = 'SUBMIT TO INBOX →'; 
-                      submitBtnRoom.disabled = false; 
+                      validateSignalRoom(); 
                   }, 3000); 
               } 
           }); 
