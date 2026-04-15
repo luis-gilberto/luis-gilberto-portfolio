@@ -5857,14 +5857,13 @@
                   </select>
                 </div>
                 <div>
-                  <label for="context-select" class="ui-label" style="display: block; margin-bottom: 8px; font-size: 9px; color: var(--text-tertiary);">PROJECT / WORKSHOP CONTEXT</label>
-                  <select id="context-select" class="matte-select">
-                    <option value="" disabled selected>Select Context...</option>
-                    <option value="criar-sin-culpas">Criar Sin Culpas · General Strategy</option>
-                    <option value="workshop-translation">Workshop Translation · Pillar 01</option>
-                    <option value="content-resonance">Content Resonance · Pillar 02</option>
-                    <option value="signature-workshop">Signature Workshop · Product Design</option>
-                  </select>
+                  <label id="context-label" class="ui-label" style="display: block; margin-bottom: 8px; font-size: 9px; color: var(--text-tertiary);">SOVEREIGN CONTEXT</label>
+                  <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); padding: 12px; border-radius: 4px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; color: #FFFFFF; line-height: 1.5;">
+                    <div style="color: rgba(255,255,255,0.4); font-size: 10px; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.5px;">Active Project</div>
+                    Criar Sin Culpas
+                    <div style="color: rgba(255,255,255,0.4); font-size: 10px; margin-top: 8px; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.5px;">Active Focus</div>
+                    Phase 02 · Decision Framework
+                  </div>
                 </div>
               </div>
 
@@ -6210,20 +6209,20 @@
         });
       });
 
-      /* ─── CLIENT INPUT ROOM LOGIC (v26.5) ─── */
+      /* ─── CLIENT INPUT ROOM LOGIC (UX-v26.8) ─── */
       const submitBtnRoom = document.getElementById('submit-signal-btn');
       const userPersonaSelect = document.getElementById('user-persona-select');
-      const contextSelect = document.getElementById('context-select');
       const signalInput = document.getElementById('strategy-inbox-input');
       const signalLoader = document.getElementById('signalLoader');
       const ghostPreview = document.getElementById('signalGhostPreview');
 
+      const SOVEREIGN_CONTEXT = "Criar Sin Culpas · Phase 02 · Decision Framework";
+
       function validateSignalRoom() {
           const isUserValid = userPersonaSelect && userPersonaSelect.value !== "";
-          const isContextValid = contextSelect && contextSelect.value !== "";
           const isTextValid = signalInput && signalInput.value.trim().length >= 50;
 
-          if (isUserValid && isContextValid && isTextValid) {
+          if (isUserValid && isTextValid) {
               submitBtnRoom.disabled = false;
               submitBtnRoom.style.opacity = "1";
               submitBtnRoom.style.cursor = "pointer";
@@ -6237,7 +6236,6 @@
       }
 
       if (userPersonaSelect) userPersonaSelect.addEventListener('change', validateSignalRoom);
-      if (contextSelect) contextSelect.addEventListener('change', validateSignalRoom);
       if (signalInput) signalInput.addEventListener('input', validateSignalRoom);
 
       if (submitBtnRoom) { 
@@ -6246,9 +6244,8 @@
               const signalData = signalInput.value.trim(); 
               const userVal = userPersonaSelect.value;
               const userText = userPersonaSelect.options[userPersonaSelect.selectedIndex].text;
-              const contextText = contextSelect.options[contextSelect.selectedIndex].text;
        
-              if (!signalData || !userVal || !contextText) { 
+              if (!signalData || !userVal) { 
                   alert('CRITICAL ERROR: Required data missing for submission.'); 
                   return; 
               } 
@@ -6266,7 +6263,7 @@
                       body: JSON.stringify({  
                           signal_text: signalData,  
                           user_id: userVal,
-                          workshop_title: contextText,
+                          workshop_title: SOVEREIGN_CONTEXT,
                           submit_timestamp: new Date().toISOString(),
                           client: 'Nari Fateha'  
                       }) 
@@ -6276,7 +6273,7 @@
                       // STAGE 2: Ghost Preview
                       if (signalLoader) signalLoader.classList.remove('active');
                       
-                      document.getElementById('ghostWorkshop').innerText = contextText;
+                      document.getElementById('ghostWorkshop').innerText = SOVEREIGN_CONTEXT;
                       document.getElementById('ghostPersona').innerText = userText;
                       document.getElementById('ghostNarrative').innerText = signalData.substring(0, 200) + (signalData.length > 200 ? '...' : '');
                       
@@ -6285,7 +6282,6 @@
                       // Reset form values immediately (data is safe)
                       signalInput.value = ''; 
                       userPersonaSelect.selectedIndex = 0;
-                      contextSelect.selectedIndex = 0;
 
                       // STAGE 3: Milestone Timer
                       setTimeout(() => {
