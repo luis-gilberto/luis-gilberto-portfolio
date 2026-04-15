@@ -3067,6 +3067,124 @@
       opacity: 0.5;
     }
 
+    /* --- SIGNAL ROOM TRUST PROTOCOL (v26.5) --- */
+    .signal-capture-wrapper {
+        position: relative;
+        width: 100%;
+    }
+
+    .signal-loader-container {
+        position: absolute;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 5;
+        pointer-events: none;
+    }
+
+    .signal-loader-container.active {
+        display: flex;
+    }
+
+    .spinner-icon {
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(255, 255, 255, 0.1);
+        border-top-color: var(--teal-primary);
+        border-radius: 50%;
+        animation: signal-spin 1s linear infinite;
+    }
+
+    @keyframes signal-spin {
+        to { transform: rotate(360deg); }
+    }
+
+    #signalGhostPreview {
+        position: absolute;
+        inset: 0;
+        background: rgba(10, 10, 10, 0.95);
+        backdrop-filter: blur(12px);
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+        z-index: 10;
+        border-radius: 4px;
+        border: 1px solid rgba(46, 211, 198, 0.2);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        text-align: center;
+    }
+
+    #signalGhostPreview.visible {
+        display: flex;
+        opacity: 1;
+    }
+
+    .ghost-title {
+        font-family: var(--font-storyteller);
+        font-style: italic;
+        font-size: 28px;
+        color: var(--teal-primary);
+        margin-bottom: 24px;
+    }
+
+    .ghost-data-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 30px;
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .ghost-item {
+        font-family: var(--font-orchestrator);
+        font-weight: 600;
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.8);
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding-bottom: 8px;
+    }
+
+    .ghost-item span {
+        color: var(--text-tertiary);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        display: block;
+        margin-bottom: 2px;
+    }
+
+    .milestone-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .success-checkmark {
+        width: 48px;
+        height: 48px;
+        color: #10b981;
+        filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.4));
+    }
+
+    .milestone-text {
+        font-family: var(--font-orchestrator);
+        font-size: 12px;
+        color: #FFFFFF;
+        letter-spacing: 0.5px;
+    }
+
+    .textarea-ghosted {
+        opacity: 0.3 !important;
+        pointer-events: none;
+    }
+
     .vault-btn {
       width: 100%;
       height: 54px;
@@ -5715,7 +5833,28 @@
                 </div>
               </div>
 
-              <textarea id="strategy-inbox-input" class="matte-textarea" style="min-height: 280px; font-size: 15px; line-height: 1.7; resize: vertical;" placeholder="Paste anything here: Vimeo links, workshop titles, content scripts, or random thoughts. I will process and categorize these into the system for you."></textarea> 
+              <div class="signal-capture-wrapper">
+                <textarea id="strategy-inbox-input" class="matte-textarea" style="min-height: 280px; font-size: 15px; line-height: 1.7; resize: vertical;" placeholder="Paste anything here: Vimeo links, workshop titles, content scripts, or random thoughts. I will process and categorize these into the system for you."></textarea>
+                
+                <!-- Stage 1: Loader -->
+                <div class="signal-loader-container" id="signalLoader">
+                  <div class="spinner-icon"></div>
+                </div>
+
+                <!-- Stage 2 & 3: Ghost Preview -->
+                <div id="signalGhostPreview">
+                  <h3 class="ghost-title">Signal Certified. Lineage Recorded.</h3>
+                  <div class="ghost-data-grid">
+                    <div class="ghost-item"><span>Workshop</span><div id="ghostWorkshop">Select Context...</div></div>
+                    <div class="ghost-item"><span>Persona</span><div id="ghostPersona">Select Persona...</div></div>
+                    <div class="ghost-item"><span>Strategic Narrative</span><div id="ghostNarrative" style="font-size: 12px; line-height: 1.5; color: rgba(255,255,255,0.6); max-height: 100px; overflow: hidden;">...</div></div>
+                  </div>
+                  <div class="milestone-container">
+                    <svg class="success-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <p class="milestone-text">Strategic Milestone Captured.</p>
+                  </div>
+                </div>
+              </div> 
             </div> 
           </div>
 
@@ -6036,11 +6175,13 @@
         });
       });
 
-      /* ─── CLIENT INPUT ROOM LOGIC (v26.2) ─── */
+      /* ─── CLIENT INPUT ROOM LOGIC (v26.5) ─── */
       const submitBtnRoom = document.getElementById('submit-signal-btn');
       const userPersonaSelect = document.getElementById('user-persona-select');
       const contextSelect = document.getElementById('context-select');
       const signalInput = document.getElementById('strategy-inbox-input');
+      const signalLoader = document.getElementById('signalLoader');
+      const ghostPreview = document.getElementById('signalGhostPreview');
 
       function validateSignalRoom() {
           const isUserValid = userPersonaSelect && userPersonaSelect.value !== "";
@@ -6069,6 +6210,7 @@
               e.preventDefault(); 
               const signalData = signalInput.value.trim(); 
               const userVal = userPersonaSelect.value;
+              const userText = userPersonaSelect.options[userPersonaSelect.selectedIndex].text;
               const contextText = contextSelect.options[contextSelect.selectedIndex].text;
        
               if (!signalData || !userVal || !contextText) { 
@@ -6076,8 +6218,11 @@
                   return; 
               } 
        
-              submitBtnRoom.innerText = 'SYNCING...'; 
+              // STAGE 1: Visual Puff
+              submitBtnRoom.innerText = 'SYNCING SIGNAL...'; 
               submitBtnRoom.disabled = true; 
+              signalInput.classList.add('textarea-ghosted');
+              if (signalLoader) signalLoader.classList.add('active');
        
               try { 
                   const response = await fetch('https://hook.us2.make.com/9k9nuttlyzx6xm36971nel7spc5o7mmq', { 
@@ -6093,22 +6238,43 @@
                   }); 
        
                   if (response.ok) { 
-                      submitBtnRoom.innerText = 'SYNCED'; 
+                      // STAGE 2: Ghost Preview
+                      if (signalLoader) signalLoader.classList.remove('active');
+                      
+                      document.getElementById('ghostWorkshop').innerText = contextText;
+                      document.getElementById('ghostPersona').innerText = userText;
+                      document.getElementById('ghostNarrative').innerText = signalData.substring(0, 200) + (signalData.length > 200 ? '...' : '');
+                      
+                      if (ghostPreview) ghostPreview.classList.add('visible');
+
+                      // Reset form values immediately (data is safe)
                       signalInput.value = ''; 
                       userPersonaSelect.selectedIndex = 0;
                       contextSelect.selectedIndex = 0;
-                      validateSignalRoom(); // Re-disable button
+
+                      // STAGE 3: Milestone Timer
+                      setTimeout(() => {
+                          if (ghostPreview) ghostPreview.classList.remove('visible');
+                          signalInput.classList.remove('textarea-ghosted');
+                          submitBtnRoom.innerText = 'SUBMIT TO INBOX →'; 
+                          validateSignalRoom(); 
+                      }, 3000);
+
                   } else { 
                       alert('SERVER ERROR: ' + response.status); 
+                      resetSubmitState();
                   } 
               } catch (err) { 
                   alert('CONNECTION ERROR: Check your internet or CORS policy.'); 
-              } finally { 
-                  setTimeout(() => { 
-                      submitBtnRoom.innerText = 'SUBMIT TO INBOX →'; 
-                      validateSignalRoom(); 
-                  }, 3000); 
-              } 
+                  resetSubmitState();
+              }
+              
+              function resetSubmitState() {
+                  if (signalLoader) signalLoader.classList.remove('active');
+                  signalInput.classList.remove('textarea-ghosted');
+                  submitBtnRoom.innerText = 'SUBMIT TO INBOX →'; 
+                  validateSignalRoom();
+              }
           }); 
       }
 
