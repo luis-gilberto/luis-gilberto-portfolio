@@ -1,0 +1,551 @@
+/* ═══════════════════════════════════════════════════════════════
+   NARI PORTAL — RESPONSIVE PATCH v2.0
+   Inject this <style> block immediately before </head> in index.html
+   
+   Fixes addressed:
+   1.  Body scroll restore after gate unlock
+   2.  Focus card + readiness panel overlap on tablets
+   3.  Production zone 2-col collapse timing
+   4.  Blueprint flow grid collapse on mid screens
+   5.  Matrix grid responsive breakpoints
+   6.  Sidebar avatar zoom clip (overflow fix)
+   7.  Mobile tab bar safe-area + z-index layering
+   8.  Mobile header backdrop blur
+   9.  SR record body tablet stacking
+   10. Accordion card title overflow wrap
+   11. Mini artifact card text truncation
+   12. Chain rail horizontal scroll on mobile
+   13. Section padding compression system
+   14. Global box-sizing min-width guard
+   15. Drawer scrim z-index conflict
+   16. Editorial header / section header responsive
+   17. Ecosystem gateway tablet collapse
+   18. Roadmap summary grid responsive
+   19. Synthesis blueprint padding responsive
+   20. Gate card mobile sizing
+═══════════════════════════════════════════════════════════════ */
+
+/* ─── 1. GLOBAL BOX-SIZING GUARD ─── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box !important;
+  min-width: 0;          /* prevents flex/grid blowout */
+}
+
+/* ─── 2. BODY SCROLL ─── */
+body {
+  overflow-x: hidden;
+}
+
+/* ─── 3. GRID COCKPIT (Desktop ≥ 1025px) ─── */
+@media (min-width: 1025px) {
+  #main-content {
+    display: grid !important;
+    grid-template-columns: 280px 1fr !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    overflow: hidden !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+  }
+  .sidebar {
+    position: relative !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    overflow-y: auto !important;
+    overflow-x: visible !important; /* allow avatar zoom */
+    grid-column: 1 !important;
+  }
+  .main-workspace {
+    grid-column: 2 !important;
+    height: 100vh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding: 40px 56px !important;
+  }
+  .mobile-header  { display: none !important; }
+  .mobile-tab-bar { display: none !important; }
+  .drawer-scrim   { display: none !important; }
+}
+
+/* ─── 4. SIDEBAR AVATAR ZOOM (unclip) ─── */
+.sidebar-profile {
+  overflow: visible !important;
+  position: relative;
+  z-index: 200;
+}
+.avatar {
+  transform-origin: bottom left !important;
+}
+.profile-card {
+  min-width: 0 !important;
+  flex: 1 1 0 !important;
+}
+.profile-info .name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ─── 5. FOCUS CARD — no overlap ─── */
+.focus-card {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: stretch !important;
+  gap: 28px !important;
+  padding: 36px !important;
+  width: 100% !important;
+  overflow: visible !important;
+}
+.focus-content {
+  flex: 1 1 0 !important;
+  min-width: 0 !important;
+}
+.readiness-panel {
+  flex: 0 0 clamp(240px, 30%, 380px) !important;
+  width: auto !important;
+  min-width: 0 !important;
+}
+
+/* Stack at tablet */
+@media (max-width: 900px) {
+  .focus-card {
+    flex-direction: column !important;
+    gap: 20px !important;
+    padding: 22px !important;
+  }
+  .readiness-panel {
+    flex: none !important;
+    width: 100% !important;
+  }
+}
+
+/* ─── 6. HERO TITLE CLAMP ─── */
+.hero-title {
+  font-size: clamp(1.75rem, 5vw, 3.8rem) !important;
+  line-height: 1.0 !important;
+}
+
+/* ─── 7. PRODUCTION ZONE ─── */
+.production-zone {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 20px !important;
+  margin-bottom: 28px !important;
+}
+@media (max-width: 900px) {
+  .production-zone {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+}
+
+/* ─── 8. ROADMAP SUMMARY GRID ─── */
+.roadmap-summary .glass-card {
+  grid-template-columns: repeat(4, 1fr) !important;
+}
+@media (max-width: 900px) {
+  .roadmap-summary .glass-card {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+@media (max-width: 540px) {
+  .roadmap-summary .glass-card {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ─── 9. INPUT ROOM GRID ─── */
+.input-room-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 24px !important;
+}
+@media (max-width: 1100px) {
+  .input-room-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 18px !important;
+  }
+}
+@media (max-width: 720px) {
+  .input-room-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+}
+
+/* ─── 10. BLUEPRINT FLOW ─── */
+.blueprint-flow {
+  display: grid !important;
+  grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr !important;
+  align-items: stretch !important;
+  gap: 6px !important;
+  margin-top: 28px !important;
+}
+.pillar-card {
+  display: flex !important;
+  flex-direction: column !important;
+}
+@media (max-width: 1100px) {
+  .blueprint-flow {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 14px !important;
+  }
+  .pillar-arrow {
+    display: none !important;
+  }
+}
+@media (max-width: 580px) {
+  .blueprint-flow {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ─── 11. MATRIX GRID ─── */
+.matrix-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 10px !important;
+  margin-top: 20px !important;
+}
+@media (max-width: 900px) {
+  .matrix-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+@media (max-width: 540px) {
+  .matrix-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ─── 12. FOUNDATIONAL LIBRARY GRID ─── */
+.fl-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 10px !important;
+}
+@media (max-width: 900px) {
+  .fl-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+@media (max-width: 580px) {
+  .fl-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ─── 13. STRATEGIC RECORD BODY ─── */
+.sr-record-body {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+}
+@media (max-width: 720px) {
+  .sr-record-body {
+    grid-template-columns: 1fr !important;
+  }
+  .sr-record-col:first-child {
+    border-right: none !important;
+    border-bottom: 1px solid rgba(255,255,255,0.07) !important;
+  }
+}
+
+/* ─── 14. CHAIN RAIL — horizontal scroll, no scrollbar ─── */
+.sr-chain {
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: none !important;
+  flex-wrap: nowrap !important;
+}
+.sr-chain::-webkit-scrollbar { display: none !important; }
+
+/* ─── 15. ACCORDION ─── */
+.ac-title {
+  white-space: normal !important;
+  word-break: break-word !important;
+  font-size: 13px !important;
+  line-height: 1.3 !important;
+}
+@media (max-width: 600px) {
+  .ac-header {
+    padding: 14px 14px !important;
+    gap: 8px !important;
+  }
+  .ac-header-right {
+    flex-direction: column !important;
+    align-items: flex-end !important;
+    gap: 4px !important;
+  }
+  .siq-seal-ac { display: none !important; }
+  .ac-section,
+  .ac-card-footer { padding: 12px 14px !important; }
+  .sec-toggle-row { padding: 12px 14px !important; }
+  .sec-body { padding: 0 14px 12px !important; }
+  .two-col,
+  .states-row,
+  .fn-row,
+  .a00-two-col,
+  .a00-states-row,
+  .a00-fn-row {
+    grid-template-columns: 1fr !important;
+  }
+  .sig-bridge {
+    grid-template-columns: 1fr !important;
+  }
+  .sig-arrow { display: none !important; }
+  .pdf-row {
+    flex-direction: column !important;
+    gap: 10px !important;
+    align-items: flex-start !important;
+  }
+}
+
+/* ─── 16. NOTE GRID / ACTION ITEMS ─── */
+.note-grid,
+.action-items-box {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 20px !important;
+}
+@media (max-width: 720px) {
+  .note-grid,
+  .action-items-box {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+}
+
+/* ─── 17. SECTION PADDING SYSTEM ─── */
+section { padding: 48px 0 !important; }
+@media (max-width: 1024px) { section { padding: 28px 0 !important; } }
+@media (max-width: 600px)  { section { padding: 20px 0 !important; } }
+
+/* ─── 18. EDITORIAL + SECTION HEADER ─── */
+.editorial-header {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 36px !important;
+  align-items: start !important;
+  margin-bottom: 36px !important;
+}
+.section-header {
+  display: grid !important;
+  grid-template-columns: 1fr 1.4fr !important;
+  gap: 36px !important;
+  margin-bottom: 36px !important;
+}
+@media (max-width: 900px) {
+  .editorial-header,
+  .section-header {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    margin-bottom: 20px !important;
+  }
+}
+
+/* ─── 19. MINI ARTIFACT CARDS ─── */
+.mini-artifact {
+  flex-wrap: nowrap !important;
+  min-width: 0 !important;
+}
+.mini-artifact .artifact-info {
+  min-width: 0 !important;
+  flex: 1 1 0 !important;
+}
+.mini-artifact .artifact-name {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  max-width: 100% !important;
+}
+@media (max-width: 480px) {
+  .mini-artifact { gap: 10px !important; }
+  .pdf-preview {
+    width: 44px !important;
+    height: 58px !important;
+    flex-shrink: 0 !important;
+  }
+}
+
+/* ─── 20. SYNTHESIS BLUEPRINT PADDING ─── */
+.synthesis-blueprint {
+  padding: 44px 36px !important;
+  margin: 28px 0 !important;
+}
+@media (max-width: 900px) {
+  .synthesis-blueprint {
+    padding: 28px 18px !important;
+  }
+  .synthesis-blueprint h2 {
+    font-size: clamp(26px, 7vw, 42px) !important;
+  }
+}
+
+/* ─── 21. ECOSYSTEM GATEWAY ─── */
+.ecosystem-gateway {
+  grid-template-columns: 1fr 1fr !important;
+}
+@media (max-width: 900px) {
+  .ecosystem-gateway {
+    grid-template-columns: 1fr !important;
+    padding: 32px 22px !important;
+    gap: 28px !important;
+  }
+}
+
+/* ─── 22. MOBILE WORKSPACE ─── */
+@media (max-width: 1024px) {
+  body {
+    height: auto !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+  #main-content {
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+    position: static !important;
+    width: 100% !important;
+  }
+  .sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    right: -100% !important;
+    left: auto !important;
+    width: min(80vw, 320px) !important;
+    height: 100vh !important;
+    z-index: 300 !important;
+    transition: right 0.3s cubic-bezier(0.4,0,0.2,1) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
+  .sidebar.drawer-open {
+    right: 0 !important;
+    box-shadow: -4px 0 40px rgba(0,0,0,0.7) !important;
+  }
+  .main-workspace {
+    padding: 16px 16px 88px 16px !important;
+    min-height: calc(100vh - 56px) !important;
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  .tab-content.active {
+    display: block !important;
+    width: 100% !important;
+    overflow-x: hidden !important;
+  }
+}
+
+/* ─── 23. MOBILE HEADER ─── */
+.mobile-header { display: none !important; }
+@media (max-width: 1024px) {
+  .mobile-header {
+    display: flex !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 250 !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 10px 16px !important;
+    gap: 12px !important;
+    background: rgba(7,7,7,0.94) !important;
+    backdrop-filter: blur(24px) !important;
+    -webkit-backdrop-filter: blur(24px) !important;
+    border-bottom: 0.5px solid rgba(255,255,255,0.08) !important;
+    min-height: 52px !important;
+  }
+}
+
+/* ─── 24. MOBILE TAB BAR ─── */
+.mobile-tab-bar { display: none !important; }
+@media (max-width: 1024px) {
+  .mobile-tab-bar {
+    display: flex !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 280 !important;
+    min-height: 56px !important;
+    padding-bottom: max(env(safe-area-inset-bottom), 6px) !important;
+    background: rgba(7,7,7,0.96) !important;
+    backdrop-filter: blur(24px) !important;
+    -webkit-backdrop-filter: blur(24px) !important;
+    border-top: 0.5px solid rgba(255,255,255,0.1) !important;
+  }
+}
+
+/* ─── 25. DRAWER SCRIM ─── */
+.drawer-scrim { display: none !important; }
+@media (max-width: 1024px) {
+  .drawer-scrim.active {
+    display: block !important;
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(0,0,0,0.65) !important;
+    z-index: 299 !important;
+    backdrop-filter: blur(2px) !important;
+  }
+}
+
+/* ─── 26. GATE CARD MOBILE ─── */
+@media (max-width: 480px) {
+  #gate { padding: 24px 12px !important; align-items: flex-start !important; padding-top: 60px !important; }
+  .gate-card {
+    padding: 32px 20px 24px !important;
+    border-radius: 16px !important;
+    max-width: 100% !important;
+  }
+  .gate-title { font-size: 26px !important; }
+  .gate-btn   { height: 52px !important; }
+}
+
+/* ─── 27. ACTIVATION CARD ─── */
+.activation-card { max-width: 100% !important; }
+
+/* ─── 28. READINESS PANEL ─── */
+.readiness-panel h3 {
+  font-size: clamp(13px, 2vw, 22px) !important;
+  line-height: 1.2 !important;
+}
+
+/* ─── 29. DETAILS SUMMARY RESET ─── */
+details > summary {
+  list-style: none !important;
+}
+details > summary::-webkit-details-marker { display: none !important; }
+
+/* ─── 30. TICKER OVERFLOW ─── */
+.recent-activity-ticker {
+  overflow: hidden !important;
+  width: 100% !important;
+}
+.ticker-content {
+  display: inline-flex !important;
+  white-space: nowrap !important;
+}
+
+/* ─── 31. FOCUS DESC READABILITY GUARD ─── */
+.focus-desc { max-width: 640px !important; }
+
+/* ─── 32. VERTICAL RAIL TIDY ─── */
+.vertical-rail {
+  padding: 20px 0 20px 16px !important;
+  margin-bottom: 4px !important;
+}
+
+/* ─── 33. ROADMAP TRACKER ─── */
+.roadmap-tracker {
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)) !important;
+}
+
+/* ─── 34. SECTION HEADER H2 ─── */
+.section-header h2,
+.section-header > div > h2 {
+  font-size: clamp(22px, 4vw, 36px) !important;
+}
