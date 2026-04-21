@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signal Extractor · Signal [SiQ]</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0A0908;--bg-card:#111010;--bg-input:#0D0B09;
+  --coral:#F96F6E;--teal:#4BADA8;
+  --text:#F5F0EB;--text-2:rgba(245,240,235,0.65);
+  --text-3:rgba(245,240,235,0.38);--text-4:rgba(245,240,235,0.18);
+  --border:rgba(255,255,255,0.07);--border-2:rgba(255,255,255,0.12);
+}
+html,body{height:100%}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
+  -webkit-font-smoothing:antialiased;display:flex;flex-direction:column;
+  min-height:100vh;overflow-x:hidden}
+
+/* ── TOP BAR ── */
+.topbar{
+  height:38px;background:#060504;
+  border-bottom:0.5px solid rgba(249,111,110,0.1);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;flex-shrink:0;position:sticky;top:0;z-index:100;
+}
+.topbar-left{display:flex;align-items:center;gap:10px}
+.siq{font-size:10px;font-weight:900}
+.siq .bl{color:#F96F6E}.siq .bi{color:#4BADA8}.siq .br{color:#4BADA8}
+.tb-sep{width:1px;height:10px;background:rgba(255,255,255,0.08)}
+.tb-lbl{font-size:7.5px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--text-4)}
+.tb-tool{font-size:7.5px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(75,173,168,0.55)}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);
+  animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(75,173,168,0.5)}
+  70%{box-shadow:0 0 0 6px rgba(75,173,168,0)}100%{box-shadow:0 0 0 0 rgba(75,173,168,0)}}
+.status-lbl{font-size:7.5px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(75,173,168,0.6)}
+
+/* ── ACCENT ── */
+.accent{height:2px;background:linear-gradient(90deg,#F96F6E 0%,#4BADA8 55%,transparent 100%);flex-shrink:0}
+
+/* ── MAIN ── */
+.main{flex:1;display:grid;grid-template-columns:380px 1fr;gap:0;overflow:hidden;height:calc(100vh - 40px)}
+
+/* ── INPUT PANEL ── */
+.input-panel{
+  border-right:0.5px solid var(--border);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+.panel-header{
+  padding:20px 24px 16px;
+  border-bottom:0.5px solid var(--border);
+  flex-shrink:0;
+}
+.panel-eyebrow{font-size:7.5px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;
+  color:rgba(75,173,168,0.5);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.panel-eyebrow .dot{width:4px;height:4px;border-radius:50%;background:#F96F6E;opacity:0.7}
+.panel-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:400;
+  color:var(--text);line-height:1.1;margin-bottom:4px}
+.panel-sub{font-size:11px;color:var(--text-3);line-height:1.55}
+
+.panel-body{flex:1;padding:20px 24px;display:flex;flex-direction:column;gap:16px;overflow-y:auto}
+.panel-body::-webkit-scrollbar{width:2px}
+.panel-body::-webkit-scrollbar-thumb{background:var(--border)}
+
+.field-label{font-size:8px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--text-3);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.field-label .tip{
+  font-size:7px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;
+  color:rgba(75,173,168,0.5);background:rgba(75,173,168,0.07);
+  border:0.5px solid rgba(75,173,168,0.18);padding:1px 5px;
+}
+
+textarea{
+  width:100%;background:var(--bg-input);
+  border:1px solid var(--border-2);
+  color:var(--text);font-family:'Inter',sans-serif;
+  font-size:12.5px;line-height:1.7;
+  padding:14px;resize:none;outline:none;
+  transition:border-color 0.2s,box-shadow 0.2s;
+}
+textarea:focus{border-color:rgba(75,173,168,0.4);box-shadow:0 0 0 3px rgba(75,173,168,0.07)}
+textarea::placeholder{color:var(--text-4);font-size:12px}
+#doc-input{min-height:260px;flex:1}
+
+.client-field{
+  background:var(--bg-input);border:1px solid var(--border);
+  padding:10px 12px;display:flex;flex-direction:column;gap:4px;
+}
+.client-val{font-size:12px;font-weight:600;color:var(--text)}
+.client-sub{font-size:10px;color:var(--text-3)}
+
+.layer-toggles{display:flex;flex-direction:column;gap:5px}
+.layer-toggle{
+  display:flex;align-items:center;gap:10px;
+  padding:7px 10px;background:rgba(255,255,255,0.02);
+  border:0.5px solid var(--border);cursor:pointer;
+  transition:background 0.15s;
+}
+.layer-toggle:hover{background:rgba(255,255,255,0.04)}
+.layer-toggle input{display:none}
+.toggle-box{
+  width:14px;height:14px;border:1px solid rgba(75,173,168,0.3);
+  flex-shrink:0;position:relative;transition:all 0.15s;
+}
+.layer-toggle input:checked ~ .toggle-box{
+  background:#4BADA8;border-color:#4BADA8;
+}
+.layer-toggle input:checked ~ .toggle-box::after{
+  content:'✓';position:absolute;inset:0;display:flex;align-items:center;
+  justify-content:center;font-size:8px;color:#000;font-weight:900;
+}
+.toggle-name{font-size:10px;font-weight:600;color:var(--text-2);letter-spacing:0.02em}
+.toggle-num{font-size:8px;color:var(--text-4);margin-left:auto;letter-spacing:0.06em}
+
+.panel-footer{padding:16px 24px;border-top:0.5px solid var(--border);flex-shrink:0}
+.extract-btn{
+  width:100%;height:46px;
+  background:linear-gradient(135deg,rgba(249,111,110,0.12) 0%,rgba(75,173,168,0.08) 100%);
+  border:1px solid rgba(249,111,110,0.25);color:#F96F6E;
+  font-family:'Inter',sans-serif;font-size:11px;font-weight:700;
+  letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  transition:all 0.2s;
+}
+.extract-btn:hover:not(:disabled){
+  background:linear-gradient(135deg,rgba(249,111,110,0.18) 0%,rgba(75,173,168,0.12) 100%);
+  border-color:rgba(249,111,110,0.4);
+}
+.extract-btn:disabled{opacity:0.4;cursor:not-allowed}
+.extract-btn .btn-dot{width:6px;height:6px;border-radius:50%;background:#F96F6E;flex-shrink:0}
+.extract-btn.loading .btn-dot{animation:spin 1s linear infinite;border:2px solid rgba(249,111,110,0.3);border-top-color:#F96F6E;background:transparent;border-radius:50%}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── OUTPUT PANEL ── */
+.output-panel{
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.output-header{
+  padding:20px 28px 16px;
+  border-bottom:0.5px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+}
+.output-header-left{}
+.output-eyebrow{font-size:7.5px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;
+  color:rgba(75,173,168,0.45);margin-bottom:6px}
+.output-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--text)}
+.output-actions{display:flex;gap:8px}
+.action-btn{
+  background:none;border:0.5px solid var(--border-2);
+  color:var(--text-3);padding:6px 12px;
+  font-family:'Inter',sans-serif;font-size:9px;font-weight:700;
+  letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;
+  transition:all 0.18s;
+}
+.action-btn:hover{color:var(--text-2);border-color:rgba(255,255,255,0.2)}
+.action-btn.teal{color:#4BADA8;border-color:rgba(75,173,168,0.25)}
+.action-btn.teal:hover{background:rgba(75,173,168,0.08)}
+
+.output-body{flex:1;overflow-y:auto;padding:24px 28px}
+.output-body::-webkit-scrollbar{width:2px}
+.output-body::-webkit-scrollbar-thumb{background:var(--border)}
+
+/* Empty state */
+.empty-state{
+  height:100%;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:16px;
+  text-align:center;padding:40px;
+}
+.empty-icon{
+  width:52px;height:52px;
+  border:1px solid rgba(75,173,168,0.18);
+  display:flex;align-items:center;justify-content:center;
+  color:rgba(75,173,168,0.3);font-size:20px;
+}
+.empty-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;
+  color:var(--text-3);line-height:1.2}
+.empty-sub{font-size:11px;color:var(--text-4);line-height:1.65;max-width:300px}
+
+/* Loading state */
+.loading-state{
+  height:100%;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:20px;
+}
+.loading-ring{
+  width:40px;height:40px;
+  border:2px solid rgba(75,173,168,0.15);
+  border-top-color:#4BADA8;border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+.loading-msg{font-size:11px;color:var(--text-3);letter-spacing:0.08em;text-transform:uppercase}
+.loading-sub{font-size:10px;color:var(--text-4);margin-top:-12px}
+
+/* Signal layers */
+.signal-layer{
+  margin-bottom:28px;
+  border-bottom:0.5px solid var(--border);
+  padding-bottom:24px;
+}
+.signal-layer:last-child{border-bottom:none;margin-bottom:0}
+.layer-header{
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:14px;
+}
+.layer-num{
+  font-size:8px;font-weight:700;letter-spacing:0.1em;
+  color:rgba(75,173,168,0.5);min-width:24px;
+}
+.layer-name{
+  font-size:9px;font-weight:700;letter-spacing:0.16em;
+  text-transform:uppercase;color:#4BADA8;
+}
+.layer-count{
+  font-size:8px;color:var(--text-4);margin-left:auto;
+  background:rgba(75,173,168,0.07);border:0.5px solid rgba(75,173,168,0.15);
+  padding:2px 6px;letter-spacing:0.06em;
+}
+
+.signal-card{
+  background:rgba(255,255,255,0.02);
+  border:0.5px solid var(--border);
+  border-left:2px solid #4BADA8;
+  padding:14px 16px;margin-bottom:8px;
+}
+.signal-card:last-child{margin-bottom:0}
+.signal-card.priority{border-left-color:#F96F6E;background:rgba(249,111,110,0.03)}
+.signal-card.arch{border-left-color:#4BADA8;background:rgba(75,173,168,0.03)}
+
+.sig-title{
+  font-size:12px;font-weight:600;
+  color:var(--text);line-height:1.35;margin-bottom:8px;
+}
+.sig-body{display:flex;flex-direction:column;gap:6px}
+.sig-field{display:flex;gap:8px;align-items:baseline}
+.sig-key{
+  font-size:7.5px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--text-4);min-width:110px;flex-shrink:0;
+}
+.sig-val{font-size:11.5px;color:var(--text-2);line-height:1.6;flex:1}
+
+/* Priority layer */
+.priority-list{display:flex;flex-direction:column;gap:8px}
+.priority-item{
+  display:flex;align-items:baseline;gap:12px;
+  padding:10px 14px;
+  background:rgba(249,111,110,0.04);
+  border:0.5px solid rgba(249,111,110,0.12);
+  border-left:2px solid #F96F6E;
+}
+.pri-num{font-size:8px;font-weight:700;color:#F96F6E;min-width:24px;flex-shrink:0;letter-spacing:0.08em}
+.pri-text{font-size:11.5px;color:var(--text-2);line-height:1.55;flex:1}
+.pri-text strong{color:var(--text);font-weight:600}
+
+/* Error */
+.error-block{
+  background:rgba(249,111,110,0.06);border:0.5px solid rgba(249,111,110,0.2);
+  border-left:2px solid #F96F6E;padding:16px 18px;
+  font-size:12px;color:rgba(249,111,110,0.8);line-height:1.6;
+}
+
+/* Markdown-like rendering */
+.md strong{color:var(--text);font-weight:600}
+.md em{color:#4BADA8;font-style:normal;font-weight:600}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="siq"><span class="bl">[</span><span class="bi">SiQ</span><span class="br">]</span></div>
+    <div class="tb-sep"></div>
+    <div class="tb-lbl">Signal Environment</div>
+    <div class="tb-sep"></div>
+    <div class="tb-tool">Signal Extractor</div>
+  </div>
+  <div class="topbar-right">
+    <div class="status-dot"></div>
+    <div class="status-lbl">Engine Active</div>
+  </div>
+</div>
+<div class="accent"></div>
+
+<div class="main">
+
+  <!-- ── INPUT PANEL ── -->
+  <div class="input-panel">
+    <div class="panel-header">
+      <div class="panel-eyebrow"><span class="dot"></span>StrategyIQ · Signal [SiQ]</div>
+      <div class="panel-title">Signal Extractor</div>
+      <div class="panel-sub">Paste any document, report, or research. The system extracts structured strategic signals across eight intelligence layers.</div>
+    </div>
+
+    <div class="panel-body">
+
+      <!-- Client context -->
+      <div>
+        <div class="field-label">Active Client Context</div>
+        <div class="client-field">
+          <div class="client-val">Criar Sin Culpas · @criarsinculpas</div>
+          <div class="client-sub">Phase 02 · System Architecture · Signal [SiQ]</div>
+        </div>
+      </div>
+
+      <!-- Document input -->
+      <div style="flex:1;display:flex;flex-direction:column">
+        <div class="field-label">
+          Document Input
+          <span class="tip">Paste full text</span>
+        </div>
+        <textarea id="doc-input" placeholder="Paste the document, report, article, or research material here.
+
+The system will extract strategic signals across 8 intelligence layers:
+· Strategic Signals
+· Problem Signals
+· Opportunity Signals
+· System Signals
+· Decision Signals
+· Architecture Signals
+· Contradiction Signals
+· Signal Priority"></textarea>
+      </div>
+
+      <!-- Layer selection -->
+      <div>
+        <div class="field-label">Signal Layers to Extract</div>
+        <div class="layer-toggles">
+          <label class="layer-toggle"><input type="checkbox" class="layer-cb" value="strategic" checked><div class="toggle-box"></div><span class="toggle-name">Strategic Signals</span><span class="toggle-num">01</span></label>
+          <label class="layer-toggle"><input type="checkbox" class="layer-cb" value="problem" checked><div class="toggle-box"></div><span class="toggle-name">Problem Signals</span><span class="toggle-num">02</span></label>
+          <label class="layer-toggle"><input type="checkbox" class="layer-cb" value="opportunity" checked><div class="toggle-box"></div><span class="toggle-name">Opportunity Signals</span><span class="toggle-num">03</span></label>
+          <label class="layer-toggle"><input type="checkbox" class="layer-cb" value="system" checked><div class="toggle-box"></div><span class="toggle-name">System Signals</span><span class="toggle-num">04</span></label>
+          <label class="layer-toggle"><input type="checkbox" class="layer-cb" value="decision" checked><div class="toggle-box"></div><span class="toggle-name">Decision Signals</span><span class="toggle-num">05</span></label>
+          <label class="layer-toggle"><input type="checkbox" class="layer-cb" value="architecture" checked><div class="toggle-box"></div><span class="toggle-name">Architecture Signals</span><span class="toggle-num">06</span></label>
+          <label class="layer-toggle"><input type="checkbox" class="layer-cb" value="contradiction" checked><div class="toggle-box"></div><span class="toggle-name">Contradiction Signals</span><span class="toggle-num">07</span></label>
+          <label class="layer-toggle"><input type="checkbox" class="layer-cb" value="priority" checked><div class="toggle-box"></div><span class="toggle-name">Signal Priority</span><span class="toggle-num">08</span></label>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="panel-footer">
+      <button class="extract-btn" id="extract-btn" onclick="runExtraction()">
+        <span class="btn-dot"></span>
+        Extract Signals
+      </button>
+    </div>
+  </div>
+
+  <!-- ── OUTPUT PANEL ── -->
+  <div class="output-panel">
+    <div class="output-header">
+      <div class="output-header-left">
+        <div class="output-eyebrow">Signal [SiQ] · Intelligence Output</div>
+        <div class="output-title">Signal Analysis</div>
+      </div>
+      <div class="output-actions">
+        <button class="action-btn" onclick="copyOutput()">Copy All</button>
+        <button class="action-btn teal" onclick="clearOutput()">Clear</button>
+      </div>
+    </div>
+
+    <div class="output-body" id="output-body">
+      <div class="empty-state">
+        <div class="empty-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div class="empty-title">No signals extracted yet.</div>
+        <div class="empty-sub">Paste a document into the input panel and click Extract Signals. The system will analyze it across eight intelligence layers.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const SYSTEM_PROMPT = `You are a strategic intelligence analyst inside the SIGNAL [SiQ] environment built by StrategyIQ. Your job is not to summarize documents — it is to extract strategic signals that influence architecture decisions.
+
+The active client context is: Criar Sin Culpas · @criarsinculpas · Bilingual guilt-free parenting platform · 30K followers · Phase 02 System Architecture.
+
+Every signal you extract must be actionable, specific, and tied to a strategic decision or architecture choice. Generic observations are not signals. A signal changes what you build or how you position it.
+
+Return your response as a JSON object with this exact structure:
+{
+  "strategic": [{"title":"","observation":"","why_it_matters":""}],
+  "problem": [{"title":"","description":"","underlying_cause":""}],
+  "opportunity": [{"title":"","description":"","strategic_leverage":""}],
+  "system": [{"title":"","observation":"","implication":""}],
+  "decision": [{"title":"","observation":"","decision_impact":""}],
+  "architecture": [{"title":"","insight":"","architecture_implication":""}],
+  "contradiction": [{"title":"","description":"","strategic_insight":""}],
+  "priority": [{"rank":1,"signal_title":"","layer":"","rationale":""}]
+}
+
+Return ONLY the JSON object. No preamble, no markdown fences, no explanation.`;
+
+let lastOutput = '';
+
+async function runExtraction() {
+  const doc = document.getElementById('doc-input').value.trim();
+  if (!doc || doc.length < 50) {
+    alert('Please paste a document with at least 50 characters.');
+    return;
+  }
+
+  const layers = Array.from(document.querySelectorAll('.layer-cb:checked')).map(c => c.value);
+  if (!layers.length) { alert('Select at least one signal layer.'); return; }
+
+  const btn = document.getElementById('extract-btn');
+  btn.disabled = true;
+  btn.classList.add('loading');
+  btn.querySelector('.btn-dot').style.width = '14px';
+  btn.querySelector('.btn-dot').style.height = '14px';
+  btn.querySelector('.btn-dot').style.border = '2px solid rgba(249,111,110,0.3)';
+  btn.querySelector('.btn-dot').style.borderTopColor = '#F96F6E';
+  btn.querySelector('.btn-dot').style.background = 'transparent';
+  btn.querySelector('.btn-dot').style.borderRadius = '50%';
+  btn.querySelector('.btn-dot').style.animation = 'spin 1s linear infinite';
+  btn.innerHTML = '<span class="btn-dot" style="width:14px;height:14px;border:2px solid rgba(249,111,110,0.3);border-top-color:#F96F6E;background:transparent;border-radius:50%;animation:spin 1s linear infinite;"></span> Extracting Signals...';
+
+  const outputBody = document.getElementById('output-body');
+  outputBody.innerHTML = `
+    <div class="loading-state">
+      <div class="loading-ring"></div>
+      <div class="loading-msg">Processing document</div>
+      <div class="loading-sub">Extracting signals across ${layers.length} intelligence layers</div>
+    </div>`;
+
+  const userMsg = `Extract strategic signals from the following document for the Criar Sin Culpas / StrategyIQ engagement. Only extract signals for these layers: ${layers.join(', ')}.
+
+DOCUMENT:
+${doc}`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 4000,
+        system: SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: userMsg }]
+      })
+    });
+
+    const data = await resp.json();
+    const raw = data.content?.[0]?.text || '';
+
+    let parsed;
+    try {
+      const clean = raw.replace(/```json|```/g, '').trim();
+      parsed = JSON.parse(clean);
+    } catch(e) {
+      throw new Error('Could not parse signal output. Raw: ' + raw.substring(0, 200));
+    }
+
+    lastOutput = raw;
+    renderOutput(parsed, layers);
+
+  } catch(err) {
+    outputBody.innerHTML = `<div class="error-block">
+      <strong>Extraction failed.</strong><br><br>
+      ${err.message}<br><br>
+      Check that the document has enough content for signal extraction.
+    </div>`;
+  }
+
+  btn.disabled = false;
+  btn.classList.remove('loading');
+  btn.innerHTML = '<span class="btn-dot"></span> Extract Signals';
+}
+
+const LAYER_CONFIG = {
+  strategic:     { num:'01', name:'Strategic Signals',     fields:['observation','why_it_matters'],       labels:['Observation','Why It Matters'] },
+  problem:       { num:'02', name:'Problem Signals',        fields:['description','underlying_cause'],      labels:['Description','Underlying Cause'] },
+  opportunity:   { num:'03', name:'Opportunity Signals',   fields:['description','strategic_leverage'],    labels:['Description','Strategic Leverage'] },
+  system:        { num:'04', name:'System Signals',         fields:['observation','implication'],           labels:['Observation','Implication'] },
+  decision:      { num:'05', name:'Decision Signals',       fields:['observation','decision_impact'],       labels:['Observation','Decision Impact'] },
+  architecture:  { num:'06', name:'Architecture Signals',  fields:['insight','architecture_implication'],  labels:['Insight','Architecture Implication'] },
+  contradiction: { num:'07', name:'Contradiction Signals', fields:['description','strategic_insight'],     labels:['Description','Strategic Insight'] },
+};
+
+function renderOutput(data, layers) {
+  const outputBody = document.getElementById('output-body');
+  let html = '';
+  let totalCount = 0;
+
+  layers.forEach(layer => {
+    if (layer === 'priority') return;
+    const cfg = LAYER_CONFIG[layer];
+    if (!cfg || !data[layer]?.length) return;
+    const items = data[layer];
+    totalCount += items.length;
+
+    html += `<div class="signal-layer">
+      <div class="layer-header">
+        <div class="layer-num">${cfg.num}</div>
+        <div class="layer-name">${cfg.name}</div>
+        <div class="layer-count">${items.length} signal${items.length!==1?'s':''}</div>
+      </div>`;
+
+    items.forEach(sig => {
+      const isArch = layer === 'architecture';
+      html += `<div class="signal-card ${isArch?'arch':''}">
+        <div class="sig-title">${escHtml(sig.title||'Untitled Signal')}</div>
+        <div class="sig-body">`;
+      cfg.fields.forEach((f,i) => {
+        if (sig[f]) {
+          html += `<div class="sig-field">
+            <div class="sig-key">${cfg.labels[i]}</div>
+            <div class="sig-val">${escHtml(sig[f])}</div>
+          </div>`;
+        }
+      });
+      html += `</div></div>`;
+    });
+    html += `</div>`;
+  });
+
+  // Priority
+  if (layers.includes('priority') && data.priority?.length) {
+    html += `<div class="signal-layer">
+      <div class="layer-header">
+        <div class="layer-num">08</div>
+        <div class="layer-name">Signal Priority</div>
+        <div class="layer-count">Top ${data.priority.length}</div>
+      </div>
+      <div class="priority-list">`;
+    data.priority.forEach(p => {
+      html += `<div class="priority-item">
+        <div class="pri-num">P${String(p.rank).padStart(2,'0')}</div>
+        <div class="pri-text"><strong>${escHtml(p.signal_title)}</strong> &nbsp;·&nbsp; ${escHtml(p.layer)} &nbsp;·&nbsp; ${escHtml(p.rationale)}</div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  if (!html) {
+    html = `<div class="error-block">No signals were extracted for the selected layers. Try selecting more layers or providing a longer document.</div>`;
+  }
+
+  outputBody.innerHTML = html;
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function copyOutput() {
+  const body = document.getElementById('output-body');
+  const text = body.innerText;
+  if (!text || text.includes('No signals extracted')) return;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy All', 2000);
+  });
+}
+
+function clearOutput() {
+  document.getElementById('output-body').innerHTML = `
+    <div class="empty-state">
+      <div class="empty-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <div class="empty-title">No signals extracted yet.</div>
+      <div class="empty-sub">Paste a document into the input panel and click Extract Signals.</div>
+    </div>`;
+  lastOutput = '';
+}
+</script>
+</body>
+</html>
