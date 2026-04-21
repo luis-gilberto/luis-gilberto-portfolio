@@ -330,7 +330,6 @@ textarea::placeholder{color:var(--text-4);font-size:11.5px}
 </div>
 
 <script>
-const PROXY_URL = 'https://siq-proxy.me-fc9.workers.dev';
 // ── STATE ──────────────────────────────────────────────────────
 let currentMode = 'upload';
 let fileContent = '';
@@ -519,7 +518,7 @@ async function runExtraction() {
   }
 
   try {
-    const resp = await fetch(PROXY_URL, {
+    const resp = await fetch('https://siq-proxy.me-fc9.workers.dev', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -531,13 +530,19 @@ async function runExtraction() {
     });
 
     const data = await resp.json();
+
+    // DEBUG: surface full response if something goes wrong
+    if (data.error) {
+      throw new Error('API error ' + data.error.type + ': ' + data.error.message);
+    }
+
     const raw = data.content?.[0]?.text || '';
 
     let parsed;
     try {
       parsed = JSON.parse(raw.replace(/```json|```/g,'').trim());
     } catch(e) {
-      throw new Error('Parse error. Response: ' + raw.substring(0,300));
+      throw new Error('Parse error. Response: ' + (raw || JSON.stringify(data)).substring(0,600));
     }
 
     renderOutput(parsed, layers);
