@@ -1,0 +1,2076 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" style="scroll-behavior:smooth;">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-cache">
+  <title>Criar Sin Culpas — Visual Brand Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Fredoka:wght@600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ─── DESIGN TOKENS ──────────────────────────────────── */
+    :root {
+      --deep-purple: #3e2a6b;
+      --lavender:    #b8a5d6;
+      --pale-lilac:  #f3e7f0;
+      --coral:       #f96f6e;
+      --teal:        #4bada8;
+      --warm-paper:  #fbf7f1;
+      --soft-sand:   #ede3d7;
+      --ink:         #151515;
+      --text-main:   #2f2a26;
+      --text-muted:  #6d625a;
+
+      --font-wordmark: 'Fredoka', sans-serif;
+      --font-display:  'Cormorant Garamond', serif;
+      --font-body:     'Inter', sans-serif;
+
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 8px;
+      --shadow-soft:  0 12px 40px rgba(62,42,107,0.08);
+      --shadow-hover: 0 20px 60px rgba(62,42,107,0.15);
+      --transition:   all 0.4s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0; padding: 0;
+      background-color: var(--warm-paper);
+      color: var(--ink);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── PROGRESS BAR ───────────────────────────────────── */
+    #progress-bar {
+      position: fixed; top: 0; left: 0; height: 3px; width: 0;
+      background: linear-gradient(90deg, var(--coral), var(--teal));
+      z-index: 9999; transition: width 0.1s linear;
+    }
+
+    /* ─── MEGA-NAV ───────────────────────────────────────── */
+    nav.brand-mega-nav {
+      position: sticky; top: 0;
+      background: rgba(251,247,241,0.94);
+      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      z-index: 1000;
+      border-bottom: 1px solid rgba(62,42,107,0.1);
+      box-shadow: 0 4px 24px rgba(62,42,107,0.05);
+      padding: 0;
+    }
+    .bmn-inner {
+      max-width: 1100px; margin: 0 auto; padding: 0 28px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      height: 60px;
+    }
+    .bmn-left  { display: flex; align-items: center; gap: 10px; }
+    .bmn-center { display: flex; align-items: center; justify-content: center; }
+    .bmn-right  { display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
+
+    /* Back pill */
+    .bmn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      text-decoration: none; font-size: 10px; font-weight: 600;
+      letter-spacing: 0.10em; text-transform: uppercase;
+      color: rgba(62,42,107,0.6);
+      background: rgba(62,42,107,0.06); border: 1px solid rgba(62,42,107,0.12);
+      padding: 5px 10px 5px 8px; border-radius: 999px; transition: all 0.2s ease;
+      width: max-content; flex-shrink: 0;
+      font-family: var(--font-body);
+    }
+    .bmn-back:hover { background: var(--deep-purple); color: #fff; border-color: var(--deep-purple); }
+    .bmn-back svg { opacity: 0.6; }
+    .bmn-back:hover svg { opacity: 1; }
+
+    /* Logo wordmark */
+    .bmn-wordmark {
+      font-family: var(--font-wordmark); font-size: 1.05rem;
+      color: var(--deep-purple); letter-spacing: -0.01em;
+      white-space: nowrap;
+    }
+    .bmn-wordmark span { color: var(--coral); }
+
+    /* Triggers */
+    .bmn-triggers { display: flex; align-items: center; gap: 2px; }
+    .bmn-trigger {
+      display: flex; align-items: center; gap: 5px;
+      cursor: pointer; background: none; border: none;
+      font-family: var(--font-body); font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: rgba(62,42,107,0.55); padding: 6px 12px; border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+    .bmn-trigger:hover, .bmn-trigger.bmn-active {
+      color: var(--deep-purple); background: rgba(62,42,107,0.07);
+    }
+    .bmn-trigger svg { transition: transform 0.2s ease; opacity: 0.5; }
+    .bmn-trigger.bmn-active svg { transform: rotate(180deg); opacity: 1; }
+
+    /* Share button */
+    .bmn-share {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 7px 16px; border-radius: 999px;
+      background: var(--coral); color: #fff; border: none;
+      font-family: var(--font-body); font-size: 11px; font-weight: 600;
+      cursor: pointer; letter-spacing: 0.06em; text-transform: uppercase;
+      box-shadow: 0 3px 12px rgba(249,111,110,0.30);
+      transition: all 0.2s ease; white-space: nowrap;
+    }
+    .bmn-share:hover { background: #e55e5d; transform: translateY(-1px); }
+    .bmn-share svg { flex-shrink: 0; }
+
+    /* Floating panel */
+    .bmn-viewport {
+      position: fixed; top: 68px; left: 50%; transform: translateX(-50%);
+      display: none; z-index: 9000; padding-top: 4px;
+    }
+    .bmn-viewport.open { display: block; }
+    .bmn-viewport-inner {
+      background: rgba(255,253,252,0.99);
+      border: 1px solid rgba(62,42,107,0.1);
+      border-radius: 14px;
+      box-shadow: 0 20px 60px rgba(62,42,107,0.14), 0 2px 8px rgba(62,42,107,0.06);
+      min-width: 560px; padding: 12px;
+      animation: bmnIn 0.18s ease;
+    }
+    @keyframes bmnIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .bmn-view { display: block; }
+    .bmn-panel-header {
+      padding: 4px 6px 12px;
+      border-bottom: 1px solid rgba(62,42,107,0.08);
+      margin-bottom: 10px;
+    }
+    .bmn-panel-label {
+      font-size: 9px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.16em;
+      color: var(--teal); display: block; margin-bottom: 3px;
+      font-family: var(--font-body);
+    }
+    .bmn-panel-tagline {
+      font-size: 12.5px; font-weight: 500;
+      color: rgba(62,42,107,0.55); margin: 0;
+      font-family: var(--font-body);
+    }
+    .bmn-grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; }
+    .bmn-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .bmn-link {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 11px 12px; border-radius: 10px; text-decoration: none;
+      background: none; border: 1px solid transparent;
+      cursor: pointer; transition: all 0.18s ease;
+      text-align: left; width: 100%; box-sizing: border-box;
+      font-family: var(--font-body); color: var(--ink);
+    }
+    a.bmn-link { color: var(--ink); }
+    .bmn-link:hover { background: rgba(62,42,107,0.04); border-color: rgba(62,42,107,0.1); }
+    .bmn-icon {
+      width: 34px; height: 34px;
+      background: rgba(62,42,107,0.06); border: 1px solid rgba(62,42,107,0.1);
+      border-radius: 8px; display: flex; align-items: center;
+      justify-content: center; flex-shrink: 0;
+      color: rgba(62,42,107,0.45);
+    }
+    .bmn-icon svg { display: block; }
+    .bmn-text b { display: block; font-size: 12px; font-weight: 600; color: var(--deep-purple); margin-bottom: 2px; }
+    .bmn-text span { font-size: 10.5px; color: rgba(62,42,107,0.5); display: block; line-height: 1.35; }
+    .bmn-divider { height: 1px; background: rgba(62,42,107,0.07); margin: 10px 0 8px; }
+    .bmn-orientation { display: flex; gap: 20px; padding: 2px 6px 0; flex-wrap: wrap; }
+    .bmn-orient-link {
+      font-size: 10px; font-weight: 500; text-transform: uppercase;
+      letter-spacing: 0.12em; color: rgba(62,42,107,0.35);
+      text-decoration: none; transition: color 0.2s;
+    }
+    .bmn-orient-link:hover { color: var(--coral); }
+
+    /* Hamburger */
+    .bmn-hamburger {
+      display: none; background: none;
+      border: 1px solid rgba(62,42,107,0.14);
+      border-radius: 8px; padding: 7px 9px; cursor: pointer;
+      color: var(--deep-purple); align-items: center; justify-content: center;
+    }
+
+    /* Overlay & Drawer (mobile) */
+    .bmn-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(62,42,107,0.38); z-index: 8998;
+      backdrop-filter: blur(3px);
+    }
+    .bmn-overlay.visible { display: block; }
+    .bmn-drawer {
+      position: fixed; top: 0; right: 0;
+      width: min(360px,100vw); height: 100dvh;
+      background: #fdf9f4; border-left: 1px solid rgba(62,42,107,0.1);
+      z-index: 8999; transform: translateX(100%);
+      transition: transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94);
+      overflow-y: auto; display: flex; flex-direction: column;
+    }
+    .bmn-drawer.open { transform: translateX(0); }
+    .bmn-drawer-head {
+      padding: 22px 22px 18px;
+      border-bottom: 1px solid rgba(62,42,107,0.08);
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; background: #fdf9f4; z-index: 1;
+    }
+    .bmn-drawer-eyebrow {
+      font-size: 9px; font-weight: 600; letter-spacing: 0.18em;
+      text-transform: uppercase; color: rgba(62,42,107,0.35);
+      font-family: var(--font-body); margin-bottom: 3px;
+    }
+    .bmn-drawer-title {
+      font-size: 14px; font-weight: 600; color: var(--deep-purple);
+      font-family: var(--font-body); letter-spacing: 0.02em;
+    }
+    .bmn-drawer-close {
+      width: 30px; height: 30px;
+      border: 1px solid rgba(62,42,107,0.14); border-radius: 6px;
+      background: none; color: rgba(62,42,107,0.45); cursor: pointer;
+      font-size: 14px; display: flex; align-items: center; justify-content: center;
+    }
+    .bmn-drawer-section { padding: 18px 22px; border-bottom: 1px solid rgba(62,42,107,0.06); }
+    .bmn-drawer-label {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.18em;
+      text-transform: uppercase; color: rgba(62,42,107,0.35);
+      font-family: var(--font-body); margin-bottom: 10px;
+    }
+    .bmn-drawer-label.teal  { color: var(--teal); }
+    .bmn-drawer-label.coral { color: var(--coral); }
+    .bmn-drawer-link {
+      display: flex; justify-content: space-between; align-items: center;
+      text-decoration: none; background: none; border: none;
+      width: 100%; text-align: left; padding: 10px 12px;
+      border-radius: 8px; font-family: var(--font-body);
+      font-size: 13px; font-weight: 500; color: var(--ink);
+      cursor: pointer; transition: background 0.2s; box-sizing: border-box;
+    }
+    .bmn-drawer-link:hover { background: rgba(62,42,107,0.06); }
+    .bmn-drawer-arrow { color: rgba(62,42,107,0.3); font-size: 16px; }
+    .bmn-drawer-foot {
+      margin-top: auto; padding: 20px 22px;
+      border-top: 1px solid rgba(62,42,107,0.06);
+      font-size: 10px; font-weight: 500; letter-spacing: 0.1em;
+      text-transform: uppercase; color: rgba(62,42,107,0.3);
+      font-family: var(--font-body);
+    }
+
+    /* Responsive */
+    @media (max-width: 860px) {
+      .bmn-center { display: none !important; }
+      .bmn-hamburger { display: flex !important; }
+      .bmn-wordmark { display: none; }
+    }
+    @media (max-width: 540px) {
+      .bmn-share span { display: none; }
+      .bmn-share { padding: 7px 12px; }
+    }
+
+    /* ─── LAYOUT ─────────────────────────────────────────── */
+    .container { max-width: 1300px; margin: 0 auto; padding: 0 40px; }
+    @media (max-width: 640px) { .container { padding: 0 20px; } }
+
+    h1, h2, h3, h4 { color: var(--deep-purple); margin: 0 0 1rem 0; }
+    h2 {
+      font-family: var(--font-display); font-size: clamp(2.4rem,5vw,3.5rem);
+      font-weight: 600; line-height: 1.1; letter-spacing: -0.02em;
+    }
+    h3 { font-family: var(--font-display); font-size: 2rem; font-weight: 600; }
+    p { font-size: 1.05rem; color: var(--text-muted); margin-bottom: 1.8rem; max-width: 640px; }
+
+    section { padding: 110px 0; position: relative; }
+    .section-header { text-align: center; margin-bottom: 64px; display: flex; flex-direction: column; align-items: center; }
+    .section-kicker {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--coral); margin-bottom: 10px;
+      font-family: var(--font-body);
+    }
+
+    .bg-gradient-1 { background: linear-gradient(180deg, var(--pale-lilac) 0%, var(--warm-paper) 100%); }
+    .bg-gradient-2 { background: linear-gradient(180deg, var(--warm-paper) 0%, #f5f0f8 100%); }
+
+    /* ─── IMAGE SHOWCASE ─────────────────────────────────── */
+    .img-showcase {
+      border-radius: var(--radius-lg); overflow: hidden;
+      box-shadow: 0 10px 30px rgba(62,42,107,0.05); transition: var(--transition);
+      position: relative; background: #fff; cursor: zoom-in;
+      border: 1px solid rgba(62,42,107,0.08);
+    }
+    .img-showcase:hover { transform: translateY(-4px); box-shadow: 0 20px 50px rgba(62,42,107,0.1); }
+    .img-showcase img { display: block; width: 100%; height: auto; transition: var(--transition); object-fit: contain; max-height: 80vh; }
+    .img-showcase:hover img { transform: scale(1.02); }
+    .actions {
+      position: absolute; bottom: 20px; right: 20px;
+      display: flex; gap: 10px; opacity: 0; transform: translateY(8px);
+      transition: var(--transition); z-index: 10;
+    }
+    .img-showcase:hover .actions { opacity: 1; transform: translateY(0); }
+
+    /* ─── BUTTONS ────────────────────────────────────────── */
+    .btn {
+      background: rgba(255,255,255,0.95); backdrop-filter: blur(4px);
+      color: var(--deep-purple); border: none; padding: 9px 18px;
+      border-radius: 999px; font-family: var(--font-body);
+      font-size: 0.82rem; font-weight: 600; cursor: pointer;
+      text-decoration: none; transition: var(--transition);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .btn:hover { background: var(--deep-purple); color: #fff; }
+    .btn-primary { background: var(--deep-purple); color: #fff; }
+    .btn-primary:hover { background: var(--coral); }
+    .btn-share {
+      background: rgba(249,111,110,0.1); color: var(--coral);
+      border: 1px solid rgba(249,111,110,0.3);
+    }
+    .btn-share:hover { background: var(--coral); color: #fff; }
+
+    /* ─── CHIPS ──────────────────────────────────────────── */
+    .chip-group { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 20px; }
+    .chip {
+      background: rgba(184,165,214,0.15); color: var(--deep-purple);
+      padding: 6px 18px; border-radius: 40px; font-size: 0.85rem;
+      font-weight: 500; border: 1px solid rgba(184,165,214,0.3);
+    }
+
+    /* ─── COLOR PALETTE ──────────────────────────────────── */
+    .color-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(130px,1fr));
+      gap: 18px; margin-top: 36px;
+    }
+    .color-card {
+      background: #fff; border-radius: var(--radius-md); padding: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.03); cursor: pointer;
+      transition: var(--transition); border: 1px solid var(--soft-sand);
+      position: relative;
+    }
+    .color-card:hover { transform: translateY(-4px); border-color: var(--lavender); }
+    .color-swatch { height: 90px; border-radius: var(--radius-sm); margin-bottom: 14px; border: 1px solid rgba(0,0,0,0.05); }
+    .color-details { text-align: center; }
+    .color-name { display: block; font-weight: 600; font-size: 0.85rem; color: var(--deep-purple); }
+    .color-hex { display: block; font-family: monospace; font-size: 0.78rem; color: #888; margin-top: 3px; }
+    .color-copied-badge {
+      position: absolute; top: 8px; right: 8px; background: var(--teal); color: #fff;
+      font-size: 0.65rem; font-weight: 700; padding: 2px 7px; border-radius: 999px;
+      opacity: 0; transition: opacity 0.2s; letter-spacing: 0.05em;
+    }
+    .color-card.copied .color-copied-badge { opacity: 1; }
+
+    .color-philosophy {
+      margin-top: 40px; display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+      gap: 28px; background: #fff; padding: 36px;
+      border-radius: var(--radius-lg); box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    }
+    .phil-item h4 { font-size: 1rem; margin-bottom: 6px; }
+    .phil-item p { font-size: 0.9rem; margin: 0; }
+
+    /* ─── TYPOGRAPHY ─────────────────────────────────────── */
+    .type-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 28px; margin-top: 36px; }
+    @media (max-width: 768px) { .type-grid { grid-template-columns: 1fr; } }
+    .type-card { background: #fff; padding: 36px; border-radius: var(--radius-lg); box-shadow: 0 4px 20px rgba(0,0,0,0.03); text-align: center; }
+    .type-specimen-1 { font-family: var(--font-wordmark); font-size: 3.2rem; color: var(--deep-purple); margin-bottom: 14px; line-height: 1; }
+    .type-specimen-2 { font-family: var(--font-display); font-size: 4.2rem; color: var(--deep-purple); margin-bottom: 14px; line-height: 1; }
+    .type-specimen-3 { font-family: var(--font-body); font-size: 3.8rem; font-weight: 500; color: var(--deep-purple); margin-bottom: 14px; line-height: 1; }
+    .type-note { text-align: center; font-style: italic; color: var(--deep-purple); opacity: 0.75; margin-top: 28px; font-size: 0.95rem; }
+
+    /* ─── IMAGE GRIDS ────────────────────────────────────── */
+    .masonry-grid-large { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; }
+    .masonry-grid-large .full-span { grid-column: 1 / -1; }
+    .masonry-grid-small { display: grid; grid-template-columns: repeat(auto-fit,minmax(380px,1fr)); gap: 28px; }
+    @media (max-width: 768px) { .masonry-grid-large { grid-template-columns: 1fr; } .masonry-grid-small { grid-template-columns: 1fr; } }
+
+    /* ─── PROMPT BOX ─────────────────────────────────────── */
+    .prompt-container { background: #fff; border-radius: var(--radius-lg); padding: 36px; margin-top: 56px; box-shadow: var(--shadow-soft); border: 1px solid var(--lavender); }
+    .prompt-box {
+      background: rgba(62,42,107,0.04); border: 1px solid rgba(62,42,107,0.1);
+      border-radius: 12px; padding: 20px; margin: 20px 0;
+      font-family: monospace; font-size: 0.85rem; line-height: 1.7;
+      color: var(--text-main); white-space: pre-wrap; word-break: break-word;
+    }
+
+    /* ─── DOWNLOADS ──────────────────────────────────────── */
+    .downloads-section { background: linear-gradient(180deg, rgba(184,165,214,0.18) 0%, rgba(243,231,240,0.7) 100%); }
+    .download-categories { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 24px; }
+    @media (max-width: 900px) { .download-categories { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 540px) { .download-categories { grid-template-columns: 1fr; } }
+
+    .download-category {
+      background: #fff; border-radius: 14px; padding: 22px;
+      box-shadow: var(--shadow-soft); border: 1px solid rgba(184,165,214,0.2);
+      transition: var(--transition); display: flex; flex-direction: column;
+    }
+    .download-category:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); border-color: rgba(249,111,110,0.3); }
+    .category-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; margin-bottom: 16px; }
+    .category-title { font-family: var(--font-display); font-size: 1.5rem; line-height: 1.1; color: var(--deep-purple); margin: 0; }
+    .category-sub { font-size: 0.85rem; color: var(--text-muted); margin: 5px 0 0 0; }
+    .category-preview-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; margin-bottom: 16px; }
+    .category-thumb { position: relative; border-radius: 10px; overflow: hidden; cursor: pointer; box-shadow: 0 6px 20px rgba(62,42,107,0.08); }
+    .category-thumb img { display: block; width: 100%; height: auto; transition: var(--transition); }
+    .category-thumb:hover img { transform: scale(1.04); }
+    .asset-list { flex: 1; margin-bottom: 16px; }
+    .asset-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(237,227,215,0.6); gap: 12px; }
+    .asset-item:last-child { border-bottom: none; }
+    .asset-meta { display: flex; flex-direction: column; gap: 3px; }
+    .asset-name { font-size: 0.82rem; font-weight: 500; color: var(--text-main); }
+    .asset-info { display: flex; gap: 6px; }
+    .format-badge { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.06em; padding: 2px 6px; border-radius: 4px; background: rgba(62,42,107,0.08); color: var(--deep-purple); }
+    .size-badge { font-size: 0.65rem; color: var(--text-muted); padding: 2px 6px; border-radius: 4px; background: rgba(237,227,215,0.5); }
+    .asset-link { font-size: 0.75rem; font-weight: 600; color: var(--teal); text-decoration: none; padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(75,173,168,0.3); transition: background 0.2s; white-space: nowrap; }
+    .asset-link:hover { background: var(--teal); color: #fff; }
+    .category-actions { margin-top: auto; }
+    .download-category-btn {
+      width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(62,42,107,0.15);
+      background: rgba(62,42,107,0.04); color: var(--deep-purple); font-family: var(--font-body);
+      font-size: 0.82rem; font-weight: 600; cursor: pointer; display: flex;
+      align-items: center; justify-content: center; gap: 8px; transition: var(--transition);
+    }
+    .download-category-btn:hover { background: var(--deep-purple); color: #fff; }
+
+    .download-master { text-align: center; margin-top: 56px; padding: 48px; background: #fff; border-radius: var(--radius-lg); box-shadow: var(--shadow-soft); }
+    .download-master p { font-size: 1rem; max-width: 480px; margin: 0 auto 24px; }
+    .download-all-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--deep-purple); color: #fff; border: none;
+      padding: 16px 32px; border-radius: 999px; font-family: var(--font-body);
+      font-size: 0.95rem; font-weight: 600; cursor: pointer; letter-spacing: 0.02em;
+      box-shadow: 0 14px 28px rgba(62,42,107,0.2); transition: var(--transition);
+    }
+    .download-all-btn:hover { background: var(--coral); transform: translateY(-2px); }
+
+    /* ─── WORKSPACE CTA ──────────────────────────────────── */
+    .workspace-cta-section {
+      padding: 100px 0;
+      background: linear-gradient(135deg, var(--deep-purple) 0%, #2a1c4a 100%);
+      position: relative; overflow: hidden;
+    }
+    .workspace-cta-section::before {
+      content: ''; position: absolute; top: -60px; right: -60px;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(249,111,110,0.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .workspace-cta-section::after {
+      content: ''; position: absolute; bottom: -60px; left: -40px;
+      width: 350px; height: 350px;
+      background: radial-gradient(circle, rgba(75,173,168,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .workspace-cta-inner { position: relative; z-index: 1; text-align: center; }
+    .workspace-cta-inner .section-kicker { color: rgba(255,255,255,0.55); }
+    .workspace-cta-inner h2 { color: #fff; font-size: clamp(2rem,4vw,3rem); margin-bottom: 16px; }
+    .workspace-cta-inner p { color: rgba(255,255,255,0.7); max-width: 520px; margin: 0 auto 36px; }
+    .cta-pill-group { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .cta-pill-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 28px; border-radius: 999px;
+      background: var(--coral); color: #fff; text-decoration: none;
+      font-family: var(--font-body); font-size: 0.9rem; font-weight: 600;
+      box-shadow: 0 8px 24px rgba(249,111,110,0.35); transition: var(--transition);
+    }
+    .cta-pill-primary:hover { background: #e55e5d; transform: translateY(-2px); }
+    .cta-pill-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 28px; border-radius: 999px;
+      background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.9);
+      border: 1px solid rgba(255,255,255,0.2); text-decoration: none;
+      font-family: var(--font-body); font-size: 0.9rem; font-weight: 500;
+      transition: var(--transition);
+    }
+    .cta-pill-secondary:hover { background: rgba(255,255,255,0.18); }
+
+    /* ─── FOOTER ─────────────────────────────────────────── */
+    footer {
+      background: var(--ink); color: rgba(255,255,255,0.6);
+      padding: 48px 0; font-size: 0.85rem;
+    }
+    .footer-grid {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 24px;
+    }
+    .footer-brand { font-family: var(--font-wordmark); font-size: 1.1rem; color: rgba(255,255,255,0.85); }
+    .footer-brand span { color: var(--coral); }
+    .footer-links { display: flex; gap: 20px; flex-wrap: wrap; }
+    .footer-links a { color: rgba(255,255,255,0.45); text-decoration: none; transition: color 0.2s; font-size: 0.8rem; }
+    .footer-links a:hover { color: var(--teal); }
+    .footer-copy { color: rgba(255,255,255,0.3); font-size: 0.75rem; }
+
+    /* ─── LIGHTBOX ───────────────────────────────────────── */
+    #lightbox {
+      display: none; position: fixed; inset: 0; z-index: 9000;
+      background: rgba(0,0,0,0.88); align-items: center; justify-content: center;
+      cursor: zoom-out;
+    }
+    #lightbox.active { display: flex; }
+    #lightbox img { max-width: 90vw; max-height: 90vh; border-radius: 12px; box-shadow: 0 30px 80px rgba(0,0,0,0.5); }
+    .lightbox-close {
+      position: fixed; top: 24px; right: 28px; font-size: 2.2rem;
+      color: rgba(255,255,255,0.8); cursor: pointer; line-height: 1;
+      transition: color 0.2s;
+    }
+    .lightbox-close:hover { color: var(--coral); }
+
+    /* ─── TOAST ──────────────────────────────────────────── */
+    #toast {
+      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: var(--ink); color: #fff; padding: 10px 20px; border-radius: 999px;
+      font-size: 0.82rem; font-weight: 500; z-index: 9500;
+      opacity: 0; pointer-events: none; transition: opacity 0.25s, transform 0.25s;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ─── FADE-UP ANIMATION ──────────────────────────────── */
+    .fade-up { opacity: 0; transform: translateY(32px); transition: opacity 0.65s ease, transform 0.65s ease; }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+    /* ─────────────────────────────────────────────────────── 
+       SHARE MODAL
+    ─────────────────────────────────────────────────────── */
+    .shr-backdrop {
+      display: none; position: fixed; inset: 0; z-index: 8000;
+      background: rgba(21,21,21,0.55); backdrop-filter: blur(6px);
+      align-items: center; justify-content: center; padding: 20px;
+    }
+    .shr-backdrop.visible { display: flex; animation: shrFadeIn 0.22s ease; }
+    @keyframes shrFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .shr-panel {
+      background: var(--warm-paper); border-radius: 20px; width: 100%;
+      max-width: 640px; max-height: 92vh; overflow-y: auto;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.25); border: 1px solid var(--soft-sand);
+      display: flex; flex-direction: column;
+    }
+    .shr-header {
+      padding: 24px 28px 18px; border-bottom: 1px solid var(--soft-sand);
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+      position: sticky; top: 0; background: var(--warm-paper); z-index: 2; border-radius: 20px 20px 0 0;
+    }
+    .shr-header-left { display: flex; flex-direction: column; gap: 2px; }
+    .shr-eyebrow { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--coral); }
+    .shr-title { font-family: var(--font-display); font-size: 1.55rem; color: var(--text-main); font-weight: 400; }
+    .shr-close {
+      background: rgba(62,42,107,0.07); border: none; width: 32px; height: 32px;
+      border-radius: 50%; cursor: pointer; font-size: 1.1rem; color: var(--text-muted);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      transition: background 0.2s;
+    }
+    .shr-close:hover { background: rgba(249,111,110,0.12); color: var(--coral); }
+
+    .shr-tabs {
+      display: flex; padding: 12px 28px 0; border-bottom: 1px solid var(--soft-sand);
+      gap: 4px; overflow-x: auto; scrollbar-width: none;
+    }
+    .shr-tabs::-webkit-scrollbar { display: none; }
+    .shr-tab {
+      padding: 8px 14px; border-radius: 8px 8px 0 0; border: none;
+      background: none; font-family: var(--font-body); font-size: 0.8rem; font-weight: 500;
+      color: var(--text-muted); cursor: pointer; white-space: nowrap;
+      transition: background 0.18s, color 0.18s;
+      border-bottom: 2px solid transparent; margin-bottom: -1px;
+    }
+    .shr-tab.active { color: var(--coral); border-bottom-color: var(--coral); font-weight: 600; }
+    .shr-tab:hover:not(.active) { background: rgba(62,42,107,0.05); }
+
+    .shr-body { padding: 24px 28px 28px; flex: 1; }
+    .shr-tab-panel { display: none; }
+    .shr-tab-panel.active { display: block; }
+
+    /* tab: link */
+    .shr-link-row { display: flex; gap: 8px; }
+    .shr-url-input {
+      flex: 1; padding: 10px 14px; border-radius: 10px;
+      border: 1px solid var(--soft-sand); background: #fff;
+      font-family: monospace; font-size: 0.8rem; color: var(--text-main);
+      outline: none;
+    }
+    .shr-url-input:focus { border-color: var(--teal); }
+    .shr-copy-btn {
+      padding: 10px 18px; border-radius: 10px; border: none;
+      background: var(--teal); color: #fff; font-family: var(--font-body);
+      font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .shr-copy-btn:hover { background: #3d9a95; }
+    .shr-copy-btn.copied { background: var(--deep-purple); }
+    .shr-privacy-note {
+      display: flex; align-items: center; gap: 8px; margin-top: 16px;
+      padding: 10px 14px; border-radius: 8px; background: rgba(75,173,168,0.08);
+      border: 1px solid rgba(75,173,168,0.2); font-size: 0.78rem; color: var(--text-muted);
+    }
+    .shr-privacy-note svg { flex-shrink: 0; color: var(--teal); }
+
+    /* tab: social */
+    .shr-social-cards { display: flex; flex-direction: column; gap: 16px; }
+    .shr-social-card { background: #fff; border-radius: 12px; border: 1px solid var(--soft-sand); overflow: hidden; }
+    .shr-sc-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px; background: rgba(62,42,107,0.03);
+      border-bottom: 1px solid var(--soft-sand);
+    }
+    .shr-sc-platform { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 600; color: var(--text-main); }
+    .shr-sc-icon { width: 26px; height: 26px; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+    .shr-sc-body { padding: 12px 14px; }
+    .shr-sc-textarea {
+      width: 100%; min-height: 72px; resize: none; border: none; background: transparent;
+      font-family: var(--font-body); font-size: 0.82rem; line-height: 1.6; color: var(--text-main);
+      outline: none;
+    }
+    .shr-sc-footer { display: flex; align-items: center; justify-content: space-between; padding: 8px 14px; border-top: 1px solid var(--soft-sand); }
+    .shr-char-count { font-size: 0.72rem; color: var(--text-muted); }
+
+    /* tab: email */
+    .shr-field-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; display: block; }
+    .shr-field-group { margin-bottom: 16px; }
+    .shr-field-row { display: flex; gap: 8px; align-items: center; }
+    .shr-field-input {
+      width: 100%; padding: 10px 14px; border-radius: 10px;
+      border: 1px solid var(--soft-sand); background: #fff;
+      font-family: var(--font-body); font-size: 0.82rem; color: var(--text-main); outline: none;
+    }
+    .shr-field-input:focus { border-color: var(--teal); }
+    .shr-field-textarea {
+      width: 100%; min-height: 130px; resize: none; padding: 10px 14px; border-radius: 10px;
+      border: 1px solid var(--soft-sand); background: #fff; font-family: var(--font-body);
+      font-size: 0.82rem; color: var(--text-main); line-height: 1.6; outline: none;
+    }
+    .shr-field-textarea:focus { border-color: var(--teal); }
+    .shr-email-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+    .shr-btn-ghost {
+      padding: 8px 16px; border-radius: 8px; border: 1px solid var(--soft-sand);
+      background: #fff; font-family: var(--font-body); font-size: 0.8rem;
+      font-weight: 500; cursor: pointer; color: var(--text-main); transition: all 0.2s;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .shr-btn-ghost:hover { border-color: var(--teal); color: var(--teal); }
+    .shr-btn-ghost.primary { background: var(--teal); color: #fff; border-color: var(--teal); }
+    .shr-btn-ghost.primary:hover { background: #3d9a95; }
+
+    /* tab: embed */
+    .shr-embed-formats { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+    .shr-fmt-btn {
+      padding: 7px 14px; border-radius: 8px; border: 1px solid var(--soft-sand);
+      background: #fff; font-family: var(--font-body); font-size: 0.78rem; font-weight: 500;
+      cursor: pointer; color: var(--text-muted); transition: all 0.18s;
+    }
+    .shr-fmt-btn.active { background: var(--deep-purple); color: #fff; border-color: var(--deep-purple); }
+    .shr-fmt-btn:hover:not(.active) { border-color: var(--lavender); color: var(--deep-purple); }
+    .shr-embed-panel { display: none; }
+    .shr-embed-panel.active { display: block; }
+    .shr-embed-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; display: block; }
+    .shr-code-area {
+      width: 100%; min-height: 90px; resize: none; padding: 12px 14px; border-radius: 10px;
+      border: 1px solid var(--soft-sand); background: rgba(62,42,107,0.03);
+      font-family: monospace; font-size: 0.75rem; color: var(--text-main); line-height: 1.7;
+      outline: none;
+    }
+    .shr-code-area:focus { border-color: var(--teal); }
+    .shr-preview-box {
+      margin-top: 16px; padding: 16px; border-radius: 12px;
+      border: 1px solid var(--soft-sand); background: #fff;
+    }
+    .shr-preview-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; display: block; }
+    .shr-compat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 16px; }
+    .shr-compat-item { display: flex; align-items: center; gap: 7px; font-size: 0.78rem; color: var(--text-main); }
+    .shr-compat-ok { color: var(--teal); font-weight: 700; font-size: 0.9rem; }
+    .shr-compat-no { color: var(--coral); font-weight: 700; font-size: 0.9rem; }
+    .shr-instructions { font-size: 0.78rem; color: var(--text-muted); line-height: 1.65; margin: 10px 0 14px; }
+    .shr-instructions ol { margin: 0; padding-left: 18px; }
+    .shr-instructions li { margin-bottom: 4px; }
+
+    /* tab: pdf */
+    .shr-pdf-cards { display: flex; flex-direction: column; gap: 12px; }
+    .shr-pdf-card {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 18px; border-radius: 12px; border: 1px solid var(--soft-sand);
+      background: #fff; gap: 14px; text-decoration: none;
+      transition: var(--transition);
+    }
+    .shr-pdf-card:hover { border-color: var(--coral); transform: translateX(4px); }
+    .shr-pdf-left { display: flex; align-items: center; gap: 14px; }
+    .shr-pdf-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(249,111,110,0.1); flex-shrink: 0;
+    }
+    .shr-pdf-meta { display: flex; flex-direction: column; gap: 2px; }
+    .shr-pdf-name { font-size: 0.88rem; font-weight: 600; color: var(--text-main); }
+    .shr-pdf-sub { font-size: 0.74rem; color: var(--text-muted); }
+    .shr-pdf-arrow { color: var(--coral); font-size: 1.2rem; }
+    .shr-print-row { margin-top: 16px; text-align: center; }
+    .shr-print-btn {
+      padding: 10px 22px; border-radius: 999px; border: 1px solid var(--soft-sand);
+      background: #fff; font-family: var(--font-body); font-size: 0.82rem; font-weight: 500;
+      cursor: pointer; color: var(--text-muted); transition: all 0.2s; display: inline-flex; gap: 7px; align-items: center;
+    }
+    .shr-print-btn:hover { border-color: var(--deep-purple); color: var(--deep-purple); }
+
+    /* ─── COPIED FLASH ────────────────────────────────────── */
+    .shr-copied-flash {
+      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(12px);
+      background: var(--deep-purple); color: #fff; padding: 9px 20px;
+      border-radius: 999px; font-size: 0.8rem; font-weight: 600; z-index: 9900;
+      opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s;
+    }
+    .shr-copied-flash.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ─── LOGO HERO GRID (Identity section) ─────────────── */ 
+ .logo-hero-grid { 
+   display: grid; 
+   grid-template-columns: 1fr 1fr; 
+   gap: 16px; 
+   margin-top: 32px; 
+ } 
+ .logo-hero-main { 
+   background: var(--warm-paper); 
+   border: 1px solid var(--soft-sand); 
+   border-radius: var(--radius-lg); 
+   padding: 48px 40px; 
+   display: flex; 
+   align-items: center; 
+   justify-content: center; 
+   box-shadow: var(--shadow-soft); 
+ } 
+ .logo-hero-main img { max-width: 100%; height: auto; max-height: 280px; object-fit: contain; } 
+ .logo-hero-side { display: flex; flex-direction: column; gap: 16px; } 
+ .logo-hero-card { 
+   border-radius: var(--radius-md); 
+   padding: 32px 28px; 
+   display: flex; 
+   align-items: center; 
+   justify-content: center; 
+   flex: 1; 
+   box-shadow: var(--shadow-soft); 
+ } 
+ .logo-hero-card img { max-width: 100%; height: auto; max-height: 120px; object-fit: contain; } 
+ .logo-system-grid { 
+   display: grid; 
+   grid-template-columns: repeat(3, 1fr); 
+   gap: 16px; 
+   margin-top: 32px; 
+ } 
+ .logo-sys-card { 
+   border-radius: var(--radius-md); 
+   padding: 36px 24px 20px; 
+   display: flex; 
+   flex-direction: column; 
+   align-items: center; 
+   justify-content: center; 
+   gap: 16px; 
+   box-shadow: var(--shadow-soft); 
+   transition: var(--transition); 
+ } 
+ .logo-sys-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); } 
+ .logo-sys-card img { max-width: 100%; height: 100px; object-fit: contain; } 
+ .logo-sys-label { 
+   font-family: var(--font-body); 
+   font-size: 0.75rem; 
+   font-weight: 600; 
+   letter-spacing: 0.08em; 
+   text-transform: uppercase; 
+   color: var(--text-muted); 
+ } 
+ .bg-paper  { background: var(--warm-paper); border: 1px solid var(--soft-sand); } 
+ .bg-purple { background: var(--deep-purple); } 
+ .bg-lilac  { background: var(--pale-lilac); border: 1px solid #e8d5e5; } 
+ .bg-ink    { background: var(--ink); } 
+ .bg-sand   { background: var(--soft-sand); } 
+ .bg-coral  { background: var(--coral); } 
+ @media (max-width: 768px) { 
+   .logo-hero-grid { grid-template-columns: 1fr; } 
+   .logo-system-grid { grid-template-columns: repeat(2, 1fr); } 
+ } 
+
+    /* ─── PRINT: ───────────────────────────────────────────── */
+    @media print {
+      .brand-nav, .workspace-cta-section, #lightbox, #toast, .shr-backdrop, .shr-copied-flash,
+      .actions, .brand-share-btn, .brand-back-pill { display: none !important; }
+      section { padding: 40px 0; page-break-inside: avoid; }
+      .img-showcase, .download-category { box-shadow: none; border: 1px solid #ccc; }
+    }
+  </style>
+</head>
+<body>
+  <div id="progress-bar"></div>
+
+  <!-- ═══ MEGA-NAV ════════════════════════════════════════ -->
+  <nav class="brand-mega-nav" id="brandMegaNav">
+    <div class="bmn-inner">
+
+      <!-- Left: back pill + wordmark -->
+      <div class="bmn-left">
+        <a href="../../../index.html" class="bmn-back" title="Back to Workspace">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          Workspace
+        </a>
+        <span class="bmn-wordmark">Criar Sin <span>Culpas</span></span>
+      </div>
+
+      <!-- Center: triggers + floating panels -->
+      <div class="bmn-center">
+        <div class="bmn-triggers" id="bmnTriggers">
+
+          <!-- Trigger 1: Brand Book -->
+          <button class="bmn-trigger" data-bmn="book">
+            Brand Book
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 4l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+
+          <!-- Trigger 2: CSC Project -->
+          <button class="bmn-trigger" data-bmn="project">
+            CSC Project
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 4l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+
+          <!-- Floating panel -->
+          <div class="bmn-viewport" id="bmnViewport">
+            <div class="bmn-viewport-inner">
+
+              <!-- Panel: Brand Book sections -->
+              <div id="bmn-view-book" class="bmn-view">
+                <div class="bmn-panel-header">
+                  <span class="bmn-panel-label">Visual Brand Book · Criar Sin Culpas</span>
+                  <p class="bmn-panel-tagline">Eight sections. One complete brand system.</p>
+                </div>
+                <div class="bmn-grid-4">
+                  <a href="#identity" class="bmn-link">
+                    <div class="bmn-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
+                    <div class="bmn-text"><b>Identity</b><span>Brand essence &amp; personality</span></div>
+                  </a>
+                  <a href="#logo" class="bmn-link">
+                    <div class="bmn-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 12l2 2 4-4"/></svg></div>
+                    <div class="bmn-text"><b>Logo System</b><span>Mark, lockups &amp; clearspace</span></div>
+                  </a>
+                  <a href="#colors" class="bmn-link">
+                    <div class="bmn-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 010 18"/><path d="M12 3v9h9"/></svg></div>
+                    <div class="bmn-text"><b>Color Palette</b><span>7 tokens + philosophy</span></div>
+                  </a>
+                  <a href="#typography" class="bmn-link">
+                    <div class="bmn-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg></div>
+                    <div class="bmn-text"><b>Typography</b><span>Cormorant + Inter system</span></div>
+                  </a>
+                  <a href="#applications" class="bmn-link">
+                    <div class="bmn-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+                    <div class="bmn-text"><b>Applications</b><span>Real-world brand usage</span></div>
+                  </a>
+                  <a href="#social" class="bmn-link">
+                    <div class="bmn-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/></svg></div>
+                    <div class="bmn-text"><b>Social Media</b><span>Templates &amp; format specs</span></div>
+                  </a>
+                  <a href="#dna" class="bmn-link">
+                    <div class="bmn-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3c4 4 14-4 18 0M3 21c4-4 14 4 18 0M3 12h18"/><path d="M7.5 7.5c0 3-4.5 6-4.5 9M16.5 7.5c0 3 4.5 6 4.5 9"/></svg></div>
+                    <div class="bmn-text"><b>Brand DNA</b><span>Voice, tone &amp; bios</span></div>
+                  </a>
+                  <a href="#downloads" class="bmn-link">
+                    <div class="bmn-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v12M7 9l5 5 5-5"/><rect x="3" y="17" width="18" height="4" rx="1"/></svg></div>
+                    <div class="bmn-text"><b>Downloads</b><span>All assets &amp; files</span></div>
+                  </a>
+                </div>
+                <div class="bmn-divider"></div>
+                <div class="bmn-orientation">
+                  <button class="bmn-orient-link" onclick="openShareModal()">Share this Brand Book →</button>
+                  <a href="#identity" class="bmn-orient-link">Jump to top →</a>
+                </div>
+              </div>
+
+              <!-- Panel: CSC Project -->
+              <div id="bmn-view-project" class="bmn-view" style="display:none;">
+                <div class="bmn-panel-header">
+                  <span class="bmn-panel-label" style="color:var(--coral);">Proyecto CSC 2.0</span>
+                  <p class="bmn-panel-tagline">Workspace, method &amp; brand identity hub</p>
+                </div>
+                <div class="bmn-grid-2">
+                  <a href="../../../index.html" class="bmn-link">
+                    <div class="bmn-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+                    <div class="bmn-text"><b>Private Workspace</b><span>Artifacts, speaking &amp; growth</span></div>
+                  </a>
+                  <a href="../../../method.html" class="bmn-link">
+                    <div class="bmn-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h20M2 9h20M2 15h12M2 21h8"/></svg></div>
+                    <div class="bmn-text"><b>The Nari Method</b><span>Three-chapter parenting system</span></div>
+                  </a>
+                  <a href="../../../index.html" class="bmn-link" onclick="localStorage.setItem('csc-goto','speaking')">
+                    <div class="bmn-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0014 0M12 19v3M8 22h8"/></svg></div>
+                    <div class="bmn-text"><b>Speaking</b><span>Press kit &amp; speaker dossier</span></div>
+                  </a>
+                  <a href="../../../index.html" class="bmn-link" onclick="localStorage.setItem('csc-goto','vault')">
+                    <div class="bmn-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+                    <div class="bmn-text"><b>Brand Vault</b><span>Viz ID, tokens &amp; assets</span></div>
+                  </a>
+                </div>
+                <div class="bmn-divider"></div>
+                <div class="bmn-orientation">
+                  <a href="../../../index.html" class="bmn-orient-link">Project overview →</a>
+                  <a href="../../../index.html" class="bmn-orient-link" onclick="localStorage.setItem('csc-goto','artifacts')">Artifacts &amp; deliverables →</a>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div><!-- /.bmn-center -->
+
+      <!-- Right: Share + Hamburger -->
+      <div class="bmn-right">
+        <button class="bmn-share" onclick="openShareModal()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          <span>Share</span>
+        </button>
+        <button class="bmn-hamburger" id="bmnHamburger" aria-label="Open menu">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+
+    </div>
+  </nav>
+
+  <!-- Mobile overlay + drawer -->
+  <div class="bmn-overlay" id="bmnOverlay" onclick="bmnCloseDrawer()"></div>
+  <div class="bmn-drawer" id="bmnDrawer">
+    <div class="bmn-drawer-head">
+      <div>
+        <div class="bmn-drawer-eyebrow">Criar Sin Culpas</div>
+        <div class="bmn-drawer-title">Visual Brand Book</div>
+      </div>
+      <button class="bmn-drawer-close" onclick="bmnCloseDrawer()">&#x2715;</button>
+    </div>
+
+    <div class="bmn-drawer-section">
+      <div class="bmn-drawer-label teal">Brand Book Sections</div>
+      <a href="#identity"     class="bmn-drawer-link" onclick="bmnCloseDrawer()"><span>Identity</span><span class="bmn-drawer-arrow">›</span></a>
+      <a href="#logo"         class="bmn-drawer-link" onclick="bmnCloseDrawer()"><span>Logo System</span><span class="bmn-drawer-arrow">›</span></a>
+      <a href="#colors"       class="bmn-drawer-link" onclick="bmnCloseDrawer()"><span>Color Palette</span><span class="bmn-drawer-arrow">›</span></a>
+      <a href="#typography"   class="bmn-drawer-link" onclick="bmnCloseDrawer()"><span>Typography</span><span class="bmn-drawer-arrow">›</span></a>
+      <a href="#applications" class="bmn-drawer-link" onclick="bmnCloseDrawer()"><span>Applications</span><span class="bmn-drawer-arrow">›</span></a>
+      <a href="#social"       class="bmn-drawer-link" onclick="bmnCloseDrawer()"><span>Social Media</span><span class="bmn-drawer-arrow">›</span></a>
+      <a href="#dna"          class="bmn-drawer-link" onclick="bmnCloseDrawer()"><span>Brand DNA</span><span class="bmn-drawer-arrow">›</span></a>
+      <a href="#downloads"    class="bmn-drawer-link" onclick="bmnCloseDrawer()"><span>Downloads</span><span class="bmn-drawer-arrow">›</span></a>
+    </div>
+
+    <div class="bmn-drawer-section">
+      <div class="bmn-drawer-label coral">CSC Project</div>
+      <a href="../../../index.html"  class="bmn-drawer-link"><span>Private Workspace</span><span class="bmn-drawer-arrow" style="color:var(--coral)">↗</span></a>
+      <a href="../../../method.html" class="bmn-drawer-link"><span>The Nari Method</span><span class="bmn-drawer-arrow" style="color:var(--coral)">↗</span></a>
+    </div>
+
+    <div class="bmn-drawer-section" style="border-bottom:none;">
+      <button class="bmn-share" style="width:100%;justify-content:center;" onclick="bmnCloseDrawer();openShareModal();">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        Share Brand Book
+      </button>
+    </div>
+
+    <div class="bmn-drawer-foot">Built inside the LG Ecosystem</div>
+  </div>
+
+  <!-- ═══ IDENTITY ══════════════════════════════════════════ -->
+  <section id="identity" class="bg-gradient-1">
+    <div class="container">
+      <div class="section-header fade-up">
+        <div class="section-kicker">Visual Brand Book · Criar Sin Culpas</div>
+        <h2>Criar Sin Culpas</h2>
+        <p>A premium parenting education brand focused on emotional resilience, connection, and practical support. Connection before control.</p>
+        <div class="chip-group">
+          <span class="chip">Warm</span>
+          <span class="chip">Clear</span>
+          <span class="chip">Modern</span>
+          <span class="chip">Human</span>
+          <span class="chip">Editorial</span>
+        </div>
+      </div>
+      <div class="logo-hero-grid fade-up"> 
+        <div class="logo-hero-main"> 
+          <img src="../01_Logo_System/CSC_Logo_Primary.png" alt="CSC Primary Logo"> 
+        </div> 
+        <div class="logo-hero-side"> 
+          <div class="logo-hero-card" style="background:#3e2a6b;"> 
+            <img src="../01_Logo_System/CSC_Logo_Secondary.png" alt="CSC Secondary Logo"> 
+          </div> 
+          <div class="logo-hero-card" style="background:#f3e7f0;"> 
+            <img src="../01_Logo_System/CSC_Logo_Grayscale.png" alt="CSC Grayscale Logo"> 
+          </div> 
+        </div> 
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ LOGO SYSTEM ═══════════════════════════════════════ -->
+  <section id="logo">
+    <div class="container">
+      <div class="section-header fade-up">
+        <div class="section-kicker">Logo System</div>
+        <h2>Logo System</h2>
+        <p>Scalable brand architecture. The original illustrated logo remains the emotional source asset, while this system provides versatile application across all mediums.</p>
+      </div>
+      <div class="logo-system-grid fade-up"> 
+        <div class="logo-sys-card bg-paper"> 
+          <img src="../01_Logo_System/CSC_Logo_Primary.png" alt="Primary Logo"> 
+          <span class="logo-sys-label">Primary</span> 
+        </div> 
+        <div class="logo-sys-card bg-purple"> 
+          <img src="../01_Logo_System/CSC_Logo_Secondary.png" alt="Secondary Logo"> 
+          <span class="logo-sys-label" style="color:#fff;">Secondary</span> 
+        </div> 
+        <div class="logo-sys-card bg-lilac"> 
+          <img src="../01_Logo_System/CSC_Logomark.png" alt="Logomark"> 
+          <span class="logo-sys-label">Logomark</span> 
+        </div> 
+        <div class="logo-sys-card bg-ink"> 
+          <img src="../01_Logo_System/CSC_Logo_Grayscale.png" alt="Grayscale"> 
+          <span class="logo-sys-label" style="color:#fff;">Grayscale</span> 
+        </div> 
+        <div class="logo-sys-card bg-sand"> 
+          <img src="../01_Logo_System/CSC_Icon.png" alt="Icon"> 
+          <span class="logo-sys-label">Icon</span> 
+        </div> 
+        <div class="logo-sys-card bg-coral"> 
+          <img src="../01_Logo_System/CSC_Favicon.png" alt="Favicon"> 
+          <span class="logo-sys-label" style="color:#fff;">Favicon</span> 
+        </div> 
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ COLOR PALETTE ════════════════════════════════════ -->
+  <section id="colors" class="bg-gradient-2">
+    <div class="container">
+      <div class="section-header fade-up">
+        <div class="section-kicker">Color Palette</div>
+        <h2>Color Palette</h2>
+        <p>A harmonious blend of emotional warmth and editorial clarity. Click any swatch to copy its HEX value.</p>
+      </div>
+      <div class="img-showcase fade-up">
+        <img src="../03_Color_Typography/CSC_ColorPalette.png" loading="lazy" alt="Color Palette Presentation">
+        <div class="actions">
+          <button class="btn btn-share" onclick="openShareModal()">Share</button>
+          <a href="../03_Color_Typography/CSC_ColorPalette.png" target="_blank" class="btn btn-primary">Download</a>
+        </div>
+      </div>
+      <div class="color-grid fade-up">
+        <div class="color-card" onclick="copyColor(this,'#3E2A6B')">
+          <div class="color-swatch" style="background:#3E2A6B"></div>
+          <div class="color-details"><span class="color-name">Deep Purple</span><span class="color-hex">#3E2A6B</span></div>
+          <span class="color-copied-badge">Copied!</span>
+        </div>
+        <div class="color-card" onclick="copyColor(this,'#B8A5D6')">
+          <div class="color-swatch" style="background:#B8A5D6"></div>
+          <div class="color-details"><span class="color-name">Lavender</span><span class="color-hex">#B8A5D6</span></div>
+          <span class="color-copied-badge">Copied!</span>
+        </div>
+        <div class="color-card" onclick="copyColor(this,'#F3E7F0')">
+          <div class="color-swatch" style="background:#F3E7F0; border:1px solid #e8d5e5"></div>
+          <div class="color-details"><span class="color-name">Pale Lilac</span><span class="color-hex">#F3E7F0</span></div>
+          <span class="color-copied-badge">Copied!</span>
+        </div>
+        <div class="color-card" onclick="copyColor(this,'#F96F6E')">
+          <div class="color-swatch" style="background:#F96F6E"></div>
+          <div class="color-details"><span class="color-name">Coral</span><span class="color-hex">#F96F6E</span></div>
+          <span class="color-copied-badge">Copied!</span>
+        </div>
+        <div class="color-card" onclick="copyColor(this,'#4BADA8')">
+          <div class="color-swatch" style="background:#4BADA8"></div>
+          <div class="color-details"><span class="color-name">Teal</span><span class="color-hex">#4BADA8</span></div>
+          <span class="color-copied-badge">Copied!</span>
+        </div>
+        <div class="color-card" onclick="copyColor(this,'#FBF7F1')">
+          <div class="color-swatch" style="background:#FBF7F1; border:1px solid #e8ddd2"></div>
+          <div class="color-details"><span class="color-name">Warm Paper</span><span class="color-hex">#FBF7F1</span></div>
+          <span class="color-copied-badge">Copied!</span>
+        </div>
+        <div class="color-card" onclick="copyColor(this,'#EDE3D7')">
+          <div class="color-swatch" style="background:#EDE3D7"></div>
+          <div class="color-details"><span class="color-name">Soft Sand</span><span class="color-hex">#EDE3D7</span></div>
+          <span class="color-copied-badge">Copied!</span>
+        </div>
+      </div>
+      <div class="color-philosophy fade-up">
+        <div class="phil-item"><h4 style="color:#3E2A6B">Deep Purple</h4><p>The anchor. Instills trust, calm authority, and emotional grounding.</p></div>
+        <div class="phil-item"><h4 style="color:#B8A5D6">Lilac & Lavender</h4><p>The canvas. Provides softness, empathy, and gentleness to layouts.</p></div>
+        <div class="phil-item"><h4 style="color:#F96F6E">Coral</h4><p>The pulse. Adds relational warmth, humanity, and energetic highlights.</p></div>
+        <div class="phil-item"><h4 style="color:#4BADA8">Teal</h4><p>The guide. Ensures clarity, balance, and practical confidence.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ TYPOGRAPHY ════════════════════════════════════════ -->
+  <section id="typography">
+    <div class="container">
+      <div class="section-header fade-up">
+        <div class="section-kicker">Typography</div>
+        <h2>Typography</h2>
+        <p>A pairing of authority and approachability.</p>
+      </div>
+      <div class="img-showcase fade-up">
+        <img src="../03_Color_Typography/CSC_TypographyGuide.png" loading="lazy" alt="Typography Guidelines">
+        <div class="actions">
+          <button class="btn btn-share" onclick="openShareModal()">Share</button>
+          <a href="../03_Color_Typography/CSC_TypographyGuide.png" target="_blank" class="btn btn-primary">Download</a>
+        </div>
+      </div>
+      <p class="type-note fade-up">Fredoka approximates the original logo wordmark style. Reserved exclusively for wordmarks and playful emphasis — never body copy.</p>
+      <div class="type-grid fade-up">
+        <div class="type-card"><div class="type-specimen-1">Aa</div><h4>Fredoka Bold</h4><p style="font-size:.88rem;margin:0">Wordmarks &amp; Badges</p></div>
+        <div class="type-card"><div class="type-specimen-2">Aa</div><h4>Cormorant Garamond</h4><p style="font-size:.88rem;margin:0">Display &amp; Headlines</p></div>
+        <div class="type-card"><div class="type-specimen-3">Aa</div><h4>Inter Regular</h4><p style="font-size:.88rem;margin:0">Body &amp; UI Elements</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ APPLICATIONS ══════════════════════════════════════ -->
+  <section id="applications" class="bg-gradient-1">
+    <div class="container">
+      <div class="section-header fade-up">
+        <div class="section-kicker">Real-World Applications</div>
+        <h2>Real-World Applications</h2>
+        <p>Translating the brand system into tangible touchpoints.</p>
+      </div>
+      <div class="masonry-grid-large fade-up">
+        <div class="img-showcase full-span">
+          <img src="../06_Mockups/CSC_Brand_Applications.png" loading="lazy" alt="Brand Applications Overview">
+          <div class="actions">
+            <button class="btn btn-share" onclick="openShareModal()">Share</button>
+            <a href="../06_Mockups/CSC_Brand_Applications.png" target="_blank" class="btn btn-primary">Download</a>
+          </div>
+        </div>
+        <div class="img-showcase">
+          <img src="../06_Mockups/CSC_Brand_Applications.png" loading="lazy" alt="Website Hero Section">
+          <div class="actions">
+            <button class="btn btn-share" onclick="openShareModal()">Share</button>
+            <a href="../06_Mockups/CSC_Brand_Applications.png" target="_blank" class="btn btn-primary">Download</a>
+          </div>
+        </div>
+        <div class="img-showcase">
+          <img src="../04_Speaker_Media_Kit/CSC_MediaKit_Page1_Cover.png" loading="lazy" alt="Speaker Media Kit Cover">
+          <div class="actions">
+            <button class="btn btn-share" onclick="openShareModal()">Share</button>
+            <a href="../04_Speaker_Media_Kit/CSC_MediaKit_Page1_Cover.png" target="_blank" class="btn btn-primary">Download</a>
+          </div>
+        </div>
+        <div class="img-showcase full-span">
+          <img src="../06_Mockups/CSC_Brand_Applications.png" loading="lazy" alt="Real-World Product Mockups">
+          <div class="actions">
+            <button class="btn btn-share" onclick="openShareModal()">Share</button>
+            <a href="../06_Mockups/CSC_Brand_Applications.png" target="_blank" class="btn btn-primary">Download</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ SOCIAL ════════════════════════════════════════════ -->
+  <section id="social">
+    <div class="container">
+      <div class="section-header fade-up">
+        <div class="section-kicker">Social Media Templates</div>
+        <h2>Social Media Templates</h2>
+        <p>Consistent, scroll-stopping editorial layouts for digital community building.</p>
+      </div>
+      <div class="masonry-grid-small fade-up">
+        <div class="img-showcase">
+          <img src="../05_Social_Media/CSC_Instagram_Templates.png" loading="lazy" alt="Instagram Posts Set">
+          <div class="actions">
+            <button class="btn btn-share" onclick="openShareModal()">Share</button>
+            <a href="../05_Social_Media/CSC_Instagram_Templates.png" target="_blank" class="btn btn-primary">Download</a>
+          </div>
+        </div>
+        <div class="img-showcase">
+          <img src="../05_Social_Media/CSC_Instagram_Templates.png" loading="lazy" alt="Instagram Templates">
+          <div class="actions">
+            <button class="btn btn-share" onclick="openShareModal()">Share</button>
+            <a href="../05_Social_Media/CSC_Instagram_Templates.png" target="_blank" class="btn btn-primary">Download</a>
+          </div>
+        </div>
+        <div class="img-showcase">
+          <img src="../05_Social_Media/CSC_Instagram_Templates.png" loading="lazy" alt="Instagram Stories">
+          <div class="actions">
+            <button class="btn btn-share" onclick="openShareModal()">Share</button>
+            <a href="../05_Social_Media/CSC_Instagram_Templates.png" target="_blank" class="btn btn-primary">Download</a>
+          </div>
+        </div>
+        <div class="img-showcase">
+          <img src="../05_Social_Media/CSC_Podcast_Cover.png" loading="lazy" alt="Podcast Cover">
+          <div class="actions">
+            <button class="btn btn-share" onclick="openShareModal()">Share</button>
+            <a href="../05_Social_Media/CSC_Podcast_Cover.png" target="_blank" class="btn btn-primary">Download</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ BRAND DNA ══════════════════════════════════════════ -->
+  <section id="dna" class="bg-gradient-2">
+    <div class="container">
+      <div class="section-header fade-up">
+        <div class="section-kicker">Brand DNA</div>
+        <h2>Brand Board &amp; DNA</h2>
+        <p>The unified visual language captured at a glance.</p>
+      </div>
+      <div class="img-showcase fade-up" style="margin-bottom:36px;">
+        <img src="CSC_Visual_identity_Guide.png" loading="lazy" alt="One-Page Brand Board">
+        <div class="actions">
+          <button class="btn btn-share" onclick="openShareModal()">Share</button>
+          <a href="CSC_Visual_identity_Guide.png" target="_blank" class="btn btn-primary">Download</a>
+        </div>
+      </div>
+      <div class="img-showcase fade-up">
+        <img src="CSC_Vis_ID_Guide.png" loading="lazy" alt="Brand DNA Summary">
+        <div class="actions">
+          <button class="btn btn-share" onclick="openShareModal()">Share</button>
+          <a href="CSC_Vis_ID_Guide.png" target="_blank" class="btn btn-primary">Download</a>
+        </div>
+      </div>
+      <div class="prompt-container fade-up">
+        <h3>AI Prompt Pack</h3>
+        <p style="margin-bottom:0;">Copy this exact prompt to instruct AI tools, designers, or content generators on the CSC visual identity.</p>
+        <div class="prompt-box" id="promptText">Role: Expert Brand Designer. Context: Apply the "Criar Sin Culpas" visual identity to this output. Vibe: Purple-forward premium parenting education brand. Warm, human, editorial. Colors: Deep Purple (#3E2A6B) anchor. Backgrounds are Warm Paper (#FBF7F1) or Pale Lilac (#F3E7F0). Accents are Coral (#F96F6E) and Teal (#4BADA8). Typography: Cormorant Garamond (headlines) + Inter (body) editorial pairing. Fredoka Bold reserved EXCLUSIVELY for wordmark/playful emphasis only. Layouts: Airy layouts, soft edges, generous whitespace, subtle shadows. Constraints: Avoid generic daycare aesthetics, loud primary colors, or stiff corporate templates. Maintain emotional warmth with high-end polish.</div>
+        <button class="btn btn-primary" onclick="copyPrompt(this)">Copy Brand Prompt</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ DOWNLOADS ══════════════════════════════════════════ -->
+  <section id="downloads" class="downloads-section">
+    <div class="container">
+      <div class="section-header fade-up">
+        <div class="section-kicker">Asset Downloads</div>
+        <h2>Download Brand Assets</h2>
+        <p>Your clean asset portal. Preview, download, and hand off the full CSC system without the messy scavenger hunt energy.</p>
+      </div>
+      <div class="download-categories fade-up">
+
+        <div class="download-category">
+          <div class="category-header">
+            <div><h3 class="category-title">📁 Logo Files</h3><p class="category-sub">Primary, secondary, icon, favicon, and grayscale logo system.</p></div>
+          </div>
+          <div class="category-preview-grid">
+            <div class="category-thumb"><img src="CSC_logo.png" alt="Logo system" loading="lazy"></div>
+            <div class="category-thumb"><img src="CSC_logo_horizontal.png" alt="Brand board" loading="lazy"></div>
+          </div>
+          <div class="asset-list">
+            <div class="asset-item">
+              <div class="asset-meta"><span class="asset-name">Primary + Secondary Logo System</span><div class="asset-info"><span class="format-badge">PNG</span><span class="size-badge">2.4 MB</span></div></div>
+              <a class="asset-link" href="CSC_logo.png" target="_blank">Download</a>
+            </div>
+            <div class="asset-item">
+              <div class="asset-meta"><span class="asset-name">Icon / Favicon / Grayscale Reference</span><div class="asset-info"><span class="format-badge">PNG</span><span class="size-badge">780 KB</span></div></div>
+              <a class="asset-link" href="CSC_favicon.png" target="_blank">Download</a>
+            </div>
+            <div class="asset-item">
+              <div class="asset-meta"><span class="asset-name">Print Master Logo Sheet</span><div class="asset-info"><span class="format-badge">PNG</span><span class="size-badge">1.1 MB</span></div></div>
+              <a class="asset-link" href="CSC_Wordmark_print.png" target="_blank">Download</a>
+            </div>
+          </div>
+          <div class="category-actions"><button class="download-category-btn" onclick="showToast('Logo files available above — click any Download link.')">⬇ Download Category</button></div>
+        </div>
+
+        <div class="download-category">
+          <div class="category-header">
+            <div><h3 class="category-title">📁 Color Palette</h3><p class="category-sub">Swatches, hex references, and master palette overview.</p></div>
+          </div>
+          <div class="category-preview-grid">
+            <div class="category-thumb"><img src="../03_Color_Typography/CSC_ColorPalette.png" alt="Color palette" loading="lazy"></div>
+            <div class="category-thumb"><img src="CSC_logo.png" alt="Brand cover" loading="lazy"></div>
+          </div>
+          <div class="asset-list">
+            <div class="asset-item">
+              <div class="asset-meta"><span class="asset-name">Palette Reference Sheet</span><div class="asset-info"><span class="format-badge">PDF</span><span class="size-badge">1.3 MB</span></div></div>
+              <a class="asset-link" href="../03_Color_Typography/CSC_ColorPalette.png" target="_blank">Download</a>
+            </div>
+            <div class="asset-item">
+              <div class="asset-meta"><span class="asset-name">Digital Swatch Guide</span><div class="asset-info"><span class="format-badge">PNG</span><span class="size-badge">860 KB</span></div></div>
+              <a class="asset-link" href="../03_Color_Typography/CSC_ColorPalette.png" target="_blank">Download</a>
+            </div>
+          </div>
+          <div class="category-actions"><button class="download-category-btn" onclick="showToast('Color files available above — click any Download link.')">⬇ Download Category</button></div>
+        </div>
+
+        <div class="download-category">
+          <div class="category-header">
+            <div><h3 class="category-title">📁 Typography</h3><p class="category-sub">Font pairing rules, hierarchy guides, and Fredoka Bold reference usage.</p></div>
+          </div>
+          <div class="category-preview-grid">
+            <div class="category-thumb"><img src="../03_Color_Typography/CSC_TypographyGuide.png" alt="Typography" loading="lazy"></div>
+            <div class="category-thumb"><img src="CSC_logo.png" alt="Brand typography" loading="lazy"></div>
+          </div>
+          <div class="asset-list">
+            <div class="asset-item">
+              <div class="asset-meta"><span class="asset-name">Typography System Guide</span><div class="asset-info"><span class="format-badge">PDF</span><span class="size-badge">1.5 MB</span></div></div>
+              <a class="asset-link" href="../03_Color_Typography/CSC_TypographyGuide.png" target="_blank">Download</a>
+            </div>
+            <div class="asset-item">
+              <div class="asset-meta"><span class="asset-name">Fredoka Bold Wordmark Specimen</span><div class="asset-info"><span class="format-badge">PNG</span><span class="size-badge">640 KB</span></div></div>
+              <a class="asset-link" href="../03_Color_Typography/CSC_TypographyGuide.png" target="_blank">Download</a>
+            </div>
+          </div>
+          <div class="category-actions"><button class="download-category-btn" onclick="showToast('Typography files available above — click any Download link.')">⬇ Download Category</button></div>
+        </div>
+
+        <div class="download-category">
+          <div class="category-header">
+            <div><h3 class="category-title">📁 Social Templates</h3><p class="category-sub">Instagram posts, Stories, podcast cover, and social system layouts.</p></div>
+          </div>
+          <div class="category-preview-grid">
+            <div class="category-thumb"><img src="../05_Social_Media/CSC_Instagram_Templates.png" alt="Instagram posts" loading="lazy"></div>
+            <div class="category-thumb"><img src="../05_Social_Media/CSC_Instagram_Templates.png" alt="Instagram stories" loading="lazy"></div>
+          </div>
+          <div class="asset-list">
+            <div class="asset-item">
+              <div class="asset-meta"><span class="asset-name">Instagram Posts Set</span><div class="asset-info"><span class="format-badge">PNG</span><span class="size-badge">2.1 MB</span></div></div>
+              <a class="asset-link" href="../05_Social_Media/CSC_Instagram_Templates.png" target="_blank">Download</a>
+            </div>
+            <div class="asset-item">
+              <div class="asset-meta"><span class="asset-name">Stories + Template Variations</span><div class="asset-info"><span class="format-badge">PNG</span><span class="size-badge">1.8 MB</span></div></div>
+              <a class="asset-link" href="../05_Social_Media/CSC_Instagram_Templates.png" target="_blank">Download</a>
+            </div>
+            <div class="asset-item">
+              <div class="asset-meta"><span class="asset-name">Podcast Cover Artwork</span><div class="asset-info"><span class="format-badge">JPG</span><span class="size-badge">920 KB</span></div></div>
+              <a class="asset-link" href="../05_Social_Media/CSC_Podcast_Cover.png" target="_blank">Download</a>
+            </div>
+          </div>
+          <div class="category-actions"><button class="download-category-btn" onclick="showToast('Social files available above — click any Download link.')">⬇ Download Category</button></div>
+        </div>
+
+        <div class="download-category">
+          <div class="category-header">
+            <div><h3 class="category-title">📁 Print Materials</h3><p class="category-sub">Speaker media kit pages, mockups, and print-facing presentation assets.</p></div>
+          </div>
+          <div class="category-preview-grid">
+            <div class="category-thumb"><img src="../04_Speaker_Media_Kit/CSC_MediaKit_Page1_Cover.png" alt="Speaker media kit p1" loading="lazy"></div>
+            <div class="category-thumb"><img src="../04_Speaker_Media_Kit/CSC_MediaKit_Page2_About.png" alt="Speaker media kit p2" loading="lazy"></div>
+          </div>
+          <div class="asset-list">
+            <div class="asset-item">
+              <div class="asset-meta"><span class="asset-name">Speaker Media Kit Pages</span><div class="asset-info"><span class="format-badge">PDF</span><span class="size-badge">3.4 MB</span></div></div>
+              <a class="asset-link" href="../04_Speaker_Media_Kit/CSC_MediaKit_Page1_Cover.png" target="_blank">Download</a>
+            </div>
+            <div class="asset-item">
+              <div class="asset-meta"><span class="asset-name">Print Mockup Reference</span><div class="asset-info"><span class="format-badge">PNG</span><span class="size-badge">1.7 MB</span></div></div>
+              <a class="asset-link" href="../04_Speaker_Media_Kit/CSC_MediaKit_Page1_Cover.png" target="_blank">Download</a>
+            </div>
+          </div>
+          <div class="category-actions"><button class="download-category-btn" onclick="showToast('Print files available above — click any Download link.')">⬇ Download Category</button></div>
+        </div>
+
+        <div class="download-category">
+          <div class="category-header">
+            <div><h3 class="category-title">📁 Complete Brand Book</h3><p class="category-sub">Cover, brand board, HTML edition, and the full PDF version.</p></div>
+          </div>
+          <div class="category-preview-grid">
+            <div class="category-thumb"><img src="CSC_logo.png" alt="Brand book cover" loading="lazy"></div>
+            <div class="category-thumb"><img src="CSC_Vis_ID_Guide.png" alt="Brand DNA" loading="lazy"></div>
+          </div>
+          <div class="asset-list">
+            <div class="asset-item">
+              <div class="asset-meta"><span class="asset-name">Complete Brand Book Cover</span><div class="asset-info"><span class="format-badge">PNG</span><span class="size-badge">1.6 MB</span></div></div>
+              <a class="asset-link" href="CSC_logo.png" target="_blank">Download</a>
+            </div>
+            <div class="asset-item">
+              <div class="asset-meta"><span class="asset-name">Brand DNA Summary</span><div class="asset-info"><span class="format-badge">PDF</span><span class="size-badge">1.4 MB</span></div></div>
+              <a class="asset-link" href="CSC_Vis_ID_Guide.png" target="_blank">Download</a>
+            </div>
+            <div class="asset-item">
+              <div class="asset-meta"><span class="asset-name">Interactive HTML Brand Book</span><div class="asset-info"><span class="format-badge">HTML</span><span class="size-badge">Live</span></div></div>
+              <a class="asset-link" href="#identity">View Live ↑</a>
+            </div>
+          </div>
+          <div class="category-actions"><button class="download-category-btn" onclick="showToast('Brand book files available above — click any link.')">⬇ Download Category</button></div>
+        </div>
+
+      </div>
+
+      <div class="download-master fade-up">
+        <p>Need the whole ecosystem in one move? Hit the master download and grab the full CSC system stack.</p>
+        <button class="download-all-btn" onclick="showToast('Full ZIP coming soon. Download individual assets above.')">
+          <span>⬇</span><span>Download All Assets (Complete ZIP)</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ WORKSPACE CTA ════════════════════════════════════ -->
+  <section class="workspace-cta-section">
+    <div class="container">
+      <div class="workspace-cta-inner fade-up">
+        <div class="section-kicker">Private Workspace</div>
+        <h2>Want to go deeper?</h2>
+        <p>The full Criar Sin Culpas strategy — speaker dossier, monetization model, growth signals, and brand vault — lives inside the private workspace.</p>
+        <div class="cta-pill-group">
+          <a href="../../../index.html" class="cta-pill-primary">Enter Workspace →</a>
+          <a href="../../../method.html" class="cta-pill-secondary">Read The Nari Method</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ════════════════════════════════════════════ -->
+  <footer>
+    <div class="container footer-grid">
+      <div class="brand-nav-logo footer-brand">Criar Sin <span>Culpas</span></div>
+      <div class="footer-links">
+        <a href="#identity">Identity</a>
+        <a href="#logo">Logo</a>
+        <a href="#colors">Color</a>
+        <a href="#typography">Type</a>
+        <a href="#applications">Applications</a>
+        <a href="#social">Social</a>
+        <a href="#dna">Brand DNA</a>
+        <a href="#downloads">Downloads</a>
+      </div>
+      <p class="footer-copy">© 2026 Criar Sin Culpas. Connection before control.</p>
+    </div>
+  </footer>
+
+  <!-- ═══ LIGHTBOX ══════════════════════════════════════════ -->
+  <div id="lightbox">
+    <span class="lightbox-close" onclick="closeLightbox()">×</span>
+    <img id="lightbox-img" src="" alt="Enlarged view">
+  </div>
+
+  <!-- ═══ TOAST ══════════════════════════════════════════════ -->
+  <div id="toast"></div>
+
+  <!-- ═══ SHARE MODAL ═══════════════════════════════════════ -->
+  <div class="shr-backdrop" id="shrBackdrop" onclick="handleBackdropClick(event)">
+    <div class="shr-panel" id="shrPanel">
+
+      <div class="shr-header">
+        <div class="shr-header-left">
+          <span class="shr-eyebrow">Criar Sin Culpas · Visual Brand Book</span>
+          <span class="shr-title">Share This Resource</span>
+        </div>
+        <button class="shr-close" onclick="closeShareModal()">✕</button>
+      </div>
+
+      <div class="shr-tabs">
+        <button class="shr-tab active" data-tab="link"    onclick="shrSwitchTab('link')">🔗 Link</button>
+        <button class="shr-tab"        data-tab="social"  onclick="shrSwitchTab('social')">📣 Social</button>
+        <button class="shr-tab"        data-tab="email"   onclick="shrSwitchTab('email')">✉️ Email</button>
+        <button class="shr-tab"        data-tab="embed"   onclick="shrSwitchTab('embed')">⟨⟩ Embed</button>
+        <button class="shr-tab"        data-tab="pdf"     onclick="shrSwitchTab('pdf')">📄 PDF</button>
+      </div>
+
+      <div class="shr-body">
+
+        <!-- LINK TAB -->
+        <div class="shr-tab-panel active" id="shr-panel-link">
+          <p style="font-size:.82rem;color:var(--text-muted);margin:0 0 14px;">This link goes directly to the public brand book. Your private workspace is not accessible from it.</p>
+          <div class="shr-link-row">
+            <input class="shr-url-input" id="shr-link-url" type="text" readonly>
+            <button class="shr-copy-btn" id="shr-copy-link-btn" onclick="shrCopyLink(this)">Copy</button>
+          </div>
+          <div class="shr-privacy-note">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Only the brand book is accessible via this link. The private workspace stays protected.
+          </div>
+        </div>
+
+        <!-- SOCIAL TAB -->
+        <div class="shr-tab-panel" id="shr-panel-social">
+          <div class="shr-social-cards">
+
+            <div class="shr-social-card">
+              <div class="shr-sc-header">
+                <div class="shr-sc-platform">
+                  <div class="shr-sc-icon" style="background:#fde8f8;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="#c13584"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                  </div>
+                  Instagram
+                </div>
+                <button class="shr-copy-btn" style="padding:6px 12px;font-size:.75rem;" onclick="shrCopyField('shr-ig-caption',this)">Copy</button>
+              </div>
+              <div class="shr-sc-body"><textarea class="shr-sc-textarea" id="shr-ig-caption" rows="5"></textarea></div>
+            </div>
+
+            <div class="shr-social-card">
+              <div class="shr-sc-header">
+                <div class="shr-sc-platform">
+                  <div class="shr-sc-icon" style="background:#e8f4fd;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="#0a66c2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                  </div>
+                  LinkedIn
+                </div>
+                <button class="shr-copy-btn" style="padding:6px 12px;font-size:.75rem;" onclick="shrCopyField('shr-li-caption',this)">Copy</button>
+              </div>
+              <div class="shr-sc-body"><textarea class="shr-sc-textarea" id="shr-li-caption" rows="5"></textarea></div>
+            </div>
+
+            <div class="shr-social-card">
+              <div class="shr-sc-header">
+                <div class="shr-sc-platform">
+                  <div class="shr-sc-icon" style="background:#f0f0f0;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="#000"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.74l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                  </div>
+                  X / Twitter
+                </div>
+                <button class="shr-copy-btn" style="padding:6px 12px;font-size:.75rem;" onclick="shrCopyField('shr-x-caption',this)">Copy</button>
+              </div>
+              <div class="shr-sc-body"><textarea class="shr-sc-textarea" id="shr-x-caption" rows="3" oninput="shrUpdateXCount()"></textarea></div>
+              <div class="shr-sc-footer"><span class="shr-char-count" id="shr-x-count">0 / 280</span></div>
+            </div>
+
+            <div class="shr-social-card">
+              <div class="shr-sc-header">
+                <div class="shr-sc-platform">
+                  <div class="shr-sc-icon" style="background:#e8faf0;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="#25d366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                  </div>
+                  WhatsApp
+                </div>
+                <button class="shr-copy-btn" style="padding:6px 12px;font-size:.75rem;" onclick="shrOpenWhatsApp()">Open WhatsApp</button>
+              </div>
+              <div class="shr-sc-body"><textarea class="shr-sc-textarea" id="shr-wa-caption" rows="4"></textarea></div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- EMAIL TAB -->
+        <div class="shr-tab-panel" id="shr-panel-email">
+          <div class="shr-field-group">
+            <label class="shr-field-label">Subject</label>
+            <div class="shr-field-row">
+              <input class="shr-field-input" id="shr-email-subject" type="text">
+              <button class="shr-copy-btn" style="padding:10px 14px;font-size:.75rem;white-space:nowrap;" onclick="shrCopyField('shr-email-subject',this)">Copy</button>
+            </div>
+          </div>
+          <div class="shr-field-group">
+            <label class="shr-field-label">Body</label>
+            <textarea class="shr-field-textarea" id="shr-email-body" rows="8"></textarea>
+          </div>
+          <div class="shr-email-actions">
+            <button class="shr-btn-ghost primary" onclick="shrOpenEmailClient()">Open in Mail App</button>
+            <button class="shr-btn-ghost" onclick="shrCopyField('shr-email-body',this)">Copy Body</button>
+            <button class="shr-btn-ghost" onclick="shrCopyField('shr-email-subject',this)">Copy Subject</button>
+          </div>
+        </div>
+
+        <!-- EMBED TAB -->
+        <div class="shr-tab-panel" id="shr-panel-embed">
+          <p style="font-size:.82rem;color:var(--text-muted);margin:0 0 14px;">Industry-standard formats for embedding Nari's brand and speaker presence across different contexts.</p>
+          <div class="shr-embed-formats">
+            <button class="shr-fmt-btn active" onclick="shrPickEmbedFormat('speaker-card',this)">Speaker Card</button>
+            <button class="shr-fmt-btn" onclick="shrPickEmbedFormat('email-sig',this)">Email Signature</button>
+            <button class="shr-fmt-btn" onclick="shrPickEmbedFormat('bio-block',this)">Bio Block</button>
+            <button class="shr-fmt-btn" onclick="shrPickEmbedFormat('iframe',this)">Notion / iframe</button>
+          </div>
+
+          <!-- Speaker Card -->
+          <div class="shr-embed-panel active" id="emb-panel-speaker-card">
+            <span class="shr-embed-label">HTML — for event programs, websites, press pages</span>
+            <p class="shr-instructions">Copy and paste into any CMS, WordPress, Squarespace, or HTML email. No login required.</p>
+            <textarea class="shr-code-area" id="emb-code-speaker-card" rows="8" readonly></textarea>
+            <div style="display:flex;gap:8px;margin-top:10px;">
+              <button class="shr-copy-btn" onclick="shrCopyField('emb-code-speaker-card',this)">Copy HTML</button>
+            </div>
+            <div class="shr-preview-box">
+              <span class="shr-preview-label">Preview</span>
+              <div id="emb-preview-speaker-card"></div>
+            </div>
+          </div>
+
+          <!-- Email Signature -->
+          <div class="shr-embed-panel" id="emb-panel-email-sig">
+            <span class="shr-embed-label">Table HTML — Gmail · Outlook · Apple Mail</span>
+            <div class="shr-instructions">
+              <ol>
+                <li>Copy the HTML below</li>
+                <li>In Gmail: Settings → See all settings → Signature → paste</li>
+                <li>In Outlook: File → Options → Mail → Signatures → paste</li>
+              </ol>
+            </div>
+            <textarea class="shr-code-area" id="emb-code-email-sig" rows="8" readonly></textarea>
+            <div style="display:flex;gap:8px;margin-top:10px;">
+              <button class="shr-copy-btn" onclick="shrCopyField('emb-code-email-sig',this)">Copy HTML</button>
+            </div>
+            <div class="shr-preview-box">
+              <span class="shr-preview-label">Preview</span>
+              <div id="emb-preview-email-sig"></div>
+            </div>
+          </div>
+
+          <!-- Bio Block -->
+          <div class="shr-embed-panel" id="emb-panel-bio-block">
+            <span class="shr-embed-label">Markdown — Notion · Google Docs · Press pages</span>
+            <p class="shr-instructions">Paste directly into Notion, Google Docs, GitHub README, or any Markdown-supported editor.</p>
+            <textarea class="shr-code-area" id="emb-code-bio-md" rows="10" readonly></textarea>
+            <div style="display:flex;gap:8px;margin-top:10px;">
+              <button class="shr-copy-btn" onclick="shrCopyField('emb-code-bio-md',this)">Copy Markdown</button>
+              <button class="shr-btn-ghost" onclick="shrCopyPlainBio(this)">Copy Plain Text</button>
+            </div>
+          </div>
+
+          <!-- Notion/iframe -->
+          <div class="shr-embed-panel" id="emb-panel-iframe">
+            <span class="shr-embed-label">URL — Paste into Notion /embed</span>
+            <textarea class="shr-code-area" id="emb-code-notion-url" rows="2" readonly></textarea>
+            <div style="display:flex;gap:8px;margin-top:10px;">
+              <button class="shr-copy-btn" onclick="shrCopyField('emb-code-notion-url',this)">Copy URL</button>
+            </div>
+            <span class="shr-embed-label" style="margin-top:20px;display:block;">iframe — Webflow · Squarespace · Linktree Pro</span>
+            <textarea class="shr-code-area" id="emb-code-iframe" rows="4" readonly></textarea>
+            <div style="display:flex;gap:8px;margin-top:10px;">
+              <button class="shr-copy-btn" onclick="shrCopyField('emb-code-iframe',this)">Copy iframe</button>
+            </div>
+            <div class="shr-compat-grid" style="margin-top:20px;">
+              <div class="shr-compat-item"><span class="shr-compat-ok">✓</span> Notion embed</div>
+              <div class="shr-compat-item"><span class="shr-compat-ok">✓</span> Webflow</div>
+              <div class="shr-compat-item"><span class="shr-compat-ok">✓</span> Squarespace</div>
+              <div class="shr-compat-item"><span class="shr-compat-ok">✓</span> Linktree Pro</div>
+              <div class="shr-compat-item"><span class="shr-compat-no">✗</span> Gmail / Outlook</div>
+              <div class="shr-compat-item"><span class="shr-compat-no">✗</span> WhatsApp</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PDF TAB -->
+        <div class="shr-tab-panel" id="shr-panel-pdf">
+          <p style="font-size:.82rem;color:var(--text-muted);margin:0 0 16px;">Download or share the brand book in PDF format.</p>
+          <div class="shr-pdf-cards">
+            <a class="shr-pdf-card" id="shr-pdf-es" href="#" target="_blank">
+              <div class="shr-pdf-left">
+                <div class="shr-pdf-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f96f6e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                </div>
+                <div class="shr-pdf-meta">
+                  <span class="shr-pdf-name" id="shr-pdf-es-name">Visual Brand Book — ES</span>
+                  <span class="shr-pdf-sub">Español · PDF</span>
+                </div>
+              </div>
+              <span class="shr-pdf-arrow">↗</span>
+            </a>
+            <a class="shr-pdf-card" id="shr-pdf-en" href="#" target="_blank">
+              <div class="shr-pdf-left">
+                <div class="shr-pdf-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f96f6e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                </div>
+                <div class="shr-pdf-meta">
+                  <span class="shr-pdf-name" id="shr-pdf-en-name">Visual Brand Book — EN</span>
+                  <span class="shr-pdf-sub">English · PDF</span>
+                </div>
+              </div>
+              <span class="shr-pdf-arrow">↗</span>
+            </a>
+          </div>
+          <div class="shr-print-row">
+            <button class="shr-print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+          </div>
+        </div>
+
+      </div><!-- /.shr-body -->
+    </div><!-- /.shr-panel -->
+  </div><!-- /.shr-backdrop -->
+
+  <div class="shr-copied-flash" id="shr-copied-flash"></div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       JAVASCRIPT
+  ═══════════════════════════════════════════════════════ -->
+  <script>
+    /* ── PROGRESS BAR ── */
+    window.addEventListener('scroll', function() {
+      const el = document.getElementById('progress-bar');
+      if (!el) return;
+      const h = document.documentElement.scrollHeight - window.innerHeight;
+      el.style.width = (h > 0 ? (window.scrollY / h * 100) : 0) + '%';
+    });
+
+    /* ── FADE-UP ANIMATION ── */
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+      }, { threshold: 0.1 });
+      document.querySelectorAll('.fade-up').forEach(el => io.observe(el));
+    } else {
+      document.querySelectorAll('.fade-up').forEach(el => el.classList.add('visible'));
+    }
+
+    /* ── LIGHTBOX ── */
+    document.querySelectorAll('.img-showcase img').forEach(img => {
+      img.addEventListener('click', function() {
+        const lb = document.getElementById('lightbox');
+        document.getElementById('lightbox-img').src = this.src;
+        lb.classList.add('active');
+      });
+    });
+    function closeLightbox() { document.getElementById('lightbox').classList.remove('active'); }
+    document.getElementById('lightbox').addEventListener('click', function(e) {
+      if (e.target === this) closeLightbox();
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeLightbox();
+        closeShareModal();
+      }
+    });
+
+    /* ══ MEGA-NAV ENGINE ══════════════════════════════════ */
+    (function() {
+      var triggers  = document.querySelectorAll('.bmn-trigger');
+      var viewport  = document.getElementById('bmnViewport');
+      var views     = document.querySelectorAll('.bmn-view');
+      var hamburger = document.getElementById('bmnHamburger');
+      var drawer    = document.getElementById('bmnDrawer');
+      var overlay   = document.getElementById('bmnOverlay');
+      if (!viewport) return;
+      var closeTimer;
+
+      function openPanel(key) {
+        clearTimeout(closeTimer);
+        views.forEach(function(v) { v.style.display = 'none'; });
+        var target = document.getElementById('bmn-view-' + key);
+        if (target) target.style.display = 'block';
+        viewport.classList.add('open');
+        triggers.forEach(function(t) {
+          t.classList.toggle('bmn-active', t.dataset.bmn === key);
+        });
+      }
+
+      function scheduleClose() {
+        closeTimer = setTimeout(function() {
+          viewport.classList.remove('open');
+          triggers.forEach(function(t) { t.classList.remove('bmn-active'); });
+        }, 180);
+      }
+
+      triggers.forEach(function(trigger) {
+        trigger.addEventListener('mouseenter', function() { openPanel(trigger.dataset.bmn); });
+        trigger.addEventListener('mouseleave', scheduleClose);
+        trigger.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var isOpen = viewport.classList.contains('open') && trigger.classList.contains('bmn-active');
+          if (isOpen) { scheduleClose(); } else { openPanel(trigger.dataset.bmn); }
+        });
+      });
+
+      viewport.addEventListener('mouseenter', function() { clearTimeout(closeTimer); });
+      viewport.addEventListener('mouseleave', scheduleClose);
+
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.bmn-center') && !e.target.closest('.bmn-viewport')) {
+          viewport.classList.remove('open');
+          triggers.forEach(function(t) { t.classList.remove('bmn-active'); });
+        }
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          viewport.classList.remove('open');
+          triggers.forEach(function(t) { t.classList.remove('bmn-active'); });
+          bmnCloseDrawer();
+        }
+      });
+
+      if (hamburger) {
+        hamburger.addEventListener('click', function() {
+          drawer.classList.add('open');
+          overlay.classList.add('visible');
+          document.body.style.overflow = 'hidden';
+        });
+      }
+    })();
+
+    window.bmnCloseDrawer = function() {
+      var drawer  = document.getElementById('bmnDrawer');
+      var overlay = document.getElementById('bmnOverlay');
+      if (drawer)  drawer.classList.remove('open');
+      if (overlay) overlay.classList.remove('visible');
+      document.body.style.overflow = '';
+    };
+    /* ══ END MEGA-NAV ENGINE ══════════════════════════════ */
+
+    /* ── TOAST ── */
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(t._timer);
+      t._timer = setTimeout(() => t.classList.remove('show'), 2800);
+    }
+
+    /* ── COLOR COPY ── */
+    function copyColor(card, hex) {
+      navigator.clipboard.writeText(hex).then(() => {
+        card.classList.add('copied');
+        showToast(hex + ' copied to clipboard');
+        setTimeout(() => card.classList.remove('copied'), 1600);
+      }).catch(() => {
+        showToast('Copy: ' + hex);
+      });
+    }
+
+    /* ── PROMPT COPY ── */
+    function copyPrompt(btn) {
+      const text = document.getElementById('promptText').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        const orig = btn.textContent;
+        btn.textContent = '✓ Copied!';
+        setTimeout(() => { btn.textContent = orig; }, 1800);
+      });
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       SHARE MODAL SYSTEM
+    ═══════════════════════════════════════════════════════ */
+    const BRAND_BOOK = {
+      title: 'Criar Sin Culpas — Visual Brand Book',
+      url:   window.location.origin + window.location.pathname
+    };
+
+    const NARI_BIO = {
+      en: 'Parenting educator and founder of Criar Sin Culpas. She supports families, schools, and institutions on digital parenting, emotional regulation, and family trust-building.',
+      es: 'Educadora en crianza y fundadora de Criar Sin Culpas. Acompaña a familias, escuelas e instituciones en crianza digital, regulación emocional y construcción de confianza familiar.'
+    };
+    const NARI_ROLE = {
+      en: 'Parenting Educator · Speaker · Founder, Criar Sin Culpas',
+      es: 'Educadora en Crianza · Conferencista · Fundadora, Criar Sin Culpas'
+    };
+    const NARI_TOPICS = {
+      en: ['Digital parenting','Emotional regulation','Neurodivergent families','Family trust'],
+      es: ['Crianza digital','Regulación emocional','Familias neurodivergentes','Confianza familiar']
+    };
+
+    // always use English for the brand book (it's a bilingual asset)
+    const LANG = 'en';
+
+    function openShareModal() {
+      const modal = document.getElementById('shrBackdrop');
+      const pubUrl = BRAND_BOOK.url;
+
+      // Link tab
+      document.getElementById('shr-link-url').value = pubUrl;
+
+      // Social captions
+      const igCaption = `The Criar Sin Culpas brand system is live.\n\nWarm, editorial, and built around one principle: connection before control. From deep purple to coral — every color, typeface, and layout choice reflects how Nari Fateha approaches parenting: with clarity, warmth, and intention.\n\n👉 ${pubUrl}\n\n#CriarSinCulpas #BrandIdentity #ParentingBrand`;
+      const liCaption = `Brand identity isn't decoration — it's communication.\n\nThe Criar Sin Culpas visual brand book is now publicly available. It documents the full design system behind the brand: color philosophy, typography pairing, logo architecture, social templates, and real-world applications.\n\nBuilt by the LG Ecosystem for Nari Fateha and Criar Sin Culpas.\n\n${pubUrl}`;
+      const xCaption  = `The @criarsinculpas brand book is live. Color, type, logo, social, DNA — all of it. Built around connection before control. → ${pubUrl}`;
+      const waCaption = `Hi! Sharing the Criar Sin Culpas visual brand book — it covers the full design system: colors, typography, logo, social templates, and more. Worth a look if you work with the brand. ${pubUrl}`;
+
+      document.getElementById('shr-ig-caption').value = igCaption;
+      document.getElementById('shr-li-caption').value = liCaption;
+      document.getElementById('shr-x-caption').value  = xCaption;
+      document.getElementById('shr-wa-caption').value = waCaption;
+      shrUpdateXCount();
+
+      // Email
+      const emailSubject = 'Criar Sin Culpas — Visual Brand Book';
+      const emailBody    = `Hi,\n\nI wanted to share the Criar Sin Culpas visual brand book with you. It documents the full design system for the brand: color palette, typography, logo system, social templates, and real-world applications.\n\nNari Fateha is a parenting educator whose brand is built around one core principle: connection before control. The brand system reflects that — warm, editorial, and human.\n\nYou can access the brand book here:\n${pubUrl}\n\nLet me know what you think!\n\n---\nShared from the Criar Sin Culpas Brand System`;
+      document.getElementById('shr-email-subject').value = emailSubject;
+      document.getElementById('shr-email-body').value    = emailBody;
+
+      // Embed formats
+      shrBuildEmbeds(pubUrl);
+      shrPickEmbedFormat('speaker-card', null);
+
+      // PDF
+      document.getElementById('shr-pdf-es').href = pubUrl;
+      document.getElementById('shr-pdf-en').href = pubUrl;
+
+      shrSwitchTab('link');
+
+      modal.classList.add('visible');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeShareModal() {
+      const modal = document.getElementById('shrBackdrop');
+      modal.classList.remove('visible');
+      document.body.style.overflow = '';
+    }
+
+    function handleBackdropClick(e) {
+      if (e.target === document.getElementById('shrBackdrop')) closeShareModal();
+    }
+
+    function shrSwitchTab(tab) {
+      document.querySelectorAll('.shr-tab').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tab);
+      });
+      ['link','social','email','embed','pdf'].forEach(t => {
+        const el = document.getElementById('shr-panel-' + t);
+        if (el) el.classList.toggle('active', t === tab);
+      });
+    }
+
+    function shrCopyLink(btn) {
+      const val = document.getElementById('shr-link-url').value;
+      navigator.clipboard.writeText(val).then(() => {
+        shrFlashCopied(btn, 'Copied!');
+        showToast('Link copied to clipboard');
+      });
+    }
+
+    function shrCopyField(fieldId, btn) {
+      const el = document.getElementById(fieldId);
+      if (!el) return;
+      const text = el.tagName === 'TEXTAREA' || el.tagName === 'INPUT' ? el.value : el.textContent;
+      navigator.clipboard.writeText(text).then(() => shrFlashCopied(btn))
+        .catch(() => { el.select && el.select(); document.execCommand('copy'); shrFlashCopied(btn); });
+    }
+
+    function shrFlashCopied(btn, label) {
+      if (btn) {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '✓ ' + (label || 'Copied');
+        btn.classList.add('copied');
+        setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copied'); }, 1800);
+      }
+      const flash = document.getElementById('shr-copied-flash');
+      flash.textContent = '✓ Copied to clipboard';
+      flash.classList.add('show');
+      clearTimeout(flash._t);
+      flash._t = setTimeout(() => flash.classList.remove('show'), 2000);
+    }
+
+    function shrUpdateXCount() {
+      const el = document.getElementById('shr-x-caption');
+      const cnt = document.getElementById('shr-x-count');
+      if (!el || !cnt) return;
+      const len = el.value.length;
+      cnt.textContent = len + ' / 280';
+      cnt.style.color = len > 260 ? 'var(--coral)' : 'var(--text-muted)';
+    }
+
+    function shrOpenWhatsApp() {
+      const text = document.getElementById('shr-wa-caption')?.value || '';
+      window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(text), '_blank');
+    }
+
+    function shrOpenEmailClient() {
+      const subj = document.getElementById('shr-email-subject')?.value || '';
+      const body = document.getElementById('shr-email-body')?.value || '';
+      window.location.href = 'mailto:?subject=' + encodeURIComponent(subj) + '&body=' + encodeURIComponent(body);
+    }
+
+    function shrPickEmbedFormat(fmt, btn) {
+      document.querySelectorAll('.shr-fmt-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.shr-embed-panel').forEach(p => p.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      else {
+        const b = document.querySelector(`.shr-fmt-btn[onclick*="${fmt}"]`);
+        if (b) b.classList.add('active');
+      }
+      const panel = document.getElementById('emb-panel-' + fmt);
+      if (panel) panel.classList.add('active');
+    }
+
+    function shrCopyPlainBio(btn) {
+      const bio  = NARI_BIO[LANG];
+      const role = NARI_ROLE[LANG];
+      const topics = NARI_TOPICS[LANG].map(t => '• ' + t).join('\n');
+      const url  = BRAND_BOOK.url;
+      const plain = `Nari Fateha\n${role}\n\n${bio}\n\nTopics:\n${topics}\n\n📧 nari@criarsinculpas.com\n🌐 criarsinculpas.com\n📲 @criarsinculpas\n🔗 Brand Book: ${url}`;
+      navigator.clipboard.writeText(plain).then(() => shrFlashCopied(btn));
+    }
+
+    function shrBuildEmbeds(pubUrl) {
+      const bio    = NARI_BIO[LANG];
+      const role   = NARI_ROLE[LANG];
+      const topics = NARI_TOPICS[LANG];
+      const bookLabel = 'View Brand Book';
+      const speakerLabel = 'Speaker · Educator · Author';
+
+      /* 1 — Speaker Card */
+      const chips = topics.map(t =>
+        `<span style="display:inline-block;padding:3px 10px;background:#fdf0ef;border:1px solid #f9c8c7;border-radius:999px;font-size:11px;font-family:sans-serif;color:#c0504d;margin:3px 4px 0 0;">${t}</span>`
+      ).join('');
+
+      const scHTML = `<table cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:560px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;border-radius:12px;overflow:hidden;border:1px solid #ede3d7;background:#fbf7f1;">
+  <tr><td style="padding:0;height:4px;background:linear-gradient(90deg,#f96f6e,#4bada8);"></td></tr>
+  <tr><td style="padding:28px 28px 8px;">
+    <p style="margin:0 0 2px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#f96f6e;font-weight:700;">Criar Sin Culpas</p>
+    <h2 style="margin:0 0 4px;font-size:26px;font-weight:400;color:#151515;font-family:Georgia,'Times New Roman',serif;line-height:1.15;">Nari Fateha</h2>
+    <p style="margin:0 0 16px;font-size:12px;color:#6d625a;">${role}</p>
+    <p style="margin:0 0 18px;font-size:13px;line-height:1.65;color:#2f2a26;">${bio}</p>
+    <div style="margin-bottom:20px;">${chips}</div>
+    <a href="${pubUrl}" style="display:inline-block;padding:10px 22px;background:#f96f6e;color:#fff;border-radius:999px;font-size:12px;font-weight:600;text-decoration:none;letter-spacing:.04em;">${bookLabel} →</a>
+  </td></tr>
+  <tr><td style="padding:14px 28px;border-top:1px solid #ede3d7;">
+    <p style="margin:0;font-size:10px;color:#a89e97;">criarsinculpas.com · nari@criarsinculpas.com · @criarsinculpas</p>
+  </td></tr>
+</table>`;
+
+      const scPrev = `<div style="max-width:460px;font-family:-apple-system,sans-serif;border-radius:10px;overflow:hidden;border:1px solid #ede3d7;background:#fbf7f1;">
+    <div style="height:3px;background:linear-gradient(90deg,#f96f6e,#4bada8);"></div>
+    <div style="padding:20px 20px 8px;">
+      <p style="margin:0 0 2px;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#f96f6e;font-weight:700;">Criar Sin Culpas</p>
+      <h2 style="margin:0 0 3px;font-size:20px;font-weight:400;color:#151515;font-family:Georgia,serif;line-height:1.2;">Nari Fateha</h2>
+      <p style="margin:0 0 12px;font-size:11px;color:#6d625a;">${role}</p>
+      <p style="margin:0 0 12px;font-size:12px;line-height:1.6;color:#2f2a26;">${bio}</p>
+      <div style="margin-bottom:14px;">${chips}</div>
+      <a href="${pubUrl}" style="display:inline-block;padding:8px 18px;background:#f96f6e;color:#fff;border-radius:999px;font-size:11px;font-weight:600;text-decoration:none;">View Brand Book →</a>
+    </div>
+    <div style="padding:10px 20px;border-top:1px solid #ede3d7;">
+      <p style="margin:0;font-size:9px;color:#a89e97;">criarsinculpas.com · @criarsinculpas</p>
+    </div>
+  </div>`;
+
+      document.getElementById('emb-code-speaker-card').value = scHTML;
+      document.getElementById('emb-preview-speaker-card').innerHTML = scPrev;
+
+      /* 2 — Email Signature */
+      const sigHTML = `<table cellpadding="0" cellspacing="0" border="0" style="font-family:Arial,Helvetica,sans-serif;max-width:480px;">
+  <tr>
+    <td style="padding-right:16px;vertical-align:top;border-right:2px solid #f96f6e;">
+      <p style="margin:0;font-size:15px;font-weight:700;color:#151515;">Nari Fateha</p>
+      <p style="margin:2px 0 0;font-size:11px;color:#6d625a;">${speakerLabel}</p>
+      <p style="margin:4px 0 0;font-size:11px;color:#4bada8;font-weight:600;">Criar Sin Culpas</p>
+    </td>
+    <td style="padding-left:16px;vertical-align:top;">
+      <p style="margin:0;font-size:11px;color:#6d625a;">📧 <a href="mailto:nari@criarsinculpas.com" style="color:#6d625a;text-decoration:none;">nari@criarsinculpas.com</a></p>
+      <p style="margin:3px 0 0;font-size:11px;color:#6d625a;">🌐 <a href="https://criarsinculpas.com" style="color:#4bada8;text-decoration:none;">criarsinculpas.com</a></p>
+      <p style="margin:3px 0 0;font-size:11px;color:#6d625a;">📲 <a href="https://instagram.com/criarsinculpas" style="color:#6d625a;text-decoration:none;">@criarsinculpas</a></p>
+      <p style="margin:6px 0 0;"><a href="${pubUrl}" style="display:inline-block;padding:4px 12px;background:#f96f6e;color:#fff;border-radius:999px;font-size:10px;font-weight:600;text-decoration:none;">View Brand Book</a></p>
+    </td>
+  </tr>
+</table>`;
+
+      const sigPrev = `<table cellpadding="0" cellspacing="0" border="0" style="font-family:Arial,Helvetica,sans-serif;max-width:420px;">
+    <tr>
+      <td style="padding-right:14px;vertical-align:top;border-right:2px solid #f96f6e;">
+        <p style="margin:0;font-size:14px;font-weight:700;color:#151515;">Nari Fateha</p>
+        <p style="margin:2px 0 0;font-size:10px;color:#6d625a;">${speakerLabel}</p>
+        <p style="margin:4px 0 0;font-size:11px;color:#4bada8;font-weight:600;">Criar Sin Culpas</p>
+      </td>
+      <td style="padding-left:14px;vertical-align:top;">
+        <p style="margin:0;font-size:10px;color:#6d625a;">📧 nari@criarsinculpas.com</p>
+        <p style="margin:3px 0 0;font-size:10px;color:#4bada8;">🌐 criarsinculpas.com</p>
+        <p style="margin:3px 0 0;font-size:10px;color:#6d625a;">📲 @criarsinculpas</p>
+        <p style="margin:6px 0 0;"><a href="${pubUrl}" style="display:inline-block;padding:4px 10px;background:#f96f6e;color:#fff;border-radius:999px;font-size:10px;font-weight:600;text-decoration:none;">View Brand Book</a></p>
+      </td>
+    </tr>
+  </table>`;
+
+      document.getElementById('emb-code-email-sig').value = sigHTML;
+      document.getElementById('emb-preview-email-sig').innerHTML = sigPrev;
+
+      /* 3 — Bio Block (Markdown) */
+      const mdTopics = topics.map(t => `- ${t}`).join('\n');
+      const bioMd = `## Nari Fateha
+**${role}**
+
+${bio}
+
+### Topics
+${mdTopics}
+
+---
+📧 nari@criarsinculpas.com  
+🌐 criarsinculpas.com  
+📲 @criarsinculpas  
+🔗 Visual Brand Book: ${pubUrl}`;
+
+      document.getElementById('emb-code-bio-md').value = bioMd;
+
+      /* 4 — Notion / iframe */
+      document.getElementById('emb-code-notion-url').value = pubUrl;
+      document.getElementById('emb-code-iframe').value = `<iframe src="${pubUrl}" width="100%" height="620" frameborder="0" style="border-radius:12px;border:1px solid #ede3d7;" title="Criar Sin Culpas — Visual Brand Book" loading="lazy"></iframe>`;
+    }
+  </script>
+</body>
+</html>
