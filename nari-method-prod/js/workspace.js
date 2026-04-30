@@ -338,6 +338,12 @@ function renderSignals() {
 }
 
 /* ── GATE / ENTRY ────────────────────────────────────────── */
+function returnToGate() {
+  document.getElementById("workspace").classList.add("hidden");
+  document.getElementById("gate").style.display = "";
+  document.getElementById("gate").style.opacity = "1";
+}
+
 function enterWorkspace(targetSection = 'home') {
   const gate = document.getElementById('gate');
   const workspace = document.getElementById('workspace');
