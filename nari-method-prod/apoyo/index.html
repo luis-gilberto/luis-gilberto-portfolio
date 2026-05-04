@@ -124,8 +124,8 @@
         box-shadow:
           var(--shadow),
           inset 0 0 80px rgba(141, 121, 255, 0.08);
-        padding: 18px 16px; 
-         isolation: isolate; 
+        padding: 18px 16px;
+        isolation: isolate;
 
         overflow: hidden;
       }
@@ -154,33 +154,7 @@
         background: rgba(255, 125, 115, 0.26);
       }
 
-      /* Watermark - Environmental Character Integration */
-      .brand-watermark {
-        position: absolute;
-        bottom: -120px;
-        right: -100px;
-        width: 420px;
-        height: 420px;
-        opacity: 0.08;
-        pointer-events: none;
-        z-index: -1;
-        filter: blur(1px) saturate(0.3) brightness(0.95);
-        mix-blend-mode: soft-light;
-      }
-      .brand-watermark img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        object-position: bottom right;
-      }
-      .brand-watermark::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(circle at 70% 70%, rgba(141, 121, 255, 0.12), transparent 65%);
-        mix-blend-mode: overlay;
-        pointer-events: none;
-      }
+
 
       .shell-inner {
         display: flex;
@@ -912,17 +886,50 @@
           animation: none;
         }
       }
-    </style>
+    /* ── CARD EXIT TRANSITION ───────────────────────────────────── */ 
+ .protocol-grid { perspective: 1200px; } 
+ 
+ .card { transform-origin: center center; will-change: transform, opacity, filter; } 
+ 
+ /* State when a sibling card is being navigated away from */ 
+ .card.is-receding { 
+   animation: cardRecede 480ms cubic-bezier(.4,0,.2,1) forwards; 
+   pointer-events: none; 
+ } 
+ /* State when THIS card was clicked */ 
+ .card.is-expanding { 
+   animation: cardExpand 480ms cubic-bezier(.4,0,.2,1) forwards; 
+   pointer-events: none; 
+   z-index: 10; 
+   position: relative; 
+ } 
+ 
+ @keyframes cardExpand { 
+   0%   { transform: scale(1);    opacity: 1; filter: brightness(1); } 
+   60%  { transform: scale(1.06); opacity: 1; filter: brightness(1.15); } 
+   100% { transform: scale(2.2);  opacity: 0; filter: brightness(1.4) blur(4px); } 
+ } 
+ @keyframes cardRecede { 
+   0%   { transform: scale(1)    translateZ(0); opacity: 1; filter: blur(0); } 
+   100% { transform: scale(0.88) translateZ(-60px); opacity: 0; filter: blur(6px); } 
+ } 
+ 
+ /* Page-level fade-out before navigation */ 
+ .page-exiting { 
+   animation: pageExitFade 480ms cubic-bezier(.4,0,1,1) forwards; 
+ } 
+ @keyframes pageExitFade { 
+   0%   { opacity: 1; } 
+   100% { opacity: 0; } 
+ } 
+ 
+ </style>
   </head>
   <body style="">
     <div id="toast" class="toast">Link copiado al portapapeles.</div>
 
     <div class="page-wrap">
       <main class="app-shell">
-        <div class="brand-watermark">
-          <img src="https://www.genspark.ai/api/files/s/KjtxC1q4" alt="" aria-hidden="true" data-height-listener-added="true">
-        </div>
-
         <div class="shell-inner">
           
           <div class="top-row">
@@ -1211,6 +1218,48 @@
         } else {
           init();
         }
-      })();
+      /* ── Card exit transition ─────────────────────────────────── */ 
+ const cards = document.querySelectorAll('.protocol-grid .card'); 
+ 
+ cards.forEach(card => { 
+   card.addEventListener('click', function(e) { 
+     e.preventDefault(); 
+     const href = this.getAttribute('href'); 
+     if (!href) return; 
+ 
+     // Accent color for the destination page — read from card class 
+     const accentMap = { 
+       screen:     'rgba(141,121,255,0.18)', 
+       escalation: 'rgba(255,125,115,0.18)', 
+       bedtime:    'rgba(97,209,196,0.18)', 
+       sibling:    'rgba(209,126,233,0.18)', 
+     }; 
+     let accentKey = 'screen'; 
+     if (this.classList.contains('escalation')) accentKey = 'escalation'; 
+     else if (this.classList.contains('bedtime'))    accentKey = 'bedtime'; 
+     else if (this.classList.contains('sibling'))    accentKey = 'sibling'; 
+ 
+     // Flash accent overlay on body before leaving 
+     const overlay = document.createElement('div'); 
+     overlay.style.cssText = ` 
+       position:fixed;inset:0;z-index:9999;pointer-events:none; 
+       background:${accentMap[accentKey]}; 
+       opacity:0;transition:opacity 320ms ease; 
+     `; 
+     document.body.appendChild(overlay); 
+     requestAnimationFrame(() => { 
+       overlay.style.opacity = '1'; 
+     }); 
+ 
+     // Animate clicked card up, siblings away 
+     this.classList.add('is-expanding'); 
+     cards.forEach(c => { if (c !== this) c.classList.add('is-receding'); }); 
+ 
+     // Navigate after animation completes 
+     setTimeout(() => { window.location.href = href; }, 460); 
+   }); 
+ }); 
+ 
+ })();
     </script>
 </body></html>

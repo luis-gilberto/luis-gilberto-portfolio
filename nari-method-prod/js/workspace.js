@@ -315,7 +315,76 @@ function renderArtifactPhases() {
 function renderSignals() {
   const container = document.getElementById('signals-ledger-container');
   if (!container) return;
-  container.innerHTML = signalsData.map(sig => {
+  
+  let html = '';
+
+  // 1. Check for staged intelligence package
+  const staged = localStorage.getItem('staged_intelligence_package');
+  if (staged) {
+    try {
+      const pkg = JSON.parse(staged);
+      const dateStr = new Date(pkg.timestamp).toLocaleDateString(state.lang === 'es' ? 'es-ES' : 'en-US', {
+        month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+      });
+      
+      html += `
+        <div class="staged-review-card" style="background:rgba(75,173,168,0.08); border:1px dashed var(--teal); border-radius:12px; padding:20px; margin-bottom:32px; position:relative; animation: slideIn 0.4s ease-out;">
+          <div style="position:absolute; top:-10px; right:20px; background:var(--teal); color:#000; font-size:9px; font-weight:900; padding:2px 10px; border-radius:2px; letter-spacing:0.1em;">STAGED FOR REVIEW</div>
+          <div style="font-size:10px; font-weight:700; color:var(--teal); margin-bottom:8px; letter-spacing:0.1em; text-transform:uppercase;">
+            ${state.lang === 'es' ? 'Nueva Síntesis' : 'Latest Synthesis'} · ${dateStr}
+          </div>
+          <div style="font-family:'Cormorant Garamond',serif; font-size:20px; color:var(--text-primary); line-height:1.5; margin-bottom:16px;">
+            ${pkg.summary.headline}
+          </div>
+          
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
+            <div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:4px; border:1px solid rgba(255,255,255,0.05);">
+              <div style="font-size:8px; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px; letter-spacing:0.05em;">${state.lang === 'es' ? 'Señal Prioritaria' : 'Priority Signal'}</div>
+              <div style="font-size:12px; color:var(--text-primary); font-weight:500;">${pkg.summary.prioritySignal}</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:4px; border:1px solid rgba(255,255,255,0.05);">
+              <div style="font-size:8px; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px; letter-spacing:0.05em;">${state.lang === 'es' ? 'Acción Recomendada' : 'Recommended Action'}</div>
+              <div style="font-size:12px; color:var(--text-primary); font-weight:500;">${pkg.summary.recommendedAction}</div>
+            </div>
+          </div>
+          
+          <div style="display:flex; gap:10px;">
+            <button onclick="publishStagedSignal()" style="flex:1; height:36px; background:var(--teal); color:#000; border:none; border-radius:4px; font-size:10px; font-weight:700; letter-spacing:0.05em; cursor:pointer; text-transform:uppercase; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+              ${state.lang === 'es' ? 'Publicar al Registro' : 'Publish to Ledger'}
+            </button>
+            <button onclick="discardStagedSignal()" style="height:36px; padding:0 15px; background:none; border:1px solid var(--border); color:var(--text-muted); border-radius:4px; font-size:10px; cursor:pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='var(--coral)'; this.style.color='var(--coral)'" onmouseout="this.style.borderColor='var(--border)'; this.style.color='var(--text-muted)'">
+              ${state.lang === 'es' ? 'Descartar' : 'Discard'}
+            </button>
+          </div>
+        </div>
+        <div style="height:1px; background:var(--border); margin-bottom:32px; position:relative;">
+          <span style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:var(--panel); padding:0 15px; font-size:9px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.2em;">${state.lang === 'es' ? 'Inteligencia Activa' : 'Active Intelligence'}</span>
+        </div>
+      `;
+    } catch(e) {
+      console.error("Error rendering staged package:", e);
+    }
+  }
+
+  // 2. Render published signals from localStorage
+  const published = JSON.parse(localStorage.getItem('published_signals') || '[]');
+  published.forEach(pkg => {
+    html += `
+      <div style="border-left:2px solid #4BADA8; padding-left:16px; margin-bottom:24px; opacity:0.85;">
+        <div style="font-size:9px; font-weight:700; color:#6B6560; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:6px;">
+          ${pkg.type === 'workspace_intelligence_update' ? (state.lang === 'es' ? 'Actualización de Inteligencia' : 'Intelligence Update') : (state.lang === 'es' ? 'Señal Publicada' : 'Published Signal')}
+        </div>
+        <div style="font-family:'Cormorant Garamond',serif; font-size:16px; font-style:italic; color:var(--text-primary); margin-bottom:10px;">${pkg.summary.headline}</div>
+        <div style="background:rgba(75,173,168,0.05); border:1px solid rgba(75,173,168,0.15); border-radius:6px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; color:#4BADA8; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:4px;">${state.lang === 'es' ? 'DIFICULTAD DETECTADA:' : 'DETECTED DIFFICULTY:'}</div>
+          <div style="font-size:13px; color:var(--text-primary); font-weight:500; margin-bottom:6px;">${pkg.summary.prioritySignal}</div>
+          <div style="font-size:11px; color:var(--text-muted);">${pkg.summary.recommendedAction}</div>
+        </div>
+      </div>`;
+  });
+
+  // 3. Render standard hardcoded signals
+  html += signalsData.map(sig => {
     const isCommercial = sig.type === 'commercial';
     const accentColor  = isCommercial ? '#F96F6E' : '#2ED3C6';
     const bgColor      = isCommercial ? 'rgba(249,111,110,0.05)' : 'rgba(46,211,198,0.05)';
@@ -955,6 +1024,49 @@ function openSignalsLedger() {
     requestAnimationFrame(() => { modal.style.opacity = '1'; });
   }
 }
+
+function publishStagedSignal() {
+  const staged = localStorage.getItem('staged_intelligence_package');
+  if (!staged) return;
+  
+  try {
+    const pkg = JSON.parse(staged);
+    // Add to active signals (simulated for now by adding to a persistent array in localStorage)
+    const activeSignals = JSON.parse(localStorage.getItem('published_signals') || '[]');
+    activeSignals.unshift(pkg);
+    localStorage.setItem('published_signals', JSON.stringify(activeSignals));
+    
+    // Clear staged
+    localStorage.removeItem('staged_intelligence_package');
+    
+    // Feedback and re-render
+    renderSignals();
+    alert(state.lang === 'es' ? 'Señal publicada exitosamente.' : 'Signal published successfully.');
+  } catch(e) {
+    console.error("Error publishing signal:", e);
+  }
+}
+
+function discardStagedSignal() {
+  if (confirm(state.lang === 'es' ? '¿Estás seguro de que quieres descartar esta señal?' : 'Are you sure you want to discard this signal?')) {
+    localStorage.removeItem('staged_intelligence_package');
+    renderSignals();
+  }
+}
+
+function checkHashRouting() {
+  const hash = window.location.hash;
+  if (hash === '#review') {
+    const workspace = document.getElementById('workspace');
+    if (workspace.classList.contains('hidden')) {
+      // Auto-enter workspace if landing on #review
+      enterWorkspace('signal');
+      setTimeout(openSignalsLedger, 800);
+    } else {
+      openSignalsLedger();
+    }
+  }
+}
 function closeSignalsLedger() {
   const modal = document.getElementById('signals-modal');
   if (modal) {
@@ -1087,6 +1199,10 @@ document.addEventListener('DOMContentLoaded', function() {
   initKeyboardNav();
   initAmbientBg();
   initGateParticles();
+  
+  // Hash Routing
+  window.addEventListener('hashchange', checkHashRouting);
+  checkHashRouting();
 
   const workspaceObserver = new MutationObserver((mutations) => {
     mutations.forEach(mutation => {
