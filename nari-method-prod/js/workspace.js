@@ -137,7 +137,7 @@ const artifactsData = [
     code:    'SIQ_A01_SpeakerMediaKit_CSC',
     type:    { en: 'Client Deliverable · ES/EN', es: 'Entregable para cliente · ES/EN' },
     desc:    { en: 'Complete external-facing speaker kit. Positioning narrative, audience data, topic menu and collaboration formats for event organizers and brand partners.', es: 'Media kit completo de speaking — conferencias magistrales, talleres, colaboraciones editoriales y prueba de autoridad. Versión final en español e inglés.' },
-    url:     'https://www.luis-gilberto.com/TheHub/clients/nari/files/SIQ_A01_SpeakerMediaKit_CSC',
+    url:     '/files/SIQ_A01_SpeakerMediaKit_CSC.html',
     status:  'approved', pages: '2',
     langs:   'ES / EN',
   },
@@ -148,8 +148,8 @@ const artifactsData = [
     code:    'SIQ_A02_MonetizationReport_CSC',
     type:    { en: 'Market Intelligence · Bilingual', es: 'Inteligencia de mercado · Bilingüe' },
     desc:    { en: 'Competitive landscape analysis, creator benchmarking and monetization model research for Criar Sin Culpas.', es: 'Inteligencia de mercado y arquitectura de ingresos. Proyecciones, mix de monetización, precios de cursos y alianzas de marca.' },
-    urlEn:   'files/SIQ_A02_MonetizationReport_CSC.html?lang=en',
-    urlEs:   'files/SIQ_A02_MonetizationReport_CSC.html?lang=es',
+    urlEn:   '/files/SIQ_A02_MonetizationReport_CSC_ES.html',
+    urlEs:   '/files/SIQ_A02_MonetizationReport_CSC_ES.html',
     status:  'approved', pages: '3',
     langs:   'ES / EN',
   },
@@ -160,7 +160,7 @@ const artifactsData = [
     code:    'SIQ_A03_FinancialModel_CSC',
     type:    { en: 'Revenue Modeling · Excel', es: 'Modelado de ingresos · Excel' },
     desc:    { en: '12-month financial model with revenue stream assumptions, pricing scenarios and sensitivity analysis across monetization channels.', es: 'Modelo financiero de 12 meses con supuestos de ingresos, escenarios de precios y análisis de sensibilidad para distintos canales de monetización.' },
-    url:     'https://www.luis-gilberto.com/TheHub/clients/nari/files/SIQ_A02_FinancialModel_CSC.xlsx',
+    url:     '/files/SIQ_A02_FinancialModel_CSC.xlsx',
     status:  'approved', pages: '—',
     langs:   'ES / EN',
   },
@@ -171,8 +171,8 @@ const artifactsData = [
     code:    'SIQ_A04_CommercialActivationBrief_CSC',
     type:    { en: 'Strategic Brief · Bilingual', es: 'Resumen estratégico · Bilingüe' },
     desc:    { en: 'Bilingual commercial strategy brief covering revenue architecture, channel prioritization and activation sequencing.', es: 'Dos motores de ingresos, tres escenarios de crecimiento, señales estratégicas y acciones inmediatas para activar el potencial comercial de Criar Sin Culpas.' },
-    urlEn:   'https://www.genspark.ai/api/files/s/NfzVOSim',
-    urlEs:   'https://www.genspark.ai/api/files/s/aZJm7Q3O',
+    urlEn:   '/files/SIQ_A02_CommercialActivationBrief_CSC.html',
+    urlEs:   '/files/SIQ_A02_CommercialActivationBrief_CSC.html',
     status:  'approved', pages: '2',
     langs:   'ES / EN',
   },
@@ -183,9 +183,9 @@ const artifactsData = [
     code:    'SIQ_A05_BrandPartnershipKit_CSC',
     type:    { en: 'Revenue Activation · Engine 01', es: 'Activación de Ingresos · Motor 01' },
     desc:    { en: 'Bilingual brand partnership kit — market opportunity, audience data, content pillars, pricing tiers and collaboration formats for brand partners.', es: 'Kit de alianzas bilingüe — oportunidad de mercado, demografía de audiencia, pilares de contenido y precios para colaboraciones comerciales.' },
-    urlEn:   'files/SIQ_A05_BrandPartnershipKit_CSC.html?lang=en',
-    urlEs:   'files/SIQ_A05_BrandPartnershipKit_CSC.html?lang=es',
-    status:  'approved', pages: '—',
+    urlEn:   'files/SIQ_A05_BrandPartnershipKit_CSC.html',
+    urlEs:   'files/SIQ_A05_BrandPartnershipKit_CSC.html',
+    status:  'approved', pages: '2',
     langs:   'ES / EN',
   },
   {
@@ -314,96 +314,78 @@ function renderArtifactPhases() {
 /* ── RENDER SIGNALS (dynamic, bilingual) ─────────────────── */
 function renderSignals() {
   const container = document.getElementById('signals-ledger-container');
-  if (!container) return;
+  const feedContainer = document.querySelector('.signal-feed');
   
-  let html = '';
-
-  // 1. Check for staged intelligence package
-  const staged = localStorage.getItem('staged_intelligence_package');
-  if (staged) {
-    try {
-      const pkg = JSON.parse(staged);
-      const dateStr = new Date(pkg.timestamp).toLocaleDateString(state.lang === 'es' ? 'es-ES' : 'en-US', {
-        month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-      });
-      
-      html += `
-        <div class="staged-review-card" style="background:rgba(75,173,168,0.08); border:1px dashed var(--teal); border-radius:12px; padding:20px; margin-bottom:32px; position:relative; animation: slideIn 0.4s ease-out;">
-          <div style="position:absolute; top:-10px; right:20px; background:var(--teal); color:#000; font-size:9px; font-weight:900; padding:2px 10px; border-radius:2px; letter-spacing:0.1em;">STAGED FOR REVIEW</div>
-          <div style="font-size:10px; font-weight:700; color:var(--teal); margin-bottom:8px; letter-spacing:0.1em; text-transform:uppercase;">
-            ${state.lang === 'es' ? 'Nueva Síntesis' : 'Latest Synthesis'} · ${dateStr}
-          </div>
-          <div style="font-family:'Cormorant Garamond',serif; font-size:20px; color:var(--text-primary); line-height:1.5; margin-bottom:16px;">
-            ${pkg.summary.headline}
-          </div>
-          
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
-            <div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:4px; border:1px solid rgba(255,255,255,0.05);">
-              <div style="font-size:8px; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px; letter-spacing:0.05em;">${state.lang === 'es' ? 'Señal Prioritaria' : 'Priority Signal'}</div>
-              <div style="font-size:12px; color:var(--text-primary); font-weight:500;">${pkg.summary.prioritySignal}</div>
-            </div>
-            <div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:4px; border:1px solid rgba(255,255,255,0.05);">
-              <div style="font-size:8px; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px; letter-spacing:0.05em;">${state.lang === 'es' ? 'Acción Recomendada' : 'Recommended Action'}</div>
-              <div style="font-size:12px; color:var(--text-primary); font-weight:500;">${pkg.summary.recommendedAction}</div>
-            </div>
-          </div>
-          
-          <div style="display:flex; gap:10px;">
-            <button onclick="publishStagedSignal()" style="flex:1; height:36px; background:var(--teal); color:#000; border:none; border-radius:4px; font-size:10px; font-weight:700; letter-spacing:0.05em; cursor:pointer; text-transform:uppercase; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
-              ${state.lang === 'es' ? 'Publicar al Registro' : 'Publish to Ledger'}
-            </button>
-            <button onclick="discardStagedSignal()" style="height:36px; padding:0 15px; background:none; border:1px solid var(--border); color:var(--text-muted); border-radius:4px; font-size:10px; cursor:pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='var(--coral)'; this.style.color='var(--coral)'" onmouseout="this.style.borderColor='var(--border)'; this.style.color='var(--text-muted)'">
-              ${state.lang === 'es' ? 'Descartar' : 'Discard'}
-            </button>
-          </div>
-        </div>
-        <div style="height:1px; background:var(--border); margin-bottom:32px; position:relative;">
-          <span style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:var(--panel); padding:0 15px; font-size:9px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.2em;">${state.lang === 'es' ? 'Inteligencia Activa' : 'Active Intelligence'}</span>
-        </div>
-      `;
-    } catch(e) {
-      console.error("Error rendering staged package:", e);
-    }
+  // Read from persistent signals_log
+  let persistentSignals = [];
+  try {
+    const logData = localStorage.getItem('signals_log');
+    if (logData) persistentSignals = JSON.parse(logData);
+  } catch (e) {
+    console.error('Error reading signals_log:', e);
   }
 
-  // 2. Render published signals from localStorage
-  const published = JSON.parse(localStorage.getItem('published_signals') || '[]');
-  published.forEach(pkg => {
-    html += `
-      <div style="border-left:2px solid #4BADA8; padding-left:16px; margin-bottom:24px; opacity:0.85;">
-        <div style="font-size:9px; font-weight:700; color:#6B6560; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:6px;">
-          ${pkg.type === 'workspace_intelligence_update' ? (state.lang === 'es' ? 'Actualización de Inteligencia' : 'Intelligence Update') : (state.lang === 'es' ? 'Señal Publicada' : 'Published Signal')}
-        </div>
-        <div style="font-family:'Cormorant Garamond',serif; font-size:16px; font-style:italic; color:var(--text-primary); margin-bottom:10px;">${pkg.summary.headline}</div>
-        <div style="background:rgba(75,173,168,0.05); border:1px solid rgba(75,173,168,0.15); border-radius:6px; padding:10px 12px;">
-          <div style="font-size:10px; font-weight:700; color:#4BADA8; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:4px;">${state.lang === 'es' ? 'DIFICULTAD DETECTADA:' : 'DETECTED DIFFICULTY:'}</div>
-          <div style="font-size:13px; color:var(--text-primary); font-weight:500; margin-bottom:6px;">${pkg.summary.prioritySignal}</div>
-          <div style="font-size:11px; color:var(--text-muted);">${pkg.summary.recommendedAction}</div>
-        </div>
-      </div>`;
-  });
+  // Map persistent signals to the format used by the rendering engine
+  const mappedPersistent = persistentSignals.map(s => ({
+    type: s.priority === 'high' ? 'commercial' : 'raw',
+    title: { en: 'Approved Signal', es: 'Señal Aprobada' },
+    rawText: s.synthesis,
+    pattern: { en: s.title, es: s.title },
+    patternLabel: { en: 'STRATEGIC INSIGHT:', es: 'INSIGHT ESTRATÉGICO:' },
+    mapped: { en: s.recommendedAction, es: s.recommendedAction },
+    meta: `${new Date(s.timestamp).toLocaleDateString(state.lang === 'es' ? 'es-ES' : 'en-US', { month: 'short', year: 'numeric' })} · Review Queue`
+  }));
 
-  // 3. Render standard hardcoded signals
-  html += signalsData.map(sig => {
-    const isCommercial = sig.type === 'commercial';
-    const accentColor  = isCommercial ? '#F96F6E' : '#2ED3C6';
-    const bgColor      = isCommercial ? 'rgba(249,111,110,0.05)' : 'rgba(46,211,198,0.05)';
-    const labelColor   = isCommercial ? '#F96F6E' : '#2ED3C6';
-    const title   = sig.title[state.lang]        || sig.title.es;
-    const pattern = sig.pattern[state.lang]      || sig.pattern.es;
-    const plabel  = sig.patternLabel[state.lang] || sig.patternLabel.es;
-    const mapped  = sig.mapped[state.lang]       || sig.mapped.es;
-    return `
-      <div style="border-left:2px solid ${accentColor};padding-left:16px;margin-bottom:24px;">
-        <div style="font-size:9px;font-weight:700;color:#6B6560;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">${title}</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;color:var(--text-primary);margin-bottom:10px;">${sig.rawText}</div>
-        <div style="background:${bgColor};border:1px solid ${labelColor}26;border-radius:6px;padding:10px 12px;">
-          <div style="font-size:10px;font-weight:700;color:${labelColor};letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">${plabel}</div>
-          <div style="font-size:13px;color:var(--text-primary);font-weight:500;margin-bottom:6px;">${pattern}</div>
-          <div style="font-size:11px;color:var(--text-muted);">${mapped}</div>
-        </div>
-      </div>`;
-  }).join('');
+  // Fallback to static data if log is empty for the modal, but merge for the feed
+  const modalData = persistentSignals.length > 0 ? mappedPersistent : signalsData;
+
+  // 1. Render to the Ledger/Archive Modal
+  if (container) {
+    container.innerHTML = modalData.map(sig => {
+      const isCommercial = sig.type === 'commercial';
+      const accentColor  = isCommercial ? '#F96F6E' : '#2ED3C6';
+      const bgColor      = isCommercial ? 'rgba(249,111,110,0.05)' : 'rgba(46,211,198,0.05)';
+      const labelColor   = isCommercial ? '#F96F6E' : '#2ED3C6';
+      const title   = sig.title[state.lang]        || sig.title.es;
+      const pattern = sig.pattern[state.lang]      || sig.pattern.es;
+      const plabel  = sig.patternLabel[state.lang] || sig.patternLabel.es;
+      const mapped  = sig.mapped[state.lang]       || sig.mapped.es;
+      return `
+        <div style="border-left:2px solid ${accentColor};padding-left:16px;margin-bottom:24px;">
+          <div style="font-size:9px;font-weight:700;color:#6B6560;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">${title}</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;color:var(--text-primary);margin-bottom:10px;">${sig.rawText}</div>
+          <div style="background:${bgColor};border:1px solid ${labelColor}26;border-radius:6px;padding:10px 12px;">
+            <div style="font-size:10px;font-weight:700;color:${labelColor};letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">${plabel}</div>
+            <div style="font-size:13px;color:var(--text-primary);font-weight:500;margin-bottom:6px;">${pattern}</div>
+            <div style="font-size:11px;color:var(--text-muted);">${mapped}</div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  // 2. Render to the Signal Room Feed (The active/recent feed)
+  if (feedContainer) {
+    // Merge persistent approved signals with static signalsData
+    const feedData = [...mappedPersistent, ...signalsData];
+    
+    feedContainer.innerHTML = feedData.map(sig => {
+      const dotColor = sig.type === 'commercial' ? 'coral' : 'teal';
+      const title = sig.pattern[state.lang] || sig.pattern.es;
+      const desc = sig.rawText;
+      const meta = sig.meta || `${state.lang === 'es' ? 'Abr' : 'Apr'} 2026 · LG Ecosystem`;
+      const isNew = sig.meta ? 'new' : '';
+      
+      return `
+        <div class="signal-item ${isNew}">
+          <div class="si-dot ${dotColor}"></div>
+          <div class="si-content">
+            <div class="si-title">${title}</div>
+            <div class="si-desc">${desc}</div>
+            <div class="si-meta">${meta}</div>
+          </div>
+        </div>`;
+    }).join('');
+  }
 }
 
 /* ── GATE / ENTRY ────────────────────────────────────────── */
@@ -1024,49 +1006,6 @@ function openSignalsLedger() {
     requestAnimationFrame(() => { modal.style.opacity = '1'; });
   }
 }
-
-function publishStagedSignal() {
-  const staged = localStorage.getItem('staged_intelligence_package');
-  if (!staged) return;
-  
-  try {
-    const pkg = JSON.parse(staged);
-    // Add to active signals (simulated for now by adding to a persistent array in localStorage)
-    const activeSignals = JSON.parse(localStorage.getItem('published_signals') || '[]');
-    activeSignals.unshift(pkg);
-    localStorage.setItem('published_signals', JSON.stringify(activeSignals));
-    
-    // Clear staged
-    localStorage.removeItem('staged_intelligence_package');
-    
-    // Feedback and re-render
-    renderSignals();
-    alert(state.lang === 'es' ? 'Señal publicada exitosamente.' : 'Signal published successfully.');
-  } catch(e) {
-    console.error("Error publishing signal:", e);
-  }
-}
-
-function discardStagedSignal() {
-  if (confirm(state.lang === 'es' ? '¿Estás seguro de que quieres descartar esta señal?' : 'Are you sure you want to discard this signal?')) {
-    localStorage.removeItem('staged_intelligence_package');
-    renderSignals();
-  }
-}
-
-function checkHashRouting() {
-  const hash = window.location.hash;
-  if (hash === '#review') {
-    const workspace = document.getElementById('workspace');
-    if (workspace.classList.contains('hidden')) {
-      // Auto-enter workspace if landing on #review
-      enterWorkspace('signal');
-      setTimeout(openSignalsLedger, 800);
-    } else {
-      openSignalsLedger();
-    }
-  }
-}
 function closeSignalsLedger() {
   const modal = document.getElementById('signals-modal');
   if (modal) {
@@ -1199,10 +1138,33 @@ document.addEventListener('DOMContentLoaded', function() {
   initKeyboardNav();
   initAmbientBg();
   initGateParticles();
-  
-  // Hash Routing
-  window.addEventListener('hashchange', checkHashRouting);
-  checkHashRouting();
+
+  // Route based on hash
+  const handleHashRoute = () => {
+    const hash = window.location.hash.substring(1);
+    if (hash) {
+      const section = document.getElementById('section-' + hash);
+      if (section) {
+        // If we are already in workspace, just go to section
+        const workspace = document.getElementById('workspace');
+        if (!workspace.classList.contains('hidden')) {
+          goToSection(hash);
+        } else {
+          // If still at gate, enter and go to section
+          enterWorkspace(hash);
+        }
+      }
+    }
+  };
+
+  // Listen for hash changes
+  window.addEventListener('hashchange', handleHashRoute);
+
+  // Initial route check
+  if (window.location.hash) {
+    // Small delay to ensure everything is ready
+    setTimeout(handleHashRoute, 100);
+  }
 
   const workspaceObserver = new MutationObserver((mutations) => {
     mutations.forEach(mutation => {
@@ -1210,6 +1172,7 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(observeSections, 200);
         renderArtifactPhases();
         renderSignals();
+        renderReviewQueue(); // New function
         workspaceObserver.disconnect();
       }
     });
@@ -1237,6 +1200,217 @@ document.addEventListener('DOMContentLoaded', function() {
   // Vault info tooltips
   initVaultTooltips();
 });
+
+/* ══════════════════════════════════════════════════════════
+   REVIEW QUEUE ENGINE (The Tower)
+   Handles the private intelligence moderation layer
+══════════════════════════════════════════════════════════ */
+function renderReviewQueue() {
+  const container = document.getElementById('review-queue-container');
+  if (!container) return;
+
+  const stagedData = localStorage.getItem('staged_intelligence_package');
+  if (!stagedData) {
+    // Show empty state (already in HTML but ensure it is visible)
+    return;
+  }
+
+  let pkg;
+  try {
+    pkg = JSON.parse(stagedData);
+  } catch (e) {
+    console.error('Failed to parse staged package:', e);
+    return;
+  }
+
+  const lang = state.lang;
+  const isEn = lang === 'en';
+
+  const html = `
+    <div class="review-package" style="background:var(--panel); border:1px solid var(--border-strong); border-radius:24px; overflow:hidden; animation: sectionReveal 0.6s ease;">
+      <!-- Package Header -->
+      <div style="padding:32px; border-bottom:1px solid var(--border); background:linear-gradient(135deg, rgba(46,211,198,0.05) 0%, transparent 100%);">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="width:10px; height:10px; border-radius:50%; background:var(--teal); box-shadow:var(--shadow-teal);"></div>
+            <span style="font-size:10px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--teal);">
+              ${isEn ? 'Intelligence Staged' : 'Inteligencia Preparada'} · ${new Date(pkg.timestamp).toLocaleDateString(lang === 'es' ? 'es-ES' : 'en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+            </span>
+          </div>
+          <div style="font-size:10px; font-weight:500; color:var(--text-muted); font-family:monospace;">ID: ${pkg.id}</div>
+        </div>
+        
+        <h3 style="font-family:var(--font-display); font-size:32px; font-weight:300; line-height:1.2; color:var(--text-primary); margin-bottom:12px;">
+          ${pkg.summary.headline}
+        </h3>
+        
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <span style="font-size:10px; font-weight:700; background:rgba(255,255,255,0.04); border:1px solid var(--border); padding:4px 12px; border-radius:999px; color:var(--text-muted);">
+            Source: ${pkg.source.tool}
+          </span>
+          <span style="font-size:10px; font-weight:700; background:rgba(255,255,255,0.04); border:1px solid var(--border); padding:4px 12px; border-radius:999px; color:var(--text-muted);">
+            Type: ${pkg.source.inputType}
+          </span>
+        </div>
+      </div>
+
+      <!-- Package Body -->
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1px; background:var(--border);">
+        
+        <!-- Left: Signals -->
+        <div style="background:var(--panel); padding:32px;">
+          <h4 style="font-size:11px; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; color:var(--text-muted); margin-bottom:24px; display:flex; align-items:center; gap:8px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            ${isEn ? 'Extracted Signals' : 'Señales Extraídas'}
+          </h4>
+          
+          <div style="display:flex; flex-direction:column; gap:16px;">
+            ${pkg.signals.map(sig => `
+              <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border); border-left:2px solid var(--teal); padding:16px; border-radius:12px;">
+                <div style="font-size:13px; font-weight:600; color:var(--text-primary); margin-bottom:8px;">${sig.title}</div>
+                <div style="font-size:12px; color:var(--text-secondary); line-height:1.6; margin-bottom:8px;">${sig.observation}</div>
+                <div style="font-size:10px; font-style:italic; color:var(--text-muted);">
+                  <strong style="color:var(--teal); font-style:normal; font-weight:700; text-transform:uppercase; font-size:9px; letter-spacing:0.05em; margin-right:6px;">Impact:</strong>
+                  ${sig.why_it_matters}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Right: Decisions -->
+        <div style="background:var(--panel); padding:32px;">
+          <h4 style="font-size:11px; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; color:var(--text-muted); margin-bottom:24px; display:flex; align-items:center; gap:8px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            ${isEn ? 'Recommended Actions' : 'Acciones Recomendadas'}
+          </h4>
+          
+          <div style="display:flex; flex-direction:column; gap:16px;">
+            ${pkg.decisions.map(dec => `
+              <div style="background:rgba(249,111,110,0.04); border:1px solid rgba(249,111,110,0.12); border-left:2px solid var(--coral); padding:16px; border-radius:12px;">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+                  <div style="font-size:13px; font-weight:600; color:var(--text-primary);">${dec.action}</div>
+                  <span style="font-size:9px; font-weight:700; text-transform:uppercase; color:var(--coral); border:1px solid rgba(249,111,110,0.3); padding:2px 8px; border-radius:999px;">
+                    ${dec.horizon}
+                  </span>
+                </div>
+                <div style="font-size:12px; color:var(--text-secondary); line-height:1.6;">${dec.rationale}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+
+      <!-- Package Footer / Moderation Actions -->
+      <div style="padding:24px 32px; background:var(--panel-2); border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="font-size:12px; color:var(--text-muted);">
+            <strong style="color:var(--text-secondary);">${isEn ? 'Governance Check:' : 'Gobernanza:'}</strong> 
+            ${isEn ? 'Human approval required to sync with workspace.' : 'Se requiere aprobación humana para sincronizar.'}
+          </div>
+        </div>
+        
+        <div style="display:flex; gap:12px;">
+          <button onclick="rejectPackage()" class="btn-ghost" style="border-color:rgba(255,255,255,0.1);">
+            ${isEn ? 'Reject' : 'Rechazar'}
+          </button>
+          <button onclick="approvePackage()" class="btn-primary" style="background:var(--teal); box-shadow:var(--shadow-teal);">
+            ${isEn ? 'Approve & Publish' : 'Aprobar y Publicar'}
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  container.innerHTML = html;
+}
+
+function approvePackage() {
+  const stagedData = localStorage.getItem('staged_intelligence_package');
+  if (!stagedData) return;
+
+  const pkg = JSON.parse(stagedData);
+  const lang = state.lang;
+  const isEn = lang === 'en';
+
+  // signals_log is the v1 localStorage-backed canonical approved intelligence ledger. 
+  // Future backend persistence should replace this key, but the lifecycle should remain: 
+  // staged package → human approval → signals_log.
+
+  let signalsLog = [];
+  try {
+    const existingLog = localStorage.getItem('signals_log');
+    if (existingLog) signalsLog = JSON.parse(existingLog);
+  } catch (e) {
+    console.error('Error reading signals_log:', e);
+  }
+
+  const timestamp = new Date().toISOString();
+  
+  // Map staged intelligence to approved signal entries
+  pkg.signals.forEach((sig, index) => {
+    // Attempt to find a matching decision for recommendedAction
+    const matchingDecision = pkg.decisions ? pkg.decisions[index] || pkg.decisions[0] : null;
+    const recommendedAction = matchingDecision ? matchingDecision.action : sig.why_it_matters;
+    
+    const signalEntry = {
+      id: pkg.id ? `${pkg.id}-${index}` : `sig-${Date.now()}-${index}`,
+      title: sig.title,
+      synthesis: sig.observation,
+      priority: matchingDecision ? (matchingDecision.horizon === 'Immediate' ? 'high' : 'medium') : 'medium',
+      recommendedAction: recommendedAction,
+      source: "review_queue",
+      sourcePackageId: pkg.id || 'unknown',
+      status: "published",
+      timestamp: timestamp,
+      createdFrom: "staged_intelligence_package"
+    };
+
+    // Prevent duplicates based on content hash
+    const entryHash = `${signalEntry.title}|${signalEntry.synthesis}|${signalEntry.recommendedAction}`;
+    const isDuplicate = signalsLog.some(existing => 
+      `${existing.title}|${existing.synthesis}|${existing.recommendedAction}` === entryHash
+    );
+
+    if (!isDuplicate) {
+      signalsLog.unshift(signalEntry);
+    }
+  });
+
+  localStorage.setItem('signals_log', JSON.stringify(signalsLog));
+  console.log("signals_log updated:", signalsLog.length);
+
+  // Clear staged package
+  localStorage.removeItem('staged_intelligence_package');
+
+  // Show success message
+  const container = document.getElementById('review-queue-container');
+  container.innerHTML = `
+    <div style="text-align:center; padding:100px 20px; animation: sectionReveal 0.4s ease;">
+      <div style="width:64px; height:64px; border-radius:50%; background:var(--teal-dim); border:2px solid var(--teal); color:var(--teal); display:flex; align-items:center; justify-content:center; margin:0 auto 24px; font-size:32px;">✓</div>
+      <h3 style="font-family:var(--font-display); font-size:28px; font-weight:300; margin-bottom:12px;">
+        ${isEn ? 'Intelligence Published' : 'Inteligencia Publicada'}
+      </h3>
+      <p style="font-size:15px; color:var(--text-secondary); max-width:400px; margin:0 auto 24px; line-height:1.7;">
+        ${isEn ? 'The intelligence package has been approved and published to the Signal Room. The strategic loop is complete.' : 'El paquete de inteligencia ha sido aprobado y publicado en la Sala de Señales. El ciclo estratégico se ha completado.'}
+      </p>
+      <button onclick="goToSection('signal')" class="btn-primary">
+        ${isEn ? 'Go to Signal Room' : 'Ir a Sala de Señales'}
+      </button>
+    </div>
+  `;
+
+  // Update the actual signals feed
+  renderSignals();
+}
+
+function rejectPackage() {
+  const isEn = state.lang === 'en';
+  if (confirm(isEn ? 'Discard this intelligence package?' : '¿Descartar este paquete de inteligencia?')) {
+    localStorage.removeItem('staged_intelligence_package');
+    location.reload(); // Simplest way to restore empty state
+  }
+}
 
 /* ══════════════════════════════════════════════════════════
    VAULT TOOLTIP ENGINE

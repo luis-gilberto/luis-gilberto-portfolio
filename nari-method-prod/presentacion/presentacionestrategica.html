@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Strategic Alignment Session · Criar Sin Culpas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --obsidian: #0B0A09;
+      --panel: #131210;
+      --panel-2: #1A1815;
+      --border: rgba(255,255,255,0.06);
+      --border-mid: rgba(255,255,255,0.10);
+      --text: #F0ECE5;
+      --text-mid: rgba(240,236,229,0.65);
+      --text-muted: rgba(240,236,229,0.35);
+      --coral: #F96F6E;
+      --coral-dim: rgba(249,111,110,0.15);
+      --teal: #4BADA8;
+      --teal-dim: rgba(75,173,168,0.15);
+      --gold: #E8C87A;
+      --font-display: 'Cormorant Garamond', serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: var(--obsidian);
+      color: var(--text);
+      font-family: var(--font-body);
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── GRAIN OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.4;
+    }
+
+    /* ── AMBIENT BACKGROUND ── */
+    .bg-ambient {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .bg-ambient::before {
+      content: '';
+      position: absolute;
+      width: 800px; height: 800px;
+      top: -200px; right: -200px;
+      background: radial-gradient(circle, rgba(249,111,110,0.04) 0%, transparent 70%);
+      animation: ambientDrift 12s ease-in-out infinite alternate;
+    }
+    .bg-ambient::after {
+      content: '';
+      position: absolute;
+      width: 600px; height: 600px;
+      bottom: -100px; left: -100px;
+      background: radial-gradient(circle, rgba(75,173,168,0.04) 0%, transparent 70%);
+      animation: ambientDrift 15s ease-in-out infinite alternate-reverse;
+    }
+    @keyframes ambientDrift {
+      from { transform: translate(0,0) scale(1); }
+      to { transform: translate(40px, 30px) scale(1.1); }
+    }
+
+    /* ── GRID BG ── */
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    /* ── LANG TOGGLE ── */
+    .lang-toggle {
+      position: fixed;
+      top: 24px; right: 24px;
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      background: rgba(11,10,9,0.8);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-mid);
+      border-radius: 999px;
+      padding: 5px 8px;
+    }
+    .lang-btn {
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      background: none;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+    .lang-btn.active {
+      background: rgba(249,111,110,0.12);
+      color: var(--coral);
+    }
+
+    /* ── START SCREEN ── */
+    #start-screen {
+      position: fixed;
+      inset: 0;
+      background: var(--obsidian);
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      transition: opacity 0.8s ease, visibility 0.8s;
+    }
+    #start-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+    .start-eyebrow {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 24px;
+    }
+    .start-title {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 6vw, 5.5rem);
+      font-weight: 300;
+      color: var(--text);
+      line-height: 1;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+    .start-subtitle {
+      font-family: var(--font-display);
+      font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+      font-style: italic;
+      color: var(--coral);
+      margin-bottom: 32px;
+    }
+    .start-desc {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--text-muted);
+      max-width: 480px;
+      line-height: 1.75;
+      margin-bottom: 48px;
+    }
+    .start-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 36px;
+      border-radius: 999px;
+      border: 1px solid var(--border-mid);
+      background: none;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .start-btn:hover {
+      background: var(--text);
+      color: var(--obsidian);
+      border-color: var(--text);
+    }
+
+    /* ── SVG DECORATION ── */
+    .start-deco {
+      position: absolute;
+      opacity: 0.06;
+      pointer-events: none;
+    }
+
+    /* ── PRESENTATION ── */
+    .presentation {
+      position: relative;
+      width: 100%; height: 100%;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .slide {
+      position: absolute;
+      width: 88%;
+      max-width: 1160px;
+      max-height: 85vh;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+      transform: translateY(24px) scale(0.985);
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+    .slide::-webkit-scrollbar { display: none; }
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+      z-index: 2;
+    }
+    .slide.past { transform: translateY(-24px) scale(0.985); }
+
+    /* ── SLIDE HEADER ── */
+    .slide-eyebrow {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 16px;
+      display: block;
+    }
+    .slide-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 4.5vw, 3.8rem);
+      font-weight: 300;
+      color: var(--text);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin-bottom: 40px;
+    }
+    .slide-title em { font-style: italic; color: var(--coral); }
+    .slide-title span.teal { color: var(--teal); }
+
+    /* ── COVER SLIDE ── */
+    .slide-cover {
+      text-align: center;
+      display: flex !important;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 70vh;
+    }
+    .cover-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 32px;
+      padding: 6px 16px;
+      border: 1px solid rgba(75,173,168,0.2);
+      border-radius: 999px;
+    }
+    .cover-badge::before {
+      content: '';
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--teal);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+    .cover-title {
+      font-family: var(--font-display);
+      font-size: clamp(3.5rem, 7vw, 6.5rem);
+      font-weight: 300;
+      color: var(--text);
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+      margin-bottom: 16px;
+    }
+    .cover-subtitle {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 3vw, 2.2rem);
+      font-style: italic;
+      color: var(--coral);
+      margin-bottom: 32px;
+    }
+    .cover-desc {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--text-muted);
+      max-width: 520px;
+      line-height: 1.8;
+    }
+    .cover-line {
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(180deg, transparent, rgba(249,111,110,0.4), transparent);
+      margin: 32px auto;
+    }
+
+    /* ── CHIP GRID ── */
+    .chip-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .chip {
+      padding: 14px 24px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--text-mid);
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .chip::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 2px;
+      background: var(--teal);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .chip:hover { border-color: rgba(75,173,168,0.25); color: var(--text); }
+    .chip:hover::before { opacity: 1; }
+    .chip.coral-chip::before { background: var(--coral); }
+    .chip:hover.coral-chip { border-color: rgba(249,111,110,0.25); }
+
+    /* ── FRAMEWORK GRID ── */
+    .framework-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .framework-card {
+      padding: 28px 32px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      position: relative;
+      overflow: hidden;
+    }
+    .framework-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, var(--teal), transparent);
+    }
+    .framework-card h3 {
+      font-family: var(--font-body);
+      font-weight: 500;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--teal);
+      margin-bottom: 14px;
+    }
+    .framework-card p {
+      font-size: 16px;
+      font-weight: 300;
+      color: var(--text-mid);
+      line-height: 1.65;
+    }
+
+    /* ── INSIGHT LIST ── */
+    .insight-list { display: flex; flex-direction: column; gap: 0; }
+    .insight-item {
+      display: grid;
+      grid-template-columns: 64px 1fr;
+      gap: 24px;
+      align-items: start;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .insight-item:last-child { border-bottom: none; }
+    .insight-number {
+      font-family: var(--font-display);
+      font-size: 2.8rem;
+      font-weight: 300;
+      color: rgba(249,111,110,0.2);
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+    .insight-text {
+      font-size: 18px;
+      font-weight: 300;
+      color: var(--text-mid);
+      padding-top: 8px;
+      line-height: 1.5;
+    }
+    .insight-text strong { color: var(--text); font-weight: 500; }
+    .insight-lead {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    /* ── CHECKLIST ── */
+    .checklist {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 40px;
+    }
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 16px;
+      font-weight: 300;
+      color: var(--text-mid);
+      padding: 18px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .check-icon {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--teal-dim);
+      border: 1px solid rgba(75,173,168,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--teal);
+      font-size: 12px;
+    }
+    .check-icon.coral {
+      background: var(--coral-dim);
+      border-color: rgba(249,111,110,0.2);
+      color: var(--coral);
+    }
+
+    /* ── STABILIZATION FLOW ── */
+    .stabilization-flow {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      margin-top: 8px;
+      border: 1px solid var(--border);
+    }
+    .flow-step {
+      flex: 1;
+      padding: 28px 28px;
+      border-right: 1px solid var(--border);
+      position: relative;
+    }
+    .flow-step:last-child { border-right: none; }
+    .flow-step::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--coral);
+    }
+    .flow-step h4 {
+      font-family: var(--font-body);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--coral);
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+    .flow-step ul { list-style: none; }
+    .flow-step li {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--text-mid);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .flow-step li::before {
+      content: '';
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: var(--coral);
+      opacity: 0.5;
+      flex-shrink: 0;
+    }
+
+    /* ── SPLIT LAYOUT ── */
+    .split-layout {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 60px;
+      align-items: center;
+    }
+    .split-lead {
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 2.5vw, 2.1rem);
+      font-weight: 300;
+      color: var(--text);
+      line-height: 1.4;
+      padding-left: 24px;
+      border-left: 2px solid rgba(249,111,110,0.3);
+    }
+    .split-list { list-style: none; }
+    .split-list li {
+      font-size: 16px;
+      font-weight: 300;
+      color: var(--text-mid);
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .split-list li::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--teal);
+      flex-shrink: 0;
+    }
+    .split-list li:last-child { border-bottom: none; }
+
+    /* ── ROADMAP ── */
+    .roadmap { display: flex; flex-direction: column; }
+    .roadmap-item {
+      display: grid;
+      grid-template-columns: 180px 1fr auto;
+      align-items: center;
+      gap: 32px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .roadmap-item:last-child { border-bottom: none; }
+    .roadmap-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .roadmap-title {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 400;
+      color: var(--text);
+    }
+    .roadmap-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--teal);
+      opacity: 0.4;
+    }
+
+    /* ── CONTROLS ── */
+    .controls {
+      position: fixed;
+      bottom: 28px;
+      left: 0; right: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 40px;
+      z-index: 50;
+    }
+    .nav-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 10px;
+      cursor: pointer;
+      font-family: var(--font-body);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      transition: all 0.2s;
+      padding: 8px 20px;
+      border-radius: 999px;
+    }
+    .nav-btn:hover {
+      border-color: var(--border-mid);
+      color: var(--text);
+    }
+    .progress-container {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .slide-number {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.06em;
+    }
+    .progress-bar {
+      width: 120px;
+      height: 1px;
+      background: rgba(255,255,255,0.08);
+      position: relative;
+    }
+    .progress-fill {
+      position: absolute;
+      top: 0; left: 0;
+      height: 100%;
+      background: linear-gradient(90deg, var(--teal), var(--coral));
+      transition: width 0.5s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    /* ── NOTES TOGGLE ── */
+    .notes-toggle {
+      position: fixed;
+      top: 28px; left: 40px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      cursor: pointer;
+      z-index: 50;
+      font-family: var(--font-body);
+      transition: color 0.2s;
+    }
+    .notes-toggle:hover { color: var(--coral); }
+
+    /* ── NOTES PANEL ── */
+    #notes-panel {
+      position: fixed;
+      top: 0; right: -420px;
+      width: 420px; height: 100%;
+      background: var(--panel);
+      border-left: 1px solid var(--border);
+      z-index: 90;
+      padding: 60px 32px 32px;
+      transition: right 0.4s cubic-bezier(0.16,1,0.3,1);
+    }
+    #notes-panel.open { right: 0; }
+    #notes-panel h4 {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--teal);
+      margin-bottom: 20px;
+    }
+    #notes-panel p {
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--text-muted);
+      font-weight: 300;
+    }
+
+    /* ── DECORATIVE SVG ELEMENTS ── */
+    .slide-deco {
+      position: absolute;
+      pointer-events: none;
+      opacity: 0.04;
+    }
+
+    /* ── LANG VISIBILITY ── */
+    .es { display: inline; }
+    .en { display: none; }
+    body.lang-en .es { display: none; }
+    body.lang-en .en { display: inline; }
+    .es-block { display: block; }
+    .en-block { display: none; }
+    body.lang-en .es-block { display: none; }
+    body.lang-en .en-block { display: block; }
+
+    /* ── SLIDE BACKGROUND IMAGES ── */
+    .slide-bg-img {
+      position: absolute;
+      top: -5%;
+      right: -2%;
+      height: 75%;
+      width: 42%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+      border-radius: 8px;
+    }
+    .slide-bg-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      opacity: 0.32;
+      filter: grayscale(60%) contrast(1.0) brightness(0.9);
+      mask-image: linear-gradient(135deg, transparent 0%, rgba(0,0,0,0.4) 20%, rgba(0,0,0,0.85) 60%, rgba(0,0,0,0.85) 100%);
+      -webkit-mask-image: linear-gradient(135deg, transparent 0%, rgba(0,0,0,0.4) 20%, rgba(0,0,0,0.85) 60%, rgba(0,0,0,0.85) 100%);
+    }
+
+    /* Slide 2 specific background adjustment */
+    #slide-2 .slide-bg-img {
+      width: 150%;
+      height: 260%;
+      top: -55%;
+      right: -35%;
+      opacity: 0.6;
+    }
+    #slide-2 .slide-bg-img img {
+      filter: grayscale(40%) contrast(1.1) brightness(1.1);
+      object-fit: contain;
+      object-position: center;
+    }
+
+    /* Slide 6 specific background adjustment */
+    #slide-6 .slide-bg-img {
+      width: 85%;
+      height: 144%;
+      top: -74%;
+      right: -28%;
+      opacity: 1;
+    }
+    #slide-6 .slide-bg-img img {
+      filter: grayscale(0%) contrast(1.15) brightness(1.45);
+      object-fit: contain;
+      object-position: center;
+    }
+
+    .slide { overflow: visible; }
+    .slide > *:not(.slide-bg-img) { position: relative; z-index: 1; }
+
+    /* ── CLOSING SLIDE ── */
+    .slide-closing {
+      display: flex !important;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      min-height: 70vh;
+      position: relative;
+      overflow: hidden;
+      padding: 40px 0;
+    }
+    .closing-bg-logo {
+      position: absolute;
+      width: 520px; height: 520px;
+      top: 42%; left: 50%;
+      transform: translate(-50%, -50%);
+      object-fit: contain;
+      opacity: 0.22;
+      filter: grayscale(80%) contrast(1.2) brightness(1.2);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .closing-eyebrow {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 20px;
+      position: relative; z-index: 1;
+    }
+    .closing-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 4.5vw, 4rem);
+      font-weight: 300;
+      color: var(--text);
+      line-height: 1;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+      position: relative; z-index: 1;
+    }
+    .closing-title em { font-style: italic; color: var(--coral); }
+    .closing-sub {
+      font-family: var(--font-display);
+      font-size: clamp(0.9rem, 1.6vw, 1.15rem);
+      font-style: italic;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+      position: relative; z-index: 1;
+    }
+    .closing-line {
+      width: 1px; height: 36px;
+      background: linear-gradient(180deg, transparent, rgba(249,111,110,0.5), transparent);
+      margin: 0 auto 28px;
+      position: relative; z-index: 1;
+    }
+    .closing-meta {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      justify-content: center;
+      position: relative; z-index: 1;
+    }
+    .closing-meta-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .closing-meta-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .closing-meta-value {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text-mid);
+    }
+    .closing-meta-divider {
+      width: 1px; height: 32px;
+      background: var(--border-mid);
+    }
+
+    /* ── SECTION DIVIDER ── */
+    .divider {
+      width: 40px; height: 1px;
+      background: var(--coral);
+      margin-bottom: 32px;
+      opacity: 0.6;
+    }
+
+    /* ── STAT ROW ── */
+    .stat-row {
+      display: flex;
+      gap: 40px;
+      margin-top: 40px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .stat-item { display: flex; flex-direction: column; gap: 6px; }
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: 2.4rem;
+      font-weight: 400;
+      color: var(--coral);
+      line-height: 1;
+    }
+    .stat-num.teal { color: var(--teal); }
+    .stat-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- AMBIENT -->
+  <div class="bg-ambient"></div>
+  <div class="bg-grid"></div>
+
+  <!-- LANG TOGGLE -->
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('es')">ES</button>
+    <button class="lang-btn" onclick="setLang('en')">EN</button>
+  </div>
+
+  <!-- NOTES TOGGLE -->
+  <button class="notes-toggle" onclick="toggleNotes()">
+    <span class="es">Notas</span><span class="en">Notes</span> · N
+  </button>
+
+  <!-- START SCREEN -->
+  <div id="start-screen">
+    <svg class="start-deco" style="top:-100px;right:-100px;width:500px;height:500px;" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="250" cy="250" r="200" stroke="white" stroke-width="0.5"/>
+      <circle cx="250" cy="250" r="140" stroke="white" stroke-width="0.5"/>
+      <circle cx="250" cy="250" r="80" stroke="white" stroke-width="0.5"/>
+      <line x1="50" y1="250" x2="450" y2="250" stroke="white" stroke-width="0.5"/>
+      <line x1="250" y1="50" x2="250" y2="450" stroke="white" stroke-width="0.5"/>
+      <line x1="108" y1="108" x2="392" y2="392" stroke="white" stroke-width="0.5"/>
+      <line x1="392" y1="108" x2="108" y2="392" stroke="white" stroke-width="0.5"/>
+    </svg>
+
+    <div class="cover-badge">
+      <span class="es">Sesión estratégica</span>
+      <span class="en">Strategic session</span>
+    </div>
+    <h1 class="start-title">
+      <span class="es">Alineación<br>Estratégica</span>
+      <span class="en">Strategic<br>Alignment</span>
+    </h1>
+    <p class="start-subtitle">Criar Sin Culpas · Ecosystem Review</p>
+    <p class="start-desc">
+      <span class="es">Activación de protocolos, arquitectura del ecosistema, alineación operacional y planificación de la siguiente fase.</span>
+      <span class="en">Protocol activation, ecosystem architecture, operational alignment, and next-phase planning.</span>
+    </p>
+    <div class="cover-line"></div>
+    <button class="start-btn" id="start-btn">
+      <span class="es">Iniciar presentación</span>
+      <span class="en">Enter presentation</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="controls">
+    <button class="nav-btn" id="prev-btn">
+      ← <span class="es">Anterior</span><span class="en">Prev</span>
+    </button>
+    <div class="progress-container">
+      <span class="slide-number" id="current-num">01</span>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <span class="slide-number" id="total-num">08</span>
+    </div>
+    <button class="nav-btn" id="next-btn">
+      <span class="es">Siguiente</span><span class="en">Next</span> →
+    </button>
+  </div>
+
+  <!-- NOTES PANEL -->
+  <div id="notes-panel">
+    <h4><span class="es">Notas del ponente</span><span class="en">Speaker notes</span></h4>
+    <p id="notes-content"></p>
+  </div>
+
+  <!-- PRESENTATION -->
+  <div class="presentation">
+
+    <!-- SLIDE 1: COVER -->
+    <section class="slide slide-cover"
+      data-notes-es="Slide de bienvenida. Establece un tono calmado y con autoridad. Esta es una sesión de trabajo, no una presentación de ventas. Énfasis en arquitectura y alineación operacional."
+      data-notes-en="Welcome slide. Set a calm, authoritative tone. This is a working session, not a pitch. Emphasize architecture and operational alignment.">
+
+      <svg class="slide-deco" style="top:-60px;right:-60px;width:320px;height:320px;opacity:0.05;" viewBox="0 0 320 320" fill="none">
+        <circle cx="160" cy="160" r="120" stroke="white" stroke-width="0.8"/>
+        <circle cx="160" cy="160" r="80" stroke="white" stroke-width="0.8"/>
+        <circle cx="160" cy="160" r="40" stroke="white" stroke-width="0.8"/>
+        <line x1="40" y1="160" x2="280" y2="160" stroke="white" stroke-width="0.5"/>
+        <line x1="160" y1="40" x2="160" y2="280" stroke="white" stroke-width="0.5"/>
+      </svg>
+
+      <div class="cover-badge">
+        <span class="es">Sesión de alineación estratégica</span>
+        <span class="en">Strategic alignment session</span>
+      </div>
+      <h1 class="cover-title">
+        <span class="es">Criar Sin Culpas</span>
+        <span class="en">Criar Sin Culpas</span>
+      </h1>
+      <p class="cover-subtitle">
+        <span class="es">Revisión del Ecosistema</span>
+        <span class="en">Ecosystem Review</span>
+      </p>
+      <div class="cover-line"></div>
+      <p class="cover-desc">
+        <span class="es">Activación de protocolos · Arquitectura del ecosistema · Alineación operacional · Planificación de la siguiente fase</span>
+        <span class="en">Protocol activation · Ecosystem architecture · Operational alignment · Next-phase planning</span>
+      </p>
+
+      <div class="stat-row" style="justify-content:center;">
+        <div class="stat-item">
+          <span class="stat-num">4</span>
+          <span class="stat-label"><span class="es">Protocolos en vivo</span><span class="en">Live protocols</span></span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num teal">8</span>
+          <span class="stat-label"><span class="es">Artefactos activos</span><span class="en">Active artifacts</span></span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" style="color:var(--gold)">2</span>
+          <span class="stat-label"><span class="es">Capas del ecosistema</span><span class="en">Ecosystem layers</span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: WHAT CHANGED -->
+    <section class="slide" id="slide-2"
+      data-notes-es="Reconoce el momentum. Enmarca estos no como tareas completadas, sino como cambios fundamentales en el ecosistema."
+      data-notes-en="Acknowledge momentum. Frame these not as tasks completed, but as foundational shifts in the ecosystem.">
+
+      <div class="slide-bg-img">
+        <img src="https://res.cloudinary.com/dogtoagya/image/upload/q_auto/f_auto/v1778272863/3yXYqyst_s11bae.jpg" alt="" loading="lazy">
+      </div>
+
+      <span class="slide-eyebrow"><span class="es">Desde la última sesión</span><span class="en">Since last session</span></span>
+      <h2 class="slide-title">
+        <span class="es">Lo que <em>cambió</em></span>
+        <span class="en">What <em>changed</em></span>
+      </h2>
+      <div class="chip-grid">
+        <div class="chip"><span class="es">Workspace simplificado</span><span class="en">Simplified workspace</span></div>
+        <div class="chip coral-chip"><span class="es">Capa privada con OAuth</span><span class="en">OAuth private layer</span></div>
+        <div class="chip"><span class="es">CSC.com como plataforma pública</span><span class="en">CSC.com public transition</span></div>
+        <div class="chip coral-chip"><span class="es">Migración del Brand Book</span><span class="en">Brand Book migration</span></div>
+        <div class="chip"><span class="es">Protocol Signal Framework</span><span class="en">Protocol Signal Framework</span></div>
+        <div class="chip coral-chip"><span class="es">Despliegue de protocolos</span><span class="en">Protocol deployment</span></div>
+        <div class="chip"><span class="es">Navegación mejorada</span><span class="en">Improved navigation</span></div>
+        <div class="chip coral-chip"><span class="es">Brand Partnership Kit</span><span class="en">Brand Partnership Kit</span></div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: PROTOCOL ACTIVATION FRAMEWORK -->
+    <section class="slide"
+      data-notes-es="Este es el núcleo de la sesión. Recorre el framework sistemáticamente. Explica cómo las señales se traducen directamente en decisiones de producto."
+      data-notes-en="This is the centerpiece. Walk through the framework systematically. Explain how signals translate directly into product decisions.">
+
+      <!-- DOODLE: Screen Time — top right -->
+      <svg style="position:absolute;top:-20px;right:60px;width:160px;height:160px;opacity:0.18;pointer-events:none;z-index:0;" viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="32" y="12" width="34" height="58" rx="7" stroke="#8d79ff" stroke-width="1.8" stroke-linecap="round"/>
+        <rect x="36" y="18" width="26" height="38" rx="3" stroke="#8d79ff" stroke-width="1" opacity=".35"/>
+        <line x1="43" y1="63" x2="55" y2="63" stroke="#8d79ff" stroke-width="1.8" stroke-linecap="round" opacity=".6"/>
+        <path d="M68 42 L82 28" stroke="#8d79ff" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M72 28 L82 28 L82 38" stroke="#8d79ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="68" y1="50" x2="78" y2="50" stroke="#8d79ff" stroke-width="1.2" stroke-linecap="round" opacity=".3"/>
+        <line x1="68" y1="56" x2="75" y2="56" stroke="#8d79ff" stroke-width="1.2" stroke-linecap="round" opacity=".18"/>
+        <circle cx="49" cy="37" r="3" fill="#8d79ff" opacity=".2"/>
+      </svg>
+
+      <!-- DOODLE: Emotional Escalation — top center-right -->
+      <svg style="position:absolute;top:10px;right:220px;width:140px;height:140px;opacity:0.16;pointer-events:none;z-index:0;" viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18 68 Q36 38 54 68" stroke="#ff7d73" stroke-width="1.4" stroke-linecap="round" opacity=".45"/>
+        <path d="M10 68 Q34 26 58 68" stroke="#ff7d73" stroke-width="1.7" stroke-linecap="round" opacity=".7"/>
+        <path d="M4 68 Q32 14 62 68" stroke="#ff7d73" stroke-width="2" stroke-linecap="round" opacity=".9"/>
+        <line x1="6" y1="68" x2="60" y2="68" stroke="#ff7d73" stroke-width=".8" stroke-dasharray="3 5" stroke-linecap="round" opacity=".22"/>
+        <circle cx="33" cy="10" r="2" fill="#ff7d73" opacity=".5"/>
+        <circle cx="36" cy="4" r="1.4" fill="#ff7d73" opacity=".32"/>
+        <path d="M29 61 Q29 57 32 57 Q35 57 35 60 Q35 57 38 57 Q41 57 41 61 Q41 65 35 69 Q29 65 29 61Z" stroke="#ff7d73" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity=".7"/>
+      </svg>
+
+      <!-- DOODLE: Bedtime — bottom left -->
+      <svg style="position:absolute;bottom:-10px;left:20px;width:150px;height:150px;opacity:0.15;pointer-events:none;z-index:0;" viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="15" cy="18" r="1.5" fill="#61d1c4" opacity=".55"/>
+        <circle cx="25" cy="8" r="1" fill="#61d1c4" opacity=".38"/>
+        <circle cx="90" cy="22" r="1.5" fill="#61d1c4" opacity=".45"/>
+        <circle cx="98" cy="40" r="1" fill="#61d1c4" opacity=".3"/>
+        <path d="M55 14 Q90 20 96 55 Q102 88 76 106 Q58 118 44 108" stroke="#61d1c4" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M55 14 Q36 30 34 55 Q32 80 44 108" stroke="#61d1c4" stroke-width="1.8" stroke-linecap="round"/>
+        <circle cx="64" cy="46" r="6" stroke="#61d1c4" stroke-width="1.5" opacity=".85"/>
+        <path d="M58 54 Q52 62 54 70 Q56 77 64 79 Q72 81 76 74 Q80 67 75 60" stroke="#61d1c4" stroke-width="1.5" stroke-linecap="round" opacity=".8"/>
+        <path d="M54 70 Q50 78 53 84" stroke="#61d1c4" stroke-width="1.3" stroke-linecap="round" opacity=".5"/>
+      </svg>
+
+      <!-- DOODLE: Sibling Conflict — bottom right -->
+      <svg style="position:absolute;bottom:-20px;right:40px;width:180px;height:180px;opacity:0.16;pointer-events:none;z-index:0;" viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="28" cy="22" r="8" stroke="#d17ee9" stroke-width="1.6" opacity=".9"/>
+        <line x1="28" y1="30" x2="28" y2="56" stroke="#d17ee9" stroke-width="1.6" stroke-linecap="round" opacity=".9"/>
+        <path d="M28 40 Q34 45 40 43" stroke="#d17ee9" stroke-width="1.5" stroke-linecap="round" opacity=".85"/>
+        <path d="M28 40 Q22 45 16 43" stroke="#d17ee9" stroke-width="1.5" stroke-linecap="round" opacity=".55"/>
+        <path d="M28 56 Q24 66 21 78" stroke="#d17ee9" stroke-width="1.5" stroke-linecap="round" opacity=".7"/>
+        <path d="M28 56 Q32 66 35 78" stroke="#d17ee9" stroke-width="1.5" stroke-linecap="round" opacity=".7"/>
+        <circle cx="82" cy="22" r="8" stroke="#d17ee9" stroke-width="1.6" opacity=".9"/>
+        <line x1="82" y1="30" x2="82" y2="56" stroke="#d17ee9" stroke-width="1.6" stroke-linecap="round" opacity=".9"/>
+        <path d="M82 40 Q76 45 70 43" stroke="#d17ee9" stroke-width="1.5" stroke-linecap="round" opacity=".85"/>
+        <path d="M82 40 Q88 45 94 43" stroke="#d17ee9" stroke-width="1.5" stroke-linecap="round" opacity=".55"/>
+        <path d="M82 56 Q78 66 75 78" stroke="#d17ee9" stroke-width="1.5" stroke-linecap="round" opacity=".7"/>
+        <path d="M82 56 Q86 66 89 78" stroke="#d17ee9" stroke-width="1.5" stroke-linecap="round" opacity=".7"/>
+        <line x1="42" y1="48" x2="68" y2="48" stroke="#d17ee9" stroke-width=".9" stroke-dasharray="3 4" stroke-linecap="round" opacity=".22"/>
+        <path d="M42 8 Q55 2 68 8" stroke="#d17ee9" stroke-width="1.5" stroke-linecap="round" opacity=".45"/>
+      </svg>
+
+      <span class="slide-eyebrow">SnglIQ · SIQ_A03</span>
+      <h2 class="slide-title">
+        <span class="es">Protocol <em>Signal</em> Framework</span>
+        <span class="en">Protocol <em>Signal</em> Framework</span>
+      </h2>
+      <div class="framework-grid">
+        <div class="framework-card">
+          <h3><span class="es">Por qué importa</span><span class="en">Why it matters</span></h3>
+          <p><span class="es">Establece la inteligencia estructural central del ecosistema. No es contenido — es un experimento de señales con consecuencias reales de producto.</span><span class="en">Establishes the core structural intelligence of the ecosystem. Not content — a signal experiment with real product consequences.</span></p>
+        </div>
+        <div class="framework-card">
+          <h3><span class="es">Qué medimos</span><span class="en">What we measure</span></h3>
+          <p><span class="es">Resonancia, comportamiento de compartido, preferencia de idioma, flujo entre protocolos, geografía y hora de acceso.</span><span class="en">Resonance, sharing behavior, language preference, cross-protocol flow, geography and access time.</span></p>
+        </div>
+        <div class="framework-card">
+          <h3><span class="es">Qué significan las señales</span><span class="en">What signals mean</span></h3>
+          <p><span class="es">Traducción de comportamiento real en inteligencia accionable — no métricas vacías, sino datos que cambian decisiones.</span><span class="en">Translation of real behavior into actionable intelligence — not empty metrics, but data that changes decisions.</span></p>
+        </div>
+        <div class="framework-card">
+          <h3><span class="es">Cómo informa productos</span><span class="en">How it informs products</span></h3>
+          <p><span class="es">Mapeo directo desde necesidades identificadas hacia arquitectura de producto: curso insignia, lead magnets, membresía, currículo.</span><span class="en">Direct mapping from identified needs to product architecture: flagship course, lead magnets, membership, curriculum.</span></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: WHAT WE'RE LEARNING -->
+    <section class="slide"
+      data-notes-es="Reformular las observaciones como inteligencia estratégica. Esto prueba el valor de la infraestructura antes de que lance completamente."
+      data-notes-en="Reframing observations into strategic intelligence. This proves the value of the infrastructure before it even fully launches.">
+
+      <span class="slide-eyebrow"><span class="es">Inteligencia emergente</span><span class="en">Emerging intelligence</span></span>
+      <h2 class="slide-title">
+        <span class="es">Lo que <em>aprendemos</em></span>
+        <span class="en">What we're <em>learning</em></span>
+      </h2>
+      <span class="insight-lead">
+        <span class="es">Incluso antes del lanzamiento completo:</span>
+        <span class="en">Even before full launch:</span>
+      </span>
+      <div class="insight-list">
+        <div class="insight-item">
+          <span class="insight-number">01</span>
+          <span class="insight-text"><span class="es">La arquitectura pública/privada es <strong>fundamental</strong>, no cosmética.</span><span class="en">Public/private architecture matters <strong>fundamentally</strong>, not cosmetically.</span></span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-number">02</span>
+          <span class="insight-text"><span class="es">Los protocolos funcionan como <strong>infraestructura real de producto</strong>, no solo como contenido.</span><span class="en">Protocols function as <strong>actual product infrastructure</strong>, not just content.</span></span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-number">03</span>
+          <span class="insight-text"><span class="es">El comportamiento de la audiencia puede <strong>dar forma preventiva al roadmap</strong>.</span><span class="en">Audience behavior can <strong>preemptively shape the roadmap</strong>.</span></span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-number">04</span>
+          <span class="insight-text"><span class="es">El ecosistema más amplio está <strong>ganando claridad estratégica</strong> real.</span><span class="en">The broader ecosystem is gaining <strong>genuine strategic clarity</strong>.</span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: CÓRDOBA -->
+    <section class="slide"
+      data-notes-es="Mantén esto operacional pero preciso. Se trata de estar listo para capturar una oportunidad concreta."
+      data-notes-en="Keep this operational but sharp. This is about readiness to capture a concrete opportunity.">
+
+      <span class="slide-eyebrow"><span class="es">Oportunidad activa</span><span class="en">Active opportunity</span></span>
+      <h2 class="slide-title">
+        <span class="es">Oportunidad <em>Córdoba</em></span>
+        <span class="en"><em>Córdoba</em> Opportunity</span>
+      </h2>
+      <div class="checklist">
+        <div class="check-item">
+          <span class="check-icon">✦</span>
+          <span><span class="es">Activos necesarios</span><span class="en">Required assets</span></span>
+        </div>
+        <div class="check-item">
+          <span class="check-icon coral">✦</span>
+          <span><span class="es">Posicionamiento como ponente</span><span class="en">Speaking positioning</span></span>
+        </div>
+        <div class="check-item">
+          <span class="check-icon">✦</span>
+          <span><span class="es">Materiales de presentación</span><span class="en">Presentation materials</span></span>
+        </div>
+        <div class="check-item">
+          <span class="check-icon coral">✦</span>
+          <span><span class="es">Fechas límite</span><span class="en">Deadlines</span></span>
+        </div>
+        <div class="check-item" style="grid-column: 1 / -1;">
+          <span class="check-icon">✦</span>
+          <span><span class="es">Cómo el ecosistema actual soporta esta oportunidad</span><span class="en">How current ecosystem supports this opportunity</span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: INFRASTRUCTURE -->
+    <section class="slide" id="slide-6"
+      data-notes-es="Eleva la limpieza a infraestructura. No estamos organizando archivos; estamos construyendo gobernanza sostenible."
+      data-notes-en="Elevate cleanup to infrastructure. We are not organizing files; we are building sustainable governance.">
+
+      <div class="slide-bg-img">
+        <img src="https://res.cloudinary.com/dogtoagya/image/upload/e_improve,e_sharpen/v1778275596/Remove_background_to_create_transparent_PNG-1778275560450_zr2t27.png" alt="" loading="lazy">
+      </div>
+
+      <span class="slide-eyebrow"><span class="es">Operaciones</span><span class="en">Operations</span></span>
+      <h2 class="slide-title">
+        <span class="es">Infraestructura + <em>Estabilización</em></span>
+        <span class="en">Infrastructure + <em>Stabilization</em></span>
+      </h2>
+      <p style="font-size:14px;font-weight:300;color:var(--text-muted);margin-bottom:28px;">
+        <span class="es">Construyendo infraestructura sostenible para el ecosistema en crecimiento.</span>
+        <span class="en">Building sustainable infrastructure for the growing ecosystem.</span>
+      </p>
+      <div class="stabilization-flow">
+        <div class="flow-step">
+          <h4><span class="es">Almacenamiento</span><span class="en">Storage</span></h4>
+          <ul>
+            <li><span class="es">Disco duro</span><span class="en">Hard drive</span></li>
+            <li><span class="es">Organización de archivos</span><span class="en">File organization</span></li>
+            <li><span class="es">Repositorios git</span><span class="en">Git repositories</span></li>
+          </ul>
+        </div>
+        <div class="flow-step">
+          <h4><span class="es">Acceso</span><span class="en">Access</span></h4>
+          <ul>
+            <li><span class="es">Permisos OAuth</span><span class="en">OAuth permissions</span></li>
+            <li><span class="es">Capas de edición futura</span><span class="en">Future editing layers</span></li>
+            <li><span class="es">Acceso de cliente</span><span class="en">Client access</span></li>
+          </ul>
+        </div>
+        <div class="flow-step">
+          <h4><span class="es">Proceso</span><span class="en">Process</span></h4>
+          <ul>
+            <li><span class="es">Gobernanza del sistema</span><span class="en">System governance</span></li>
+            <li><span class="es">Flujo de trabajo</span><span class="en">Workflow</span></li>
+            <li><span class="es">Actualizaciones sostenibles</span><span class="en">Sustainable updates</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: NEXT PHASE -->
+    <section class="slide"
+      data-notes-es="Inspiracional pero fundamentado. Pinta el cuadro de hacia dónde lleva naturalmente esta arquitectura."
+      data-notes-en="Inspirational but grounded. Paint the picture of where this architecture naturally leads.">
+
+      <span class="slide-eyebrow"><span class="es">Hoja de ruta</span><span class="en">Roadmap</span></span>
+      <h2 class="slide-title">
+        <span class="es">La <em>siguiente</em> fase</span>
+        <span class="en">The <em>next</em> phase</span>
+      </h2>
+      <div class="roadmap">
+        <div class="roadmap-item">
+          <span class="roadmap-label"><span class="es">Metodología</span><span class="en">Methodology</span></span>
+          <span class="roadmap-title"><span class="es">El Método Nari · criarsinculpas.com/metodo</span><span class="en">The Nari Method · criarsinculpas.com/metodo</span></span>
+          <span class="roadmap-dot"></span>
+        </div>
+        <div class="roadmap-item">
+          <span class="roadmap-label"><span class="es">Externo</span><span class="en">External</span></span>
+          <span class="roadmap-title"><span class="es">Ecosistema público CSC.com</span><span class="en">Public CSC.com ecosystem</span></span>
+          <span class="roadmap-dot" style="background:var(--coral);"></span>
+        </div>
+        <div class="roadmap-item">
+          <span class="roadmap-label"><span class="es">Interno</span><span class="en">Internal</span></span>
+          <span class="roadmap-title"><span class="es">Biblioteca de protocolos + Arquitectura de productos</span><span class="en">Protocol library + Product architecture</span></span>
+          <span class="roadmap-dot"></span>
+        </div>
+        <div class="roadmap-item">
+          <span class="roadmap-label"><span class="es">Ofertas</span><span class="en">Offerings</span></span>
+          <span class="roadmap-title"><span class="es">Membresías · Cursos · Certificaciones</span><span class="en">Memberships · Courses · Certifications</span></span>
+          <span class="roadmap-dot" style="background:var(--coral);"></span>
+        </div>
+        <div class="roadmap-item">
+          <span class="roadmap-label"><span class="es">Sistemas</span><span class="en">Systems</span></span>
+          <span class="roadmap-title"><span class="es">Sistema de inteligencia SnglIQ</span><span class="en">SnglIQ intelligence system</span></span>
+          <span class="roadmap-dot"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 8: SCOPE EVOLUTION -->
+    <section class="slide"
+      data-notes-es="Evolución del alcance. Entrega esto con confianza tranquila. Es una progresión natural del éxito — el ecosistema ha madurado más allá del alcance original."
+      data-notes-en="Scope evolution discussion. Deliver this with quiet confidence. It's a natural progression of success — the ecosystem has matured beyond the original engagement scope.">
+
+      <span class="slide-eyebrow"><span class="es">Alineación estratégica</span><span class="en">Strategic alignment</span></span>
+      <h2 class="slide-title">
+        <span class="es">Evolución del <em>alcance</em></span>
+        <span class="en">Scope <em>evolution</em></span>
+      </h2>
+      <div class="split-layout">
+        <div>
+          <p class="split-lead">
+            <span class="es">El ecosistema ha evolucionado significativamente más allá del alcance original del engagement y ahora está entrando en una fase más operacional, impulsada por la infraestructura.</span>
+            <span class="en">The ecosystem has evolved significantly beyond the original engagement scope and is now entering a more operational, infrastructure-driven phase.</span>
+          </p>
+        </div>
+        <div>
+          <ul class="split-list">
+            <li><span class="es">Sostenibilidad del sistema</span><span class="en">System sustainability</span></li>
+            <li><span class="es">Soporte continuo</span><span class="en">Ongoing support</span></li>
+            <li><span class="es">Estructura de fases</span><span class="en">Phase structure</span></li>
+            <li><span class="es">Necesidades operacionales</span><span class="en">Operational needs</span></li>
+            <li><span class="es">Continuidad estratégica</span><span class="en">Strategic continuity</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 9: CLOSING -->
+    <section class="slide slide-closing" style="overflow:hidden;"
+      data-notes-es="Cierre con calma y confianza. Este es el sistema que construimos juntos. La siguiente fase empieza ahora."
+      data-notes-en="Close with calm confidence. This is the system we built together. The next phase starts now.">
+
+      <img class="closing-bg-logo"
+        src="https://res.cloudinary.com/dogtoagya/image/upload/q_auto/f_auto/v1778272963/CSC_Logo_Grayscale_k6uitt.png"
+        alt="">
+
+      <p class="closing-eyebrow">
+        <span class="es">Criar Sin Culpas · LG Ecosystem</span>
+        <span class="en">Criar Sin Culpas · LG Ecosystem</span>
+      </p>
+
+      <h2 class="closing-title">
+        <span class="es">La siguiente fase<br><em>empieza ahora.</em></span>
+        <span class="en">The next phase<br><em>starts now.</em></span>
+      </h2>
+
+      <p class="closing-sub">
+        <span class="es">El sistema está construido. Las señales están activas. Es momento de crecer.</span>
+        <span class="en">The system is built. The signals are active. Time to grow.</span>
+      </p>
+
+      <div class="closing-line"></div>
+
+      <div class="closing-meta">
+        <div class="closing-meta-item">
+          <span class="closing-meta-label"><span class="es">Estrategia</span><span class="en">Strategy</span></span>
+          <span class="closing-meta-value">Luis Gilberto · The Hub</span>
+        </div>
+        <div class="closing-meta-divider"></div>
+        <div class="closing-meta-item">
+          <span class="closing-meta-label"><span class="es">Marca</span><span class="en">Brand</span></span>
+          <span class="closing-meta-value">Nari Fateha · Criar Sin Culpas</span>
+        </div>
+        <div class="closing-meta-divider"></div>
+        <div class="closing-meta-item">
+          <span class="closing-meta-label"><span class="es">Sistema</span><span class="en">System</span></span>
+          <span class="closing-meta-value">SnglIQ · Signal Intelligence</span>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /presentation -->
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const startScreen = document.getElementById('start-screen');
+    const notesPanel = document.getElementById('notes-panel');
+    const notesContent = document.getElementById('notes-content');
+    const progressFill = document.getElementById('progress-fill');
+    const currentNum = document.getElementById('current-num');
+    const totalNum = document.getElementById('total-num');
+    let current = 0;
+    let lang = 'es';
+
+    totalNum.textContent = String(slides.length).padStart(2, '0');
+
+    function setLang(l) {
+      lang = l;
+      document.body.className = l === 'en' ? 'lang-en' : '';
+      document.querySelectorAll('.lang-btn').forEach(b => {
+        b.classList.toggle('active', b.textContent.trim().toLowerCase() === l);
+      });
+      updateNotes();
+    }
+
+    function updateNotes() {
+      const s = slides[current];
+      const note = lang === 'en'
+        ? (s.dataset.notesEn || s.dataset.notes || '')
+        : (s.dataset.notesEs || s.dataset.notes || '');
+      notesContent.textContent = note;
+    }
+
+    function goTo(index) {
+      slides[current].classList.remove('active');
+      slides[current].classList.add('past');
+      current = Math.max(0, Math.min(index, slides.length - 1));
+      slides.forEach((s, i) => {
+        s.classList.remove('active', 'past');
+        if (i < current) s.classList.add('past');
+      });
+      slides[current].classList.add('active');
+      currentNum.textContent = String(current + 1).padStart(2, '0');
+      progressFill.style.width = ((current + 1) / slides.length * 100) + '%';
+      updateNotes();
+    }
+
+    function toggleNotes() {
+      notesPanel.classList.toggle('open');
+    }
+
+    document.getElementById('start-btn').addEventListener('click', () => {
+      startScreen.classList.add('hidden');
+      goTo(0);
+    });
+
+    document.getElementById('prev-btn').addEventListener('click', () => goTo(current - 1));
+    document.getElementById('next-btn').addEventListener('click', () => goTo(current + 1));
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(current + 1);
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(current - 1);
+      if (e.key === 'n' || e.key === 'N') toggleNotes();
+    });
+
+    // Touch support
+    let touchStartX = 0;
+    document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+    document.addEventListener('touchend', e => {
+      const diff = touchStartX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 50) diff > 0 ? goTo(current + 1) : goTo(current - 1);
+    });
+  </script>
+</body>
+</html>

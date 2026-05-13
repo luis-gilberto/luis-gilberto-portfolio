@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="utf-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"> 
+  <title>SIQ_A00_EcosystemIntelligence_CSC · StrategyIQ</title>
+  
+  <style>
+    :root {
+      --bg: #121014;
+      --bg-surface: rgba(255, 255, 255, 0.03);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-soft: rgba(255, 255, 255, 0.04);
+
+      --text-main: #faf7f2;
+      --text-muted: #cdc4be;
+      --text-soft: #a79b95;
+
+      --teal: #61d1c4;
+      --coral: #ff7d73;
+      --violet: #8d79ff;
+      --mixed: #d17ee9;
+
+      --radius-xl: 24px;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      
+      --display-font: 'Iowan Old Style', Georgia, serif;
+      --ui-font: Inter, system-ui, -apple-system, sans-serif;
+      --mono-font: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html, body { min-height: 100%; scroll-behavior: smooth; }
+    
+    body {
+      font-family: var(--ui-font);
+      color: var(--text-main);
+      background: #0e0b12;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Ambient Backgrounds */
+    .orbs { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+    .grain { position: fixed; inset: 0; pointer-events: none; z-index: 1; opacity: 0.03; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); background-size: 180px 180px; }
+    
+    .watermark { position: fixed; bottom: -60px; right: -40px; width: 480px; height: 480px; pointer-events: none; z-index: 1; opacity: 0.15; filter: grayscale(100%) brightness(1.1); mix-blend-mode: screen; } 
+    .watermark img { width: 100%; height: 100%; object-fit: contain; object-position: bottom right; } 
+
+    /* Layout */
+    .report-wrapper { position: relative; z-index: 2; max-width: 760px; margin: 0 auto; padding: 48px 24px 80px; }
+
+    /* Archival Header */
+    .header { margin-bottom: 48px; animation: fadeInUp 0.8s backwards; }
+    .header-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+    .header-pill { display: inline-flex; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-soft); padding: 6px 14px; border-radius: 999px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); }
+    .header-pill.origin { color: var(--teal); border-color: rgba(97, 209, 196, 0.3); background: rgba(97, 209, 196, 0.05); }
+    
+    .header h1 { font-family: var(--display-font); font-size: clamp(2.2rem, 6vw, 3.5rem); line-height: 1.1; letter-spacing: -0.02em; font-weight: 600; color: #fff; margin-bottom: 16px; }
+    .header h2 { font-size: clamp(1.1rem, 3vw, 1.4rem); font-weight: 400; color: var(--text-muted); line-height: 1.5; margin-bottom: 32px; }
+    
+    /* StrategyIQ Dossier Meta Box */
+    .meta-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 20px; padding: 24px; background: rgba(0,0,0,0.4); border: 1px solid var(--border-soft); border-radius: var(--radius-md); }
+    .meta-item p.label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-soft); margin-bottom: 6px; font-weight: 700; }
+    .meta-item p.val { font-size: 0.85rem; color: #fff; font-weight: 500; }
+    .meta-item p.val.mono { font-family: var(--mono-font); color: var(--violet); font-size: 0.8rem; letter-spacing: 0.02em; }
+
+    /* SIQ Methodology Note */
+    .siq-note { display: flex; gap: 16px; padding: 20px; margin-bottom: 56px; border-radius: var(--radius-lg); background: linear-gradient(135deg, rgba(141, 121, 255, 0.08), rgba(255, 255, 255, 0.02)); border: 1px solid rgba(141, 121, 255, 0.2); animation: fadeInUp 0.8s 0.1s backwards; }
+    .siq-note-icon { flex-shrink: 0; color: var(--violet); }
+    .siq-note-text p { margin: 0; font-size: 0.9rem; color: var(--text-muted); }
+    .siq-note-text p strong { color: #fff; font-weight: 600; }
+
+    /* Typography & Content Blocks */
+    section { margin-bottom: 64px; animation: fadeInUp 0.8s 0.2s backwards; }
+    .sec-title { font-family: var(--display-font); font-size: 2rem; font-weight: 600; color: #fff; margin-bottom: 24px; letter-spacing: -0.02em; }
+    
+    p { margin-bottom: 16px; font-size: 1.05rem; color: var(--text-muted); }
+    strong { color: #fff; font-weight: 600; }
+    
+    ul { margin: 0 0 24px 0; padding-left: 0; list-style: none; }
+    ul li { position: relative; padding-left: 20px; font-size: 1.05rem; color: var(--text-muted); margin-bottom: 8px; }
+    ul li::before { content: ''; position: absolute; left: 0; top: 0.6em; width: 6px; height: 6px; border-radius: 50%; background: var(--text-soft); }
+
+    /* Quotes / Core Insights */
+    .insight-quote { padding: 32px; border-radius: var(--radius-lg); background: rgba(255,255,255,0.02); border-left: 4px solid var(--violet); margin: 32px 0; }
+    .insight-quote p { font-family: var(--display-font); font-size: 1.4rem; line-height: 1.4; color: #fff; margin: 0; font-style: italic; }
+
+    /* Benchmark Cards */
+    .bench-category { margin-bottom: 56px; }
+    .bench-category.cat-1 { --cat-color: var(--violet); }
+    .bench-category.cat-2 { --cat-color: var(--teal); }
+    .bench-category.cat-3 { --cat-color: var(--coral); }
+    .bench-category.cat-4 { --cat-color: var(--mixed); }
+
+    .cat-header { padding-bottom: 16px; border-bottom: 1px solid var(--border-soft); margin-bottom: 32px; }
+    .cat-header h3 { font-family: var(--display-font); font-size: 1.8rem; color: #fff; font-weight: 600; }
+    .cat-header span { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--cat-color); display: block; margin-bottom: 4px; }
+
+    .bench-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px; margin-bottom: 24px; position: relative; overflow: hidden; }
+    .bench-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--cat-color); opacity: 0.8; }
+    
+    .bench-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+    .bench-header h4 { font-size: 1.4rem; color: #fff; font-weight: 700; margin: 0; }
+    .bench-link { font-size: 0.8rem; color: var(--cat-color); font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+    .bench-link:hover { text-decoration: underline; }
+
+    .bench-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
+    @media (min-width: 600px) { .bench-grid { grid-template-columns: 1fr 1fr; } }
+    
+    .bench-section h5 { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-soft); margin-bottom: 12px; }
+    .bench-section ul li { font-size: 0.95rem; }
+    .bench-section ul li::before { background: var(--cat-color); }
+    
+    .bench-highlight { background: rgba(0,0,0,0.2); border-radius: var(--radius-md); padding: 20px; margin-top: 16px; border: 1px solid var(--border-soft); }
+    .bench-highlight h5 { color: var(--cat-color); margin-bottom: 8px; }
+    .bench-highlight p { margin: 0; font-size: 0.95rem; color: #fff; line-height: 1.5; }
+    .bench-highlight blockquote { margin: 8px 0 0 0; padding-left: 12px; border-left: 2px solid var(--cat-color); font-family: var(--display-font); font-size: 1.1rem; color: #fff; font-style: italic; }
+
+    /* Ecosystem Architecture Stacks */
+    .eco-stack { display: flex; flex-direction: column; gap: 12px; margin-top: 32px; }
+    .eco-layer { display: flex; align-items: center; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; position: relative; overflow: hidden; }
+    .eco-layer.core { background: rgba(141, 121, 255, 0.1); border-color: rgba(141, 121, 255, 0.3); }
+    .eco-layer-num { font-size: 0.8rem; font-weight: 800; color: rgba(255,255,255,0.2); width: 60px; flex-shrink: 0; }
+    .eco-layer-content h4 { font-size: 1.1rem; color: #fff; margin-bottom: 4px; }
+    .eco-layer-content p { font-size: 0.9rem; margin: 0; }
+
+    /* Web Architecture Grid */
+    .web-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 32px; }
+    @media (min-width: 600px) { .web-grid { grid-template-columns: 1fr 1fr; } }
+    .web-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 24px; }
+    .web-card h4 { font-size: 1rem; color: #fff; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .web-card ul li { font-size: 0.9rem; }
+    .web-card .note { font-size: 0.85rem; color: var(--coral); margin-top: 12px; font-weight: 500; }
+
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+
+  <!-- Background Orbs -->
+  <div class="orbs" style="background: radial-gradient(circle 400px at 10% 10%, rgba(141, 121, 255, 0.15), transparent 0 70%), radial-gradient(circle 500px at 90% 50%, rgba(97, 209, 196, 0.1), transparent 0 70%), radial-gradient(circle 300px at 50% 90%, rgba(255, 125, 115, 0.1), transparent 0 70%);"></div>
+  <div class="grain"></div>
+  
+  <div class="watermark">
+    <img src="https://res.cloudinary.com/dogtoagya/image/upload/q_auto/f_auto/v1778272963/CSC_Logo_Grayscale_k6uitt.png" alt="CSC">
+  </div>
+
+  <div class="report-wrapper">
+    
+    <!-- HEADER -->
+    <header class="header">
+      <div class="header-pills">
+        <span class="header-pill origin">Phase 01 · Diagnosis</span>
+        <span class="header-pill">Origin Node</span>
+      </div>
+      <h1>Ecosystem Intelligence</h1>
+      <h2>Foundational Architecture & Signal Synthesis · Criar Sin Culpas</h2>
+      
+      <div class="meta-box">
+        <div class="meta-item">
+          <p class="label">Artifact ID</p>
+          <p class="val mono">SIQ_A00_EcosystemIntelligence_CSC</p>
+        </div>
+        <div class="meta-item">
+          <p class="label">Type</p>
+          <p class="val">Strategic Intelligence</p>
+        </div>
+        <div class="meta-item">
+          <p class="label">Status</p>
+          <p class="val">Archived (Genesis)</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- STRATEGY IQ METHODOLOGY CONTEXT -->
+    <div class="siq-note">
+      <div class="siq-note-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <div class="siq-note-text">
+        <p><strong>StrategyIQ Context:</strong> This document represents the strategic inflection point of the project. Raw benchmark data was fed into the <em>Signal Extractor</em> to synthesize market gaps. This process revealed the distinction between "educational content" and "emotional support," pivoting the entire architecture of Criar Sin Culpas from a creator website into an emotional support ecosystem.</p>
+      </div>
+    </div>
+
+    <!-- RESUMEN EJECUTIVO -->
+    <section>
+      <h2 class="sec-title">Resumen Ejecutivo</h2>
+      <p>Criar Sin Culpas está entrando en un punto de inflexión muy importante.</p>
+      <p>La oportunidad ya no parece ser simplemente crear:</p>
+      <ul>
+        <li>Una página de creadora de contenido</li>
+        <li>Un blog de crianza</li>
+        <li>Una plataforma tradicional de cursos</li>
+      </ul>
+      <p>La oportunidad que empieza a revelarse es mucho más grande:</p>
+      
+      <div class="insight-quote" style="border-color: var(--teal);">
+        <p>Construir un sistema de apoyo para padres que combine contención emocional, herramientas prácticas, metodología y acompañamiento accionable en tiempo real.</p>
+      </div>
+
+      <p>Este documento analiza marcas y plataformas “best in class” dentro de: crianza, bienestar emocional, educación, metodologías escalables y ecosistemas digitales de apoyo.</p>
+      <p>El objetivo NO es copiar otros modelos. El objetivo es identificar:</p>
+      <ul>
+        <li>Patrones estructurales</li>
+        <li>Oportunidades de diferenciación</li>
+        <li>Modelos de monetización</li>
+        <li>Arquitecturas digitales efectivas</li>
+        <li>Posibles caminos evolutivos para Criar Sin Culpas</li>
+      </ul>
+    </section>
+
+    <!-- INSIGHT CENTRAL -->
+    <section>
+      <h2 class="sec-title">Insight Estratégico Central</h2>
+      <p>La mayoría de las marcas de crianza hoy se enfocan en: contenido educativo, publicaciones constantes, filosofía, cursos, membresías y redes sociales.</p>
+      <p>Pero existe una necesidad mucho más profunda y poco resuelta:</p>
+
+      <div class="insight-quote" style="border-color: var(--coral);">
+        <p>Los padres necesitan ayuda accionable durante momentos de crisis emocional y tensión cotidiana.</p>
+      </div>
+
+      <p>Muchas veces los padres <strong>NO necesitan más teoría</strong> en ese momento. Necesitan:</p>
+      <ul>
+        <li>Guía inmediata</li>
+        <li>Claridad y contención</li>
+        <li>Intervención práctica</li>
+        <li>Ayuda para tomar decisiones</li>
+      </ul>
+      <p>Especialmente durante: berrinches, transiciones, peleas entre hermanos, conflictos con pantallas, sobreestimulación, ansiedad, rutinas de sueño y escaladas emocionales.</p>
+      <p><strong>Ese insight cambia completamente la forma en que debería construirse la plataforma.</strong></p>
+    </section>
+
+    <!-- BENCHMARKS CAT 1 -->
+    <section class="bench-category cat-1">
+      <div class="cat-header">
+        <span>Categoría 1</span>
+        <h3>Marcas de Autoridad y Confianza</h3>
+        <p>Estas marcas construyen credibilidad emocional y una relación profunda con su audiencia.</p>
+      </div>
+
+      <div class="bench-card">
+        <div class="bench-header">
+          <h4>Good Inside (Dr. Becky)</h4>
+          <a href="https://www.goodinside.com" target="_blank" class="bench-link">goodinside.com ↗</a>
+        </div>
+        <div class="bench-grid">
+          <div class="bench-section">
+            <h5>Fortalezas Principales</h5>
+            <ul>
+              <li>Posicionamiento emocional muy sólido</li>
+              <li>Filosofía clara y Metodología coherente</li>
+              <li>Excelente arquitectura de ecosistema</li>
+              <li>Sistema escalable de productos</li>
+            </ul>
+          </div>
+          <div class="bench-section">
+            <h5>Observaciones Estratégicas</h5>
+            <p>Logró evolucionar de “una experta en crianza” a “un ecosistema integral de apoyo”. Integra confianza, educación, productos, comunidad y acompañamiento.</p>
+          </div>
+        </div>
+        <div class="bench-highlight">
+          <h5>Insight Principal</h5>
+          <p>La plataforma NO se siente como la página de una influencer. Se siente como:</p>
+          <blockquote>“Un sistema estructurado de apoyo.”</blockquote>
+        </div>
+      </div>
+
+      <div class="bench-card">
+        <div class="bench-header">
+          <h4>Big Little Feelings</h4>
+          <a href="https://biglittlefeelings.com" target="_blank" class="bench-link">biglittlefeelings.com ↗</a>
+        </div>
+        <div class="bench-grid">
+          <div class="bench-section">
+            <h5>Fortalezas Principales</h5>
+            <ul>
+              <li>Funnel de conversión extremadamente fuerte</li>
+              <li>Arquitectura pensada para redes sociales</li>
+              <li>Alta conexión emocional y monetización clara</li>
+            </ul>
+          </div>
+          <div class="bench-section">
+            <h5>Observaciones Estratégicas</h5>
+            <p>Funciona muy bien para crecer audiencia y monetizar, pero depende mucho de las creadoras, tiene menos profundidad metodológica y es menos escalable institucionalmente.</p>
+          </div>
+        </div>
+        <div class="bench-highlight">
+          <h5>Insight Principal</h5>
+          <p>Excelente benchmark para funnels, UX orientado a conversión y arquitectura de productos digitales.</p>
+        </div>
+      </div>
+
+      <div class="bench-card">
+        <div class="bench-header">
+          <h4>Janet Lansbury</h4>
+          <a href="https://www.janetlansbury.com" target="_blank" class="bench-link">janetlansbury.com ↗</a>
+        </div>
+        <div class="bench-grid">
+          <div class="bench-section">
+            <h5>Fortalezas Principales</h5>
+            <ul>
+              <li>Autoridad tranquila</li>
+              <li>Credibilidad editorial</li>
+              <li>Posicionamiento atemporal</li>
+            </ul>
+          </div>
+          <div class="bench-section">
+            <h5>Observaciones Estratégicas</h5>
+            <p>La marca prioriza confianza intelectual, profundidad y claridad, más que la conversión agresiva o monetización inmediata.</p>
+          </div>
+        </div>
+        <div class="bench-highlight">
+          <h5>Insight Principal</h5>
+          <p>La autoridad también puede construirse desde la calma, la claridad y la consistencia conceptual.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- BENCHMARKS CAT 2 -->
+    <section class="bench-category cat-2">
+      <div class="cat-header">
+        <span>Categoría 2</span>
+        <h3>Ecosistemas Basados en Método</h3>
+        <p>Estas marcas lograron convertir conocimiento en sistemas escalables.</p>
+      </div>
+
+      <div class="bench-card">
+        <div class="bench-header">
+          <h4>Gottman Institute</h4>
+          <a href="https://www.gottman.com" target="_blank" class="bench-link">gottman.com ↗</a>
+        </div>
+        <div class="bench-grid">
+          <div class="bench-section">
+            <h5>Fortalezas Principales</h5>
+            <ul>
+              <li>Autoridad respaldada por investigación</li>
+              <li>Metodología estructurada e institucional</li>
+              <li>Navegación basada en framework</li>
+            </ul>
+          </div>
+          <div class="bench-section">
+            <h5>Observaciones Estratégicas</h5>
+            <p>El sitio comunica claramente: “Tenemos un sistema repetible”, no “Aquí hay contenido random”. Eso hace TODA la diferencia.</p>
+          </div>
+        </div>
+        <div class="bench-highlight">
+          <h5>Insight Principal</h5>
+          <p>La metodología es lo que transforma una marca personal en propiedad intelectual, institución y ecosistema escalable.</p>
+        </div>
+      </div>
+
+      <div class="bench-card">
+        <div class="bench-header">
+          <h4>Positive Discipline</h4>
+          <a href="https://www.positivediscipline.com" target="_blank" class="bench-link">positivediscipline.com ↗</a>
+        </div>
+        <div class="bench-grid">
+          <div class="bench-section">
+            <h5>Fortalezas Principales</h5>
+            <ul>
+              <li>Arquitectura educativa sólida</li>
+              <li>Ecosistema de certificación</li>
+              <li>Herramientas estructuradas</li>
+            </ul>
+          </div>
+          <div class="bench-section">
+            <h5>Observaciones Estratégicas</h5>
+            <p>La filosofía se operacionaliza en herramientas, programas, entrenamientos y formación profesional.</p>
+          </div>
+        </div>
+        <div class="bench-highlight">
+          <h5>Insight Principal</h5>
+          <p>Una filosofía se vuelve mucho más poderosa cuando se convierte en:</p>
+          <blockquote>Metodología accionable.</blockquote>
+        </div>
+      </div>
+    </section>
+
+    <!-- BENCHMARKS CAT 3 -->
+    <section class="bench-category cat-3">
+      <div class="cat-header">
+        <span>Categoría 3</span>
+        <h3>Plataformas de Apoyo Emocional</h3>
+        <p>El concepto de “protocolos” se parece más a sistemas de apoyo emocional que a blogs tradicionales.</p>
+      </div>
+
+      <div class="bench-card">
+        <div class="bench-header">
+          <h4>Headspace</h4>
+          <a href="https://www.headspace.com" target="_blank" class="bench-link">headspace.com ↗</a>
+        </div>
+        <div class="bench-grid">
+          <div class="bench-section">
+            <h5>Fortalezas Principales</h5>
+            <ul>
+              <li>Navegación basada en estados emocionales</li>
+              <li>Guías paso a paso (modular)</li>
+              <li>Reducción de carga cognitiva</li>
+            </ul>
+          </div>
+          <div class="bench-section">
+            <h5>Observaciones Estratégicas</h5>
+            <p>Entienden que las personas llegan saturadas. El sistema ayuda a identificar rápido: cómo se sienten, qué necesitan y qué hacer después.</p>
+          </div>
+        </div>
+        <div class="bench-highlight">
+          <h5>Insight Principal</h5>
+          <p>Los protocolos de Criar Sin Culpas podrían evolucionar hacia herramientas de apoyo emocional práctico, no solo contenido educativo.</p>
+        </div>
+      </div>
+
+      <div class="bench-card">
+        <div class="bench-header">
+          <h4>Happiest Baby</h4>
+          <a href="https://www.happiestbaby.com" target="_blank" class="bench-link">happiestbaby.com ↗</a>
+        </div>
+        <div class="bench-grid">
+          <div class="bench-section">
+            <h5>Fortalezas Principales</h5>
+            <ul>
+              <li>Arquitectura basada en problemas reales</li>
+              <li>Balance entre educación y utilidad</li>
+              <li>Excelente onboarding</li>
+            </ul>
+          </div>
+          <div class="bench-section">
+            <h5>Observaciones Estratégicas</h5>
+            <p>La marca combina muy bien: autoridad, practicidad, educación y monetización.</p>
+          </div>
+        </div>
+        <div class="bench-highlight">
+          <h5>Insight Principal</h5>
+          <p>Los usuarios responden muy bien al alivio inmediato, la simplicidad y la utilidad clara.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- BENCHMARKS CAT 4 -->
+    <section class="bench-category cat-4">
+      <div class="cat-header">
+        <span>Categoría 4</span>
+        <h3>Ecosistemas Premium de Transformación</h3>
+        <p>Útiles para pensar en la evolución futura visual y formativa de la marca.</p>
+      </div>
+
+      <div class="bench-card">
+        <div class="bench-header">
+          <h4>Mindvalley</h4>
+          <a href="https://www.mindvalley.com" target="_blank" class="bench-link">mindvalley.com ↗</a>
+        </div>
+        <div class="bench-grid">
+          <div class="bench-section">
+            <h5>Fortalezas Principales</h5>
+            <ul>
+              <li>Arquitectura de ecosistema</li>
+              <li>Posicionamiento transformacional</li>
+              <li>Experiencia educativa inmersiva</li>
+            </ul>
+          </div>
+          <div class="bench-section">
+            <h5>Observaciones Estratégicas</h5>
+            <p>La experiencia no se siente como “consumir contenido”, se siente como entrar a un proceso de transformación profunda.</p>
+          </div>
+        </div>
+        <div class="bench-highlight">
+          <h5>Insight Principal</h5>
+          <p>Criar Sin Culpas podría eventualmente evolucionar hacia un ecosistema de transformación para padres, no solo una marca educativa.</p>
+        </div>
+      </div>
+
+      <div class="bench-card">
+        <div class="bench-header">
+          <h4>MasterClass</h4>
+          <a href="https://www.masterclass.com" target="_blank" class="bench-link">masterclass.com ↗</a>
+        </div>
+        <div class="bench-grid">
+          <div class="bench-section">
+            <h5>Fortalezas Principales</h5>
+            <ul>
+              <li>Storytelling premium</li>
+              <li>Diseño aspiracional y cinematográfico</li>
+              <li>Aprendizaje estructurado</li>
+            </ul>
+          </div>
+          <div class="bench-section">
+            <h5>Observaciones Estratégicas</h5>
+            <p>La calidad visual influye directamente en la percepción de autoridad, la confianza y el valor percibido del producto.</p>
+          </div>
+        </div>
+        <div class="bench-highlight">
+          <h5>Insight Principal</h5>
+          <p>La presentación importa muchísimo cuando se quiere posicionar una metodología como algo premium.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONCLUSIÓN & ARQUITECTURA -->
+    <section>
+      <h2 class="sec-title">Ecosistema Recomendado</h2>
+      <p>La oportunidad más fuerte parece ser construir un <strong>sistema operativo de apoyo para padres</strong>. Un ecosistema donde conviven la contención emocional, herramientas prácticas y acompañamiento.</p>
+      
+      <div class="eco-stack">
+        <div class="eco-layer core">
+          <div class="eco-layer-num">Capa 1</div>
+          <div class="eco-layer-content">
+            <h4>Confianza Emocional</h4>
+            <p>Humanidad, empatía, conexión, historia personal, seguridad emocional.</p>
+          </div>
+        </div>
+        <div class="eco-layer">
+          <div class="eco-layer-num">Capa 2</div>
+          <div class="eco-layer-content">
+            <h4>Metodología</h4>
+            <p>Método de los 4 pilares, filosofía, estructura conceptual, diferenciación.</p>
+          </div>
+        </div>
+        <div class="eco-layer">
+          <div class="eco-layer-num">Capa 3</div>
+          <div class="eco-layer-content">
+            <h4>Apoyo en Tiempo Real</h4>
+            <p>Protocolos, intervenciones prácticas, herramientas situacionales, apoyo inmediato.</p>
+          </div>
+        </div>
+        <div class="eco-layer">
+          <div class="eco-layer-num">Capa 4</div>
+          <div class="eco-layer-content">
+            <h4>Transformación</h4>
+            <p>Cursos, talleres, programas, acompañamiento guiado.</p>
+          </div>
+        </div>
+        <div class="eco-layer">
+          <div class="eco-layer-num">Capa 5</div>
+          <div class="eco-layer-content">
+            <h4>Comunidad y Escala</h4>
+            <p>Membresías, comunidad, sesiones grupales, alianzas con escuelas y organizaciones.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ARQUITECTURA WEB -->
+    <section>
+      <h2 class="sec-title">Arquitectura Web Recomendada</h2>
+      <p>Estructura de la plataforma digital para soportar el ecosistema.</p>
+      
+      <div class="web-grid">
+        <div class="web-card">
+          <h4>Home</h4>
+          <ul>
+            <li>Posicionamiento emocional</li>
+            <li>Utilidad inmediata (“¿Qué vives hoy?”)</li>
+            <li>Claridad de navegación hacia protocolos</li>
+          </ul>
+        </div>
+        <div class="web-card">
+          <h4>El Método</h4>
+          <ul>
+            <li>Explicación de la metodología</li>
+            <li>Desarrollo de autoridad e IP</li>
+            <li>Diferenciación de marca</li>
+          </ul>
+        </div>
+        <div class="web-card" style="border-color: var(--teal); background: rgba(97, 209, 196, 0.05);">
+          <h4 style="color: var(--teal);">Apoyo en Tiempo Real</h4>
+          <ul>
+            <li>Biblioteca de protocolos (pantallas, sueño, berrinches, etc.)</li>
+            <li>Herramientas accionables</li>
+          </ul>
+          <p class="note">El corazón de la utilidad del ecosistema.</p>
+        </div>
+        <div class="web-card">
+          <h4>Caminos de Aprendizaje</h4>
+          <ul>
+            <li>Procesos profundos (mini guías, talleres, cursos, programas)</li>
+          </ul>
+        </div>
+        <div class="web-card">
+          <h4>Historias e Insights</h4>
+          <ul>
+            <li>Reflexiones y filosofía práctica</li>
+            <li>Evitar el “blog spam” genérico</li>
+          </ul>
+        </div>
+        <div class="web-card">
+          <h4>Comunidad (Futuro)</h4>
+          <ul>
+            <li>Membresías y acompañamiento</li>
+            <li>Oficina de apoyo para padres</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- REFLEXIÓN FINAL -->
+    <section>
+      <div class="insight-quote" style="border-color: var(--violet); background: rgba(141, 121, 255, 0.05);">
+        <p>Criar Sin Culpas no parece estar construyendo simplemente “contenido”. Parece estar construyendo infraestructura de apoyo y toma de decisiones para padres modernos.</p>
+      </div>
+      <p>Y esa diferencia cambia la experiencia digital, la arquitectura del sitio, la monetización, la escalabilidad y el potencial real de la marca.</p>
+    </section>
+
+  </div>
+</body>
+</html>
