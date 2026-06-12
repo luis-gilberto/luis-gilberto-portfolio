@@ -8,7 +8,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/Logomark_White_a.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&display=swap" rel="stylesheet" />
   <style>
     :root {
       --coral: #F96F6E;
@@ -26,7 +26,7 @@
       --shadow: 0 30px 90px rgba(0,0,0,.55);
       --max: 1320px;
       --f-display: 'Big Shoulders Display', sans-serif;
-      --f-serif: 'Playfair Display', Georgia, serif;
+      --f-serif: 'Cormorant Garamond', Georgia, serif;
       --f-ui: 'Inter', sans-serif;
     }
 
@@ -1037,13 +1037,15 @@
         line-height: .88;
       }
       .hero h1 .serif { font-size: .48em; }
-      .stats-strip, .cap-grid, .nexus-flow, .footer-grid { grid-template-columns: 1fr; }
+      .cap-grid, .nexus-flow, .footer-grid { grid-template-columns: 1fr; }
+      .stats-strip { grid-template-columns: repeat(2, 1fr); }
       .stat { border-right: none; border-bottom: 1px solid var(--line); }
-      .stat:last-child { border-bottom: none; }
+      .stat:nth-child(odd) { border-right: 1px solid var(--line); }
+      .stat:nth-child(n+3) { border-bottom: none; }
       .section-head { display: block; }
       .section-head p { margin-top: 18px; }
       .era { grid-template-columns: 1fr; gap: 12px; padding: 22px; }
-      .nexus { min-height: 760px; }
+      .nexus { min-height: 640px; }
       .nexus-stage img { width: 132vw; height: 84vh; object-position: 52% 46%; }
       .legal { flex-direction: column; }
     }
@@ -1436,6 +1438,185 @@
       }
     }
 
+
+    /* Cormorant Garamond renders lighter than Playfair: calibrate weights */
+    .statement, .section-head h2, .timeline-sticky h2, .final-cta h2 { font-weight: 500; }
+    .hero h1 .serif, .era-content h3 em, .nexus-panel h2 em { font-weight: 600; }
+    .proof-metric { font-weight: 500; }
+    .mobile-drawer-name { font-weight: 700; }
+
+    /* ============ HERO CHOREOGRAPHY ============ */
+    /* The hero runs its own entrance; neutralize the generic scroll reveal inside it */
+    .hero .reveal { opacity: 1; transform: none; transition: none; }
+
+    .signal-card { transition: transform .6s cubic-bezier(.22,1,.36,1); }
+    @media (min-width: 1081px) {
+      .signal-card:hover {
+        transform: perspective(1000px) rotateY(-2deg) rotateX(1deg) translateY(-4px);
+      }
+    }
+
+    /* Signal beam: a teal pulse traveling the hero baseline */
+    .hero-signal {
+      position: absolute;
+      left: 0;
+      bottom: -2px;
+      width: 90px;
+      height: 5px;
+      z-index: 2;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, var(--teal), transparent);
+      filter: drop-shadow(0 0 8px rgba(46,211,198,.8));
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .hero-bg img {
+        animation:
+          hero-settle 2.4s cubic-bezier(.16,1,.3,1),
+          hero-drift 30s ease-in-out 2.4s infinite alternate;
+      }
+      .hero .eyebrow { animation: hero-rise 1s cubic-bezier(.22,1,.36,1) .2s backwards; }
+      .hero h1 { animation: hero-rise 1s cubic-bezier(.22,1,.36,1) .34s backwards; }
+      .hero-copy { animation: hero-rise 1s cubic-bezier(.22,1,.36,1) .5s backwards; }
+      .hero-actions { animation: hero-rise 1s cubic-bezier(.22,1,.36,1) .64s backwards; }
+      .signal-card { animation: card-in 1.1s cubic-bezier(.22,1,.36,1) .8s backwards; }
+      .stats-strip { animation: hero-rise 1s cubic-bezier(.22,1,.36,1) 1.05s backwards; }
+      .hero-signal { animation: signal-travel 7s ease-in-out 3s infinite; }
+      .online::before { animation: dot-pulse 2.4s ease-in-out infinite; }
+    }
+    @keyframes hero-settle { from { transform: scale(1.16); } }
+    @keyframes hero-drift {
+      from { transform: scale(1.06); }
+      to { transform: scale(1.12) translate3d(-1.4%, -1.1%, 0); }
+    }
+    @keyframes hero-rise { from { opacity: 0; transform: translateY(26px); } }
+    @keyframes card-in { from { opacity: 0; transform: translateY(34px) scale(.98); } }
+    @keyframes signal-travel {
+      0% { transform: translateX(-90px); opacity: 0; }
+      6% { opacity: 1; }
+      46% { opacity: 1; }
+      52% { transform: translateX(100vw); opacity: 0; }
+      100% { transform: translateX(100vw); opacity: 0; }
+    }
+    @keyframes dot-pulse {
+      0%, 100% { box-shadow: 0 0 8px var(--teal); }
+      50% { box-shadow: 0 0 16px var(--teal), 0 0 30px rgba(46,211,198,.45); }
+    }
+
+    /* ============ SMALL-SCREEN POLISH ============ */
+    html { -webkit-text-size-adjust: 100%; }
+    @media (max-width: 480px) {
+      .hero-actions { width: 100%; }
+      .hero-actions .btn, .final-actions .btn { flex: 1 1 100%; }
+      .signal-card { padding: 14px; }
+      .nexus-panel { padding: 26px 20px; }
+      .era { padding: 18px; }
+    }
+
+    /* ============ LIGHT MODE ============ */
+    [data-theme="light"] body {
+      --ink: #16120F;
+      --ink-soft: rgba(22,18,15,.74);
+      --ink-muted: rgba(22,18,15,.52);
+      --ink-faint: rgba(22,18,15,.16);
+      --bg: #F6F3EF;
+      --panel: rgba(20,16,12,.035);
+      --panel-strong: rgba(20,16,12,.06);
+      --line: rgba(20,16,12,.1);
+      --line-strong: rgba(20,16,12,.18);
+      --shadow: 0 24px 70px rgba(31,24,18,.12);
+      background:
+        radial-gradient(circle at 80% 6%, rgba(46,211,198,.09), transparent 28%),
+        radial-gradient(circle at 10% 14%, rgba(249,111,110,.07), transparent 26%),
+        linear-gradient(180deg, #F8F5F1 0%, #F4F1EC 52%, #EFEBE5 100%);
+      color: var(--ink);
+    }
+    [data-theme="light"] .grain { opacity: .1; }
+
+    /* White logomark on a light nav: invert until a dark asset is wired in */
+    [data-theme="light"] .nav-logo img { filter: invert(1); }
+
+    /* Hero and Nexus stay cinematic dark in both themes (image-led bands) */
+    [data-theme="light"] .hero,
+    [data-theme="light"] .nexus {
+      --bg: #050607;
+      --ink: #FAF7F4;
+      --ink-soft: rgba(250,247,244,.68);
+      --ink-muted: rgba(250,247,244,.42);
+      --line: rgba(255,255,255,.09);
+      --line-strong: rgba(255,255,255,.16);
+      --shadow: 0 30px 90px rgba(0,0,0,.55);
+      color: var(--ink);
+    }
+    [data-theme="light"] .nexus {
+      background:
+        radial-gradient(circle at 68% 38%, rgba(46,211,198,.13), transparent 48%),
+        radial-gradient(circle at 34% 52%, rgba(249,111,110,.10), transparent 54%),
+        #050607;
+    }
+
+    /* Hardcoded near-white copy flips with the theme */
+    [data-theme="light"] .editorial-copy .body-large,
+    [data-theme="light"] .body-note,
+    [data-theme="light"] .capabilities-head p { color: var(--ink-soft); }
+
+    /* Accent legibility on light paper */
+    [data-theme="light"] .kicker { color: #D9504E; }
+    [data-theme="light"] .statement .accent,
+    [data-theme="light"] .cap-num,
+    [data-theme="light"] .era-content h3 em { color: #178F86; }
+
+    /* Cards and surfaces */
+    [data-theme="light"] .cap-card {
+      background: linear-gradient(180deg, #FFFFFF, #FAF7F2);
+      border-color: rgba(20,16,12,.09);
+      box-shadow: 0 14px 40px rgba(31,24,18,.07);
+    }
+    [data-theme="light"] .cap-card:hover {
+      border-color: rgba(23,143,134,.4);
+      background: linear-gradient(180deg, #FFFFFF, #F4FAF9);
+    }
+    [data-theme="light"] .timeline {
+      background: linear-gradient(180deg, rgba(20,16,12,.02), transparent 30%, rgba(20,16,12,.02));
+    }
+    [data-theme="light"] .era {
+      background: #FFFFFF;
+      border-color: rgba(20,16,12,.08);
+      box-shadow: 0 12px 34px rgba(31,24,18,.06);
+    }
+    [data-theme="light"] .era:hover {
+      border-color: rgba(217,80,78,.35);
+      background: #FFFFFF;
+    }
+    [data-theme="light"] .proof-tags span {
+      background: rgba(20,16,12,.04);
+      border-color: rgba(20,16,12,.12);
+    }
+    [data-theme="light"] .proof-card {
+      background: linear-gradient(180deg, #FFFFFF, #FAF7F2);
+      border-color: rgba(20,16,12,.09);
+      box-shadow: 0 14px 40px rgba(31,24,18,.07);
+    }
+    [data-theme="light"] .btn-secondary {
+      color: var(--ink);
+      border-color: rgba(20,16,12,.24);
+      background: rgba(255,255,255,.65);
+    }
+    [data-theme="light"] .btn-secondary:hover {
+      color: #178F86;
+      border-color: rgba(23,143,134,.5);
+    }
+    [data-theme="light"] .hero .btn-secondary {
+      color: var(--ink);
+      border-color: var(--line-strong);
+      background: rgba(255,255,255,.035);
+    }
+    [data-theme="light"] .hero .btn-secondary:hover {
+      color: var(--teal);
+      border-color: rgba(46,211,198,.45);
+    }
   </style>
 </head>
 <body>
@@ -1549,6 +1730,7 @@
         <div class="hero-bg" aria-hidden="true">
           <img src="https://res.cloudinary.com/dogtoagya/image/upload/q_auto/f_auto/v1781029251/ChatGPT_Image_Jun_9_2026_11_16_33_AM_f13joi.png" alt="" loading="eager" decoding="async" fetchpriority="high">
         </div>
+        <div class="hero-signal" aria-hidden="true"></div>
         <div class="container">
           <div class="hero-grid">
             <div class="hero-copy-block reveal">
@@ -1843,7 +2025,7 @@
                     ">Luis Gilberto</span>
                 </a>
                 <p style="
-                    font-family: 'Playfair Display', serif;
+                    font-family: 'Cormorant Garamond', serif;
                     font-size: 1rem;
                     font-style: italic;
                     color: rgba(255,255,255,0.75);
@@ -2024,7 +2206,7 @@
                 letter-spacing: 0.02em;
                 margin: 0;
             ">
-                Where <span style="font-family: 'Playfair Display', serif; font-style: italic; color: #F96F6E;">emotion</span> and <span style="font-family: 'Big Shoulders Display', sans-serif; text-transform: uppercase; letter-spacing: 0.05em; color: #2ED3C6;">structure</span> converge
+                Where <span style="font-family: 'Cormorant Garamond', serif; font-style: italic; color: #F96F6E;">emotion</span> and <span style="font-family: 'Big Shoulders Display', sans-serif; text-transform: uppercase; letter-spacing: 0.05em; color: #2ED3C6;">structure</span> converge
             </p>
         </div>
     </div>
@@ -2136,6 +2318,36 @@
     })();
   </script>
 
+
+  <script>
+    (function() {
+      var bg = document.querySelector('.hero-bg img');
+      var hero = document.querySelector('.hero');
+      if (!bg || !hero) return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (window.matchMedia('(pointer: coarse)').matches) return;
+      var active = false;
+      setTimeout(function() {
+        bg.style.animation = 'none';
+        bg.style.transition = 'transform .6s cubic-bezier(.22,1,.36,1)';
+        active = true;
+      }, 2600);
+      var raf = null;
+      hero.addEventListener('mousemove', function(e) {
+        if (!active) return;
+        var r = hero.getBoundingClientRect();
+        var x = (e.clientX - r.left) / r.width - .5;
+        var y = (e.clientY - r.top) / r.height - .5;
+        if (raf) cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(function() {
+          bg.style.transform = 'scale(1.08) translate3d(' + (x * -14) + 'px, ' + (y * -10) + 'px, 0)';
+        });
+      });
+      hero.addEventListener('mouseleave', function() {
+        if (active) bg.style.transform = 'scale(1.06)';
+      });
+    })();
+  </script>
 
   <script>
     const observer = new IntersectionObserver((entries) => {
