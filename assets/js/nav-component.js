@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div id="view-portfolio" class="view-content" style="display:none;">
                             <div class="grid-2">
                                 <a href="${base}myexperience.html" class="mega-link"><div class="mega-icon"><i class="fas fa-briefcase"></i></div><div class="mega-text"><b>Experience</b><span>15+ years of leadership</span></div></a>
-                                <a href="${base}timeline.html" class="mega-link"><div class="mega-icon"><i class="fas fa-stream"></i></div><div class="mega-text"><b>Timeline</b><span>Career pivots & eras</span></div></a>
+                                <a href="${base}journey.html" class="mega-link"><div class="mega-icon"><i class="fas fa-stream"></i></div><div class="mega-text"><b>Journey</b><span>Career pivots & eras</span></div></a>
                                 <a href="${base}about.html" class="mega-link"><div class="mega-icon"><i class="fas fa-user"></i></div><div class="mega-text"><b>About Me</b><span>The human story</span></div></a>
                                 <a href="https://www.luis-gilberto.com/brand/" class="mega-link"><div class="mega-icon" style="color:var(--teal);"><i class="fas fa-fingerprint"></i></div><div class="mega-text"><b>Identity</b><span>Canonical guidelines</span></div></a>
                             </div>
@@ -466,7 +466,7 @@ document.addEventListener('DOMContentLoaded', function() {
         ],
         portfolio: [
             { label: 'Experience',     href: '/myexperience.html', active: path.includes('myexperience') },
-            { label: 'Timeline',       href: '/timeline.html',     active: path.includes('timeline') },
+            { label: 'Journey',        href: '/journey.html',      active: path.includes('journey') },
             { label: 'About me',       href: '/about.html',        active: path.includes('about') },
             { label: 'Brand identity', href: '/brand/',            active: path.includes('brand') },
         ]
