@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StrategyIQ™ | Strategic Intelligence Engine</title>
+    <meta name="description" content="StrategyIQ — a system for faster, clearer strategic decisions. It helps leadership teams turn messy inputs into clear, structured decisions before they commit budget to execution.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@300;400;500;600;700&family=Big+Shoulders+Display:wght@600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript>
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@300;400;500;600;700&family=Big+Shoulders+Display:wght@600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    </noscript>
+    <link rel="stylesheet" href="/assets/css/ecosystem-core.v1.css">
+    <script src="/assets/js/nav-component.js"></script>
+    <style>
+        /* =========================================
+           CORE TOKENS
+        ========================================= */
+        :root {
+            --coral: #F96F6E;
+            --teal: #2ED3C6;
+            --bg-body: #0A0A0A;
+            --header-height: 72px;
+            --font-strategist: 'Big Shoulders Display', sans-serif;
+            --font-storyteller: 'Cormorant Garamond', serif; /* thesis / lede serif */
+            --font-orchestrator: 'Inter', sans-serif;        /* functional descriptions */
+            --font-mono: 'JetBrains Mono', monospace;         /* labels + codes only */
+            /* type scale — legible floor, executive rhythm */
+            --fs-tiny: 13px;   /* the new floor */
+            --fs-ui: 15px;
+            --fs-body: 18px;
+            --fs-heading: clamp(2.5rem, 6vw, 4.5rem);
+            --measure: 60ch;   /* max reading width for body copy */
+            --ease-out: cubic-bezier(0.4, 0, 0.2, 1);
+            --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+            --transition-smooth: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            --card-radius: 14px;
+            --glow-coral: 0 0 40px rgba(249,111,110,0.12);
+            --glow-teal: 0 0 40px rgba(46,211,198,0.12);
+            /* Section spacing. calibrated, not extreme */
+            --section-pad: 7rem;
+            --section-pad-sm: 5rem;
+            --text-body: rgba(200,200,210,0.8); 
+            --text-muted: rgba(160,160,170,0.5); 
+            --text-faint: rgba(255,255,255,0.25); 
+            --text-dim: rgba(255,255,255,0.4); 
+            --border-subtle: rgba(255,255,255,0.05); 
+        }
+        [data-theme="light"] { 
+            --bg-body: #F0EDE8; 
+            --text-body: rgba(20, 16, 12, 0.8); 
+            --text-muted: rgba(20, 16, 12, 0.6); 
+            --text-faint: rgba(20, 16, 12, 0.3); 
+            --text-dim: rgba(20, 16, 12, 0.5); 
+            --border-subtle: rgba(20, 16, 12, 0.06); 
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            background-color: var(--bg-body); color: #EDEDED;
+            font-family: var(--font-orchestrator); font-size: 16px; line-height: 1.65;
+            overflow-x: hidden; transition: background-color 0.3s ease, color 0.3s ease;
+            padding-top: var(--header-height);
+        }
+        [data-theme="light"] body { color: #111; }
+        a { text-decoration: none; color: inherit; transition: all 0.2s ease; }
+
+        /* 🧬 Standardized Footer Responsive */
+        @media (max-width: 1023px) {
+          .ft-responsive-grid {
+            grid-template-columns: 1fr !important;
+            padding: 48px 28px 0 !important;
+            gap: 40px !important;
+          }
+          .ft-responsive-legal {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 10px !important;
+            padding: 20px 28px 32px !important;
+          }
+          .ft-responsive-legal span:last-child {
+            text-align: left !important;
+            max-width: 100% !important;
+          }
+        }
+
+        /* =========================================
+           TYPE / COLOR UTILITIES
+           ========================================= */
+        .text-primary { color: #F0EDE8; }
+        .text-secondary { color: #888; }
+        [data-theme="light"] .text-primary { color: #111; }
+        [data-theme="light"] .text-secondary { color: #666; }
+        .bg-dark-section { background: #050505; }
+        .bg-panel-section { background: #0C0C0D; }
+        .border-theme { border-color: rgba(255,255,255,0.07); }
+        .text-coral-gradient {
+            background: linear-gradient(135deg, var(--coral) 0%, #ff9a9a 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .grid-pattern {
+            background-image: linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+            background-size: 48px 48px;
+        }
+
+        /* =========================================
+           ECOSYSTEM FLOW (Standardized v4.5)
+        ========================================= */
+        .ecosystem-flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color, rgba(255,255,255,0.08)); }
+        .ecosystem-node { padding: 2rem 1.5rem; border-right: 1px solid var(--border-color, rgba(255,255,255,0.08)); background: var(--bg-primary, #0A0A0A); }
+        .ecosystem-node:last-child { border-right: none; }
+        .ecosystem-node .node-number { font-family: var(--font-mono); font-size: var(--fs-tiny); font-weight: 700; letter-spacing: 0.1em; color: rgba(255,255,255,0.45); text-transform: uppercase; margin-bottom: 0.75rem; }
+        .ecosystem-node .node-title { font-family: 'Big Shoulders Display', sans-serif; font-size: 1.4rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.02em; color: #F0EDE8; line-height: 1.05; margin-bottom: 0.5rem; }
+        .ecosystem-node .node-desc { font-family: var(--font-orchestrator); font-size: var(--fs-ui); color: rgba(255,255,255,0.55); line-height: 1.65; }
+        .ecosystem-node.active-node { border-color: var(--coral); background: rgba(249,111,110,0.06); box-shadow: var(--glow-coral); }
+        @media (max-width: 1024px) { .ecosystem-flow { grid-template-columns: 1fr 1fr; } .ecosystem-node:nth-child(2) { border-right: none; } }
+        @media (max-width: 640px)  { .ecosystem-flow { grid-template-columns: 1fr; } .ecosystem-node { border-right: none !important; border-bottom: 1px solid var(--border-color, rgba(255,255,255,0.08)); } .ecosystem-node:last-child { border-bottom: none; } }
+
+        /* =========================================
+           SECTION TYPOGRAPHY SYSTEM
+        ========================================= */
+        .section-eyebrow {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            font-family: var(--font-mono); font-size: var(--fs-tiny); font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.35);
+            margin-bottom: 1rem;
+        }
+        .section-eyebrow::before { content: ''; display: block; width: 20px; height: 1px; background: rgba(255,255,255,0.25); }
+        .section-h2 {
+            font-family: var(--font-strategist); font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+            font-weight: 800; color: #F0EDE8; letter-spacing: -0.01em; line-height: 1.0;
+            margin-bottom: 1rem;
+        }
+        .section-sub {
+            font-family: var(--font-orchestrator); font-size: var(--fs-ui);
+            color: rgba(255,255,255,0.4); line-height: 1.7; max-width: var(--measure);
+        }
+        .teal-frame {
+            font-family: var(--font-storyteller); font-size: 1.375rem; color: rgba(161,161,170,0.8); font-style: italic;
+            border-left: 2px solid rgba(46,211,198,0.35); padding-left: 1.1rem; line-height: 1.5; max-width: var(--measure);
+        }
+
+        /* =========================================
+           BUTTONS
+        ========================================= */
+        .cta-primary {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: var(--coral); color: #fff; padding: 0.875rem 2rem; border-radius: 50px;
+            font-family: var(--font-mono); font-weight: 700; font-size: var(--fs-tiny); text-transform: uppercase; letter-spacing: 0.06em;
+            transition: all var(--transition-smooth); box-shadow: 0 4px 20px rgba(249,111,110,0.25);
+        }
+        .cta-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(249,111,110,0.4); background: #ff8180; color: #fff; }
+        .cta-secondary {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            border: 1px solid rgba(46,211,198,0.4); color: var(--teal);
+            padding: 0.875rem 2rem; border-radius: 50px;
+            font-family: var(--font-mono); font-weight: 700; font-size: var(--fs-tiny); text-transform: uppercase; letter-spacing: 0.06em;
+            transition: all var(--transition-smooth); background: transparent;
+        }
+        .cta-secondary:hover { background: rgba(46,211,198,0.08); border-color: var(--teal); transform: translateY(-2px); }
+        .btn-coral {
+            display: inline-flex; align-items: center; gap: 0.75rem;
+            background: var(--coral); color: #fff; padding: 1rem 2.75rem; border-radius: 50px;
+            font-family: var(--font-mono); font-weight: 700; font-size: var(--fs-tiny); text-transform: uppercase; letter-spacing: 0.06em;
+            transition: all var(--transition-smooth); box-shadow: 0 4px 20px rgba(249,111,110,0.25);
+        }
+        .btn-coral:hover { transform: translateY(-3px); box-shadow: 0 12px 36px rgba(249,111,110,0.45); background: #ff8180; color: #fff; }
+
+        /* =========================================
+           STEP CIRCLES
+        ========================================= */
+        .step-circle { transition: all var(--transition-smooth); }
+        .group:hover .step-circle {
+            border-color: rgba(249,111,110,0.5) !important;
+            box-shadow: 0 0 28px rgba(249,111,110,0.15), inset 0 0 16px rgba(249,111,110,0.04);
+        }
+
+        /* =========================================
+           GLASS CARDS
+        ========================================= */
+        .glass-panel {
+            background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.07);
+            transition: all var(--transition-smooth); position: relative; overflow: hidden;
+        }
+        .glass-panel::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(circle at 50% 0%, rgba(249,111,110,0.04) 0%, transparent 70%);
+            opacity: 0; transition: opacity var(--transition-smooth);
+        }
+        .glass-panel:hover { background: rgba(255,255,255,0.04); border-color: rgba(249,111,110,0.25); box-shadow: var(--glow-coral); transform: translateY(-4px); }
+        .glass-panel:hover::before { opacity: 1; }
+
+        /* =========================================
+           EDITORIAL BREAK
+        ========================================= */
+        .editorial-break {
+            padding: 8rem 1.5rem; text-align: center;
+            background: #030303; position: relative; overflow: hidden;
+            border-top: 1px solid rgba(255,255,255,0.04);
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .editorial-break::before {
+            content: ''; position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); width: 600px; height: 300px;
+            background: radial-gradient(ellipse, rgba(249,111,110,0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .editorial-break-text {
+            font-family: var(--font-storyteller); font-size: clamp(1.75rem, 4vw, 3.25rem);
+            font-style: italic; font-weight: 400; color: rgba(255,255,255,0.6);
+            line-height: 1.3; max-width: 680px; margin: 0 auto; letter-spacing: -0.01em;
+            position: relative; z-index: 1;
+        }
+        .editorial-break-text em { color: var(--coral); font-style: italic; text-shadow: 0 0 40px rgba(249,111,110,0.3); }
+        .editorial-break-rule { width: 40px; height: 1px; background: rgba(249,111,110,0.4); margin: 2.5rem auto 0; }
+
+        /* =========================================
+           ECOSYSTEM DIAGRAM
+        ========================================= */
+        .siq-diagram { display: flex; flex-direction: column; align-items: center; gap: 0; margin: 0 auto 3rem; max-width: 220px; }
+        .siq-diag-node {
+            display: flex; flex-direction: column; align-items: center; gap: 0.2rem;
+            padding: 0.75rem 1.75rem; border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.07); background: rgba(255,255,255,0.02);
+            width: 100%; text-align: center; transition: all var(--transition-smooth);
+        }
+        .siq-diag-node.active-node { border-color: rgba(249,111,110,0.35); background: rgba(249,111,110,0.04); box-shadow: var(--glow-coral); }
+        .siq-diag-label { font-family: var(--font-mono); font-size: var(--fs-tiny); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.55); }
+        .siq-diag-node.active-node .siq-diag-label { color: var(--coral); }
+        .siq-diag-sub { font-family: var(--font-mono); font-size: var(--fs-tiny); color: rgba(255,255,255,0.35); letter-spacing: 0.04em; }
+        .siq-diag-arrow { width: 1px; height: 22px; background: linear-gradient(to bottom, rgba(249,111,110,0.2), rgba(255,255,255,0.06)); }
+
+        /* =========================================
+           ECOSYSTEM CARDS. fully defined
+        ========================================= */
+        .eco-card {
+            padding: 1.75rem; border-radius: 12px;
+            transition: all var(--transition-smooth); position: relative; overflow: hidden;
+        }
+        .eco-card.eco-active { border: 1px solid rgba(249,111,110,0.3); background: rgba(249,111,110,0.04); }
+        .eco-card.eco-active:hover { border-color: rgba(249,111,110,0.55); box-shadow: var(--glow-coral); transform: translateY(-3px); }
+        .eco-card.eco-dim { border: 1px solid rgba(255,255,255,0.07); background: rgba(255,255,255,0.02); opacity: 0.65; }
+        .eco-card.eco-dim:hover { opacity: 1; border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.04); transform: translateY(-3px); }
+        .eco-tag { font-family: var(--font-mono); font-size: var(--fs-tiny); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem; }
+        .eco-title { font-family: var(--font-strategist); font-size: 1.2rem; font-weight: 800; color: #F0EDE8; margin-bottom: 0.5rem; letter-spacing: 0.01em; }
+        .eco-desc { font-family: var(--font-orchestrator); font-size: var(--fs-ui); color: rgba(255,255,255,0.4); line-height: 1.65; max-width: var(--measure); }
+
+        /* =========================================
+           AUDIENCE CARDS. fully defined
+        ========================================= */
+        .audience-card {
+            border-radius: 12px; padding: 2.25rem;
+            border: 1px solid rgba(255,255,255,0.07); background: rgba(255,255,255,0.025);
+            transition: all var(--transition-smooth); position: relative; overflow: hidden;
+        }
+        .audience-card::after {
+            content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, var(--coral), transparent);
+            opacity: 0; transition: opacity var(--transition-smooth);
+        }
+        .audience-card:hover { border-color: rgba(249,111,110,0.2); background: rgba(255,255,255,0.04); transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .audience-card:hover::after { opacity: 1; }
+        .audience-number { font-family: var(--font-mono); font-size: var(--fs-tiny); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.4); margin-bottom: 0.75rem; }
+        .audience-title { font-family: var(--font-strategist); font-size: 1.5rem; font-weight: 800; color: #F0EDE8; margin-bottom: 0.875rem; line-height: 1.1; }
+        .audience-desc { font-family: var(--font-orchestrator); font-size: var(--fs-ui); color: rgba(255,255,255,0.45); line-height: 1.7; max-width: var(--measure); }
+        .audience-outcome { font-family: var(--font-orchestrator); font-size: var(--fs-ui); color: var(--teal); font-weight: 600; margin-top: 1rem; letter-spacing: 0.01em; }
+
+        /* =========================================
+           FAQ
+        ========================================= */
+        details.faq-item {
+            border: 1px solid rgba(255,255,255,0.07); border-radius: 12px;
+            background: rgba(255,255,255,0.02); overflow: hidden;
+            transition: border-color var(--transition-smooth);
+        }
+        details.faq-item[open] { border-color: rgba(249,111,110,0.2); background: rgba(255,255,255,0.03); }
+        details.faq-item summary {
+            padding: 1.4rem 1.75rem; cursor: pointer;
+            font-family: var(--font-orchestrator); font-size: var(--fs-ui); font-weight: 500; color: #F0EDE8;
+            display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+            list-style: none; transition: color var(--transition-smooth);
+        }
+        details.faq-item summary:hover { color: var(--coral); }
+        details.faq-item summary::-webkit-details-marker { display: none; }
+        details.faq-item .faq-chevron {
+            width: 28px; height: 28px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.65rem; flex-shrink: 0; transition: all var(--transition-smooth); color: rgba(255,255,255,0.4);
+        }
+        details.faq-item[open] .faq-chevron { transform: rotate(180deg); border-color: rgba(249,111,110,0.3); color: var(--coral); }
+        details.faq-item .faq-body { padding: 0 1.75rem 1.4rem; font-family: var(--font-orchestrator); font-size: var(--fs-ui); line-height: 1.75; color: rgba(255,255,255,0.5); max-width: var(--measure); }
+
+        /* =========================================
+           FINAL CTA
+        ========================================= */
+        .final-cta-headline {
+            font-family: var(--font-strategist);
+            font-size: clamp(4rem, 10vw, 8rem);
+            font-weight: 900; letter-spacing: -0.03em; line-height: 0.88;
+            color: #F0EDE8;
+        }
+        .btn-primary-premium {
+            display: inline-flex; align-items: center; gap: 0.75rem;
+            background: var(--coral); color: #fff; padding: 1rem 2.75rem; border-radius: 50px;
+            font-family: var(--font-mono); font-weight: 700; font-size: var(--fs-tiny); text-transform: uppercase; letter-spacing: 0.06em;
+            transition: all var(--transition-smooth); box-shadow: 0 4px 20px rgba(249,111,110,0.25);
+        }
+        .btn-primary-premium:hover { transform: translateY(-3px); box-shadow: 0 12px 36px rgba(249,111,110,0.45); background: #ff8180; color: #fff; }
+
+        /* =========================================
+           REVEAL ANIMATIONS
+        ========================================= */
+        .reveal-up { opacity: 0; transform: translateY(20px); transition: opacity 0.65s var(--ease-out), transform 0.65s var(--ease-out); }
+        .reveal-up.visible { opacity: 1; transform: translateY(0); }
+        .reveal-item { opacity: 0; transform: translateY(20px); transition: opacity 0.65s var(--ease-out), transform 0.65s var(--ease-out); }
+
+        /* =========================================
+           FOOTER
+        ========================================= */
+        .site-footer { background: #030303; border-top: 1px solid rgba(255,255,255,0.05); padding: 5rem 0 0; color: #FFF; }
+        .footer-grid { max-width: 1400px; margin: 0 auto; padding: 0 2rem 4rem; display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 3rem; }
+        .footer-heading { font-family: var(--font-mono); font-size: var(--fs-tiny); text-transform: uppercase; letter-spacing: 0.12em; color: #666; margin-bottom: 1.25rem; font-weight: 700; }
+        .footer-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.625rem; }
+        .footer-list a { font-size: var(--fs-ui); color: rgba(255,255,255,0.4); transition: color 0.2s; }
+        .footer-list a:hover { color: #FFF; }
+        .footer-legal-bar { border-top: 1px solid rgba(255,255,255,0.04); padding: 1.5rem 2rem; text-align: center; }
+
+        /* ========================================= 
+            LIGHT MODE OVERRIDES v2 — More contrast 
+            Replace previous light mode block entirely 
+         ========================================= */ 
+         
+         /* ── SECTION RHYTHM ─────────────────────── */ 
+         /* Primary surface (hero, outputs, who-for) */ 
+         [data-theme="light"] body { background-color: #F0EDE8 !important; } 
+         
+         /* Dark sections → medium warm tone */ 
+         [data-theme="light"] [style*="background: #030303"], 
+         [data-theme="light"] [style*="background: #040404"], 
+         [data-theme="light"] [style*="background: #050505"], 
+         [data-theme="light"] [style*="background: #080808"], 
+         [data-theme="light"] [style*="background: #0A0A0A"], 
+         [data-theme="light"] [style*="background: #0c0c0d"], 
+         [data-theme="light"] [style*="background: #0C0C0D"], 
+         [data-theme="light"] [style*="background-color: #0A0A0A"] { 
+             background: #E3DED7 !important; 
+         } 
+         
+         [data-theme="light"] .bg-dark-section, 
+         [data-theme="light"] .bg-panel-section { 
+             background: #D9D4CC !important; 
+         } 
+         
+         /* ── GLOBAL TEXT ────────────────────────── */ 
+         [data-theme="light"] .section-h2, 
+         [data-theme="light"] [style*="color: #F0EDE8"], 
+         [data-theme="light"] .final-cta-headline { 
+             color: #111111 !important; 
+         } 
+         [data-theme="light"] [style*="color: rgba(255,255,255,0.8)"], 
+         [data-theme="light"] [style*="color: rgba(255,255,255,0.85)"], 
+         [data-theme="light"] [style*="color: rgba(200,200,210,0.8)"], 
+         [data-theme="light"] [style*="color: rgba(160,160,170,0.8)"], 
+         [data-theme="light"] [style*="color: rgba(161,161,170,0.8)"], 
+         [data-theme="light"] [style*="color: rgba(160,160,170,0.85)"] { 
+             color: rgba(20, 16, 12, 0.8) !important; 
+         } 
+         [data-theme="light"] [style*="color: rgba(255,255,255,0.55)"], 
+         [data-theme="light"] [style*="color: rgba(255,255,255,0.6)"], 
+         [data-theme="light"] [style*="color: rgba(255,255,255,0.65)"], 
+         [data-theme="light"] [style*="color: rgba(161,161,170,0.5)"] { 
+             color: rgba(20, 16, 12, 0.6) !important; 
+         } 
+         [data-theme="light"] [style*="color: rgba(255,255,255,0.4)"], 
+         [data-theme="light"] [style*="color: rgba(255,255,255,0.45)"], 
+         [data-theme="light"] [style*="color: rgba(255,255,255,0.5)"], 
+         [data-theme="light"] [style*="color: rgba(161,161,170,0.4)"] { 
+             color: rgba(20, 16, 12, 0.5) !important; 
+         } 
+         [data-theme="light"] [style*="color: rgba(255,255,255,0.2)"], 
+         [data-theme="light"] [style*="color: rgba(255,255,255,0.25)"], 
+         [data-theme="light"] [style*="color: rgba(255,255,255,0.3)"] { 
+             color: rgba(20, 16, 12, 0.3) !important; 
+         } 
+         
+         /* ── EYEBROW & TEAL FRAME ───────────────── */ 
+         [data-theme="light"] .section-eyebrow { 
+             color: rgba(20, 16, 12, 0.4) !important; 
+         } 
+         [data-theme="light"] .section-eyebrow::before { 
+             background: rgba(20, 16, 12, 0.25) !important; 
+         } 
+         [data-theme="light"] .teal-frame { 
+             color: rgba(20, 16, 12, 0.6) !important; 
+             border-left-color: rgba(46, 211, 198, 0.6) !important; 
+         } 
+         
+         /* ── HOW IT WORKS ───────────────────────── */ 
+         [data-theme="light"] .step-circle { 
+             background: #D4CFC7 !important; 
+             border-color: rgba(20, 16, 12, 0.14) !important; 
+             box-shadow: 0 2px 8px rgba(20,16,12,0.08) !important; 
+         } 
+         [data-theme="light"] .step-circle span { 
+             color: rgba(20, 16, 12, 0.22) !important; 
+         } 
+         /* Connector line */ 
+         [data-theme="light"] [style*="background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07)"] { 
+             background: linear-gradient(90deg, transparent, rgba(0,0,0,0.1) 20%, rgba(0,0,0,0.1) 80%, transparent) !important; 
+         } 
+         
+         /* ── GLASS PANELS (outputs) ─────────────── */ 
+         [data-theme="light"] .glass-panel { 
+             background: #D9D4CC !important; 
+             border: 1px solid rgba(20, 16, 12, 0.14) !important; 
+             box-shadow: 0 2px 12px rgba(20,16,12,0.06) !important; 
+         } 
+         [data-theme="light"] .glass-panel:hover { 
+             background: #CEC8C0 !important; 
+             border-color: rgba(249, 111, 110, 0.45) !important; 
+             box-shadow: 0 8px 28px rgba(249,111,110,0.12) !important; 
+             transform: translateY(-4px) !important; 
+         } 
+         [data-theme="light"] .glass-panel h3 { 
+             color: #111 !important; 
+         } 
+         [data-theme="light"] .glass-panel p { 
+             color: rgba(20, 16, 12, 0.6) !important; 
+         } 
+         [data-theme="light"] .glass-panel [style*="border-top: 1px solid rgba(255,255,255,0.06)"] { 
+             border-top-color: rgba(20, 16, 12, 0.12) !important; 
+         } 
+         [data-theme="light"] .glass-panel [style*="color: rgba(255,255,255,0.2)"] { 
+             color: rgba(20, 16, 12, 0.35) !important; 
+         } 
+         
+         /* ── EDITORIAL BREAK ────────────────────── */ 
+         [data-theme="light"] .editorial-break { 
+             background: #C8C2B9 !important; 
+             border-top-color: rgba(20,16,12,0.1) !important; 
+             border-bottom-color: rgba(20,16,12,0.1) !important; 
+         } 
+         [data-theme="light"] .editorial-break-text { 
+             color: rgba(20, 16, 12, 0.65) !important; 
+         } 
+         [data-theme="light"] .editorial-break-rule { 
+             background: rgba(249, 111, 110, 0.55) !important; 
+         } 
+         
+         /* ── COST OF GUESSING ───────────────────── */ 
+         [data-theme="light"] [style*="color: rgba(255,255,255,0.12)"] { 
+             color: rgba(20, 16, 12, 0.15) !important; 
+         } 
+         
+         /* ── ECOSYSTEM FLOW ─────────────────────── */ 
+         [data-theme="light"] .ecosystem-flow { 
+             border-color: rgba(20, 16, 12, 0.14) !important; 
+         } 
+         [data-theme="light"] .ecosystem-node { 
+             background: #D4CFC7 !important; 
+             border-color: rgba(20, 16, 12, 0.14) !important; 
+         } 
+         [data-theme="light"] .ecosystem-node .node-number { 
+             color: rgba(20, 16, 12, 0.4) !important; 
+         } 
+         [data-theme="light"] .ecosystem-node .node-title { 
+             color: #1A1714 !important; 
+         } 
+         [data-theme="light"] .ecosystem-node .node-desc { 
+             color: rgba(20, 16, 12, 0.58) !important; 
+         } 
+         [data-theme="light"] .ecosystem-node a { 
+             color: rgba(20, 16, 12, 0.45) !important; 
+         } 
+         [data-theme="light"] .ecosystem-node.active-node { 
+             background: rgba(249, 111, 110, 0.1) !important; 
+             border-color: rgba(249, 111, 110, 0.45) !important; 
+             box-shadow: 0 0 28px rgba(249,111,110,0.1) !important; 
+         } 
+         [data-theme="light"] .ecosystem-node.active-node .node-title { 
+             color: var(--coral) !important; 
+         } 
+         
+         /* ── AUDIENCE CARDS ─────────────────────── */ 
+         [data-theme="light"] .audience-card { 
+             background: #D9D4CC !important; 
+             border-color: rgba(20, 16, 12, 0.13) !important; 
+             box-shadow: 0 2px 10px rgba(20,16,12,0.06) !important; 
+         } 
+         [data-theme="light"] .audience-card:hover { 
+             background: #CEC8C0 !important; 
+             border-color: rgba(249, 111, 110, 0.3) !important; 
+             box-shadow: 0 12px 36px rgba(20,16,12,0.1) !important; 
+         } 
+         [data-theme="light"] .audience-number { 
+             color: rgba(20, 16, 12, 0.35) !important; 
+         } 
+         [data-theme="light"] .audience-title { 
+             color: #111 !important; 
+         } 
+         [data-theme="light"] .audience-desc { 
+             color: rgba(20, 16, 12, 0.6) !important; 
+         } 
+         
+         /* ── FAQ ────────────────────────────────── */ 
+         [data-theme="light"] details.faq-item { 
+             background: #D9D4CC !important; 
+             border-color: rgba(20, 16, 12, 0.13) !important; 
+         } 
+         [data-theme="light"] details.faq-item[open] { 
+             background: #CEC8C0 !important; 
+             border-color: rgba(249, 111, 110, 0.3) !important; 
+         } 
+         [data-theme="light"] details.faq-item summary { 
+             color: #1A1714 !important; 
+         } 
+         [data-theme="light"] details.faq-item summary:hover { color: var(--coral) !important; } 
+         [data-theme="light"] details.faq-item .faq-chevron { 
+             border-color: rgba(20, 16, 12, 0.18) !important; 
+             color: rgba(20, 16, 12, 0.5) !important; 
+         } 
+         [data-theme="light"] details.faq-item[open] .faq-chevron { 
+             border-color: rgba(249, 111, 110, 0.4) !important; 
+             color: var(--coral) !important; 
+         } 
+         [data-theme="light"] details.faq-item .faq-body { 
+             color: rgba(20, 16, 12, 0.65) !important; 
+         } 
+         [data-theme="light"] details.faq-item .faq-body strong { 
+             color: #111 !important; 
+         } 
+         
+         /* ── FOOTER (ALWAYS OBSIDIAN) ─────────────── */ 
+        /* Overrides to keep footer dark in light mode */ 
+        [data-theme="light"] .site-footer { background: #030303 !important; color: #FFF !important; border-top-color: rgba(255,255,255,0.05) !important; } 
+        [data-theme="light"] .footer-heading { color: #444 !important; } 
+        [data-theme="light"] .footer-list a { color: rgba(255,255,255,0.4) !important; } 
+        [data-theme="light"] .footer-list a:hover { color: #FFF !important; } 
+        [data-theme="light"] .footer-legal-bar { border-top-color: rgba(255,255,255,0.04) !important; } 
+        [data-theme="light"] .footer-legal-bar p { color: rgba(255,255,255,0.2) !important; } 
+         
+         /* ── HERO MISC ──────────────────────────── */ 
+         [data-theme="light"] [style*="color: rgba(255,255,255,0.25)"] { 
+             color: rgba(20, 16, 12, 0.3) !important; 
+         } 
+         /* Hero mock browser chrome */ 
+         [data-theme="light"] [style*="background: #111"] { 
+             background: #C8C2B9 !important; 
+         } 
+         
+         /* ── GRID PATTERN ───────────────────────── */ 
+         [data-theme="light"] .grid-pattern { 
+             background-image: 
+                 linear-gradient(rgba(0,0,0,0.07) 1px, transparent 1px), 
+                 linear-gradient(90deg, rgba(0,0,0,0.07) 1px, transparent 1px) !important; 
+         }
+
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+        @media (max-width: 1024px) {
+            .footer-grid { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+            .footer-grid > div:first-child { grid-column: 1 / -1; }
+        }
+        @media (max-width: 767px) {
+            .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .editorial-break { padding: 5rem 1.5rem; }
+            :root { --section-pad: 4.5rem; --section-pad-sm: 3rem; }
+        }
+
+        /* v13.0 AUTHORITY SCALE FOOTER */ 
+        .site-footer { 
+            background-color: #050505 !important; 
+            padding: 80px 0 0 !important; 
+            border-top: 1px solid rgba(255,255,255,0.05); 
+        } 
+         
+        .footer-logo-lockup, 
+        .footer-brand img, 
+        .footer-logo-img { 
+            height: 80px !important;       /* The "Premium" Height */ 
+            width: auto !important;        /* Maintain Aspect Ratio */ 
+            max-width: 450px !important;   /* Let the wide logo breathe */ 
+            display: block !important; 
+            object-fit: contain !important; 
+            margin-bottom: 2rem; 
+            filter: drop-shadow(0 10px 30px rgba(0,0,0,0.5)); 
+            image-rendering: -webkit-optimize-contrast; 
+        } 
+         
+        /* Ensure the footer column has enough room for a bigger logo */ 
+        .footer-signature { 
+            flex: 2 !important; 
+            min-width: 350px; 
+        } 
+         
+        .footer-legal-bar { 
+            background: #000 !important; 
+            padding: 24px 48px; 
+            border-top: 1px solid rgba(255,255,255,0.04); 
+        } 
+
+         /* v13.0 LUXE AUDIENCE INDICATOR */ 
+         .audience-badge { 
+             display: inline-flex; 
+             align-items: center; 
+             gap: 8px; 
+             padding: 5px 14px; 
+             border-radius: 20px; 
+             font-family: var(--font-mono); 
+             font-size: var(--fs-tiny); 
+             font-weight: 700; 
+             letter-spacing: 0.08em; 
+             text-transform: uppercase; 
+             transition: all 0.3s ease; 
+             cursor: pointer; 
+             height: 28px;              /* Slim profile */ 
+             margin-right: 12px; 
+         } 
+         
+         /* Status Dot Animation */ 
+         .badge-dot { 
+             width: 5px; 
+             height: 5px; 
+             border-radius: 50%; 
+             display: block; 
+             animation: status-breath 2s infinite ease-in-out; 
+         } 
+         
+         /* Persona: Hire/Assess (Coral) */ 
+         .badge-hire { 
+             color: #F96F6E !important; 
+             border: 1px solid rgba(249, 111, 110, 0.2); 
+             background: rgba(249, 111, 110, 0.05); 
+         } 
+         .badge-hire .badge-dot { background: #F96F6E; box-shadow: 0 0 8px #F96F6E; } 
+         
+         /* Persona: Partner (Teal) */ 
+         .badge-partner { 
+             color: #2ED3C6 !important; 
+             border: 1px solid rgba(46, 211, 198, 0.2); 
+             background: rgba(46, 211, 198, 0.05); 
+         } 
+         .badge-partner .badge-dot { background: #2ED3C6; box-shadow: 0 0 8px #2ED3C6; } 
+         
+         /* Persona: Explore (White) */ 
+         .badge-explore { 
+             color: #FFFFFF !important; 
+             border: 1px solid rgba(255, 255, 255, 0.2); 
+             background: rgba(255, 255, 255, 0.05); 
+         } 
+         .badge-explore .badge-dot { background: #FFFFFF; box-shadow: 0 0 8px #FFFFFF; } 
+         
+         @keyframes status-breath { 
+             0%, 100% { opacity: 1; transform: scale(1); } 
+             50% { opacity: 0.5; transform: scale(0.9); } 
+         } 
+
+        /* =========================================
+           LEGIBILITY FLOOR — no inline micro-type below 13px
+           (mirrors this page's [style*=] override pattern)
+        ========================================= */
+        [style*="font-size: 0.6rem"],
+        [style*="font-size: 0.62rem"],
+        [style*="font-size: 0.65rem"],
+        [style*="font-size: 0.68rem"],
+        [style*="font-size: 0.7rem"],
+        [style*="font-size: 0.72rem"],
+        [style*="font-size: 0.75rem"],
+        [style*="font-size:9px"],
+        [style*="font-size:10px"],
+        [style*="font-size:11px"],
+        [style*="font-size:12px"] { font-size: var(--fs-tiny) !important; }
+
+        /* Body copy floor — lift small inline paragraphs to a comfortable read */
+        [style*="font-size: 0.8rem"],
+        [style*="font-size: 0.82rem"],
+        [style*="font-size: 0.85rem"],
+        [style*="font-size: 0.875rem"],
+        [style*="font-size: 0.9rem"],
+        [style*="font-size: 0.95rem"] { font-size: 1rem !important; line-height: 1.7 !important; }
+   </style>
+</head>
+<body class="antialiased">
+    <div id="site-nav" data-base="../../" data-active="hub"></div>
+
+    <main>
+
+        <!-- 1. HERO -->
+        <section style="padding: 6rem 0 7rem; background: var(--bg-body); position: relative; overflow: hidden;">
+            <div style="position: absolute; inset: 0;">
+                <div style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 900px; height: 600px; background: radial-gradient(ellipse, rgba(249,111,110,0.06) 0%, transparent 70%); blur: 140px; pointer-events: none; filter: blur(140px);"></div>
+                <div style="position: absolute; inset: 0; opacity: 0.02;" class="grid-pattern"></div>
+            </div>
+            <div style="position: relative; z-index: 10; max-width: 72rem; margin: 0 auto; padding: 0 1.5rem;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 4rem;">
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem; max-width: 520px;">
+                        <div style="display: inline-flex; align-items: center; gap: 0.625rem; padding: 0.375rem 1rem; border-radius: 50px; border: 1px solid rgba(249,111,110,0.25); background: rgba(249,111,110,0.04); width: fit-content;">
+                            <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--coral); animation: pulse 2s infinite;"></span>
+                            <span style="font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--coral);">StrategyIQ™ · Strategic Diagnostic System</span>
+                        </div>
+                        <h1 class="font-display font-bold text-primary" style="font-size: clamp(2.75rem, 5.5vw, 4.5rem); line-height: 0.93; letter-spacing: -0.02em;">
+                            Know what to build <span class="text-coral-gradient">before</span> you build it.
+                        </h1>
+                        <p style="font-size: 1.125rem; color: var(--text-body); line-height: 1.75;">
+                            StrategyIQ is a system for faster, clearer strategic decisions.
+                        </p>
+                        <p class="teal-frame">
+                            A framework for organizing complex decisions — so you act on clarity, not guesswork.
+                        </p>
+                        <ul style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.875rem;">
+                            <li style="display: flex; align-items: center; gap: 0.75rem; color: var(--text-body);"><span style="color: var(--teal); font-size: 0.7rem;"><i class="fas fa-check"></i></span> Stop wasting budget on "guesswork" campaigns.</li>
+                            <li style="display: flex; align-items: center; gap: 0.75rem; color: var(--text-body);"><span style="color: var(--teal); font-size: 0.7rem;"><i class="fas fa-check"></i></span> Get a calculated maturity score (0–100).</li>
+                            <li style="display: flex; align-items: center; gap: 0.75rem; color: var(--text-body);"><span style="color: var(--teal); font-size: 0.7rem;"><i class="fas fa-check"></i></span> Receive a prioritized Strategic Brief.</li>
+                        </ul>
+                        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; padding-top: 0.25rem;">
+                            <a href="https://portal.luis-gilberto.com/auth/signup" class="cta-primary">Start analysis <i class="fas fa-arrow-right" style="font-size: 0.65rem;"></i></a>
+                            <a href="#outputs" class="cta-secondary">See strategic outputs</a>
+                        </div>
+                        <p style="font-size: 0.72rem; color: var(--text-faint); letter-spacing: 0.02em; line-height: 1.6;">
+                            Built from real-world strategy systems used inside global product teams.
+                        </p>
+                    </div>
+                    <div style="position: relative;">
+                        <div style="border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 32px 80px rgba(0,0,0,0.5);">
+                            <div style="height: 36px; background: #111; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; padding: 0 1rem; gap: 0.5rem;">
+                                <div style="width: 10px; height: 10px; border-radius: 50%; background: rgba(255,95,87,0.5);"></div>
+                                <div style="width: 10px; height: 10px; border-radius: 50%; background: rgba(255,189,46,0.5);"></div>
+                                <div style="width: 10px; height: 10px; border-radius: 50%; background: rgba(40,201,64,0.5);"></div>
+                                <span style="margin-left: auto; font-size: 0.6rem; color: rgba(255,255,255,0.2); text-transform: uppercase; letter-spacing: 0.08em;">StrategyIQ™ Dashboard</span>
+                            </div>
+                            <div style="aspect-ratio: 4/3; background: linear-gradient(135deg, #0a0a0a, #111); position: relative;">
+                                <img src="/TheHub/strategy-iq/assets/images/dashboard-dark.png" alt="StrategyIQ Interface" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.8;">
+                                <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none;">
+                                    <div style="width: 96px; height: 96px; border-radius: 50%; border: 3px solid var(--teal); box-shadow: 0 0 32px rgba(46,211,198,0.2); display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 0.75rem;">
+                                        <span style="font-family: var(--font-strategist); font-size: 2.25rem; font-weight: 800; color: #fff; line-height: 1;">86</span>
+                                    </div>
+                                    <span style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--teal); font-weight: 700;">Growth Ready</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. HOW IT WORKS -->
+        <section data-section="dark" style="padding: var(--section-pad) 0; background: var(--bg-body); border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05);">
+            <div style="max-width: 72rem; margin: 0 auto; padding: 0 1.5rem;">
+                <div style="text-align: center; margin-bottom: 4rem;">
+                    <div class="section-eyebrow" style="justify-content: center;">The Process</div>
+                    <h2 class="section-h2" style="font-size: clamp(2rem, 4vw, 3rem);">HOW IT WORKS</h2>
+                    <p style="color: var(--text-dim); font-size: 0.9rem; max-width: 360px; margin: 0 auto; line-height: 1.7;">Three steps to turn uncertainty into strategic clarity.</p>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3rem; position: relative;" class="reveal-container" id="how-it-works-reveal">
+                    <div style="position: absolute; top: 48px; left: 16.66%; right: 16.66%; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07) 20%, rgba(255,255,255,0.07) 80%, transparent);"></div>
+                    <div style="text-align: center; position: relative; z-index: 1;" class="group reveal-item">
+                        <div class="step-circle" style="width: 96px; height: 96px; border-radius: 50%; background: #0A0A0A; border: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                            <span style="font-family: var(--font-strategist); font-size: 1.75rem; font-weight: 800; color: rgba(255,255,255,0.18);">01</span>
+                        </div>
+                        <h3 style="font-family: var(--font-strategist); font-size: 1.35rem; font-weight: 800; color: #F0EDE8; margin-bottom: 0.625rem;">Signal Capture</h3>
+                        <p style="font-size: 0.875rem; color: var(--text-dim); line-height: 1.75; padding: 0 1rem;">Answer a focused set of strategic questions covering GTM, Brand, and Creative operations.</p>
+                    </div>
+                    <div style="text-align: center; position: relative; z-index: 1;" class="group reveal-item">
+                        <div class="step-circle" style="width: 96px; height: 96px; border-radius: 50%; background: #0A0A0A; border: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                            <span style="font-family: var(--font-strategist); font-size: 1.75rem; font-weight: 800; color: rgba(255,255,255,0.18);">02</span>
+                        </div>
+                        <h3 style="font-family: var(--font-strategist); font-size: 1.35rem; font-weight: 800; color: #F0EDE8; margin-bottom: 0.625rem;">Strategic Synthesis</h3>
+                        <p style="font-size: 0.875rem; color: var(--text-dim); line-height: 1.75; padding: 0 1rem;">The engine benchmarks your answers against market standards to calculate your Maturity Score.</p>
+                    </div>
+                    <div style="text-align: center; position: relative; z-index: 1;" class="group reveal-item">
+                        <div class="step-circle" style="width: 96px; height: 96px; border-radius: 50%; background: #0A0A0A; border: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                            <span style="font-family: var(--font-strategist); font-size: 1.75rem; font-weight: 800; color: rgba(255,255,255,0.18);">03</span>
+                        </div>
+                        <h3 style="font-family: var(--font-strategist); font-size: 1.35rem; font-weight: 800; color: #F0EDE8; margin-bottom: 0.625rem;">Execution Roadmap</h3>
+                        <p style="font-size: 0.875rem; color: var(--text-dim); line-height: 1.75; padding: 0 1rem;">Instantly generate a Strategic Brief with prioritized actions to close gaps and move forward.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. WHAT STRATEGYIQ REVEALS -->
+        <section data-section="dark" style="padding: var(--section-pad) 0; background: #030303; overflow: hidden; position: relative; border-top: 1px solid rgba(255,255,255,0.04);">
+            <div style="max-width: 72rem; margin: 0 auto; padding: 0 1.5rem; position: relative; z-index: 10;">
+                <div style="display: grid; grid-template-columns: 5fr 7fr; align-items: center; gap: 4rem;">
+                    <div>
+                        <div class="section-eyebrow">The Signal Layer</div>
+                        <h2 class="section-h2" style="font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 1.5rem;">WHAT STRATEGYIQ REVEALS</h2>
+                        <p style="color: var(--text-body); font-size: 0.95rem; margin-bottom: 1.75rem; line-height: 1.85;">
+                            A system that helps leadership teams turn messy inputs into clear, structured decisions. It analyzes your answers to pinpoint <strong style="color: #F0EDE8;">where you're leaking value</strong> and surface the highest-leverage moves before you commit budget to execution.
+                        </p>
+                        <div style="display: flex; align-items: center; gap: 0.625rem; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--teal);">
+                            <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 8px rgba(46,211,198,0.6); flex-shrink: 0;"></span>
+                            Real-time strategic analysis
+                        </div>
+                    </div>
+                    <div style="position: relative;">
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; height: 80%; background: radial-gradient(ellipse, rgba(249,111,110,0.06) 0%, transparent 70%); filter: blur(60px); pointer-events: none;"></div>
+                        <img src="/insights/assets/images/StrategyIQ_nodes.png" alt="StrategyIQ Analysis Network" style="width: 100%; height: auto; object-fit: contain; mix-blend-mode: screen; opacity: 0.85; position: relative; z-index: 1;">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- EDITORIAL BREAK -->
+        <div data-section="dark" class="editorial-break">
+            <p class="editorial-break-text">
+                "Execution is expensive.<br><em>Clarity is priceless.</em>"
+            </p>
+            <div class="editorial-break-rule"></div>
+        </div>
+
+        <!-- 4. WHAT YOU WALK AWAY WITH -->
+        <section data-section="dark" id="outputs" style="padding: var(--section-pad) 0; background: var(--bg-body); border-top: 1px solid rgba(255,255,255,0.04);">
+            <div style="max-width: 72rem; margin: 0 auto; padding: 0 1.5rem;">
+                <div style="margin-bottom: 2.5rem;">
+                    <div class="section-eyebrow">Tangible Results</div>
+                    <h2 class="section-h2" style="font-size: clamp(2rem, 4vw, 3rem);">WHAT YOU WALK AWAY WITH</h2>
+                    <p style="color: var(--text-dim); font-size: 0.875rem; margin-top: 0.5rem;">Tangible artifacts you can act on immediately.</p>
+                </div>
+                <p class="teal-frame" style="margin-bottom: 3rem; max-width: 480px;">
+                    StrategyIQ doesn't replace strategic thinking. It structures it.
+                </p>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem;">
+                    <div class="glass-panel" style="padding: 2rem 1.75rem; border-radius: var(--card-radius); display: flex; flex-direction: column;">
+                        <div style="font-size: 1.5rem; color: var(--coral); margin-bottom: 1.25rem;"><i class="fas fa-chart-pie"></i></div>
+                        <h3 style="font-family: var(--font-strategist); font-size: 1.15rem; font-weight: 800; color: #F0EDE8; margin-bottom: 0.5rem;">Market Signal</h3>
+                        <p style="font-size: 0.85rem; color: rgba(255,255,255,0.45); line-height: 1.7; flex-grow: 1; margin-bottom: 1.25rem;">A clear signal of how your brand's positioning actually lands in the market.</p>
+                        <div style="font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.2); border-top: 1px solid rgba(255,255,255,0.06); padding-top: 0.875rem;">WHY: STOP BLENDING IN</div>
+                    </div>
+                    <div class="glass-panel" style="padding: 2rem 1.75rem; border-radius: var(--card-radius); display: flex; flex-direction: column;">
+                        <div style="font-size: 1.5rem; color: var(--teal); margin-bottom: 1.25rem;"><i class="fas fa-magnifying-glass-chart"></i></div>
+                        <h3 style="font-family: var(--font-strategist); font-size: 1.15rem; font-weight: 800; color: #F0EDE8; margin-bottom: 0.5rem;">Gap Analysis</h3>
+                        <p style="font-size: 0.85rem; color: rgba(255,255,255,0.45); line-height: 1.7; flex-grow: 1; margin-bottom: 1.25rem;">Pinpoints where your current strategy or execution is leaking value.</p>
+                        <div style="font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.2); border-top: 1px solid rgba(255,255,255,0.06); padding-top: 0.875rem;">WHY: FIX LEAKS</div>
+                    </div>
+                    <div class="glass-panel" style="padding: 2rem 1.75rem; border-radius: var(--card-radius); display: flex; flex-direction: column;">
+                        <div style="font-size: 1.5rem; color: rgba(240,237,232,0.6); margin-bottom: 1.25rem;"><i class="fas fa-road"></i></div>
+                        <h3 style="font-family: var(--font-strategist); font-size: 1.15rem; font-weight: 800; color: #F0EDE8; margin-bottom: 0.5rem;">Roadmap</h3>
+                        <p style="font-size: 0.85rem; color: rgba(255,255,255,0.45); line-height: 1.7; flex-grow: 1; margin-bottom: 1.25rem;">A prioritized roadmap for what to build, fix, and sequence next.</p>
+                        <div style="font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.2); border-top: 1px solid rgba(255,255,255,0.06); padding-top: 0.875rem;">WHY: FOCUS EFFORT</div>
+                    </div>
+                    <div class="glass-panel" style="padding: 2rem 1.75rem; border-radius: var(--card-radius); display: flex; flex-direction: column;">
+                        <div style="font-size: 1.5rem; color: var(--coral); margin-bottom: 1.25rem;"><i class="fas fa-file-pdf"></i></div>
+                        <h3 style="font-family: var(--font-strategist); font-size: 1.15rem; font-weight: 800; color: #F0EDE8; margin-bottom: 0.5rem;">Strategic Brief</h3>
+                        <p style="font-size: 0.85rem; color: rgba(255,255,255,0.45); line-height: 1.7; flex-grow: 1; margin-bottom: 1.25rem;">An executive-ready strategic brief designed to align teams and leadership.</p>
+                        <div style="font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.2); border-top: 1px solid rgba(255,255,255,0.06); padding-top: 0.875rem;">WHY: ALIGN TEAMS</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. THE COST OF GUESSING -->
+        <section data-section="dark" style="padding: var(--section-pad) 0; background: #0A0A0A; border-top: 1px solid rgba(255,255,255,0.04); position: relative; overflow: hidden;">
+            <div style="position: absolute; top: 0; right: 0; width: 600px; height: 600px; background: radial-gradient(ellipse, rgba(46,211,198,0.04) 0%, transparent 65%); pointer-events: none;"></div>
+            <div style="max-width: 48rem; margin: 0 auto; padding: 0 1.5rem; text-align: center;" class="reveal-up">
+                <h2 style="font-family: var(--font-strategist); font-size: clamp(3rem, 8vw, 6rem); font-weight: 900; letter-spacing: -0.03em; line-height: 0.88; color: #F0EDE8; margin-bottom: 2rem;">
+                    THE COST OF <span style="color: rgba(255,255,255,0.12); text-decoration: line-through; text-decoration-color: var(--coral); text-decoration-thickness: 3px;">GUESSING</span>
+                </h2>
+                <p style="font-size: 1rem; line-height: 1.85; color: var(--text-body); max-width: 560px; margin: 0 auto 1.5rem;">
+                    Skipping strategy feels fast, but the result is <strong style="color: #F0EDE8;">misaligned execution</strong> and <strong style="color: #F0EDE8;">burned capital</strong>. StrategyIQ™ compresses weeks of discovery into minutes, giving you the conviction to move fast without breaking things.
+                </p>
+                <p style="font-size: 0.85rem; color: var(--text-body); font-style: italic; margin: 0 auto 3rem; max-width: 440px;">
+                    StrategyIQ compresses weeks of discovery into minutes of structured insight.
+                </p>
+                <a href="/TheHub/index.html?open=diagnostic" style="display: inline-flex; align-items: center; gap: 0.625rem; color: var(--coral); font-weight: 700; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.08em; transition: gap 0.2s ease; text-decoration: none;" onmouseover="this.style.gap='1rem'" onmouseout="this.style.gap='0.625rem'">
+                    Start analysis now <i class="fas fa-arrow-right" style="font-size: 0.75rem;"></i>
+                </a>
+            </div>
+        </section>
+
+        <!-- 6. YOUR PATH FORWARD -->
+        <section data-section="dark" style="padding: var(--section-pad) 0; background: #040404; border-top: 1px solid rgba(255,255,255,0.04);">
+            <div style="max-width: 72rem; margin: 0 auto; padding: 0 1.5rem;">
+                <div style="text-align: center; margin-bottom: 3rem;" class="reveal-up">
+                <div class="section-eyebrow" style="justify-content: center; color: var(--teal);">THE HUB ECOSYSTEM</div>
+                <h2 class="section-h2" style="font-size: clamp(1.75rem, 3.5vw, 2.75rem);">StrategyIQ in the ecosystem</h2>
+                <p class="section-sub" style="margin: 0 auto; text-align: center; color: var(--text-dim);">The diagnostic engine that powers every decision. Everything else in the ecosystem builds on the clarity StrategyIQ produces.</p>
+            </div>
+
+            <div class="ecosystem-flow">
+                <div class="ecosystem-node active-node" style="border-color: var(--coral); background: rgba(249,111,110,0.04);">
+                    <div class="node-number">01 · STRATEGYIQ</div>
+                    <div class="node-title" style="color: var(--coral);">SURFACES<br>THE SIGNAL</div>
+                    <p class="node-desc">Diagnostic intelligence identifies patterns, friction, and opportunity across strategic domains.</p>
+                    <span style="display:inline-flex; align-items:center; gap:0.375rem; font-size:0.75rem; font-weight:700; color: var(--coral); margin-top:1.25rem; text-transform:uppercase; letter-spacing:0.08em;">START HERE</span>
+                </div>
+                <div class="ecosystem-node">
+                    <div class="node-number">02 · ADVISORY</div>
+                    <div class="node-title">INTERPRETS<br>THE SIGNAL</div>
+                    <p class="node-desc">Expert evaluation and critical analysis translated into a clear, defensible course of action.</p>
+                    <a href="/TheHub/advisory/index.html" style="display:inline-flex; align-items:center; gap:0.375rem; font-size:0.75rem; font-weight:600; color: var(--text-muted); text-decoration:none; margin-top:1.25rem; text-transform:uppercase; letter-spacing:0.08em;">Explore Advisory →</a>
+                </div>
+                <div class="ecosystem-node">
+                    <div class="node-number">03 · THE STUDIO</div>
+                    <div class="node-title">BUILDS WHAT<br>STRATEGY REQUIRES</div>
+                    <p class="node-desc">Creative production and execution environment for when direction needs to become real work.</p>
+                    <a href="/TheHub/studio.html" style="display:inline-flex; align-items:center; gap:0.375rem; font-size:0.75rem; font-weight:600; color: var(--text-muted); text-decoration:none; margin-top:1.25rem; text-transform:uppercase; letter-spacing:0.08em;">Explore Studio →</a>
+                </div>
+                <div class="ecosystem-node">
+                    <div class="node-number">04 · THE PORTAL</div>
+                    <div class="node-title">CONNECTS<br>THE WORKFLOW</div>
+                    <p class="node-desc">The operating system that holds the full engagement flow together across every layer.</p>
+                    <a href="/portal/" style="display:inline-flex; align-items:center; gap:0.375rem; font-size:0.75rem; font-weight:600; color: var(--text-muted); text-decoration:none; margin-top:1.25rem; text-transform:uppercase; letter-spacing:0.08em;">Enter Portal <i class="fa-solid fa-arrow-right" style="font-size:0.65rem;"></i></a>
+                </div>
+            </div>
+            </div>
+        </section>
+
+        <!-- 7. WHO IS THIS FOR -->
+        <section data-section="dark" style="padding: var(--section-pad) 0; background: #080808; border-top: 1px solid rgba(255,255,255,0.04);">
+            <div style="max-width: 72rem; margin: 0 auto; padding: 0 1.5rem;">
+                <div style="margin-bottom: 3rem;" class="reveal-up">
+                    <div class="section-eyebrow">Audience</div>
+                    <h2 class="section-h2" style="border-left: 3px solid var(--coral); padding-left: 1.25rem;">WHO IS THIS FOR?</h2>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;" class="reveal-container" id="audience-reveal">
+                    <div class="audience-card reveal-item">
+                        <div class="audience-number">01 / Founders</div>
+                        <div class="audience-title">Building Traction</div>
+                        <p class="audience-desc">You have a product but need a Go-To-Market strategy that doesn't burn cash on vague experiments.</p>
+                        <p class="audience-outcome">Identify the highest-leverage move before committing resources.</p>
+                    </div>
+                    <div class="audience-card reveal-item">
+                        <div class="audience-number">02 / Marketers</div>
+                        <div class="audience-title">Needing Clarity</div>
+                        <p class="audience-desc">You inherited a messy brand or need to pivot positioning without pausing execution.</p>
+                        <p class="audience-outcome">Turn scattered signals into a clear strategic direction.</p>
+                    </div>
+                    <div class="audience-card reveal-item">
+                        <div class="audience-number">03 / Product Teams</div>
+                        <div class="audience-title">Seeking Alignment</div>
+                        <p class="audience-desc">You need to ensure the marketing story actually matches the product reality.</p>
+                        <p class="audience-outcome">Align product decisions with real market opportunities.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. FAQ -->
+        <section data-section="dark" style="padding: var(--section-pad) 0; background: #040404; border-top: 1px solid rgba(255,255,255,0.04);">
+            <div style="max-width: 48rem; margin: 0 auto; padding: 0 1.5rem;">
+                <div style="text-align: center; margin-bottom: 3rem;" class="reveal-up">
+                    <div class="section-eyebrow" style="justify-content: center;">Common Questions</div>
+                    <h2 class="section-h2">COMMON QUESTIONS</h2>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.625rem;">
+                    <details class="faq-item reveal-up">
+                        <summary>How long does it take? <span class="faq-chevron"><i class="fas fa-chevron-down"></i></span></summary>
+                        <div class="faq-body">The assessment takes about 10–15 minutes to complete. It requires you to think critically about your business, so don't rush it.</div>
+                    </details>
+                    <details class="faq-item reveal-up">
+                        <summary>What do I receive at the end? <span class="faq-chevron"><i class="fas fa-chevron-down"></i></span></summary>
+                        <div class="faq-body">You get immediate access to your Maturity Score dashboard and a downloadable Strategic Brief outlining gaps and prioritized next steps.</div>
+                    </details>
+                    <details class="faq-item reveal-up">
+                        <summary>Is this a sales call? <span class="faq-chevron"><i class="fas fa-chevron-down"></i></span></summary>
+                        <div class="faq-body">No. StrategyIQ™ is a <strong style="color: #F0EDE8;">consultant-led diagnostic session</strong>. We run your brand through the intelligence engine together to identify gaps and opportunities in real-time. You leave with a roadmap, not a pitch.</div>
+                    </details>
+                    <details class="faq-item reveal-up">
+                        <summary>What happens after? <span class="faq-chevron"><i class="fas fa-chevron-down"></i></span></summary>
+                        <div class="faq-body">Execute the brief with your team, or use the "Request Advisory" link to review results with Luis directly and map the path forward.</div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- 9. FINAL CTA -->
+        <section data-section="dark" style="padding: 8rem 1.5rem; background: #030303; border-top: 1px solid rgba(255,255,255,0.04); text-align: center; position: relative; overflow: hidden;">
+            <div style="position: absolute; inset: 0; background: radial-gradient(ellipse 800px 400px at 50% 100%, rgba(249,111,110,0.05) 0%, transparent 70%); pointer-events: none;"></div>
+            <div style="position: absolute; inset: 0; opacity: 0.015;" class="grid-pattern"></div>
+            <div style="position: relative; z-index: 10; max-width: 48rem; margin: 0 auto;" class="reveal-up">
+                <p style="font-size: 0.65rem; font-weight: 700; letter-spacing: 0.16em; color: rgba(255,255,255,0.2); text-transform: uppercase; margin-bottom: 2.5rem;">
+                    Engineered by Luis Gilberto · 15+ Years Integrated Marketing Leadership
+                </p>
+                <h2 class="final-cta-headline" style="margin-bottom: 1.5rem;">READY<br>TO BUILD?</h2>
+                <p style="font-size: 1rem; color: var(--text-body); margin-bottom: 3rem; letter-spacing: 0.02em;">Stop guessing. Start building with clarity.</p>
+                <a href="/contact.html?from=hub-strategyiq&amp;journey=hire" class="btn-primary-premium">Transmit Signal <i class="fas fa-arrow-right" style="font-size: 0.75rem;"></i></a>
+            </div>
+        </section>
+
+    </main>
+
+    <footer style="background:#050505; font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased;">
+ 
+      <div class="ft-responsive-grid" style="max-width:1400px; margin:0 auto; padding:72px 72px 0; display:grid; grid-template-columns:1.6fr 1fr 1fr 1.4fr; gap:56px; align-items:start;" data-footer-grid="true">
+ 
+        <!-- Brand signature -->
+        <div>
+          <a href="/index.html" style="display:inline-block; margin-bottom:20px;">
+            <img src="/assets/images/LG-ecosystem-logo-lockup.png" 
+                 alt="Luis Gilberto Ecosystem" 
+                 style="height:88px; width:auto; max-width:220px; object-fit:contain; display:block; opacity:0.92;">
+          </a>
+          <p style="font-family:'Cormorant Garamond',serif; font-size:15px; font-weight:300; font-style:italic; color:rgba(255,255,255,0.38); line-height:1.65; max-width:260px; margin:0 0 28px;">
+            Making technology feel human through clarity, beautiful execution, and systems that scale.
+          </p>
+          <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07); border-radius:8px; padding:18px 20px; max-width:260px;"> 
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;"> 
+              <div style="width:7px; height:7px; background:#2ED3C6; border-radius:50%; flex-shrink:0;"></div> 
+              <span style="font-size:10px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:rgba(255,255,255,0.7);">Accepting projects</span> 
+            </div> 
+            <p style="font-size:12px; color:rgba(255,255,255,0.32); line-height:1.55; margin:0;">Available for strategic consulting and creative direction.</p> 
+          </div> 
+        </div>
+ 
+        <!-- Ecosystem -->
+        <div>
+          <p style="font-size:10px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:#F96F6E; margin:0 0 22px;">ECOSYSTEM</p>
+          <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:13px;">
+            <li><a href="/timeline.html" style="font-size:13px; color:rgba(255,255,255,0.45); text-decoration:none;">Portfolio</a></li>
+            <li><a href="/insights/" style="font-size:13px; color:rgba(255,255,255,0.45); text-decoration:none;">Insights</a></li>
+            <li><a href="/TheHub/index.html" style="font-size:13px; color:rgba(255,255,255,0.45); text-decoration:none;">The Hub</a></li>
+            <li><a href="https://portal.luis-gilberto.com" style="font-size:13px; color:rgba(255,255,255,0.45); text-decoration:none;">The Portal</a></li>
+          </ul>
+        </div>
+ 
+        <!-- Profile -->
+        <div>
+          <p style="font-size:10px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:#F96F6E; margin:0 0 22px;">PROFILE</p>
+          <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:13px;">
+            <li><a id="footer-experience-link" href="/myexperience.html" style="font-size:13px; color:rgba(255,255,255,0.45); text-decoration:none;">Experience</a></li>
+            <li><a id="footer-timeline-link" href="/timeline.html" style="font-size:13px; color:rgba(255,255,255,0.45); text-decoration:none;">Timeline</a></li>
+            <li><a href="/about.html" style="font-size:13px; color:rgba(255,255,255,0.45); text-decoration:none;">About me</a></li>
+            <li><a href="/brand/" style="font-size:13px; color:rgba(255,255,255,0.45); text-decoration:none;">Brand identity</a></li>
+          </ul>
+        </div>
+ 
+        <!-- Connect -->
+        <div>
+          <p style="font-size:10px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:#F96F6E; margin:0 0 22px;">CONNECT</p>
+          <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:13px;">
+            <li><a href="https://www.linkedin.com/in/luisgilberto00" target="_blank" rel="noopener" style="font-size:13px; color:rgba(255,255,255,0.45); text-decoration:none;">LinkedIn</a></li>
+            <li><a href="/contact.html" style="font-size:13px; color:rgba(255,255,255,0.45); text-decoration:none;">Contact</a></li>
+          </ul>
+        </div>
+ 
+      </div>
+ 
+      <!-- Legal bar -->
+      <div class="ft-responsive-legal" style="max-width:1400px; margin:0 auto; padding:20px 72px 28px; display:flex; align-items:center; justify-content:space-between; border-top:1px solid rgba(255,255,255,0.05); margin-top:0;">
+        <span style="font-size:11px; color:rgba(255,255,255,0.22); letter-spacing:0.02em;">© <span id="ft-year-footer"></span> Luis Gilberto Sanchez. All rights reserved.</span>
+        <span style="font-size:10px; color:rgba(255,255,255,0.14); letter-spacing:0.04em; max-width:500px; text-align:right; line-height:1.5;">Intellectual property notice: StrategyIQ™, The Hub™, and the associated diagnostic methodologies are proprietary intellectual property of Luis Gilberto.</span>
+      </div>
+ 
+    </footer>
+
+    <script>
+      (function() {
+          const yearEl = document.getElementById('ft-year-footer');
+          if (yearEl) yearEl.textContent = new Date().getFullYear();
+      })();
+    </script>
+
+    <script src="/assets/js/nav-component.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () { 
+            const html = document.documentElement; 
+             
+            // Reveal Animations
+            const revealObs = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        if (entry.target.classList.contains('reveal-up')) {
+                            entry.target.classList.add('visible');
+                            revealObs.unobserve(entry.target);
+                        }
+                        if (entry.target.classList.contains('reveal-container')) {
+                            entry.target.querySelectorAll('.reveal-item').forEach((child, i) => {
+                                setTimeout(() => {
+                                    child.style.opacity = '1';
+                                    child.style.transform = 'translateY(0)';
+                                }, i * 120);
+                            });
+                            revealObs.unobserve(entry.target);
+                        }
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.reveal-up, .reveal-container').forEach(el => revealObs.observe(el));
+            document.querySelectorAll('.reveal-item').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'opacity 0.65s cubic-bezier(0.4,0,0.2,1), transform 0.65s cubic-bezier(0.4,0,0.2,1)';
+            });
+        });
+    </script>
+
+    <style>
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        @media (max-width: 1024px) {
+            [style*="grid-template-columns: repeat(4"] { grid-template-columns: repeat(2, 1fr) !important; }
+            [style*="grid-template-columns: 1fr 1fr 1fr"] { grid-template-columns: 1fr !important; }
+            [style*="grid-template-columns: 5fr 7fr"] { grid-template-columns: 1fr !important; }
+            [style*="grid-template-columns: 1fr 1fr;"] { grid-template-columns: 1fr !important; }
+        }
+        @media (max-width: 768px) {
+            [style*="grid-template-columns: repeat(4"] { grid-template-columns: repeat(2, 1fr) !important; }
+            [style*="grid-template-columns: repeat(3"] { grid-template-columns: repeat(2, 1fr) !important; }
+            [style*="grid-template-columns: repeat(2"] { grid-template-columns: 1fr !important; }
+            [style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; }
+        }
+        @media (max-width: 640px) {
+            [style*="grid-template-columns: repeat"] { grid-template-columns: 1fr !important; }
+            .final-cta-headline { font-size: clamp(3rem, 15vw, 5rem) !important; }
+        }
+    </style>
+
+</body>
+</html>
