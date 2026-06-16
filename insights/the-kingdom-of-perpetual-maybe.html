@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -558,7 +558,16 @@
     }
     .micro-tag { color: var(--ink-soft); background: rgba(26,23,20,.055); border: 1px solid rgba(26,23,20,.06); }
 
-    .back-strip { max-width: 1280px; margin: 0 auto; padding: 0 48px 72px; }
+    .back-strip {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 48px 72px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
     .back-link {
       display: inline-flex;
       align-items: center;
@@ -574,6 +583,7 @@
     }
     .back-link:hover { color: var(--coral); gap: 12px; }
     .back-link svg { width: 12px; height: 12px; }
+    .back-to-top svg { transform: rotate(90deg); }
 
     footer { background: #050505; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
     .ft-grid {
@@ -1212,7 +1222,7 @@
   </div>
 </nav>
 
-<header class="article-hero">
+<header class="article-hero" id="article-top">
   <div class="hero-copy">
     <div class="article-eyebrow">
       <span class="category-tag">Weather</span>
@@ -1224,7 +1234,7 @@
     <div class="article-byline">
       <span>By Luis Gilberto</span>
       <div class="byline-dot"></div>
-      <span>Apr 20</span>
+      <span>June 2026</span>
       <div class="byline-dot"></div>
       <span>4 min read</span>
     </div>
@@ -1478,6 +1488,10 @@
 </div>
 
 <div class="back-strip">
+  <a href="#article-top" class="back-link back-to-top" id="restart-journey">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    Back to the top
+  </a>
   <a href="/insights/" class="back-link">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
     All Stories
@@ -1532,6 +1546,25 @@
   })();
 </script>
 <script src="/insights/assets/js/insights-nav.js?v=3" data-active="insights" data-series="reflections"></script>
+<script>
+(function () {
+  document.documentElement.setAttribute('data-theme', 'dark');
+
+  var iconSun = document.getElementById('ins-icon-sun');
+  var iconMoon = document.getElementById('ins-icon-moon');
+  if (iconSun) iconSun.style.display = 'none';
+  if (iconMoon) iconMoon.style.display = 'block';
+
+  var ld = document.getElementById('ins-logo-desktop');
+  if (ld) ld.src = '/insights/assets/images/Insights_logo_white.png';
+
+  var lm = document.getElementById('ins-logo-mark');
+  if (lm) lm.src = '/insights/assets/images/Symbol_mobile.png';
+
+  var pn = document.getElementById('ins-portal-logo-nav');
+  if (pn) pn.src = '/assets/images/TheLGPortal_dark-mode.png';
+})();
+</script>
 
 <script>
 /* =========================================================
@@ -1905,6 +1938,35 @@
     requestAnimationFrame(frame);
   }
 
+  function replayEntryAnimations() {
+    ['body', '.article-hero', '.hero-card', '.article-shell article', '.poem', '.appendix'].forEach(function (sel) {
+      document.querySelectorAll(sel).forEach(function (el) {
+        el.style.animation = 'none';
+        void el.offsetHeight;
+        el.style.animation = '';
+      });
+    });
+  }
+
+  function restartAtmosphere() {
+    cur = { fog: 0, drizzle: 0, snow: 0, sun: 0, bank: 0, cloud: 0 };
+    tgt = { fog: 0, drizzle: 0, snow: 0, sun: 0, bank: 0, cloud: 0 };
+    drizzle.length = 0;
+    drizzleFr.length = 0;
+    snow.length = 0;
+    bankProg = 0;
+    cloudProg = 0;
+    primed = false;
+    t = 0;
+    bctx.clearRect(0, 0, W, H);
+    fctx.clearRect(0, 0, W, H);
+    if (sunEl) sunEl.style.opacity = 0;
+    seedFog();
+    replayEntryAnimations();
+  }
+
+  window.restartKingdomAtmosphere = restartAtmosphere;
+
   /* ---- Boot + lifecycle ---- */
   function start() {
     resize();
@@ -1948,13 +2010,29 @@
   });
 
   start();
+
+  var restartLink = document.getElementById('restart-journey');
+  if (restartLink) {
+    restartLink.addEventListener('click', function (e) {
+      e.preventDefault();
+      restartAtmosphere();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState(null, '', window.location.pathname + window.location.search);
+      }
+    });
+  }
 })();
 </script>
 
 <script>
 document.querySelectorAll('a').forEach(link => {
   link.addEventListener('click', e => {
+    if (link.classList.contains('back-to-top')) return;
     if (link.href && !link.target) {
+      var dest;
+      try { dest = new URL(link.href, window.location.href); } catch (err) { return; }
+      if (dest.pathname === window.location.pathname && dest.hash) return;
       document.body.style.transition = "opacity 0.6s ease, filter 0.6s ease";
       document.body.style.opacity = "0";
       document.body.style.filter = "blur(6px)";
