@@ -206,11 +206,12 @@
     const totalCount = cards.length;
 
     const articleIndex = cards.map(card => ({
-      title:   card.querySelector(".story-title")?.textContent?.trim()   || "",
-      cat:     card.querySelector(".story-cat")?.textContent?.trim()     || "",
-      excerpt: card.querySelector(".story-excerpt")?.textContent?.trim() || "",
-      url:     card.getAttribute("href") || "#",
-      img:     card.querySelector("img")?.getAttribute("src")            || null,
+      title:    card.querySelector(".story-title")?.textContent?.trim()    || "",
+      cat:      card.querySelector(".story-cat")?.textContent?.trim()      || "",
+      excerpt:  card.querySelector(".story-excerpt")?.textContent?.trim()  || "",
+      keywords: card.getAttribute("data-search")?.trim()                    || "",
+      url:      card.getAttribute("href") || "#",
+      img:      card.querySelector("img")?.getAttribute("src")            || null,
     }));
 
     // ── Add clear button ─────────────────────────────────────────────────
@@ -283,9 +284,10 @@
         .map(a => {
           let score = 0;
           const fields = {
-            title:   { w: 10, v: normalize(a.title)   },
-            cat:     { w:  6, v: normalize(a.cat)     },
-            excerpt: { w:  3, v: normalize(a.excerpt) },
+            title:    { w: 10, v: normalize(a.title)    },
+            cat:      { w:  6, v: normalize(a.cat)      },
+            excerpt:  { w:  3, v: normalize(a.excerpt)  },
+            keywords: { w:  5, v: normalize(a.keywords) },
           };
           terms.forEach(term => {
             Object.values(fields).forEach(({ w, v }) => {
