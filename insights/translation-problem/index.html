@@ -808,9 +808,12 @@
     }
     p:last-child { margin-bottom: 0; }
     .main-content .reading-section > p {
+      display: block;
+      width: 100%;
+      max-width: 100%;
       margin-bottom: 0.65rem;
       font-size: 19px;
-      line-height: 1.6;
+      line-height: 1.65;
       color: var(--ink-soft);
       font-weight: 400;
     }
@@ -833,7 +836,13 @@
     .main-content a:visited { color: var(--teal); }
 
     /* ── Translation Relay module (Altitude Meets Asphalt) ── */
-    .tr-ui-label {
+    .tr-ui-label,
+    .tr-node-eyebrow,
+    .tr-node-meta,
+    .tr-gap-label,
+    .tr-gap-sub,
+    .tr-scenario-stage,
+    .tr-scenario-label {
       font-family: 'Inter', sans-serif;
       font-size: 11px;
       font-weight: 700;
@@ -857,6 +866,20 @@
       justify-content: space-between;
       gap: 16px;
       margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+    .tr-relay-head-meta {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .tr-relay-badge {
+      color: var(--teal);
+    }
+    .sim-section-label {
+      margin: 28px 0 12px;
+      color: var(--ink-soft);
     }
     .tr-relay-kicker {
       color: var(--ink-soft);
@@ -947,20 +970,14 @@
     [data-theme="dark"] .tr-gap { box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28); }
     .tr-gap-label {
       display: block;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
       color: var(--coral);
       line-height: 1.35;
     }
     .tr-gap-sub {
       display: block;
-      font-size: 9px;
-      font-weight: 500;
-      letter-spacing: 0.06em;
       color: var(--ink-soft);
       margin-top: 2px;
+      opacity: 0.85;
     }
     .tr-relay[data-scenario="1"] .tr-gap { opacity: 0.45; transform: translate(-50%, -10%) scale(0.96); }
     .tr-relay[data-scenario="2"] .tr-gap { opacity: 1; transform: translate(-50%, 8%) scale(1); }
@@ -975,10 +992,6 @@
     }
     .tr-node-eyebrow {
       display: block;
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
       color: var(--ink-soft);
       margin-bottom: 4px;
     }
@@ -994,10 +1007,6 @@
     .tr-node-meta {
       display: block;
       margin-top: 6px;
-      font-size: 9px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
       color: var(--ink-soft);
       opacity: 0.7;
     }
@@ -1091,19 +1100,63 @@
     }
     .tr-scenario-label {
       color: var(--ink);
+      font-weight: 700;
     }
 
     @media (max-width: 768px) {
       .tr-relay { padding: 24px 20px 22px; margin: 48px auto; }
-      .tr-grid {
-        grid-template-columns: 1fr;
-        gap: 16px;
+
+      /* Force horizontal grid tracks to stack neatly downwards from Altitude to Asphalt */
+      .tr-grid,
+      .tr-relay-container,
+      [class*="tr-nodes-wrap"],
+      .tr-relay [style*="display: flex"] {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 24px !important;
       }
-      .tr-stage { order: 2; min-height: 72px; }
+
+      .tr-stage {
+        order: 2;
+        width: 100%;
+        max-width: 320px;
+        min-height: 56px;
+        height: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
       .tr-node--strategy { order: 1; }
       .tr-node--execution { order: 3; }
+
+      /* Transform the horizontal connection lines into vertical downward rails */
+      .tr-line,
+      .tr-arrow,
+      .tr-svg,
+      .tr-path,
+      .tr-relay svg[style*="width"],
+      .tr-relay [style*="width: 40%"] {
+        width: 32px !important;
+        height: 48px !important;
+        margin: 8px auto !important;
+        transform: rotate(90deg) !important;
+        transform-origin: center center;
+      }
+
+      /* Ensure container cards bounds scale accurately on narrow viewports */
+      .tr-node,
+      .tr-node-card {
+        width: 100% !important;
+        max-width: 320px !important;
+      }
+
       .tr-relay[data-scenario="2"] .tr-node--strategy,
       .tr-relay[data-scenario="2"] .tr-node--execution { transform: none; }
+      .tr-gap {
+        max-width: 280px;
+        white-space: normal;
+      }
       .tr-controls { grid-template-columns: 1fr; }
       .tr-narrative-desc { font-size: 17px; }
     }
@@ -1649,6 +1702,152 @@
       top: 0 !important;
       z-index: 500 !important;
     }
+    /* ═══════════════════════════════════════════
+       TRANSLATION RELAY · live decay demo (#ladder)
+       Namespaced tld- so it never collides with the
+       abstract .tr-relay diagram in #the-gap.
+    ═══════════════════════════════════════════ */
+    .tld-relay{
+      --tld-good:var(--teal);
+      --tld-bad:var(--coral);
+      font-family:'Inter',sans-serif;
+      background:var(--cream);
+      border:1px solid var(--rule);
+      border-radius:6px;
+      padding:36px 36px 40px;
+      margin:48px 0;
+    }
+    .tld-eyebrow{
+      font-family:'JetBrains Mono',monospace;
+      font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+      color:var(--tld-bad);display:flex;align-items:center;gap:10px;margin-bottom:14px;
+    }
+    .tld-eyebrow::before{content:'';width:18px;height:1px;background:var(--tld-bad)}
+    .tld-lede{
+      font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;font-style:italic;
+      line-height:1.4;color:var(--ink);max-width:48ch;margin-bottom:26px;
+    }
+    .tld-lede b{font-style:normal;font-weight:600}
+    .tld-pick{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:30px}
+    .tld-chip{
+      font-family:'Inter',sans-serif;font-size:12px;font-weight:600;
+      color:var(--ink-soft);background:var(--card-bg);
+      border:1px solid var(--rule);border-radius:999px;
+      padding:9px 16px;cursor:pointer;transition:all .18s;line-height:1;
+    }
+    .tld-chip:hover{border-color:var(--ink-soft);color:var(--ink)}
+    .tld-chip.active{color:var(--ink);border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+    .tld-stage{display:grid;grid-template-columns:64px 1fr;gap:22px;align-items:stretch}
+    .tld-gauge{position:relative;display:flex;flex-direction:column;align-items:center}
+    .tld-gauge-cap{
+      font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;
+      letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);
+      text-align:center;line-height:1.5;height:26px;
+    }
+    .tld-gauge-track{
+      position:relative;flex:1;width:6px;border-radius:6px;
+      background:var(--accent-bg);overflow:hidden;margin:8px 0;
+    }
+    .tld-gauge-fill{
+      position:absolute;left:0;right:0;top:0;height:100%;
+      background:linear-gradient(180deg,var(--tld-good) 0%,var(--tld-good) 35%,#E0A86E 60%,var(--tld-bad) 100%);
+      transform-origin:top;transform:scaleY(1);
+      transition:transform 1.1s cubic-bezier(.6,.04,.3,1);
+    }
+    .tld-pulse{
+      position:absolute;left:50%;top:0;width:14px;height:14px;border-radius:50%;
+      transform:translate(-50%,-50%);background:var(--tld-good);
+      box-shadow:0 0 0 4px color-mix(in srgb,var(--tld-good) 30%,transparent);
+      opacity:0;transition:top 1.1s cubic-bezier(.6,.04,.3,1),background .5s,box-shadow .5s,opacity .3s;
+    }
+    .tld-fid{font-family:'JetBrains Mono',monospace;text-align:center;margin-top:6px;line-height:1.1}
+    .tld-fid-num{display:block;font-size:18px;font-weight:700;color:var(--ink)}
+    .tld-fid-lbl{display:block;font-size:7px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);margin-top:2px}
+    .tld-flow{display:flex;flex-direction:column;gap:0}
+    .tld-node{position:relative;opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease}
+    .tld-node.in{opacity:1;transform:none}
+    .tld-card{
+      background:var(--card-bg);border:1px solid var(--rule);border-radius:4px;
+      padding:15px 18px;transition:border-color .2s,box-shadow .2s;
+    }
+    .tld-node:hover .tld-card{border-color:var(--ink-soft)}
+    .tld-role{
+      font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;
+      letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);
+      display:flex;align-items:center;gap:8px;margin-bottom:7px;
+    }
+    .tld-role .tld-tier{color:var(--ink-soft);opacity:.55}
+    .tld-says{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;line-height:1.42;color:var(--ink)}
+    .tld-drop{
+      display:inline-flex;align-items:center;gap:6px;margin-top:10px;
+      font-family:'Inter',sans-serif;font-size:11px;font-weight:600;
+      color:var(--tld-bad);background:color-mix(in srgb,var(--tld-bad) 9%,transparent);
+      border:1px solid color-mix(in srgb,var(--tld-bad) 22%,transparent);
+      padding:4px 10px;border-radius:999px;
+    }
+    .tld-drop svg{width:11px;height:11px;flex:none}
+    .tld-link{height:22px;display:flex;align-items:center;justify-content:flex-start;padding-left:21px}
+    .tld-link::before{
+      content:'';width:2px;height:100%;
+      background:repeating-linear-gradient(180deg,var(--rule) 0 4px,transparent 4px 8px);
+    }
+    .tld-node.is-shipped .tld-card{
+      background:color-mix(in srgb,var(--tld-bad) 7%,var(--card-bg));
+      border-color:color-mix(in srgb,var(--tld-bad) 35%,transparent);
+    }
+    .tld-node.is-shipped.in .tld-card{animation:tldPulse .9s ease 1}
+    @keyframes tldPulse{
+      0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--tld-bad) 38%,transparent)}
+      100%{box-shadow:0 0 0 14px transparent}
+    }
+    .tld-node.is-shipped .tld-role{color:var(--tld-bad)}
+    .tld-node.is-shipped .tld-says{font-family:'Inter',sans-serif;font-size:15px;font-weight:500;line-height:1.55}
+    .tld-gap{
+      margin-top:26px;border-top:1px solid var(--rule);padding-top:24px;
+      display:grid;grid-template-columns:1fr auto 1fr;gap:18px;align-items:center;
+      opacity:0;transform:translateY(10px);transition:opacity .55s ease,transform .55s ease;
+    }
+    .tld-gap.in{opacity:1;transform:none}
+    .tld-gap-box{padding:2px 0}
+    .tld-gap-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:7px}
+    .tld-gap-box.intent .tld-gap-lbl{color:var(--tld-good)}
+    .tld-gap-box.reality .tld-gap-lbl{color:var(--tld-bad)}
+    .tld-gap-txt{font-family:'Cormorant Garamond',serif;font-size:18px;font-style:italic;line-height:1.4;color:var(--ink)}
+    .tld-gap-arrow{
+      font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.1em;
+      color:var(--ink-soft);text-align:center;line-height:1.4;text-transform:uppercase;
+    }
+    .tld-gap-arrow span{display:block;font-size:9px;opacity:.6;margin-top:2px}
+    .tld-controls{display:flex;align-items:center;gap:14px;margin-top:26px}
+    .tld-replay{
+      display:inline-flex;align-items:center;gap:8px;
+      font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+      color:var(--ink);background:transparent;border:1px solid var(--rule);
+      padding:11px 18px;border-radius:4px;cursor:pointer;transition:all .2s;
+    }
+    .tld-replay:hover{border-color:var(--ink);transform:translateY(-1px)}
+    .tld-replay svg{width:13px;height:13px;transition:transform .4s}
+    .tld-replay:active svg{transform:rotate(-360deg)}
+    .tld-hint{font-family:'Inter',sans-serif;font-size:12px;color:var(--ink-soft);line-height:1.4}
+    .tld-coda{margin-top:18px;opacity:0;transform:translateY(8px);transition:opacity .5s ease,transform .5s ease}
+    .tld-coda.in{opacity:1;transform:none}
+    .tld-coda-lbl{
+      font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;
+      letter-spacing:.16em;text-transform:uppercase;color:var(--tld-bad);
+      display:flex;align-items:center;gap:8px;margin-bottom:6px;
+    }
+    .tld-coda-lbl::before{content:'';width:14px;height:1px;background:var(--tld-bad)}
+    .tld-coda-txt{font-family:'Cormorant Garamond',serif;font-size:18px;font-style:italic;line-height:1.45;color:var(--ink-soft)}
+    @media (max-width:640px){
+      .tld-relay{padding:26px 20px 30px}
+      .tld-stage{grid-template-columns:46px 1fr;gap:14px}
+      .tld-says{font-size:18px}
+      .tld-gap{grid-template-columns:1fr;gap:10px;text-align:center}
+      .tld-gap-arrow{transform:rotate(90deg);margin:2px 0}
+    }
+    @media (prefers-reduced-motion:reduce){
+      .tld-node,.tld-gap,.tld-coda,.tld-gauge-fill,.tld-pulse{transition:none!important;animation:none!important}
+    }
   </style>
 </head>
 <body>
@@ -1756,26 +1955,6 @@
       <a href="#close"          class="toc-link">The Closing Argument</a>
     </div>
 
-    <div class="antipattern-card">
-      <div class="antipattern-card-title">Familiar Signals</div>
-      <div class="antipattern-item">
-        <strong>"Wait, are we still doing that?"</strong>
-        Decisions not closed
-      </div>
-      <div class="antipattern-item">
-        <strong>"I thought that was a suggestion."</strong>
-        Priorities not explicit
-      </div>
-      <div class="antipattern-item">
-        <strong>"Why are we building this again?"</strong>
-        Thread lost in translation
-      </div>
-    </div>
-
-    <div class="sidebar-status">
-      <strong>Current Status</strong>
-      <p>Accepting projects.<br>Systems-first partnership.</p>
-    </div>
   </aside>
 
   <!-- Main content -->
@@ -1818,17 +1997,23 @@
     <div class="reading-section fade-up" id="the-gap">
       <h2 class="section-heading">Altitude Meets Asphalt</h2>
 
-      <div class="tr-relay fade-up" id="tr-relay" data-scenario="0">
+      <div class="sim-section-label tr-ui-label">The Mechanics of Decay</div>
+      <p class="prose-block">An empirical map of how information degrades in transit—signal strength measured across the conversion layer, not declared in a deck.</p>
+
+      <div class="tr-relay tr-relay-container fade-up" id="tr-relay" data-scenario="0">
         <div class="tr-relay-head">
           <span class="tr-relay-kicker tr-ui-label">The Conversion Layer Simulator</span>
-          <span class="tr-relay-signal tr-ui-label" data-tr-signal>100% fidelity</span>
+          <div class="tr-relay-head-meta">
+            <span class="tr-relay-badge tr-ui-label">Live Simulation</span>
+            <span class="tr-relay-signal tr-ui-label" data-tr-signal>100% fidelity</span>
+          </div>
         </div>
 
         <div class="tr-grid">
           <div class="tr-node tr-node--strategy" data-tr-node="strategy">
-            <span class="tr-node-eyebrow">Altitude</span>
+            <span class="tr-node-eyebrow tr-ui-label">Altitude</span>
             <span class="tr-node-label">Strategy</span>
-            <span class="tr-node-meta">Macro-intent</span>
+            <span class="tr-node-meta tr-ui-label">Macro-intent</span>
           </div>
 
           <div class="tr-stage">
@@ -1840,15 +2025,15 @@
               <circle class="tr-pulse" data-tr-pulse cx="8" cy="44" r="4"></circle>
             </svg>
             <div class="tr-gap" data-tr-gap>
-              <span class="tr-gap-label">The Conversion Layer</span>
-              <span class="tr-gap-sub">(Bermuda Triangle)</span>
+              <span class="tr-gap-label tr-ui-label">The Conversion Layer</span>
+              <span class="tr-gap-sub tr-ui-label">(Bermuda Triangle)</span>
             </div>
           </div>
 
           <div class="tr-node tr-node--execution" data-tr-node="execution">
-            <span class="tr-node-eyebrow">Asphalt</span>
+            <span class="tr-node-eyebrow tr-ui-label">Asphalt</span>
             <span class="tr-node-label">Execution</span>
-            <span class="tr-node-meta">Ground game</span>
+            <span class="tr-node-meta tr-ui-label">Ground game</span>
           </div>
         </div>
 
@@ -1868,11 +2053,11 @@
           </button>
           <button type="button" class="tr-scenario-btn" data-scenario="1" role="tab" aria-selected="false">
             <span class="tr-scenario-stage tr-ui-label">STAGE 02</span>
-            <strong class="tr-scenario-label tr-ui-label">The All-Hands Drizzle</strong>
+            <strong class="tr-scenario-label tr-ui-label">Standard Cascade Broadcast</strong>
           </button>
           <button type="button" class="tr-scenario-btn" data-scenario="2" role="tab" aria-selected="false">
             <span class="tr-scenario-stage tr-ui-label">STAGE 03</span>
-            <strong class="tr-scenario-label tr-ui-label">The Carol Integration Failure</strong>
+            <strong class="tr-scenario-label tr-ui-label">The Analog Integration</strong>
           </button>
         </div>
       </div>
@@ -1893,19 +2078,22 @@
         var SCEN = [
           {
             signal: '100% fidelity',
+            label: 'The Offsite',
             title: '1. Pure Intent (The High Ground)',
             desc: '\u201CThe room agreed. The doc was polished. The air still tingled with alignment.\u201D Clear signal mapping seamlessly to direction.',
             timers: [0, 900, 1800]
           },
           {
             signal: '50% leakage',
-            title: '2. The All-Hands Drizzle',
+            label: 'Standard Cascade Broadcast',
+            title: '2. Standard Cascade Broadcast',
             desc: '\u201CBy the time the message reaches execution, it is less telephone, more smoke signal.\u201D Infrastructure fiction takes over.',
             timers: [0, 520, 1100, 1680]
           },
           {
             signal: 'Integration failed',
-            title: '3. The Carol Integration Failure',
+            label: 'The Analog Integration',
+            title: '3. The Analog Integration',
             desc: '',
             logs: [
               '[INIT] Strategy launched with 100% executive confidence.',
@@ -2063,50 +2251,260 @@
     <!-- 3. The Translation Ladder -->
     <div class="reading-section fade-up" id="ladder">
       <h2 class="section-heading">The Translation Ladder</h2>
-      <p>Every plan starts as certainty.</p>
-      <p>Every plan ends as archaeology.</p>
+      <p>Every plan starts as clear sky.</p>
+      <p>Every plan ends as weather.</p>
       <p>What happens in between is not execution.</p>
-      <p>It is a four-stage weather system.</p>
+      <p>It is a four-stage degradation hierarchy.</p>
       <div class="ladder-wrap fade-up">
-        <div class="ladder-header">The Translation Ladder (Climb, Do Not Jump)</div>
+        <div class="ladder-header">Weather Degradation</div>
         <div class="ladder-step">
           <div class="ladder-num">1</div>
           <div class="ladder-content">
-            <div class="ladder-title">Direction &rarr; Decisions</div>
-            <p class="ladder-detail">What did we actually decide?</p>
+            <div class="ladder-title">Waterfall</div>
+            <p class="ladder-detail">Meetings leave as gospel.</p>
           </div>
         </div>
         <div class="ladder-step">
           <div class="ladder-num">2</div>
           <div class="ladder-content">
-            <div class="ladder-title">Decisions &rarr; Priorities</div>
-            <p class="ladder-detail">What gets attention first?</p>
+            <div class="ladder-title">High Velocity Drizzle</div>
+            <p class="ladder-detail">Informal messaging and assumptions.</p>
           </div>
         </div>
         <div class="ladder-step">
           <div class="ladder-num">3</div>
           <div class="ladder-content">
-            <div class="ladder-title">Priorities &rarr; Trade-offs</div>
-            <p class="ladder-detail">What are we not doing?</p>
+            <div class="ladder-title">Category 5</div>
+            <p class="ladder-detail">Arguments had, context lost.</p>
           </div>
         </div>
         <div class="ladder-step">
           <div class="ladder-num">4</div>
           <div class="ladder-content">
-            <div class="ladder-title">Trade-offs &rarr; Ownership &amp; Cadence</div>
-            <p class="ladder-detail">Who owns what? How often do we check?</p>
+            <div class="ladder-title">The Flood</div>
+            <p class="ladder-detail">Alignment screams into the void.</p>
           </div>
         </div>
       </div>
-      <p>You cannot broadcast intent and hope for the best.</p>
+      <p>You cannot broadcast intent and hope the forecast holds.</p>
       <p>That is not a plan.</p>
       <p>That is drizzle.</p>
-      <p>The pain is always in the rungs skipped.</p>
-      <p>Most teams assume someone else is climbing.</p>
+      <p>The damage is always in the front you ignored.</p>
+      <p>Most teams assume someone else is watching the sky.</p>
       <p>(&ldquo;Did we not cover that at the all-hands?&rdquo; No.)</p>
-      <p>It happens invisibly.</p>
-      <p>Until the project is tangled.</p>
-      <p>Until the only paper trail is a Slack search and collective amnesia.</p>
+      <p>It moves in quietly.</p>
+      <p>By the time anyone looks up, the basement is flooded.</p>
+      <p>And the only record of what we meant is a Slack search and collective amnesia.</p>
+
+      <p class="prose-block">Intent does not survive on its own. Every handoff is another front.</p>
+      <div class="sim-section-label tr-ui-label">Empirical System Decay</div>
+      <p>One clear instruction enters at the top. Nobody mishears it. Nobody is careless. Watch what reaches the people doing the work.</p>
+
+      <!-- ── Translation Relay: live decay demo ── -->
+      <section class="tld-relay fade-up" id="tldRelay" aria-label="Watch one instruction travel from intent to execution">
+        <div class="tld-eyebrow">System Diagnostics</div>
+        <p class="tld-lede">Same signal. Four reasonable handoffs. No villains—just the measured distance between intent and what actually ships.</p>
+
+        <div class="tld-pick" id="tldPick" role="tablist" aria-label="Choose a scenario"></div>
+
+        <div class="tld-stage">
+          <div class="tld-gauge" aria-hidden="true">
+            <div class="tld-gauge-cap">Signal<br>strength</div>
+            <div class="tld-gauge-track">
+              <div class="tld-gauge-fill" id="tldFill"></div>
+              <div class="tld-pulse" id="tldPulse"></div>
+            </div>
+            <div class="tld-fid">
+              <span class="tld-fid-num" id="tldFid">100%</span>
+              <span class="tld-fid-lbl">intact</span>
+            </div>
+          </div>
+          <div class="tld-flow" id="tldFlow"></div>
+        </div>
+
+        <div class="tld-gap" id="tldGap">
+          <div class="tld-gap-box intent">
+            <div class="tld-gap-lbl">What they meant</div>
+            <div class="tld-gap-txt" id="tldIntent"></div>
+          </div>
+          <div class="tld-gap-arrow">became<span>after 4 handoffs</span></div>
+          <div class="tld-gap-box reality">
+            <div class="tld-gap-lbl">What got built</div>
+            <div class="tld-gap-txt" id="tldReality"></div>
+          </div>
+        </div>
+
+        <div class="tld-coda" id="tldCoda">
+          <div class="tld-coda-lbl">The human API</div>
+          <div class="tld-coda-txt" id="tldCodaTxt"></div>
+        </div>
+
+        <div class="tld-controls">
+          <button class="tld-replay" id="tldReplay" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><polyline points="21 3 21 9 15 9"/></svg>
+            Run it again
+          </button>
+          <span class="tld-hint">Same instruction. Four reasonable handoffs. No villains.</span>
+        </div>
+      </section>
+
+      <script>
+      (function(){
+        var SCEN = [
+          {
+            chip:'&ldquo;Make onboarding simple&rdquo;',
+            intent:'New users should hit their first real win inside 5 minutes.',
+            levels:[
+              {role:'CEO',     tier:'Direction'  , says:'Let&rsquo;s make onboarding feel effortless.',          drop:null,                                  fid:100},
+              {role:'VP',      tier:'Strategy',    says:'Agreed. Let&rsquo;s align the paradigm and cut funnel friction.', drop:'the 5-minute goal',          fid:74},
+              {role:'Manager', tier:'Plan',        says:'Trim the signup steps. We&rsquo;ll circle back on the &ldquo;win&rdquo; part after Q3.', drop:'what &ldquo;first win&rdquo; means', fid:48},
+              {role:'Builder', tier:'Execution',   says:'Removed the email verification screen. Shipped.',       drop:'the actual user value',               fid:21}
+            ],
+            shipped:'Signup is two screens shorter. Spam accounts up 40%. Time-to-first-win: unchanged.',
+            reality:'A shorter form that still buries the win.',
+            coda:'The one person who knew what &ldquo;first win&rdquo; meant was Carol in accounting. Nobody put her in the thread.'
+          },
+          {
+            chip:'&ldquo;Make it feel premium&rdquo;',
+            intent:'The product should feel trustworthy and quietly premium.',
+            levels:[
+              {role:'CEO',     tier:'Direction'  , says:'I want this to feel more premium.',                     drop:null,                        fid:100},
+              {role:'VP',      tier:'Strategy',    says:'Love it. Let&rsquo;s elevate the visuals.',             drop:'&ldquo;trustworthy&rdquo;', fid:72},
+              {role:'Manager', tier:'Plan',        says:'Gradients and a fancier font. Parking the rest until we have bandwidth.', drop:'what premium signals', fid:45},
+              {role:'Builder', tier:'Execution',   says:'Buttons are gold now. Drop-shadows everywhere.',        drop:'restraint',                 fid:17}
+            ],
+            shipped:'Looks busier, not richer. Trust score in user testing went down, not up.',
+            reality:'Decoration mistaken for premium.',
+            coda:'The real brand rationale lived in exactly one place: Tom&rsquo;s notebook. Tom is on PTO.'
+          },
+          {
+            chip:'&ldquo;Ship a week earlier&rdquo;',
+            intent:'Ship one week earlier without lowering quality.',
+            levels:[
+              {role:'CEO',     tier:'Direction'  , says:'We need to move faster.',                               drop:null,                                     fid:100},
+              {role:'VP',      tier:'Strategy',    says:'On it. Increase velocity.',                             drop:'&ldquo;without lowering quality&rdquo;', fid:70},
+              {role:'Manager', tier:'Plan',        says:'Tighten the timeline. We were all on the same page at the all-hands, right?', drop:'the real bottleneck', fid:46},
+              {role:'Builder', tier:'Execution',   says:'Skipped QA to hit the date.',                           drop:'quality',                                fid:15}
+            ],
+            shipped:'Released three days early. Two production incidents. Net delivery: slower.',
+            reality:'Speed bought with the thing speed was supposed to protect.',
+            coda:'Carol flagged the risk once, right before her four-hour sync. The thread scrolled past it.'
+          }
+        ];
+
+        var relay = document.getElementById('tldRelay');
+        if(!relay) return;
+        var pick=document.getElementById('tldPick');
+        var flow=document.getElementById('tldFlow');
+        var fill=document.getElementById('tldFill');
+        var pulse=document.getElementById('tldPulse');
+        var fidEl=document.getElementById('tldFid');
+        var gap=document.getElementById('tldGap');
+        var intentEl=document.getElementById('tldIntent');
+        var realityEl=document.getElementById('tldReality');
+        var coda=document.getElementById('tldCoda');
+        var codaTxt=document.getElementById('tldCodaTxt');
+        var replay=document.getElementById('tldReplay');
+
+        var reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+        var STEP=620, timers=[], active=0;
+        var dropIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+
+        SCEN.forEach(function(s,i){
+          var b=document.createElement('button');
+          b.className='tld-chip'+(i===0?' active':'');
+          b.type='button'; b.setAttribute('role','tab');
+          b.innerHTML=s.chip;
+          b.addEventListener('click',function(){ if(i===active && !timers.length) return; selectScenario(i); });
+          pick.appendChild(b);
+        });
+
+        function clearTimers(){ timers.forEach(clearTimeout); timers=[]; }
+
+        function buildFlow(s){
+          flow.innerHTML='';
+          var nodes=[];
+          s.levels.forEach(function(lv,idx){
+            if(idx>0){ var link=document.createElement('div'); link.className='tld-link'; flow.appendChild(link); }
+            var node=document.createElement('div');
+            node.className='tld-node';
+            node.innerHTML=
+              '<div class="tld-card">'+
+                '<div class="tld-role"><span>'+lv.role+'</span><span class="tld-tier">'+lv.tier+'</span></div>'+
+                '<div class="tld-says">&ldquo;'+lv.says+'&rdquo;</div>'+
+                (lv.drop?'<div class="tld-drop">'+dropIcon+'lost here: '+lv.drop+'</div>':'')+
+              '</div>';
+            flow.appendChild(node); nodes.push(node);
+          });
+          var link=document.createElement('div'); link.className='tld-link'; flow.appendChild(link);
+          var shipped=document.createElement('div');
+          shipped.className='tld-node is-shipped';
+          shipped.innerHTML=
+            '<div class="tld-card">'+
+              '<div class="tld-role"><span>What shipped</span><span class="tld-tier">reality</span></div>'+
+              '<div class="tld-says">'+s.shipped+'</div>'+
+            '</div>';
+          flow.appendChild(shipped); nodes.push(shipped);
+          return nodes;
+        }
+
+        function setGauge(fidPct){
+          fill.style.transform='scaleY('+(fidPct/100)+')';
+          fidEl.textContent=Math.round(fidPct)+'%';
+          pulse.style.opacity='1';
+          pulse.style.top=(100-fidPct)+'%';
+          var c = fidPct>66?'var(--tld-good)' : fidPct>33?'#E0A86E' : 'var(--tld-bad)';
+          pulse.style.background=c;
+          pulse.style.boxShadow='0 0 0 4px color-mix(in srgb,'+c+' 30%,transparent)';
+        }
+
+        function selectScenario(i){
+          active=i;
+          Array.prototype.forEach.call(pick.children,function(c,ci){ c.classList.toggle('active',ci===i); });
+          play(SCEN[i]);
+        }
+
+        function play(s){
+          clearTimers();
+          var nodes=buildFlow(s);
+          intentEl.textContent=s.intent;
+          realityEl.textContent=s.reality;
+          codaTxt.innerHTML=s.coda;
+          gap.classList.remove('in');
+          coda.classList.remove('in');
+          fidEl.textContent='100%';
+          fill.style.transform='scaleY(1)';
+          pulse.style.opacity='0'; pulse.style.top='0%'; pulse.style.background='var(--tld-good)';
+
+          if(reduce){
+            nodes.forEach(function(n){ n.classList.add('in'); });
+            setGauge(s.levels[s.levels.length-1].fid);
+            gap.classList.add('in');
+            coda.classList.add('in');
+            return;
+          }
+
+          nodes.forEach(function(node,idx){
+            timers.push(setTimeout(function(){
+              node.classList.add('in');
+              var fidVal = idx < s.levels.length ? s.levels[idx].fid : s.levels[s.levels.length-1].fid;
+              setGauge(fidVal);
+              if(idx===nodes.length-1){
+                timers.push(setTimeout(function(){ gap.classList.add('in'); },420));
+                timers.push(setTimeout(function(){ coda.classList.add('in'); },760));
+              }
+            }, 240 + idx*STEP));
+          });
+        }
+
+        replay.addEventListener('click',function(){ play(SCEN[active]); });
+
+        var io=new IntersectionObserver(function(e,obs){
+          e.forEach(function(en){ if(en.isIntersecting){ play(SCEN[0]); obs.disconnect(); } });
+        },{threshold:.3});
+        io.observe(relay);
+      })();
+      </script>
     </div>
 
     <!-- 4. Humans as API -->
