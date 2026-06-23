@@ -723,7 +723,7 @@
       .g-illus,
       .img-wrapper img {
         cursor: zoom-in;
-        touch-action: pan-x pinch-zoom;
+        touch-action: none;
       }
 
       .mag {
@@ -1293,6 +1293,7 @@
       var pages = Array.prototype.slice.call(document.querySelectorAll('.mag .page'));
       var total = pages.length;
       var current = 0;
+      var storageKey = 'lg-erika-slide';
       var counter = document.getElementById('counter');
       var dotsWrap = document.getElementById('dots-container');
       var btnPrev = document.getElementById('btn-prev');
@@ -1319,6 +1320,22 @@
         lightbox.setAttribute('aria-hidden', 'true');
         lightboxImg.src = '';
         lightboxImg.alt = '';
+      }
+
+      function findInspectableImage(el) {
+        return el && el.closest ? el.closest('.img-wrapper img, .shot-illus, .g-illus') : null;
+      }
+
+      function openLightboxForPinch(e) {
+        if (lightbox && lightbox.classList.contains('open')) return false;
+        var img = findInspectableImage(e.target);
+        if (!img) return false;
+        openLightbox(img);
+        return true;
+      }
+
+      function saveSlide() {
+        try { sessionStorage.setItem(storageKey, String(current)); } catch (err) {}
       }
 
       Array.prototype.slice.call(document.querySelectorAll('.img-wrapper img, .shot-illus, .g-illus')).forEach(function (img) {
@@ -1381,6 +1398,7 @@
 
       function goTo(i) {
         current = Math.max(0, Math.min(total - 1, i));
+        saveSlide();
         render();
       }
       function next() { if (current < total - 1) goTo(current + 1); }
@@ -1426,9 +1444,10 @@
         mag.addEventListener('touchstart', function (e) {
           if (lightbox && lightbox.classList.contains('open')) return;
 
-          if (e.touches.length !== 1) {
+          if (e.touches.length >= 2) {
             touchState.multiTouch = true;
             touchState.x0 = null;
+            if (openLightboxForPinch(e)) e.preventDefault();
             return;
           }
 
@@ -1436,15 +1455,17 @@
           touchState.x0 = e.touches[0].clientX;
           touchState.y0 = e.touches[0].clientY;
           touchState.t0 = Date.now();
-          touchState.onImage = !!e.target.closest('.img-wrapper img, .shot-illus, .g-illus');
-        }, { passive: true });
+          touchState.onImage = !!findInspectableImage(e.target);
+        }, { passive: false });
 
         mag.addEventListener('touchmove', function (e) {
           if (e.touches.length > 1) {
             touchState.multiTouch = true;
             touchState.x0 = null;
+            if (openLightboxForPinch(e)) e.preventDefault();
+            else if (lightbox && lightbox.classList.contains('open')) e.preventDefault();
           }
-        }, { passive: true });
+        }, { passive: false });
 
         mag.addEventListener('touchend', function (e) {
           if (lightbox && lightbox.classList.contains('open')) return;
@@ -1502,6 +1523,13 @@
           document.documentElement.setAttribute('data-lang', cur === 'es' ? 'en' : 'es');
         });
       }
+
+      try {
+        var savedSlide = parseInt(sessionStorage.getItem(storageKey), 10);
+        if (!isNaN(savedSlide) && savedSlide >= 0 && savedSlide < total) {
+          current = savedSlide;
+        }
+      } catch (err) {}
 
       render();
     })();
