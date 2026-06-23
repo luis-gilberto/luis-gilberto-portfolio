@@ -161,45 +161,148 @@
         right: 0;
         z-index: 50;
         display: flex;
-        justify-content: space-between;
-        align-items: center;
+        justify-content: center;
+        align-items: flex-end;
+        gap: 12px;
         padding: 0 24px;
         max-width: 800px;
         margin: 0 auto;
+        pointer-events: none;
       }
+
+      .bottom-nav {
+        pointer-events: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .slide-progress {
+        width: 72px;
+        height: 2px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.12);
+        overflow: hidden;
+      }
+
+      .slide-progress-fill {
+        display: block;
+        height: 100%;
+        width: 10%;
+        border-radius: inherit;
+        background: var(--teal);
+        transition: width 0.35s ease;
+      }
+
+      .bottom-nav-row {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+      }
+
       .page-count {
         font-family: var(--mono);
         font-size: 10px;
         color: var(--muted);
-        letter-spacing: 0.15em;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
       }
+
       .dots {
         display: flex;
-        gap: 6px;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 5px;
+        max-width: 280px;
+        pointer-events: auto;
       }
+
       .dot {
-        width: 6px;
-        height: 6px;
+        width: 5px;
+        height: 5px;
+        border: none;
+        padding: 0;
         border-radius: 50%;
-        background: rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.18);
         cursor: pointer;
         transition: 0.3s;
       }
+
       .dot.active {
         background: var(--teal);
-        transform: scale(1.3);
-        box-shadow: 0 0 8px rgba(78, 205, 196, 0.5);
+        transform: scale(1.25);
+        box-shadow: 0 0 6px rgba(78, 205, 196, 0.45);
       }
+
       .hint-mobile {
+        display: none;
         font-family: var(--mono);
-        font-size: 9px;
+        font-size: 8px;
         text-transform: uppercase;
-        letter-spacing: 0.15em;
-        color: var(--coral);
+        letter-spacing: 0.14em;
+        color: rgba(240, 236, 229, 0.42);
+        white-space: nowrap;
       }
-      @media (min-width: 769px) {
-        .hint-mobile {
+
+      .bottom-bar.show-coach .hint-mobile {
+        display: block;
+      }
+
+      @media (max-width: 768px) {
+        .bottom-bar {
+          bottom: max(14px, env(safe-area-inset-bottom));
+          padding: 0 16px;
+        }
+
+        .bottom-nav {
+          min-width: 132px;
+          padding: 10px 16px 11px;
+          border-radius: 999px;
+          background: rgba(15, 14, 17, 0.82);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          backdrop-filter: blur(14px);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+        }
+
+        .slide-progress {
+          width: 100%;
+          max-width: 88px;
+        }
+
+        .dots {
           display: none;
+        }
+
+        .page {
+          padding-bottom: 96px;
+        }
+      }
+
+      @media (min-width: 769px) {
+        .bottom-bar {
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        .bottom-nav {
+          flex-direction: row;
+          align-items: center;
+          gap: 14px;
+        }
+
+        .slide-progress {
+          display: none;
+        }
+
+        .bottom-nav-row {
+          flex-direction: row;
+          gap: 0;
+        }
+
+        .hint-mobile {
+          display: none !important;
         }
       }
 
@@ -658,6 +761,10 @@
         .bottom-bar {
           bottom: max(8px, env(safe-area-inset-bottom));
           padding: 0 16px;
+        }
+
+        .bottom-nav {
+          padding: 8px 14px 9px;
         }
 
         .top-bar {
@@ -1154,11 +1261,18 @@
     </div>
 
     
-    <div class="bottom-bar">
-      <div class="page-count" id="counter">01 / 10</div>
+    <div class="bottom-bar show-coach">
+      <div class="bottom-nav">
+        <div class="slide-progress" aria-hidden="true">
+          <span class="slide-progress-fill" id="progress-fill"></span>
+        </div>
+        <div class="bottom-nav-row">
+          <div class="page-count" id="counter">01 / 10</div>
+          <div class="hint-mobile es">Desliza · toca imagen</div>
+          <div class="hint-mobile en">Swipe · tap image</div>
+        </div>
+      </div>
       <div class="dots" id="dots-container"></div>
-      <div class="hint-mobile es">Desliza para avanzar · toca una imagen para verla</div>
-      <div class="hint-mobile en">Swipe to continue · tap an image to view</div>
     </div>
 
     <div class="image-lightbox" id="image-lightbox" aria-hidden="true" role="dialog" aria-label="Image preview">
@@ -1188,6 +1302,8 @@
       var lightbox = document.getElementById('image-lightbox');
       var lightboxImg = document.getElementById('image-lightbox-img');
       var lightboxClose = document.querySelector('.image-lightbox-close');
+      var progressFill = document.getElementById('progress-fill');
+      var bottomBar = document.querySelector('.bottom-bar');
 
       function openLightbox(img) {
         if (!lightbox || !lightboxImg || !img) return;
@@ -1255,6 +1371,12 @@
         if (btnPrev) btnPrev.disabled = (current === 0);
         if (btnNext) btnNext.disabled = (current === total - 1);
         if (pages[current]) pages[current].scrollTop = 0;
+        if (progressFill && total > 0) {
+          progressFill.style.width = (((current + 1) / total) * 100) + '%';
+        }
+        if (bottomBar) {
+          bottomBar.classList.toggle('show-coach', current === 0);
+        }
       }
 
       function goTo(i) {
