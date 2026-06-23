@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="es" data-lang="es" data-theme="light" style=""><head><meta charset="utf-8">
+    
+    
+    <title>Gracias, Erika · LG Studio</title>
+    <style>
+      :root {
+        --bg: #0f0e11;
+        --card: #161519;
+        --txt: #f0ece5;
+        --light: #c8c0b8;
+        --muted: #8a8078;
+        --teal: #4ecdc4;
+        --coral: #f96f6e;
+        --gold: #e8c87a;
+        --serif: 'Cormorant Garamond', Georgia, serif;
+        --sans: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+        --mono: 'DM Mono', Consolas, monospace;
+      }
+
+      * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--bg);
+        color: var(--txt);
+        font-family: var(--sans);
+        overflow: hidden;
+      }
+
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        perspective: 1500px;
+      }
+
+      /* Ambient Glow */
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background:
+          radial-gradient(circle at top right, rgba(78, 205, 196, 0.05), transparent 45%),
+          radial-gradient(circle at bottom left, rgba(249, 111, 110, 0.05), transparent 45%);
+      }
+
+      [data-lang='es'] .en {
+        display: none !important;
+      }
+      [data-lang='en'] .es {
+        display: none !important;
+      }
+
+      /* Top Bar */
+      .top-bar {
+        position: fixed;
+        top: 20px;
+        right: 24px;
+        z-index: 50;
+      }
+      .lang-btn {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--muted);
+        border-radius: 20px;
+        padding: 6px 14px;
+        font-family: var(--mono);
+        font-size: 11px;
+        cursor: pointer;
+        backdrop-filter: blur(5px);
+      }
+      [data-lang='es'] .lang-btn .es-lbl,
+      [data-lang='en'] .lang-btn .en-lbl {
+        color: var(--gold);
+        font-weight: bold;
+      }
+
+      /* Nav Controls */
+      .nav-arrows {
+        position: fixed;
+        top: 50%;
+        left: 0;
+        right: 0;
+        transform: translateY(-50%);
+        display: flex;
+        justify-content: space-between;
+        padding: 0 20px;
+        z-index: 40;
+        pointer-events: none;
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+      .nav-btn {
+        pointer-events: auto;
+        background: rgba(22, 21, 25, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--muted);
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        cursor: pointer;
+        backdrop-filter: blur(5px);
+        transition: 0.3s;
+      }
+      .nav-btn:hover {
+        color: var(--teal);
+        border-color: var(--teal);
+      }
+      .nav-btn:disabled {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .hint-desktop {
+        position: fixed;
+        top: calc(50% + 40px);
+        left: 50%;
+        transform: translateX(-50%);
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.2em;
+        color: rgba(255, 255, 255, 0.3);
+        text-transform: uppercase;
+        z-index: 41;
+        pointer-events: none;
+      }
+
+      @media (max-width: 768px) {
+        .nav-arrows,
+        .hint-desktop {
+          display: none;
+        }
+      }
+
+      /* Bottom Bar */
+      .bottom-bar {
+        position: fixed;
+        bottom: 24px;
+        left: 0;
+        right: 0;
+        z-index: 50;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 24px;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .page-count {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--muted);
+        letter-spacing: 0.15em;
+      }
+      .dots {
+        display: flex;
+        gap: 6px;
+      }
+      .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        cursor: pointer;
+        transition: 0.3s;
+      }
+      .dot.active {
+        background: var(--teal);
+        transform: scale(1.3);
+        box-shadow: 0 0 8px rgba(78, 205, 196, 0.5);
+      }
+      .hint-mobile {
+        font-family: var(--mono);
+        font-size: 9px;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: var(--coral);
+      }
+      @media (min-width: 769px) {
+        .hint-mobile {
+          display: none;
+        }
+      }
+
+      /* Magazine & Pages */
+      .mag {
+        position: relative;
+        width: 100%;
+        max-width: 800px;
+        height: 100%;
+        max-height: 850px;
+        transform-style: preserve-3d;
+        z-index: 10;
+      }
+      .page {
+        position: absolute;
+        inset: 0;
+        padding: 60px 30px 80px;
+        background: linear-gradient(135deg, #18171c, #0f0e11);
+        box-shadow:
+          -15px 0 40px rgba(0, 0, 0, 0.6),
+          inset 1px 0 0 rgba(255, 255, 255, 0.03);
+        transform-origin: bottom right;
+        transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        opacity: 0;
+        pointer-events: none;
+        overflow-y: auto;
+        scrollbar-width: none;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .page::-webkit-scrollbar {
+        display: none;
+      }
+
+      .page.active {
+        opacity: 1;
+        pointer-events: auto;
+        z-index: 10;
+        transform: translateZ(0) rotateY(0deg);
+      }
+      .page.prev {
+        opacity: 0;
+        z-index: 5;
+        transform: translateZ(-100px) translateX(-15%) rotateY(15deg);
+      }
+      .page.next {
+        opacity: 0;
+        z-index: 5;
+        transform: translateZ(-100px) translateX(15%) rotateY(-15deg);
+      }
+
+      /* Peel effect */
+      .page::after {
+        content: '';
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        width: 45px;
+        height: 45px;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 50%);
+        box-shadow: -5px -5px 15px rgba(0, 0, 0, 0.4);
+        clip-path: polygon(100% 0, 0 100%, 100% 100%);
+        transition: 0.4s;
+        pointer-events: none;
+        z-index: 20;
+      }
+      .page.active::after {
+        width: 55px;
+        height: 55px;
+        transform: rotateX(10deg) rotateY(-10deg);
+      }
+
+      /* Typography */
+      h1,
+      h2,
+      h3 {
+        font-family: var(--serif);
+        font-weight: 300;
+        margin: 0 0 15px 0;
+        color: var(--txt);
+      }
+      h1 {
+        font-size: clamp(2.5rem, 8vw, 4rem);
+      }
+      h2 {
+        font-size: clamp(1.8rem, 5vw, 2.5rem);
+      }
+      h1 i,
+      h2 i {
+        color: var(--gold);
+        font-style: italic;
+      }
+      p {
+        line-height: 1.6;
+        margin: 0 0 15px 0;
+        font-weight: 300;
+        color: var(--light);
+        font-size: 0.95rem;
+      }
+
+      .eyebrow {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        display: block;
+        margin-bottom: 20px;
+      }
+      .sig {
+        font-family: var(--mono);
+        color: var(--teal);
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin-top: 20px;
+      }
+      .micro {
+        font-family: var(--mono);
+        font-size: 9px;
+        color: var(--muted);
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        margin-top: 40px;
+      }
+      a {
+        color: var(--teal);
+        text-decoration: none;
+        border-bottom: 1px solid rgba(78, 205, 196, 0.3);
+        transition: 0.2s;
+      }
+      a:hover {
+        color: var(--gold);
+        border-color: var(--gold);
+      }
+
+      /* Full Image Page */
+      .img-wrapper {
+        width: 100%;
+        height: 100%;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .img-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: 4px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      }
+
+      /* Cards */
+      .card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 20px;
+        border-radius: 6px;
+        margin-bottom: 15px;
+      }
+      .card-h {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 8px;
+        font-family: var(--sans);
+        font-size: 1rem;
+        font-weight: 500;
+      }
+      .c-teal {
+        fill: var(--teal);
+        stroke: var(--teal);
+      }
+      .c-gold {
+        fill: var(--gold);
+        stroke: var(--gold);
+      }
+      .c-coral {
+        fill: var(--coral);
+        stroke: var(--coral);
+      }
+      .c-vio {
+        fill: var(--violet);
+        stroke: var(--violet);
+      }
+
+      /* Guide Components */
+      .guide-page {
+        justify-content: flex-start;
+        padding-top: 80px;
+      }
+      .principle {
+        background: rgba(249, 111, 110, 0.05);
+        border: 1px solid rgba(249, 111, 110, 0.15);
+        padding: 20px;
+        border-radius: 6px;
+        margin-top: 20px;
+      }
+      .principle-lbl {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--coral);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        display: block;
+        margin-bottom: 10px;
+      }
+
+      .shot {
+        margin-bottom: 30px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding-bottom: 30px;
+      }
+      .shot:last-child {
+        border: none;
+        padding-bottom: 0;
+      }
+      .shot-hdr {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+      .shot-num {
+        font-family: var(--serif);
+        font-size: 2rem;
+        color: var(--coral);
+        font-style: italic;
+        line-height: 1;
+      }
+      .shot-title {
+        font-family: var(--serif);
+        font-size: 1.3rem;
+        margin: 0;
+        font-weight: 600;
+      }
+
+      .ghost {
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 15px;
+        box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
+      }
+      .ghost::after {
+        content: attr(data-r);
+        font-family: var(--mono);
+        font-size: 10px;
+        color: rgba(255, 255, 255, 0.3);
+        letter-spacing: 0.1em;
+      }
+      .r45 {
+        aspect-ratio: 4/5;
+        width: 50%;
+        max-width: 200px;
+        margin: 0 auto 15px;
+      }
+      .r32 {
+        aspect-ratio: 3/2;
+        width: 100%;
+      }
+      .r11 {
+        aspect-ratio: 1/1;
+        width: 60%;
+        max-width: 240px;
+        margin: 0 auto 15px;
+      }
+      .r169 {
+        aspect-ratio: 16/9;
+        width: 100%;
+      }
+      .r219 {
+        aspect-ratio: 21/9;
+        width: 100%;
+      }
+
+      .badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 12px;
+      }
+      .badge {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-family: var(--mono);
+        font-size: 9px;
+        color: var(--light);
+        text-transform: uppercase;
+      }
+      .shot p strong {
+        color: var(--txt);
+        font-weight: 500;
+      }
+
+      /* Grid Page */
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-top: 20px;
+      }
+      .g-item {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 15px;
+        border-radius: 6px;
+        text-align: center;
+      }
+      .g-num {
+        color: var(--coral);
+        font-family: var(--serif);
+        font-style: italic;
+        font-size: 1.2rem;
+      }
+      .g-name {
+        font-family: var(--serif);
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 5px 0 10px;
+      }
+      .g-item .ghost {
+        margin: 0;
+        width: 100%;
+      }
+
+      /* single-shot pages: center + fit viewport (no scroll) */
+      .guide-page.solo { justify-content: center; padding-top: 64px; padding-bottom: 40px; }
+      .guide-page.solo .shot { margin-bottom: 0; border: none; padding-bottom: 0; }
+      .guide-page.solo .ghost { margin-left: auto; margin-right: auto; }
+      .guide-page.solo .ghost.r32  { width: min(100%, 540px); }
+      .guide-page.solo .ghost.r169 { width: min(100%, 620px); }
+      .guide-page.solo .ghost.r45  { width: min(46%, 220px); }
+      .guide-page.solo .ghost.r11  { width: min(56%, 240px); }
+      /* recap thumbnails: bound height so 3 fit cleanly */
+      .g-item .ghost { max-height: 150px; }
+
+      /* placeholder illustrations (preview) */
+      .guide-page.solo .shot-illus {
+        display: block; margin: 0 auto 15px;
+        max-width: 100%; max-height: min(46vh, 460px);
+        width: auto; height: auto;
+        border-radius: 4px; box-shadow: 0 14px 40px rgba(0,0,0,0.5);
+        background: #fff;
+      }
+      .g-item .g-illus {
+        display: block; width: 100%; max-height: 120px;
+        object-fit: contain; border-radius: 4px; margin-top: 4px; background: #fff;
+      }
+    </style>
+  </head>
+  <body style="">
+    
+    <div class="top-bar">
+      <button class="lang-btn">
+        <span class="es-lbl">ES</span> | <span class="en-lbl">EN</span>
+      </button>
+    </div>
+
+    
+    <div class="nav-arrows">
+      <button class="nav-btn" id="btn-prev" aria-label="Prev">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M15 18l-6-6 6-6"></path>
+        </svg>
+      </button>
+      <button class="nav-btn" id="btn-next" aria-label="Next">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 18l6-6-6-6"></path>
+        </svg>
+      </button>
+    </div>
+    <div class="hint-desktop"><span class="es">Click para navegar</span><span class="en">Click to navigate</span></div>
+
+    
+    <div class="mag">
+      
+      <div class="page">
+        <span class="eyebrow">LG Studio · Seattle</span>
+        <h1 class="es">Gracias, <i>Erika</i></h1>
+        <h1 class="en">Thank You, <i>Erika</i></h1>
+        <p class="es">Por tu profesionalismo y tu corazón</p>
+        <p class="en">For your professionalism and your heart</p>
+        <div class="sig">Luis · LG Studio</div>
+      </div>
+
+      
+      <div class="page" style="padding: 0; justify-content: center">
+        <div class="img-wrapper">
+          <img src="https://res.cloudinary.com/dogtoagya/image/upload/v1782168961/wwoP6UtI_ynypmb.png" alt="Anotaciones de ubicacion de fotografia sobre la interfaz del sitio">
+        </div>
+      </div>
+
+      
+      <div class="page">
+        <h2 class="es">Los beneficios <i>para ti</i></h2>
+        <h2 class="en">What you <i>receive</i></h2>
+
+        <div class="card">
+          <div class="card-h">
+            <svg class="c-teal" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <circle cx="8.5" cy="8.5" r="1.5"></circle>
+              <polyline points="21 15 16 10 5 21"></polyline>
+            </svg>
+            <span class="es">Crédito en cada foto</span><span class="en">Credit on every photo</span>
+          </div>
+          <p class="es">
+            "Fotografía por Erika Sharnay · Sharnay Photography" con link a tu Instagram
+            <a href="https://www.instagram.com/sharnay_photography/" target="_blank">@sharnay_photography</a>
+          </p>
+          <p class="en">
+            "Photography by Erika Sharnay · Sharnay Photography" with link to your Instagram
+            <a href="https://www.instagram.com/sharnay_photography/" target="_blank">@sharnay_photography</a>
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-h">
+            <svg class="c-gold" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+            </svg>
+            <span class="es">Crédito permanente en el pie de página</span><span class="en">Permanent footer credit</span>
+          </div>
+          <p class="es">Tu nombre y link en todas las páginas del sitio</p>
+          <p class="en">Your name and link on every page of the site</p>
+        </div>
+
+        <div class="card">
+          <div class="card-h">
+            <svg class="c-coral" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+            <span class="es">Metadata profesional</span><span class="en">Professional metadata</span>
+          </div>
+          <p class="es">Tus datos en cada imagen (schema.org) para que Google te atribuya</p>
+          <p class="en">Your information in each image (schema.org) so Google attributes the work to you</p>
+        </div>
+
+        <div class="card">
+          <div class="card-h">
+            <svg class="c-vio" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            <span class="es">Exposición constante</span><span class="en">Constant exposure</span>
+          </div>
+          <p class="es">El sitio atrae a madres y familias de Seattle (tu clientela ideal)</p>
+          <p class="en">The site attracts mothers and families in Seattle (your ideal clients)</p>
+        </div>
+      </div>
+
+      
+      <div class="page">
+        <h2 class="es">
+          Tú quisiste regalarlo por amor. Yo quiero darte exposición profesional a cambio.<br><br>Esta es mi
+          decisión, mi forma de honrar tu trabajo.
+        </h2>
+        <h2 class="en">
+          You wanted to give it out of love. I want to give you professional exposure in return.<br><br>This is my
+          decision, my way of honoring your work.
+        </h2>
+        <div class="sig es">Con cariño, Luis · LG Studio, Seattle</div>
+        <div class="sig en">With appreciation, Luis · LG Studio, Seattle</div>
+        <div class="micro es">Hecho con intención. Pensado para durar.</div>
+        <div class="micro en">Made with intention. Built to last.</div>
+      </div>
+
+      
+      <div class="page guide-page">
+        <span class="eyebrow">Photo Placement Guide</span>
+        <h2 class="es">Dónde vive Nari en todo el sitio</h2>
+        <h2 class="en">Where Nari Lives Throughout the Site</h2>
+        <p class="es">
+          Una guía de ubicación y selección. Cada marco muestra el encuadre, dónde aparece, para qué sirve y el texto
+          que irá debajo.
+        </p>
+        <p class="en">
+          A placement and selects guide. Each frame shows the crop, where it appears, what it does, and the caption text
+          that will sit beneath it.
+        </p>
+
+        <div class="principle">
+          <span class="principle-lbl es">Principio rector</span>
+          <span class="principle-lbl en">Governing principle</span>
+          <p class="es">
+            El rostro de Nari se gana su lugar según el contexto emocional. En las páginas de identidad y de método, su
+            presencia es el activo: calidez, confianza, una persona real. En las guías de crisis gana la contención: una
+            madre o un padre en pleno desborde necesita las palabras rápido, no un retrato...
+          </p>
+          <p class="en">
+            Nari’s face earns its place based on emotional context. On identity and method pages, her presence is the
+            asset: warmth, trust, a real person. In crisis guides, containment wins: a mother or father in the middle of
+            overwhelm needs the words quickly, not a portrait...
+          </p>
+        </div>
+      </div>
+
+      
+      <div class="page guide-page solo">
+        <div class="shot">
+          <div class="shot-hdr">
+            <span class="shot-num">01</span>
+            <h3 class="shot-title es">El Retrato Ancla</h3>
+            <h3 class="shot-title en">The Anchor Portrait</h3>
+          </div>
+          <img class="shot-illus" src="https://res.cloudinary.com/dogtoagya/image/upload/v1782172741/ChatGPT_Image_Jun_22_2026_04_58_11_PM_1_xptost.png" alt="Ilustracion de referencia, encuadre 01">
+          <div class="badges es">
+            <span class="badge">Vertical 4:5</span><span class="badge">Mirada serena</span><span class="badge">Pared cálida · espacio negativo</span>
+          </div>
+          <div class="badges en">
+            <span class="badge">Vertical 4:5</span><span class="badge">Steady gaze</span><span class="badge">Warm wall · negative space</span>
+          </div>
+          <p class="es">
+            <strong>Propósito:</strong> La imagen que más debe sentirse como ella: presente, cálida, inteligente,
+            emocionalmente segura.<br><strong>Aparece en:</strong> Sobre Nari (hero) · Inscripción · Método · home ·
+            decks<br><strong>Alt text:</strong> Retrato cálido de Nari con contacto visual sereno y fondo suave.
+          </p>
+          <p class="en">
+            <strong>Purpose:</strong> The image that most needs to feel like her: present, warm, intelligent,
+            emotionally secure.<br><strong>Appears in:</strong> About Nari (hero) · Enrollment · Method · home ·
+            decks<br><strong>Alt text:</strong> Warm portrait of Nari with calm eye contact and a soft background.
+          </p>
+        </div>
+      </div>
+
+      <div class="page guide-page solo">
+        <div class="shot">
+          <div class="shot-hdr">
+            <span class="shot-num">02</span>
+            <h3 class="shot-title es">En el Escritorio · El Método en Práctica</h3>
+            <h3 class="shot-title en">At the Desk · The Method in Practice</h3>
+          </div>
+          <img class="shot-illus" src="https://res.cloudinary.com/dogtoagya/image/upload/v1782172741/ChatGPT_Image_Jun_22_2026_04_58_11_PM_2_ysjlmh.png" alt="Ilustracion de referencia, encuadre 02">
+          <div class="badges es">
+            <span class="badge">Horizontal 3:2</span><span class="badge">Manos en el cuaderno</span><span class="badge">Luz natural suave</span>
+          </div>
+          <div class="badges en">
+            <span class="badge">Horizontal 3:2</span><span class="badge">Hands on notebook</span><span class="badge">Soft natural light</span>
+          </div>
+          <p class="es">
+            <strong>Propósito:</strong> La prueba de que hay una persona real, con un método real, haciendo trabajo
+            real.<br><strong>Aparece en:</strong> Método (hero) · home · Inscripción · PDFs<br><strong>Alt text:</strong>
+            Nari trabajando en su escritorio con cuaderno y luz natural suave.
+          </p>
+          <p class="en">
+            <strong>Purpose:</strong> Proof that there is a real person, with a real method, doing real work.<br><strong>Appears in:</strong>
+            Method (hero) · home · Enrollment · PDFs<br><strong>Alt text:</strong> Nari working at her desk with a
+            notebook and soft natural light.
+          </p>
+        </div>
+      </div>
+
+      
+      <div class="page guide-page solo">
+        <div class="shot">
+          <div class="shot-hdr">
+            <span class="shot-num">03</span>
+            <h3 class="shot-title es">Escuchar · Sostener el Espacio</h3>
+            <h3 class="shot-title en">Listening · Holding the Space</h3>
+          </div>
+          <img class="shot-illus" src="https://res.cloudinary.com/dogtoagya/image/upload/v1782172740/ChatGPT_Image_Jun_22_2026_04_58_12_PM_3_ygzza0.png" alt="Ilustracion de referencia, encuadre 03">
+          <div class="badges es">
+            <span class="badge">Cuadrada 1:1</span><span class="badge">Expresión de escucha</span><span class="badge">Mano al pecho / taza</span>
+          </div>
+          <div class="badges en">
+            <span class="badge">Square 1:1</span><span class="badge">Listening expression</span><span class="badge">Hand to chest / mug</span>
+          </div>
+          <p class="es">
+            <strong>Propósito:</strong> Alguien capaz de sostener la intensidad sin volverse dramática.<br><strong>Aparece en:</strong>
+            Apoyo (hub) · guías · Método · Sobre Nari<br><strong>Alt text:</strong> Nari en actitud de escucha,
+            sosteniendo el espacio con calma.
+          </p>
+          <p class="en">
+            <strong>Purpose:</strong> Someone able to hold intensity without becoming dramatic.<br><strong>Appears in:</strong>
+            Support (hub) · guides · Method · About Nari<br><strong>Alt text:</strong> Nari in a listening posture,
+            holding the space with calm.
+          </p>
+        </div>
+      </div>
+
+      <div class="page guide-page solo">
+        <div class="shot">
+          <div class="shot-hdr">
+            <span class="shot-num">04</span>
+            <h3 class="shot-title es">Movimiento · Vida Real</h3>
+            <h3 class="shot-title en">Movement · Real Life</h3>
+          </div>
+          <img class="shot-illus" src="https://res.cloudinary.com/dogtoagya/image/upload/v1782172740/ChatGPT_Image_Jun_22_2026_04_58_12_PM_4_xivr9n.png" alt="Ilustracion de referencia, encuadre 04">
+          <div class="badges es">
+            <span class="badge">Horizontal 3:2</span><span class="badge">Movimiento natural</span><span class="badge">Transición doméstica</span>
+          </div>
+          <div class="badges en">
+            <span class="badge">Horizontal 3:2</span><span class="badge">Natural motion</span><span class="badge">Domestic transition</span>
+          </div>
+          <p class="es">
+            <strong>Propósito:</strong> El encuadre que evita que toda la librería se sienta como una sesión de
+            LinkedIn.<br><strong>Aparece en:</strong> home (cierre) · Inscripción · Sobre Nari · social cards<br><strong>Alt text:</strong>
+            Nari en movimiento natural en un espacio doméstico, momento real.
+          </p>
+          <p class="en">
+            <strong>Purpose:</strong> The framing that keeps the library from feeling like a LinkedIn photo shoot.<br><strong>Appears in:</strong>
+            home (closing) · Enrollment · About Nari · social cards<br><strong>Alt text:</strong> Nari in natural
+            movement inside a domestic space, a real-life moment.
+          </p>
+        </div>
+      </div>
+
+      
+      <div class="page guide-page solo">
+        <div class="shot">
+          <div class="shot-hdr">
+            <span class="shot-num">05</span>
+            <h3 class="shot-title es">Tras Cámara · Grabando</h3>
+            <h3 class="shot-title en">Behind the Scenes · Recording</h3>
+          </div>
+          <img class="shot-illus" src="https://res.cloudinary.com/dogtoagya/image/upload/v1782172741/ChatGPT_Image_Jun_22_2026_04_58_12_PM_5_ey07ud.png" alt="Ilustracion de referencia, encuadre 05">
+          <div class="badges es">
+            <span class="badge">Horizontal + Vertical</span><span class="badge">De espaldas al lente</span><span class="badge">Detrás de cámara</span>
+          </div>
+          <div class="badges en">
+            <span class="badge">Landscape + Portrait</span><span class="badge">Turned from the lens</span><span class="badge">Behind the camera</span>
+          </div>
+          <p class="es">
+            <strong>Propósito:</strong> La persona real haciendo el trabajo real, desde un ángulo que nadie ha visto:
+            grabando los reels que la gente ya sigue.<br><strong>Aparece en:</strong> Sobre Nari · Inscripción ("+50 talleres") · home · portadas de reels<br><strong>Alt text:</strong> Nari grabando un video con su teléfono en un soporte, de espaldas a la cámara, en pleno trabajo.
+          </p>
+          <p class="en">
+            <strong>Purpose:</strong> The real person doing the real work, from an angle no one has seen: recording the reels people already follow.<br><strong>Appears in:</strong> About Nari · Enrollment ("50+ workshops") · home · reel covers<br><strong>Alt text:</strong> Nari recording a video with her phone on a stand, turned away from the camera, mid-work.
+          </p>
+        </div>
+      </div>
+
+      <div class="page guide-page solo">
+        <div class="shot">
+          <div class="shot-hdr">
+            <span class="shot-num">06</span>
+            <h3 class="shot-title es">Espacio Abierto · Hero Editorial</h3>
+            <h3 class="shot-title en">Open Space · Editorial Hero</h3>
+          </div>
+          <img class="shot-illus" src="https://res.cloudinary.com/dogtoagya/image/upload/v1782172739/ChatGPT_Image_Jun_22_2026_04_58_12_PM_6_tdczpk.png" alt="Ilustracion de referencia, encuadre 06">
+          <div class="badges es">
+            <span class="badge">Cinemática 21:9</span><span class="badge">Sujeto a un lado</span><span class="badge">Amplio espacio negativo</span>
+          </div>
+          <div class="badges en">
+            <span class="badge">Cinematic 21:9</span><span class="badge">Subject to one side</span><span class="badge">Wide negative space</span>
+          </div>
+          <p class="es">
+            <strong>Propósito:</strong> La favorita del diseño: le da al texto un lugar donde vivir. Calma, editorial,
+            espacio para que un titular respire.<br><strong>Aparece en:</strong> home (hero) · Inscripción · Método ·
+            Marca · Open Graph<br><strong>Alt text:</strong> Nari en un espacio luminoso con amplio espacio negativo,
+            sereno y editorial.
+          </p>
+          <p class="en">
+            <strong>Purpose:</strong> The design favorite: it gives text a place to live. Calm, editorial, room for a
+            headline to breathe.<br><strong>Appears in:</strong> home (hero) · Enrollment · Method · Brand · Open
+            Graph<br><strong>Alt text:</strong> Nari in a bright space with generous negative space, serene and
+            editorial.
+          </p>
+        </div>
+      </div>
+
+      
+            <div class="page guide-page solo">
+        <div class="shot">
+          <div class="shot-hdr">
+            <span class="shot-num">07</span>
+            <h3 class="shot-title es">Conexión · Nari y Louie</h3>
+            <h3 class="shot-title en">Connection · Nari &amp; Louie</h3>
+          </div>
+          <img class="shot-illus" src="https://res.cloudinary.com/dogtoagya/image/upload/v1782172741/ChatGPT_Image_Jun_22_2026_04_58_13_PM_7_w4ezoy.png" alt="Ilustracion de referencia, encuadre 07">
+          <div class="badges es">
+            <span class="badge">Vertical 4:5</span><span class="badge">Momento de ternura</span><span class="badge">Madre e hijo</span>
+          </div>
+          <div class="badges en">
+            <span class="badge">Portrait 4:5</span><span class="badge">A tender moment</span><span class="badge">Mother and child</span>
+          </div>
+          <p class="es">
+            <strong>Propósito:</strong> El abrazo. La reparación y la reconexión que enseña el método, vividas. Vive en las páginas cálidas, nunca en la crisis.<br><strong>Aparece en:</strong> Sobre Nari · cierre del home · Método (Reparación sin Culpa)<br><strong>Alt text:</strong> Nari abraza a su hijo Louie en un momento de ternura y conexión.
+          </p>
+          <p class="en">
+            <strong>Purpose:</strong> The embrace. The repair and reconnection the method teaches, lived. It belongs to the warm pages, never the crisis.<br><strong>Appears in:</strong> About Nari · home closing · Method (Reparación sin Culpa)<br><strong>Alt text:</strong> Nari embraces her son Louie in a tender moment of connection.
+          </p>
+        </div>
+      </div>
+
+      <div class="page guide-page solo">
+        <div class="shot">
+          <div class="shot-hdr">
+            <span class="shot-num">08</span>
+            <h3 class="shot-title es">Juego · Play OS</h3>
+            <h3 class="shot-title en">Play · Play OS</h3>
+          </div>
+          <img class="shot-illus" src="https://res.cloudinary.com/dogtoagya/image/upload/v1782172741/ChatGPT_Image_Jun_22_2026_04_58_13_PM_8_hndkql.png" alt="Ilustracion de referencia, encuadre 08">
+          <div class="badges es">
+            <span class="badge">Horizontal 3:2</span><span class="badge">Juego en el suelo</span><span class="badge">Espacio seguro</span>
+          </div>
+          <div class="badges en">
+            <span class="badge">Landscape 3:2</span><span class="badge">Play on the floor</span><span class="badge">A safe space</span>
+          </div>
+          <p class="es">
+            <strong>Propósito:</strong> El canal que se abre antes de corregir, hecho visible. La tesis de "Mecanismos del Juego · Play OS".<br><strong>Aparece en:</strong> Método (Play OS) · taller futuro sobre el juego · Sobre Nari<br><strong>Alt text:</strong> Nari y Louie jugando en el suelo; el entorno de juego como espacio seguro.
+          </p>
+          <p class="en">
+            <strong>Purpose:</strong> The channel you open before correcting, made visible. The thesis of "Mecanismos del Juego · Play OS".<br><strong>Appears in:</strong> Method (Play OS) · a future play workshop · About Nari<br><strong>Alt text:</strong> Nari and Louie playing on the floor; the play environment as a safe space.
+          </p>
+        </div>
+      </div>
+
+      <div class="page guide-page">
+        <h2 class="es">Los 8 Encuadres · Vista Rápida</h2>
+        <h2 class="en">The 8 Frames · Quick View</h2>
+        <p class="es">Una referencia visual para escanear el sistema completo de un vistazo.</p>
+        <p class="en">A visual reference for scanning the full system at a glance.</p>
+
+        <div class="grid">
+          <div class="g-item">
+            <div class="g-num">01</div>
+            <div class="g-name es">El Retrato Ancla</div>
+            <div class="g-name en">The Anchor Portrait</div>
+            <img class="g-illus" src="https://res.cloudinary.com/dogtoagya/image/upload/v1782172741/ChatGPT_Image_Jun_22_2026_04_58_11_PM_1_xptost.png" alt="">
+          </div>
+          <div class="g-item">
+            <div class="g-num">02</div>
+            <div class="g-name es">En el Escritorio</div>
+            <div class="g-name en">At the Desk</div>
+            <img class="g-illus" src="https://res.cloudinary.com/dogtoagya/image/upload/v1782172741/ChatGPT_Image_Jun_22_2026_04_58_11_PM_2_ysjlmh.png" alt="">
+          </div>
+          <div class="g-item">
+            <div class="g-num">03</div>
+            <div class="g-name es">Escuchar</div>
+            <div class="g-name en">Listening</div>
+            <img class="g-illus" src="https://res.cloudinary.com/dogtoagya/image/upload/v1782172740/ChatGPT_Image_Jun_22_2026_04_58_12_PM_3_ygzza0.png" alt="">
+          </div>
+          <div class="g-item">
+            <div class="g-num">04</div>
+            <div class="g-name es">Movimiento</div>
+            <div class="g-name en">Movement</div>
+            <img class="g-illus" src="https://res.cloudinary.com/dogtoagya/image/upload/v1782172740/ChatGPT_Image_Jun_22_2026_04_58_12_PM_4_xivr9n.png" alt="">
+          </div>
+        </div>
+      </div>
+
+      <div class="page guide-page">
+        <h2 class="es">Los 8 Encuadres · Vista Rápida</h2>
+        <h2 class="en">The 8 Frames · Quick View</h2>
+        <p class="es">Continuación de la vista rápida.</p>
+        <p class="en">Quick view, continued.</p>
+        <div class="grid">
+          <div class="g-item">
+            <div class="g-num">05</div>
+            <div class="g-name es">Tras Cámara</div>
+            <div class="g-name en">Behind the Scenes</div>
+            <img class="g-illus" src="https://res.cloudinary.com/dogtoagya/image/upload/v1782172741/ChatGPT_Image_Jun_22_2026_04_58_12_PM_5_ey07ud.png" alt="">
+          </div>
+          <div class="g-item">
+            <div class="g-num">06</div>
+            <div class="g-name es">Espacio Abierto</div>
+            <div class="g-name en">Open Space</div>
+            <img class="g-illus" src="https://res.cloudinary.com/dogtoagya/image/upload/v1782172739/ChatGPT_Image_Jun_22_2026_04_58_12_PM_6_tdczpk.png" alt="">
+          </div>
+          <div class="g-item">
+            <div class="g-num">07</div>
+            <div class="g-name es">Conexión</div>
+            <div class="g-name en">Connection</div>
+            <img class="g-illus" src="https://res.cloudinary.com/dogtoagya/image/upload/v1782172741/ChatGPT_Image_Jun_22_2026_04_58_13_PM_7_w4ezoy.png" alt="">
+          </div>
+          <div class="g-item">
+            <div class="g-num">08</div>
+            <div class="g-name es">Juego · Play OS</div>
+            <div class="g-name en">Play · Play OS</div>
+            <img class="g-illus" src="https://res.cloudinary.com/dogtoagya/image/upload/v1782172741/ChatGPT_Image_Jun_22_2026_04_58_13_PM_8_hndkql.png" alt="">
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="page">
+        <h2 class="es">
+          Ocho encuadres, todo el sistema visual. Cuando se llenen, el sitio deja de ser una estructura y se
+          vuelve una persona.
+        </h2>
+        <h2 class="en">
+          Eight frames, the entire visual system. Once they are filled, the site stops feeling like a
+          structure and starts feeling like a person.
+        </h2>
+        <p class="es">
+          <a href="https://www.instagram.com/sharnay_photography/" target="_blank">Fotografía por Erika Sharnay · Sharnay Photography</a>
+        </p>
+        <p class="en">
+          <a href="https://www.instagram.com/sharnay_photography/" target="_blank">Photography by Erika Sharnay · Sharnay Photography</a>
+        </p>
+        <div class="sig es">Con cariño, Luis · LG Studio, Seattle</div>
+        <div class="sig en">With appreciation, Luis · LG Studio, Seattle</div>
+      </div>
+    </div>
+
+    
+    <div class="bottom-bar">
+      <div class="page-count" id="counter">01 / 10</div>
+      <div class="dots" id="dots-container"></div>
+      <div class="hint-mobile es">Desliza para continuar →</div>
+      <div class="hint-mobile en">Swipe to continue →</div>
+    </div>
+
+    
+  
+
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+
+    <script>
+    (function () {
+      var pages = Array.prototype.slice.call(document.querySelectorAll('.mag .page'));
+      var total = pages.length;
+      var current = 0;
+      var counter = document.getElementById('counter');
+      var dotsWrap = document.getElementById('dots-container');
+      var btnPrev = document.getElementById('btn-prev');
+      var btnNext = document.getElementById('btn-next');
+      var langBtn = document.querySelector('.lang-btn');
+      var dots = [];
+
+      if (dotsWrap) {
+        pages.forEach(function (_, i) {
+          var d = document.createElement('button');
+          d.className = 'dot';
+          d.type = 'button';
+          d.setAttribute('aria-label', 'Slide ' + (i + 1));
+          d.addEventListener('click', function (e) { e.stopPropagation(); goTo(i); });
+          dotsWrap.appendChild(d);
+          dots.push(d);
+        });
+      }
+
+      function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+      function render() {
+        pages.forEach(function (p, i) {
+          p.classList.remove('active', 'prev', 'next');
+          if (i === current) p.classList.add('active');
+          else if (i === current - 1) p.classList.add('prev');
+          else if (i === current + 1) p.classList.add('next');
+        });
+        dots.forEach(function (d, i) { d.classList.toggle('active', i === current); });
+        if (counter) counter.textContent = pad(current + 1) + ' / ' + pad(total);
+        if (btnPrev) btnPrev.disabled = (current === 0);
+        if (btnNext) btnNext.disabled = (current === total - 1);
+        if (pages[current]) pages[current].scrollTop = 0;
+      }
+
+      function goTo(i) {
+        current = Math.max(0, Math.min(total - 1, i));
+        render();
+      }
+      function next() { if (current < total - 1) goTo(current + 1); }
+      function prev() { if (current > 0) goTo(current - 1); }
+
+      if (btnNext) btnNext.addEventListener('click', function (e) { e.stopPropagation(); next(); });
+      if (btnPrev) btnPrev.addEventListener('click', function (e) { e.stopPropagation(); prev(); });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); }
+        else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); }
+      });
+
+      var mag = document.querySelector('.mag');
+      if (mag) {
+        mag.addEventListener('click', function (e) {
+          if (e.target.closest('button, a, .dot')) return;
+          if (e.clientX < window.innerWidth * 0.35) prev(); else next();
+        });
+      }
+
+      // touch swipe (mobile)
+      var x0 = null;
+      if (mag) {
+        mag.addEventListener('touchstart', function (e) { x0 = e.changedTouches[0].clientX; }, { passive: true });
+        mag.addEventListener('touchend', function (e) {
+          if (x0 === null) return;
+          var dx = e.changedTouches[0].clientX - x0;
+          if (Math.abs(dx) > 45) { if (dx < 0) next(); else prev(); }
+          x0 = null;
+        }, { passive: true });
+      }
+
+      if (langBtn) {
+        langBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          var cur = document.documentElement.getAttribute('data-lang') || 'es';
+          document.documentElement.setAttribute('data-lang', cur === 'es' ? 'en' : 'es');
+        });
+      }
+
+      render();
+    })();
+    </script>
+  </body></html>
