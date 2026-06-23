@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es" data-lang="es" data-theme="light" style=""><head><meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="description" content="A bilingual cinematic photo-selects and attribution guide by LG Studio.">
     <meta name="robots" content="noindex, nofollow">
     <meta property="og:title" content="Gracias, Erika · LG Studio">
@@ -556,6 +556,109 @@
         display: block; width: 100%; max-height: 120px;
         object-fit: contain; border-radius: 4px; margin-top: 4px; background: #fff;
       }
+
+      .image-lightbox {
+        position: fixed;
+        inset: 0;
+        z-index: 200;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: max(18px, env(safe-area-inset-top)) 18px max(18px, env(safe-area-inset-bottom));
+        background: rgba(10, 9, 12, 0.92);
+        backdrop-filter: blur(10px);
+      }
+
+      .image-lightbox.open {
+        display: flex;
+      }
+
+      .image-lightbox-img {
+        max-width: 96vw;
+        max-height: 88dvh;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        border-radius: 6px;
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.7);
+        background: #fff;
+        touch-action: pinch-zoom;
+      }
+
+      .image-lightbox-close {
+        position: fixed;
+        top: max(14px, env(safe-area-inset-top));
+        right: max(14px, env(safe-area-inset-right));
+        z-index: 210;
+        width: 42px;
+        height: 42px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: rgba(22, 21, 25, 0.72);
+        color: var(--txt);
+        font-size: 26px;
+        line-height: 1;
+        cursor: pointer;
+      }
+
+      .image-lightbox-hint {
+        position: fixed;
+        left: 50%;
+        bottom: max(16px, env(safe-area-inset-bottom));
+        transform: translateX(-50%);
+        width: min(90vw, 460px);
+        text-align: center;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(240, 236, 229, 0.62);
+      }
+
+      .shot-illus,
+      .g-illus,
+      .img-wrapper img {
+        cursor: zoom-in;
+      }
+
+      @media (orientation: landscape) and (max-height: 520px) {
+        body,
+        html {
+          height: 100dvh;
+        }
+
+        .mag {
+          max-width: min(100vw, 980px);
+          max-height: 100dvh;
+        }
+
+        .page {
+          padding: 44px 28px 54px;
+        }
+
+        .guide-page {
+          padding-top: 52px;
+        }
+
+        .guide-page.solo {
+          padding-top: 44px;
+          padding-bottom: 42px;
+        }
+
+        .guide-page.solo .shot-illus {
+          max-height: min(70dvh, 520px);
+        }
+
+        .bottom-bar {
+          bottom: max(8px, env(safe-area-inset-bottom));
+          padding: 0 16px;
+        }
+
+        .top-bar {
+          top: max(10px, env(safe-area-inset-top));
+          right: max(12px, env(safe-area-inset-right));
+        }
+      }
     </style>
   </head>
   <body style="">
@@ -1048,8 +1151,17 @@
     <div class="bottom-bar">
       <div class="page-count" id="counter">01 / 10</div>
       <div class="dots" id="dots-container"></div>
-      <div class="hint-mobile es">Desliza para continuar →</div>
-      <div class="hint-mobile en">Swipe to continue →</div>
+      <div class="hint-mobile es">Desliza para avanzar · toca una imagen para verla</div>
+      <div class="hint-mobile en">Swipe to continue · tap an image to view</div>
+    </div>
+
+    <div class="image-lightbox" id="image-lightbox" aria-hidden="true" role="dialog" aria-label="Image preview">
+      <button class="image-lightbox-close" type="button" aria-label="Close image preview">×</button>
+      <img class="image-lightbox-img" id="image-lightbox-img" src="" alt="">
+      <div class="image-lightbox-hint">
+        <span class="es">Pellizca o gira el teléfono para ver más detalle</span>
+        <span class="en">Pinch or rotate your phone to see more detail</span>
+      </div>
     </div>
 
     
@@ -1067,6 +1179,47 @@
       var btnNext = document.getElementById('btn-next');
       var langBtn = document.querySelector('.lang-btn');
       var dots = [];
+      var lightbox = document.getElementById('image-lightbox');
+      var lightboxImg = document.getElementById('image-lightbox-img');
+      var lightboxClose = document.querySelector('.image-lightbox-close');
+
+      function openLightbox(img) {
+        if (!lightbox || !lightboxImg || !img) return;
+        lightboxImg.src = img.currentSrc || img.src;
+        lightboxImg.alt = img.alt || '';
+        lightbox.classList.add('open');
+        lightbox.setAttribute('aria-hidden', 'false');
+      }
+
+      function closeLightbox() {
+        if (!lightbox || !lightboxImg) return;
+        lightbox.classList.remove('open');
+        lightbox.setAttribute('aria-hidden', 'true');
+        lightboxImg.src = '';
+        lightboxImg.alt = '';
+      }
+
+      Array.prototype.slice.call(document.querySelectorAll('.img-wrapper img, .shot-illus, .g-illus')).forEach(function (img) {
+        img.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          openLightbox(img);
+        });
+      });
+
+      if (lightbox) {
+        lightbox.addEventListener('click', function (e) {
+          if (e.target === lightbox) closeLightbox();
+        });
+      }
+
+      if (lightboxClose) {
+        lightboxClose.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          closeLightbox();
+        });
+      }
 
       if (dotsWrap) {
         pages.forEach(function (_, i) {
@@ -1107,23 +1260,38 @@
       if (btnPrev) btnPrev.addEventListener('click', function (e) { e.stopPropagation(); prev(); });
 
       document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && lightbox && lightbox.classList.contains('open')) {
+          e.preventDefault();
+          closeLightbox();
+          return;
+        }
+
+        if (lightbox && lightbox.classList.contains('open')) return;
+
         if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); }
         else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); }
       });
 
       var mag = document.querySelector('.mag');
-      if (mag) {
+      var canClickNavigate = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+      if (mag && canClickNavigate) {
         mag.addEventListener('click', function (e) {
-          if (e.target.closest('button, a, .dot')) return;
-          if (e.clientX < window.innerWidth * 0.35) prev(); else next();
+          if (e.target.closest('button, a, .dot, img, .image-lightbox')) return;
+          if (e.clientX < window.innerWidth * 0.35) prev();
+          else if (e.clientX > window.innerWidth * 0.65) next();
         });
       }
 
       // touch swipe (mobile)
       var x0 = null;
       if (mag) {
-        mag.addEventListener('touchstart', function (e) { x0 = e.changedTouches[0].clientX; }, { passive: true });
+        mag.addEventListener('touchstart', function (e) {
+          if (lightbox && lightbox.classList.contains('open')) return;
+          x0 = e.changedTouches[0].clientX;
+        }, { passive: true });
         mag.addEventListener('touchend', function (e) {
+          if (lightbox && lightbox.classList.contains('open')) return;
           if (x0 === null) return;
           var dx = e.changedTouches[0].clientX - x0;
           if (Math.abs(dx) > 45) { if (dx < 0) next(); else prev(); }
