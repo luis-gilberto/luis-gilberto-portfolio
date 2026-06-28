@@ -10,4 +10,4 @@
   - Deliverables cards switched to flexible layout with aligned borders
   - Light-mode contrast fixes, theme-aware utilities
   - Portal: Gatekeeper warning on login and confidential watermark in sidebar
-  - Final CTA now routes to Cal.com (https://cal.com/luisgilberto)
+  - Final CTA now routes to Microsoft Bookings (https://www.luis-gilberto.com/book)
