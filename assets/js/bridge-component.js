@@ -28,7 +28,7 @@
             { 
                 title: "The Studio", 
                 description: "See how strategy becomes real campaigns and products.", 
-                link: "/TheHub/studio.html" 
+                link: "/studio/" 
             }
         ]
     };

@@ -528,7 +528,7 @@
                     <div class="ins-item-text"><p class="ins-item-title">Advisory</p><p class="ins-item-desc">Direct access to Luis. leadership alignment and clarity</p><span class="ins-item-role">Partnership</span></div>
                   </a>
 
-                  <a href="/TheHub/studio.html" class="ins-panel-item">
+                  <a href="/studio/" class="ins-panel-item">
                     <div class="ins-item-icon hub-studio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
                     <div class="ins-item-text"><p class="ins-item-title">The Studio</p><p class="ins-item-desc">High-fidelity execution. ideas into tangible assets</p><span class="ins-item-role">Production</span></div>
                   </a>

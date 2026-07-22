@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <a href="${base}TheHub/index.html" class="mega-link"><div class="mega-icon"><i class="fas fa-home"></i></div><div class="mega-text"><b>Hub Home</b><span>System overview</span></div></a>
                                 <a href="${base}TheHub/strategy-iq/index.html" class="mega-link"><div class="mega-icon" style="color:var(--teal);"><i class="fas fa-brain"></i></div><div class="mega-text"><b>StrategyIQ™</b><span>Diagnostic tool</span></div></a>
                                 <a href="${base}TheHub/advisory/index.html" class="mega-link"><div class="mega-icon"><i class="fas fa-compass"></i></div><div class="mega-text"><b>Advisory</b><span>Leadership alignment</span></div></a>
-                                <a href="${base}TheHub/studio.html" class="mega-link"><div class="mega-icon"><i class="fas fa-paint-brush"></i></div><div class="mega-text"><b>The Studio</b><span>Creative production</span></div></a>
+                                <a href="${base}studio/" class="mega-link"><div class="mega-icon"><i class="fas fa-paint-brush"></i></div><div class="mega-text"><b>The Studio</b><span>Creative production</span></div></a>
                             </div>
                         </div>
                     </div>
@@ -380,7 +380,7 @@ document.addEventListener('DOMContentLoaded', function() {
             { label: 'Hub home',    href: '/TheHub/index.html',              active: path.endsWith('/TheHub/') || path.endsWith('/TheHub/index.html') },
             { label: 'StrategyIQ™', href: '/TheHub/strategy-iq/index.html', active: path.includes('strategy-iq') },
             { label: 'Advisory',    href: '/TheHub/advisory/index.html',     active: path.includes('advisory') },
-            { label: 'The Studio',  href: '/TheHub/studio.html',             active: path.includes('studio') },
+            { label: 'The Studio',  href: '/studio/',             active: path.includes('studio') },
         ],
         portfolio: [
             { label: 'Experience',     href: '/myexperience.html', active: path.includes('myexperience') },
