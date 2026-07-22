@@ -1,0 +1,994 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Criar Sin Culpas · Sistema visual editorial · Síntesis</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FAF6F2;
+    --blush: #FCE7DD;
+    --peach: #F4A88A;
+    --peach-deep: #E8896A;
+    --navy: #1F2E46;
+    --slate-blue: #8599AD;
+    --ink-mute: #4A5B75;
+    --ink-quiet: #7F8DA1;
+    --icon-rosa: #E89BA8;
+    --icon-terra: #C45A47;
+    --icon-ambar: #E4A85C;
+    --icon-sereno: #8FA8C4;
+    --font-serif: 'Cormorant Garamond', 'Times New Roman', serif;
+    --font-sans: 'DM Sans', -apple-system, 'Helvetica Neue', sans-serif;
+    --mono: 'DM Mono', ui-monospace, monospace;
+    --hairline: rgba(31, 46, 70, 0.08);
+    --hairline-strong: rgba(31, 46, 70, 0.14);
+    --museum-tag: rgba(31, 46, 70, 0.48);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* Portfolio canvas · 1600 wide · publication artifact, not a responsive page */
+  html, body { min-width: 1600px; background: var(--cream); }
+  body {
+    color: var(--navy);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  .canvas {
+    width: 1600px;
+    margin: 0 auto;
+    position: relative;
+    padding: 96px 96px 72px;
+    background: var(--cream);
+  }
+  .canvas::after {
+    content: '';
+    position: absolute; inset: 0;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 220px;
+    opacity: 0.025;
+    mix-blend-mode: multiply;
+    z-index: 100;
+  }
+
+  /* ═══════════ LANGUAGE TOGGLE ═══════════ */
+  .lang-toggle {
+    position: fixed;
+    top: 24px; right: 24px;
+    z-index: 200;
+    display: inline-flex;
+    background: rgba(250, 246, 242, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--hairline-strong);
+    border-radius: 999px;
+    padding: 4px;
+    box-shadow: 0 4px 16px rgba(31,46,70,0.08);
+  }
+  .lang-toggle button {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    border: none;
+    background: transparent;
+    color: rgba(31,46,70,0.55);
+    padding: 7px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 160ms ease;
+  }
+  .lang-toggle button:hover { color: var(--navy); }
+  .lang-toggle button.active { background: var(--navy); color: var(--cream); }
+
+  /* ═══════════ HEADER ═══════════ */
+  .head {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    align-items: end;
+    padding-bottom: 44px;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .head-left { max-width: 940px; }
+  .brandmark {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--navy);
+    letter-spacing: -0.005em;
+    margin-bottom: 44px;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+  .brandmark::after {
+    content: 'Sistema visual · v2 · 2026';
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--slate-blue);
+    padding-left: 14px;
+    border-left: 1px solid var(--hairline-strong);
+    line-height: 1;
+    align-self: baseline;
+  }
+  .eyebrow-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--peach-deep);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+  .eyebrow-tag::before { content: ''; width: 24px; height: 1px; background: var(--peach-deep); }
+  .display {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: 66px;
+    line-height: 1.02;
+    letter-spacing: -0.01em;
+    color: var(--navy);
+    margin-bottom: 24px;
+  }
+  .display em { font-style: italic; color: var(--peach-deep); font-weight: 400; }
+  .lede {
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--ink-mute);
+    max-width: 66ch;
+  }
+  .lede strong { color: var(--navy); font-weight: 500; }
+
+  .head-right { display: flex; flex-direction: column; align-items: flex-end; gap: 20px; }
+  .meta-block { text-align: right; }
+  .meta-block .k {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--slate-blue);
+    margin-bottom: 4px;
+  }
+  .meta-block .v {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: 15px;
+    letter-spacing: -0.005em;
+    color: var(--navy);
+  }
+
+  /* ═══════════ SECTION LABEL ═══════════ */
+  .section-label {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin: 56px 0 28px;
+  }
+  .section-label .eyebrow-tag { margin-bottom: 0; }
+  .section-label h2 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: 30px;
+    line-height: 1.1;
+    letter-spacing: -0.005em;
+    color: var(--navy);
+    margin-top: 12px;
+  }
+  .section-label h2 em { font-style: italic; color: var(--peach-deep); }
+  .section-label .count {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--slate-blue);
+  }
+
+  /* ═══════════ ZOOM LADDER · signature specimen ═══════════ */
+  .ladder {
+    display: grid;
+    grid-template-columns: 620px 1fr 1fr 1fr;
+    gap: 0;
+    align-items: stretch;
+  }
+  .rung { position: relative; padding-right: 36px; }
+  .rung + .rung { padding-left: 36px; border-left: 1px dashed rgba(31,46,70,0.14); }
+  .rung + .rung::before {
+    content: '⟶';
+    position: absolute;
+    left: -9px; top: 50%;
+    transform: translateY(-70%);
+    font-size: 13px;
+    color: var(--peach-deep);
+    background: var(--cream);
+    padding: 2px 0;
+    line-height: 1;
+  }
+  .rung-frame {
+    background: var(--blush);
+    border-radius: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 268px;
+    overflow: hidden;
+    position: relative;
+  }
+  .rung-frame.sq { border-radius: 12px; }
+  .rung-frame svg { display: block; }
+  .rung.hero .rung-frame svg { width: 100%; height: 100%; }
+  .rung.doodle .rung-frame svg { width: 196px; height: 196px; }
+  .rung.mini .rung-frame { background: #FFFFFF; border: 1px solid var(--hairline); }
+  .rung.mini .rung-frame svg { width: 72px; height: 72px; }
+  .rung.symbol .rung-frame { background: transparent; border: 1px dashed var(--hairline-strong); }
+  .rung.symbol .rung-frame svg { width: 64px; height: 64px; }
+  .rung-tag {
+    margin-top: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .rung-tag .t {
+    font-family: var(--mono);
+    font-size: 8.5px;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--museum-tag);
+  }
+  .rung-tag .n {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 15px;
+    color: var(--ink-mute);
+  }
+  .ladder-caption {
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--hairline);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .ladder-caption .txt {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 19px;
+    letter-spacing: -0.005em;
+    color: var(--ink-mute);
+  }
+  .ladder-caption .txt strong { font-style: italic; font-weight: 600; color: var(--navy); }
+  .ladder-caption .spec {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--slate-blue);
+  }
+
+  /* ═══════════ CHAPTER CARDS ═══════════ */
+  .chapters {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+  }
+  .chap {
+    background: #FFFFFF;
+    border: 1px solid var(--hairline);
+    border-radius: 14px;
+    padding: 30px 32px 26px;
+    box-shadow: 0 2px 8px rgba(31,46,70,0.04);
+    display: flex;
+    flex-direction: column;
+  }
+  .chap .num {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--peach-deep);
+    margin-bottom: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .chap .num .q {
+    color: var(--slate-blue);
+    letter-spacing: 0.12em;
+  }
+  .chap h3 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: 27px;
+    line-height: 1.12;
+    letter-spacing: -0.005em;
+    color: var(--navy);
+    margin-bottom: 14px;
+  }
+  .chap h3 em { font-style: italic; color: var(--peach-deep); }
+  .chap p {
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--ink-mute);
+    flex: 1;
+  }
+  .chap p strong { color: var(--navy); font-weight: 500; }
+  .chap .metric {
+    margin-top: 22px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--hairline-strong);
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--navy);
+  }
+
+  /* ═══════════ ALPHABET STRIP ═══════════ */
+  .alphabet {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr) 220px;
+    border: 1px solid var(--hairline-strong);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #FFFFFF;
+  }
+  .glyph {
+    padding: 22px 12px 18px;
+    text-align: center;
+    border-right: 1px solid var(--hairline);
+  }
+  .glyph .well {
+    width: 62px; height: 62px;
+    margin: 0 auto 12px;
+    background: var(--blush);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .glyph.dark .well { background: var(--navy); }
+  .glyph .well svg { width: 40px; height: 40px; }
+  .glyph .g-name {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: 14.5px;
+    line-height: 1.15;
+    letter-spacing: -0.005em;
+    color: var(--navy);
+    margin-bottom: 6px;
+    min-height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .glyph .g-re {
+    font-family: var(--mono);
+    font-size: 8.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--museum-tag);
+  }
+  .hues {
+    padding: 22px 24px 18px;
+    background: var(--cream);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 9px;
+  }
+  .hues .h-title {
+    font-family: var(--mono);
+    font-size: 8.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--slate-blue);
+    margin-bottom: 4px;
+  }
+  .hue { display: flex; align-items: center; gap: 10px; }
+  .hue .dot { width: 13px; height: 13px; border-radius: 50%; flex: none; }
+  .hue .h-name {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: 13.5px;
+    color: var(--navy);
+    width: 74px;
+  }
+  .hue .h-hex {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    color: var(--ink-quiet);
+  }
+
+  /* ═══════════ CONCEPT PANEL ═══════════ */
+  .concept {
+    margin-top: 56px;
+    padding: 48px 56px 42px;
+    background: var(--navy);
+    color: var(--cream);
+    border-radius: 16px;
+  }
+  .concept-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+  .concept-eyebrow {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--peach);
+    margin-bottom: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .concept-eyebrow::before { content: ''; width: 24px; height: 1px; background: var(--peach); }
+  .concept h2 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: 40px;
+    line-height: 1.1;
+    letter-spacing: -0.005em;
+    color: var(--cream);
+  }
+  .concept h2 em { font-style: italic; color: var(--peach); font-weight: 400; }
+  .concept p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: #C7D0DD;
+  }
+  .concept p + p { margin-top: 14px; }
+  .concept p strong { color: var(--cream); font-weight: 500; }
+  .concept-metrics {
+    margin-top: 40px;
+    padding-top: 28px;
+    border-top: 1px solid rgba(250,246,242,0.14);
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 20px;
+  }
+  .cm .cm-v {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: 34px;
+    line-height: 1;
+    color: var(--cream);
+    margin-bottom: 8px;
+  }
+  .cm .cm-v em { font-style: italic; color: var(--peach); }
+  .cm .cm-k {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(199,208,221,0.75);
+    line-height: 1.5;
+  }
+
+  /* ═══════════ FOOTER ═══════════ */
+  .foot {
+    margin-top: 40px;
+    padding-top: 28px;
+    border-top: 1px solid var(--hairline);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--slate-blue);
+  }
+  .foot .mark {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--navy);
+    text-transform: none;
+    letter-spacing: -0.005em;
+  }
+</style>
+</head>
+<body>
+
+<div class="lang-toggle" role="group" aria-label="Idioma">
+  <button data-lang="es" class="active">ES</button>
+  <button data-lang="en">EN</button>
+</div>
+
+<div class="canvas">
+
+  <!-- ═══════════ HEADER ═══════════ -->
+  <div class="head">
+    <div class="head-left">
+      <div class="brandmark">Criar Sin Culpas</div>
+      <div class="eyebrow-tag" data-i18n-es="Caso de estudio · síntesis en una página" data-i18n-en="Case study · one-page synthesis">Caso de estudio · síntesis en una página</div>
+      <h1 class="display" data-i18n-es="Diseñado para padres agotados,<br><em>no para jurados.</em>" data-i18n-en="Designed for exhausted parents,<br><em>not for juries.</em>">Diseñado para padres agotados,<br><em>no para jurados.</em></h1>
+      <p class="lede" data-i18n-es="Un sistema visual editorial construido para una lectora real: la madre que escanea un artículo a las 11pm con un niño llorando al lado. Tres capítulos lo documentan · <strong>una escalera de ilustración de cuatro escalas</strong>, una metodología de diseño de contenido que reordena sin reescribir, y <strong>un alfabeto de ocho símbolos</strong> dibujados a mano que reemplaza a los emojis." data-i18n-en="An editorial visual system built for a real reader: the mother scanning an article at 11pm with a crying child beside her. Three chapters document it · <strong>a four-scale illustration ladder</strong>, a content design methodology that reorders without rewriting, and <strong>an eight-symbol hand-drawn alphabet</strong> that replaces emojis.">Un sistema visual editorial construido para una lectora real: la madre que escanea un artículo a las 11pm con un niño llorando al lado. Tres capítulos lo documentan · <strong>una escalera de ilustración de cuatro escalas</strong>, una metodología de diseño de contenido que reordena sin reescribir, y <strong>un alfabeto de ocho símbolos</strong> dibujados a mano que reemplaza a los emojis.</p>
+    </div>
+    <div class="head-right">
+      <div class="meta-block">
+        <div class="k" data-i18n-es="Proyecto" data-i18n-en="Project">Proyecto</div>
+        <div class="v" data-i18n-es="Sistema visual editorial" data-i18n-en="Editorial visual system">Sistema visual editorial</div>
+      </div>
+      <div class="meta-block">
+        <div class="k" data-i18n-es="Ámbito" data-i18n-en="Category">Ámbito</div>
+        <div class="v" data-i18n-es="Crianza consciente" data-i18n-en="Conscious parenting">Crianza consciente</div>
+      </div>
+      <div class="meta-block">
+        <div class="k" data-i18n-es="Rol" data-i18n-en="Role">Rol</div>
+        <div class="v" data-i18n-es="Dirección de arte + diseño" data-i18n-en="Art direction + design">Dirección de arte + diseño</div>
+      </div>
+      <div class="meta-block">
+        <div class="k" data-i18n-es="Serie" data-i18n-en="Series">Serie</div>
+        <div class="v" data-i18n-es="3 capítulos · 2026" data-i18n-en="3 chapters · 2026">3 capítulos · 2026</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ ZOOM LADDER ═══════════ -->
+  <div class="section-label">
+    <div>
+      <div class="eyebrow-tag" data-i18n-es="La prueba en una fila · narrativa 03 · Sueño" data-i18n-en="The proof in one row · narrative 03 · Sleep">La prueba en una fila · narrativa 03 · Sueño</div>
+      <h2 data-i18n-es="Un solo dibujo, <em>cuatro distancias.</em>" data-i18n-en="One single drawing, <em>four distances.</em>">Un solo dibujo, <em>cuatro distancias.</em></h2>
+    </div>
+    <div class="count" data-i18n-es="Escala como narrativa" data-i18n-en="Scale as narrative">Escala como narrativa</div>
+  </div>
+
+  <div class="ladder">
+    <div class="rung hero">
+      <div class="rung-frame"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480" aria-labelledby="ttl-s-v1">
+  <title id="ttl-s-v1">La noche — un niño en cama, un adulto sentado cerca, luna ámbar y estrellas suaves.</title>
+
+  <!-- upper night atmosphere — sereno wash -->
+  <path d="M0 0 L 800 0 L 800 260 C 640 250, 480 258, 320 252 C 200 248, 80 254, 0 250 z"
+        fill="#8FA8C4" opacity="0.30"/>
+  <path d="M0 200 C 200 190, 400 202, 600 194 C 700 190, 780 196, 800 194 L 800 260 L 0 260 z"
+        fill="#8FA8C4" opacity="0.18"/>
+
+  <!-- floor / room -->
+  <path d="M0 260 L 800 260 L 800 480 L 0 480 z" fill="#FCE7DD" opacity="0.55"/>
+
+  <!-- ambar moon — upper right -->
+  <circle cx="640" cy="130" r="42" fill="#E4A85C" opacity="0.9"/>
+  <circle cx="640" cy="130" r="42" fill="none" stroke="#1F2E46" stroke-width="1.9"/>
+  <path d="M622 100 c -18 12, -22 44, -8 62 c 18 -6, 34 -22, 38 -42 c -8 -14, -20 -22, -30 -20z" fill="#E89BA8" opacity="0.5"/>
+  <!-- ambient glow -->
+  <circle cx="640" cy="130" r="66" fill="none" stroke="#E4A85C" stroke-width="1.4" opacity="0.4"/>
+  <circle cx="640" cy="130" r="90" fill="none" stroke="#E4A85C" stroke-width="1.2" opacity="0.25"/>
+
+  <!-- three stars -->
+  <g fill="#E4A85C">
+    <circle cx="140" cy="90" r="2.6" opacity="0.9"/>
+    <circle cx="240" cy="150" r="1.8" opacity="0.7"/>
+    <circle cx="400" cy="72" r="2.2" opacity="0.85"/>
+  </g>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       BED · isometric-ish angle, mid-scene, left-center
+       Draws depth so it doesn't read as a flat rectangle
+       ═══════════════════════════════════════════════════════════ -->
+
+  <!-- BED shadow on floor (soft ambar spill from moon) -->
+  <ellipse cx="330" cy="410" rx="180" ry="14" fill="#1F2E46" opacity="0.06"/>
+
+  <!-- BED — headboard (back) -->
+  <path d="M180 300 L 200 290 L 300 290 L 300 340 L 180 340 z" fill="#FFFFFF" opacity="0.95"/>
+  <path d="M180 300 L 200 290 L 300 290 L 300 340 L 180 340 z"
+        fill="none" stroke="#1F2E46" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+
+  <!-- BED — mattress top surface (angled — reads as 3D) -->
+  <path d="M180 340 L 300 340 L 460 340 L 480 370 L 180 400 L 180 400 z" fill="#FCE7DD"/>
+  <path d="M180 340 L 460 340 L 480 370 L 180 400 z"
+        fill="none" stroke="#1F2E46" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+
+  <!-- BED — front face -->
+  <path d="M180 400 L 480 370 L 480 405 L 180 425 z" fill="#F4A88A" opacity="0.28"/>
+  <path d="M180 400 L 480 370 L 480 405 L 180 425 z"
+        fill="none" stroke="#1F2E46" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+
+  <!-- BED — pillow at head end (left) -->
+  <path d="M198 314 L 260 314 L 260 336 L 198 336 z" fill="#FAF6F2"/>
+  <path d="M198 314 L 260 314 L 260 336 L 198 336 z"
+        fill="none" stroke="#1F2E46" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/>
+
+  <!-- CHILD lying — head on pillow, body under covers (bump silhouette) -->
+  <!-- child head -->
+  <g fill="none" stroke="#1F2E46" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+    <ellipse cx="228" cy="322" rx="15" ry="14"/>
+    <path d="M222 322 c 1 -1, 3 -1, 4 0"/>
+    <path d="M232 322 c 1 -1, 3 -1, 4 0"/>
+    <path d="M225 330 l 6 0"/>
+  </g>
+
+  <!-- BLANKET bump — covers over child's body, receding into perspective -->
+  <path d="M250 336 C 290 342, 340 344, 400 340 C 430 338, 448 342, 452 348 L 452 358 C 420 362, 340 366, 260 360 C 246 358, 244 348, 250 336 z"
+        fill="#F4A88A" opacity="0.55"/>
+  <path d="M250 336 C 290 342, 340 344, 400 340 C 430 338, 448 342, 452 348"
+        fill="none" stroke="#1F2E46" stroke-width="1.9" stroke-linecap="round"/>
+
+  <!-- Small foot bump at end of blanket -->
+  <path d="M448 352 c 6 -3, 12 -4, 16 -2 c 2 4, -2 8, -8 10"
+        fill="none" stroke="#1F2E46" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       ADULT · sitting on floor to the right of the bed
+       Clearly seated, no ambiguous horizontal lines
+       ═══════════════════════════════════════════════════════════ -->
+  <g fill="none" stroke="#1F2E46" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+    <!-- head -->
+    <circle cx="590" cy="340" r="17"/>
+    <!-- soft face -->
+    <path d="M583 340 l 3 0"/>
+    <path d="M594 340 l 3 0"/>
+    <path d="M585 348 l 8 0"/>
+    <!-- torso, seated upright but relaxed -->
+    <path d="M590 357 L 592 410"/>
+    <!-- arm forward toward bed, resting -->
+    <path d="M590 372 C 574 378, 558 384, 546 388"/>
+    <!-- hand — small closing curve, not a straight line -->
+    <path d="M546 388 c -3 0, -5 2, -5 4"/>
+    <!-- other arm at side, bent -->
+    <path d="M594 372 C 604 380, 610 392, 608 402"/>
+    <!-- legs folded in seated position — clearly angled, not straight -->
+    <path d="M592 410 C 610 418, 626 424, 630 432"/>
+    <path d="M592 412 C 578 420, 570 428, 574 434"/>
+  </g>
+
+  <!-- small ambar heart floating between child and adult -->
+  <g transform="translate(490 296) scale(0.24)">
+    <path d="M50 32 c -6 -10, -19 -12, -26 -5 c -8 7, -7 21, 3 31 l 23 22 l 24 -22 c 10 -10, 11 -24, 3 -31 c -7 -7, -21 -5, -27 5z"
+          fill="#E4A85C" opacity="0.94" stroke="#1F2E46" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+  </g>
+
+  <!-- Floor line, subtle horizon reference -->
+  <path d="M60 452 C 240 448, 500 452, 720 450"
+        fill="none" stroke="#1F2E46" stroke-width="1.5" stroke-linecap="round" opacity="0.24"/>
+</svg>
+</div>
+      <div class="rung-tag">
+        <span class="t" data-i18n-es="Tier 4 · Cine · 800 × 480" data-i18n-en="Tier 4 · Cinema · 800 × 480">Tier 4 · Cine · 800 × 480</span>
+        <span class="n" data-i18n-es="La noche" data-i18n-en="The night">La noche</span>
+      </div>
+    </div>
+    <div class="rung doodle">
+      <div class="rung-frame sq"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 250" aria-labelledby="ttl-sueno">
+  <title id="ttl-sueno">Sueño — un close-up de la noche: la luna ámbar y el niño en cama abajo.</title>
+
+  <!-- upper night — sereno wash -->
+  <path d="M0 0 L 250 0 L 250 168 C 200 160, 100 172, 0 160 z"
+        fill="#8FA8C4" opacity="0.34"/>
+
+  <!-- horizon band, softer -->
+  <path d="M0 130 C 60 122, 140 132, 250 128 L 250 168 L 0 168 z"
+        fill="#8FA8C4" opacity="0.16"/>
+
+  <!-- floor / room area — blush -->
+  <path d="M0 168 L 250 168 L 250 250 L 0 250 z" fill="#FCE7DD" opacity="0.72"/>
+
+  <!-- ==== THE MOON · dominant, upper right ==== -->
+  <!-- outer glow rings -->
+  <circle cx="176" cy="72" r="52" fill="none" stroke="#E4A85C" stroke-width="1.4" opacity="0.28"/>
+  <circle cx="176" cy="72" r="40" fill="none" stroke="#E4A85C" stroke-width="1.4" opacity="0.42"/>
+  <!-- ambar body -->
+  <circle cx="176" cy="72" r="30" fill="#E4A85C" opacity="0.92"/>
+  <!-- crescent shadow -->
+  <path d="M162 52 c -12 8, -14 30, -6 42 c 12 -4, 22 -14, 26 -28 c -6 -10, -14 -16, -20 -14z" fill="#E89BA8" opacity="0.55"/>
+  <!-- outline -->
+  <circle cx="176" cy="72" r="30" fill="none" stroke="#1F2E46" stroke-width="1.9"/>
+
+  <!-- three stars -->
+  <g fill="#E4A85C">
+    <circle cx="46" cy="52" r="2.4" opacity="0.9"/>
+    <circle cx="80" cy="96" r="1.8" opacity="0.7"/>
+    <circle cx="112" cy="42" r="2.2" opacity="0.85"/>
+  </g>
+
+  <!-- ==== BED · lower portion, small ==== -->
+  <!-- mattress base -->
+  <rect x="60" y="184" width="140" height="34" rx="10" fill="#FFFFFF" opacity="0.9"/>
+  <path d="M70 190 L 108 190 L 108 212 L 70 212 z" fill="#FAF6F2"/>
+
+  <!-- outline -->
+  <g fill="none" stroke="#1F2E46" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="60" y="184" width="140" height="34" rx="10"/>
+    <path d="M70 190 L 108 190 L 108 212 L 70 212 z"/>
+  </g>
+
+  <!-- child, sleeping, small -->
+  <g fill="none" stroke="#1F2E46" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <!-- head on pillow -->
+    <circle cx="89" cy="200" r="10"/>
+    <!-- closed eyes -->
+    <path d="M84 199 c 1 -1, 3 -1, 4 0"/>
+    <path d="M91 199 c 1 -1, 3 -1, 4 0"/>
+    <!-- soft mouth -->
+    <path d="M87 205 l 4 0"/>
+    <!-- body lying — under covers -->
+    <path d="M100 200 C 130 198, 160 202, 188 200"/>
+    <!-- small foot bump -->
+    <path d="M188 200 c 3 -1, 5 -2, 6 -3 c 1 2, 0 4, -2 5"/>
+  </g>
+
+  <!-- floor line -->
+  <path d="M30 228 L 220 226"
+        fill="none" stroke="#1F2E46" stroke-width="1.4" stroke-linecap="round" opacity="0.28"/>
+</svg>
+</div>
+      <div class="rung-tag">
+        <span class="t" data-i18n-es="Tier 3 · Foto · 250 × 250" data-i18n-en="Tier 3 · Photo · 250 × 250">Tier 3 · Foto · 250 × 250</span>
+      </div>
+    </div>
+    <div class="rung mini">
+      <div class="rung-frame sq"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+  <!-- ámbar moon -->
+  <circle cx="27" cy="12" r="6" fill="#E4A85C" opacity="0.9"/>
+  <!-- moon shadow · rosa -->
+  <path d="M24 8 c -3 2, -3 8, -1 10 c 3 -1, 6 -3, 6 -7 c -1 -3, -3 -4, -5 -3z" fill="#E89BA8" opacity="0.6"/>
+  <!-- moon outline -->
+  <circle cx="27" cy="12" r="6" fill="none" stroke="#1F2E46" stroke-width="1.9"/>
+  <!-- small bed below · navy line -->
+  <rect x="6" y="26" width="20" height="6" rx="1.5" fill="#FCE7DD"/>
+  <rect x="6" y="26" width="20" height="6" rx="1.5" fill="none" stroke="#1F2E46" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- pillow -->
+  <path d="M8 27 L 13 27 L 13 31 L 8 31 z" fill="none" stroke="#1F2E46" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+</svg>
+</div>
+      <div class="rung-tag">
+        <span class="t" data-i18n-es="Tier 2 · Pin · 40 × 40" data-i18n-en="Tier 2 · Pin · 40 × 40">Tier 2 · Pin · 40 × 40</span>
+      </div>
+    </div>
+    <div class="rung symbol">
+      <div class="rung-frame sq"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <path d="M30 46c-1-8 3-14 8-14 1-6 5-10 10-9 1-6 6-10 12-9 6 1 10 6 10 12 4 0 8 4 8 9 0 6-2 14-4 20-3 8-8 14-16 16-9 2-19-1-24-8-3-4-5-10-4-17z" fill="#F4A88A" opacity="0.55" transform="translate(-1 3) rotate(-4 50 50)"/>
+  <g fill="none" stroke="#1F2E46" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M32 54c-3-2-5-6-4-10 1-3 4-4 6-2 2 2 3 6 3 10"/>
+    <path d="M40 50c-1-6 0-16 2-22 1-3 5-3 6 0 1 3 1 15 1 22"/>
+    <path d="M50 50c-1-8 0-20 2-26 1-3 5-3 6 0 1 4 1 18 1 26"/>
+    <path d="M60 50c0-6 2-16 4-20 2-3 5-2 6 1 0 4-1 14-2 20"/>
+    <path d="M68 52c1-4 3-10 5-12 2-2 5-1 5 2 0 4-2 10-3 14"/>
+    <path d="M32 54c-2 6-1 14 4 20 5 6 13 8 20 6 8-2 13-8 15-16 1-4 1-8 1-12"/>
+    <path d="M40 66c4 2 10 3 14 2" opacity="0.55"/>
+  </g>
+</svg>
+</div>
+      <div class="rung-tag">
+        <span class="t" data-i18n-es="Tier 1 · Símbolo · 32 × 32" data-i18n-en="Tier 1 · Symbol · 32 × 32">Tier 1 · Símbolo · 32 × 32</span>
+      </div>
+    </div>
+  </div>
+  <div class="ladder-caption">
+    <div class="txt" data-i18n-es="No son cuatro assets. Es <strong>la misma cámara moviéndose:</strong> el zoom-out del sistema, dibujado a mano en cada resolución." data-i18n-en="Not four assets. It's <strong>the same camera moving:</strong> the system's zoom-out, hand-drawn at every resolution.">No son cuatro assets. Es <strong>la misma cámara moviéndose:</strong> el zoom-out del sistema, dibujado a mano en cada resolución.</div>
+    <div class="spec" data-i18n-es="4 escalas × 4 narrativas · 16 piezas coherentes" data-i18n-en="4 scales × 4 narratives · 16 coherent pieces">4 escalas × 4 narrativas · 16 piezas coherentes</div>
+  </div>
+
+  <!-- ═══════════ CHAPTERS ═══════════ -->
+  <div class="section-label">
+    <div>
+      <div class="eyebrow-tag" data-i18n-es="La serie" data-i18n-en="The series">La serie</div>
+      <h2 data-i18n-es="Tres capítulos, <em>un argumento.</em>" data-i18n-en="Three chapters, <em>one argument.</em>">Tres capítulos, <em>un argumento.</em></h2>
+    </div>
+    <div class="count" data-i18n-es="Sistema · práctica · material" data-i18n-en="System · practice · material">Sistema · práctica · material</div>
+  </div>
+
+  <div class="chapters">
+    <div class="chap">
+      <div class="num"><span data-i18n-es="Capítulo 01 · El sistema" data-i18n-en="Chapter 01 · The system">Capítulo 01 · El sistema</span><span class="q" data-i18n-es="¿Cómo se estructura?" data-i18n-en="How is it built?">¿Cómo se estructura?</span></div>
+      <h3 data-i18n-es="Cuatro momentos. Cuatro zooms. <em>Un solo dibujo.</em>" data-i18n-en="Four moments. Four zooms. <em>One single drawing.</em>">Cuatro momentos. Cuatro zooms. <em>Un solo dibujo.</em></h3>
+      <p data-i18n-es="Cada momento emocional vive en cuatro escalas: de la ilustración cinemática que abre un artículo al símbolo de 32px que firma una sección. La coherencia no se aplica al final · <strong>es estructural</strong>. El lector la siente sin notarla." data-i18n-en="Each emotional moment lives at four scales: from the cinematic illustration opening an article to the 32px symbol signing a section. Coherence is not applied at the end · <strong>it's structural</strong>. The reader feels it without noticing it.">Cada momento emocional vive en cuatro escalas: de la ilustración cinemática que abre un artículo al símbolo de 32px que firma una sección. La coherencia no se aplica al final · <strong>es estructural</strong>. El lector la siente sin notarla.</p>
+      <div class="metric" data-i18n-es="4 escalas × 4 narrativas" data-i18n-en="4 scales × 4 narratives">4 escalas × 4 narrativas</div>
+    </div>
+    <div class="chap">
+      <div class="num"><span data-i18n-es="Capítulo 02 · La práctica" data-i18n-en="Chapter 02 · The practice">Capítulo 02 · La práctica</span><span class="q" data-i18n-es="¿Cómo trabaja?" data-i18n-en="How does it work?">¿Cómo trabaja?</span></div>
+      <h3 data-i18n-es="Los mismos párrafos. <em>Otro ritmo.</em>" data-i18n-en="The same paragraphs. <em>A different rhythm.</em>">Los mismos párrafos. <em>Otro ritmo.</em></h3>
+      <p data-i18n-es="Un artículo real de 4000 palabras en dos vidas: el muro de texto del CMS estándar contra la versión editorial con pull quotes, tarjetas de frases, rituales numerados y cajas de tesis. <strong>Cero cambios al copy.</strong> Solo cambia el costo de leerlo a las 11pm." data-i18n-en="A real 4000-word article in two lives: the standard CMS wall of text against the editorial version with pull quotes, phrase cards, numbered rituals, and thesis boxes. <strong>Zero changes to the copy.</strong> Only the cost of reading it at 11pm changes.">Un artículo real de 4000 palabras en dos vidas: el muro de texto del CMS estándar contra la versión editorial con pull quotes, tarjetas de frases, rituales numerados y cajas de tesis. <strong>Cero cambios al copy.</strong> Solo cambia el costo de leerlo a las 11pm.</p>
+      <div class="metric" data-i18n-es="0 palabras reescritas · 5 tratamientos · 7 anclas" data-i18n-en="0 words rewritten · 5 treatments · 7 anchors">0 palabras reescritas · 5 tratamientos · 7 anclas</div>
+    </div>
+    <div class="chap">
+      <div class="num"><span data-i18n-es="Capítulo 03 · El material" data-i18n-en="Chapter 03 · The material">Capítulo 03 · El material</span><span class="q" data-i18n-es="¿De qué está hecho?" data-i18n-en="What is it made of?">¿De qué está hecho?</span></div>
+      <h3 data-i18n-es="Ocho símbolos <em>en vez de emojis.</em>" data-i18n-en="Eight symbols <em>instead of emojis.</em>">Ocho símbolos <em>en vez de emojis.</em></h3>
+      <p data-i18n-es="Un alfabeto iconográfico presentado como tira Pantone: cada símbolo con el emoji que reemplaza, el hue semántico que lo gobierna y su rol en el sistema. Acuarela más línea trazada, con la <strong>imperfección en los béziers</strong>, no en los filtros." data-i18n-en="An iconographic alphabet presented as a Pantone strip: each symbol with the emoji it replaces, the semantic hue that governs it, and its role in the system. Watercolor plus traced line, with the <strong>imperfection in the béziers</strong>, not in the filters.">Un alfabeto iconográfico presentado como tira Pantone: cada símbolo con el emoji que reemplaza, el hue semántico que lo gobierna y su rol en el sistema. Acuarela más línea trazada, con la <strong>imperfección en los béziers</strong>, no en los filtros.</p>
+      <div class="metric" data-i18n-es="8 símbolos · 5 hues semánticos" data-i18n-en="8 symbols · 5 semantic hues">8 símbolos · 5 hues semánticos</div>
+    </div>
+  </div>
+
+  <!-- ═══════════ ALPHABET ═══════════ -->
+  <div class="section-label">
+    <div>
+      <div class="eyebrow-tag" data-i18n-es="El alfabeto" data-i18n-en="The alphabet">El alfabeto</div>
+      <h2 data-i18n-es="Ocho firmas, <em>cinco temperaturas.</em>" data-i18n-en="Eight signatures, <em>five temperatures.</em>">Ocho firmas, <em>cinco temperaturas.</em></h2>
+    </div>
+    <div class="count" data-i18n-es="Misma temperatura de marca" data-i18n-en="Same brand temperature">Misma temperatura de marca</div>
+  </div>
+
+  <div class="alphabet">
+    <div class="glyph">
+      <div class="well"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <path d="M28 34c-1-8 5-15 13-16 3-6 12-8 18-4 7-3 15 1 17 8 6 2 9 8 8 14 3 4 3 10-1 14 2 6-3 12-10 12-2 4-7 6-12 5-4 4-11 4-15-1-6 1-13-3-14-9-6-1-9-7-8-13-2-4-1-8 4-10z" fill="#E89BA8" opacity="0.7" transform="translate(2 3) rotate(-3 50 50)"/>
+  <g fill="none" stroke="#1F2E46" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M50 22c-4-4-12-4-16 1-5-1-11 2-12 8-5 2-8 8-6 14-4 4-3 11 2 14-1 6 4 12 11 12 3 5 11 6 16 2 4 3 10 3 14-1"/>
+    <path d="M50 22c4-4 12-4 16 1 5-1 11 2 12 8 5 2 8 8 6 14 4 4 3 11-2 14 1 6-4 12-11 12-3 5-11 6-16 2"/>
+    <path d="M50 24c0 8 0 44 0 52"/>
+    <path d="M34 40c3 2 6 2 9-1"/><path d="M32 56c4 2 8 2 12-1"/><path d="M36 70c3 1 7 1 10-1"/>
+    <path d="M66 40c-3 2-6 2-9-1"/><path d="M68 56c-4 2-8 2-12-1"/><path d="M64 70c-3 1-7 1-10-1"/>
+    <path d="M56 50l-4 6h4l-3 6" stroke="#C45A47" stroke-width="2.2"/>
+  </g>
+</svg>
+</div>
+      <div class="g-name" data-i18n-es="Cerebro en tormenta" data-i18n-en="Brain in storm">Cerebro en tormenta</div>
+      <div class="g-re"><span data-i18n-es="Reemplaza" data-i18n-en="Replaces">Reemplaza</span> · 🧠</div>
+    </div>
+    <div class="glyph">
+      <div class="well"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <path d="M30 46c-1-8 3-14 8-14 1-6 5-10 10-9 1-6 6-10 12-9 6 1 10 6 10 12 4 0 8 4 8 9 0 6-2 14-4 20-3 8-8 14-16 16-9 2-19-1-24-8-3-4-5-10-4-17z" fill="#F4A88A" opacity="0.55" transform="translate(-1 3) rotate(-4 50 50)"/>
+  <g fill="none" stroke="#1F2E46" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M32 54c-3-2-5-6-4-10 1-3 4-4 6-2 2 2 3 6 3 10"/>
+    <path d="M40 50c-1-6 0-16 2-22 1-3 5-3 6 0 1 3 1 15 1 22"/>
+    <path d="M50 50c-1-8 0-20 2-26 1-3 5-3 6 0 1 4 1 18 1 26"/>
+    <path d="M60 50c0-6 2-16 4-20 2-3 5-2 6 1 0 4-1 14-2 20"/>
+    <path d="M68 52c1-4 3-10 5-12 2-2 5-1 5 2 0 4-2 10-3 14"/>
+    <path d="M32 54c-2 6-1 14 4 20 5 6 13 8 20 6 8-2 13-8 15-16 1-4 1-8 1-12"/>
+    <path d="M40 66c4 2 10 3 14 2" opacity="0.55"/>
+  </g>
+</svg>
+</div>
+      <div class="g-name" data-i18n-es="Mano abierta" data-i18n-en="Open hand">Mano abierta</div>
+      <div class="g-re"><span data-i18n-es="Reemplaza" data-i18n-en="Replaces">Reemplaza</span> · 🤜</div>
+    </div>
+    <div class="glyph">
+      <div class="well"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <path d="M50 20c-17 0-30 13-30 30s13 30 30 30 30-13 30-30-13-30-30-30zm0 6c13 0 24 11 24 24s-11 24-24 24-24-11-24-24 11-24 24-24z" fill="#C45A47" opacity="0.35" transform="translate(2 3) rotate(-4 50 50)"/>
+  <g fill="none" stroke="#C45A47" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M50 18c-18 1-32 15-32 32 0 18 15 32 33 32 17 0 31-15 31-33 0-17-15-31-32-31z"/>
+    <path d="M30 30l40 40"/>
+  </g>
+</svg>
+</div>
+      <div class="g-name" data-i18n-es="Círculo con barra" data-i18n-en="Circle with slash">Círculo con barra</div>
+      <div class="g-re"><span data-i18n-es="Reemplaza" data-i18n-en="Replaces">Reemplaza</span> · 🚫</div>
+    </div>
+    <div class="glyph">
+      <div class="well"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <path d="M22 30c1-6 6-10 12-10h32c7 0 13 5 13 12v18c0 7-6 12-13 12H45l-10 10-1-10c-6-1-11-6-12-12z" fill="#8FA8C4" opacity="0.4" transform="translate(2 3) rotate(-2 50 50)"/>
+  <g fill="none" stroke="#1F2E46" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 32c0-6 5-11 11-11h34c6 0 11 5 11 11v17c0 6-5 11-11 11H44l-9 10-1-11c-6-1-12-5-12-11z"/>
+    <circle cx="38" cy="41" r="2" fill="#1F2E46" stroke="none"/>
+    <circle cx="50" cy="41" r="2" fill="#1F2E46" stroke="none"/>
+    <circle cx="62" cy="41" r="2" fill="#1F2E46" stroke="none"/>
+  </g>
+</svg>
+</div>
+      <div class="g-name" data-i18n-es="Bocadillo de pausa" data-i18n-en="Bubble of pause">Bocadillo de pausa</div>
+      <div class="g-re"><span data-i18n-es="Reemplaza" data-i18n-en="Replaces">Reemplaza</span> · 💬</div>
+    </div>
+    <div class="glyph">
+      <div class="well"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <path d="M50 18c-11 0-19 8-19 18 0 14 19 44 19 44s19-30 19-44c0-10-8-18-19-18z" fill="#C45A47" opacity="0.45" transform="translate(2 3) rotate(-3 50 50)"/>
+  <g fill="none" stroke="#C45A47" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M50 18c-11 0-19 8-19 18 0 14 19 44 19 44s19-30 19-44c0-10-8-18-19-18z"/>
+    <circle cx="50" cy="36" r="6" fill="#C45A47" stroke="none"/>
+  </g>
+</svg>
+</div>
+      <div class="g-name" data-i18n-es="Marcador de tip" data-i18n-en="Tip marker">Marcador de tip</div>
+      <div class="g-re"><span data-i18n-es="Reemplaza" data-i18n-en="Replaces">Reemplaza</span> · 📍</div>
+    </div>
+    <div class="glyph">
+      <div class="well"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <path d="M50 32c-6-10-20-12-27-4-8 8-6 22 4 32l23 22 24-22c10-10 12-24 4-32-7-8-21-6-27 4z" fill="#E4A85C" opacity="0.55" transform="translate(1 3) rotate(-3 50 50)"/>
+  <g fill="none" stroke="#1F2E46" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M50 32c-6-10-19-12-26-5-8 7-7 21 3 31l23 22 24-22c10-10 11-24 3-31-7-7-21-5-27 5z"/>
+  </g>
+</svg>
+</div>
+      <div class="g-name" data-i18n-es="Corazón cálido" data-i18n-en="Warm heart">Corazón cálido</div>
+      <div class="g-re"><span data-i18n-es="Reemplaza" data-i18n-en="Replaces">Reemplaza</span> · 🧡</div>
+    </div>
+    <div class="glyph">
+      <div class="well"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <rect x="14" y="30" width="72" height="40" rx="12" fill="#C45A47" opacity="0.85" transform="translate(2 3) rotate(-3 50 50)"/>
+  <rect x="14" y="30" width="72" height="40" rx="12" fill="#C45A47" stroke="#1F2E46" stroke-width="1.7"/>
+  <g fill="none" stroke="#FAF6F2" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M35 43c-3-2-8-1-8 3 0 3 3 3 6 4 3 1 5 1 5 4 0 4-5 5-8 3"/>
+    <ellipse cx="50" cy="50" rx="6" ry="7"/>
+    <path d="M71 43c-3-2-8-1-8 3 0 3 3 3 6 4 3 1 5 1 5 4 0 4-5 5-8 3"/>
+  </g>
+</svg>
+</div>
+      <div class="g-name" data-i18n-es="Insignia SOS" data-i18n-en="SOS badge">Insignia SOS</div>
+      <div class="g-re"><span data-i18n-es="Reemplaza" data-i18n-en="Replaces">Reemplaza</span> · 🆘</div>
+    </div>
+    <div class="glyph dark">
+      <div class="well"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <circle cx="62" cy="70" r="12" fill="#8FA8C4" opacity="0.5" transform="translate(2 2)"/>
+  <g fill="none" stroke="#FAF6F2" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M30 20c0 12 0 22 2 30 3 8 10 12 18 12"/>
+    <path d="M52 20c0 12 0 22-2 30-3 8-10 12-18 12"/>
+    <circle cx="30" cy="20" r="3" fill="#FAF6F2" stroke="none"/>
+    <circle cx="52" cy="20" r="3" fill="#FAF6F2" stroke="none"/>
+    <path d="M50 62v6c0 3 3 6 6 6"/>
+    <circle cx="62" cy="72" r="8" fill="none"/>
+    <circle cx="62" cy="72" r="3" fill="#FAF6F2" stroke="none"/>
+  </g>
+</svg>
+</div>
+      <div class="g-name" data-i18n-es="Estetoscopio" data-i18n-en="Stethoscope">Estetoscopio</div>
+      <div class="g-re"><span data-i18n-es="Reemplaza" data-i18n-en="Replaces">Reemplaza</span> · 🩺</div>
+    </div>
+    <div class="hues">
+      <div class="h-title" data-i18n-es="Hues semánticos" data-i18n-en="Semantic hues">Hues semánticos</div>
+      <div class="hue"><span class="dot" style="background:#E89BA8"></span><span class="h-name">Rosa</span><span class="h-hex">#E89BA8</span></div>
+      <div class="hue"><span class="dot" style="background:#C45A47"></span><span class="h-name">Terracota</span><span class="h-hex">#C45A47</span></div>
+      <div class="hue"><span class="dot" style="background:#E4A85C"></span><span class="h-name">Ámbar</span><span class="h-hex">#E4A85C</span></div>
+      <div class="hue"><span class="dot" style="background:#8FA8C4"></span><span class="h-name">Sereno</span><span class="h-hex">#8FA8C4</span></div>
+      <div class="hue"><span class="dot" style="background:#F4A88A"></span><span class="h-name">Peach</span><span class="h-hex">#F4A88A</span></div>
+    </div>
+  </div>
+
+  <!-- ═══════════ CONCEPT ═══════════ -->
+  <div class="concept">
+    <div class="concept-grid">
+      <div>
+        <div class="concept-eyebrow" data-i18n-es="Por qué importa" data-i18n-en="Why it matters">Por qué importa</div>
+        <h2 data-i18n-es="El sistema no decora.<br><em>Sostiene.</em>" data-i18n-en="The system doesn't decorate.<br><em>It holds.</em>">El sistema no decora.<br><em>Sostiene.</em></h2>
+      </div>
+      <div>
+        <p data-i18n-es="Una lectora en crisis no necesita belleza. Necesita <strong>anclas</strong>: puntos donde el ojo puede aterrizar, encontrar la frase exacta, y volver con su hijo. Cada decisión del sistema · la escala, el ritmo, el símbolo · existe para reducir el costo de leer, no para impresionar." data-i18n-en="A reader in crisis doesn't need beauty. She needs <strong>anchors</strong>: points where the eye can land, find the exact phrase, and return to her child. Every decision in the system · the scale, the rhythm, the symbol · exists to lower the cost of reading, not to impress.">Una lectora en crisis no necesita belleza. Necesita <strong>anclas</strong>: puntos donde el ojo puede aterrizar, encontrar la frase exacta, y volver con su hijo. Cada decisión del sistema · la escala, el ritmo, el símbolo · existe para reducir el costo de leer, no para impresionar.</p>
+        <p data-i18n-es="La disciplina es la tesis: un solo dibujo en cada resolución, cero palabras reescritas, ocho símbolos donde antes había emojis. <strong>La escaneabilidad, aquí, es una forma de cuidado.</strong>" data-i18n-en="The discipline is the thesis: one single drawing at every resolution, zero words rewritten, eight symbols where emojis used to be. <strong>Scannability, here, is a form of care.</strong>">La disciplina es la tesis: un solo dibujo en cada resolución, cero palabras reescritas, ocho símbolos donde antes había emojis. <strong>La escaneabilidad, aquí, es una forma de cuidado.</strong></p>
+      </div>
+    </div>
+    <div class="concept-metrics">
+      <div class="cm"><div class="cm-v">4</div><div class="cm-k" data-i18n-es="Escalas de ilustración" data-i18n-en="Illustration scales">Escalas de ilustración</div></div>
+      <div class="cm"><div class="cm-v">4</div><div class="cm-k" data-i18n-es="Narrativas emocionales" data-i18n-en="Emotional narratives">Narrativas emocionales</div></div>
+      <div class="cm"><div class="cm-v">8</div><div class="cm-k" data-i18n-es="Símbolos dibujados a mano" data-i18n-en="Hand-drawn symbols">Símbolos dibujados a mano</div></div>
+      <div class="cm"><div class="cm-v">5</div><div class="cm-k" data-i18n-es="Hues semánticos" data-i18n-en="Semantic hues">Hues semánticos</div></div>
+      <div class="cm"><div class="cm-v"><em>0</em></div><div class="cm-k" data-i18n-es="Palabras reescritas" data-i18n-en="Words rewritten">Palabras reescritas</div></div>
+      <div class="cm"><div class="cm-v">2</div><div class="cm-k" data-i18n-es="Idiomas · ES / EN" data-i18n-en="Languages · ES / EN">Idiomas · ES / EN</div></div>
+    </div>
+  </div>
+
+  <!-- ═══════════ FOOTER ═══════════ -->
+  <div class="foot">
+    <span class="mark" data-i18n-es="Criar Sin Culpas · Sistema visual · v2" data-i18n-en="Criar Sin Culpas · Visual system · v2">Criar Sin Culpas · Sistema visual · v2</span>
+    <span data-i18n-es="Síntesis · Serie de 3 capítulos · 1600px" data-i18n-en="Synthesis · 3-chapter series · 1600px">Síntesis · Serie de 3 capítulos · 1600px</span>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  const buttons = document.querySelectorAll('.lang-toggle button');
+  const html = document.documentElement;
+  function setLang(lang) {
+    html.lang = lang;
+    buttons.forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+    document.querySelectorAll('[data-i18n-es]').forEach(el => {
+      const val = el.getAttribute('data-i18n-' + lang);
+      if (val === null) return;
+      if (val.indexOf('<') !== -1) el.innerHTML = val;
+      else el.textContent = val;
+    });
+    localStorage.setItem('behance-lang', lang);
+  }
+  buttons.forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
+  const saved = localStorage.getItem('behance-lang') || 'es';
+  setLang(saved);
+})();
+</script>
+</body>
+</html>
