@@ -5,42 +5,100 @@
 
   var EXPLORER_DATA = {
     website: {
-      conditions: [
-        'High-polish design',
-        'Zero-signal conversion',
-        'Architecture misalignment'
-      ],
-      interpretation:
-        'The website isn\'t the problem. The problem is you\'re trying to solve a positioning failure with a graphics upgrade. Your "Premium" brand is currently speaking to the wrong audience in the wrong tone.'
+      en: {
+        conditions: [
+          'High-polish design',
+          'Zero-signal conversion',
+          'Architecture misalignment'
+        ],
+        interpretation:
+          'The website was not the real problem. The problem is you\'re trying to solve a positioning failure with a graphics upgrade. Your "Premium" brand is currently speaking to the wrong audience in the wrong tone.'
+      },
+      es: {
+        conditions: [
+          'Diseño pulido',
+          'Conversión sin señal',
+          'Desalineación de arquitectura'
+        ],
+        interpretation:
+          'El sitio web no era el problema real. El problema es que intentas resolver un fallo de posicionamiento con una mejora gráfica. Tu marca "Premium" habla al público equivocado en el tono equivocado.'
+      }
     },
     leads: {
-      conditions: [
-        'Burned-out ad spend',
-        'Friction-heavy intake',
-        'Lead-quality decay'
-      ],
-      interpretation:
-        'You don\'t need more leads; you need a filter. You are currently inviting everyone to the table, which means you\'re spending 80% of your time on 20% leads. We need to build a diagnostic gate, not a louder megaphone.'
+      en: {
+        conditions: [
+          'Burned-out ad spend',
+          'Friction-heavy intake',
+          'Lead-quality decay'
+        ],
+        interpretation:
+          'You don\'t need more leads; you need a filter. You are currently inviting everyone to the table, which means you\'re spending 80% of your time on 20% leads. We need to build a diagnostic gate, not a louder megaphone.'
+      },
+      es: {
+        conditions: [
+          'Inversión publicitaria agotada',
+          'Entrada con fricción',
+          'Decaimiento en calidad de leads'
+        ],
+        interpretation:
+          'No necesitas más leads · necesitas un filtro. Hoy invitas a todos a la mesa, lo que significa que inviertes el 80% del tiempo en el 20% de leads. Hay que construir una puerta de diagnóstico, no un megáfono más alto.'
+      }
     },
     stalled: {
-      conditions: [
-        'Project-drift',
-        'Decision-fatigue',
-        'Reopened operational loops'
-      ],
-      interpretation:
-        'This isn\'t a "motion" problem; it\'s a "decision" problem. You\'ve reopened the same three strategic choices for six months. Until we lock the floor, you can\'t build the next story.'
+      en: {
+        conditions: [
+          'Project-drift',
+          'Decision-fatigue',
+          'Reopened operational loops'
+        ],
+        interpretation:
+          'This isn\'t a "motion" problem; it\'s a "decision" problem. You\'ve reopened the same three strategic choices for six months. Until we lock the floor, you can\'t build the next story.'
+      },
+      es: {
+        conditions: [
+          'Deriva de proyecto',
+          'Fatiga de decisión',
+          'Bucles operativos reabiertos'
+        ],
+        interpretation:
+          'No es un problema de "movimiento" · es un problema de "decisión". Has reabierto las mismas tres opciones estratégicas durante seis meses. Hasta fijar la base, no puedes construir la siguiente historia.'
+      }
     },
     'in-head': {
-      conditions: [
-        'Founder-bottleneck',
-        'Institutional amnesia',
-        'Zero-map operations'
-      ],
-      interpretation:
-        'You are the OS, but you\'re running on a version that hasn\'t been updated since you were a team of one. Your strategy exists in your intuition, which means it cannot be used by anyone else. We need to codify the "Read" so the "Build" can happen without you.'
+      en: {
+        conditions: [
+          'Founder-bottleneck',
+          'Institutional amnesia',
+          'Zero-map operations'
+        ],
+        interpretation:
+          'You are the OS, but you\'re running on a version that hasn\'t been updated since you were a team of one. Your strategy exists in your intuition, which means it cannot be used by anyone else. We need to codify the "Read" so the "Build" can happen without you.'
+      },
+      es: {
+        conditions: [
+          'Cuello de botella del fundador',
+          'Amnesia institucional',
+          'Operación sin mapa'
+        ],
+        interpretation:
+          'Eres el sistema operativo, pero corres una versión que no se actualizó desde que eras un equipo de uno. La estrategia vive en tu intuición, lo que significa que nadie más puede usarla. Hay que codificar la "Lectura" para que la "Construcción" ocurra sin ti.'
+      }
     }
   };
+
+  function getExplorerLang() {
+    if (window.StudioI18n && typeof window.StudioI18n.getLang === 'function') {
+      return window.StudioI18n.getLang();
+    }
+    return document.documentElement.lang || 'en';
+  }
+
+  function getExplorerCopy(id) {
+    var lang = getExplorerLang();
+    var entry = EXPLORER_DATA[id];
+    if (!entry) return null;
+    return entry[lang] || entry.en;
+  }
 
   function initExplorer() {
     var root = document.querySelector('[data-explorer-root]');
@@ -51,9 +109,13 @@
     var interpretation = root.querySelector('[data-explorer-interpretation]');
     if (!tabs.length || !conditionsList || !interpretation) return;
 
+    var activeTabId = null;
+
     function render(id) {
-      var data = EXPLORER_DATA[id];
+      var data = getExplorerCopy(id);
       if (!data) return;
+
+      activeTabId = id;
 
       conditionsList.innerHTML = '';
       data.conditions.forEach(function (item) {
@@ -103,6 +165,10 @@
 
     var initial = root.querySelector('[data-explorer-tab].is-active') || tabs[0];
     if (initial) render(initial.getAttribute('data-explorer-tab'));
+
+    document.addEventListener('studio:langchange', function () {
+      if (activeTabId) render(activeTabId);
+    });
   }
 
   function initStrategyIQRail() {
