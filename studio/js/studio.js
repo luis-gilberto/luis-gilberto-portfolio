@@ -16,12 +16,12 @@
       },
       es: {
         conditions: [
-          'Diseño pulido',
-          'Conversión sin señal',
-          'Desalineación de arquitectura'
+          'Diseño visual de primera',
+          'Intentos de conversión sin validación',
+          'Arquitectura mal alineada'
         ],
         interpretation:
-          'El sitio web no era el problema real. El problema es que intentas resolver un fallo de posicionamiento con una mejora gráfica. Tu marca "Premium" habla al público equivocado en el tono equivocado.'
+          'El sitio web no era el verdadero problema. Estás intentando resolver un problema de posicionamiento mediante una mejora visual. Tu marca “Premium” le está hablando al público equivocado con el mensaje equivocado.'
       }
     },
     leads: {
@@ -36,9 +36,9 @@
       },
       es: {
         conditions: [
-          'Inversión publicitaria agotada',
-          'Entrada con fricción',
-          'Decaimiento en calidad de leads'
+          'Presupuesto publicitario agotado',
+          'Proceso de admisión confuso y complicado',
+          'Generación de prospectos poco cualificados'
         ],
         interpretation:
           'No necesitas más leads · necesitas un filtro. Hoy invitas a todos a la mesa, lo que significa que inviertes el 80% del tiempo en el 20% de leads. Hay que construir una puerta de diagnóstico, no un megáfono más alto.'
@@ -56,12 +56,12 @@
       },
       es: {
         conditions: [
-          'Deriva de proyecto',
-          'Fatiga de decisión',
-          'Bucles operativos reabiertos'
+          'Insuficiente claridad de dirección',
+          'Constante indecisión',
+          'Decisiones ya tomadas que siguen reabriéndose'
         ],
         interpretation:
-          'No es un problema de "movimiento" · es un problema de "decisión". Has reabierto las mismas tres opciones estratégicas durante seis meses. Hasta fijar la base, no puedes construir la siguiente historia.'
+          'Llevas meses replanteando las mismas decisiones estratégicas que ya se tomaron. Mientras las decisiones clave sigan abiertas, el trabajo no podrá avanzar.'
       }
     },
     'in-head': {
@@ -76,12 +76,12 @@
       },
       es: {
         conditions: [
-          'Cuello de botella del fundador',
-          'Amnesia institucional',
-          'Operación sin mapa'
+          'Dependencia excesiva del fundador',
+          'Conocimiento que nunca se documentó',
+          'Procesos que dependen de la memoria'
         ],
         interpretation:
-          'Eres el sistema operativo, pero corres una versión que no se actualizó desde que eras un equipo de uno. La estrategia vive en tu intuición, lo que significa que nadie más puede usarla. Hay que codificar la "Lectura" para que la "Construcción" ocurra sin ti.'
+          'La estrategia existe principalmente en tu cabeza. Eso significa que otras personas no pueden aplicarla con la misma claridad ni consistencia que tú. Necesitamos documentar la forma en que piensas y tomas decisiones para que el trabajo pueda avanzar sin depender constantemente de ti.'
       }
     }
   };
