@@ -70,7 +70,7 @@ console.log('[insights-nav] v2.2 loaded');
 
     /* ── Header ── */
     .ins-header {
-      position: sticky; top: 0; z-index: 200;
+      position: sticky; top: 0; z-index: 1000;
       width: 100%;
       transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
       border-bottom: 1px solid transparent;
@@ -116,11 +116,15 @@ console.log('[insights-nav] v2.2 loaded');
     .ins-nav-link[aria-expanded="true"] .ins-chevron { transform: rotate(180deg); }
 
     /* ── Dropdown viewport ── */
+    /* The 8px offset is padding, not a gap: the pointer must never cross dead
+       space between the trigger and the panel or the menu closes under it. */
     .ins-nav-viewport {
-      position: absolute; left: 50%; top: calc(100% + 8px);
+      position: absolute; left: 50%; top: 100%;
+      padding-top: 8px;
       transform: translateX(-50%);
       pointer-events: none; z-index: 300;
     }
+    .ins-nav-viewport.open { pointer-events: auto; }
     .ins-nav-viewport-inner {
       background: var(--ins-popover-bg);
       border: 1px solid var(--ins-popover-border);
@@ -320,7 +324,7 @@ console.log('[insights-nav] v2.2 loaded');
     /* ── Mobile drawer ── */
     .ins-mobile-menu {
       display: none; position: fixed;
-      inset: 0; top: var(--ins-header-h); z-index: 199;
+      inset: 0; top: var(--ins-header-h); z-index: 999;
       background: rgba(245,240,235,0.97);
       backdrop-filter: blur(12px);
       flex-direction: column;
@@ -762,7 +766,10 @@ console.log('[insights-nav] v2.2 loaded');
     const triggerRect = trigger.getBoundingClientRect();
     const navRect     = desktopNav.getBoundingClientRect();
     const triggerMid  = triggerRect.left + triggerRect.width / 2 - navRect.left;
-    if (viewportWrap) viewportWrap.style.left = triggerMid + 'px';
+    if (viewportWrap) {
+      viewportWrap.style.left = triggerMid + 'px';
+      viewportWrap.classList.add('open');
+    }
     viewportInner?.classList.add('open');
     triggers.forEach(t => t.setAttribute('aria-expanded', 'false'));
     trigger.setAttribute('aria-expanded', 'true');
@@ -771,11 +778,12 @@ console.log('[insights-nav] v2.2 loaded');
 
   function closeDropdown() {
     closeTimer = setTimeout(() => {
+      viewportWrap?.classList.remove('open');
       viewportInner?.classList.remove('open');
       document.querySelectorAll('.ins-nav-content').forEach(p => p.classList.remove('active'));
       triggers.forEach(t => t.setAttribute('aria-expanded', 'false'));
       activeId = null;
-    }, 120);
+    }, 260);
   }
 
   triggers.forEach(t => {
@@ -786,8 +794,8 @@ console.log('[insights-nav] v2.2 loaded');
     });
   });
   desktopNav?.addEventListener('mouseleave', closeDropdown);
-  viewportInner?.addEventListener('mouseenter', () => clearTimeout(closeTimer));
-  viewportInner?.addEventListener('mouseleave', closeDropdown);
+  viewportWrap?.addEventListener('mouseenter', () => clearTimeout(closeTimer));
+  viewportWrap?.addEventListener('mouseleave', closeDropdown);
   document.addEventListener('click', e => {
     if (desktopNav && !desktopNav.contains(e.target)) closeDropdown();
   });
