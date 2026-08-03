@@ -73,7 +73,7 @@ Match `.btn-editorial` and `.demo-note` to the page's existing button and metada
 
 ## 6. Assumptions and shortcuts
 
-- English only. The public LG Studio portfolio reads in English; the production El Retrato is bilingual ES-default, but the excerpt targets portfolio visitors. The chapter wash keeps "Capítulo Dos" as the one Spanish gesture.
+- Bilingual EN/ES via `data-i18n-*` attributes and a quiet top-right language toggle. Language preference shares the Studio key (`studio-lang`) so it stays consistent with the case-study page.
 - Google Fonts via CDN. If the site self-hosts Cormorant/Inter/JetBrains Mono, swap the `<link>` tags for the local `@font-face` declarations.
 - Reference tiles are CSS-drawn abstract marks, not photography or analog artifacts. This kept the file dependency-free; swapping in Cloudinary-hosted artifact imagery is a one-line change per tile.
 - The S2 answer is optional by design. Forcing input would make it feel like a form; the fallback line on S7 turns skipping into part of the reading.
@@ -83,7 +83,6 @@ Match `.btn-editorial` and `.demo-note` to the page's existing button and metada
 ## 7. Future expansion points
 
 - Swap tile marks for real reference imagery (Cloudinary `dogtoagya`).
-- Add ES/EN toggle reusing the copy structure (all copy lives in the HTML, so a `data-lang` swap or a small copy dictionary both work).
 - Expand the tension → pattern mapping into a fuller matrix (tension × direction) without touching the flow logic.
 - Wire the closing CTA to pass the session's selections as URL params into the real El Retrato intake, so the excerpt becomes a genuine top-of-funnel.
 - Add a Plausible event per screen advance if you want completion-rate data (frozen event names, one per screen ID).
