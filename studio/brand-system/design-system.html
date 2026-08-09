@@ -1,0 +1,1224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LG Studio — Design System</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="icon" type="image/png" href="assets/monogram.png">
+<style>
+  body { min-height: 100vh; }
+
+  /* ─── STRUCTURAL TYPE COMPATIBILITY ───────────────────────
+     Big Shoulders Display sets narrower than the previous
+     condensed label face. Lift weight so micro labels hold. */
+  .rail-brand .tag, .rail-group h5, .rail-foot, .page-head .meta,
+  .doc-section-head .num, .c-usage .role, .type-block .row .label,
+  .type-block h4, .sp-row .use, .util-tile .info, .logo-doc .label,
+  .app-doc-tile .label, footer.docs-foot, .toast,
+  .mode-card .m-name, .matrix th, .matrix .row-label,
+  .migration-step .s-label, .mode-band-label, .surface-demo .s-eyebrow {
+    font-weight: var(--fw-structural);
+  }
+
+  /* ─── ARCHITECTURE · MODE DIAGRAM ─────────────────────────── */
+  .arch-diagram { border: 1px solid var(--rule); background: var(--surface-card); padding: var(--sp-4) var(--sp-3); }
+  .arch-master { text-align: center; padding-bottom: var(--sp-3); }
+  .arch-master .a-eyebrow { font-family: var(--font-structural); font-weight: var(--fw-structural); font-size: 10px; letter-spacing: var(--tr-eyebrow); text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 8px; }
+  .arch-master .a-name { font-family: var(--font-editorial); font-size: 2rem; font-weight: 400; letter-spacing: -0.02em; color: var(--ink); line-height: 1.1; }
+  .arch-core { border-top: 1px solid var(--rule-strong); border-bottom: 1px solid var(--rule-strong); padding: var(--sp-3) 0; margin: var(--sp-2) 0 var(--sp-3); }
+  .arch-core .c-label { font-family: var(--font-structural); font-weight: 600; font-size: 11px; letter-spacing: var(--tr-signature); text-transform: uppercase; color: var(--ink); text-align: center; display: block; margin-bottom: var(--sp-2); }
+  .arch-core .c-items { display: flex; flex-wrap: wrap; gap: 6px 8px; justify-content: center; }
+  .arch-core .c-items span { font-family: var(--font-system); font-size: 10px; color: var(--text-secondary); border: 1px solid var(--rule); padding: 3px 8px; }
+  .arch-split { display: flex; justify-content: center; font-family: var(--font-system); font-size: 13px; color: var(--text-muted); padding-bottom: var(--sp-2); }
+
+  .mode-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: var(--rule); border: 1px solid var(--rule); }
+  .mode-card { background: var(--surface-card); padding: var(--sp-3); display: flex; flex-direction: column; gap: 10px; }
+  .mode-card.ink { background: var(--ink); color: var(--text-on-ink); }
+  .mode-card .m-num { font-family: var(--font-system); font-size: 10px; color: var(--text-muted); }
+  .mode-card.ink .m-num { color: var(--text-on-ink-muted); }
+  .mode-card .m-name { font-family: var(--font-structural); font-size: 1.25rem; letter-spacing: var(--tr-eyebrow); text-transform: uppercase; color: var(--ink); line-height: 1.1; }
+  .mode-card.ink .m-name { color: var(--ivory); }
+  .mode-card .m-purpose { font-size: 0.875rem; line-height: 1.55; color: var(--text-secondary); margin: 0; }
+  .mode-card.ink .m-purpose { color: var(--text-on-ink-muted); }
+  .mode-card .m-surface { font-family: var(--font-system); font-size: 10px; color: var(--accent-signal); margin-top: auto; padding-top: 10px; }
+  .mode-card.ink .m-surface { color: var(--accent-action); }
+
+  /* ─── MATRIX ──────────────────────────────────────────────── */
+  .matrix-wrap { overflow-x: auto; border: 1px solid var(--rule); background: var(--surface-card); }
+  .matrix { width: 100%; border-collapse: collapse; min-width: 680px; }
+  .matrix th, .matrix td { text-align: left; padding: 12px var(--sp-3); border-bottom: 1px solid var(--rule); vertical-align: top; font-size: 0.8125rem; line-height: 1.55; }
+  .matrix thead th { background: var(--ivory-alt); font-family: var(--font-structural); font-size: 11px; letter-spacing: var(--tr-eyebrow); text-transform: uppercase; color: var(--ink); border-bottom: 1px solid var(--rule-strong); }
+  .matrix .row-label { font-family: var(--font-structural); font-size: 11px; letter-spacing: var(--tr-eyebrow); text-transform: uppercase; color: var(--text-muted); white-space: nowrap; }
+  .matrix td { color: var(--text-secondary); }
+  .matrix tbody tr:last-child th, .matrix tbody tr:last-child td { border-bottom: 0; }
+  .matrix code { font-family: var(--font-system); font-size: 0.95em; color: var(--ink); }
+
+  /* ─── LEGACY HOST SURFACE ─────────────────────────────────── */
+  .legacy-band { border: 1px dashed var(--rule-strong); background: var(--ivory-alt); padding: var(--sp-3); margin-top: var(--sp-3); }
+  .legacy-band .l-eyebrow { font-family: var(--font-structural); font-weight: var(--fw-structural); font-size: 10px; letter-spacing: var(--tr-eyebrow); text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .legacy-band .l-name { font-family: var(--font-editorial); font-size: 1.25rem; font-weight: 400; letter-spacing: -0.02em; color: var(--ink); line-height: 1.15; margin-bottom: 8px; }
+  .legacy-band p { font-size: 0.875rem; line-height: 1.6; color: var(--text-secondary); margin: 0; max-width: var(--measure-wide); }
+  .legacy-band .l-rules { display: flex; flex-wrap: wrap; gap: 5px 8px; margin-top: 10px; }
+  .legacy-band .l-rules span { font-family: var(--font-system); font-size: 10px; color: var(--text-secondary); border: 1px solid var(--rule); padding: 3px 8px; background: var(--surface-card); }
+
+  /* ─── MIGRATION ───────────────────────────────────────────── */
+  .migration { border: 1px solid var(--rule-strong); background: var(--surface-card); padding: var(--sp-4); }
+  .migration-head { font-family: var(--font-editorial); font-size: 1.625rem; font-weight: 400; letter-spacing: -0.02em; color: var(--ink); margin: 0 0 8px; }
+  .migration-rule { font-family: var(--font-editorial); font-size: 1.125rem; font-style: italic; color: var(--accent-action); margin: 0 0 var(--sp-3); }
+  .migration-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-3); margin-top: var(--sp-3); }
+  .migration-step { border-top: 1px solid var(--rule-strong); padding-top: var(--sp-2); }
+  .migration-step .s-label { font-family: var(--font-structural); font-size: 10px; letter-spacing: var(--tr-eyebrow); text-transform: uppercase; color: var(--accent-signal); display: block; margin-bottom: 6px; }
+  .migration-step p { margin: 0; font-size: 0.875rem; line-height: 1.6; color: var(--text-secondary); }
+
+  /* ─── SURFACES ────────────────────────────────────────────── */
+  .surface-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--rule); border: 1px solid var(--rule); }
+  .surface-demo { padding: var(--sp-3); display: flex; flex-direction: column; gap: 10px; min-height: 200px; }
+  .surface-demo.paper { background: var(--ivory); }
+  .surface-demo.ink { background: var(--ink); }
+  .surface-demo .s-eyebrow { font-family: var(--font-structural); font-size: 10px; letter-spacing: var(--tr-eyebrow); text-transform: uppercase; color: var(--text-muted); }
+  .surface-demo .s-name { font-family: var(--font-editorial); font-size: 1.5rem; font-weight: 400; letter-spacing: -0.02em; color: var(--text-primary); line-height: 1.1; }
+  .surface-demo .s-body { font-size: 0.875rem; line-height: 1.6; color: var(--text-secondary); margin: 0; }
+  .surface-demo .s-tokens { display: flex; flex-wrap: wrap; gap: 5px; margin-top: auto; padding-top: 10px; }
+  .surface-demo .s-tokens span { font-family: var(--font-system); font-size: 10px; color: var(--text-muted); border: 1px solid var(--rule); padding: 3px 7px; }
+
+  /* ─── MODE SPECIMENS ──────────────────────────────────────── */
+  .mode-band-label { font-family: var(--font-structural); font-size: 11px; letter-spacing: var(--tr-eyebrow); text-transform: uppercase; color: var(--text-muted); display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 8px; border-bottom: 1px solid var(--rule-strong); margin-bottom: var(--sp-3); }
+  .mode-band-label strong { color: var(--ink); font-weight: 600; }
+  .mode-band + .mode-band { margin-top: var(--sp-5); }
+  .mode-note { font-family: var(--font-body); font-size: 0.8125rem; color: var(--text-muted); margin: var(--sp-2) 0 0; line-height: 1.6; max-width: var(--measure-read); }
+
+  .spec-instrument { background: var(--ink); color: var(--text-on-ink); border: 1px solid var(--ink); display: grid; grid-template-columns: 1fr 260px; }
+  .spec-instrument .si-main { padding: var(--sp-3); border-right: 1px solid var(--rule-on-ink); }
+  .spec-instrument .si-rail { padding: var(--sp-3); display: flex; flex-direction: column; gap: var(--sp-3); }
+  .si-meta { font-family: var(--font-system); font-size: 10px; color: var(--text-on-ink-muted); display: flex; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid var(--rule-on-ink); margin-bottom: var(--sp-3); }
+  .si-title { font-family: var(--font-structural); font-weight: 600; font-size: 1.25rem; letter-spacing: var(--tr-eyebrow); text-transform: uppercase; color: var(--ivory); margin: 0 0 6px; line-height: 1.1; }
+  .si-sub { font-family: var(--font-body); font-size: 0.8125rem; color: var(--text-on-ink-muted); margin: 0 0 var(--sp-3); line-height: 1.6; max-width: 46ch; }
+  .si-signal { display: grid; grid-template-columns: 24px 1fr 112px; gap: var(--sp-2); align-items: center; padding: 10px 0; border-top: 1px solid var(--rule-on-ink); }
+  .si-signal .idx { font-family: var(--font-system); font-size: 10px; color: var(--text-on-ink-muted); }
+  .si-signal .nm { font-family: var(--font-body); font-size: 0.8125rem; color: var(--ivory); }
+  .si-signal .st { font-family: var(--font-system); font-size: 10px; text-align: right; white-space: nowrap; }
+  .si-signal .st.hi { color: var(--accent-action); }
+  .si-signal .st.md { color: var(--accent-signal); }
+  .si-signal .st.lo { color: var(--text-on-ink-muted); }
+  .si-bar { display: block; height: 3px; background: var(--rule-on-ink); position: relative; margin-top: 6px; }
+  .si-bar i { position: absolute; inset: 0 auto 0 0; background: var(--accent-signal); display: block; }
+  .si-bar i.act { background: var(--accent-action); }
+  .si-rail .r-label { font-family: var(--font-structural); font-weight: var(--fw-structural); font-size: 10px; letter-spacing: var(--tr-eyebrow); text-transform: uppercase; color: var(--text-on-ink-muted); margin-bottom: 8px; display: block; }
+  .si-rail .r-read { font-family: var(--font-editorial); font-size: 1rem; line-height: 1.4; color: var(--ivory); margin: 0; }
+  .si-rail .r-note { font-family: var(--font-body); font-size: 0.8125rem; color: var(--text-on-ink-muted); line-height: 1.6; margin: 0; }
+
+  .spec-publishing { border: 1px solid var(--rule); background: var(--surface-card); display: grid; grid-template-columns: 150px 1fr; }
+  .sp-margin { padding: var(--sp-3); border-right: 1px solid var(--rule); display: flex; flex-direction: column; gap: var(--sp-2); }
+  .sp-margin .a-key { font-family: var(--font-structural); font-weight: var(--fw-structural); font-size: 10px; letter-spacing: var(--tr-eyebrow); text-transform: uppercase; color: var(--text-muted); display: block; }
+  .sp-margin .a-val { font-family: var(--font-system); font-size: 11px; color: var(--text-secondary); }
+  .sp-body { padding: var(--sp-3); }
+  .sp-body .sp-eyebrow { font-family: var(--font-structural); font-weight: var(--fw-structural); font-size: 10px; letter-spacing: var(--tr-eyebrow); text-transform: uppercase; color: var(--accent-action); }
+  .sp-body h4 { font-family: var(--font-editorial); font-weight: 400; font-size: 1.75rem; letter-spacing: -0.02em; line-height: 1.15; margin: 8px 0 var(--sp-2); color: var(--ink); }
+  .sp-body p { font-size: 0.9375rem; line-height: 1.75; color: var(--text-secondary); max-width: var(--measure-read); margin: 0; }
+
+  .shell {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: 100vh;
+  }
+  .shell > * { min-width: 0; }
+  .app-doc-grid > *, .util-grid > *, .color-grid > *, .logo-doc > * { min-width: 0; }
+  .comp-doc-code, .matrix-wrap { max-width: 100%; }
+
+  /* ── SIDEBAR ─────────────────────────────────────────────── */
+  aside.rail {
+    background: var(--ink);
+    color: var(--ivory);
+    padding: var(--sp-4) var(--sp-3);
+    position: sticky; top: 0; height: 100vh; overflow-y: auto;
+    border-right: 1px solid var(--ink);
+  }
+  .rail-brand { display: flex; flex-direction: column; gap: 12px; padding-bottom: var(--sp-3); border-bottom: 1px solid var(--rule-on-ink); margin-bottom: var(--sp-3); }
+  .rail-brand img { height: 24px; align-self: flex-start; filter: invert(1); }
+  .rail-brand .tag { font-family: var(--font-structural); font-size: 10px; letter-spacing: var(--tr-signature); text-transform: uppercase; color: var(--text-on-ink-muted); }
+  .rail-title { font-family: var(--font-editorial); font-size: 1.375rem; letter-spacing: -0.01em; margin-bottom: var(--sp-2); }
+  .rail-version { font-family: var(--font-system); font-size: 10px; color: var(--text-on-ink-muted); margin-bottom: var(--sp-4); }
+  .rail-group { margin-bottom: var(--sp-4); }
+  .rail-group h5 { font-family: var(--font-structural); font-size: 10px; letter-spacing: var(--tr-eyebrow); text-transform: uppercase; color: var(--text-on-ink-muted); margin: 0 0 10px; }
+  .rail-group ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 2px; }
+  .rail-group a {
+    display: block;
+    padding: 8px 12px;
+    color: var(--ivory);
+    text-decoration: none;
+    font-family: var(--font-body);
+    font-size: 13px;
+    border-left: 2px solid transparent;
+    transition: border-color var(--dur-hover), background var(--dur-hover);
+  }
+  .rail-group a:hover, .rail-group a.active {
+    border-left-color: var(--terracotta);
+    background: rgba(255,255,255,0.03);
+  }
+  .rail-foot { position: sticky; bottom: 0; background: var(--ink); padding-top: var(--sp-3); border-top: 1px solid var(--rule-on-ink); margin-top: var(--sp-4); font-family: var(--font-structural); font-size: 10px; letter-spacing: var(--tr-eyebrow); text-transform: uppercase; color: var(--text-on-ink-muted); display: flex; flex-direction: column; gap: 6px; }
+  .rail-foot a { color: var(--terracotta); text-decoration: none; }
+
+  /* ── MAIN ────────────────────────────────────────────────── */
+  main.content { padding: var(--sp-5) var(--sp-5) var(--sp-6); max-width: 1140px; }
+
+  .page-head { display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: var(--sp-3); border-bottom: 1px solid var(--rule-strong); margin-bottom: var(--sp-5); }
+  .page-head h1 { font-family: var(--font-editorial); font-size: 3rem; font-weight: 400; letter-spacing: -0.02em; margin: 0; }
+  .page-head .meta { font-family: var(--font-structural); font-size: 11px; letter-spacing: var(--tr-eyebrow); text-transform: uppercase; color: var(--text-muted); text-align: right; }
+
+  section.doc-section { margin-bottom: var(--sp-6); scroll-margin-top: 24px; }
+  .doc-section-head { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: var(--sp-2); border-bottom: 1px solid var(--ink); margin-bottom: var(--sp-4); }
+  .doc-section-head h2 { font-family: var(--font-editorial); font-size: 2rem; font-weight: 500; letter-spacing: -0.015em; margin: 0; }
+  .doc-section-head .num { font-family: var(--font-structural); font-size: 11px; letter-spacing: var(--tr-eyebrow); text-transform: uppercase; color: var(--text-muted); }
+
+  .doc-section .intro { max-width: var(--measure-read); color: var(--text-secondary); font-size: 1.0625rem; line-height: 1.65; margin-bottom: var(--sp-4); }
+
+  /* ── FOUNDATIONS · COLOR ─────────────────────────────────── */
+  .color-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-2); }
+  .c-swatch { border: 1px solid var(--rule); background: var(--surface-card); cursor: pointer; transition: transform var(--dur-hover), box-shadow var(--dur-hover); }
+  .c-swatch:hover { transform: translateY(-2px); box-shadow: var(--shadow-soft); }
+  .c-swatch .chip { height: 96px; }
+  .c-swatch .info { padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .c-swatch .info .name { font-family: var(--font-editorial); font-size: 1rem; font-weight: 500; }
+  .c-swatch .info .hex { font-family: var(--font-system); font-size: 11px; color: var(--text-muted); }
+  .c-swatch.copied .hex { color: var(--terracotta); }
+
+  .c-usage { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--sp-2); margin-top: var(--sp-3); }
+  .c-usage > div { border: 1px solid var(--rule); padding: 14px; background: var(--surface-card); }
+  .c-usage .role { font-family: var(--font-structural); font-size: 10px; letter-spacing: var(--tr-eyebrow); text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+  .c-usage .token { font-family: var(--font-system); font-size: 11.5px; color: var(--ink); margin-bottom: 4px; }
+  .c-usage .val { font-family: var(--font-system); font-size: 11px; color: var(--text-secondary); }
+
+  /* ── FOUNDATIONS · TYPE ──────────────────────────────────── */
+  .type-block { border: 1px solid var(--rule); background: var(--surface-card); padding: var(--sp-3); }
+  .type-block + .type-block { margin-top: var(--sp-2); }
+  .type-block .row { display: grid; grid-template-columns: 180px 1fr 160px; align-items: baseline; gap: var(--sp-3); padding: 12px 0; border-top: 1px dashed var(--rule); }
+  .type-block .row:first-of-type { border-top: 0; padding-top: 0; }
+  .type-block .row .label { font-family: var(--font-structural); font-size: 11px; letter-spacing: var(--tr-eyebrow); text-transform: uppercase; color: var(--text-muted); }
+  .type-block .row .spec { font-family: var(--font-system); font-size: 10.5px; color: var(--text-muted); text-align: right; }
+  .type-block h4 { font-family: var(--font-structural); font-size: 11px; letter-spacing: var(--tr-eyebrow); text-transform: uppercase; color: var(--text-muted); margin: 0 0 var(--sp-2); display: flex; justify-content: space-between; }
+
+  /* ── SPACING ─────────────────────────────────────────────── */
+  .sp-table { border: 1px solid var(--rule); background: var(--surface-card); }
+  .sp-row { display: grid; grid-template-columns: 100px 1fr 180px 100px; align-items: center; padding: 10px var(--sp-3); border-top: 1px solid var(--rule); gap: var(--sp-3); }
+  .sp-row:first-child { border-top: 0; }
+  .sp-row .tok { font-family: var(--font-system); font-size: 12px; color: var(--ink); }
+  .sp-row .bar { height: 8px; background: var(--ink); }
+  .sp-row .val { font-family: var(--font-system); font-size: 11px; color: var(--text-secondary); }
+  .sp-row .use { font-family: var(--font-structural); font-size: 10.5px; letter-spacing: var(--tr-eyebrow); text-transform: uppercase; color: var(--text-muted); text-align: right; }
+
+  /* ── RADII / SHADOWS ─────────────────────────────────────── */
+  .util-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--sp-2); }
+  .util-tile { border: 1px solid var(--rule); background: var(--surface-card); padding: var(--sp-3); display: flex; flex-direction: column; gap: var(--sp-2); }
+  .util-tile .demo { height: 80px; background: var(--ivory-alt); border: 1px solid var(--rule); }
+  .util-tile .info { display: flex; justify-content: space-between; align-items: baseline; font-family: var(--font-structural); font-size: 11px; letter-spacing: var(--tr-eyebrow); text-transform: uppercase; color: var(--text-muted); }
+  .util-tile .info strong { color: var(--ink); font-weight: 500; }
+  .util-tile .code { font-family: var(--font-system); font-size: 10.5px; color: var(--text-secondary); }
+
+  /* ── COMPONENTS ──────────────────────────────────────────── */
+  .comp-doc { border: 1px solid var(--rule); background: var(--surface-card); }
+  .comp-doc + .comp-doc { margin-top: var(--sp-3); }
+  .comp-doc-head { padding: 14px 20px; border-bottom: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: baseline; background: var(--ivory-alt); }
+  .comp-doc-head h3 { font-family: var(--font-editorial); font-size: 1.25rem; font-weight: 500; margin: 0; }
+  .comp-doc-head .id { font-family: var(--font-system); font-size: 11px; color: var(--text-muted); }
+  .comp-doc-desc { padding: 14px 20px 0; font-size: 0.9375rem; color: var(--text-secondary); max-width: var(--measure-read); }
+  .comp-doc-preview { padding: var(--sp-3) 20px; display: flex; flex-wrap: wrap; gap: var(--sp-2); align-items: center; border-top: 1px dashed var(--rule); margin-top: var(--sp-2); }
+  .comp-doc-code { padding: 14px 20px; background: var(--ink); color: var(--ivory); font-family: var(--font-system); font-size: 11.5px; line-height: 1.6; overflow-x: auto; }
+  .comp-doc-code .k { color: #A8D0C6; }
+  .comp-doc-code .s { color: var(--terracotta); }
+  .comp-doc-code .c { color: #6B7A78; }
+
+  /* Reused component styles (mirrored from guide) */
+  .btn { font-family: var(--font-body); font-weight: 500; font-size: 12px; letter-spacing: var(--tr-eyebrow); text-transform: uppercase; padding: 14px 22px; border: 1px solid var(--ink); background: var(--ink); color: var(--ivory); cursor: pointer; transition: background var(--dur-hover), color var(--dur-hover); }
+  .btn:hover { background: transparent; color: var(--ink); }
+  .btn.secondary { background: transparent; color: var(--ink); border-color: var(--ink); }
+  .btn.secondary:hover { background: var(--ink); color: var(--ivory); }
+  .btn.ghost { background: transparent; color: var(--ink); border: 0; border-bottom: 1px solid var(--ink); padding: 4px 0; }
+  .btn.accent { background: var(--terracotta); border-color: var(--terracotta); color: var(--ivory); }
+  .btn.accent:hover { background: transparent; color: var(--terracotta); }
+  .btn.sm { padding: 8px 14px; font-size: 11px; }
+
+  .field { display: flex; flex-direction: column; gap: 6px; min-width: 240px; }
+  .field label { font-family: var(--font-body); font-weight: 500; font-size: 11px; letter-spacing: var(--tr-eyebrow); text-transform: uppercase; color: var(--text-muted); }
+  .field input, .field textarea { font-family: var(--font-body); font-size: 15px; padding: 10px 0; border: 0; border-bottom: 1px solid var(--ink); background: transparent; color: var(--ink); outline: none; }
+  .field input:focus, .field textarea:focus { border-bottom-color: var(--terracotta); }
+
+  .chip {
+    border: 1px solid var(--ink);
+    padding: 6px 12px;
+    font-family: var(--font-structural);
+    font-size: 11px;
+    letter-spacing: var(--tr-eyebrow);
+    text-transform: uppercase;
+    background: transparent;
+    color: var(--ink);
+  }
+  .chip.filled { background: var(--ink); color: var(--ivory); }
+  .chip.accent { border-color: var(--terracotta); color: var(--terracotta); }
+  .chip.teal   { border-color: var(--teal); color: var(--teal); }
+
+  .card-doc {
+    background: var(--surface-card);
+    border: 1px solid var(--rule);
+    padding: var(--sp-3);
+    max-width: 320px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .card-doc h4 { font-family: var(--font-editorial); font-weight: 500; font-size: 1.25rem; margin: 0; letter-spacing: -0.01em; }
+  .card-doc p { margin: 0; color: var(--text-secondary); font-size: 0.9375rem; line-height: 1.55; }
+
+  .nav-doc { border: 1px solid var(--rule); background: var(--surface-card); padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; width: 100%; }
+  .nav-doc img { height: 20px; }
+  .nav-doc ul { display: flex; gap: 20px; list-style: none; margin: 0; padding: 0; font-family: var(--font-body); font-weight: 500; font-size: 11px; letter-spacing: var(--tr-eyebrow); text-transform: uppercase; color: var(--text-secondary); }
+
+  /* ── LOGO PREVIEWS ───────────────────────────────────────── */
+  .logo-doc { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; background: var(--rule); border: 1px solid var(--rule); }
+  .logo-doc > div { background: var(--surface-card); padding: var(--sp-3); display: flex; flex-direction: column; gap: var(--sp-2); align-items: center; justify-content: space-between; min-height: 160px; }
+  .logo-doc > div.dark { background: var(--ink); }
+  .logo-doc > div.dark img { filter: invert(1); }
+  .logo-doc img { max-width: 80%; max-height: 60px; object-fit: contain; }
+  .logo-doc .label { font-family: var(--font-structural); font-size: 10px; letter-spacing: var(--tr-eyebrow); text-transform: uppercase; color: var(--text-muted); }
+  .logo-doc > div.dark .label { color: var(--text-on-ink-muted); }
+
+  /* ── APPLICATIONS ────────────────────────────────────────── */
+  .app-doc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-2); }
+  .app-doc-tile { border: 1px solid var(--rule); min-height: 200px; padding: var(--sp-3); position: relative; display: flex; flex-direction: column; justify-content: space-between; gap: var(--sp-2); }
+  .app-doc-tile .label { position: absolute; top: 12px; right: 12px; font-family: var(--font-structural); font-size: 10px; letter-spacing: var(--tr-eyebrow); text-transform: uppercase; color: var(--text-muted); }
+  .app-web-doc { background: var(--ink); color: var(--ivory); }
+  .app-web-doc .label { color: var(--text-on-ink-muted); }
+  .app-web-doc h4 { font-family: var(--font-editorial); font-weight: 400; font-size: 1.5rem; margin: 0; letter-spacing: -0.02em; }
+
+  /* ── FOOTER ──────────────────────────────────────────────── */
+  footer.docs-foot {
+    padding-top: var(--sp-4);
+    border-top: 1px solid var(--rule);
+    margin-top: var(--sp-6);
+    font-family: var(--font-structural);
+    font-size: 11px;
+    letter-spacing: var(--tr-eyebrow);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    display: flex;
+    justify-content: space-between;
+  }
+  footer.docs-foot a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--ink); }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(30px);
+    background: var(--ink); color: var(--ivory);
+    padding: 12px 20px;
+    font-family: var(--font-structural); font-size: 12px; letter-spacing: var(--tr-eyebrow); text-transform: uppercase;
+    opacity: 0; pointer-events: none;
+    transition: opacity var(--dur-hover), transform var(--dur-hover) var(--ease-breath);
+    z-index: 100;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 1000px) {
+    .shell { grid-template-columns: 1fr; }
+    aside.rail { position: static; height: auto; }
+    .util-grid, .app-doc-grid, .color-grid { grid-template-columns: repeat(2, 1fr); }
+    .logo-doc { grid-template-columns: repeat(2, 1fr); }
+    .mode-cards, .migration-steps, .surface-pair { grid-template-columns: 1fr; }
+    .spec-instrument, .spec-publishing { grid-template-columns: 1fr; }
+    .spec-instrument .si-main { border-right: 0; border-bottom: 1px solid var(--rule-on-ink); }
+    .sp-margin { border-right: 0; border-bottom: 1px solid var(--rule); flex-direction: row; flex-wrap: wrap; gap: var(--sp-3); }
+  }
+  @media (max-width: 640px) {
+    main.content { padding: var(--sp-4) var(--sp-3) var(--sp-5); }
+    .util-grid, .app-doc-grid, .color-grid, .logo-doc { grid-template-columns: 1fr; }
+    .c-usage { grid-template-columns: 1fr !important; }
+    .type-block .row { grid-template-columns: 1fr; gap: 6px; }
+    .type-block .row .spec { text-align: left; }
+    .sp-row { grid-template-columns: 90px 1fr; row-gap: 6px; }
+    .sp-row .use { display: none; }
+    .nav-doc { flex-wrap: wrap; gap: var(--sp-2); }
+    .nav-doc ul { flex-wrap: wrap; gap: 12px; }
+    .comp-doc-preview { gap: var(--sp-2); }
+    .two-col { grid-template-columns: 1fr !important; }
+    .logo-doc > div { grid-column: auto !important; }
+    .logo-doc > div > div[style*="display: flex"] { flex-wrap: wrap; justify-content: center; }
+  }
+  @media (max-width: 400px) {
+    main.content { padding: var(--sp-3) 16px var(--sp-5); }
+    aside.rail { padding: var(--sp-3) 16px; }
+  }
+
+  @media print {
+    aside.rail, .toast { display: none !important; }
+    .shell { grid-template-columns: 1fr; }
+    section.doc-section { page-break-inside: avoid; }
+    body { background: white; }
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+<!-- ── SIDEBAR ─────────────────────────────────────────────── -->
+<aside class="rail">
+  <div class="rail-brand">
+    <img src="assets/monogram.png" alt="LG Studio">
+    <span class="tag">Design System</span>
+  </div>
+  <div class="rail-title">LG Studio</div>
+  <div class="rail-version">v1.1 · Aug 2026</div>
+
+  <div class="rail-group">
+    <h5>Architecture</h5>
+    <ul>
+      <li><a href="#architecture">Expression Modes</a></li>
+      <li><a href="#migration">Migration Principle</a></li>
+    </ul>
+  </div>
+  <div class="rail-group">
+    <h5>Foundations</h5>
+    <ul>
+      <li><a href="#color">Color &amp; Surfaces</a></li>
+      <li><a href="#typography">Typography</a></li>
+      <li><a href="#spacing">Spacing</a></li>
+      <li><a href="#radii">Radii & Shadows</a></li>
+    </ul>
+  </div>
+  <div class="rail-group">
+    <h5>Marks</h5>
+    <ul>
+      <li><a href="#logo-system">Logo System</a></li>
+      <li><a href="#partnership">Partnership Lockups</a></li>
+    </ul>
+  </div>
+  <div class="rail-group">
+    <h5>Components</h5>
+    <ul>
+      <li><a href="#buttons">Buttons</a></li>
+      <li><a href="#inputs">Inputs</a></li>
+      <li><a href="#chips">Chips & Labels</a></li>
+      <li><a href="#cards">Cards</a></li>
+      <li><a href="#nav">Navigation</a></li>
+    </ul>
+  </div>
+  <div class="rail-group">
+    <h5>In Practice</h5>
+    <ul>
+      <li><a href="#applications">Applications</a></li>
+    </ul>
+  </div>
+
+  <div class="rail-foot">
+    <a href="brand-guide.html">→ Long-form Brand Guide</a>
+    <span style="color: var(--text-on-ink-muted); text-transform: none; letter-spacing: 0.02em; font-family: var(--font-system); font-size: 10px;">tokens.css</span>
+  </div>
+</aside>
+
+<!-- ── MAIN CONTENT ────────────────────────────────────────── -->
+<main class="content">
+
+<div class="page-head">
+  <h1>Design System</h1>
+  <div class="meta">
+    <div>Volume 01 · v1.0</div>
+    <div>Effective August 2026</div>
+  </div>
+</div>
+
+<p class="intro" style="max-width: var(--measure-wide); font-size: 1.125rem; margin-bottom: var(--sp-5);">The working reference. Every token, every component, every rule, as it actually gets used. Start with the expression modes below: they determine which rules apply and which are allowed to vary. Pair this with the long-form <a href="brand-guide.html" style="color: var(--ink); border-bottom: 1px solid var(--ink); text-decoration: none;">Brand Guide</a> when arguing the why.</p>
+
+<!-- ============================================================
+     ARCHITECTURE · EXPRESSION MODES
+     ============================================================ -->
+<section class="doc-section" id="architecture">
+  <div class="doc-section-head"><h2>Expression Modes</h2><span class="num">01 &middot; Architecture</span></div>
+  <p class="intro">One brand. One shared core. Three modes. The objective is not visual uniformity across LG Studio, StrategyIQ and Insights. The objective is recognizable kinship: one underlying system capable of changing mode according to what the experience is doing.</p>
+
+  <div class="arch-diagram">
+    <div class="arch-master">
+      <span class="a-eyebrow">Master Brand</span>
+      <div class="a-name">LG Studio</div>
+    </div>
+
+    <div class="arch-core">
+      <span class="c-label">Shared Core</span>
+      <div class="c-items">
+        <span>logo system</span>
+        <span>color vocabulary</span>
+        <span>semantic color roles</span>
+        <span>spacing logic</span>
+        <span>grid principles</span>
+        <span>hairlines &amp; rules</span>
+        <span>border behavior</span>
+        <span>icon grammar</span>
+        <span>interaction principles</span>
+        <span>image principles</span>
+        <span>voice principles</span>
+        <span>navigation philosophy</span>
+        <span>CTA philosophy</span>
+        <span>accessibility expectations</span>
+        <span>semantic typography roles</span>
+        <span>Read / Direct / Build</span>
+      </div>
+    </div>
+
+    <div class="arch-split">&darr;</div>
+
+    <div class="mode-cards">
+      <div class="mode-card">
+        <span class="m-num">Mode 01</span>
+        <div class="m-name">Practice<br>Editorial</div>
+        <p class="m-purpose">The authored practice: positioning, methodology, creative reads, case studies, engagement, presentations, the studio site.</p>
+        <span class="m-surface">Dominant surface &middot; Paper</span>
+      </div>
+      <div class="mode-card ink">
+        <span class="m-num">Mode 02</span>
+        <div class="m-name">StrategyIQ<br>Instrument</div>
+        <p class="m-purpose">Diagnostic product experiences: structured reads, readouts, workflows, signals, decisions, operational interfaces.</p>
+        <span class="m-surface">Dominant surface &middot; Ink</span>
+      </div>
+      <div class="mode-card">
+        <span class="m-num">Mode 03</span>
+        <div class="m-name">Insights<br>Publishing</div>
+        <p class="m-purpose">Essays, observations, strategic writing, frameworks, journals, long-form thought, editorial artifacts.</p>
+        <span class="m-surface">Dominant surface &middot; Paper</span>
+      </div>
+    </div>
+
+    <div class="legacy-band">
+      <span class="l-eyebrow">Legacy host surface &middot; Not a fourth brand mode</span>
+      <div class="l-name">The existing luis-gilberto.com implementation</div>
+      <p>A legacy implementation, not a mode of the brand. It hosts the ecosystem and keeps its own established palette and type. It is not promoted to a fourth expression mode and it is not retrofitted.</p>
+      <div class="l-rules">
+        <span>existing pages remain valid</span>
+        <span>new work follows the master system</span>
+        <span>no retrofit required</span>
+        <span>migrates opportunistically</span>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="font-family: var(--font-editorial); font-weight: 500; font-size: 1.375rem; margin: var(--sp-4) 0 var(--sp-2);">What is shared, what is allowed to vary</h3>
+
+  <div class="matrix-wrap">
+    <table class="matrix">
+      <thead>
+        <tr>
+          <th scope="col">&nbsp;</th>
+          <th scope="col">01 &middot; Practice</th>
+          <th scope="col">02 &middot; StrategyIQ</th>
+          <th scope="col">03 &middot; Insights</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row" class="row-label">Purpose</th>
+          <td>Authored practice, methodology, selected work</td>
+          <td>Diagnostic instrument, readouts, operational UI</td>
+          <td>Publishing, essays, frameworks, journals</td>
+        </tr>
+        <tr>
+          <th scope="row" class="row-label">Dominant surface</th>
+          <td>Paper, with deliberate Ink sections</td>
+          <td>Ink-led, substantially and by design</td>
+          <td>Paper, with dark editorial interruptions</td>
+        </tr>
+        <tr>
+          <th scope="row" class="row-label">Density</th>
+          <td>Spacious. <code>--sp-6</code> / <code>--sp-7</code> section breaks.</td>
+          <td>Information-dense where the read requires it. <code>--sp-2</code> / <code>--sp-3</code>.</td>
+          <td>Reading-led. Measure held at <code>--measure-read</code>.</td>
+        </tr>
+        <tr>
+          <th scope="row" class="row-label">Typography</th>
+          <td><code>--font-editorial</code> leads</td>
+          <td>Canonical product type holds. <code>--font-structural</code> and <code>--font-system</code> lead.</td>
+          <td><code>--font-editorial</code> and <code>--font-body</code> lead. Existing faces may remain.</td>
+        </tr>
+        <tr>
+          <th scope="row" class="row-label">Imagery</th>
+          <td>Atmospheric, architectural, image-aware</td>
+          <td>Rare. Diagrams and data displace photography.</td>
+          <td>Editorial and supporting. Never decorative.</td>
+        </tr>
+        <tr>
+          <th scope="row" class="row-label">Components</th>
+          <td>Editorial cards, hairline rules, near-square corners</td>
+          <td>Existing product components remain canonical</td>
+          <td>Article furniture, annotations, structured metadata</td>
+        </tr>
+        <tr>
+          <th scope="row" class="row-label">Always shared</th>
+          <td colspan="3">Logo system &middot; semantic color roles &middot; spacing logic &middot; hairline behavior &middot; interaction principles &middot; voice &middot; CTA philosophy &middot; accessibility expectations</td>
+        </tr>
+        <tr>
+          <th scope="row" class="row-label">Allowed to vary</th>
+          <td colspan="3">Page composition &middot; dominant surface &middot; density &middot; typographic implementation &middot; component interiors &middot; image weight</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="two-col" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3); margin-top: var(--sp-4);">
+    <div class="comp-doc" style="padding: var(--sp-3);">
+      <h3 style="font-family: var(--font-editorial); font-weight: 500; font-size: 1.125rem; margin: 0 0 8px;">StrategyIQ is an instrument, not a second brand</h3>
+      <p style="font-size: 0.875rem; line-height: 1.65; color: var(--text-secondary); margin: 0;">StrategyIQ has an existing canonical product system, and it remains valid. This document does not prescribe a retrofit and does not overwrite product typography or product UI rules. StrategyIQ participates through shared principles and carefully selected shared tokens. It should feel related to LG Studio, not dressed like the LG Studio homepage.</p>
+    </div>
+    <div class="comp-doc" style="padding: var(--sp-3);">
+      <h3 style="font-family: var(--font-editorial); font-weight: 500; font-size: 1.125rem; margin: 0 0 8px;">Insights aligns forward, not backward</h3>
+      <p style="font-size: 0.875rem; line-height: 1.65; color: var(--text-secondary); margin: 0;">Insights should gain greater kinship with the Practice over time. Existing Insights pages are not obsolete and do not require redesign. New editorial work uses the shared system. When an older page is substantially revisited for a legitimate reason, it may migrate opportunistically.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     MIGRATION PRINCIPLE
+     ============================================================ -->
+<section class="doc-section" id="migration">
+  <div class="doc-section-head"><h2>Migration Principle</h2><span class="num">02 &middot; Architecture</span></div>
+  <p class="intro">There is no mandatory global retrofit. Existing work is not automatically obsolete. The system improves at the seams, where consistency is felt most and costs least.</p>
+
+  <div class="migration">
+    <h3 class="migration-head">Unify the edges first.</h3>
+    <p class="migration-rule">Preserve existing interiors until they need to change.</p>
+    <div class="migration-steps">
+      <div class="migration-step">
+        <span class="s-label">First &middot; Unify the edges</span>
+        <p>Identity and logo usage. Shell behaviors. Navigation. Footer. Semantic tokens. CTA behaviors. Spacing logic. Interaction standards.</p>
+      </div>
+      <div class="migration-step">
+        <span class="s-label">Then &middot; Preserve the interiors</span>
+        <p>Existing product and page interiors stay in their established visual language until they are naturally revisited. A working interior is not a defect.</p>
+      </div>
+      <div class="migration-step">
+        <span class="s-label">Always &middot; New work uses the system</span>
+        <p>Anything built from here forward uses the shared core and the correct mode. Migration happens opportunistically, never as a scheduled sweep.</p>
+      </div>
+    </div>
+    <p style="font-size: 0.875rem; line-height: 1.65; color: var(--text-secondary); margin: var(--sp-3) 0 0; max-width: var(--measure-wide);"><strong style="color: var(--ink); font-weight: 500;">This applies to the legacy host surface as well.</strong> The existing luis-gilberto.com implementation keeps its established visual language. When one of its surfaces is substantially redesigned anyway, it migrates at that moment. That is the only trigger.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     COLOR
+     ============================================================ -->
+<section class="doc-section" id="color">
+  <div class="doc-section-head"><h2>Color &amp; Surfaces</h2><span class="num">03 &middot; Foundations</span></div>
+  <p class="intro">Four values carry the identity. The system separates raw palette values from semantic roles: the raw value is the vocabulary, the role is the job. New work references the role, so a mode can change what a surface is made of without changing what it means. Click any swatch to copy the hex.</p>
+  <h3 style="font-family: var(--font-editorial); font-weight: 500; font-size: 1.25rem; margin: 0 0 var(--sp-2);">Raw palette</h3>
+
+  <div class="color-grid">
+    <div class="c-swatch" data-hex="#0F1111"><div class="chip" style="background:#0F1111"></div><div class="info"><span class="name">Deep Ink</span><span class="hex">#0F1111</span></div></div>
+    <div class="c-swatch" data-hex="#F7F2E9"><div class="chip" style="background:#F7F2E9"></div><div class="info"><span class="name">Warm Ivory</span><span class="hex">#F7F2E9</span></div></div>
+    <div class="c-swatch" data-hex="#EFE8DB"><div class="chip" style="background:#EFE8DB"></div><div class="info"><span class="name">Ivory Alt</span><span class="hex">#EFE8DB</span></div></div>
+    <div class="c-swatch" data-hex="#C96E53"><div class="chip" style="background:#C96E53"></div><div class="info"><span class="name">Terracotta</span><span class="hex">#C96E53</span></div></div>
+    <div class="c-swatch" data-hex="#2F5D5A"><div class="chip" style="background:#2F5D5A"></div><div class="info"><span class="name">Teal</span><span class="hex">#2F5D5A</span></div></div>
+    <div class="c-swatch" data-hex="#4A4744"><div class="chip" style="background:#4A4744"></div><div class="info"><span class="name">Text Secondary</span><span class="hex">#4A4744</span></div></div>
+  </div>
+
+  <h3 style="font-family: var(--font-editorial); font-weight: 500; font-size: 1.25rem; margin: var(--sp-4) 0 var(--sp-2);">Surfaces</h3>
+  <p class="intro" style="margin-bottom: var(--sp-3);">Paper and Ink are compositional tools inside one identity, not light mode and dark mode. Neither is primary. Practice and Insights are generally Paper-led with deliberate Ink sections. StrategyIQ may remain substantially Ink-led. Apply <code style="font-family: var(--font-system); font-size: 0.9em;">data-surface="ink"</code> to any section that should become Ink-led: the semantic tokens re-point, the raw palette does not.</p>
+
+  <div class="surface-pair">
+    <div class="surface-demo paper">
+      <span class="s-eyebrow">Surface 01</span>
+      <div class="s-name">Paper Surface</div>
+      <p class="s-body">Warm, editorial, reading-led. The default ground for Practice and Insights. Long-form lives here.</p>
+      <div class="s-tokens"><span>--surface-canvas</span><span>--surface-alt</span><span>--surface-card</span></div>
+    </div>
+    <div class="surface-demo ink" data-surface="ink">
+      <span class="s-eyebrow">Surface 02</span>
+      <div class="s-name">Ink Surface</div>
+      <p class="s-body">Immersive, diagnostic, high-focus. The default ground for StrategyIQ, and a deliberate anchor inside Practice and Insights.</p>
+      <div class="s-tokens"><span>--surface-ink</span><span>--surface-ink-alt</span><span>--rule-on-ink</span></div>
+    </div>
+  </div>
+
+  <h3 style="font-family: var(--font-editorial); font-weight: 500; font-size: 1.25rem; margin: var(--sp-4) 0 var(--sp-2);">Semantic accent roles</h3>
+  <div class="c-usage" style="grid-template-columns: 1fr 1fr;">
+    <div style="border-left: 3px solid var(--terracotta);">
+      <div class="role">Human intervention &middot; emphasis &middot; action &middot; authored decision</div>
+      <div class="token">--accent-action</div>
+      <div class="val">var(--terracotta) &middot; #C96E53</div>
+    </div>
+    <div style="border-left: 3px solid var(--teal);">
+      <div class="role">Signal &middot; structure &middot; system &middot; analytical precision</div>
+      <div class="token">--accent-signal</div>
+      <div class="val">var(--teal) &middot; #2F5D5A</div>
+    </div>
+  </div>
+  <p class="intro" style="margin-top: var(--sp-2); font-size: 0.9375rem;">Neither accent becomes decorative confetti. If a view has more than one Terracotta moment, one of them is not the most important action. If Teal appears without structure underneath it, it is decoration wearing the costume of a signal.</p>
+
+  <h3 style="font-family: var(--font-editorial); font-weight: 500; font-size: 1.25rem; margin: var(--sp-4) 0 var(--sp-2);">Usage tokens</h3>
+  <div class="c-usage">
+    <div><div class="role">Canvas</div><div class="token">--surface-canvas</div><div class="val">#F7F2E9</div></div>
+    <div><div class="role">Alt surface</div><div class="token">--surface-alt</div><div class="val">#EFE8DB</div></div>
+    <div><div class="role">Card</div><div class="token">--surface-card</div><div class="val">#FFFCF6</div></div>
+    <div><div class="role">Dark anchor</div><div class="token">--surface-ink</div><div class="val">#0F1111</div></div>
+    <div><div class="role">Primary text</div><div class="token">--text-primary</div><div class="val">#0F1111</div></div>
+    <div><div class="role">Secondary text</div><div class="token">--text-secondary</div><div class="val">#4A4744</div></div>
+    <div><div class="role">Muted / meta</div><div class="token">--text-muted</div><div class="val">#8A857E</div></div>
+    <div><div class="role">Hairline rule</div><div class="token">--rule</div><div class="val">#DDD3BF</div></div>
+  </div>
+</section>
+
+<!-- ============================================================
+     TYPOGRAPHY
+     ============================================================ -->
+<section class="doc-section" id="typography">
+  <div class="doc-section-head"><h2>Typography</h2><span class="num">04 &middot; Foundations</span></div>
+  <p class="intro">Four semantic roles, not four brands. A role describes the job the type is doing, not the territory a typeface owns. This is what lets one system change mode without forking its identity. Practice mode maps the roles to Fraunces, Inter, Big Shoulders Display and JetBrains Mono. Another mode may map a role to a different family and still be recognizably LG Studio.</p>
+
+  <div class="matrix-wrap" style="margin-bottom: var(--sp-3);">
+    <table class="matrix">
+      <thead>
+        <tr><th scope="col">Role</th><th scope="col">Practice mapping</th><th scope="col">The job it does</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row" class="row-label">--font-editorial</th><td>Fraunces</td><td>Editorial thought. Large propositions. Essay and display headlines. Names. Authored argument.</td></tr>
+        <tr><th scope="row" class="row-label">--font-body</th><td>Inter</td><td>Universal readable layer. Body copy. Interface. Navigation. Buttons where readability beats editorial character. Forms.</td></tr>
+        <tr><th scope="row" class="row-label">--font-structural</th><td>Big Shoulders Display</td><td>Structural voice. Section labels. Taxonomy. Indexes. Chapter identifiers. Wayfinding. Selective, with tracking and restraint.</td></tr>
+        <tr><th scope="row" class="row-label">--font-system</th><td>JetBrains Mono</td><td>System and technical metadata only. Coordinates. Token names. Diagnostic metadata. Code. Not a fourth headline family.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="migration" style="margin-bottom: var(--sp-4);">
+    <h3 class="migration-head">Typography compatibility</h3>
+    <p class="migration-rule">Existing pages may retain their current editorial typeface until they are substantially revisited.</p>
+    <p style="font-size: 0.875rem; line-height: 1.65; color: var(--text-secondary); margin: 0; max-width: var(--measure-wide);">Fraunces is the preferred editorial voice for new LG Studio Practice work. It is not applied backwards. There is no historical typography migration. StrategyIQ keeps its canonical product typography. Legacy aliases <code style="font-family: var(--font-system);">--font-display</code> and <code style="font-family: var(--font-system);">--font-label</code> are retained in tokens.css and resolve to <code style="font-family: var(--font-system);">--font-editorial</code> and <code style="font-family: var(--font-system);">--font-structural</code>, so existing selectors keep working without a rewrite.</p>
+  </div>
+
+  <div class="type-block">
+    <h4><span>Editorial role &middot; Fraunces</span><span style="font-family: var(--font-system); text-transform: none; letter-spacing: 0.02em;">var(--font-editorial)</span></h4>
+    <div class="row">
+      <div class="label">Display XL</div>
+      <div style="font-family: var(--font-editorial); font-weight: 400; font-size: 3.5rem; line-height: 1; letter-spacing: -0.03em;">Read what's <em style="font-weight: 400;">there.</em></div>
+      <div class="spec">400 · 56–96px · -3%</div>
+    </div>
+    <div class="row">
+      <div class="label">Display L</div>
+      <div style="font-family: var(--font-editorial); font-weight: 400; font-size: 2.5rem; line-height: 1.05; letter-spacing: -0.02em;">Every engagement is a read.</div>
+      <div class="spec">400 · 44–68px · -2%</div>
+    </div>
+    <div class="row">
+      <div class="label">Display M</div>
+      <div style="font-family: var(--font-editorial); font-weight: 500; font-size: 1.75rem; letter-spacing: -0.015em;">The read finds what sits underneath.</div>
+      <div class="spec">500 · 32–44px · -1.5%</div>
+    </div>
+  </div>
+
+  <div class="type-block">
+    <h4><span>Body role &middot; Inter</span><span style="font-family: var(--font-system); text-transform: none; letter-spacing: 0.02em;">var(--font-body)</span></h4>
+    <div class="row">
+      <div class="label">H1</div>
+      <div style="font-family: var(--font-body); font-weight: 500; font-size: 1.75rem; letter-spacing: -0.015em;">Every engagement is a read</div>
+      <div class="spec">Inter · 500 · 28px</div>
+    </div>
+    <div class="row">
+      <div class="label">H2</div>
+      <div style="font-family: var(--font-body); font-weight: 500; font-size: 1.375rem;">Two ways to read</div>
+      <div class="spec">Inter · 500 · 22px</div>
+    </div>
+    <div class="row">
+      <div class="label">Body Lede</div>
+      <div style="font-family: var(--font-body); font-size: 1.125rem; line-height: 1.6; color: var(--text-secondary);">The read finds what sits underneath. Symptoms rarely are.</div>
+      <div class="spec">Inter · 400 · 18px · lh 1.6</div>
+    </div>
+    <div class="row">
+      <div class="label">Body</div>
+      <div style="font-family: var(--font-body); font-size: 1rem; line-height: 1.65; color: var(--text-secondary);">Diagnostic read of the market, category, and audience shaping the challenge.</div>
+      <div class="spec">Inter · 400 · 16px · lh 1.65</div>
+    </div>
+  </div>
+
+  <div class="type-block">
+    <h4><span>Structural role &middot; Big Shoulders Display</span><span style="font-family: var(--font-system); text-transform: none; letter-spacing: 0.02em;">var(--font-structural)</span></h4>
+    <div class="row">
+      <div class="label">Eyebrow</div>
+      <div style="font-family: var(--font-structural); font-weight: 500; font-size: 0.875rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted);">The Practice · Section 01</div>
+      <div class="spec">500 · 13px · 0.18em</div>
+    </div>
+    <div class="row">
+      <div class="label">Signature</div>
+      <div style="font-family: var(--font-structural); font-weight: 500; font-size: 0.9375rem; letter-spacing: 0.32em; text-transform: uppercase;">READ / DIRECT / BUILD</div>
+      <div class="spec">400 · 14px · 0.32em</div>
+    </div>
+    <div class="row">
+      <div class="label">Micro</div>
+      <div style="font-family: var(--font-structural); font-weight: 500; font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted);">Volume 01 · Case Study 04</div>
+      <div class="spec">400 · 11px · 0.18em</div>
+    </div>
+  </div>
+
+  <div class="type-block">
+    <h4><span>System role &middot; JetBrains Mono</span><span style="font-family: var(--font-system); text-transform: none; letter-spacing: 0.02em;">var(--font-system)</span></h4>
+    <div class="row">
+      <div class="label">Token / metadata</div>
+      <div style="font-family: var(--font-system); font-size: 0.75rem; color: var(--text-secondary);">--accent-signal &middot; 0.42 &middot; readout/04</div>
+      <div class="spec">400 &middot; 12px</div>
+    </div>
+    <div class="row">
+      <div class="label">Micro annotation</div>
+      <div style="font-family: var(--font-system); font-size: 0.6875rem; color: var(--text-muted);">selected-work / el-retrato / 04</div>
+      <div class="spec">400 &middot; 11px</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SPACING
+     ============================================================ -->
+<section class="doc-section" id="spacing">
+  <div class="doc-section-head"><h2>Spacing</h2><span class="num">05 · Foundations</span></div>
+  <p class="intro">Modular scale. Micro for text rhythm, component for interior padding, section for content breaks, chapter for thematic shifts.</p>
+
+  <div class="sp-table">
+    <div class="sp-row"><div class="tok">--sp-1</div><div class="bar" style="width: 8px;"></div><div class="val">8px</div><div class="use">Text rhythm</div></div>
+    <div class="sp-row"><div class="tok">--sp-2</div><div class="bar" style="width: 16px;"></div><div class="val">16px</div><div class="use">Chip padding</div></div>
+    <div class="sp-row"><div class="tok">--sp-3</div><div class="bar" style="width: 24px;"></div><div class="val">24px</div><div class="use">Card interior</div></div>
+    <div class="sp-row"><div class="tok">--sp-4</div><div class="bar" style="width: 40px;"></div><div class="val">40px</div><div class="use">Subsection</div></div>
+    <div class="sp-row"><div class="tok">--sp-5</div><div class="bar" style="width: 64px;"></div><div class="val">64px</div><div class="use">Section break</div></div>
+    <div class="sp-row"><div class="tok">--sp-6</div><div class="bar" style="width: 96px;"></div><div class="val">96px</div><div class="use">Major section</div></div>
+    <div class="sp-row"><div class="tok">--sp-7</div><div class="bar" style="width: 144px;"></div><div class="val">144px</div><div class="use">Chapter break</div></div>
+  </div>
+</section>
+
+<!-- ============================================================
+     RADII / SHADOWS
+     ============================================================ -->
+<section class="doc-section" id="radii">
+  <div class="doc-section-head"><h2>Radii & Shadows</h2><span class="num">06 · Foundations</span></div>
+  <p class="intro">Corners stay near-square. Shadows are rare. This is a printed system that happens to run in a browser.</p>
+
+  <div class="util-grid">
+    <div class="util-tile"><div class="demo" style="border-radius: 0;"></div><div class="info"><strong>None</strong><span class="code">--r-none</span></div><div class="code">0</div></div>
+    <div class="util-tile"><div class="demo" style="border-radius: 2px;"></div><div class="info"><strong>XS · Default</strong><span class="code">--r-xs</span></div><div class="code">2px</div></div>
+    <div class="util-tile"><div class="demo" style="border-radius: 4px;"></div><div class="info"><strong>S</strong><span class="code">--r-s</span></div><div class="code">4px</div></div>
+    <div class="util-tile"><div class="demo" style="border-radius: 999px;"></div><div class="info"><strong>Pill</strong><span class="code">--r-pill</span></div><div class="code">999px</div></div>
+  </div>
+
+  <div class="util-grid" style="margin-top: var(--sp-2);">
+    <div class="util-tile"><div class="demo" style="box-shadow: 0 0 0 1px var(--rule);"></div><div class="info"><strong>Hairline</strong><span class="code">shadow-hairline</span></div></div>
+    <div class="util-tile"><div class="demo" style="box-shadow: 0 1px 0 rgba(15,17,17,0.06);"></div><div class="info"><strong>Print</strong><span class="code">shadow-print</span></div></div>
+    <div class="util-tile"><div class="demo" style="box-shadow: 0 12px 32px rgba(15,17,17,0.06);"></div><div class="info"><strong>Soft</strong><span class="code">shadow-soft</span></div></div>
+    <div class="util-tile"><div class="demo" style="box-shadow: 0 24px 60px rgba(15,17,17,0.10);"></div><div class="info"><strong>Lift</strong><span class="code">shadow-lift</span></div></div>
+  </div>
+</section>
+
+<!-- ============================================================
+     LOGO SYSTEM
+     ============================================================ -->
+<section class="doc-section" id="logo-system">
+  <div class="doc-section-head"><h2>Logo System</h2><span class="num">07 · Marks</span></div>
+  <p class="intro">Every variant has a Paper and an Ink surface partner. Never redraw, never approximate, never regenerate. <strong style="color: var(--ink); font-weight: 500;">READ / DIRECT / BUILD is a signature of the practice, not a mandatory logo tagline</strong> &mdash; the monogram and the wordmark are each allowed to stand entirely on their own.</p>
+
+  <div class="matrix-wrap" style="margin-bottom: var(--sp-3);">
+    <table class="matrix">
+      <thead><tr><th scope="col">Tier</th><th scope="col">Variants</th><th scope="col">Where it belongs</th></tr></thead>
+      <tbody>
+        <tr><th scope="row" class="row-label">Primary</th><td>Horizontal lockup &middot; monogram + wordmark</td><td>Default identity. Site headers, covers, credits, decks, documents.</td></tr>
+        <tr><th scope="row" class="row-label">Secondary</th><td>Wordmark only &middot; monogram only &middot; stacked lockup</td><td>Where space, hierarchy or repetition make the full lockup redundant.</td></tr>
+        <tr><th scope="row" class="row-label">Environmental</th><td>Reversed versions for Ink and other dark surfaces</td><td>Ink-led sections, StrategyIQ product surfaces, film credits, cover pages.</td></tr>
+        <tr><th scope="row" class="row-label">Extension</th><td>Partnership and co-brand lockup templates</td><td>An extension of the identity, never a primary identity variant.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="logo-doc">
+    <div><img src="assets/lockup-full.png" alt=""><span class="label">01A · Full Lockup</span></div>
+    <div class="dark"><img src="assets/lockup-full.png" alt=""><span class="label">01B · Reversed</span></div>
+    <div><img src="assets/lockup-horizontal.png" alt=""><span class="label">02A · Horizontal</span></div>
+    <div class="dark"><img src="assets/lockup-horizontal-dark.png" alt=""><span class="label" style="filter: none;">02B · Horizontal Rev.</span></div>
+    <div><img src="assets/wordmark.png" alt=""><span class="label">03A · Wordmark</span></div>
+    <div class="dark"><img src="assets/wordmark.png" alt=""><span class="label">03B · Wordmark Rev.</span></div>
+    <div><img src="assets/monogram.png" alt="" style="max-width: 60px;"><span class="label">04A · Monogram</span></div>
+    <div class="dark"><img src="assets/monogram.png" alt="" style="max-width: 60px;"><span class="label">04B · Monogram Rev.</span></div>
+  </div>
+</section>
+
+<!-- ============================================================
+     PARTNERSHIP
+     ============================================================ -->
+<section class="doc-section" id="partnership">
+  <div class="doc-section-head"><h2>Partnership Lockups</h2><span class="num">08 · Marks</span></div>
+  <p class="intro">An extension of the LG Studio identity, not a primary identity variant. Both marks hold their own weight, separated by a thin vertical rule. Three formats: pick the one that matches the hierarchy of the moment.</p>
+
+  <div class="logo-doc" style="grid-template-columns: 1fr 1fr;">
+    <div style="padding: var(--sp-4);">
+      <div style="display: flex; align-items: center; gap: var(--sp-3); width: 100%;">
+        <div style="flex: 1; text-align: center;"><img src="assets/lockup-horizontal.png" style="max-width: 90%; max-height: 40px;" alt=""></div>
+        <div style="width: 1px; align-self: stretch; background: var(--rule);"></div>
+        <div style="flex: 1; text-align: center;"><span style="font-family: var(--font-editorial); font-size: 1.125rem; letter-spacing: 0.08em; padding: 6px 14px; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); display: inline-block;">PARTNER</span></div>
+      </div>
+      <span class="label" style="margin-top: var(--sp-3);">Format A · Full + Full</span>
+    </div>
+    <div class="dark" style="padding: var(--sp-4);">
+      <div style="display: flex; align-items: center; gap: var(--sp-3); width: 100%;">
+        <div style="flex: 1; text-align: center;"><img src="assets/lockup-horizontal.png" style="max-width: 90%; max-height: 40px;" alt=""></div>
+        <div style="width: 1px; align-self: stretch; background: var(--rule-on-ink);"></div>
+        <div style="flex: 1; text-align: center;"><span style="font-family: var(--font-editorial); font-size: 1.125rem; letter-spacing: 0.08em; padding: 6px 14px; border-top: 1px solid var(--ivory); border-bottom: 1px solid var(--ivory); display: inline-block; color: var(--ivory); filter: none;">PARTNER</span></div>
+      </div>
+      <span class="label" style="margin-top: var(--sp-3);">Format C · Reversed</span>
+    </div>
+    <div style="padding: var(--sp-4); grid-column: span 2;">
+      <div style="display: flex; align-items: center; gap: var(--sp-3); width: 100%; justify-content: center;">
+        <img src="assets/monogram.png" style="max-height: 44px; max-width: 44px;" alt="">
+        <span style="font-family: var(--font-structural); font-size: 12px; letter-spacing: 0.32em; color: var(--text-muted); padding: 0 var(--sp-2);">×</span>
+        <span style="font-family: var(--font-editorial); font-size: 1rem; letter-spacing: 0.08em; padding: 4px 12px; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink);">PARTNER</span>
+      </div>
+      <span class="label" style="margin-top: var(--sp-3);">Format B · Monogram × Partner — tight applications, favicons, social</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     BUTTONS
+     ============================================================ -->
+<section class="doc-section" id="buttons">
+  <div class="doc-section-head"><h2>Buttons</h2><span class="num">09 · Components</span></div>
+
+  <div class="comp-doc">
+    <div class="comp-doc-head"><h3>Primary — Ink</h3><span class="id">.btn</span></div>
+    <p class="comp-doc-desc">The default CTA. Ink fill, ivory label, uppercase Inter at 500. Readability leads over editorial character here. Hover inverts to hairline outline. Reserve for the single most important action on a page.</p>
+    <div class="comp-doc-preview">
+      <button class="btn">Start a read</button>
+      <button class="btn sm">Small</button>
+    </div>
+    <pre class="comp-doc-code">&lt;<span class="k">button</span> <span class="k">class</span>=<span class="s">"btn"</span>&gt;Start a read&lt;/<span class="k">button</span>&gt;</pre>
+  </div>
+
+  <div class="comp-doc">
+    <div class="comp-doc-head"><h3>Secondary — Outline</h3><span class="id">.btn.secondary</span></div>
+    <p class="comp-doc-desc">Ink outline, transparent fill. Used alongside primary or when the context is already dark.</p>
+    <div class="comp-doc-preview">
+      <button class="btn secondary">Read more</button>
+      <button class="btn secondary sm">Small</button>
+    </div>
+    <pre class="comp-doc-code">&lt;<span class="k">button</span> <span class="k">class</span>=<span class="s">"btn secondary"</span>&gt;Read more&lt;/<span class="k">button</span>&gt;</pre>
+  </div>
+
+  <div class="comp-doc">
+    <div class="comp-doc-head"><h3>Ghost — Underlined</h3><span class="id">.btn.ghost</span></div>
+    <p class="comp-doc-desc">Editorial link-style CTA. A single hairline underline. Use inside long-form content or card footers.</p>
+    <div class="comp-doc-preview">
+      <button class="btn ghost">View the case study</button>
+    </div>
+    <pre class="comp-doc-code">&lt;<span class="k">button</span> <span class="k">class</span>=<span class="s">"btn ghost"</span>&gt;View the case study&lt;/<span class="k">button</span>&gt;</pre>
+  </div>
+
+  <div class="comp-doc">
+    <div class="comp-doc-head"><h3>Accent — Terracotta</h3><span class="id">.btn.accent</span></div>
+    <p class="comp-doc-desc">Reserved for the highest-priority moment. Never more than one per view. Never used as a decorative flourish.</p>
+    <div class="comp-doc-preview">
+      <button class="btn accent">Get in touch</button>
+    </div>
+    <pre class="comp-doc-code">&lt;<span class="k">button</span> <span class="k">class</span>=<span class="s">"btn accent"</span>&gt;Get in touch&lt;/<span class="k">button</span>&gt;</pre>
+  </div>
+</section>
+
+<!-- ============================================================
+     INPUTS
+     ============================================================ -->
+<section class="doc-section" id="inputs">
+  <div class="doc-section-head"><h2>Inputs</h2><span class="num">10 · Components</span></div>
+  <div class="comp-doc">
+    <div class="comp-doc-head"><h3>Editorial Underline</h3><span class="id">.field</span></div>
+    <p class="comp-doc-desc">No boxes. A hairline underline is the input. Inter label above, uppercase and tracked. Terracotta on focus. Feels like filling out a form on nice paper.</p>
+    <div class="comp-doc-preview" style="gap: var(--sp-3); align-items: flex-start;">
+      <div class="field"><label>Your name</label><input type="text" placeholder="Luis Gilberto"></div>
+      <div class="field"><label>What are you trying to move?</label><input type="text" placeholder="One sentence."></div>
+    </div>
+    <pre class="comp-doc-code">&lt;<span class="k">div</span> <span class="k">class</span>=<span class="s">"field"</span>&gt;
+  &lt;<span class="k">label</span>&gt;Your name&lt;/<span class="k">label</span>&gt;
+  &lt;<span class="k">input</span> <span class="k">type</span>=<span class="s">"text"</span>&gt;
+&lt;/<span class="k">div</span>&gt;</pre>
+  </div>
+</section>
+
+<!-- ============================================================
+     CHIPS
+     ============================================================ -->
+<section class="doc-section" id="chips">
+  <div class="doc-section-head"><h2>Chips & Labels</h2><span class="num">11 · Components</span></div>
+  <div class="comp-doc">
+    <div class="comp-doc-head"><h3>Category Chip</h3><span class="id">.chip</span></div>
+    <p class="comp-doc-desc">A rectangular label, never a pill. Structural role, uppercase, tracked. Ink outline by default. Filled for state; teal or terracotta for category emphasis.</p>
+    <div class="comp-doc-preview">
+      <span class="chip">Strategy</span>
+      <span class="chip">Direction</span>
+      <span class="chip filled">Editorial</span>
+      <span class="chip accent">In progress</span>
+      <span class="chip teal">Signal</span>
+    </div>
+    <pre class="comp-doc-code">&lt;<span class="k">span</span> <span class="k">class</span>=<span class="s">"chip"</span>&gt;Strategy&lt;/<span class="k">span</span>&gt;
+&lt;<span class="k">span</span> <span class="k">class</span>=<span class="s">"chip filled"</span>&gt;Editorial&lt;/<span class="k">span</span>&gt;
+&lt;<span class="k">span</span> <span class="k">class</span>=<span class="s">"chip accent"</span>&gt;In progress&lt;/<span class="k">span</span>&gt;</pre>
+  </div>
+</section>
+
+<!-- ============================================================
+     CARDS
+     ============================================================ -->
+<section class="doc-section" id="cards">
+  <div class="doc-section-head"><h2>Cards</h2><span class="num">12 · Components</span></div>
+  <div class="comp-doc">
+    <div class="comp-doc-head"><h3>Editorial Card</h3><span class="id">.card-doc</span></div>
+    <p class="comp-doc-desc">A card is a rectangle with a hairline border. Never a raised, shadowed, or gradient-filled surface. Eyebrow → serif headline → body → ghost CTA. That order.</p>
+    <div class="comp-doc-preview" style="gap: var(--sp-2); align-items: stretch;">
+      <div class="card-doc">
+        <span style="font-family: var(--font-structural); font-size: 11px; letter-spacing: var(--tr-eyebrow); text-transform: uppercase; color: var(--text-muted);">Case Study · 04</span>
+        <h4>A brand that stands apart</h4>
+        <p>Identity and expression system designed to be durable across every channel — with rules that actually get used.</p>
+        <button class="btn ghost" style="align-self: flex-start; margin-top: 4px;">Read the work</button>
+      </div>
+      <div class="card-doc">
+        <span style="font-family: var(--font-structural); font-size: 11px; letter-spacing: var(--tr-eyebrow); text-transform: uppercase; color: var(--terracotta);">Practice · Read</span>
+        <h4>Read the situation</h4>
+        <p>A diagnostic read of the market, category, and audience shaping the challenge — before any output is committed to.</p>
+        <button class="btn ghost" style="align-self: flex-start; margin-top: 4px;">Explore the read</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     NAV
+     ============================================================ -->
+<section class="doc-section" id="nav">
+  <div class="doc-section-head"><h2>Navigation</h2><span class="num">13 · Components</span></div>
+  <div class="comp-doc">
+    <div class="comp-doc-head"><h3>Editorial Masthead</h3><span class="id">.nav-doc</span></div>
+    <p class="comp-doc-desc">Hairline-bordered strip. Monogram left, Inter nav right. Never a hamburger unless the viewport demands it.</p>
+    <div class="comp-doc-preview" style="align-items: stretch;">
+      <div class="nav-doc">
+        <img src="assets/monogram.png" alt="">
+        <ul>
+          <li>Practice</li>
+          <li>Case Studies</li>
+          <li>Journal</li>
+          <li>Contact</li>
+        </ul>
+        <button class="btn sm">Start a read</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     APPLICATIONS
+     ============================================================ -->
+<section class="doc-section" id="applications">
+  <div class="doc-section-head"><h2>Applications</h2><span class="num">14 · In Practice</span></div>
+  <p class="intro">Three specimens, one system. These prove the system can change mode. Read them together: the kinship should be obvious without any two of them looking alike. What travels is the hairline rules, the near-square corners, the spacing rhythm, the semantic accent roles and the restraint. What changes is the dominant surface, the density, which typographic role leads, and how much room the image gets.</p>
+
+  <!-- A · PRACTICE / EDITORIAL -->
+  <div class="mode-band">
+    <div class="mode-band-label">
+      <span><strong>A &middot; Practice / Editorial</strong> &middot; Paper-led with an Ink anchor</span>
+      <span>Mode 01</span>
+    </div>
+
+    <div class="app-doc-grid">
+      <div class="app-doc-tile app-web-doc">
+        <span class="label">Studio site &middot; hero</span>
+        <div style="font-family: var(--font-structural); font-weight: 500; font-size: 10px; letter-spacing: var(--tr-eyebrow); text-transform: uppercase; color: var(--text-on-ink-muted); margin-top: var(--sp-3);">Read the Practice</div>
+        <h4>Good marketing isn&rsquo;t decoration. It&rsquo;s architecture.</h4>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn accent sm">Start a read</button>
+        </div>
+      </div>
+
+      <div class="app-doc-tile">
+        <span class="label">Case study opening</span>
+        <div style="margin-top: var(--sp-3);">
+          <div style="font-family: var(--font-structural); font-weight: 500; font-size: 10px; letter-spacing: var(--tr-eyebrow); text-transform: uppercase; color: var(--accent-action);">El Retrato</div>
+          <div style="font-family: var(--font-editorial); font-size: 1.375rem; line-height: 1.2; letter-spacing: -0.02em; color: var(--ink); margin-top: 8px;">A discovery system that makes the sitter visible.</div>
+        </div>
+        <div style="font-family: var(--font-system); font-size: 10px; color: var(--text-muted); border-top: 1px solid var(--rule); padding-top: 8px; margin-top: auto;">selected-work / 04</div>
+      </div>
+
+      <div class="app-doc-tile" style="background: var(--terracotta); color: var(--ivory); aspect-ratio: 1 / 1; min-height: unset;">
+        <span class="label" style="color: rgba(247,242,233,0.6);">Social &middot; 1:1</span>
+        <div style="margin-top: auto;">
+          <div style="font-family: var(--font-structural); font-weight: 500; font-size: 10px; letter-spacing: var(--tr-eyebrow); text-transform: uppercase; color: rgba(247,242,233,0.75); margin-bottom: 6px;">Insights &middot; 04</div>
+          <div style="font-family: var(--font-editorial); font-weight: 300; font-size: 1.5rem; line-height: 1.15; letter-spacing: -0.02em;">The read finds what sits underneath.</div>
+        </div>
+        <img src="assets/monogram.png" style="position: absolute; top: 14px; left: 14px; height: 20px; filter: invert(1);" alt="">
+      </div>
+
+      <div class="app-doc-tile" style="padding: 0;">
+        <span class="label" style="top: 12px; right: 12px;">Business card</span>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; height: 100%;">
+          <div style="background: var(--ivory); display: flex; align-items: center; justify-content: center;">
+            <img src="assets/monogram.png" style="height: 44px;" alt="">
+          </div>
+          <div style="background: var(--ink); padding: 16px; color: var(--ivory); display: flex; flex-direction: column; justify-content: flex-end;">
+            <div style="font-family: var(--font-editorial); font-size: 1rem;">Luis Gilberto</div>
+            <div style="font-family: var(--font-body); font-size: 10px; color: var(--text-on-ink-muted); line-height: 1.6; margin-top: 8px;">
+              Founder<br>Creative Director<br>LG Studio
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="app-doc-tile">
+        <span class="label">Letterhead</span>
+        <img src="assets/lockup-horizontal.png" style="height: 24px; align-self: flex-start;" alt="">
+        <div style="height: 1px; background: var(--rule); margin-top: 8px;"></div>
+        <div style="font-family: var(--font-editorial); font-size: 0.875rem; color: var(--ink); margin-top: 4px;">Dear reader,</div>
+        <div style="font-family: var(--font-body); font-size: 0.6875rem; line-height: 1.7; color: var(--text-secondary);">Every engagement begins with a read. Below the surface of what&rsquo;s being asked is usually the real question&hellip;</div>
+        <div style="font-family: var(--font-system); font-size: 10px; color: var(--text-muted); border-top: 1px solid var(--rule); padding-top: 8px; margin-top: auto;">LG Studio</div>
+      </div>
+
+      <div class="app-doc-tile" style="background: var(--ink); color: var(--ivory);">
+        <span class="label" style="color: var(--text-on-ink-muted);">Deck &middot; section divider</span>
+        <div style="margin: auto 0;">
+          <div style="font-family: var(--font-structural); font-weight: 500; font-size: 11px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--accent-action); margin-bottom: var(--sp-2);">Read</div>
+          <div style="font-family: var(--font-editorial); font-weight: 300; font-size: 1.75rem; line-height: 1.1; letter-spacing: -0.02em;">Section 02 &mdash; Read the situation.</div>
+        </div>
+        <div style="font-family: var(--font-system); font-size: 10px; color: var(--text-on-ink-muted);">LG Studio &middot; 04 / 12</div>
+      </div>
+    </div>
+    <p class="mode-note">Editorial composition. Editorial role leads. Paper ground with a deliberate Ink anchor. One Terracotta action per view. This is the mode that can use the new visual language most strongly.</p>
+  </div>
+
+  <!-- B · STRATEGYIQ / INSTRUMENT -->
+  <div class="mode-band">
+    <div class="mode-band-label">
+      <span><strong>B &middot; StrategyIQ / Instrument</strong> &middot; Ink-led, diagnostic</span>
+      <span>Mode 02</span>
+    </div>
+
+    <div class="spec-instrument">
+      <div class="si-main">
+        <div class="si-meta">
+          <span>readout / 0412</span>
+          <span>scan complete &middot; 04:00</span>
+        </div>
+        <h5 class="si-title">Pattern Readout</h5>
+        <p class="si-sub">Eight structural patterns evaluated against the intake. The system maps the pattern. The Second Read interprets what it means.</p>
+        <div class="si-signals">
+          <div class="si-signal">
+            <span class="idx">01</span>
+            <span class="nm">Stall<span class="si-bar"><i class="act" style="width: 78%;"></i></span></span>
+            <span class="st hi">0.78 &middot; high</span>
+          </div>
+          <div class="si-signal">
+            <span class="idx">02</span>
+            <span class="nm">Blocking Dependency<span class="si-bar"><i style="width: 54%;"></i></span></span>
+            <span class="st md">0.54 &middot; present</span>
+          </div>
+          <div class="si-signal">
+            <span class="idx">03</span>
+            <span class="nm">Single-Point Bottleneck<span class="si-bar"><i style="width: 41%;"></i></span></span>
+            <span class="st md">0.41 &middot; present</span>
+          </div>
+          <div class="si-signal">
+            <span class="idx">04</span>
+            <span class="nm">Scatter<span class="si-bar"><i style="width: 12%;"></i></span></span>
+            <span class="st lo">0.12 &middot; clear</span>
+          </div>
+        </div>
+      </div>
+      <div class="si-rail">
+        <div>
+          <span class="r-label">Human read</span>
+          <p class="r-read">The stall isn&rsquo;t a capacity problem. It&rsquo;s a decision that never got made.</p>
+        </div>
+        <div style="height: 1px; background: var(--rule-on-ink);"></div>
+        <div>
+          <span class="r-label">Next move</span>
+          <p class="r-note">Name the owner of the blocked decision. Set a date.</p>
+        </div>
+        <div style="margin-top: auto;">
+          <img src="assets/lockup-horizontal-dark.png" alt="LG Studio" style="width: 120px; height: auto; opacity: 0.75;">
+        </div>
+      </div>
+    </div>
+    <p class="mode-note"><strong style="color: var(--ink); font-weight: 500;">Compatibility specimen only.</strong> This is not a redesign of the StrategyIQ product and does not replace its canonical product system. It reads as family through shared hairlines, spacing rhythm, structural label discipline and semantic accent roles: Teal carries what the system found, Terracotta carries the human read. It is allowed to differ in dominant surface, density, leading typographic role and the absence of photography. It is an instrument, and it looks like one.</p>
+  </div>
+
+  <!-- C · INSIGHTS / PUBLISHING -->
+  <div class="mode-band">
+    <div class="mode-band-label">
+      <span><strong>C &middot; Insights / Publishing</strong> &middot; Paper-led, reading-first</span>
+      <span>Mode 03</span>
+    </div>
+
+    <div class="spec-publishing">
+      <div class="sp-margin">
+        <div><span class="a-key">Series</span><span class="a-val">Strategic Lens</span></div>
+        <div><span class="a-key">Entry</span><span class="a-val">No. 14</span></div>
+        <div><span class="a-key">Read</span><span class="a-val">7 min</span></div>
+        <div><span class="a-key">Filed</span><span class="a-val">2026-08</span></div>
+      </div>
+      <div class="sp-body">
+        <span class="sp-eyebrow">Strategic Lens &middot; 14</span>
+        <h4>The brief is rarely the problem.</h4>
+        <p>Most engagements arrive with a request attached: a campaign, a site, a deck, a rebrand. The request is real, and it is almost never the thing that needs solving. Underneath it sits a decision someone has been avoiding, and the artifact is what avoidance looks like when it has a budget.</p>
+      </div>
+    </div>
+    <p class="mode-note">Structured metadata in the margin, editorial hierarchy in the body, measure held at <code style="font-family: var(--font-system);">--measure-read</code>. This shows how Insights gains family resemblance without an immediate rebuild: the shell, navigation, footer, semantic tokens and CTA behavior unify first, and article interiors follow when they are next opened for a legitimate reason.</p>
+  </div>
+</section>
+
+<footer class="docs-foot">
+  <span>LG Studio &middot; Design System &middot; v1.1 &middot; August 2026</span>
+  <span><a href="brand-guide.html">Long-form Brand Guide →</a></span>
+</footer>
+
+</main>
+
+</div>
+
+<div class="toast" id="toast">Copied</div>
+
+<script>
+  // Copy-to-clipboard swatches
+  const toast = document.getElementById('toast');
+  let toastTimer;
+  document.querySelectorAll('.c-swatch').forEach(sw => {
+    sw.addEventListener('click', async () => {
+      const hex = sw.dataset.hex;
+      try {
+        await navigator.clipboard.writeText(hex);
+        sw.classList.add('copied');
+        toast.textContent = `${hex} copied`;
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toast.classList.remove('show');
+          sw.classList.remove('copied');
+        }, 1600);
+      } catch (e) { console.warn('Clipboard blocked', e); }
+    });
+  });
+
+  // Scrollspy for sidebar
+  const links = document.querySelectorAll('.rail-group a');
+  const sections = [...document.querySelectorAll('section.doc-section')];
+  const spy = () => {
+    const y = window.scrollY + 100;
+    let current = sections[0]?.id;
+    for (const s of sections) {
+      if (s.offsetTop <= y) current = s.id;
+    }
+    links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + current));
+  };
+  window.addEventListener('scroll', spy, { passive: true });
+  spy();
+
+  // Smooth scroll
+  links.forEach(a => {
+    a.addEventListener('click', (e) => {
+      const id = a.getAttribute('href');
+      if (id && id.startsWith('#')) {
+        e.preventDefault();
+        const el = document.querySelector(id);
+        if (el) window.scrollTo({ top: el.offsetTop - 20, behavior: 'smooth' });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
