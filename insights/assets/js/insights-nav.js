@@ -1,5 +1,5 @@
-// insights-nav.js — v2.2 — last updated: 2026-03-30 
-console.log('[insights-nav] v2.2 loaded'); 
+// insights-nav.js — v2.3 — last updated: 2026-08-13
+console.log('[insights-nav] v2.3 loaded'); 
 /**
  * insights-nav.js
  * Canonical navigation component for the Insights channel.
@@ -68,9 +68,15 @@ console.log('[insights-nav] v2.2 loaded');
       --ins-popover-border: rgba(255,255,255,0.08);
     }
 
-    /* ── Header ── */
+    /* Insights chrome is sticky-in-flow (not the fixed Luis .site-header).
+       Only clear the fixed identity strip; do not add the 68px Luis header offset. */
+    body.has-ecosystem-nav[data-eco-context="insights"] {
+      padding-top: var(--lg-eco-strip-offset, 30px) !important;
+    }
+
+    /* ── Header — sits below shared identity strip ── */
     .ins-header {
-      position: sticky; top: 0; z-index: 1000;
+      position: sticky; top: var(--lg-eco-strip-offset, 30px); z-index: 1000;
       width: 100%;
       transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
       border-bottom: 1px solid transparent;
@@ -443,6 +449,17 @@ console.log('[insights-nav] v2.2 loaded');
   const arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`;
 
   const HTML = `
+  <!-- ── Identity strip (property switcher only) ── -->
+  <nav class="lg-eco" aria-label="Identity">
+    <div class="lg-eco__shell">
+      <div class="lg-eco__primary" aria-label="Properties">
+        <a class="lg-eco__node lg-eco__node--identity" href="/" aria-current="page" rel="me">Luis Gilberto</a>
+        <span class="lg-eco__sep" aria-hidden="true">|</span>
+        <a class="lg-eco__node lg-eco__node--identity" href="/studio/" rel="me">LG Studio</a>
+      </div>
+    </div>
+  </nav>
+
   <!-- ── Header ── -->
   <header class="ins-header" id="ins-site-header">
     <div class="ins-header-inner">
@@ -665,11 +682,16 @@ console.log('[insights-nav] v2.2 loaded');
       </div>
     </div>
     <div class="ins-drawer-global-section">
-      <div class="ins-drawer-global-label">Ecosystem</div>
-      <a href="/" class="ins-drawer-global-link${activeChannel === 'portfolio' ? ' drawer-active' : ''}">
+      <div class="ins-drawer-global-label">Identity</div>
+      <a href="/" class="ins-drawer-global-link drawer-active">
         <div class="ins-drawer-global-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-        <span class="ins-drawer-global-text">Portfolio</span>
+        <span class="ins-drawer-global-text">Luis Gilberto</span>
       </a>
+      <a href="/studio/" class="ins-drawer-global-link">
+        <div class="ins-drawer-global-icon"><svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z"/></svg></div>
+        <span class="ins-drawer-global-text">LG Studio</span>
+      </a>
+      <div class="ins-drawer-global-label" style="margin-top:18px;">In this world</div>
       <a href="/insights/" class="ins-drawer-global-link${activeChannel === 'insights' ? ' drawer-active' : ''}">
         <div class="ins-drawer-global-icon"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
         <span class="ins-drawer-global-text">Insights</span>
@@ -678,9 +700,9 @@ console.log('[insights-nav] v2.2 loaded');
         <div class="ins-drawer-global-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
         <span class="ins-drawer-global-text">The Hub</span>
       </a>
-      <a href="/portal/story/" class="ins-drawer-global-link${activeChannel === 'portal' ? ' drawer-active' : ''}">
-        <div class="ins-drawer-global-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-        <span class="ins-drawer-global-text">The Portal</span>
+      <a href="/" class="ins-drawer-global-link${activeChannel === 'portfolio' ? ' drawer-active' : ''}">
+        <div class="ins-drawer-global-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></div>
+        <span class="ins-drawer-global-text">Work &amp; Experience</span>
       </a>
     </div>
     <div class="ins-drawer-footer-strip">
@@ -695,6 +717,16 @@ console.log('[insights-nav] v2.2 loaded');
   /* ─────────────────────────────────────────────────────────────────────────
      3. INJECT
   ───────────────────────────────────────────────────────────────────────── */
+
+  // Shared identity-strip styles + host offsets
+  if (!document.querySelector('link[href*="lg-ecosystem-strip.css"]')) {
+    const ecoCss = document.createElement('link');
+    ecoCss.rel = 'stylesheet';
+    ecoCss.href = '/assets/css/lg-ecosystem-strip.css?v=4';
+    document.head.appendChild(ecoCss);
+  }
+  document.body.classList.add('has-ecosystem-nav');
+  document.body.setAttribute('data-eco-context', 'insights');
 
   // Inject styles
   const styleEl = document.createElement('style');

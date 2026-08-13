@@ -1,0 +1,394 @@
+/* ==========================================================================
+   LG ECOSYSTEM · COHERENCE LAYER v2.1
+   Ecosystem strip + two local headers. Static CSS. No framework.
+
+   BINDING CONTRACT
+   Every value below resolves against the canonical LG Studio tokens.css
+   first, and only falls back to a literal if that token is absent.
+   Cursor task: delete the fallbacks once tokens.css is confirmed wired.
+   Fallbacks marked CONFIRM are best-known canonical values, not decisions
+   made by this document.
+   ========================================================================== */
+
+:root {
+  /* ---- Surface scopes · bound to the existing ink/paper scope system ---- */
+  --lg-ink:        var(--color-ink,        #0E0C0A);  /* CONFIRM */
+  --lg-paper:      var(--color-paper,      #F5F0EB);  /* CONFIRM */
+  --lg-ink-soft:   var(--color-ink-soft,   #1A1714);
+  --lg-paper-soft: var(--color-paper-soft, #EBE4DC);
+
+  /* ---- Accent · ONE family, shared by both identities ---- */
+  --lg-accent:     var(--color-accent,     #F96F6E);  /* CONFIRM */
+
+  /* ---- Type roles · four canonical roles, two dialects ---- */
+  --lg-editorial:  var(--font-editorial,  "Fraunces", Georgia, serif);
+  --lg-body:       var(--font-body,       "Inter", -apple-system, sans-serif);
+  --lg-structural: var(--font-structural, "Big Shoulders Display", "Big Shoulders", Oswald, sans-serif);
+  --lg-utility:    var(--font-utility,    "JetBrains Mono", ui-monospace, monospace);
+
+  /* ---- Rhythm ---- */
+  --lg-strip-h:      32px;
+  --lg-strip-h-sm:   28px;
+  --lg-header-h:     72px;
+  --lg-header-h-sm:  56px;
+  --lg-pad:          40px;
+  --lg-pad-sm:       20px;
+  --lg-shell:        1320px;
+
+  /* ---- Hairlines ---- */
+  --lg-rule-on-paper: rgba(14, 12, 10, 0.14);
+  --lg-rule-on-ink:   rgba(245, 240, 235, 0.16);
+
+  /* ---- Motion ---- */
+  --lg-ease: cubic-bezier(.22, .61, .36, 1);
+}
+
+/* ==========================================================================
+   1 · ECOSYSTEM STRIP
+   Infrastructure, not a brand. Ink on BOTH properties, always.
+   Set in the utility (mono) role so it can never be mistaken for a header.
+   ========================================================================== */
+
+.lg-eco {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  height: var(--lg-strip-h);
+  background: var(--lg-ink);
+  color: var(--lg-paper);
+  border-bottom: 1px solid rgba(245, 240, 235, 0.08);
+}
+
+.lg-eco__shell {
+  max-width: var(--lg-shell);
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 var(--lg-pad);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.lg-eco__group {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+/* Hairline separating IDENTITIES from DESTINATIONS. The tiering device. */
+.lg-eco__divide {
+  width: 1px;
+  height: 11px;
+  background: rgba(245, 240, 235, 0.22);
+  margin: 0 4px;
+  flex: none;
+}
+
+.lg-eco__node {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--lg-utility);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  color: rgba(245, 240, 235, 0.62);
+  transition: color .3s var(--lg-ease);
+}
+
+/* Destinations sit one opacity step below identities. Same size. */
+.lg-eco__node--dest { color: rgba(245, 240, 235, 0.42); }
+
+.lg-eco__node:hover,
+.lg-eco__node:focus-visible { color: var(--lg-paper); }
+
+.lg-eco__node[aria-current="page"] { color: var(--lg-paper); }
+
+/* Active marker: CSS-drawn, never a text glyph. Glyphs render
+   inconsistently across platforms and break vertical rhythm. */
+.lg-eco__node[aria-current="page"]::before {
+  content: "";
+  width: 4px;
+  height: 4px;
+  margin-right: 8px;
+  background: var(--lg-accent);
+  transform: rotate(45deg);
+  flex: none;
+}
+
+/* Language toggle. Two states, not one link. The active locale reads at
+   identity strength so the user can see which language they are in without
+   having to parse the page. */
+.lg-eco__lang { display: inline-flex; align-items: center; gap: 8px; flex: none; }
+
+.lg-eco__lang a {
+  font-family: var(--lg-utility);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(245, 240, 235, 0.42);
+  text-decoration: none;
+  transition: color .3s var(--lg-ease);
+}
+.lg-eco__lang a:hover { color: var(--lg-paper); }
+.lg-eco__lang a[aria-current="true"] { color: var(--lg-paper); }
+.lg-eco__lang .sep { color: rgba(245, 240, 235, 0.28); font-family: var(--lg-utility); font-size: 10px; }
+
+/* "You are inside this identity, in this product." Used where a product of
+   the practice has its own domain, so the strip can show ownership without
+   growing a fifth node. Not a link. */
+.lg-eco__within {
+  font-family: var(--lg-utility);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(245, 240, 235, 0.42);
+  margin-left: 10px;
+  white-space: nowrap;
+}
+.lg-eco__within::before { content: "\203A"; margin-right: 8px; opacity: 0.6; }
+
+/* ==========================================================================
+   2 · LOCAL HEADER · shared skeleton
+   Exactly one of these per page. Never two.
+   ========================================================================== */
+
+.lg-header {
+  position: relative;
+  z-index: 190;
+  height: var(--lg-header-h);
+}
+
+.lg-header__shell {
+  position: relative;
+  max-width: var(--lg-shell);
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 var(--lg-pad);
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+/* Mark slot. The real asset drops in here and is never restyled by the
+   header. Height is the contract; width is free. */
+.lg-mark {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  text-decoration: none;
+  color: inherit;
+}
+.lg-mark img,
+.lg-mark svg { display: block; width: auto; }
+
+.lg-header--luis   .lg-mark img,
+.lg-header--luis   .lg-mark svg { height: 28px; }
+.lg-header--studio .lg-mark img,
+.lg-header--studio .lg-mark svg { height: 24px; }
+
+.lg-nav { display: flex; align-items: center; }
+
+.lg-nav a {
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+  transition: opacity .25s var(--lg-ease);
+}
+
+.lg-nav a[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0;
+  bottom: -7px;
+  height: 1px;
+  background: var(--lg-accent);
+}
+
+.lg-cta {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 0;
+  white-space: nowrap;
+  transition: background-color .18s var(--lg-ease), color .18s var(--lg-ease);
+}
+
+.lg-burger {
+  display: none;
+  flex: none;
+  width: 24px; height: 16px;
+  background: none; border: 0; padding: 0;
+  cursor: pointer;
+  position: relative;
+}
+.lg-burger::before,
+.lg-burger::after {
+  content: "";
+  position: absolute; left: 0; right: 0; height: 1px;
+  background: currentColor;
+}
+.lg-burger::before { top: 4px; }
+.lg-burger::after  { bottom: 4px; }
+
+/* ==========================================================================
+   3 · LUIS GILBERTO DIALECT
+   Paper gravity. Asymmetric, editorial. Nav is right-clustered and set in
+   sentence case: it should read like a masthead, not a control panel.
+   ========================================================================== */
+
+.lg-header--luis {
+  background: var(--lg-paper);
+  color: var(--lg-ink);
+  border-bottom: 1px solid var(--lg-rule-on-paper);
+}
+
+.lg-header--luis .lg-nav {
+  margin-left: auto;
+  gap: 28px;
+}
+
+.lg-header--luis .lg-nav a {
+  font-family: var(--lg-body);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0;
+  opacity: 0.72;
+}
+.lg-header--luis .lg-nav a:hover,
+.lg-header--luis .lg-nav a[aria-current="page"] { opacity: 1; }
+
+.lg-header--luis .lg-cta {
+  margin-left: 8px;
+  padding: 10px 18px;
+  font-family: var(--lg-body);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
+  background: transparent;
+  color: var(--lg-ink);
+  border: 1px solid var(--lg-ink);
+}
+.lg-header--luis .lg-cta:hover {
+  background: var(--lg-ink);
+  color: var(--lg-paper);
+}
+
+/* ==========================================================================
+   4 · LG STUDIO DIALECT
+   Ink gravity. Centered, architectural. Nav is set in the structural role,
+   uppercase and tracked: it should read like a plan legend.
+   ========================================================================== */
+
+.lg-header--studio {
+  background: var(--lg-ink);
+  color: var(--lg-paper);
+  border-bottom: 1px solid var(--lg-rule-on-ink);
+}
+
+/* Three-column grid with equal outer tracks. The nav lands on the true
+   centre no matter how wide the mark or the CTA turn out to be, and the
+   tracks reserve space so the nav and CTA can never overlap. */
+.lg-header--studio .lg-header__shell {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+}
+.lg-header--studio .lg-nav { justify-self: center; gap: 26px; }
+.lg-header--studio .lg-cta { justify-self: end; }
+
+.lg-header--studio .lg-nav a {
+  font-family: var(--lg-structural);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+.lg-header--studio .lg-nav a:hover,
+.lg-header--studio .lg-nav a[aria-current="page"] { opacity: 1; }
+
+.lg-header--studio .lg-cta {
+  padding: 11px 20px;
+  font-family: var(--lg-structural);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: var(--lg-paper);
+  color: var(--lg-ink);
+  border: 1px solid var(--lg-paper);
+}
+.lg-header--studio .lg-cta:hover {
+  background: transparent;
+  color: var(--lg-paper);
+}
+
+/* ==========================================================================
+   5 · ENDORSED PRACTICE LOCKUP · D1
+   Secondary device. Decks, proposals, credits, footers. NOT site chrome.
+   The endorsement is left-aligned to the mark edge and capped by ratio, so
+   it survives any real mark geometry.
+   ========================================================================== */
+
+.lg-endorse {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+}
+
+.lg-endorse__line {
+  font-family: var(--lg-editorial);
+  font-style: italic;
+  font-size: 12px;              /* max 12px desktop / 11px mobile */
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: currentColor;
+  opacity: 0.58;
+  text-decoration: none;
+}
+.lg-endorse__line:hover { opacity: 0.85; }
+
+/* ==========================================================================
+   6 · RESPONSIVE
+   Mobile keeps both IDENTITIES in the strip and moves DESTINATIONS into the
+   local menu. The identity relationship is the thing worth protecting.
+   ========================================================================== */
+
+@media (max-width: 1080px) {
+  .lg-eco { height: var(--lg-strip-h-sm); }
+  .lg-eco__shell { padding: 0 var(--lg-pad-sm); }
+  .lg-eco__group { gap: 18px; }
+  .lg-eco__node { font-size: 9px; letter-spacing: 0.12em; }
+  .lg-eco__node--dest,
+  .lg-eco__divide,
+  .lg-eco__within { display: none; }
+
+  .lg-header { height: var(--lg-header-h-sm); }
+  .lg-header__shell { padding: 0 var(--lg-pad-sm); gap: 16px; }
+
+  .lg-header--luis   .lg-mark img,
+  .lg-header--luis   .lg-mark svg { height: 22px; }
+  .lg-header--studio .lg-mark img,
+  .lg-header--studio .lg-mark svg { height: 19px; }
+
+  .lg-nav, .lg-cta { display: none; }
+  .lg-header--studio .lg-header__shell { display: flex; }
+  .lg-burger { display: block; margin-left: auto; }
+
+  .lg-endorse__line { font-size: 11px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lg-eco__node, .lg-nav a, .lg-cta { transition: none; }
+}
+
+:where(.lg-eco a, .lg-header a, .lg-burger):focus-visible {
+  outline: 2px solid var(--lg-accent);
+  outline-offset: 3px;
+}

@@ -475,6 +475,15 @@
         closeDrawer();
       });
     });
+
+    /* Close if the mobile nav host is no longer shown (e.g. resize to desktop). */
+    var mobileHost = toggle.closest('.ed-nav-mobile') || toggle;
+    window.addEventListener('resize', function () {
+      if (!drawer.classList.contains('is-open')) return;
+      if (window.getComputedStyle(mobileHost).display === 'none') {
+        closeDrawer();
+      }
+    });
   }
 
   function init() {

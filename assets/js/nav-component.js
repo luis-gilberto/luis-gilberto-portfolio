@@ -1,20 +1,37 @@
 /* =============================================================
-   🧬 v14.3 SOVEREIGN ENGINE · Luis Gilberto Ecosystem
-   CHANNELS: Insights (Theme-Aware) | The Hub (Channel-Signature) | Portfolio (Persona-Aware)
-   CHANGES FROM v14.2:
-   - Hub megamenu restructured for canonical parity (3operating arms + orientation links)
-   - Version bump to v14.3
+   🧬 v15.3 SOVEREIGN ENGINE · Luis Gilberto Ecosystem
+   Strip = identity switcher only: Luis Gilberto | LG Studio
+   Luis local header owns Insights / The Hub / portfolio destinations.
+   Studio pages: strip only (Studio owns local .nav / .ed-nav).
+   Portal: not in active nav (direct URLs preserved).
    ============================================================= */
-// nav-component.js — v14.3 — last updated: 2026-03-30 
-console.log('[nav-component] v14.3 loaded');
+// nav-component.js — v15.3 — last updated: 2026-08-13
+console.log('[nav-component] v15.3 loaded');
 document.addEventListener('DOMContentLoaded', function() {
 
-    // 0. DEPENDENCY INJECTION: Force FontAwesome for icons
+    // Identity switcher — future Studio migration: studio → 'https://lgpractice.com'
+    const ECOSYSTEM_DESTINATIONS = {
+        luis: '/',
+        studio: '/studio/'
+    };
+    // Luis-world destinations (local nav / drawers — never the strip)
+    const LUIS_DESTINATIONS = {
+        insights: '/insights/',
+        hub: '/TheHub/'
+    };
+
+    // 0. DEPENDENCY INJECTION
     if (!document.querySelector('link[href*="font-awesome"]')) {
         const fa = document.createElement('link');
         fa.rel = 'stylesheet';
         fa.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css';
         document.head.appendChild(fa);
+    }
+    if (!document.querySelector('link[href*="lg-ecosystem-strip.css"]')) {
+        const ecoCss = document.createElement('link');
+        ecoCss.rel = 'stylesheet';
+        ecoCss.href = '/assets/css/lg-ecosystem-strip.css?v=4';
+        document.head.appendChild(ecoCss);
     }
 
     const navHook = document.getElementById('site-nav');
@@ -25,49 +42,76 @@ document.addEventListener('DOMContentLoaded', function() {
     const persona  = localStorage.getItem('luxe-persona') || 'explore';
     const theme    = localStorage.getItem('lg-theme') || 'dark';
     const path     = window.location.pathname;
+    const pathLower = path.toLowerCase();
 
-    const isInsights = path.includes('/insights/');
-    const isHub = window.location.pathname.toLowerCase().includes('/thehub') || window.location.pathname.toLowerCase().includes('/portal/story/');
+    const isStudio = pathLower === '/studio' || pathLower.startsWith('/studio/');
+    const isInsights = pathLower.includes('/insights/');
+    const isHub = pathLower.includes('/thehub') || pathLower.includes('/portal/story/');
 
-    // 3. LOGO ENGINE
+    // Host chrome context (padding / local header variants). Strip identity is luis|studio only.
+    const ecoContext = isStudio ? 'studio' : isInsights ? 'insights' : isHub ? 'hub' : 'luis';
+    const identityContext = isStudio ? 'studio' : 'luis';
+    document.body.classList.add('has-ecosystem-nav');
+    document.body.setAttribute('data-eco-context', ecoContext);
+
+    function identityCurrent(node) {
+        return identityContext === node ? ' aria-current="page"' : '';
+    }
+
+    // Identity / property switcher — not global navigation.
+    const stripHTML = `
+    <nav class="lg-eco" aria-label="Identity">
+      <div class="lg-eco__shell">
+        <div class="lg-eco__primary" aria-label="Properties">
+          <a class="lg-eco__node lg-eco__node--identity" href="${ECOSYSTEM_DESTINATIONS.luis}"${identityCurrent('luis')} rel="me">Luis Gilberto</a>
+          <span class="lg-eco__sep" aria-hidden="true">|</span>
+          <a class="lg-eco__node lg-eco__node--identity" href="${ECOSYSTEM_DESTINATIONS.studio}"${identityCurrent('studio')} rel="me">LG Studio</a>
+        </div>
+      </div>
+    </nav>`;
+
+    // Studio: strip only — local Studio header owns the brand (no competing Luis header)
+    if (isStudio) {
+        navHook.innerHTML = stripHTML;
+        return;
+    }
+
+    // 3. LOGO ENGINE — one local brand owner per context
+    // Luis: refined compact SVG on dark header. Insights/Hub keep destination marks.
+    const LUIS_COMPACT_DARK = '/assets/brand/luis-gilberto/compact--color-dark.svg';
+    const LUIS_MARK_DARK = '/assets/brand/luis-gilberto/mark--color-dark.svg';
     let logoHTML = '';
 
     if (isInsights) {
-        // Insights logo is always white because header is always dark
         logoHTML = `<img id="snav-logo-desktop" src="/insights/assets/images/insights_logo_white_desktop.webp" alt="Insights" height="48" style="height:48px;width:auto;">`;
     } else if (isHub) {
         const hubMarkMap = { hire: 'coral-3d_logomark.webp', partner: 'teal-3d_logomark.webp', explore: 'white-3d_logomark.webp' };
         const hubMark = hubMarkMap[persona] || 'white-3d_logomark.webp';
         logoHTML = `
             <div style="display:flex;align-items:center;gap:12px;">
-                <img id="snav-logo-desktop" src="/assets/images/${hubMark}" alt="LG" height="48" style="height:48px;width:auto;">
+                <img id="snav-logo-desktop" src="/assets/images/${hubMark}" alt="The Hub" height="48" style="height:48px;width:auto;">
                 <div style="width:1px;height:24px;background:rgba(255,255,255,0.2);"></div>
                 <span style="font-family:'Big Shoulders Display';font-size:18px;font-weight:700;color:#FFF;text-transform:uppercase;letter-spacing:1px;">The Hub.</span>
             </div>`;
     } else {
-        const portMapDark  = { hire: 'coral_lg-portfolio-logo.webp', partner: 'LG_Portfolio_logo_teal.webp', explore: 'white_lg-portfolio-logo.webp' };
-        const portLogo = portMapDark[persona] || 'white_lg-portfolio-logo.webp';
-        logoHTML = `<img id="snav-logo-desktop" src="/assets/images/${portLogo}" alt="Luis Gilberto Portfolio" height="48" style="height:48px;width:auto;">`;
+        logoHTML = `<img id="snav-logo-desktop" src="${LUIS_COMPACT_DARK}" alt="Luis Gilberto" height="36" width="215" style="height:36px;width:auto;display:block;">`;
     }
 
-    // 3. GENERATE MASTER HTML
+    // 3. GENERATE MASTER HTML — strip + one local branded header
     navHook.innerHTML = `
-    <header class="${isHub ? 'site-header site-header--hub' : 'site-header'}" style="border-bottom:1px solid rgba(255,255,255,0.08);height:80px;display:flex;align-items:center;position:fixed;top:0;width:100%;z-index:10000;">
-        <div class="nav-container" style="max-width:1400px;margin:0 auto;width:100%;padding:0 48px;display:flex;justify-content:space-between;align-items:center;">
+    ${stripHTML}
+    <header class="${isHub ? 'site-header site-header--hub' : 'site-header'}" style="border-bottom:1px solid rgba(255,255,255,0.06);height:68px;display:flex;align-items:center;position:fixed;top:30px;width:100%;z-index:10000;">
+        <div class="nav-container" style="max-width:1400px;margin:0 auto;width:100%;padding:0 40px;display:flex;justify-content:space-between;align-items:center;">
 
-            <a href="/" style="text-decoration:none;" class="desktop-logo">${logoHTML}</a>
-            <a href="/" style="text-decoration:none;" class="mobile-logo-mark">
-                <img id="snav-logo-mobile" height="40" style="height:40px;width:auto;display:block;" alt="LG">
+            <a href="${ECOSYSTEM_DESTINATIONS.luis}" style="text-decoration:none;" class="desktop-logo">${logoHTML}</a>
+            <a href="${ECOSYSTEM_DESTINATIONS.luis}" style="text-decoration:none;" class="mobile-logo-mark">
+                <img id="snav-logo-mobile" height="40" style="height:40px;width:auto;display:block;" alt="Luis Gilberto">
             </a>
 
             <nav class="desktop-nav" style="display:flex;gap:8px;position:relative;">
-                <button class="nav-link" data-trigger="portfolio">Portfolio</button>
+                <button class="nav-link" data-trigger="portfolio">Luis Gilberto</button>
                 <button class="nav-link" data-trigger="insights">Insights</button>
                 <button class="nav-link" data-trigger="hub">The Hub</button>
-                <a href="https://portal.luis-gilberto.com" class="nav-link nav-portal-lockup" style="padding:0 8px;">
-                    <img class="portal-logo-dark"  src="/assets/images/TheLGPortal_dark-mode.png"  alt="The Portal" style="height:32px;width:auto;display:block;">
-                    <img class="portal-logo-light" src="/assets/images/TheLGPortal_light-mode.png" alt="The Portal" style="height:32px;width:auto;display:none;">
-                </a>
 
                 <div class="nav-viewport" id="master-viewport">
                     <div class="nav-viewport-inner">
@@ -87,31 +131,26 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <a href="${base}insights/series/#reflections" class="mega-link"><div class="mega-icon"><i class="fas fa-feather"></i></div><div class="mega-text"><b>Reflections</b><span>Creativity, pace, and momentum</span></div></a>
                             </div>
                         </div>
-                        <div id="view-hub" class="view-content" style="display:none;"> 
-                          <div class="mega-panel-header"> 
-                            <span class="mega-panel-label">The Hub</span> 
-                            <p class="mega-panel-tagline">Three arms. One system.</p> 
-                          </div> 
-                          <div class="grid-3"> 
-                            <a href="${base}TheHub/advisory/index.html" class="mega-link"> 
-                              <div class="mega-icon"><i class="fas fa-compass"></i></div> 
-                              <div class="mega-text"><b>Advisory</b><span>Strategic leadership guidance. Alignment and clarity for complex decisions.</span></div> 
-                            </a> 
-                            <a href="${base}studio/" class="mega-link">
-                              <div class="mega-icon"><i class="fas fa-paint-brush"></i></div> 
-                              <div class="mega-text"><b>The Studio</b><span>High-fidelity execution. Ideas into tangible assets.</span></div> 
-                            </a> 
-                            <a href="https://portal.luis-gilberto.com/" target="_blank" rel="noopener" class="mega-link"> 
-                              <div class="mega-icon"><i class="fas fa-lock"></i></div> 
-                              <div class="mega-text"><b>The Portal ↗</b><span>Secure command center. Where strategy becomes operational.</span></div> 
-                            </a> 
-                          </div> 
-                          <div class="mega-divider"></div> 
-                          <div class="mega-orientation"> 
-                            <a href="${base}TheHub/index.html" class="mega-orientation-link">Hub Overview</a> 
-                            <a href="/portal/story/" class="mega-orientation-link">How It Works</a> 
-                          </div> 
-                        </div> 
+                        <div id="view-hub" class="view-content" style="display:none;">
+                          <div class="mega-panel-header">
+                            <span class="mega-panel-label">The Hub</span>
+                            <p class="mega-panel-tagline">Two arms. One system.</p>
+                          </div>
+                          <div class="grid-2">
+                            <a href="${base}TheHub/advisory/index.html" class="mega-link">
+                              <div class="mega-icon"><i class="fas fa-compass"></i></div>
+                              <div class="mega-text"><b>Advisory</b><span>Strategic leadership guidance. Alignment and clarity for complex decisions.</span></div>
+                            </a>
+                            <a href="${ECOSYSTEM_DESTINATIONS.studio}" class="mega-link">
+                              <div class="mega-icon"><i class="fas fa-paint-brush"></i></div>
+                              <div class="mega-text"><b>LG Studio</b><span>High-fidelity execution. Ideas into tangible assets.</span></div>
+                            </a>
+                          </div>
+                          <div class="mega-divider"></div>
+                          <div class="mega-orientation">
+                            <a href="${base}TheHub/index.html" class="mega-orientation-link">Hub Overview</a>
+                          </div>
+                        </div>
                     </div>
                 </div>
             </nav>
@@ -139,14 +178,9 @@ document.addEventListener('DOMContentLoaded', function() {
             <div id="drawer-channel-links"></div>
         </div>
         <div class="drawer-section">
-            <div class="drawer-section-label coral">Ecosystem</div>
-            <a href="/index.html" class="drawer-nav-link"><span>Portfolio</span><span class="dnl-arrow">›</span></a>
-            <a href="/insights/" class="drawer-nav-link"><span>Insights</span><span class="dnl-arrow">›</span></a>
-            <a href="/TheHub/index.html" class="drawer-nav-link"><span>The Hub</span><span class="dnl-arrow">›</span></a>
-            <a href="https://portal.luis-gilberto.com" class="drawer-nav-link drawer-portal-lockup" style="padding:11px 0;">
-                <img class="portal-logo-dark"  src="/assets/images/TheLGPortal_dark-mode.png"  alt="The Portal" style="height:32px;width:auto;display:block;">
-                <img class="portal-logo-light" src="/assets/images/TheLGPortal_light-mode.png" alt="The Portal" style="height:32px;width:auto;display:none;">
-            </a>
+            <div class="drawer-section-label coral">Identity</div>
+            <a href="${ECOSYSTEM_DESTINATIONS.luis}" class="drawer-nav-link${identityContext === 'luis' ? ' active' : ''}"><span>Luis Gilberto</span><span class="dnl-arrow">${identityContext === 'luis' ? '●' : '›'}</span></a>
+            <a href="${ECOSYSTEM_DESTINATIONS.studio}" class="drawer-nav-link"><span>LG Studio</span><span class="dnl-arrow">›</span></a>
         </div>
         <div class="drawer-section" style="border-bottom:none;padding-bottom:8px;">
             <div class="drawer-section-label" style="color:#F96F6E;margin-bottom:12px;">Get in touch<span style="flex:1;height:1px;background:rgba(249,111,110,0.15);display:block;margin-left:8px;"></span></div>
@@ -175,8 +209,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         .site-header { background: #080808 !important; }
 
-        .nav-link { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.6) !important; background: none; border: none; cursor: pointer; padding: 8px 16px; transition: 0.2s; display: flex; align-items: center; gap: 6px; }
-        .nav-link:hover, .nav-link.active { color: #FFF !important; background: rgba(255,255,255,0.05); border-radius: 6px; }
+        .nav-link { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.55) !important; background: none; border: none; cursor: pointer; padding: 6px 12px; transition: 0.2s; display: flex; align-items: center; gap: 6px; }
+        .nav-link:hover, .nav-link.active { color: #FFF !important; background: rgba(255,255,255,0.04); border-radius: 6px; }
         
         #masterThemeToggle { border-color: rgba(255,255,255,0.15) !important; color: #FFF !important; background: none !important; }
         #drawerThemeToggle { border-color: rgba(255,255,255,0.15) !important; color: #FFF !important; background: none !important; }
@@ -278,16 +312,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         .desktop-badge-anchor { display: flex; }
 
-        /* ── PORTAL LOCKUP THEME SWAP ── */
-        [data-theme="light"] .portal-logo-dark  { display: none !important; }
-        [data-theme="light"] .portal-logo-light { display: block !important; }
-
-        /* Hub pages: nav is always dark — lock Portal logo to dark variant */ 
-        html[data-theme="light"] .site-header--hub .portal-logo-dark  { display: block !important; } 
-        html[data-theme="light"] .site-header--hub .portal-logo-light { display: none !important; } 
-        [data-theme="dark"]  .portal-logo-light { display: none !important; }
-        [data-theme="dark"]  .portal-logo-dark  { display: block !important; }
-
         /* ── DRAWER ── */
         .drawer-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9998; backdrop-filter: blur(2px); opacity: 0; transition: opacity 0.3s ease; }
         .drawer-overlay.visible { opacity: 1; }
@@ -358,18 +382,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const overlay     = document.getElementById('drawer-overlay');
     const drawerTheme = document.getElementById('drawerThemeToggle');
 
-    // 5.5 INITIALIZE MOBILE LOGOMARK
+    // 5.5 INITIALIZE MOBILE MARK
     const markImg = document.getElementById('snav-logo-mobile');
     if (markImg) {
         const mk = (persona === 'coral' || persona === 'hire') ? 'hire' : (persona === 'teal' || persona === 'partner') ? 'partner' : 'explore';
         if (isInsights) {
             markImg.src = `/insights/assets/images/white-3d_logomark.webp`;
+            markImg.alt = 'Insights';
         } else if (isHub) {
             const hubMarkMap = { hire: 'coral-3d_logomark.webp', partner: 'teal-3d_logomark.webp', explore: 'white-3d_logomark.webp' };
             markImg.src = `/assets/images/${hubMarkMap[mk]}`;
+            markImg.alt = 'The Hub';
         } else {
-            const portMarkDark = { hire: 'coral-3d_logomark.webp', partner: 'teal-3d_logomark.webp', explore: 'white-3d_logomark.webp' };
-            markImg.src = `/assets/images/${portMarkDark[mk]}`;
+            markImg.src = LUIS_MARK_DARK;
+            markImg.alt = 'Luis Gilberto';
+            markImg.style.height = '40px';
+            markImg.style.width = 'auto';
         }
     }
 
@@ -387,8 +415,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (toggle) toggle.innerHTML = icon;
         if (drawerTheme) drawerTheme.innerHTML = icon;
 
-        // Logos are now static because the header is always dark
-        // Swapping is only needed for the Portal logo which is in the nav-links
+        // Logos are static — header chrome is always dark
     };
 
     if (toggle) {
@@ -436,7 +463,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 9. MOBILE DRAWER
     const activeChannel      = isInsights ? 'insights' : isHub ? 'hub' : 'portfolio';
-    const channelNames       = { insights: 'Insights', hub: 'The Hub', portfolio: 'Portfolio' };
+    const channelNames       = { insights: 'Insights', hub: 'The Hub', portfolio: 'Luis Gilberto' };
     const channelDisplayName = channelNames[activeChannel];
 
     const dnEl = document.getElementById('drawer-channel-name');
@@ -461,14 +488,15 @@ document.addEventListener('DOMContentLoaded', function() {
         hub: [
             { label: 'Hub home',   href: '/TheHub/index.html',          active: path.endsWith('/TheHub/') || path.endsWith('/TheHub/index.html') },
             { label: 'Advisory',   href: '/TheHub/advisory/index.html', active: path.includes('advisory') },
-            { label: 'The Studio',   href: '/studio/',  active: path.includes('studio') },
-            { label: 'How It Works', href: '/portal/story/',      active: path.includes('/portal/story') },
+            { label: 'LG Studio',  href: ECOSYSTEM_DESTINATIONS.studio, active: path.includes('studio') },
         ],
         portfolio: [
             { label: 'Experience',     href: '/myexperience.html', active: path.includes('myexperience') },
             { label: 'Journey',        href: '/journey.html',      active: path.includes('journey') },
             { label: 'About me',       href: '/about.html',        active: path.includes('about') },
             { label: 'Brand identity', href: '/brand/',            active: path.includes('brand') },
+            { label: 'Insights',       href: LUIS_DESTINATIONS.insights, active: false },
+            { label: 'The Hub',        href: LUIS_DESTINATIONS.hub,      active: false },
         ]
     };
 

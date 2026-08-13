@@ -18,7 +18,7 @@ body.studio-lovable {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-size: 16px;
   line-height: 1.6;
-  overflow-x: clip;
+  /* Do NOT set overflow-x on body — it breaks position:sticky for .ed-nav */
   font-synthesis: none;
 }
 
@@ -30,6 +30,7 @@ body.studio-lovable a {
 body.studio-lovable #studio-main {
   background: #FAF6EF;
   color: #0E0C0A;
+  overflow-x: clip;
 }
 
 /* Upright voice · no slanted emphasis */
@@ -48,49 +49,88 @@ body.studio-lovable .accent-text {
 
 .studio-skip {
   position: absolute;
-  left: -9999px;
-  top: auto;
   width: 1px;
   height: 1px;
+  padding: 0;
+  margin: -1px;
   overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+  text-decoration: none;
 }
 
-.studio-skip:focus {
+.studio-skip:focus,
+.studio-skip:focus-visible {
   position: fixed;
   left: 1rem;
   top: 1rem;
-  z-index: 200;
+  z-index: 10060;
   width: auto;
   height: auto;
+  margin: 0;
   padding: 0.75rem 1rem;
+  overflow: visible;
+  clip: auto;
+  clip-path: none;
+  white-space: nowrap;
   background: #0E0C0A;
   color: #FAF6EF;
   font-family: "JetBrains Mono", ui-monospace, monospace;
   font-size: 0.75rem;
+  font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+  outline: 2px solid #C96E53;
+  outline-offset: 2px;
 }
 
 /* --- Navigation ---------------------------------------------------------- */
 
-/* Ecosystem nav integration. nav-component.js renders a fixed 80px bar above
-   the Studio bar, so the page reserves that space and the Studio bar sticks
-   beneath it. Scoped to .has-ecosystem-nav because this stylesheet is shared
-   with pages that do not carry the ecosystem bar. */
-body.studio-lovable.has-ecosystem-nav {
-  padding-top: 80px;
+/*
+  Sticky stack (Studio + ecosystem):
+  - .lg-eco     fixed  top: 0                         z-index: 200
+  - .ed-nav     fixed  top: var(--lg-eco-strip-offset) z-index: 150
+  - chapter bar sticky top: eco + studio-nav           z-index: 140
+  Body padding clears both fixed layers so content never starts under chrome.
+  data-eco-context=studio is set by nav-component.js.
+*/
+body.studio-lovable {
+  --lg-studio-nav-h: 56px;
+  --lg-studio-chapter-h: 40px;
+  --lg-studio-chrome-top: var(--lg-eco-strip-offset, 30px);
+  --lg-studio-chapter-top: calc(var(--lg-studio-chrome-top) + var(--lg-studio-nav-h));
+}
+
+/* Chapter index styles: lg-studio-practice-chapters.css */
+
+@media (max-width: 1080px) {
+  body.studio-lovable {
+    --lg-studio-chapter-h: 38px;
+  }
+}
+
+/* When studio-shell.js owns chrome, padding is strip-only (see lg-studio-shell.css). */
+body.studio-lovable.has-ecosystem-nav:not(.studio-shell) {
+  padding-top: calc(var(--lg-eco-strip-offset, 30px) + var(--lg-studio-nav-h));
+}
+
+/* Beat lg-ecosystem-strip.css studio padding (strip-only) once local nav is fixed */
+body.studio-lovable.has-ecosystem-nav[data-eco-context="studio"]:not(.studio-shell) {
+  padding-top: calc(var(--lg-eco-strip-offset, 30px) + var(--lg-studio-nav-h)) !important;
 }
 
 body.studio-lovable.has-ecosystem-nav .ed-nav {
-  top: 80px;
-  z-index: 90;
+  position: fixed;
+  top: var(--lg-eco-strip-offset, 30px);
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 150;
 }
 
-/* The two bars change to mobile at different widths (1023px and 899px), which
-   would stack two menu buttons. The Studio drawer carries the language toggle,
-   the section links and Book, so it stays; the ecosystem bar drops to an
-   identity strip whose logo still routes home. */
-@media (max-width: 1023px) {
+@media (max-width: 1080px) {
   body.studio-lovable.has-ecosystem-nav .mobile-menu-btn {
     display: none !important;
   }
@@ -99,39 +139,73 @@ body.studio-lovable.has-ecosystem-nav .ed-nav {
 body.studio-lovable .ed-nav {
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 150;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 56px;
-  padding: 0 clamp(20px, 4vw, 48px);
+  gap: 24px;
+  min-height: var(--lg-studio-nav-h, 56px);
+  /* Match ecosystem strip outer grid: --lg-shell 1320 + --lg-pad 40 */
+  padding:
+    0
+    max(var(--lg-pad, 40px), calc((100% - var(--lg-shell, 1320px)) / 2 + var(--lg-pad, 40px)));
   background: rgba(14, 12, 10, 0.94);
   border-bottom: 1px solid rgba(250, 246, 239, 0.16);
   backdrop-filter: blur(8px);
+  box-sizing: border-box;
+}
+
+@media (max-width: 1080px) {
+  body.studio-lovable .ed-nav {
+    padding:
+      0
+      max(var(--lg-pad-sm, 20px), calc((100% - var(--lg-shell, 1320px)) / 2 + var(--lg-pad-sm, 20px)));
+  }
 }
 
 body.studio-lovable .ed-brand {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
-  font-family: "Barlow Condensed", "Arial Narrow", sans-serif;
-  font-size: 0.82rem;
-  font-weight: 600;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
+  flex-shrink: 0;
+  text-decoration: none;
   color: #FAF6EF;
 }
 
-body.studio-lovable .ed-brand-mark {
-  display: grid;
-  place-items: center;
-  width: 1.5rem;
-  height: 1.5rem;
-  border: 1px solid rgba(250, 246, 239, 0.16);
-  font-family: "Cormorant Garamond", Georgia, serif;
-  font-size: 0.62rem;
-  letter-spacing: 0.05em;
-  color: #F96F6E;
+/* Approved reversed horizontal lockup for ink headers (no CSS invent / invert) */
+body.studio-lovable .ed-brand-lockup {
+  display: block;
+  line-height: 0;
+}
+
+body.studio-lovable .ed-brand-lockup img {
+  display: block;
+  width: auto;
+  height: 28px;
+  max-width: min(220px, 42vw);
+}
+
+/* Mobile: monogram crop from the same reversed horizontal asset */
+body.studio-lovable .ed-brand-lockup--compact {
+  display: none;
+  width: 28px;
+  height: 28px;
+  overflow: hidden;
+}
+
+body.studio-lovable .ed-brand-lockup--compact img {
+  height: 28px;
+  width: auto;
+  max-width: none;
+}
+
+@media (max-width: 1080px) {
+  body.studio-lovable .ed-brand-lockup--full {
+    display: none;
+  }
+
+  body.studio-lovable .ed-brand-lockup--compact {
+    display: block;
+  }
 }
 
 body.studio-lovable .ed-nav-links {
@@ -392,6 +466,37 @@ body.studio-lovable .ed-nav-drawer-label {
   font-style: normal;
 }
 
+/* Secondary ecosystem destinations when strip collapses (≤1080) */
+body.studio-lovable .ed-nav-drawer-ecosystem {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem 0.75rem;
+  margin: 1.25rem 0 0;
+  padding: 1rem 0 0;
+  border-top: 1px solid rgba(250, 246, 239, 0.12);
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+body.studio-lovable .ed-nav-drawer-ecosystem a {
+  color: rgba(250, 246, 239, 0.55);
+  text-decoration: none;
+}
+
+body.studio-lovable .ed-nav-drawer-ecosystem a:hover,
+body.studio-lovable .ed-nav-drawer-ecosystem a:focus-visible {
+  color: #FAF6EF;
+}
+
+body.studio-lovable .ed-nav-drawer-ecosystem__sep {
+  color: rgba(250, 246, 239, 0.28);
+  user-select: none;
+}
+
 body.studio-lovable .ed-nav-drawer-foot {
   margin-top: clamp(40px, 8vw, 72px);
   padding-top: clamp(24px, 4vw, 40px);
@@ -437,7 +542,7 @@ body.studio-lovable.ed-nav-drawer-open {
   }
 }
 
-@media (max-width: 899px) {
+@media (max-width: 1200px) {
 
   body.studio-lovable .ed-nav-link-desktop,
   body.studio-lovable .ed-nav-book-desktop,
@@ -2277,6 +2382,38 @@ body.studio-lovable .ed-strategyiq-stage {
   grid-template-columns: minmax(120px, 160px) minmax(0, 1fr);
   gap: clamp(24px, 3vw, 48px);
   align-items: start;
+}
+
+body.studio-lovable .ed-strategyiq-stage-visual {
+  grid-template-columns: 1fr;
+  gap: clamp(28px, 3vw, 40px);
+}
+
+body.studio-lovable .ed-strategyiq-visual {
+  margin: 0;
+  width: 100%;
+  line-height: 0;
+}
+
+body.studio-lovable .ed-strategyiq-visual img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+body.studio-lovable .ed-strategyiq-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(16px, 2vw, 28px);
+  max-width: 56rem;
+}
+
+body.studio-lovable .ed-strategyiq-cta .ed-readout-bridge {
+  margin: 0;
+  flex: 1 1 18rem;
 }
 
 body.studio-lovable .ed-strategyiq-rail {

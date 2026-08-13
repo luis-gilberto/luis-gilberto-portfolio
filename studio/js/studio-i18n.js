@@ -3,11 +3,9 @@
 
   var STORAGE_KEY = 'studio-lang';
   var DEFAULT_LANG = 'en';
+  var boundDelegation = false;
 
-  function setLang(lang) {
-    var html = document.documentElement;
-    html.lang = lang;
-
+  function applyLangUI(lang) {
     document.querySelectorAll('.ed-nav-lang-toggle button').forEach(function (button) {
       button.classList.toggle('is-active', button.dataset.lang === lang);
       button.setAttribute('aria-pressed', button.dataset.lang === lang ? 'true' : 'false');
@@ -22,6 +20,12 @@
         el.textContent = val;
       }
     });
+  }
+
+  function setLang(lang) {
+    if (lang !== 'en' && lang !== 'es') lang = DEFAULT_LANG;
+    document.documentElement.lang = lang;
+    applyLangUI(lang);
 
     try {
       localStorage.setItem(STORAGE_KEY, lang);
@@ -32,32 +36,42 @@
     document.dispatchEvent(new CustomEvent('studio:langchange', { detail: { lang: lang } }));
   }
 
-  function initLangToggle() {
-    var buttons = document.querySelectorAll('.ed-nav-lang-toggle button');
-    if (!buttons.length) return;
-
-    buttons.forEach(function (button) {
-      button.addEventListener('click', function () {
-        setLang(button.dataset.lang);
-      });
-    });
-
+  function getSavedLang() {
     var saved = DEFAULT_LANG;
     try {
       saved = localStorage.getItem(STORAGE_KEY) || DEFAULT_LANG;
     } catch (err) {
       saved = DEFAULT_LANG;
     }
-
     if (saved !== 'en' && saved !== 'es') saved = DEFAULT_LANG;
-    setLang(saved);
+    return saved;
+  }
+
+  function bindDelegation() {
+    if (boundDelegation) return;
+    boundDelegation = true;
+    document.addEventListener('click', function (event) {
+      var button = event.target.closest && event.target.closest('.ed-nav-lang-toggle button');
+      if (!button || !button.dataset.lang) return;
+      setLang(button.dataset.lang);
+    });
+  }
+
+  function initLangToggle() {
+    bindDelegation();
+    setLang(getSavedLang());
+  }
+
+  function refresh() {
+    applyLangUI(document.documentElement.lang || getSavedLang());
   }
 
   window.StudioI18n = {
     setLang: setLang,
     getLang: function () {
       return document.documentElement.lang || DEFAULT_LANG;
-    }
+    },
+    refresh: refresh
   };
 
   if (document.readyState === 'loading') {
