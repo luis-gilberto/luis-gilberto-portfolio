@@ -59,9 +59,7 @@
           '</a>' +
           '<div class="nav-links" aria-label="Primary">' +
             '<a href="' + L.practiceHref + '"' + practiceCurrent + ' data-i18n-en="Practice" data-i18n-es="Práctica">Practice</a>' +
-            '<span class="nav-sep" aria-hidden="true">|</span>' +
             '<a href="' + L.strategyHref + '">StrategyIQ</a>' +
-            '<span class="nav-sep" aria-hidden="true">|</span>' +
             '<a href="' + L.workHref + '" data-i18n-en="Work" data-i18n-es="Trabajo">Work</a>' +
           '</div>' +
           '<div class="nav-right">' +
@@ -70,7 +68,7 @@
               '<button type="button" data-lang="es" aria-pressed="false">ES</button>' +
             '</div>' +
             '<a class="nav-cta" href="' + L.bookHref + '"' + bookAttrs +
-              ' data-i18n-en="Book a conversation" data-i18n-es="Agendar una conversación">Book a conversation</a>' +
+              " data-i18n-en=\"Let's talk\" data-i18n-es=\"Conversemos\">Let's talk</a>" +
             '<div class="ed-nav-mobile">' +
               '<button type="button" class="ed-menu-toggle" aria-expanded="false" aria-controls="ed-nav-drawer" aria-label="Open menu" data-aria-en="Open menu" data-aria-es="Abrir menú">' +
                 '<span class="ed-menu-toggle-icon" aria-hidden="true">' +
@@ -130,7 +128,7 @@
               '<button type="button" data-lang="en" class="is-active" aria-pressed="true">EN</button>' +
               '<button type="button" data-lang="es" aria-pressed="false">ES</button>' +
             '</div>' +
-            '<a href="' + BOOKINGS + '" class="ed-btn ed-btn-primary ed-nav-drawer-book" target="_blank" rel="noopener noreferrer" data-i18n-en="Book a conversation" data-i18n-es="Agendar una conversación">Book a conversation</a>' +
+            '<a href="' + BOOKINGS + '" class="ed-btn ed-btn-primary ed-nav-drawer-book" target="_blank" rel="noopener noreferrer" data-i18n-en="Let\'s talk" data-i18n-es="Conversemos">Let\'s talk</a>' +
           '</div>' +
         '</div>' +
       '</div>'
