@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>CSC Image Director · Local Editorial Tool</title>
+  <link rel="stylesheet" href="./director.css" />
+</head>
+<body>
+  <header class="top">
+    <div class="top__brand">
+      <strong>CSC Image Director</strong>
+      <span class="top__sub">Local editorial production · not public</span>
+    </div>
+    <div class="top__actions">
+      <span class="sync-status is-synced" id="sync-status" title="Edits auto-save to the case study">Live · synced</span>
+      <button type="button" id="btn-reload" class="btn btn--ghost">Reload</button>
+      <details class="top__advanced">
+        <summary class="btn btn--ghost">Export</summary>
+        <div class="top__advanced-menu">
+          <button type="button" id="btn-export-manifest" class="btn btn--ghost">Export JSON</button>
+          <button type="button" id="btn-export-css" class="btn btn--ghost">Export CSS</button>
+          <button type="button" id="btn-save" class="btn btn--ghost" hidden>Save manifest</button>
+          <button type="button" id="btn-apply" class="btn btn--ghost" hidden>Apply crops</button>
+        </div>
+      </details>
+      <a class="btn btn--ghost" id="link-case" href="/studio/case-studies/criar-sin-culpas/" target="_blank" rel="noopener">Case Study</a>
+    </div>
+  </header>
+
+  <div class="server-banner" id="server-banner" hidden>
+    Dev server not connected — saves will stay in this browser only until you run
+    <code>python studio/tools/csc-image-director/dev-server.py</code>
+    and open
+    <a href="http://localhost:4173/studio/tools/csc-image-director/">localhost:4173</a>.
+    Use <strong>Export JSON</strong> / <strong>Export CSS</strong> only when you intentionally want download files.
+  </div>
+
+  <div class="app">
+    <aside class="rail">
+      <div class="rail__filters">
+        <label class="sr">Filter</label>
+        <select id="filter">
+          <option value="ALL">ALL</option>
+          <option value="CURRENT CANONICAL">CURRENT</option>
+          <option value="HISTORICAL">HISTORICAL</option>
+          <option value="LG STUDIO / STRATEGYIQ EVIDENCE">STRATEGYIQ / LG</option>
+          <option value="UNKNOWN">UNKNOWN</option>
+          <option value="NEEDS REVIEW">NEEDS REVIEW</option>
+          <option value="APPROVED">APPROVED</option>
+          <option value="PILOT">PILOTS</option>
+          <option value="MISSING FROM PAGE">MISSING FROM PAGE</option>
+        </select>
+        <input id="search" type="search" placeholder="Search filename or section…" />
+      </div>
+      <div class="rail__meta" id="rail-meta"></div>
+      <div class="rail__audit" id="rail-audit" hidden></div>
+      <ul class="rail__list" id="rail-list"></ul>
+    </aside>
+
+    <main class="workspace" id="workspace">
+      <div class="empty" id="empty-state">
+        <p>Select an image instance from the left rail.</p>
+        <p class="muted">Pilots are marked · composition-sensitive assets default to contain.</p>
+      </div>
+
+      <div class="detail hidden" id="detail">
+        <section class="live-edit">
+          <div class="live-edit__head">
+            <h2>Edit in context</h2>
+            <p class="muted">Preview and crop controls are side-by-side — adjust zoom/position while watching the real module.</p>
+          </div>
+
+          <div class="live-edit__desk">
+            <div class="live-edit__preview-col">
+              <section class="module-preview hidden" id="module-preview">
+                <div class="module-preview__head">
+                  <div class="mp-states" id="mp-states"></div>
+                  <div class="mp-widths" id="mp-widths"></div>
+                  <p class="mp-viewport-label">Viewport: <strong id="mp-viewport-label">1440px</strong></p>
+                </div>
+                <div class="module-preview__viewport-wrap">
+                  <div class="module-preview__viewport" id="module-preview-viewport">
+                    <iframe id="module-preview-iframe" title="Case study module preview" loading="lazy"></iframe>
+                  </div>
+                </div>
+                <details class="mp-details">
+                  <summary>Measurements &amp; source prep</summary>
+                  <dl class="meta mp-measurements" id="mp-measurements"></dl>
+                  <div class="source-prep" id="source-prep"></div>
+                </details>
+              </section>
+
+              <section class="frames frames--fallback hidden" id="generic-frames">
+                <div class="frames__grid" id="frames-grid"></div>
+              </section>
+            </div>
+
+            <aside class="controls controls--dock" id="controls-dock">
+              <div class="controls__head">
+                <h2>Crop</h2>
+                <label class="toggle toggle--compact">
+                  <input type="checkbox" id="distort-mode" />
+                  Distort
+                </label>
+              </div>
+              <div class="controls__bp">
+                <span>Layout</span>
+                <div class="seg seg--compact" id="bp-seg">
+                  <button type="button" data-bp="desktop" class="is-active">Wide</button>
+                  <button type="button" data-bp="tablet">Compact</button>
+                  <button type="button" data-bp="mobile">Stack</button>
+                </div>
+              </div>
+              <div class="controls__grid controls__grid--dock">
+                <label>Fit
+                  <select id="ctrl-fit">
+                    <option value="cover">Fill (cover)</option>
+                    <option value="contain">Fit (contain)</option>
+                  </select>
+                </label>
+                <label>Matte
+                  <select id="ctrl-frame-matte">
+                    <option value="match-section">Match section</option>
+                    <option value="paper">Paper</option>
+                    <option value="ivory">Ivory</option>
+                    <option value="obsidian">Obsidian</option>
+                  </select>
+                </label>
+                <label class="controls__slider">Zoom <input id="ctrl-zoom" type="range" min="0.5" max="3" step="0.01" /><output id="out-zoom"></output></label>
+                <label class="controls__slider">X <input id="ctrl-x" type="range" min="0" max="100" step="0.5" /><output id="out-x"></output></label>
+                <label class="controls__slider">Y <input id="ctrl-y" type="range" min="0" max="100" step="0.5" /><output id="out-y"></output></label>
+                <label class="controls__slider">Scale X <input id="ctrl-sx" type="range" min="0.5" max="2" step="0.01" /><output id="out-sx"></output></label>
+                <label class="controls__slider">Scale Y <input id="ctrl-sy" type="range" min="0.5" max="2" step="0.01" /><output id="out-sy"></output></label>
+              </div>
+              <div class="controls__actions controls__actions--dock">
+                <button type="button" class="btn btn--ghost" id="btn-reset-bp">Reset</button>
+                <button type="button" class="btn btn--ghost" id="btn-center">Center</button>
+                <button type="button" class="btn btn--ghost" id="btn-fit">Fit</button>
+                <button type="button" class="btn btn--ghost" id="btn-fill">Fill</button>
+              </div>
+              <div class="controls__actions controls__actions--dock">
+                <button type="button" class="btn btn--ghost" id="btn-reset-inst">Reset instance</button>
+                <button type="button" class="btn btn--accent" id="btn-approve-source" hidden>Use source on page</button>
+              </div>
+              <p class="hint hint--dock">↑↓←→ nudge · Shift = bigger steps · auto-syncs live</p>
+              <p class="hint hint--dock" id="source-work-hint" hidden>New source — click <strong>Use source on page</strong>.</p>
+              <p class="flag flag--warn hidden" id="distort-warn">Distortion active (scaleX ≠ scaleY).</p>
+            </aside>
+          </div>
+        </section>
+
+        <section class="source-panel source-panel--compact">
+          <details>
+            <summary>Source &amp; metadata</summary>
+            <div class="source-panel__head">
+              <div class="source-panel__actions">
+                <button type="button" class="btn btn--ghost" id="btn-replace-source">Replace Source</button>
+                <button type="button" class="btn btn--ghost" id="btn-compare">Compare</button>
+                <button type="button" class="btn btn--ghost" id="btn-restore-original">Restore Original</button>
+                <button type="button" class="btn btn--ghost" id="btn-copy-path">Copy Path</button>
+                <a class="btn btn--ghost" id="btn-open-source" href="#" target="_blank" rel="noopener">Open Source</a>
+                <button type="button" class="btn btn--ghost" id="btn-view-context">Open full page</button>
+                <button type="button" class="btn btn--danger" id="btn-delete-instance">Delete Instance</button>
+              </div>
+            </div>
+            <div class="source-panel__grid">
+              <div class="source-full hidden" id="source-full-wrap">
+                <img id="source-img" alt="" />
+              </div>
+              <dl class="meta" id="source-meta"></dl>
+            </div>
+            <p class="flag hidden" id="sensitive-flag">COMPOSITION SENSITIVE — default contain; avoid careless cover crops.</p>
+          </details>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- Source picker overlay -->
+  <div class="picker" id="source-picker" hidden>
+    <div class="picker__panel">
+      <header class="picker__head">
+        <div>
+          <strong>Replace Source</strong>
+          <span class="muted" id="picker-instance-label"></span>
+        </div>
+        <button type="button" class="btn btn--ghost" id="picker-close">Close</button>
+      </header>
+      <div class="picker__tools">
+        <select id="picker-filter">
+          <option value="ALL">ALL</option>
+          <option value="CURRENT CANONICAL">CURRENT CANONICAL</option>
+          <option value="PHOTOGRAPHY">PHOTOGRAPHY</option>
+          <option value="ILLUSTRATION">ILLUSTRATION</option>
+          <option value="SCREENSHOTS">SCREENSHOTS</option>
+          <option value="DOCUMENTS">DOCUMENTS</option>
+          <option value="HISTORICAL">HISTORICAL</option>
+          <option value="STRATEGYIQ / LG">STRATEGYIQ / LG</option>
+          <option value="UNKNOWN">UNKNOWN</option>
+        </select>
+        <input id="picker-search" type="search" placeholder="Search filename, path, document…" />
+        <button type="button" class="btn btn--ghost" id="picker-browse">Choose Project File</button>
+        <button type="button" class="btn btn--ghost" id="picker-url">Use Image URL</button>
+      </div>
+      <div class="picker__original" id="picker-original" hidden></div>
+      <div class="picker__body">
+        <ul class="picker__list" id="picker-list"></ul>
+        <div class="picker__preview">
+          <p class="muted" id="picker-preview-empty">Select a candidate to preview in module frames.</p>
+          <div id="picker-preview-meta" class="meta" hidden></div>
+          <div class="picker__frames" id="picker-frames" hidden></div>
+          <div class="picker__actions" id="picker-actions" hidden>
+            <button type="button" class="btn btn--accent" id="picker-use">Use This Source</button>
+            <button type="button" class="btn btn--ghost" id="picker-cancel-cand">Cancel</button>
+          </div>
+        </div>
+      </div>
+      <div class="picker__browse" id="picker-browse-panel" hidden>
+        <div class="picker__browse-bar">
+          <button type="button" class="btn btn--ghost" id="browse-up">Up</button>
+          <code id="browse-path"></code>
+          <button type="button" class="btn btn--ghost" id="browse-close">Back to index</button>
+        </div>
+        <ul class="picker__list" id="browse-list"></ul>
+      </div>
+      <div class="picker__url" id="picker-url-panel" hidden>
+        <label>Cloudinary / image URL
+          <input id="picker-url-input" type="url" placeholder="https://res.cloudinary.com/..." />
+        </label>
+        <div class="picker__actions">
+          <button type="button" class="btn" id="picker-url-preview">Preview URL</button>
+          <button type="button" class="btn btn--ghost" id="picker-url-cancel">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compare overlay -->
+  <div class="compare" id="compare-panel" hidden>
+    <div class="compare__panel">
+      <header class="picker__head">
+        <strong>Compare · Current vs Candidate</strong>
+        <button type="button" class="btn btn--ghost" id="compare-close">Close</button>
+      </header>
+      <div class="seg" id="compare-bp">
+        <button type="button" data-bp="desktop" class="is-active">Desktop</button>
+        <button type="button" data-bp="tablet">Tablet</button>
+        <button type="button" data-bp="mobile">Mobile</button>
+      </div>
+      <div class="compare__grid">
+        <div>
+          <div class="frame-card__label"><span>CURRENT (approved)</span><span id="compare-cur-label"></span></div>
+          <div class="frame-stage" id="compare-cur-stage"><img alt="" draggable="false" /></div>
+        </div>
+        <div>
+          <div class="frame-card__label"><span>CANDIDATE (working)</span><span id="compare-cand-label"></span></div>
+          <div class="frame-stage" id="compare-cand-stage"><img alt="" draggable="false" /></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" hidden></div>
+  <script src="./module-preview.js"></script>
+  <script src="./director.js"></script>
+  <script src="./source-replace.js"></script>
+</body>
+</html>
