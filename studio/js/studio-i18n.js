@@ -14,6 +14,23 @@
     document.querySelectorAll('[data-i18n-en]').forEach(function (el) {
       var val = el.getAttribute('data-i18n-' + lang);
       if (val === null) return;
+
+      var attr = el.getAttribute('data-i18n-attr');
+      if (attr) {
+        el.setAttribute(attr, val);
+        return;
+      }
+
+      if (el.tagName === 'IMG') {
+        el.setAttribute('alt', val);
+        return;
+      }
+
+      if (el.tagName === 'META') {
+        el.setAttribute('content', val);
+        return;
+      }
+
       if (val.indexOf('<') !== -1) {
         el.innerHTML = val;
       } else {
