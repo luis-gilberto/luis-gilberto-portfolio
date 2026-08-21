@@ -375,9 +375,16 @@
   }
 
   function initNavDrawer() {
+    if (window.StudioShell && typeof window.StudioShell.initNavDrawer === 'function') {
+      window.StudioShell.initNavDrawer();
+      return;
+    }
+
     var toggle = document.querySelector('.ed-menu-toggle');
     var drawer = document.getElementById('ed-nav-drawer');
     if (!toggle || !drawer) return;
+    if (toggle.getAttribute('data-nav-drawer-bound') === '1') return;
+    toggle.setAttribute('data-nav-drawer-bound', '1');
 
     var panel = drawer.querySelector('.ed-nav-drawer-panel');
     var closeTriggers = drawer.querySelectorAll('[data-nav-drawer-close]');

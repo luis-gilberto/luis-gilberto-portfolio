@@ -1,0 +1,113 @@
+/* CSC directed image crops — base layer.
+   Authoritative values come from the manifest via csc-image-crops.js
+   (inline CSS variables on [data-csc-img][data-csc-directed]).
+   csc-crops-applied.css is a no-JS fallback written by APPLY. */
+
+img[data-csc-img] {
+  --crop-fit: var(--crop-fit-desktop, cover);
+  --crop-x: var(--crop-x-desktop, 50%);
+  --crop-y: var(--crop-y-desktop, 50%);
+  --crop-zoom: var(--crop-zoom-desktop, 1);
+  --crop-sx: var(--crop-sx-desktop, 1);
+  --crop-sy: var(--crop-sy-desktop, 1);
+}
+
+/* Only directed instances override module hard-codes */
+img[data-csc-img][data-csc-directed],
+img[data-csc-img].is-csc-directed {
+  object-fit: var(--crop-fit) !important;
+  object-position: var(--crop-x) var(--crop-y) !important;
+  transform: scale(
+    calc(var(--crop-zoom) * var(--crop-sx)),
+    calc(var(--crop-zoom) * var(--crop-sy))
+  ) !important;
+  transform-origin: var(--crop-x) var(--crop-y) !important;
+  will-change: transform;
+}
+
+@media (max-width: 1100px) {
+  img[data-csc-img] {
+    --crop-fit: var(--crop-fit-tablet, var(--crop-fit-desktop, cover));
+    --crop-x: var(--crop-x-tablet, var(--crop-x-desktop, 50%));
+    --crop-y: var(--crop-y-tablet, var(--crop-y-desktop, 50%));
+    --crop-zoom: var(--crop-zoom-tablet, var(--crop-zoom-desktop, 1));
+    --crop-sx: var(--crop-sx-tablet, var(--crop-sx-desktop, 1));
+    --crop-sy: var(--crop-sy-tablet, var(--crop-sy-desktop, 1));
+  }
+}
+
+@media (max-width: 820px) {
+  img[data-csc-img] {
+    --crop-fit: var(--crop-fit-mobile, var(--crop-fit-desktop, cover));
+    --crop-x: var(--crop-x-mobile, var(--crop-x-desktop, 50%));
+    --crop-y: var(--crop-y-mobile, var(--crop-y-desktop, 50%));
+    --crop-zoom: var(--crop-zoom-mobile, var(--crop-zoom-desktop, 1));
+    --crop-sx: var(--crop-sx-mobile, var(--crop-sx-desktop, 1));
+    --crop-sy: var(--crop-sy-mobile, var(--crop-sy-desktop, 1));
+  }
+}
+
+/* Frames must clip zoomed media — matches director preview */
+.csc-v0 .start-portrait__frame:has([data-csc-img]),
+.csc-v0 .artifact:has([data-csc-img]),
+.csc-v0 .ladder figure:has([data-csc-img]),
+.csc-v0 .hero__visual:has([data-csc-img]),
+.csc-v0 .early-frag:has([data-csc-img]),
+.csc-v0 .gen-card__media:has([data-csc-img]),
+.csc-v0 .vis-col:has([data-csc-img]),
+.csc-v0 .ops-tile:has([data-csc-img]) .ops-tile__media,
+.csc-v0 .named-set figure:has([data-csc-img]) {
+  overflow: hidden;
+}
+
+/* Frame matte overrides (Image Director → data-csc-frame-matte on img) */
+.csc-v0 .start-portrait__frame:has([data-csc-frame-matte="paper"]),
+.csc-v0 .artifact:has([data-csc-frame-matte="paper"]),
+.csc-v0 .ladder figure:has([data-csc-frame-matte="paper"]),
+.csc-v0 .named-set figure:has([data-csc-frame-matte="paper"]),
+.csc-v0 .hero__visual:has([data-csc-frame-matte="paper"]),
+.csc-v0 .early-frag:has([data-csc-frame-matte="paper"]),
+.csc-v0 .gen-card__media:has([data-csc-frame-matte="paper"]),
+.csc-v0 .vis-col:has([data-csc-frame-matte="paper"]),
+.csc-v0 .read-plate__frame:has([data-csc-frame-matte="paper"]),
+.csc-v0 .ops-tile:has([data-csc-frame-matte="paper"]) .ops-tile__media {
+  background: var(--csc-paper) !important;
+}
+
+.csc-v0 .start-portrait__frame:has([data-csc-frame-matte="ivory"]),
+.csc-v0 .artifact:has([data-csc-frame-matte="ivory"]),
+.csc-v0 .ladder figure:has([data-csc-frame-matte="ivory"]),
+.csc-v0 .named-set figure:has([data-csc-frame-matte="ivory"]),
+.csc-v0 .hero__visual:has([data-csc-frame-matte="ivory"]),
+.csc-v0 .early-frag:has([data-csc-frame-matte="ivory"]),
+.csc-v0 .gen-card__media:has([data-csc-frame-matte="ivory"]),
+.csc-v0 .vis-col:has([data-csc-frame-matte="ivory"]),
+.csc-v0 .read-plate__frame:has([data-csc-frame-matte="ivory"]),
+.csc-v0 .ops-tile:has([data-csc-frame-matte="ivory"]) .ops-tile__media {
+  background: var(--ivory) !important;
+}
+
+.csc-v0 .start-portrait__frame:has([data-csc-frame-matte="obsidian"]),
+.csc-v0 .artifact:has([data-csc-frame-matte="obsidian"]),
+.csc-v0 .ladder figure:has([data-csc-frame-matte="obsidian"]),
+.csc-v0 .named-set figure:has([data-csc-frame-matte="obsidian"]),
+.csc-v0 .hero__visual:has([data-csc-frame-matte="obsidian"]),
+.csc-v0 .early-frag:has([data-csc-frame-matte="obsidian"]),
+.csc-v0 .gen-card__media:has([data-csc-frame-matte="obsidian"]),
+.csc-v0 .vis-col:has([data-csc-frame-matte="obsidian"]),
+.csc-v0 .read-plate__frame:has([data-csc-frame-matte="obsidian"]),
+.csc-v0 .ops-tile:has([data-csc-frame-matte="obsidian"]) .ops-tile__media {
+  background: var(--ink-raised) !important;
+  border-color: rgba(247, 242, 233, 0.14) !important;
+}
+
+html[data-csc-director-bridge="1"] #site-nav,
+html[data-csc-director-bridge="1"] #studio-chrome-root {
+  display: none !important;
+}
+
+/* Image Director module preview highlight (iframe bridge) */
+.csc-director-highlight {
+  outline: 2px solid var(--terracotta, #c96e53);
+  outline-offset: 2px;
+}
