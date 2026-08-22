@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CSC · Unused manifest images</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <style>
+    :root {
+      --bg: #18242f;
+      --panel: #223040;
+      --ink: #f7f2e9;
+      --muted: rgba(247, 242, 233, 0.62);
+      --accent: #e8a48f;
+      --ok: #8fd4c0;
+      --danger: #c45c5c;
+      --rule: rgba(247, 242, 233, 0.14);
+      --mono: "JetBrains Mono", "SF Mono", Consolas, monospace;
+      --serif: "Cormorant Garamond", Georgia, serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: system-ui, sans-serif;
+      line-height: 1.45;
+    }
+    .wrap { max-width: 72rem; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+    h1 {
+      font-family: var(--serif);
+      font-weight: 500;
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      margin: 0 0 0.5rem;
+    }
+    .lede { color: var(--muted); max-width: 44rem; margin: 0 0 1rem; }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    .stats { display: flex; flex-wrap: wrap; gap: 0.65rem; }
+    .stat {
+      border: 1px solid var(--rule);
+      background: var(--panel);
+      padding: 0.55rem 0.75rem;
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .stat strong { color: var(--accent); }
+    .btn {
+      appearance: none;
+      border: 1px solid var(--rule);
+      background: var(--panel);
+      color: var(--ink);
+      font: inherit;
+      font-size: 0.82rem;
+      padding: 0.45rem 0.75rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+    .btn:hover { border-color: rgba(247, 242, 233, 0.28); }
+    .btn--accent { border-color: color-mix(in srgb, var(--accent) 55%, transparent); color: var(--accent); }
+    .btn--danger { border-color: color-mix(in srgb, var(--danger) 55%, transparent); color: #ffd8d8; }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+      gap: 1rem;
+    }
+    .card {
+      border: 1px solid var(--rule);
+      background: var(--panel);
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: 11rem auto auto;
+    }
+    .thumb {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem;
+      background: rgba(0, 0, 0, 0.22);
+    }
+    .thumb img {
+      max-width: 100%;
+      max-height: 9.5rem;
+      object-fit: contain;
+    }
+    .meta { padding: 0.85rem 0.9rem 0.65rem; display: grid; gap: 0.35rem; }
+    .id {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--accent);
+      word-break: break-all;
+    }
+    .section {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .asset { font-size: 0.82rem; }
+    .alt { font-size: 0.78rem; color: var(--muted); }
+    .actions {
+      display: flex;
+      gap: 0.45rem;
+      padding: 0 0.9rem 0.9rem;
+    }
+    .actions .btn { flex: 1; justify-content: center; font-size: 0.76rem; padding: 0.4rem 0.55rem; }
+    .empty, .loading { color: var(--muted); padding: 2rem 0; }
+    .toast {
+      position: fixed;
+      right: 1rem;
+      bottom: 1rem;
+      background: #111;
+      border: 1px solid var(--rule);
+      color: var(--ink);
+      padding: 0.65rem 0.85rem;
+      font-size: 0.85rem;
+      max-width: 20rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .toast.is-on { opacity: 1; }
+    a { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Unused manifest images</h1>
+    <p class="lede">
+      Catalog entries still marked <em>directed</em> in the Image Director manifest, but no longer wired into the live case study HTML.
+      Use <strong>Replace</strong> to swap the asset in Image Director, or <strong>Delete</strong> to remove the manifest slot (safe here — none are on the page).
+    </p>
+    <div class="toolbar">
+      <div class="stats">
+        <div class="stat">DOM bound <strong id="stat-dom">…</strong></div>
+        <div class="stat">Manifest directed <strong id="stat-directed">…</strong></div>
+        <div class="stat">Missing from page <strong id="stat-missing">…</strong></div>
+      </div>
+      <button type="button" class="btn" id="btn-refresh">Refresh</button>
+      <a class="btn btn--accent" href="/studio/tools/csc-image-director/" target="_blank" rel="noopener">Open Image Director</a>
+    </div>
+    <div class="loading" id="status">Loading…</div>
+    <div class="grid" id="grid" hidden></div>
+    <p class="empty" id="empty" hidden>Integrity is clean — no unused directed instances.</p>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const MANIFEST_URL = "/studio/case-studies/criar-sin-culpas-archive/csc-case-study-image-manifest.json";
+    const CASE_URL = "/studio/case-studies/criar-sin-culpas-archive/";
+    const DELETE_URL = "/__csc_director/delete-instance";
+    const APPLY_URL = "/__csc_director/apply-crops";
+    const DIRECTOR = "/studio/tools/csc-image-director/";
+
+    function toast(msg) {
+      const el = document.getElementById("toast");
+      el.textContent = msg;
+      el.classList.add("is-on");
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => el.classList.remove("is-on"), 2800);
+    }
+
+    function sourceUrl(inst) {
+      const src = inst.approvedSource || inst.source || {};
+      if (src.remoteUrl) return src.remoteUrl;
+      if (src.path) return "/" + String(src.path).replace(/^\/+/, "");
+      return "";
+    }
+
+    function isDirected(inst) {
+      return inst.directed !== false && inst.renderMode !== "non-directed";
+    }
+
+    function buildAppliedCss(instances) {
+      const lines = ["/* Auto-generated by unused-manifest-preview cleanup */", ""];
+      for (const inst of instances) {
+        if (!isDirected(inst)) continue;
+        const crops = inst.crops || {};
+        const d = crops.desktop || { fit: "cover", x: 50, y: 50, zoom: 1, scaleX: 1, scaleY: 1 };
+        const t = crops.tablet || d;
+        const m = crops.mobile || d;
+        const sel = `[data-csc-img="${inst.id}"]`;
+        lines.push(`${sel} {`);
+        for (const [bp, c] of [["desktop", d], ["tablet", t], ["mobile", m]]) {
+          lines.push(`  --crop-fit-${bp}: ${c.fit};`);
+          lines.push(`  --crop-x-${bp}: ${Number(c.x).toFixed(2)}%;`);
+          lines.push(`  --crop-y-${bp}: ${Number(c.y).toFixed(2)}%;`);
+          lines.push(`  --crop-zoom-${bp}: ${Number(c.zoom ?? 1).toFixed(4)};`);
+          lines.push(`  --crop-sx-${bp}: ${Number(c.scaleX ?? 1).toFixed(4)};`);
+          lines.push(`  --crop-sy-${bp}: ${Number(c.scaleY ?? 1).toFixed(4)};`);
+        }
+        lines.push("}");
+        lines.push("");
+      }
+      return lines.join("\n");
+    }
+
+    async function syncAppliedCss(manifest) {
+      const css = buildAppliedCss(manifest.instances);
+      await fetch(APPLY_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ css, count: manifest.instances.filter(isDirected).length }),
+      });
+    }
+
+    async function deleteInstance(id, asset) {
+      if (!confirm(`Remove "${asset}" from the manifest?\n\nIt is not on the live page.`)) return;
+      const res = await fetch(DELETE_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, removeFromHtml: false }),
+      });
+      if (!res.ok) throw new Error("Delete failed (" + res.status + ")");
+      const manifest = await fetch(MANIFEST_URL + "?t=" + Date.now(), { cache: "no-store" }).then((r) => r.json());
+      await syncAppliedCss(manifest);
+      toast("Removed " + asset);
+      await load();
+    }
+
+    function replaceUrl(id) {
+      return DIRECTOR + "?id=" + encodeURIComponent(id) + "&replace=1";
+    }
+
+    function renderCard(item) {
+      const card = document.createElement("article");
+      card.className = "card";
+      card.dataset.id = item.id;
+      card.innerHTML = `
+        <div class="thumb"><img src="${item.url}" alt="" loading="lazy" decoding="async" /></div>
+        <div class="meta">
+          <div class="section">${item.section}</div>
+          <div class="id">${item.id}</div>
+          <div class="asset">${item.asset}</div>
+          <div class="alt">${item.alt}</div>
+        </div>
+        <div class="actions">
+          <a class="btn btn--accent" href="${replaceUrl(item.id)}" target="_blank" rel="noopener">Replace</a>
+          <button type="button" class="btn btn--danger" data-delete>Delete</button>
+        </div>`;
+      card.querySelector("[data-delete]").addEventListener("click", async () => {
+        const btn = card.querySelector("[data-delete]");
+        btn.disabled = true;
+        try {
+          await deleteInstance(item.id, item.asset);
+        } catch (err) {
+          toast(err.message);
+          btn.disabled = false;
+        }
+      });
+      return card;
+    }
+
+    async function load() {
+      const status = document.getElementById("status");
+      const grid = document.getElementById("grid");
+      const empty = document.getElementById("empty");
+      status.hidden = false;
+      status.textContent = "Loading…";
+      grid.hidden = true;
+      empty.hidden = true;
+      grid.innerHTML = "";
+
+      const [manifest, html] = await Promise.all([
+        fetch(MANIFEST_URL + "?t=" + Date.now(), { cache: "no-store" }).then((r) => r.json()),
+        fetch(CASE_URL + "?t=" + Date.now(), { cache: "no-store" }).then((r) => r.text()),
+      ]);
+
+      const dom = new Set([...html.matchAll(/data-csc-img="([^"]+)"/g)].map((m) => m[1]));
+      const directed = manifest.instances.filter(isDirected);
+      const missing = directed.filter((inst) => !dom.has(inst.id)).map((inst) => ({
+        id: inst.id,
+        asset: inst.asset,
+        section: inst.usage.section,
+        alt: inst.usage.alt || "",
+        url: sourceUrl(inst),
+      }));
+
+      document.getElementById("stat-dom").textContent = dom.size;
+      document.getElementById("stat-directed").textContent = directed.length;
+      document.getElementById("stat-missing").textContent = missing.length;
+
+      status.hidden = true;
+      if (!missing.length) {
+        empty.hidden = false;
+        return;
+      }
+      grid.hidden = false;
+      missing.forEach((item) => grid.appendChild(renderCard(item)));
+    }
+
+    document.getElementById("btn-refresh").addEventListener("click", () => load().catch((e) => toast(e.message)));
+    load().catch((e) => {
+      document.getElementById("status").textContent = "Failed to load: " + e.message;
+    });
+  </script>
+</body>
+</html>
