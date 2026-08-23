@@ -29,13 +29,3 @@ node studio/case-studies/criar-sin-culpas/_extract-i18n.js
 ```
 
 Run after `index.html` copy changes to refresh strings.
-
-## Lovable-sized chunks
-
-If the full CSV is too large for your tool, split it into section files:
-
-```bash
-node studio/case-studies/criar-sin-culpas/_split-loc-csv.js
-```
-
-Output: `loc/lovable/*.csv` (max 40 rows per file) + `loc/lovable/MANIFEST.md`
