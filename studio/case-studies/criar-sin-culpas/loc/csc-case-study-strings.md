@@ -744,8 +744,8 @@
 | ID | csc-111 |
 | Status | DRAFT |
 | Element | span |
-| **EN** | LIVED USE |
-| **ES** | USO VIVIDO |
+| **EN** | REAL-WORLD USE |
+| **ES** | USO EN LA VIDA REAL |
 
 | ID | csc-112 |
 | Status | DRAFT |

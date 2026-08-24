@@ -26,7 +26,7 @@ const fixes = [
     id: "scan-care-caption",
     find: /<figcaption class="scan-care__caption" id="scan-care-caption"[^>]*>[\s\S]*?<\/figcaption>/,
     replace: `<figcaption class="scan-care__caption" id="scan-care-caption">
-                <span class="ev" data-i18n-en="LIVED USE" data-i18n-es="USO VIVIDO">LIVED USE</span>
+                <span class="ev" data-i18n-en="REAL-WORLD USE" data-i18n-es="USO EN LA VIDA REAL">REAL-WORLD USE</span>
                 <p class="cap" data-i18n-en="Short sections, strong visual anchors, and immediate next steps reduced the amount a parent had to interpret while already overwhelmed." data-i18n-es="Secciones cortas, anclas visuales fuertes y próximos pasos inmediatos redujeron lo que una madre o un padre tenía que interpretar mientras ya estaba desbordado.">Short sections, strong visual anchors, and immediate next steps reduced the amount a parent had to interpret while already overwhelmed.</p>
               </figcaption>`,
   },
