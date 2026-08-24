@@ -39,18 +39,57 @@
     });
   }
 
-  function setLang(lang) {
-    if (lang !== 'en' && lang !== 'es') lang = DEFAULT_LANG;
-    document.documentElement.lang = lang;
-    applyLangUI(lang);
+  function getCscLocaleRoot() {
+    return document.querySelector('[data-csc-locale-routes]');
+  }
 
+  function getCscLocaleUrls(root) {
+    return {
+      en: root.getAttribute('data-csc-locale-en') || '/studio/case-studies/criar-sin-culpas/',
+      es: root.getAttribute('data-csc-locale-es') || '/studio/case-studies/criar-sin-culpas/es/'
+    };
+  }
+
+  function getCscRouteLang() {
+    var path = (location.pathname || '').replace(/\/index\.html$/i, '/');
+    if (/\/criar-sin-culpas\/es\/?$/.test(path) || path.indexOf('/criar-sin-culpas/es/') !== -1) {
+      return 'es';
+    }
+    if (path.indexOf('/criar-sin-culpas') !== -1) {
+      return 'en';
+    }
+    return null;
+  }
+
+  function persistLang(lang) {
     try {
       localStorage.setItem(STORAGE_KEY, lang);
     } catch (err) {
       /* ignore storage failures */
     }
+  }
 
+  function setLang(lang) {
+    if (lang !== 'en' && lang !== 'es') lang = DEFAULT_LANG;
+    document.documentElement.lang = lang;
+    applyLangUI(lang);
+    persistLang(lang);
     document.dispatchEvent(new CustomEvent('studio:langchange', { detail: { lang: lang } }));
+  }
+
+  function navigateCscLocale(lang, urls) {
+    var target = urls[lang];
+    if (!target) return;
+    var hash = location.hash || '';
+    var next = target + hash;
+    var current = location.pathname.replace(/\/index\.html$/i, '/');
+    var normalizedTarget = target.replace(/\/index\.html$/i, '/');
+    if (current === normalizedTarget || current + '/' === normalizedTarget) {
+      setLang(lang);
+      return;
+    }
+    persistLang(lang);
+    location.assign(next);
   }
 
   function getSavedLang() {
@@ -70,17 +109,39 @@
     document.addEventListener('click', function (event) {
       var button = event.target.closest && event.target.closest('.ed-nav-lang-toggle button');
       if (!button || !button.dataset.lang) return;
+      var root = getCscLocaleRoot();
+      if (root) {
+        event.preventDefault();
+        navigateCscLocale(button.dataset.lang, getCscLocaleUrls(root));
+        return;
+      }
       setLang(button.dataset.lang);
     });
   }
 
   function initLangToggle() {
     bindDelegation();
+    var root = getCscLocaleRoot();
+    var routeLang = root ? getCscRouteLang() : null;
+    if (routeLang) {
+      // Route is authoritative on CSC locale pages — never let localStorage override.
+      // Content is already correct in initial HTML; sync chrome + storage only.
+      document.documentElement.lang = routeLang;
+      document.querySelectorAll('.ed-nav-lang-toggle button').forEach(function (button) {
+        button.classList.toggle('is-active', button.dataset.lang === routeLang);
+        button.setAttribute('aria-pressed', button.dataset.lang === routeLang ? 'true' : 'false');
+      });
+      persistLang(routeLang);
+      document.dispatchEvent(new CustomEvent('studio:langchange', { detail: { lang: routeLang } }));
+      return;
+    }
     setLang(getSavedLang());
   }
 
   function refresh() {
-    applyLangUI(document.documentElement.lang || getSavedLang());
+    var root = getCscLocaleRoot();
+    var routeLang = root ? getCscRouteLang() : null;
+    applyLangUI(routeLang || document.documentElement.lang || getSavedLang());
   }
 
   window.StudioI18n = {

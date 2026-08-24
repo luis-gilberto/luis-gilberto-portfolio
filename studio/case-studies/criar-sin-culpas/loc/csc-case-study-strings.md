@@ -575,7 +575,7 @@
 | ID | csc-084 |
 | Status | DRAFT |
 | Element | p |
-| **EN** | I shifted the work from organizing information to designing support under pressure: short hierarchy, protocol paths, and measurement shaped around urgent arrival rather than unhurried reading. |
+| **EN** | I shifted the work from organizing information to designing support under pressure: clear hierarchy, shorter quick-guide paths, and measurement shaped around urgent arrival rather than unhurried reading. |
 | **ES** | Cambié el trabajo: de organizar información a diseñar apoyo bajo presión. Jerarquía breve, rutas de protocolo y medición pensadas para una llegada urgente, no para una lectura pausada. |
 
 | ID | csc-085 |
