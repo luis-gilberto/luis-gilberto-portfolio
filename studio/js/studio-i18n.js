@@ -125,8 +125,9 @@
     var routeLang = root ? getCscRouteLang() : null;
     if (routeLang) {
       // Route is authoritative on CSC locale pages — never let localStorage override.
-      // Content is already correct in initial HTML; sync chrome + storage only.
+      // Body copy is already correct in initial HTML; sync injected shell chrome too.
       document.documentElement.lang = routeLang;
+      applyLangUI(routeLang);
       document.querySelectorAll('.ed-nav-lang-toggle button').forEach(function (button) {
         button.classList.toggle('is-active', button.dataset.lang === routeLang);
         button.setAttribute('aria-pressed', button.dataset.lang === routeLang ? 'true' : 'false');

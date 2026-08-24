@@ -59,7 +59,7 @@ const checks = [
   ["EN single twitter:image", countExact(enHtml, /name="twitter:image"\s/g) === 1],
   ["EN no Spanish OG", !enHtml.includes(OG_ES)],
   ["EN hreflang reciprocal", hreflangOk(enHtml)],
-  ["EN visible English hero", enHtml.includes("The trust was already there.")],
+  ["EN visible English hero", enHtml.includes("The trust was already there<br />The system wasn't")],
   ["EN locale routes flag", enHtml.includes("data-csc-locale-routes")],
   [
     "EN Caso terminology in data-i18n-es title",
@@ -92,7 +92,13 @@ const checks = [
   ["ES visible Spanish hero", esHtml.includes("La confianza ya existía")],
   [
     "ES retains data-i18n-en",
-    esHtml.includes('data-i18n-en="The trust was already there.'),
+    esHtml.includes('data-i18n-en="The trust was already there<br />The system wasn\'t"'),
+  ],
+  [
+    "ES headlines without terminal periods",
+    !esHtml.includes("Faltaba estructura.") &&
+      !esHtml.includes("El sistema, no.") &&
+      !esHtml.includes("todavía no.</p>"),
   ],
   ["ES CTA SIGUIENTE", esHtml.includes(">SIGUIENTE</p>")],
   [

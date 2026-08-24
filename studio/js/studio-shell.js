@@ -68,7 +68,7 @@
               '<button type="button" data-lang="es" aria-pressed="false">ES</button>' +
             '</div>' +
             '<a class="nav-cta" href="' + L.bookHref + '"' + bookAttrs +
-              " data-i18n-en=\"Let's talk\" data-i18n-es=\"Conversemos\">Let's talk</a>" +
+              " data-i18n-en=\"LET'S TALK\" data-i18n-es=\"HABLEMOS\">LET'S TALK</a>" +
             '<div class="ed-nav-mobile">' +
               '<button type="button" class="ed-menu-toggle" aria-expanded="false" aria-controls="ed-nav-drawer" aria-label="Open menu" data-aria-en="Open menu" data-aria-es="Abrir menú">' +
                 '<span class="ed-menu-toggle-icon" aria-hidden="true">' +
@@ -128,7 +128,7 @@
               '<button type="button" data-lang="en" class="is-active" aria-pressed="true">EN</button>' +
               '<button type="button" data-lang="es" aria-pressed="false">ES</button>' +
             '</div>' +
-            '<a href="' + BOOKINGS + '" class="ed-btn ed-btn-primary ed-nav-drawer-book" target="_blank" rel="noopener noreferrer" data-i18n-en="Let\'s talk" data-i18n-es="Conversemos">Let\'s talk</a>' +
+            '<a href="' + BOOKINGS + '" class="ed-btn ed-btn-primary ed-nav-drawer-book" target="_blank" rel="noopener noreferrer" data-i18n-en="LET\'S TALK" data-i18n-es="HABLEMOS">LET\'S TALK</a>' +
           '</div>' +
         '</div>' +
       '</div>'
@@ -371,6 +371,9 @@
     measureNavHeight();
     window.addEventListener('resize', measureNavHeight);
     initNavDrawer();
+    if (window.StudioI18n && typeof window.StudioI18n.refresh === 'function') {
+      window.StudioI18n.refresh();
+    }
   }
 
   function mountFooter(root, page) {
@@ -388,18 +391,19 @@
     var chrome = document.getElementById('studio-chrome-root');
     if (chrome) mountChrome(chrome);
 
-    var footer = document.getElementById('studio-footer-root');
-    if (footer) {
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function () {
-          mountFooter(document.getElementById('studio-footer-root'));
-          if (window.StudioI18n && typeof window.StudioI18n.refresh === 'function') {
-            window.StudioI18n.refresh();
-          }
-        });
-      } else {
-        mountFooter(footer);
+    function mountFooterWhenReady() {
+      var footer = document.getElementById('studio-footer-root');
+      if (!footer) return;
+      mountFooter(footer);
+      if (window.StudioI18n && typeof window.StudioI18n.refresh === 'function') {
+        window.StudioI18n.refresh();
       }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', mountFooterWhenReady);
+    } else {
+      mountFooterWhenReady();
     }
   }
 
