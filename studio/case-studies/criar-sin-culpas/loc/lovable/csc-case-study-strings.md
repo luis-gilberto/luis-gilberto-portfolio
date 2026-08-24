@@ -1334,14 +1334,14 @@
 | ID | csc-207 |
 | Status | DRAFT |
 | Element | img [alt] |
-| **EN** | Stethoscope symbol |
-| **ES** | Símbolo de estetoscopio |
+| **EN** | Clinical insight |
+| **ES** | Perspicacia clínica |
 
 | ID | csc-208 |
 | Status | DRAFT |
 | Element | figcaption |
-| **EN** | Stethoscope |
-| **ES** | Estetoscopio |
+| **EN** | Clinical |
+| **ES** | Clínico |
 
 | ID | csc-209 |
 | Status | DRAFT |
