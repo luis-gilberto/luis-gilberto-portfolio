@@ -13,6 +13,7 @@ console.log('[insights-nav] v2.3 loaded');
  *        data-active="insights"      — highlights the active nav item (insights|portfolio|hub|portal)
  *        data-series="strategic"     — highlights the active series card in mobile drawer
  *                                      (building|strategic|directors|reflections)
+ *        data-no-theme-toggle        — hide theme toggle; lock nav to dark (fixed-layout articles)
  *        data-breadcrumb             — JSON array: [["label","url"],["label","url"],"Current Page"]
  *
  * Tokens injected automatically:
@@ -30,6 +31,7 @@ console.log('[insights-nav] v2.3 loaded');
   const $script       = document.currentScript;
   const activeChannel = $script?.dataset.active   || 'insights';   // insights|portfolio|hub|portal
   const activeSeries  = $script?.dataset.series   || '';           // building|use-cases|reflections
+  const noThemeToggle = $script?.hasAttribute('data-no-theme-toggle');
   const breadcrumbRaw = $script?.dataset.breadcrumb || '';
 
   /* ─────────────────────────────────────────────────────────────────────────
@@ -775,11 +777,15 @@ console.log('[insights-nav] v2.3 loaded');
   }
 
   // Initialise from stored pref — default dark for Insights
-  applyTheme(localStorage.getItem('lg-theme') || 'dark');
-
-  document.getElementById('ins-theme-toggle')?.addEventListener('click', () => {
-    applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
-  });
+  if (noThemeToggle) {
+    document.getElementById('ins-theme-toggle')?.remove();
+    applyTheme('dark');
+  } else {
+    applyTheme(localStorage.getItem('lg-theme') || 'dark');
+    document.getElementById('ins-theme-toggle')?.addEventListener('click', () => {
+      applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    });
+  }
 
   // ── Mega-menu ────────────────────────────────────────────────────────────
   const viewportWrap  = document.getElementById('ins-nav-viewport');
