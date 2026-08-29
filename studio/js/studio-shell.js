@@ -23,6 +23,8 @@
     if (p.indexOf('/studio/practice/el-revelado') !== -1) return 'revelado';
     if (p.indexOf('/studio/practice/el-encuadre') !== -1) return 'encuadre';
     if (p.indexOf('/studio/practice') !== -1) return 'practice';
+    if (p.indexOf('/studio/brand-system') !== -1) return 'brand-system';
+    if (p.indexOf('/studio/assets') !== -1) return 'library';
     if (p === '/studio' || p === '/studio/' || p.indexOf('/studio/index') !== -1) return 'home';
     return 'studio';
   }
@@ -37,6 +39,12 @@
       strategyHref: onHome ? '#strategyiq' : '/studio/#strategyiq',
       workHref: onHome ? '#work' : '/studio/#work',
       contactHref: onHome ? '#contact' : '/studio/#contact',
+      brandSystemHref: '/studio/brand-system/',
+      brandSystemCurrent: page === 'brand-system',
+      designSystemHref: '/studio/brand-system/design-system.html',
+      brandGuideHref: '/studio/brand-system/brand-guide.html',
+      assetIndexHref: '/studio/brand-system/lg-studio-asset-index.html',
+      libraryHref: '/studio/assets/',
       bookHref: onHome ? '#contact' : BOOKINGS,
       bookExternal: !onHome
     };
@@ -49,6 +57,7 @@
       : '';
     var brandCurrent = L.brandCurrent ? ' aria-current="page"' : '';
     var practiceCurrent = L.practiceCurrent ? ' aria-current="page"' : '';
+    var brandSystemCurrent = L.brandSystemCurrent ? ' aria-current="page"' : '';
 
     return (
       '<nav class="nav" data-surface="ink" aria-label="LG Studio navigation">' +
@@ -63,6 +72,8 @@
             '<a href="' + L.workHref + '" data-i18n-en="Work" data-i18n-es="Trabajo">Work</a>' +
           '</div>' +
           '<div class="nav-right">' +
+            '<a class="nav-resource" href="' + L.brandSystemHref + '"' + brandSystemCurrent +
+              ' data-i18n-en="Brand System" data-i18n-es="Sistema de marca">Brand System</a>' +
             '<div class="ed-nav-lang-toggle ed-nav-lang-toggle-header" role="group" aria-label="Language">' +
               '<button type="button" data-lang="en" class="is-active" aria-pressed="true">EN</button>' +
               '<button type="button" data-lang="es" aria-pressed="false">ES</button>' +
@@ -118,6 +129,15 @@
               '<span class="ed-nav-drawer-label" data-i18n-en="Contact" data-i18n-es="Contacto">Contact</span>' +
             '</a>' +
           '</nav>' +
+          '<nav class="ed-nav-drawer-resources" aria-label="Practice resources">' +
+            '<p class="ed-nav-drawer-resources-label" data-i18n-en="Resources" data-i18n-es="Recursos">Resources</p>' +
+            '<a href="' + L.brandSystemHref + '" class="ed-nav-drawer-resource-link" data-nav-drawer-link' +
+              (L.brandSystemCurrent ? ' aria-current="page"' : '') +
+              ' data-i18n-en="Brand System" data-i18n-es="Sistema de marca">Brand System</a>' +
+            '<a href="' + L.designSystemHref + '" class="ed-nav-drawer-sublink" data-nav-drawer-link data-i18n-en="Design System" data-i18n-es="Sistema de diseño">Design System</a>' +
+            '<a href="' + L.brandGuideHref + '" class="ed-nav-drawer-sublink" data-nav-drawer-link data-i18n-en="Brand Guide" data-i18n-es="Guía de marca">Brand Guide</a>' +
+            '<a href="' + L.assetIndexHref + '" class="ed-nav-drawer-sublink" data-nav-drawer-link data-i18n-en="Asset Index" data-i18n-es="Índice de assets">Asset Index</a>' +
+          '</nav>' +
           '<nav class="ed-nav-drawer-ecosystem" aria-label="Identity">' +
             '<a href="/" data-nav-drawer-link>Luis Gilberto</a>' +
             '<span class="ed-nav-drawer-ecosystem__sep" aria-hidden="true">|</span>' +
@@ -166,7 +186,6 @@
 
   function footerHTML(page) {
     var L = linksFor(page);
-    var brandSystem = page === 'home' ? 'brand-system/index.html' : '/studio/brand-system/';
     return (
       '<footer class="foot" data-surface="ink">' +
         '<div class="foot-shell shell">' +
@@ -195,16 +214,19 @@
               '</ul>' +
             '</div>' +
             '<div>' +
-              '<h5 data-i18n-en="Insights" data-i18n-es="Perspectivas">Insights</h5>' +
+              '<h5 data-i18n-en="Resources" data-i18n-es="Recursos">Resources</h5>' +
               '<ul>' +
-                '<li><a href="/insights/"><span data-i18n-en="Articles" data-i18n-es="Artículos">Articles</span></a></li>' +
-                '<li><a href="/insights/"><span data-i18n-en="Resources" data-i18n-es="Recursos">Resources</span></a></li>' +
-                '<li><a href="' + brandSystem + '"><span data-i18n-en="Brand System" data-i18n-es="Sistema de marca">Brand System</span></a></li>' +
+                '<li><a href="' + L.brandSystemHref + '"><span data-i18n-en="Brand System" data-i18n-es="Sistema de marca">Brand System</span></a></li>' +
+                '<li><a href="' + L.designSystemHref + '"><span data-i18n-en="Design System" data-i18n-es="Sistema de diseño">Design System</span></a></li>' +
+                '<li><a href="' + L.brandGuideHref + '"><span data-i18n-en="Brand Guide" data-i18n-es="Guía de marca">Brand Guide</span></a></li>' +
+                '<li><a href="' + L.assetIndexHref + '"><span data-i18n-en="Asset Index" data-i18n-es="Índice de assets">Asset Index</span></a></li>' +
+                '<li><a href="' + L.libraryHref + '"><span data-i18n-en="Library" data-i18n-es="Biblioteca">Library</span></a></li>' +
               '</ul>' +
             '</div>' +
             '<div>' +
               '<h5 data-i18n-en="Company" data-i18n-es="Empresa">Company</h5>' +
               '<ul>' +
+                '<li><a href="/insights/"><span data-i18n-en="Insights" data-i18n-es="Perspectivas">Insights</span></a></li>' +
                 '<li><a href="/about.html"><span data-i18n-en="About" data-i18n-es="Acerca de">About</span></a></li>' +
                 '<li><a href="/contact.html"><span data-i18n-en="Contact" data-i18n-es="Contacto">Contact</span></a></li>' +
                 '<li><a href="https://www.linkedin.com/in/luisgilberto00">LinkedIn</a></li>' +
