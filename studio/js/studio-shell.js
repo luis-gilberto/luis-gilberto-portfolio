@@ -25,6 +25,7 @@
     if (p.indexOf('/studio/practice') !== -1) return 'practice';
     if (p.indexOf('/studio/brand-system') !== -1) return 'brand-system';
     if (p.indexOf('/studio/assets') !== -1) return 'library';
+    if (p.indexOf('/studio/intake') !== -1) return 'intake';
     if (p === '/studio' || p === '/studio/' || p.indexOf('/studio/index') !== -1) return 'home';
     return 'studio';
   }
