@@ -72,8 +72,8 @@
       content: '';
       position: absolute;
       inset: 0;
-      background-image: url('/insights/assets/images/baton_landscape.webp'); 
-       background-position: right center;
+      background-image: url('/insights/assets/images/what-i-built_desktop_DM.png'); 
+      background-position: right 42%;
       background-size: auto 100%;
       background-repeat: no-repeat;
       opacity: 0.9;
@@ -85,27 +85,111 @@
     }
 
     [data-theme="light"] .hero-bg::before {
-      background: linear-gradient(to right, #2C1F1A 0%, #2C1F1A 25%, transparent 55%);
+      /* Wider feather — LM plate has an opaque cream field that otherwise seams hard */
+      background: linear-gradient(to right, #2C1F1A 0%, #2C1F1A 28%, rgba(44, 31, 26, 0.92) 42%, rgba(44, 31, 26, 0.45) 58%, transparent 78%);
     }
 
     [data-theme="light"] .hero-bg::after {
-      background-image: url('/insights/assets/images/baton_landscape_light.webp');
+      background-image: url('/insights/assets/images/what-i-built_desktop_LM.png');
       background-size: auto 100%;
       opacity: 0.95;
     }
 
 
 
-    @media (max-width: 900px) {
+    /* Tablet: keep landscape desktop plate (full-bleed). Portrait stack is phone-only. */
+    @media (max-width: 1024px) {
+      .hero {
+        height: 78vh;
+        min-height: 520px;
+      }
       .hero-bg::after {
-        background-image: url('/insights/assets/images/baton-mobile.webp') !important; 
-         background-position: center bottom !important;
-        background-size: cover !important;
-        opacity: 0.8;
+        background-position: right center;
+        background-size: auto 100%;
       }
-      [data-theme="light"] .hero-bg::after {
-        background-image: url('/insights/assets/images/baton-mobile_light.webp') !important;
+      .hero-content {
+        padding: 0 28px 56px;
       }
+      .hero-title {
+        font-size: clamp(40px, 7vw, 64px) !important;
+      }
+      .hero-sub {
+        font-size: 16px !important;
+        margin-bottom: 20px !important;
+        max-width: 34ch;
+      }
+    }
+
+    /* Phone only: stacked portrait plate, crop empty ceiling baked into the PNG */
+    @media (max-width: 640px) {
+      .hero {
+        height: auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+        overflow: hidden;
+      }
+      .hero-bg::after {
+        display: none !important;
+      }
+      .hero-bg::before {
+        background: linear-gradient(
+          to bottom,
+          #0E0C0A 0%,
+          #0E0C0A 42%,
+          rgba(14, 12, 10, 0.7) 68%,
+          transparent 100%
+        ) !important;
+      }
+      [data-theme="light"] .hero-bg::before {
+        background: linear-gradient(
+          to bottom,
+          #2C1F1A 0%,
+          #2C1F1A 42%,
+          rgba(44, 31, 26, 0.7) 68%,
+          transparent 100%
+        ) !important;
+      }
+      .hero-content {
+        padding: calc(56px + var(--lg-eco-strip-offset, 0px)) 24px 12px !important;
+        margin: 0;
+        flex: 0 0 auto;
+        z-index: 2;
+      }
+      .hero-mobile-art {
+        display: block;
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        flex: 0 0 auto;
+        aspect-ratio: 4 / 5;
+        max-height: 58vh;
+        overflow: hidden;
+      }
+      .hero-mobile-art img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        max-width: none;
+        margin: 0;
+        object-fit: cover;
+        /* PNG is ~50% empty top — pin to the figure */
+        object-position: center 72%;
+      }
+      .hero-mobile-art img.hero-art-lm { display: none; }
+      [data-theme="light"] .hero-mobile-art img.hero-art-dm { display: none; }
+      [data-theme="light"] .hero-mobile-art img.hero-art-lm { display: block; }
+      .hero-title {
+        font-size: clamp(36px, 11vw, 52px) !important;
+      }
+    }
+
+    @media (min-width: 641px) {
+      .hero-mobile-art { display: none !important; }
     }
     .hero-grain {
       position: absolute;
@@ -417,6 +501,93 @@
       letter-spacing: 0.02em;
     }
     .meta-dot { width: 3px; height: 3px; background: var(--rule); border-radius: 50%; flex-shrink: 0; }
+
+    /* Secondary feature rotator (max 3) */
+    .feature-rotator {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 32px 48px 0;
+    }
+    .feature-rotator-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+    .feature-rotator-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin: 0;
+    }
+    .feature-rotator-nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .feature-rotator-btn {
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--rule);
+      border-radius: 2px;
+      background: var(--card-bg);
+      color: var(--ink);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .feature-rotator-btn:hover {
+      border-color: var(--coral);
+      color: var(--coral);
+    }
+    .feature-rotator-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+    .feature-rotator-btn svg { width: 14px; height: 14px; }
+    .feature-rotator-dots {
+      display: flex;
+      gap: 6px;
+      margin-left: 4px;
+    }
+    .feature-rotator-dot {
+      width: 18px;
+      height: 2px;
+      border: 0;
+      padding: 0;
+      background: var(--rule);
+      border-radius: 1px;
+      cursor: pointer;
+      transition: background 0.2s, width 0.2s;
+    }
+    .feature-rotator-dot[aria-current="true"] {
+      background: var(--coral);
+      width: 28px;
+    }
+    .feature-rotator-viewport {
+      overflow: hidden;
+      position: relative;
+    }
+    .feature-rotator-track {
+      display: flex;
+      transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .feature-rotator-track .featured-card {
+      flex: 0 0 100%;
+      min-width: 100%;
+      text-decoration: none;
+      color: inherit;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .feature-rotator-track { transition: none; }
+    }
 
     /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
        TABS + GRID
@@ -847,6 +1018,7 @@
       .stories-grid { grid-template-columns: repeat(2, 1fr); }
       .metrics-grid { grid-template-columns: repeat(2, 1fr); }
       .work-card { flex: 0 0 calc(50% - 10px); }
+      .feature-rotator { padding: 28px 32px 0; }
     }
     @media (max-width: 768px) {
       .search-band { padding: 20px 24px; }
@@ -857,6 +1029,7 @@
       .work-card { flex: 0 0 calc(85% - 10px); }
       .hero-title { font-size: clamp(48px, 13vw, 80px); }
       .featured-body { padding: 40px 32px; }
+      .feature-rotator { padding: 24px 24px 0; }
     }
   /* ðŸ§¬ LUXE DARK MODE RESTORATION */
   [data-theme="dark"] {
@@ -895,7 +1068,7 @@
 
   /* Dark Mode Hero Illustration */
   [data-theme="dark"] .hero-bg::after {
-    background-image: url('/insights/assets/images/baton_landscape.webp'); 
+    background-image: url('/insights/assets/images/what-i-built_desktop_DM.png'); 
      opacity: 0.9;
   }
   
@@ -946,13 +1119,17 @@
   <div class="hero-glow-coral"></div>
   <div class="hero-glow-teal"></div>
   <div class="hero-content">
-    <p class="hero-eyebrow">Now Reading &middot; Use Cases</p>
-    <h1 class="hero-title">You Don't Have a<br><em>Strategy Problem.</em></h1>
-    <p class="hero-sub">Most teams don't fail at strategy. They fail at translation. The space between thinking and doing is wildly underscaffolded.</p>
-    <a href="/insights/translation-problem/" class="hero-cta">
-      Read the Article
+    <p class="hero-eyebrow">Now Reading &middot; Building Series</p>
+    <h1 class="hero-title">What I Built<br><em>After Microsoft</em></h1>
+    <p class="hero-sub">I thought I was building a website. It turned into a practice, a product, and a late education in what I am actually for.</p>
+    <a href="/insights/what-i-built-after-microsoft.html" class="hero-cta">
+      Read the Essay
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
     </a>
+  </div>
+  <div class="hero-mobile-art" aria-hidden="true">
+    <img class="hero-art-dm" src="/insights/assets/images/what-i-built_mobile_DM.png" alt="" width="941" height="1672" decoding="async">
+    <img class="hero-art-lm" src="/insights/assets/images/what-i-built_mobile_LM.png" alt="" width="941" height="1672" decoding="async">
   </div>
   <div class="hero-scroll">
     <div class="scroll-line"></div>
@@ -973,24 +1150,73 @@
   </div>
 </div>
 
-<!-- SECONDARY FEATURED — Building Series -->
-<section style="max-width:1280px;margin:0 auto;padding:32px 48px 0;">
-  <p style="font-family:'Inter',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:18px;">Also New &middot; Building Series</p>
-  <a href="/insights/what-i-built-after-microsoft.html" class="featured-card fade-up" style="text-decoration:none;color:inherit;">
-    <div class="featured-img">
-      <img src="https://res.cloudinary.com/dogtoagya/image/upload/f_auto,q_auto,c_fill,g_auto,w_1200,h_630/v1787620115/ots_EL_Estudio_screen_LS_wr9i8o.png" alt="What I Built After Microsoft &mdash; desk at night, lit by a single screen" loading="lazy">
+<!-- SECONDARY FEATURED — rotating spotlight (max 3) -->
+<section class="feature-rotator fade-up" aria-roledescription="carousel" aria-label="Also reading">
+  <div class="feature-rotator-head">
+    <p class="feature-rotator-label" id="feature-rotator-label">Also Reading</p>
+    <div class="feature-rotator-nav">
+      <button type="button" class="feature-rotator-btn" id="feature-prev" aria-label="Previous featured story">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button type="button" class="feature-rotator-btn" id="feature-next" aria-label="Next featured story">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+      <div class="feature-rotator-dots" id="feature-dots" role="tablist" aria-label="Featured stories"></div>
     </div>
-    <div class="featured-body">
-      <span class="tag">Building Series</span>
-      <h2 class="featured-title">What I Built After Microsoft</h2>
-      <p class="featured-excerpt">I thought I was building a website. It turned into a practice, a product, and a late education in what I am actually for.</p>
-      <span class="read-link">
-        Read the Essay
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      </span>
-      <span style="display:block;margin-top:18px;font-family:'Inter',sans-serif;font-size:11px;color:var(--ink-soft);letter-spacing:0.04em;">Aug 2026 &middot; 13 min read &middot; Luis Gilberto</span>
+  </div>
+  <div class="feature-rotator-viewport" id="feature-viewport">
+    <div class="feature-rotator-track" id="feature-track">
+
+      <a href="/insights/the-kingdom-of-perpetual-maybe.html" class="featured-card" data-feature-label="Reflections" aria-label="The Kingdom of Perpetual Maybe">
+        <div class="featured-img">
+          <img src="https://res.cloudinary.com/dogtoagya/image/upload/q_auto/f_auto/v1781589094/18459A5D-7D81-4255-803F-1E1CFE076723_ffwuyx.png" alt="The Kingdom of Perpetual Maybe" loading="lazy">
+        </div>
+        <div class="featured-body">
+          <span class="tag">Reflections</span>
+          <h2 class="featured-title">The Kingdom of Perpetual Maybe</h2>
+          <p class="featured-excerpt">A brief field guide to Seattle-temperament: on the morals of moderation, drizzle as civic religion, and the subtle beauty of never really giving a shit about anything at all.</p>
+          <span class="read-link">
+            Read the Article
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+          <span style="display:block;margin-top:18px;font-family:'Inter',sans-serif;font-size:11px;color:var(--ink-soft);letter-spacing:0.04em;">Reflections &middot; Luis Gilberto</span>
+        </div>
+      </a>
+
+      <a href="/insights/translation-problem/" class="featured-card" data-feature-label="Use Cases" aria-label="You Don't Have a Strategy Problem" aria-hidden="true" tabindex="-1">
+        <div class="featured-img">
+          <img src="/insights/assets/images/baton_landscape.png" alt="You Don't Have a Strategy Problem" loading="lazy">
+        </div>
+        <div class="featured-body">
+          <span class="tag">Use Cases</span>
+          <h2 class="featured-title">You Don't Have a Strategy Problem.</h2>
+          <p class="featured-excerpt">Most teams don't fail at strategy. They fail at translation. The space between thinking and doing is wildly underscaffolded.</p>
+          <span class="read-link">
+            Read the Article
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+          <span style="display:block;margin-top:18px;font-family:'Inter',sans-serif;font-size:11px;color:var(--ink-soft);letter-spacing:0.04em;">Mar 2026 &middot; Use Cases &middot; Luis Gilberto</span>
+        </div>
+      </a>
+
+      <a href="/insights/nobody-ever-asked.html" class="featured-card" data-feature-label="Building Series" aria-label="Nobody Ever Asked" aria-hidden="true" tabindex="-1">
+        <div class="featured-img">
+          <img src="https://res.cloudinary.com/dogtoagya/image/upload/f_auto,q_auto,c_fill,g_auto,w_1200,h_630/v1787620115/ots_EL_Estudio_screen_LS_wr9i8o.png" alt="Nobody Ever Asked" loading="lazy">
+        </div>
+        <div class="featured-body">
+          <span class="tag">Building Series</span>
+          <h2 class="featured-title">Nobody Ever Asked</h2>
+          <p class="featured-excerpt">Most people are carrying abilities that have never been requested. That is a different problem than not having them.</p>
+          <span class="read-link">
+            Read the Article
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+          <span style="display:block;margin-top:18px;font-family:'Inter',sans-serif;font-size:11px;color:var(--ink-soft);letter-spacing:0.04em;">Aug 2026 &middot; Companion to the essay &middot; Luis Gilberto</span>
+        </div>
+      </a>
+
     </div>
-  </a>
+  </div>
 </section>
 
 <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 
@@ -1074,26 +1300,10 @@
     <div id="stories-panel">
       <div class="stories-grid">
 
-        <!-- â”€â”€ Flagship Story Card â”€â”€ --> 
-        <a href="/insights/translation-problem/" class="story-card fade-up" style="text-decoration:none; color:inherit;"> 
-          <div class="story-img"> 
-            <img src="/insights/assets/images/baton_landscape.png" alt="You Don't Have a Strategy Problem" loading="lazy"> 
-          </div> 
-          <div class="story-body"> 
-            <p class="story-cat">Use Cases</p> 
-            <h3 class="story-title">You Don't Have a Strategy Problem.</h3> 
-            <p class="story-excerpt">Most teams don't fail at strategy. They fail at translation. The space between thinking and doing is wildly underscaffolded.</p> 
-            <div class="story-footer"> 
-              <span>Mar 2026</span> 
-              <span class="story-read">Read Article <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span> 
-            </div> 
-          </div> 
-        </a>
-
         <!-- Story Card — What I Built After Microsoft -->
         <a href="/insights/what-i-built-after-microsoft.html" class="story-card fade-up" style="text-decoration:none; color:inherit;" data-search="Microsoft Building Series practice StrategyIQ Studio Portal website ecosystem Criar Sin Culpas essay">
           <div class="story-img">
-            <img src="https://res.cloudinary.com/dogtoagya/image/upload/f_auto,q_auto,c_fill,g_auto,w_800,h_500/v1787620115/ots_EL_Estudio_screen_LS_wr9i8o.png" alt="What I Built After Microsoft" loading="lazy">
+            <img src="/insights/assets/images/what-i-built_desktop_DM.png" alt="What I Built After Microsoft" loading="lazy">
           </div>
           <div class="story-body">
             <p class="story-cat">Building Series</p>
@@ -1102,22 +1312,6 @@
             <div class="story-footer">
               <span>Aug 2026</span>
               <span class="story-read">Read Essay <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
-            </div>
-          </div>
-        </a>
-
-        <!-- Story Card — Nobody Ever Asked -->
-        <a href="/insights/nobody-ever-asked.html" class="story-card fade-up" style="text-decoration:none; color:inherit;" data-search="Microsoft abilities request asked potential AI practice Building Series short companion">
-          <div class="story-img">
-            <img src="https://res.cloudinary.com/dogtoagya/image/upload/f_auto,q_auto,c_fill,g_auto,w_800,h_500/v1787620115/ots_EL_Estudio_screen_LS_wr9i8o.png" alt="Nobody Ever Asked" loading="lazy">
-          </div>
-          <div class="story-body">
-            <p class="story-cat">Building Series</p>
-            <h3 class="story-title">Nobody Ever Asked</h3>
-            <p class="story-excerpt">Most people are carrying abilities that have never been requested. That is a different problem than not having them.</p>
-            <div class="story-footer">
-              <span>Aug 2026</span>
-              <span class="story-read">Read Article <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
             </div>
           </div>
         </a>
@@ -1133,6 +1327,22 @@
             <p class="story-excerpt">A brief field guide to Seattle-temperament: on the morals of moderation, drizzle as civic religion, and the subtle beauty of never really giving a shit about anything at all.</p>
             <div class="story-footer">
               <span>June 2026</span>
+              <span class="story-read">Read Article <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Story Card — Translation Problem -->
+        <a href="/insights/translation-problem/" class="story-card fade-up" style="text-decoration:none; color:inherit;">
+          <div class="story-img">
+            <img src="/insights/assets/images/baton_landscape.png" alt="You Don't Have a Strategy Problem" loading="lazy">
+          </div>
+          <div class="story-body">
+            <p class="story-cat">Use Cases</p>
+            <h3 class="story-title">You Don't Have a Strategy Problem.</h3>
+            <p class="story-excerpt">Most teams don't fail at strategy. They fail at translation. The space between thinking and doing is wildly underscaffolded.</p>
+            <div class="story-footer">
+              <span>Mar 2026</span>
               <span class="story-read">Read Article <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
             </div>
           </div>
@@ -1428,6 +1638,83 @@
   }
 
   // â”€â”€ Carousel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+  // Feature rotator (secondary spotlight, max 3)
+  (function initFeatureRotator() {
+    const fTrack = document.getElementById('feature-track');
+    const fPrev = document.getElementById('feature-prev');
+    const fNext = document.getElementById('feature-next');
+    const fDots = document.getElementById('feature-dots');
+    const fLabel = document.getElementById('feature-rotator-label');
+    if (!fTrack || !fPrev || !fNext || !fDots) return;
+
+    const slides = Array.from(fTrack.querySelectorAll('.featured-card'));
+    if (!slides.length) return;
+
+    let index = 0;
+    let timer = null;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function syncA11y() {
+      slides.forEach((slideEl, i) => {
+        const active = i === index;
+        if (active) {
+          slideEl.removeAttribute('aria-hidden');
+          slideEl.removeAttribute('tabindex');
+        } else {
+          slideEl.setAttribute('aria-hidden', 'true');
+          slideEl.setAttribute('tabindex', '-1');
+        }
+      });
+      fDots.querySelectorAll('.feature-rotator-dot').forEach((dot, i) => {
+        dot.setAttribute('aria-current', i === index ? 'true' : 'false');
+      });
+      const tag = slides[index].getAttribute('data-feature-label');
+      if (fLabel && tag) fLabel.textContent = 'Also Reading · ' + tag;
+    }
+
+    function goTo(i) {
+      index = (i + slides.length) % slides.length;
+      fTrack.style.transform = 'translateX(-' + (index * 100) + '%)';
+      syncA11y();
+    }
+
+    function buildDots() {
+      fDots.innerHTML = '';
+      slides.forEach((_, i) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'feature-rotator-dot';
+        btn.setAttribute('aria-label', 'Show featured story ' + (i + 1) + ' of ' + slides.length);
+        btn.addEventListener('click', () => {
+          goTo(i);
+          restartAuto();
+        });
+        fDots.appendChild(btn);
+      });
+    }
+
+    function restartAuto() {
+      if (timer) clearInterval(timer);
+      if (reduceMotion || slides.length < 2) return;
+      timer = setInterval(() => goTo(index + 1), 8000);
+    }
+
+    fPrev.addEventListener('click', () => { goTo(index - 1); restartAuto(); });
+    fNext.addEventListener('click', () => { goTo(index + 1); restartAuto(); });
+
+    const viewport = document.getElementById('feature-viewport');
+    if (viewport) {
+      viewport.addEventListener('mouseenter', () => { if (timer) clearInterval(timer); });
+      viewport.addEventListener('mouseleave', restartAuto);
+      viewport.addEventListener('focusin', () => { if (timer) clearInterval(timer); });
+      viewport.addEventListener('focusout', restartAuto);
+    }
+
+    buildDots();
+    goTo(0);
+    restartAuto();
+  })();
   const track     = document.getElementById('carousel-track');
   const prevBtn   = document.getElementById('prev-btn');
   const nextBtn   = document.getElementById('next-btn');
