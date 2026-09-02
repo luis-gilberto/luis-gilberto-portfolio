@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Control · Costello Launch Path</title>
+
+<!--
+  ─────────────────────────────────────────────────────────────
+  PRESENTER CONTROL for Costello_Launch_Path.html
+
+  SETUP
+  1. Serve the repo root so control + deck share origin:
+         npx serve -l 4173 .
+     Control: http://localhost:4173/studio/capabilities/costello/Costello_Control.html
+     Deck:    http://localhost:4173/studio/capabilities/costello/Costello_Launch_Path.html
+     Two local file:// pages cannot control each other in Chrome.
+  2. Press "Open deck", drag that window to the second screen,
+     press F there for full screen. Keep this one on your laptop.
+
+  The link uses postMessage, which works across windows. If the dot
+  stays red, everything here still works as a prompter and you drive
+  the deck with arrow keys on the other screen.
+
+  KEYS  → space next · ← back · T timer · + − text size · F fullscreen
+  ─────────────────────────────────────────────────────────────
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;450;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#0E1013;--panel:#161A1F;--panel2:#1E232A;--line:#272D35;--line2:#39414B;
+  --text:#F0F2F4;--text2:#98A1AB;--text3:#5F6873;
+  --accent:#C98A92;--oxblood:#8A2F38;--navy:#3D6A93;--warn:#D0606C;--go:#74B683;
+  --display:'Fraunces',Georgia,serif;--ui:'IBM Plex Sans',-apple-system,sans-serif;--data:'IBM Plex Mono',ui-monospace,monospace;
+  --prompt:27px;
+}
+*{box-sizing:border-box} html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--ui);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;overflow:hidden}
+
+.bar{display:flex;align-items:center;gap:10px;padding:9px 14px;background:var(--panel);border-bottom:1px solid var(--line);flex:none}
+.bar .id{font-family:var(--data);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--text3);white-space:nowrap}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--warn);flex:none}
+.dot.live{background:var(--go)}
+.bar input{width:210px;background:var(--bg);color:var(--text);border:1px solid var(--line2);padding:7px 9px;font-family:var(--data);font-size:11px}
+button{background:var(--panel2);color:var(--text2);border:1px solid var(--line2);padding:7px 11px;font-family:var(--data);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+button:hover{border-color:var(--accent);color:var(--accent)}
+.spacer{flex:1}
+.clock{font-family:var(--data);font-size:17px;font-weight:500;min-width:64px;text-align:right}
+.clock.over{color:var(--warn)}
+
+.stage{flex:1;display:grid;grid-template-columns:220px minmax(0,1fr);min-height:0}
+nav{background:var(--panel);border-right:1px solid var(--line);overflow-y:auto;padding:6px 0 40px}
+nav button{width:100%;display:grid;grid-template-columns:26px 1fr;gap:8px;align-items:baseline;text-align:left;background:none;border:0;border-left:2px solid transparent;padding:8px 12px;color:var(--text2);font-family:var(--ui);font-size:12px;text-transform:none;letter-spacing:0}
+nav button:hover{background:var(--panel2);color:var(--text)}
+nav button.on{background:var(--panel2);color:var(--text);border-left-color:var(--accent)}
+nav button .n{font-family:var(--data);font-size:9.5px;color:var(--text3)}
+nav button.on .n{color:var(--accent)}
+
+.prompt{overflow-y:auto;padding:24px clamp(20px,3.4vw,52px) 92px}
+.meta{font-family:var(--data);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-bottom:7px}
+.meta b{color:var(--accent);font-weight:500}
+h1.title{font-family:var(--display);font-weight:300;font-size:clamp(21px,2.5vw,30px);line-height:1.18;margin:0 0 20px;padding-bottom:16px;border-bottom:1px solid var(--line);max-width:22em}
+
+.lbl{font-family:var(--data);font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--text3);margin:0 0 10px;font-weight:500}
+.say{font-family:var(--display);font-weight:300;font-size:var(--prompt);line-height:1.45;color:var(--text);max-width:26em;margin:0;padding-left:18px;border-left:2px solid var(--oxblood)}
+
+.beat{margin-top:26px;padding:14px 16px;background:rgba(201,138,146,.10);border-left:2px solid var(--accent);font-size:15px;line-height:1.55;color:var(--text2);max-width:44em}
+.beat b{color:var(--text);font-weight:500}
+.ifup{margin-top:16px;padding:14px 16px;border-left:2px solid var(--line2);font-size:14px;line-height:1.55;color:var(--text2);max-width:44em}
+
+.foot{position:fixed;left:220px;right:0;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 14px;background:var(--panel);border-top:1px solid var(--line)}
+.foot .nextup{font-size:12px;color:var(--text3)}
+.foot .note{font-family:var(--data);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--warn)}
+@media(max-width:820px){
+  html,body{height:auto;min-height:100%;overflow:auto}
+  body{display:block;padding-bottom:74px}
+  .bar{position:sticky;top:0;z-index:30;padding:10px 12px;gap:8px;flex-wrap:nowrap}
+  .bar .id{font-size:9px}
+  .dot{width:8px;height:8px}
+  .bar input,#openDeck,#minus,#plus,.spacer{display:none}
+  #timerBtn{margin-left:auto;padding:8px 10px}
+  .clock{font-size:15px;min-width:54px}
+  .stage{display:block;min-height:auto}
+  nav{display:none}
+  .prompt{overflow:visible;padding:22px 18px 30px}
+  .meta{font-size:9px;line-height:1.4;margin-bottom:8px}
+  h1.title{font-size:23px;line-height:1.15;margin-bottom:18px;padding-bottom:14px;max-width:none}
+  .lbl{font-size:9px;margin-bottom:9px}
+  .say{font-size:22px;line-height:1.48;max-width:none;padding-left:14px}
+  .beat,.ifup{max-width:none;font-size:14px;line-height:1.5;margin-top:20px;padding:13px 14px}
+  .foot{position:fixed;left:0;right:0;bottom:0;z-index:40;padding:9px 10px;background:rgba(22,26,31,.97);gap:8px}
+  .foot .note{display:none}
+  .foot .nextup{font-size:10px;line-height:1.2;max-width:44vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .foot span:last-child{display:flex;gap:8px;margin-left:auto}
+  .foot button{padding:10px 13px;font-size:10px}
+}
+@media(max-width:430px){
+  .prompt{padding:18px 15px 26px}
+  h1.title{font-size:21px}
+  .say{font-size:20px;line-height:1.5}
+  .beat,.ifup{font-size:13px}
+  .foot .nextup{max-width:38vw}
+}
+@media(max-width:820px) and (orientation:landscape){
+  .bar{position:relative}
+  .prompt{padding-top:16px}
+  .say{font-size:19px;line-height:1.42}
+}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <span class="id">Control</span>
+  <span class="dot" id="dot" title="link to deck"></span>
+  <input id="deckUrl" value="Costello_Launch_Path.html" spellcheck="false" aria-label="Deck path">
+  <button id="openDeck" type="button">Open deck</button>
+  <button id="minus" type="button">A&minus;</button>
+  <button id="plus" type="button">A+</button>
+  <span class="spacer"></span>
+  <button id="timerBtn" type="button">Start</button>
+  <span class="clock" id="clock">00:00</span>
+</div>
+
+<div class="stage">
+  <nav id="nav"></nav>
+  <div class="prompt" id="prompt"></div>
+</div>
+
+<div class="foot">
+  <span class="note" id="linkNote"></span>
+  <span class="nextup" id="nextup"></span>
+  <span>
+    <button id="prev" type="button">&larr;</button>
+    <button id="next" type="button">Next &rarr;</button>
+  </span>
+</div>
+
+<script>
+const CARDS = [
+ {
+  "i": 0,
+  "eyebrow": "COSTELLO LAW FIRM · LG STUDIO",
+  "title": "From good work to a  live firm.",
+  "say": "Thanks again for making the time. I know yesterday was mostly me listening, and that was intentional. I wanted to understand what was actually happening before I came back with an opinion. I went through everything Nari sent over last night with one question in mind: do we really need to reopen the strategy, or is there enough good work here to move straight into execution? And my answer is pretty clear: there is enough here. There is a real brand, a real point of view, developed messaging, page designs, approved copy, bios, FAQs, and a business-development plan. So I do not want to take you backward. What I want to show you today is the shortest responsible path from what you already paid for to something that is live, useful, and fully in Costello's control.",
+  "pause": "Pause after ‘there is enough here.’ Let Kris react before you keep going.",
+  "if": "If Kris says she is relieved or agrees: ‘Good. That was exactly what I was hoping the review would support, because I do not think you should have to buy the same thinking twice.’"
+ },
+ {
+  "i": 1,
+  "eyebrow": "01 · THE READ",
+  "title": "You do not have a  branding problem.",
+  "say": "So this is really the headline for me: you do not have a branding problem. The positioning is already defined. The voice is already defined. The website messaging framework is coherent. The Home and About direction is developed. The referral campaign has an actual objective, audience and cadence behind it. Could some of those things be refined over time? Of course. Any good brand evolves. But I do not see anything that justifies stopping everything and putting you through another discovery and branding process before the firm can move. The problem I see is much more practical: how do we transition this work cleanly, make sure Costello actually possesses what it paid for, and then execute it at the level the strategy deserves? That is a very different assignment, and frankly it is a much more solvable one.",
+  "pause": "Ask: ‘Does that match how you see the work you already have?’ Then let them answer fully.",
+  "if": "If Kris says parts of the strategy still feel unfinished: ‘That is completely fine. I would treat those as selective refinements after launch, not as a reason to hold the whole business in place.’"
+ },
+ {
+  "i": 2,
+  "eyebrow": "02 · WHAT EXISTS",
+  "title": "There is more finished than there is  missing.",
+  "say": "This was probably the biggest surprise in the review. I expected to find scattered fragments. What you actually have is a fairly mature body of work. The homepage already carries the central idea of overlapping risk and early, coordinated defense. Home and About copy are substantially developed. There are attorney bios, FAQs, practice-area language, the Agile 180 thinking, and the five-letter referral program. So to me, the asset here is not just a logo and some words. There is enough substance to build a credible first release right now. That changes the economics and the timeline, because I am not starting with blank pages. My job becomes synthesis, cleanup, validation, implementation and launch. That is why I keep coming back to preservation: the fastest path is to make the work operational, not to replace it.",
+  "pause": "Do not critique the visual design here. Let this slide establish that their prior investment has real value.",
+  "if": "If asked whether you like the current design direction: ‘Yes. I think there is a credible premium direction there. I would focus first on making it production-ready, cohesive and responsive before proposing aesthetic changes for the sake of change.’"
+ },
+ {
+  "i": 3,
+  "eyebrow": "03 · ONE THING I FOUND",
+  "title": "Kris’s years of experience is stated  four different ways.",
+  "say": "I wanted to show you one very specific example of why I think a short verification pass matters before anything goes live. Across the materials, Kris's experience is described four different ways. I found 36 years in approved website copy and referral materials, 35 years in the edited bios and application guide, 25 years in an older bio, and Chambers uses ‘over 30’ publicly. That does not worry me strategically. It is exactly the kind of thing that happens when a project has been developed over months and multiple files. But for a law firm, once that number is on the website, letters, bios and ads, it becomes a factual claim that needs to be consistent and defensible. So I am not proposing another discovery exercise. I am proposing a very small fact-check ledger where we settle these items once, document the approved wording, and then use the same truth everywhere.",
+  "pause": "Stop and let Kris answer. She may settle the number immediately.",
+  "if": "If she asks whether there are more: ‘A handful. There are also a few open placeholders and outcome or recognition claims that should be confirmed. None of it is difficult; it just needs one clean source of truth before publication.’"
+ },
+ {
+  "i": 4,
+  "eyebrow": "04 · WHAT I WOULD PRESERVE",
+  "title": "Keep the work that already  earned its place.",
+  "say": "My principle on the existing work is simple: I do not need to erase somebody else's good work to prove my value. If a piece has already earned its place, we keep it. That includes the core positioning, the brand voice, the visual direction, the central website message, the overlapping-risk framing, the approved copy, the strongest parts of the authority framework, and the business-development concept. I may make implementation decisions around hierarchy, mobile behavior, accessibility, conversion paths, metadata, or how certain sections are structured in the actual build. But those are execution decisions. They are not an excuse to reopen the brand. I want the next dollars you spend to buy completion and capability, not another round of rediscovery.",
+  "pause": "Give this line room: ‘I do not need to erase somebody else’s good work to prove my value.’",
+  "if": "If Kris asks what you would change: ‘Mostly the things a strategy deck cannot solve by itself: implementation, responsive behavior, technical structure, content cleanup, conversion paths, search readiness, and whatever the build reveals needs tightening.’"
+ },
+ {
+  "i": 5,
+  "eyebrow": "05 · THE TRANSITION",
+  "title": "A takeover, not another  discovery process.",
+  "say": "When I say transition audit, I want to be very clear about what that means, because I know the word ‘audit’ can sound like another process. I am talking about a short operational inventory, not workshops. I need to know what Costello has in hand, which files are final, which accounts exist, who controls the domain and DNS, whether the Framer work is transferable, what image and font licenses exist, what still lives only in someone else's environment, and which claims need final approval. That gives us a clean starting line. Once that is done, we are building. The point is to remove uncertainty quickly so that I am not discovering halfway through the project that a key asset is inaccessible or that the firm does not actually control the account it is supposed to own.",
+  "pause": "Ask: ‘Do you currently control the domain and DNS directly?’",
+  "if": "If ownership is unclear: ‘That becomes a day-one item. I can work around temporary uncertainty, but the end state cannot be Costello depending on my account either.’"
+ },
+ {
+  "i": 6,
+  "eyebrow": "06 · LAUNCH RELEASE",
+  "title": "What I would get  live first.",
+  "say": "For the first launch, I would resist thinking in terms of only three isolated pages, because the material you already have can support a more complete first impression without turning this into a giant content project. My recommended first release is Home, About, Attorneys, a useful Practice Areas structure, FAQs, and Contact. Some of those sections can be intentionally lighter at launch and deepen in the next sprint. The goal is not to pretend the entire future website is finished on day one. The goal is to make the firm look established, coherent and credible when the announcement and referral activity go out, and to make sure a prospective client or referring attorney can understand who you are, what you handle, who is on the team, and how to reach you. That is enough to restore momentum without sacrificing quality.",
+  "pause": "Ask: ‘Is there anything in that first release you consider non-negotiable that I have not named?’",
+  "if": "If they want more pages immediately: ‘We absolutely can add them. I just want to separate must-have launch content from expansion content so we protect the date instead of letting the release grow indefinitely.’"
+ },
+ {
+  "i": 7,
+  "eyebrow": "07 · THE SECOND WORKSTREAM",
+  "title": "Restart the thing that was supposed to  drive business.",
+  "say": "I also want to keep the letter program visible as its own workstream, because I do not think it should disappear inside a website build. The material you sent shows that this was designed as a real business-development program: five referral letters, a defined audience, a twice-yearly rhythm, and a stated objective of generating new matters from the network. And from what you told me yesterday, this is the thing that was supposed to restart business activity while the firm was growing. So yes, I have capacity to help here. The choice is really how much you want me to own. I can simply finish the creative and hand you production-ready files, or I can take responsibility for the production and mailing coordination as well so that it actually gets out the door. My bias, given what you have been through, is that somebody should own the finish line.",
+  "pause": "Ask: ‘Do you want me to own the letter production and mailing coordination too, or do you want the firm to handle distribution once the files are ready?’",
+  "if": "If she wants end-to-end: ‘Yes. I can own the coordination so you are not suddenly managing printers, files and mailing vendors yourself.’"
+ },
+ {
+  "i": 8,
+  "eyebrow": "08 · OWNERSHIP",
+  "title": "Costello should never be  trapped by its own website.",
+  "say": "This slide is important to me because ownership is not a technical footnote here. It is part of the product. My recommendation is that the domain, DNS, hosting or platform account, analytics, forms, core content and source assets are either created in Costello's name from the beginning or transferred into Costello's control as part of the work. I can be an administrator. I can manage it. But I should never be the only person who can access your own website. The same goes for files. If I build something for you, you should not need my permission to retrieve it later. And if we use any third-party licensed component, that gets identified clearly so your lawyer knows exactly what is owned outright and what is licensed. I want the handoff terms to be boring because they are so explicit.",
+  "pause": "Let this sit for a beat. It answers one of Kris’s biggest concerns without attacking the incumbent.",
+  "if": "If her lawyer asks about IP: ‘The agreement will spell out ownership, transfer and any third-party licenses explicitly. I do not want ambiguity around that either.’"
+ },
+ {
+  "i": 9,
+  "eyebrow": "09 · TIMING",
+  "title": "A fast path, with  named gates.",
+  "say": "On timing, based on what I have actually reviewed, my target is three weeks from complete access, with ten business days of real build inside that window. For comparison, the proposal on your desk had three pages visible in three weeks. This is six pages in the same window. The reason I can move that quickly is that we are not spending the first month discovering the brand or writing every page from scratch. A lot of the strategic and content work already exists. The two things most likely to move that date are access problems and unresolved approvals, so I would make both visible from day one. And there is one risk I do not control: if the design source files cannot be released and we have to rebuild the pages from PDFs, I will tell you within forty-eight hours and quote the difference before doing the work.",
+  "pause": "Say 'three weeks' slowly, then stop. Let Kris respond before adding anything.",
+  "if": "If asked whether it can be faster: 'Potentially, for a controlled interim release of the homepage. I would rather commit to three weeks and beat it than sell you a date before I have the access in hand.' If asked why not two weeks: 'Four of the six pages have approved copy but no design yet. I would rather tell you that now than discover it together in week two.'"
+ },
+ {
+  "i": 10,
+  "eyebrow": "10 · COMMERCIAL MODEL",
+  "title": "One scope. One number.  No open check.",
+  "say": "I also heard you clearly on the commercial model. The problem is not that you are unwilling to pay for quality. The problem is not knowing where the finish line is while the meter keeps running. So: eighteen thousand five hundred, fixed, for the transition, the launch build, the technical setup and the ownership handoff. The referral letter campaign is thirty-five hundred, and I have quoted it separately on purpose, because it is a different kind of work with print and mailing vendors attached, and you should be able to decide on it separately and on its own timing. We agree the launch set, the deliverables and the ownership terms up front. If we discover something genuinely new, we decide before I do the work, not after.",
+  "pause": "Say the number, then stop. Do not explain it before she reacts. Explaining a price tells someone you are unsure of it.",
+  "if": "If she says it is high: 'I understand. I can move FAQs to after launch and bring it to sixteen five. What I will not do is lower the number and expand it later, which is the pattern you are trying to get out of.' If she asks why more than she hoped: 'Four of the six pages have approved copy but no design yet. That is real work, and I would rather price it than discover it in week two.' If she asks payment terms: 'Fifty percent to start, fifty at launch.' If she asks about revisions: 'Two rounds per page inside the review window.'"
+ },
+ {
+  "i": 11,
+  "eyebrow": "11 · WHAT I NEED FROM COSTELLO",
+  "title": "Very little process. A few  clean decisions.",
+  "say": "The good news is that I do not need a lot from you to make this work. I need access to the assets and accounts we are using. I need one consolidated approval path so I am not getting three conflicting versions of a decision. I need a quick factual verification pass for the claims we just talked about. And while we are in the build window, I need reasonably fast review turnaround on the things that genuinely require your judgment. That is it. Your board, lawyer or accountant can absolutely review the pieces that matter to them, especially ownership, legal claims and commercial terms. I will structure it so they can review those things without becoming the project-management layer. The whole point is to make the work easier to govern, not to create another system that consumes your day.",
+  "pause": "Ask: ‘Is that workable on your side?’",
+  "if": "If Kris says multiple stakeholders must approve: ‘That is fine. I will package decisions so each person sees only what they actually need to approve, rather than dragging everyone through every website detail.’"
+ },
+ {
+  "i": 12,
+  "eyebrow": "12 · DECISION",
+  "title": "Preserve the strategy. Finish the experience.  Own the result.",
+  "say": "So that is the recommendation in one sentence: preserve the strategy, finish the experience, and make sure Costello owns the result. I think the work you already have is good enough to move from, and I think the business need is clear enough that more process would be counterproductive. If this direction feels right, the next step is very simple. We lock the first-release scope, confirm the commercial terms and ownership language, get access, and I start the transition. I am not asking you to make a philosophical bet on a new brand. I am asking whether this feels like a practical way to get the firm moving again. And if there is anything you need to see, change or understand before you would feel comfortable doing that, I would rather hear it now and address it directly.",
+  "pause": "Ask: ‘What would you need to feel comfortable moving forward?’ Then be quiet and let Kris answer.",
+  "if": "Do not oversell the close. Whatever she names here is the actual remaining objection or requirement. Deal with that, not with the pitch you prepared in advance."
+ }
+];
+
+/* ── Remote. postMessage works across windows, including from file://,
+      unlike reaching into the other document directly. ── */
+let deck=null, pending=null;
+const dot=document.getElementById("dot");
+function note(m){document.getElementById("linkNote").textContent=m||""}
+function setLinked(v){dot.classList.toggle("live",v); if(v) note("")}
+function ensureDeck(){
+  if(deck && !deck.closed) return;
+  const u=document.getElementById("deckUrl").value.trim();
+  if(u) deck=window.open(u,"clfdeck");
+}
+function send(msg){
+  ensureDeck();
+  if(!deck||deck.closed){setLinked(false);note("deck window not open");return false}
+  try{deck.postMessage(Object.assign({app:"lgdeck"},msg),"*");return true}
+  catch(e){setLinked(false);note("cannot reach deck");return false}
+}
+function expectAck(){
+  if(pending)clearTimeout(pending);
+  pending=setTimeout(function(){setLinked(false);note("deck not responding \u00b7 drive it yourself")},1200);
+}
+window.addEventListener("message",function(e){
+  const m=e.data;
+  if(!m||typeof m!=="object"||m.app!=="lgdeck")return;
+  if(m.t==="ready"||m.t==="ack"){setLinked(true); if(pending){clearTimeout(pending);pending=null}}
+});
+document.getElementById("openDeck").addEventListener("click",function(){
+  const u=document.getElementById("deckUrl").value.trim();
+  if(!u)return;
+  deck=window.open(u,"clfdeck");
+  note("connecting\u2026");
+  setTimeout(function(){send({t:"goto",i:idx});expectAck()},1400);
+});
+setInterval(function(){if(deck&&!deck.closed){send({t:"ping"});expectAck()}},8000);
+
+/* ── Render ── */
+let idx=0;
+const nav=document.getElementById("nav"), prompt=document.getElementById("prompt");
+
+function buildNav(){
+  nav.innerHTML=CARDS.map(function(c,i){
+    const label=c.eyebrow.replace(/^\d+\s*[·.]\s*/,"")||"Cover";
+    const num=(c.eyebrow.match(/^\d+/)||["\u2014"])[0];
+    return '<button type="button" data-i="'+i+'"><span class="n">'+num+'</span><span>'+label.toLowerCase().replace(/(^|\s)\S/g,function(t){return t.toUpperCase()})+'</span></button>';
+  }).join("");
+  nav.querySelectorAll("button").forEach(function(b){
+    b.addEventListener("click",function(){go(+b.dataset.i)});
+  });
+}
+
+function render(){
+  const c=CARDS[idx];
+  let h='<div class="meta"><b>'+(c.eyebrow||"Cover")+'</b> &nbsp;\u00b7&nbsp; '+(idx+1)+' of '+CARDS.length+'</div>';
+  h+='<h1 class="title">'+c.title+'</h1>';
+  h+='<p class="lbl">Say</p><p class="say">'+c.say+'</p>';
+  if(c.pause) h+='<div class="beat"><b>Pause.</b> '+c.pause+'</div>';
+  if(c["if"]) h+='<div class="ifup"><b>If it comes up.</b> '+c["if"]+'</div>';
+  prompt.innerHTML=h;
+  prompt.scrollTop=0;
+  nav.querySelectorAll("button").forEach(function(b){b.classList.toggle("on",+b.dataset.i===idx)});
+  const nx=CARDS[idx+1];
+  document.getElementById("nextup").textContent=nx?("Next \u00b7 "+(nx.eyebrow||"")):"End";
+}
+
+function go(i){
+  idx=Math.max(0,Math.min(CARDS.length-1,i));
+  render();
+  if(send({t:"goto",i:idx})) expectAck();
+}
+document.getElementById("next").addEventListener("click",function(){go(idx+1)});
+document.getElementById("prev").addEventListener("click",function(){go(idx-1)});
+
+/* ── Size, keys ── */
+let size=27;
+function setSize(v){size=Math.max(16,Math.min(46,v));document.documentElement.style.setProperty("--prompt",size+"px")}
+document.getElementById("plus").addEventListener("click",function(){setSize(size+3)});
+document.getElementById("minus").addEventListener("click",function(){setSize(size-3)});
+document.addEventListener("keydown",function(e){
+  if(e.target&&/INPUT|TEXTAREA/.test(e.target.tagName))return;
+  if(e.key==="ArrowRight"||e.key===" "){e.preventDefault();go(idx+1)}
+  else if(e.key==="ArrowLeft"){e.preventDefault();go(idx-1)}
+  else if(e.key==="t"||e.key==="T")toggleTimer();
+  else if(e.key==="+"||e.key==="=")setSize(size+3);
+  else if(e.key==="-")setSize(size-3);
+  else if(e.key==="f"||e.key==="F"){
+    if(!document.fullscreenElement){document.documentElement.requestFullscreen()}
+    else{document.exitFullscreen()}
+  }
+});
+
+/* ── Timer ── */
+let t0=null,tick=null;
+const clock=document.getElementById("clock"), timerBtn=document.getElementById("timerBtn");
+function fmt(x){const m=Math.floor(x/60),s=x%60;return String(m).padStart(2,"0")+":"+String(s).padStart(2,"0")}
+function elapsed(){return t0?Math.floor((Date.now()-t0)/1000):0}
+function toggleTimer(){
+  if(t0){t0=null;clearInterval(tick);timerBtn.textContent="Start"}
+  else{
+    t0=Date.now();timerBtn.textContent="Stop";
+    tick=setInterval(function(){
+      clock.textContent=fmt(elapsed());
+      clock.classList.toggle("over",elapsed()>30*60);
+    },1000);
+  }
+}
+timerBtn.addEventListener("click",toggleTimer);
+
+buildNav();setSize(size);render();
+</script>
+</body>
+</html>
