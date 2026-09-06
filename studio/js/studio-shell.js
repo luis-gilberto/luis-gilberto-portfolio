@@ -26,6 +26,7 @@
     if (p.indexOf('/studio/brand-system') !== -1) return 'brand-system';
     if (p.indexOf('/studio/assets') !== -1) return 'library';
     if (p.indexOf('/studio/intake') !== -1) return 'intake';
+    if (p.indexOf('/studio/work/') !== -1 || p.indexOf('/work/sharnay-photography') !== -1) return 'work-case';
     if (p === '/studio' || p === '/studio/' || p.indexOf('/studio/index') !== -1) return 'home';
     return 'studio';
   }
@@ -38,7 +39,8 @@
       practiceHref: '/studio/practice/',
       practiceCurrent: page === 'practice' || page === 'retrato' || page === 'revelado' || page === 'encuadre',
       strategyHref: onHome ? '#strategyiq' : '/studio/#strategyiq',
-      workHref: onHome ? '#work' : '/studio/#work',
+      workHref: page === 'work-case' ? '/studio/work/sharnay-photography/' : onHome ? '#work' : '/studio/#work',
+      workCurrent: page === 'work-case',
       contactHref: onHome ? '#contact' : '/studio/#contact',
       brandSystemHref: '/studio/brand-system/',
       brandSystemCurrent: page === 'brand-system',
@@ -58,6 +60,7 @@
       : '';
     var brandCurrent = L.brandCurrent ? ' aria-current="page"' : '';
     var practiceCurrent = L.practiceCurrent ? ' aria-current="page"' : '';
+    var workCurrent = L.workCurrent ? ' aria-current="page"' : '';
     var brandSystemCurrent = L.brandSystemCurrent ? ' aria-current="page"' : '';
 
     return (
@@ -70,7 +73,7 @@
           '<div class="nav-links" aria-label="Primary">' +
             '<a href="' + L.practiceHref + '"' + practiceCurrent + ' data-i18n-en="Practice" data-i18n-es="Práctica">Practice</a>' +
             '<a href="' + L.strategyHref + '">StrategyIQ</a>' +
-            '<a href="' + L.workHref + '" data-i18n-en="Work" data-i18n-es="Trabajo">Work</a>' +
+            '<a href="' + L.workHref + '"' + workCurrent + ' data-i18n-en="Work" data-i18n-es="Trabajo">Work</a>' +
           '</div>' +
           '<div class="nav-right">' +
             '<a class="nav-resource" href="' + L.brandSystemHref + '"' + brandSystemCurrent +
