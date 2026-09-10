@@ -11,12 +11,16 @@
     return studioRoot() + String(rel).replace(/^\//, "");
   }
 
-  function jsonUrl() {
+  var stateJsonUrl = (function () {
     var script = document.currentScript;
     if (script && script.src) {
       return script.src.replace(/costello-project-state\.js(?:\?.*)?$/, "costello-project-state.json");
     }
     return href("capabilities/costello/data/costello-project-state.json");
+  })();
+
+  function jsonUrl() {
+    return stateJsonUrl;
   }
 
   function load() {
