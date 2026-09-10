@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Costello Law Firm · Files — LG Studio</title>
+<meta name="robots" content="noindex, nofollow, noarchive" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" />
+<link rel="stylesheet" href="../_workspace/shell.css" />
+<style>
+  .current-list { margin-top: 18px; }
+  .current-list .lg-row { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1.6fr); }
+  .current-list .lg-mark { display: none; }
+  .lg-fold .lg-fold-body { max-width: none; }
+  .lg-fold .lg-row { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1.6fr); }
+  .lg-fold .lg-mark { display: none; }
+</style>
+</head>
+<body class="lg-page" data-lg-page="files" data-lg-mode="Documents and assets / Current shelf">
+  <div class="lg-grain" aria-hidden="true"></div>
+  <main class="lg-wrap lg-main">
+    <p class="lg-kicker">Files · The permanent record</p>
+    <h1 class="lg-read">Only files that exist belong on the shelf</h1>
+    <p class="lg-lede" id="lede">The Brand System Portal and current working proof are available. Expected files remain listed quietly until they are received.</p>
+
+    <article class="lg-work is-quiet" aria-labelledby="cur-title">
+      <p class="lg-status is-settled"><i></i>Current</p>
+      <h2 id="cur-title">Current shelf</h2>
+      <p class="lg-work-meta">Held · canonical or working record · presented as supplied</p>
+      <div class="current-list" id="current-list"></div>
+    </article>
+
+    <section class="lg-rail" aria-label="The file shelf">
+      <h2 class="lg-rail-label">The file shelf</h2>
+      <div id="cats"></div>
+    </section>
+
+    <details class="lg-fold">
+      <summary>Filing state</summary>
+      <div class="lg-fold-body" id="expected"></div>
+    </details>
+  </main>
+  <script src="../../capabilities/costello/data/costello-project-state.js"></script>
+  <script src="../_workspace/shell.js"></script>
+  <script>
+  function fileHref(rel) {
+    return CostelloState.href(rel);
+  }
+  function row(item) {
+    return "<div class=\"lg-row\"><strong><a href=\"" + fileHref(item.href) + "\">" + item.title +
+      "</a></strong><p class=\"lg-mark\"><i></i></p><p>" + item.note + "</p></div>";
+  }
+  fetch(CostelloState.href("capabilities/costello/data/costello-files.json"), { cache: "no-store" })
+    .then(function (res) { if (!res.ok) throw new Error("files"); return res.json(); })
+    .then(function (manifest) {
+      var byId = {};
+      manifest.categories.forEach(function (cat) {
+        cat.items.forEach(function (item) { byId[item.title] = item; });
+      });
+      var current = [
+        manifest.current,
+        byId["Costello Brand System Portal"],
+        byId["Website scope of work"],
+        byId["Kitchen review surface"]
+      ].filter(Boolean);
+      document.getElementById("lede").textContent =
+        "The Brand System Portal and current working proof are available. Expected files remain listed quietly until they are received.";
+      document.getElementById("current-list").innerHTML = current.map(row).join("");
+      document.getElementById("cats").innerHTML = manifest.categories.map(function (cat) {
+        return "<details class=\"lg-fold\">" +
+          "<summary>" + cat.label + "</summary>" +
+          "<div class=\"lg-fold-body\">" + cat.items.map(row).join("") + "</div></details>";
+      }).join("");
+      document.getElementById("expected").innerHTML = (manifest.expected || []).map(function (item) {
+        return "<div class=\"lg-row is-quiet\"><strong>" + item.label +
+          "</strong><p class=\"lg-mark is-need\"><i></i>" + item.status + "</p><p>" + item.note + "</p></div>";
+      }).join("");
+    });
+  </script>
+</body>
+</html>

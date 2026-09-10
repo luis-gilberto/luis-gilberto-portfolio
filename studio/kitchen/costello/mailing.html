@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Costello Law Firm · Mailing Timeline — LG Studio</title>
+<meta name="robots" content="noindex, nofollow, noarchive" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" />
+<link rel="stylesheet" href="../_workspace/shell.css" />
+<style>
+  :root {
+    --paper:#F1E7D6; --paper-2:#E9DCC4; --paper-3:#DFCEAE; --paper-line:#CBB894;
+    --ink:#241F1A; --ink-soft:#5B5145; --ink-faint:#8B7F6E;
+    --coral:#C9532F; --teal:#3C6A61;
+    --font-display:"Libre Baskerville","Iowan Old Style",Georgia,serif;
+    --font-util:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;
+    --font-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: var(--paper); color: var(--ink); font-family: var(--font-util); line-height: 1.5; overflow-x: clip; }
+  .wrap { width: 100%; }
+  h1,h2,p { margin: 0; }
+  .crumb { font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); }
+  .crumb a { color: var(--ink-soft); }
+  h1 { margin-top: 12px; font-family: var(--font-display); font-weight: 300; font-size: clamp(2rem,4vw,2.5rem); letter-spacing: -.02em; }
+  .lede { margin-top: 12px; max-width: 46em; color: var(--ink-soft); }
+  .hold { margin-top: 20px; padding: 14px 16px; background: var(--paper-2); border-left: 3px solid var(--coral); }
+  .key { margin-top: 18px; font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); }
+  .seq { margin-top: 28px; display: grid; gap: 0; }
+  .stop { display: grid; grid-template-columns: 7.5rem minmax(0,1fr) 8rem; gap: 16px; padding: 14px 0; border-top: 1px solid var(--paper-line); }
+  .stop .own { font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); }
+  .stop h2 { font-size: 17px; font-weight: 600; }
+  .stop .who { text-align: right; font-size: 13px; color: var(--ink-soft); }
+  .stop.current h2 { color: var(--coral); }
+  .actions { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 28px; align-items: center; }
+  .cta { display: inline-flex; background: var(--teal); color: var(--paper); padding: 10px 14px; border-radius: 6px; font-weight: 600; text-decoration: none; }
+  .link { font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+  @media (max-width: 834px) {
+    .wrap { padding: 28px 18px 64px; }
+    .stop { grid-template-columns: 1fr; gap: 4px; }
+    .stop .who { text-align: left; }
+  }
+</style>
+</head>
+<body class="lg-page" data-lg-page="overview" data-lg-mode="Overview / Referral mailing / Sequence">
+  <main class="lg-wrap lg-main">
+    <p class="crumb"><a href="./">Overview</a> · Referral mailing</p>
+    <h1>Working sequence. No guaranteed mailing date.</h1>
+    <p class="lede" id="lede"></p>
+    <p class="hold" id="hold"></p>
+    <p class="key">Client input · LG Studio action · Printer action</p>
+    <div class="seq" id="seq"></div>
+    <div class="actions">
+      <a class="cta" id="cta" href="../costello-review/">Open in Kitchen</a>
+      <a class="link" href="./">Back to Overview</a>
+    </div>
+  </main>
+  <script src="../../capabilities/costello/data/costello-project-state.js"></script>
+  <script src="../_workspace/shell.js"></script>
+  <script>
+  var TYPE = { client: "Client input", studio: "LG Studio action", printer: "Printer action" };
+  CostelloState.load().then(function (state) {
+    var mail = state.referralMailing;
+    document.getElementById("lede").textContent = mail.reviewRound + ". " + mail.copySummary + " " + mail.printerNote;
+    document.getElementById("hold").textContent = "Mailing list pending. " + mail.mailingListExpected + ". Owner: " + mail.mailingListOwner + ".";
+    document.getElementById("cta").href = CostelloState.url(state, "kitchen");
+    document.getElementById("seq").innerHTML = mail.sequence.map(function (step) {
+      return '<div class="stop ' + step.state + '">' +
+        '<p class="own">' + (TYPE[step.ownerType] || "") + "</p>" +
+        "<h2>" + step.label + "</h2>" +
+        '<p class="who">' + step.owner + "</p></div>";
+    }).join("");
+  });
+  </script>
+</body>
+</html>

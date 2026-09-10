@@ -427,6 +427,65 @@ h3 {
   font-weight: 600;
 }
 
+.ws-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  padding: 10px clamp(22px, 4vw, 52px);
+  border-bottom: 1px solid var(--clf-rule);
+  background: var(--clf-canvas);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.ws-nav span { color: var(--clf-mute); }
+.ws-nav a { color: var(--clf-ink-soft); text-decoration: none; }
+.ws-nav a:hover { color: var(--clf-ink); }
+.ws-nav a.is-here { color: var(--clf-ink); font-weight: 600; }
+
+.brief {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  margin: clamp(20px, 3vw, 28px) clamp(22px, 4vw, 52px) 0;
+  border: 1px solid var(--clf-rule-dk);
+}
+.brief > div { padding: 14px 16px; border-right: 1px solid var(--clf-rule); }
+.brief > div:last-child { border-right: 0; }
+.brief .lab {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--clf-mute);
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+.brief p { margin: 0; font-size: 13px; line-height: 1.5; color: var(--clf-ink-soft); }
+
+.cta-row { display: flex; flex-wrap: wrap; gap: 10px 16px; margin-top: 16px; align-items: center; }
+.cta {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 7px 10px;
+  border-radius: 2px;
+  color: #FFFFFF;
+  background: var(--clf-navy);
+  border: 1px solid var(--clf-navy);
+  border-bottom: 2px solid var(--clf-accent);
+}
+.cta-sub { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--clf-ink-soft); }
+.cta-sub:hover { color: var(--clf-ink); }
+
+.load-fail { margin: 24px clamp(22px, 4vw, 52px); color: var(--clf-ink-soft); font-size: 14px; }
+
 /* Responsive & Print Styles */
 @media (max-width: 900px) {
   .sheet { margin: 0; border: 0; box-shadow: none; }
@@ -437,13 +496,19 @@ h3 {
   .st:not(:first-child) { padding-left: 0; }
   .st:last-child { border-bottom: 0; }
   .two { grid-template-columns: 1fr; gap: 30px; }
+  .brief { grid-template-columns: 1fr 1fr; }
+  .brief > div:nth-child(2) { border-right: 0; }
+  .brief > div:nth-child(3), .brief > div:nth-child(4) { border-top: 1px solid var(--clf-rule); }
   .band { flex-direction: column; align-items: flex-start; gap: 12px; padding: 20px; }
   .band-meta { text-align: left; }
 }
 
 @media (max-width: 560px) {
-  .head, .streams, .two, .foot { padding-left: 20px; padding-right: 20px; }
-  .line { margin-left: 20px; margin-right: 20px; }
+  .head, .streams, .two, .foot, .ws-nav { padding-left: 20px; padding-right: 20px; }
+  .line, .brief { margin-left: 20px; margin-right: 20px; }
+  .brief { grid-template-columns: 1fr; }
+  .brief > div { border-right: 0; border-bottom: 1px solid var(--clf-rule); }
+  .brief > div:last-child { border-bottom: 0; }
   .head { padding-top: 26px; }
   h1 { font-size: 25px; line-height: 1.15; }
   .foot { gap: 8px; flex-direction: column; }
@@ -461,6 +526,7 @@ h3 {
   .line { margin-left: 0; margin-right: 0; }
 }
 </style>
+<script>location.replace("../../kitchen/costello/");</script>
 </head>
 <body>
 <div class="sheet">
@@ -482,88 +548,84 @@ h3 {
       </svg>
     </div>
     <div class="band-meta">
-      <strong>Programme Status · Update 01</strong><br>
+      <strong>Programme Status</strong><br>
       Prepared by LG Studio for Costello Law Firm
     </div>
   </div>
 
+  <nav class="ws-nav" aria-label="LG Studio workspace">
+    <span>Workspace</span>
+    <a class="is-here" href="Costello_Status_09072026.html">Program Status</a>
+    <a id="nav-timeline" href="Costello_Mailing_Timeline.html">Mailing Timeline</a>
+    <a id="nav-kitchen" href="../../kitchen/costello-review/">Kitchen</a>
+    <a id="nav-brand" href="Costello_Brand_Portal_Elevated.html">Brand System</a>
+  </nav>
+
   <div class="head">
     <div>
-      <p class="kick">Programme Status · Update 01</p>
+      <p class="kick">Programme Status</p>
       <div class="kick-rule"></div>
       <h1>Three workstreams, one plan</h1>
     </div>
     <div class="asof">
-      <strong>As of 8 September 2026</strong><br>
-      Next update Monday 14 September
+      <strong id="lastUpdated">Last updated</strong><br>
+      <span id="updatedBy">LG Studio</span>
     </div>
   </div>
 
-  <!-- Strict Zero-Italics: Emphasized with Upright Weight & Orange Accent Underline -->
-  <div class="line">
-    The referral campaign is moving. The website agreement is being finalized and the build begins once agreement and access are complete. <span class="highlight">The immediate production blocker is the print quote.</span>
+  <div class="line" id="statusLine">
+    Loading current programme state.
+  </div>
+
+  <div class="brief" id="briefing">
+    <div><p class="lab">What is moving</p><p id="brief-moving"></p></div>
+    <div><p class="lab">What is waiting</p><p id="brief-waiting"></p></div>
+    <div><p class="lab">Who owns the next move</p><p id="brief-next"></p></div>
+    <div><p class="lab">What changed</p><p id="brief-changed"></p></div>
   </div>
 
   <div class="streams">
 
-    <!-- 01: Referral Letters -->
-    <div class="st">
-      <span class="pill go">Moving</span>
-      <h2>Referral letters</h2>
-      <p class="sub">Letter 01 &middot; 500 recipients</p>
-      <p class="state">Agreement signed and paid. Letter 01 is approved. Production now depends on the final mailing list, final production copy, and confirmed printer timing.</p>
-      <ul>
-        <li class="done">Scope of work signed, initial payment received</li>
-        <li class="done">Letter 01 drafted, edited and approved</li>
-        <li class="done">Firm address confirmed for production</li>
-        <li class="hold">Printer quote outstanding</li>
-        <li class="hold">Final mailing list still open</li>
-        <li class="hold">Nari / final production version still outstanding</li>
-      </ul>
+    <div class="st" id="stream-mail">
+      <span class="pill go" id="mail-pill">Moving</span>
+      <h2>Referral mailing</h2>
+      <p class="sub" id="mail-sub"></p>
+      <p class="state" id="mail-state"></p>
+      <ul id="mail-list"></ul>
+      <div class="cta-row">
+        <a class="cta" id="mail-cta" href="../../kitchen/costello-review/">Open RD2 in the Kitchen</a>
+        <a class="cta-sub" id="mail-timeline" href="Costello_Mailing_Timeline.html">View mailing timeline</a>
+      </div>
       <div class="milestone">
         <span class="lab">Next milestone</span>
-        <span class="val">Files to the printer Wednesday the 9th</span>
-        <span class="who k">Costello: final list + letter</span>
+        <span class="val" id="mail-next"></span>
+        <span class="who k" id="mail-who"></span>
       </div>
     </div>
 
-    <!-- 02: Website -->
-    <div class="st">
-      <span class="pill wait">Finalizing</span>
+    <div class="st" id="stream-web">
+      <span class="pill wait" id="web-pill">Finalizing</span>
       <h2>Website</h2>
-      <p class="sub">Six pages &middot; $18,500 fixed</p>
-      <p class="state">Scope is settled and priced. Contract revisions are being finalized for counsel review. The build clock begins once the agreement is executed and required access is complete.</p>
-      <ul>
-        <li class="done">Scope agreed: six pages, one covering all practice areas</li>
-        <li class="done">Eight counsel comments addressed; Kris reports alignment</li>
-        <li class="done">Individual practice-area pages confirmed as future scope</li>
-        <li class="hold">Contract revisions being finalized for counsel review</li>
-        <li class="hold">Prior-vendor access being resolved by the firm</li>
-      </ul>
+      <p class="sub" id="web-sub"></p>
+      <p class="state" id="web-state"></p>
+      <ul id="web-list"></ul>
       <div class="milestone">
         <span class="lab">Next milestone</span>
-        <span class="val">Signature, then three weeks from access</span>
-        <span class="who k">Costello: counsel review</span>
+        <span class="val" id="web-next"></span>
+        <span class="who k" id="web-who"></span>
       </div>
     </div>
 
-    <!-- 03: Q4 Plan -->
-    <div class="st">
-      <span class="pill next">Proposed</span>
-      <h2>Q4 integrated plan</h2>
-      <p class="sub">Not yet scoped</p>
-      <p class="state">Kris has asked LG Studio to map a coordinated Q4 approach across additional pages, speaking, writing, the letter programme, and direct-market growth. This will be scoped separately once the website is underway.</p>
-      <ul>
-        <li>Additional pages, including practice-area landing pages</li>
-        <li>Speaking programme and the group being assembled</li>
-        <li>Writing and thought leadership</li>
-        <li>Letters two through five</li>
-        <li>Sequencing so each reinforces the others</li>
-      </ul>
+    <div class="st" id="stream-q4">
+      <span class="pill next" id="q4-pill">Proposed</span>
+      <h2>Q4 plan</h2>
+      <p class="sub" id="q4-sub"></p>
+      <p class="state" id="q4-state"></p>
+      <ul id="q4-list"></ul>
       <div class="milestone">
-        <span class="lab">Next milestone</span>
-        <span class="val">Outline once the site is in build</span>
-        <span class="who">LG Studio</span>
+        <span class="lab">Next conversation</span>
+        <span class="val" id="q4-next"></span>
+        <span class="who" id="q4-who">Subject to confirmation</span>
       </div>
     </div>
 
@@ -583,15 +645,7 @@ h3 {
     <div class="open">
       <h3>Open</h3>
       <div class="h3r"></div>
-      <ul>
-        <li><b>Print quote and turnaround.</b> The immediate production blocker. Final cost and timing remain subject to the printer quote.<span class="tag">LG Studio</span></li>
-        <li><b>Final mailing list.</b> 300 now, 500 expected. Print can proceed at either number.<span class="tag">Costello</span></li>
-        <li><b>Final production letter / production copy.</b> Nari&rsquo;s edited version still outstanding.<span class="tag">Costello</span></li>
-        <li><b>Prior-vendor access.</b> Being negotiated by the firm.<span class="tag">Costello</span></li>
-        <li><b>Insurance coverage and limits.</b> Quotes / coverage to be confirmed and incorporated into the revised agreement.<span class="tag">LG Studio</span></li>
-        <li><b>Final contract execution / counsel review.</b> All eight counsel comments have been addressed; Kris reports alignment with the proposed responses, including tightened language on liability, insurance and schedule credit.<span class="tag">Kris update</span></li>
-        <li><b>Where the work comes from.</b> Direct-market growth versus attorney referral remains an open strategic question, because it shapes both the site architecture and what the letters are for.<span class="tag">For discussion</span></li>
-      </ul>
+      <ul id="open-list"></ul>
     </div>
   </div>
 
@@ -599,10 +653,102 @@ h3 {
   <div class="foot">
     <span><strong>Costello Law Firm, PLLC</strong> &middot; Programme Governance</span>
     <span>Prepared by LG Studio for Costello Law Firm</span>
-    <span>Next Update: Monday 14 September 2026</span>
+    <span id="foot-updated">Last updated 9 September 2026</span>
     <span>Confidential</span>
   </div>
 
 </div>
+<script src="data/costello-project-state.js"></script>
+<script>
+(function () {
+  function set(id, text) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = text || "";
+  }
+  function items(id, rows) {
+    var ul = document.getElementById(id);
+    if (!ul) return;
+    ul.innerHTML = rows.map(function (row) {
+      return "<li class=\"" + (row.cls || "") + "\">" + row.html + "</li>";
+    }).join("");
+  }
+
+  CostelloState.load().then(function (state) {
+    var mail = state.referralMailing;
+    var web = state.website;
+    var q4 = state.q4;
+    var brief = state.briefing;
+    var kitchen = CostelloState.url(state, "kitchen");
+    var timeline = CostelloState.url(state, "timeline");
+    var brand = CostelloState.url(state, "brandSystem");
+
+    document.getElementById("nav-kitchen").href = kitchen;
+    document.getElementById("nav-timeline").href = timeline;
+    document.getElementById("nav-brand").href = brand;
+    document.getElementById("mail-cta").href = kitchen;
+    document.getElementById("mail-timeline").href = timeline;
+
+    set("lastUpdated", "Last updated " + state.meta.lastUpdatedLabel);
+    set("updatedBy", "Updated by " + state.meta.updatedBy);
+    set("foot-updated", "Last updated " + state.meta.lastUpdatedLabel);
+    document.getElementById("statusLine").innerHTML =
+      "The referral campaign is moving in " + mail.reviewRound +
+      ". The website is finalizing. <span class=\"highlight\">" +
+      mail.remainingProductionInputs + " production inputs remain on the mailing.</span>";
+
+    set("brief-moving", brief.moving);
+    set("brief-waiting", brief.waiting);
+    set("brief-next", brief.nextOwner);
+    set("brief-changed", brief.changed);
+
+    set("mail-pill", mail.overallStatus);
+    set("mail-sub", mail.reviewRound + " · " + mail.resolvedCount + " resolved · " + mail.remainingProductionInputs + " production inputs remaining");
+    set("mail-state", mail.copySummary + " " + mail.reviewStatus + " The letter is not approved for production.");
+    items("mail-list", [
+      { cls: "done", html: "Direct line resolved: " + mail.directLine.value },
+      { cls: "done", html: "Client Referrals resolved for current proof: " + mail.clientReferrals.email + " · " + mail.clientReferrals.phone },
+      { cls: "hold", html: "Revised copy in review · not yet approved" },
+      { cls: "hold", html: "Mailing list pending · " + mail.mailingListExpected },
+      { cls: "hold", html: "Signature asset pending delivery · " + mail.signatureOwner }
+    ]);
+    set("mail-next", "Mailing list and signature asset");
+    set("mail-who", mail.mailingListOwner + " + " + mail.signatureOwner);
+
+    set("web-pill", web.overallStatus);
+    set("web-sub", "Ready to begin once commercial start conditions are met");
+    set("web-state", web.contractStatus + " " + web.paymentStatus);
+    items("web-list", [
+      { cls: "done", html: "Revised contract sent today after attorney feedback" },
+      { cls: "hold", html: web.paymentStatus },
+      { cls: "hold", html: web.priorProviderStatus },
+      { html: web.startCondition },
+      { html: web.targetSchedule }
+    ]);
+    set("web-next", web.nextMove);
+    set("web-who", "Kris");
+
+    set("q4-pill", "Proposed");
+    set("q4-sub", q4.overallStatus);
+    set("q4-state", q4.purpose);
+    items("q4-list", [
+      { html: q4.scopeStatus },
+      { html: q4.nextConversation }
+    ]);
+    set("q4-next", q4.nextConversation);
+
+    items("open-list", [
+      { html: "<b>Mailing list.</b> " + mail.mailingListExpected + ".<span class=\"tag\">" + mail.mailingListOwner + "</span>" },
+      { html: "<b>Signature asset.</b> " + mail.signatureNote + "<span class=\"tag\">" + mail.signatureOwner + "</span>" },
+      { html: "<b>Revised letter copy.</b> Still in review. Not approved for production.<span class=\"tag\">In review</span>" },
+      { html: "<b>Website agreement and Phase A payment.</b> " + web.paymentStatus + "<span class=\"tag\">Kris</span>" },
+      { html: "<b>Prior-provider closeout.</b> " + web.accessStatus + "<span class=\"tag\">External</span>" },
+      { html: "<b>Printer timing.</b> " + mail.printerNote + "<span class=\"tag\">LG Studio</span>" }
+    ]);
+  }).catch(function () {
+    document.getElementById("statusLine").textContent =
+      "Current programme state could not be loaded. Open this page from the LG Studio workspace.";
+  });
+})();
+</script>
 </body>
 </html>
