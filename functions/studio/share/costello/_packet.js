@@ -21,7 +21,8 @@ export const ALLOWED_FILES = Object.freeze({
   },
 });
 
-export const ASSET_DIR = "/studio/kitchen/costello/documents/";
+export const ASSET_DIR = "/studio/share/packet/";
+export const ASSET_FALLBACK_DIR = "/studio/kitchen/costello/documents/";
 
 export const SHARE_HEADERS = Object.freeze({
   "X-Robots-Tag": "noindex, nofollow, noarchive",
@@ -62,7 +63,7 @@ export function resolveShareRequest({ path, token }) {
   return {
     ok: true,
     filename,
-    assetPath: ASSET_DIR + filename,
+    assetPaths: [ASSET_DIR + filename, ASSET_FALLBACK_DIR + filename],
     contentType: meta.contentType,
     contentDisposition: `${meta.disposition}; filename="${filename}"`,
   };
