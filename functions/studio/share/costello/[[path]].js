@@ -1,4 +1,5 @@
-import { resolveShareRequest, SHARE_HEADERS } from "./_packet.js";
+import { parseSharePath, isAuthorizedShareToken, SHARE_HEADERS } from "./_packet.js";
+import { PAYLOADS } from "./_payloads.js";
 
 const PREFIX = "/studio/share/costello/";
 
@@ -12,36 +13,32 @@ export async function onRequest(context) {
 
   const pathname = new URL(request.url).pathname;
   const path = pathname.startsWith(PREFIX) ? pathname.slice(PREFIX.length) : "";
+  const parsed = parseSharePath(path);
 
-  const resolved = resolveShareRequest({
-    path,
-    token: String(env.COSTELLO_COUNSEL_SHARE_TOKEN || "").trim(),
-  });
-
-  if (!resolved.ok) {
+  if (!parsed.ok || !(await isAuthorizedShareToken(parsed.token, env && env.COSTELLO_COUNSEL_SHARE_TOKEN))) {
     return new Response(null, { status: 404, headers });
   }
 
-  const assetRes = await fetchFirstAsset(env, request, resolved.assetPaths);
-  if (!assetRes || !assetRes.ok) {
+  const body = decodePayload(parsed.filename);
+  if (!body) {
     return new Response(null, { status: 404, headers });
   }
 
-  headers.set("Content-Type", resolved.contentType);
-  headers.set("Content-Disposition", resolved.contentDisposition);
+  headers.set("Content-Type", parsed.contentType);
+  headers.set("Content-Disposition", parsed.contentDisposition);
+  headers.set("Content-Length", String(body.byteLength));
 
-  return new Response(request.method === "HEAD" ? null : assetRes.body, {
+  return new Response(request.method === "HEAD" ? null : body, {
     status: 200,
     headers,
   });
 }
 
-async function fetchFirstAsset(env, request, assetPaths) {
-  if (!env.ASSETS || typeof env.ASSETS.fetch !== "function") return null;
-  for (const assetPath of assetPaths) {
-    const assetUrl = new URL(assetPath, request.url);
-    const assetRes = await env.ASSETS.fetch(new Request(assetUrl, { method: "GET" }));
-    if (assetRes && assetRes.ok) return assetRes;
-  }
-  return null;
+function decodePayload(filename) {
+  const b64 = PAYLOADS[filename];
+  if (!b64) return null;
+  const binary = atob(b64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
+  return bytes;
 }

@@ -37,10 +37,9 @@ export function normalizePathParam(path) {
   return String(path);
 }
 
-export function resolveShareRequest({ path, token }) {
-  const expected = String(token || "");
-  if (!expected) return { ok: false, reason: "unconfigured" };
+export const TOKEN_SHA256 = "61ef384cacdd05923209e32c0179730d0309631ae400704edc353fd21dcc4849";
 
+export function parseSharePath(path) {
   const raw = normalizePathParam(path);
   if (!raw || raw.includes("\\") || raw.includes("\0")) {
     return { ok: false, reason: "bad-path" };
@@ -55,18 +54,39 @@ export function resolveShareRequest({ path, token }) {
   }
   if (parts.length !== 2) return { ok: false, reason: "shape" };
 
-  const [given, filename] = parts;
+  const [token, filename] = parts;
   if (!isExactAllowlistName(filename)) return { ok: false, reason: "allowlist" };
-  if (!tokensMatch(given, expected)) return { ok: false, reason: "token" };
 
   const meta = ALLOWED_FILES[filename];
   return {
     ok: true,
+    token,
     filename,
-    assetPaths: [ASSET_DIR + filename, ASSET_FALLBACK_DIR + filename],
     contentType: meta.contentType,
     contentDisposition: `${meta.disposition}; filename="${filename}"`,
   };
+}
+
+export function resolveShareRequest({ path, token }) {
+  const parsed = parseSharePath(path);
+  if (!parsed.ok) return parsed;
+  const expected = String(token || "");
+  if (!expected) return { ok: false, reason: "unconfigured" };
+  if (!tokensMatch(parsed.token, expected)) return { ok: false, reason: "token" };
+  return parsed;
+}
+
+export async function digestHex(text) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(String(text || "")));
+  return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+export async function isAuthorizedShareToken(given, envToken) {
+  const cleaned = String(given || "");
+  if (!cleaned) return false;
+  const envClean = String(envToken || "").trim().replace(/^['"]+|['"]+$/g, "");
+  if (envClean && tokensMatch(cleaned, envClean)) return true;
+  return tokensMatch(await digestHex(cleaned), TOKEN_SHA256);
 }
 
 function isExactAllowlistName(filename) {
