@@ -1,9 +1,9 @@
 export const ALLOWED_FILES = Object.freeze({
-  "Costello_Website_SOW_Revised_2026-09-10.docx": {
+  "Costello_Website_SOW_Itemized_Final_2026-09-10.docx": {
     contentType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     disposition: "attachment",
   },
-  "Costello_Website_SOW_Redline_2026-09-10.docx": {
+  "Costello_Website_SOW_Itemized_Redline_2026-09-10.docx": {
     contentType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     disposition: "attachment",
   },

@@ -88,7 +88,7 @@ try {
   await check("invalid token", `/not-the-token/COI_General_Liability.pdf`, { status: 404, empty: true });
   await check("unapproved filename", `/${token}/Costello_Referral_Letter_PROOF.pdf`, { status: 404, empty: true });
   await check("path traversal", `/${token}/../costello-review/index.html`, { status: 404, empty: true });
-  await check("encoded traversal", `/${token}/%2e%2e/Costello_Website_SOW_Revised_2026-09-10.docx`, { status: 404, empty: true });
+  await check("encoded traversal", `/${token}/%2e%2e/Costello_Website_SOW_Itemized_Final_2026-09-10.docx`, { status: 404, empty: true });
   await check("directory", `/`, { status: 404, empty: true });
   await check("token only", `/${token}/`, { status: 404, empty: true });
 } finally {
