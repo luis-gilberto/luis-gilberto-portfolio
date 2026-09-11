@@ -42,8 +42,8 @@
         facts: [
           fact("Contract", "SOW-02"),
           fact("Current state", referral.reviewRound || referral.overallStatus),
-          fact("Current dependency", dependency),
-          fact("Next client action", briefing.nextOwner)
+          fact("Preferred path", referral.printerStatus || "Connect Printing · pending Costello approval"),
+          fact("Current dependency", dependency)
         ].join("")
       };
     }

@@ -34,6 +34,7 @@
       <header class="art-head">
         <h2 id="plans-title" class="art-label">Plans &amp; Operating Maps</h2>
       </header>
+      <div class="plan-orient" id="orientation"></div>
       <div class="art-plans-intro" id="plans-intro"></div>
       <div class="plan-grid" id="plans-list"></div>
     </section>
@@ -174,7 +175,7 @@
     return html;
   }
   function orderedCategories(categories) {
-    var preferred = ["agreements", "review", "strategy", "final", "assets", "archive"];
+    var preferred = ["agreements", "review", "strategy", "final", "assets", "vendor", "archive"];
     var seen = {};
     var ordered = [];
     preferred.forEach(function (id) {
@@ -208,7 +209,7 @@
     }
     if (item.currentFrom === "referralMailing") {
       var mailing = (state && state.referralMailing) || {};
-      if (mailing.mailingListStatus === "Pending") return "mailing-list";
+      if (/Pending/i.test(mailing.mailingListStatus || "")) return "mailing-list";
       if (mailing.openInputs && mailing.openInputs.indexOf("Mailing list") >= 0) return "mailing-list";
       return first;
     }
@@ -257,6 +258,31 @@
       "<div class=\"plan-track\">" + labels + "</div>" +
       "<div class=\"plan-panels\">" + panels + "</div></div>";
   }
+  function planRecommendation(item) {
+    var rec = item.recommendation;
+    if (!rec) return "";
+    var details = [
+      "First-Class postage included",
+      "CASS/NCOA included",
+      "personalization included",
+      "perfect-match fulfillment included",
+      "local Seattle vendor",
+      "next-business-day PDF proof",
+      "five-working-day production path",
+      "USPS delivery remains carrier-dependent"
+    ];
+    return "<aside class=\"plan-note\">" +
+      "<p class=\"plan-note-kicker\">Production path</p>" +
+      "<p class=\"plan-note-status\">Connect Printing · preferred pending approval</p>" +
+      "<p class=\"plan-note-facts\">" + escapeHtml(rec.quote || "$1,987.58") +
+        " · next-business-day proof · 5 working days to USPS handoff</p>" +
+      "<p class=\"plan-note-support\">Includes First-Class postage, CASS/NCOA, personalization and perfect-match fulfillment.</p>" +
+      "<p class=\"plan-note-approval\">Approval needed: " + escapeHtml(rec.approval || "Costello written approval of vendor + third-party spend") + "</p>" +
+      "<details class=\"plan-note-more\">" +
+        "<summary>View production details</summary>" +
+        "<p>" + details.join(" · ") + ".</p>" +
+      "</details></aside>";
+  }
   function planCard(item, state) {
     var reference = !item.href;
     var badge = item.kind ? "<span class=\"file-badge\">" + escapeHtml(item.kind) + "</span>" : "";
@@ -281,6 +307,7 @@
       title +
       "<p class=\"plan-summary\">" + escapeHtml(item.summary || "") + "</p>" +
       planMarks(item) +
+      planRecommendation(item) +
       planTrack(item, currentId) +
       "<div class=\"plan-card-foot\">" +
         "<a class=\"plan-open\" href=\"" + fileHref(item.href) + "\" target=\"_blank\" rel=\"noopener\">Open full plan ↗</a>" +
@@ -309,6 +336,15 @@
       document.getElementById("current-list").innerHTML = shelf.map(artifactRow).join("");
       document.getElementById("cur-count").textContent = shelf.length + " records";
       var plans = manifest.plans || {};
+      var orientation = manifest.orientation || {};
+      var orient = orientation.item;
+      document.getElementById("orientation").innerHTML = orient ? (
+        "<a href=\"" + fileHref(orient.href) + "\">" +
+          "<p class=\"plan-orient-kicker\">" + escapeHtml(orientation.label || "Orientation") + " · " + escapeHtml(orient.status || "") + "</p>" +
+          "<h3>" + escapeHtml(orient.title || "How the Work Connects") + "</h3>" +
+          "<p>" + escapeHtml(orient.summary || "") + "</p>" +
+        "</a>"
+      ) : "";
       document.getElementById("plans-intro").innerHTML = (plans.intro || []).map(function (line) {
         return "<p>" + escapeHtml(line) + "</p>";
       }).join("");
