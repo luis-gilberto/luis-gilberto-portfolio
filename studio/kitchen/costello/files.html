@@ -11,14 +11,91 @@
 <link rel="stylesheet" href="../_workspace/shell.css" />
 <style>
   .current-list { margin-top: 18px; }
-  .current-list .lg-row { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1.6fr); }
-  .current-list .lg-mark { display: none; }
-  .lg-fold .lg-fold-body { max-width: none; }
+  .current-list .lg-row,
   .lg-fold .lg-row { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1.6fr); }
+  .current-list .lg-mark,
   .lg-fold .lg-mark { display: none; }
+  .lg-fold .lg-fold-body { max-width: none; }
+  .file-sign {
+    margin-top: 18px;
+    padding: 22px 22px 20px;
+    background: var(--lg-sheet-face);
+    box-shadow: var(--lg-sheet);
+    border-left: 2px solid var(--lg-coral);
+  }
+  .file-sign .lg-kicker { margin: 0; }
+  .file-sign h3 {
+    margin: 10px 0 0;
+    font-family: var(--lg-display);
+    font-size: 1.55rem;
+    font-weight: 400;
+    line-height: 1.2;
+    color: var(--lg-ink);
+  }
+  .file-sign .file-support {
+    margin: 10px 0 0;
+    max-width: 34rem;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--lg-ink-soft);
+  }
+  .file-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 10px;
+    margin-top: 14px;
+  }
+  .file-icon {
+    display: inline-flex;
+    width: 16px;
+    height: 16px;
+    color: var(--lg-ink-soft);
+  }
+  .file-icon svg { display: block; width: 16px; height: 16px; }
+  .file-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 6px;
+    border: 1px solid var(--lg-line);
+    font-family: var(--lg-mono);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--lg-ink-faint);
+  }
+  .file-name {
+    font-family: var(--lg-mono);
+    font-size: 12px;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--lg-ink);
+    word-break: break-all;
+  }
+  .file-sign .lg-go { margin-top: 18px; }
+  .file-steps {
+    margin: 16px 0 0;
+    padding-left: 1.15em;
+    max-width: 34rem;
+    color: var(--lg-ink-soft);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .file-steps li + li { margin-top: 4px; }
+  .file-row-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px 10px;
+  }
+  .file-row .file-name { margin: 6px 0 0; }
+  .file-row.is-secondary strong,
+  .file-row.is-secondary .file-name,
+  .file-row.is-secondary p { color: var(--lg-ink-faint); }
+  .lg-fold .file-sign { margin-top: 8px; }
 </style>
 </head>
-<body class="lg-page" data-lg-page="files" data-lg-mode="Documents and assets / Current shelf">
+<body class="lg-page" data-lg-page="files" data-lg-mode="Documents and assets / Signature copy">
   <div class="lg-grain" aria-hidden="true"></div>
   <main class="lg-wrap lg-main">
     <p class="lg-kicker">Files · The permanent record</p>
@@ -55,16 +132,59 @@
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;");
   }
+  function fileName(href) {
+    return decodeURIComponent(String(href || "").split("/").pop() || "");
+  }
+  function fileKind(href) {
+    var name = fileName(href);
+    if (/\.pdf$/i.test(name)) return "PDF";
+    if (/\.docx$/i.test(name)) return "DOCX";
+    return "";
+  }
+  function fileIcon() {
+    return "<span class=\"file-icon\" aria-hidden=\"true\"><svg viewBox=\"0 0 16 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.25\"><path d=\"M4.2 1.75h5.1L12 4.6v9.65H4.2z\"/><path d=\"M9.2 1.75V4.7H12\"/></svg></span>";
+  }
+  function fileMeta(item) {
+    var kind = fileKind(item.href);
+    if (!kind) return "";
+    return "<div class=\"file-meta\">" + fileIcon() +
+      "<span class=\"file-badge\">" + kind + "</span>" +
+      "<span class=\"file-name\">" + escapeHtml(fileName(item.href)) + "</span></div>";
+  }
+  var signCount = 0;
+  function signatureCard(item) {
+    signCount += 1;
+    var titleId = "sign-title-" + signCount;
+    return "<article class=\"file-sign\" aria-labelledby=\"" + titleId + "\">" +
+      "<p class=\"lg-kicker\">" + escapeHtml(item.kicker || "Website SOW · Signature copy") + "</p>" +
+      "<h3 id=\"" + titleId + "\">" + escapeHtml(item.title) + "</h3>" +
+      "<p class=\"file-support\">" + escapeHtml(item.note || "") + "</p>" +
+      fileMeta(item) +
+      "<a class=\"lg-go\" href=\"" + fileHref(item.href) + "\">" + escapeHtml(item.cta || "Download signed PDF") + "</a>" +
+      "<ol class=\"file-steps\">" +
+        "<li>Download the signed PDF</li>" +
+        "<li>Add Costello Law Firm’s signature</li>" +
+        "<li>Reply to Luis with the countersigned PDF</li>" +
+      "</ol></article>";
+  }
   function row(item) {
     if (!item || !item.href) return "";
+    if (item.role === "signature-copy") return signatureCard(item);
     var extra = "";
     if (item.actions && item.actions.length) {
       extra = item.actions.map(function (action) {
         return " · <a href=\"" + fileHref(action.href) + "\">" + escapeHtml(action.label) + "</a>";
       }).join("");
     }
-    return "<div class=\"lg-row\"><strong><a href=\"" + fileHref(item.href) + "\">" +
-      escapeHtml(item.title) + "</a></strong><p class=\"lg-mark\"><i></i></p><p>" +
+    var secondary = item.role === "reference" ? " is-secondary" : "";
+    var kind = fileKind(item.href);
+    var title = kind
+      ? "<div><div class=\"file-row-head\">" + fileIcon() + "<span class=\"file-badge\">" + kind + "</span>" +
+        "<strong><a href=\"" + fileHref(item.href) + "\">" + escapeHtml(item.title) + "</a></strong></div>" +
+        "<p class=\"file-name\">" + escapeHtml(fileName(item.href)) + "</p></div>"
+      : "<strong><a href=\"" + fileHref(item.href) + "\">" + escapeHtml(item.title) + "</a></strong>";
+    return "<div class=\"lg-row file-row" + secondary + "\">" + title +
+      "<p class=\"lg-mark\"><i></i></p><p>" +
       escapeHtml(item.note || "") + extra + "</p></div>";
   }
   function categoryBody(cat) {
@@ -95,7 +215,8 @@
       document.getElementById("current-list").innerHTML = current.map(row).join("");
       document.getElementById("cats").innerHTML = manifest.categories.map(function (cat) {
         if (!(cat.items && cat.items.length)) return "";
-        return "<details class=\"lg-fold\">" +
+        var open = cat.id === "agreements" ? " open" : "";
+        return "<details class=\"lg-fold\"" + open + ">" +
           "<summary>" + escapeHtml(cat.label) + "</summary>" +
           "<div class=\"lg-fold-body\">" + categoryBody(cat) + "</div></details>";
       }).join("");
