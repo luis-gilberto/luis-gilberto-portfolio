@@ -30,6 +30,14 @@
       <div class="art-register" id="current-list"></div>
     </section>
 
+    <section class="art-section art-plans" aria-labelledby="plans-title">
+      <header class="art-head">
+        <h2 id="plans-title" class="art-label">Plans &amp; Operating Maps</h2>
+      </header>
+      <div class="art-plans-intro" id="plans-intro"></div>
+      <div class="plan-grid" id="plans-list"></div>
+    </section>
+
     <section class="art-section is-permanent" aria-label="The file shelf">
       <header class="art-head">
         <h2 class="art-label">The file shelf</h2>
@@ -165,9 +173,126 @@
     });
     return html;
   }
-  fetch(CostelloState.href("capabilities/costello/data/costello-files.json"), { cache: "no-store" })
-    .then(function (res) { if (!res.ok) throw new Error("files"); return res.json(); })
-    .then(function (manifest) {
+  function orderedCategories(categories) {
+    var preferred = ["agreements", "review", "strategy", "final", "assets", "archive"];
+    var seen = {};
+    var ordered = [];
+    preferred.forEach(function (id) {
+      categories.forEach(function (cat) {
+        if (cat.id === id) {
+          ordered.push(cat);
+          seen[id] = true;
+        }
+      });
+    });
+    categories.forEach(function (cat) {
+      if (!seen[cat.id]) ordered.push(cat);
+    });
+    return ordered;
+  }
+  function planRail(item) {
+    var kind = item.railKind === "points" ? " is-points" : " is-sequence";
+    return "<ol class=\"plan-rail" + kind + "\">" +
+      (item.rail || []).map(function (step) {
+        return "<li>" + escapeHtml(step) + "</li>";
+      }).join("") +
+      "</ol>";
+  }
+  function currentStepId(item, state) {
+    var first = item.steps && item.steps[0] ? item.steps[0].id : "";
+    if (item.currentFrom === "website") {
+      var website = (state && state.website) || {};
+      if (/Awaiting Costello signature/i.test(website.contractStatus || "")) return "activation";
+      if (website.blockers && website.blockers.length) return "activation";
+      return first;
+    }
+    if (item.currentFrom === "referralMailing") {
+      var mailing = (state && state.referralMailing) || {};
+      if (mailing.mailingListStatus === "Pending") return "mailing-list";
+      if (mailing.openInputs && mailing.openInputs.indexOf("Mailing list") >= 0) return "mailing-list";
+      return first;
+    }
+    return first;
+  }
+  function stepPhase(steps, stepId, currentId) {
+    var ids = (steps || []).map(function (step) { return step.id; });
+    var here = ids.indexOf(stepId);
+    var now = ids.indexOf(currentId);
+    if (here === now) return "now";
+    if (now >= 0 && here >= 0 && here < now) return "done";
+    return "ahead";
+  }
+  function planMarks(item) {
+    if (!(item.marks && item.marks.length)) return "";
+    return "<dl class=\"plan-marks\">" + item.marks.map(function (mark) {
+      return "<div><dt>" + escapeHtml(mark.value) + "</dt><dd>" + escapeHtml(mark.label) + "</dd></div>";
+    }).join("") + "</dl>";
+  }
+  function planDetail(step) {
+    if (!step) return "";
+    return "<div class=\"plan-detail\">" +
+      "<div><p class=\"plan-detail-label\">What happens</p><p>" + escapeHtml(step.happens || "") + "</p></div>" +
+      "<div><p class=\"plan-detail-label\">What you do</p><p>" + escapeHtml(step.youDo || "") + "</p></div>" +
+      "<div><p class=\"plan-detail-label\">Who · time</p><p>" + escapeHtml(step.who || "") +
+        " · " + escapeHtml(step.time || "") + "</p></div>" +
+      "</div>";
+  }
+  function planTrack(item, currentId) {
+    var group = "plan-" + item.id;
+    var inputs = "";
+    var labels = "";
+    var panels = "";
+    (item.steps || []).forEach(function (step) {
+      var phase = stepPhase(item.steps, step.id, currentId);
+      var id = group + "-" + step.id;
+      inputs += "<input class=\"plan-step-input\" type=\"radio\" name=\"" + group + "\" id=\"" + id + "\"" +
+        (phase === "now" ? " checked" : "") + ">";
+      labels += "<label class=\"plan-step is-" + phase + "\" for=\"" + id + "\"" +
+        (phase === "now" ? " aria-current=\"step\"" : "") + ">" +
+        "<span class=\"plan-step-dot\" aria-hidden=\"true\"></span>" +
+        "<span class=\"plan-step-label\">" + escapeHtml(step.label) + "</span></label>";
+      panels += planDetail(step);
+    });
+    return "<div class=\"plan-instrument\">" + inputs +
+      "<div class=\"plan-track\">" + labels + "</div>" +
+      "<div class=\"plan-panels\">" + panels + "</div></div>";
+  }
+  function planCard(item, state) {
+    var reference = !item.href;
+    var badge = item.kind ? "<span class=\"file-badge\">" + escapeHtml(item.kind) + "</span>" : "";
+    var title = "<h3>" + escapeHtml(item.title) + "</h3>";
+    if (reference) {
+      return "<article class=\"plan-card is-reference\">" +
+        "<div class=\"plan-card-top\">" +
+          "<p class=\"plan-status\">" + escapeHtml(item.status || "") + "</p>" +
+        "</div>" +
+        title +
+        "<p class=\"plan-summary\">" + escapeHtml(item.summary || "") + "</p>" +
+        planRail(item) +
+        "<p class=\"plan-ref-note\">No Costello document supplied · reference only</p>" +
+        "</article>";
+    }
+    var currentId = currentStepId(item, state);
+    return "<article class=\"plan-card is-track\">" +
+      "<div class=\"plan-card-top\">" +
+        "<p class=\"plan-status\">" + escapeHtml(item.status || "") + "</p>" +
+        badge +
+      "</div>" +
+      title +
+      "<p class=\"plan-summary\">" + escapeHtml(item.summary || "") + "</p>" +
+      planMarks(item) +
+      planTrack(item, currentId) +
+      "<div class=\"plan-card-foot\">" +
+        "<a class=\"plan-open\" href=\"" + fileHref(item.href) + "\" target=\"_blank\" rel=\"noopener\">Open full plan ↗</a>" +
+      "</div></article>";
+  }
+  Promise.all([
+    fetch(CostelloState.href("capabilities/costello/data/costello-files.json"), { cache: "no-store" })
+      .then(function (res) { if (!res.ok) throw new Error("files"); return res.json(); }),
+    CostelloState.load().catch(function () { return null; })
+  ]).then(function (results) {
+      var manifest = results[0];
+      var state = results[1];
       var byId = {};
       manifest.categories.forEach(function (cat) {
         (cat.items || []).forEach(function (item) {
@@ -183,7 +308,14 @@
       document.getElementById("priority").innerHTML = priority.map(priorityArtifact).join("");
       document.getElementById("current-list").innerHTML = shelf.map(artifactRow).join("");
       document.getElementById("cur-count").textContent = shelf.length + " records";
-      document.getElementById("cats").innerHTML = manifest.categories.map(function (cat) {
+      var plans = manifest.plans || {};
+      document.getElementById("plans-intro").innerHTML = (plans.intro || []).map(function (line) {
+        return "<p>" + escapeHtml(line) + "</p>";
+      }).join("");
+      document.getElementById("plans-list").innerHTML = (plans.items || []).map(function (item) {
+        return planCard(item, state);
+      }).join("");
+      document.getElementById("cats").innerHTML = orderedCategories(manifest.categories).map(function (cat) {
         if (!(cat.items && cat.items.length)) return "";
         var open = cat.id === "agreements" ? " open" : "";
         var tone = cat.id === "archive" ? " is-archive" : "";
