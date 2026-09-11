@@ -7,6 +7,10 @@ export const ALLOWED_FILES = Object.freeze({
     contentType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     disposition: "attachment",
   },
+  "Costello_Website_SOW_Itemized_Final_2026-09-10_SIGNED_LG.pdf": {
+    contentType: "application/pdf",
+    disposition: "inline",
+  },
   "COI_General_Liability.pdf": {
     contentType: "application/pdf",
     disposition: "inline",
