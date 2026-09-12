@@ -1,5 +1,5 @@
 (function () {
-  var END = 75.6;
+  var END = 114.3;
   var stage = document.getElementById("connect-stage");
   var watchBtn = document.getElementById("connect-watch");
   var systemBtn = document.getElementById("connect-system");
@@ -52,7 +52,7 @@
   }
 
   function setTime(sec) {
-    if (timeEl) timeEl.textContent = fmt(sec) + " / 1:16";
+    if (timeEl) timeEl.textContent = fmt(sec) + " / 1:54";
     if (progress) progress.value = String(Math.round((sec / END) * 1000));
     if (playBtn) {
       var api = film();
@@ -132,16 +132,33 @@
     }, 200);
   }
 
-  function startFilm() {
+  function isMotion() {
+    var src = frame.getAttribute("src") || "";
+    return src.indexOf("Costello_Ecosystem_Master_Frame_motion.html") !== -1;
+  }
+
+  function kickFilm() {
     var api = film();
+    if (!api) return false;
     if (reduce) {
-      if (api && api.finalFrame) api.finalFrame();
+      if (api.finalFrame) api.finalFrame();
       present.classList.add("is-resolved");
       setTime(END);
-      return;
+      return true;
     }
-    if (api && api.play) api.play();
+    if (api.playFromStart) api.playFromStart();
+    else if (api.play) api.play();
     watchEnd();
+    return true;
+  }
+
+  function startFilm() {
+    if (kickFilm()) return;
+    var n = 0;
+    var wait = setInterval(function () {
+      n += 1;
+      if (kickFilm() || n > 80) clearInterval(wait);
+    }, 50);
   }
 
   function open(nextMode, from) {
@@ -154,7 +171,12 @@
     document.body.classList.add("is-presenting");
     dock.hidden = mode !== "film";
     endLayer.hidden = false;
-    frame.src = mode === "film" && !reduce ? motionSrc : staticSrc;
+    if (mode === "film" && !reduce) {
+      if (!isMotion()) frame.src = motionSrc;
+      else startFilm();
+    } else {
+      frame.src = staticSrc;
+    }
     applyRect(previewRect());
     requestAnimationFrame(function () {
       present.classList.add("is-moving");
@@ -180,16 +202,25 @@
       applyRect(previewRect());
     }
     var finish = function () {
+      var api = film();
+      if (api && api.pause) api.pause();
       present.hidden = true;
       present.classList.remove("is-moving", "is-armed");
       document.body.classList.remove("is-presenting");
-      frame.src = "about:blank";
+      if (mode === "system") frame.src = motionSrc;
       window.scrollTo(0, lastScroll);
       (lastFocus || origin).focus();
     };
     if (reduce) finish();
     else setTimeout(finish, 700);
   }
+
+  frame.addEventListener("load", function () {
+    if (present.hidden || mode !== "film") return;
+    startFilm();
+  });
+
+  if (!reduce) frame.src = motionSrc;
 
   watchBtn.addEventListener("click", function () { open("film", watchBtn); });
   systemBtn.addEventListener("click", function () { open("system", systemBtn); });
@@ -207,7 +238,8 @@
   replayBtn.addEventListener("click", function () {
     var api = film();
     present.classList.remove("is-resolved");
-    if (api) api.play();
+    if (api && api.replay) api.replay();
+    else if (api) api.play();
     setTime(0);
     watchEnd();
   });
@@ -228,7 +260,8 @@
     if ((e.key === "r" || e.key === "R") && api) {
       e.preventDefault();
       present.classList.remove("is-resolved");
-      api.play();
+      if (api.replay) api.replay();
+      else api.play();
       watchEnd();
     }
     if ((e.key === "f" || e.key === "F") && api) {
