@@ -209,14 +209,15 @@
     var first = item.steps && item.steps[0] ? item.steps[0].id : "";
     if (item.currentFrom === "website") {
       var website = (state && state.website) || {};
-      if (/Awaiting Costello signature/i.test(website.contractStatus || "")) return "activation";
+      if (/execution pending|Awaiting Costello signature/i.test(website.contractStatus || "")) return "activation";
       if (website.blockers && website.blockers.length) return "activation";
       return first;
     }
     if (item.currentFrom === "referralMailing") {
       var mailing = (state && state.referralMailing) || {};
-      if (/Pending/i.test(mailing.mailingListStatus || "")) return "mailing-list";
-      if (mailing.openInputs && mailing.openInputs.indexOf("Mailing list") >= 0) return "mailing-list";
+      if (/final copy pending/i.test(mailing.copyStatus || mailing.reviewRound || "")) return "final-copy";
+      if (/in progress|Pending/i.test(mailing.mailingListStatus || "")) return "mailing-list";
+      if (mailing.openInputs && mailing.openInputs.indexOf("Final mailing list") >= 0) return "mailing-list";
       return first;
     }
     return first;
@@ -274,16 +275,16 @@
       "perfect-match fulfillment included",
       "local Seattle vendor",
       "next-business-day PDF proof",
-      "five-working-day production path",
-      "USPS delivery remains carrier-dependent"
+      "five working days from accepted complete package to USPS handoff",
+      "USPS handoff is not recipient delivery"
     ];
     return "<aside class=\"plan-note\">" +
       "<p class=\"plan-note-kicker\">Production path</p>" +
       "<p class=\"plan-note-status\">Connect Printing · preferred pending approval</p>" +
-      "<p class=\"plan-note-facts\">" + escapeHtml(rec.quote || "$1,987.58") +
-        " · next-business-day proof · 5 working days to USPS handoff</p>" +
+      "<p class=\"plan-note-facts\">" + escapeHtml(rec.quote || "$1,987.58 total") +
+        " · next-business-day PDF proof · five working days to USPS handoff after accepted complete package</p>" +
       "<p class=\"plan-note-support\">Includes First-Class postage, CASS/NCOA, personalization and perfect-match fulfillment.</p>" +
-      "<p class=\"plan-note-approval\">Approval needed: " + escapeHtml(rec.approval || "Costello written approval of vendor + third-party spend") + "</p>" +
+      "<p class=\"plan-note-approval\">" + escapeHtml(rec.approval || "Costello written approval required before third-party spend") + "</p>" +
       "<details class=\"plan-note-more\">" +
         "<summary>View production details</summary>" +
         "<p>" + details.join(" · ") + ".</p>" +

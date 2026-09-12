@@ -25,34 +25,57 @@
   body { background: var(--paper); color: var(--ink); font-family: var(--font-util); line-height: 1.5; overflow-x: clip; }
   .wrap { width: 100%; }
   h1,h2,p { margin: 0; }
-  .crumb { font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); }
+  .crumb { font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
   .crumb a { color: var(--ink-soft); }
-  h1 { margin-top: 12px; font-family: var(--font-display); font-weight: 300; font-size: clamp(2rem,4vw,2.5rem); letter-spacing: -.02em; }
-  .lede { margin-top: 12px; max-width: 46em; color: var(--ink-soft); }
-  .hold { margin-top: 20px; padding: 14px 16px; background: var(--paper-2); border-left: 3px solid var(--coral); }
-  .key { margin-top: 18px; font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); }
+  h1.lg-read { margin-top: 10px; }
+  .lede { margin-top: 10px; max-width: 46em; font-size: 15px; line-height: 1.6; color: var(--ink-soft); }
+  .hold { margin-top: 20px; padding: 14px 0; border-top: 1px solid var(--paper-line); color: var(--ink-soft); }
+  .now { margin-top: 28px; }
+  .now-row { display: grid; grid-template-columns: 9rem minmax(0,1fr); gap: 16px; padding: 12px 0; border-top: 1px solid var(--paper-line); }
+  .now-row strong { font-family: var(--font-util); font-weight: 500; font-size: 15px; }
+  .now-row p { color: var(--ink-soft); font-size: 15px; line-height: 1.6; }
+  .key { margin-top: 18px; font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
   .seq { margin-top: 28px; display: grid; gap: 0; }
   .stop { display: grid; grid-template-columns: 7.5rem minmax(0,1fr) 8rem; gap: 16px; padding: 14px 0; border-top: 1px solid var(--paper-line); }
-  .stop .own { font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); }
-  .stop h2 { font-size: 17px; font-weight: 600; }
+  .stop .own { font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+  .stop h2 { font-family: var(--font-util); font-size: 15px; font-weight: 500; }
   .stop .who { text-align: right; font-size: 13px; color: var(--ink-soft); }
-  .stop.current h2 { color: var(--coral); }
+  .stop.current h2 { color: var(--ink); }
   .actions { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 28px; align-items: center; }
-  .cta { display: inline-flex; background: var(--teal); color: var(--paper); padding: 10px 14px; border-radius: 6px; font-weight: 600; text-decoration: none; }
-  .link { font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+  .cta { display: inline-flex; background: var(--ink); color: var(--paper); padding: 9px 14px; font-family: var(--font-util); font-size: 13px; font-weight: 400; text-decoration: none; }
+  .link { font-family: var(--font-util); font-size: 13px; letter-spacing: 0; text-transform: none; color: var(--ink-soft); }
   @media (max-width: 834px) {
     .wrap { padding: 28px 18px 64px; }
     .stop { grid-template-columns: 1fr; gap: 4px; }
     .stop .who { text-align: left; }
+    .now-row { grid-template-columns: 1fr; gap: 4px; }
   }
 </style>
 </head>
-<body class="lg-page" data-lg-page="overview" data-lg-mode="Overview / Referral mailing / Sequence">
+<body class="lg-page" data-lg-page="overview" data-lg-mode="Mailing / Final copy pending / Not submitted">
   <main class="lg-wrap lg-main">
     <p class="crumb"><a href="./">Overview</a> · Referral mailing</p>
-    <h1>Working sequence. No guaranteed mailing date.</h1>
-    <p class="lede" id="lede"></p>
-    <p class="hold" id="hold"></p>
+    <h1 class="lg-read">Letter 1 · final copy pending</h1>
+    <p class="lede" id="lede">Final Letter 1 and the completed mailing list are expected Monday by 12:00 PM. Connect Printing is the preferred path, pending written approval. Production has not been submitted. The printer clock has not started.</p>
+    <section class="now" aria-label="Current state">
+      <div class="now-row">
+        <strong>Letter 1</strong>
+        <p>Final copy pending</p>
+      </div>
+      <div class="now-row">
+        <strong>Mailing list</strong>
+        <p>Final completion in progress</p>
+      </div>
+      <div class="now-row">
+        <strong>Printer</strong>
+        <p>Connect Printing · preferred pending approval</p>
+      </div>
+      <div class="now-row">
+        <strong>Production</strong>
+        <p>Not submitted</p>
+      </div>
+    </section>
+    <p class="hold" id="hold">Monday noon · final inputs. Then production QA and list normalization. Then Connect written approval. Then PDF proof, production, and USPS handoff. Recipient delivery remains USPS-dependent.</p>
     <p class="key">Client input · LG Studio action · Printer action</p>
     <div class="seq" id="seq"></div>
     <div class="actions">
@@ -66,8 +89,6 @@
   var TYPE = { client: "Client input", studio: "LG Studio action", printer: "Printer action" };
   CostelloState.load().then(function (state) {
     var mail = state.referralMailing;
-    document.getElementById("lede").textContent = mail.reviewRound + ". " + mail.copySummary + " " + mail.printerNote;
-    document.getElementById("hold").textContent = "Mailing list pending. " + mail.mailingListExpected + ". Owner: " + mail.mailingListOwner + ". Preferred production path: Connect Printing · pending Costello approval. Printer submission: not submitted. Mailing timing to be confirmed after final list + file acceptance.";
     document.getElementById("cta").href = CostelloState.url(state, "kitchen");
     document.getElementById("seq").innerHTML = mail.sequence.map(function (step) {
       return '<div class="stop ' + step.state + '">' +

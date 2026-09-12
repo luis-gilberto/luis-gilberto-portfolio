@@ -1,9 +1,10 @@
 COSTELLO REFERRAL LETTER — PRODUCTION PREP
 Date: 11 September 2026
 
-Letter state: COPY APPROVED · PRODUCTION COORDINATION
-Wording is frozen. Client copy is approved. Production coordination may proceed.
-Not final printer-ready. Not submitted. Not in production. Not mailed.
+Letter state: FINAL COPY PENDING · PRODUCTION PREP READY
+Kris final edits in progress. Final Letter 1 expected Monday by 12:00 PM.
+The current working proof is not the production file.
+Not printer-ready. Not submitted. Not in production. Not mailed.
 
 Preferred vendor:
   Connect Printing
@@ -64,14 +65,14 @@ Current client contact:
 
 Signature: received and on the working proof.
 Personalization: Dear [First Name],
-Mailing list: Pending / Not received
+Mailing list: Final recipient + address completion in progress. Expected Monday by 12:00 PM.
 Printer submission: Not submitted
-Production timing: To be confirmed after final list + file acceptance
+Production timing: Five working days from accepted complete package to USPS handoff
 CASS/NCOA: included in the current Connect quote
 Proof required before production.
 
-The previously discussed Monday, September 21 arrival remains a target only.
-LG Studio will provide the firm with the realistic delivery window after Connect accepts the final files and mailing list.
+A Friday USPS handoff is not the current commitment.
+USPS handoff is not recipient delivery. Delivery remains carrier-dependent.
 
 Files in this folder:
   CLF_expanding_2026-09-10.docx
@@ -95,5 +96,5 @@ Return address copy for envelope printing, if requested:
   315 Fifth Avenue South, Suite 1000
   Seattle, WA 98104
 
-Do not send to printer until the mailing list is received and the selected vendor’s production requirements are confirmed.
+Printer submission follows the final letter, the completed mailing list, and written vendor approval.
 Do not commit third-party spend or submit production files until Costello Law Firm approves the vendor and spend in writing.

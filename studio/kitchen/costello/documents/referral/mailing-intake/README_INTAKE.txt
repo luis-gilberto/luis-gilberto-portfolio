@@ -1,5 +1,7 @@
 COSTELLO REFERRAL LETTER — MAILING LIST INTAKE
-Status: mailing list not received. Do not mark RECEIVED until a real file exists.
+Status: final recipient + address completion in progress. Expected Monday by 12:00 PM.
+LG Studio QA is complete on the current working list. Final production file follows receipt.
+Do not mark FINAL until Costello’s completed recipient data is received.
 
 --------------------------------------------------------------------------------
 SCHEMA
@@ -81,7 +83,7 @@ PRINTER-HANDOFF FIELDS
 Send only after letter approval and a real, cleaned list exist.
 
 Files
-  - Final letter PDF (copy approved · production prep; not a printer submission)
+  - Final letter PDF (final copy received · production prep; not a printer submission)
   - Source DOCX if the printer asks for it
   - Cleaned mailing list (PRODUCTION xlsx, or CSV if required)
   - Return address copy for envelopes, if the printer is printing envelopes
@@ -128,7 +130,7 @@ QUESTIONS FOR THE SELECTED PRINTER
 --------------------------------------------------------------------------------
 CURRENT PROJECT FACTS (do not treat as list receipt)
 --------------------------------------------------------------------------------
-Mailing list: pending. Not received.
-Letter: COPY APPROVED · PRODUCTION PREP. Not printer-ready. Not submitted.
-Printer: not submitted.
+Mailing list: final recipient + address completion in progress. Expected Monday noon.
+Letter: FINAL COPY PENDING · PRODUCTION PREP READY. Not printer-ready. Not submitted.
+Printer: Connect Printing · preferred pending written approval. Not submitted.
 Personalization: First Name merge; blank First Name flagged.

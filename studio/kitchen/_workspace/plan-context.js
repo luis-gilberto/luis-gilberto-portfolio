@@ -27,7 +27,7 @@
         facts: [
           fact("Contract", "SOW-01"),
           fact("Current state", website.contractStatus || website.overallStatus),
-          fact("Clock begins", "Access Complete Date"),
+          fact("Clock", "Not started · begins at Access Complete Date"),
           fact("Next client action", website.nextMove)
         ].join("")
       };
@@ -43,7 +43,7 @@
           fact("Contract", "SOW-02"),
           fact("Current state", referral.reviewRound || referral.overallStatus),
           fact("Preferred path", referral.printerStatus || "Connect Printing · pending Costello approval"),
-          fact("Current dependency", dependency)
+          fact("Next input", dependency)
         ].join("")
       };
     }

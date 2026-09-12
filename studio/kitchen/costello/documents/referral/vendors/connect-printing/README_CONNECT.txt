@@ -93,12 +93,17 @@ PRODUCTION TIMING
 Five full working days is Connect’s fastest realistic turn for a quality job of this complexity.
 Assumes very fast proof approval.
 
-Steven’s example:
-  If complete print-ready files and the spreadsheet are in Connect’s hands Monday at 7:30 AM,
-  Connect expects stuffed envelopes to enter USPS by Friday.
+Vendor illustration only (not the current commitment):
+  If a complete package were accepted Monday morning, Connect has indicated
+  Friday USPS handoff can be realistic.
 
-Connect is promising USPS handoff timing, not recipient delivery timing.
-Monday 21 September arrival remains a target only, not a guaranteed delivery date.
+Current operating path:
+  Costello’s expected handoff of final inputs is Monday at noon.
+  A Friday USPS handoff is not promised.
+  Five full working days begin from receipt / acceptance of a complete package.
+
+Connect is describing USPS handoff timing, not recipient delivery timing.
+USPS handoff is not recipient delivery. Delivery remains carrier-dependent.
 
 --------------------------------------------------------------------------------
 FILES IN THIS FOLDER
