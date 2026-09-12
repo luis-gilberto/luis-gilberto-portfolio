@@ -2,6 +2,11 @@
   var page = document.body.getAttribute("data-lg-page") || "overview";
   var mode = document.body.getAttribute("data-lg-mode") || "";
 
+  function logoSrc() {
+    if (window.CostelloState) return CostelloState.href("brand-system/assets/lockup-full.png");
+    return "/studio/brand-system/assets/lockup-full.png";
+  }
+
   function links(state) {
     var url = window.CostelloState && state
       ? function (key) { return CostelloState.url(state, key); }
@@ -25,7 +30,8 @@
 
   function navHtml(items) {
     return items.map(function (item) {
-      return '<a class="' + (item.id === page ? "is-here" : "") + '" href="' + item.href + '">' + item.label + "</a>";
+      var current = item.id === page ? ' aria-current="page"' : "";
+      return "<a href=\"" + item.href + "\"" + current + ">" + item.label + "</a>";
     }).join("");
   }
 
@@ -35,23 +41,26 @@
       ? "Last updated · " + state.meta.lastUpdatedLabel
       : "";
     var header = document.createElement("header");
-    header.className = "lg-shell";
+    header.className = "workspace-header lg-shell";
     header.innerHTML =
-      '<div class="lg-shell-wrap">' +
-        '<div class="lg-shell-top">' +
-          '<p class="lg-id">LG Studio<em>Client Workspace</em></p>' +
-          '<p class="lg-conf">Confidential</p>' +
+      '<div class="brand-band">' +
+        '<div class="content-width brand-band-inner">' +
+          '<span class="logo-crop"><img src="' + logoSrc() + '" alt="LG Studio" width="156" height="112" decoding="async"></span>' +
+          '<span class="product-pipe" aria-hidden="true"></span>' +
+          '<span class="product-name">workspace</span>' +
         "</div>" +
-        '<div class="lg-shell-mid">' +
-          '<p class="lg-account"><strong>Costello Law Firm</strong><span>Client account</span></p>' +
-          '<nav class="lg-nav" aria-label="Workspace">' + navHtml(items) + "</nav>" +
-          '<button class="lg-menu" type="button" aria-expanded="false">Menu</button>' +
+      "</div>" +
+      '<div class="client-band">' +
+        '<div class="content-width client-band-inner">' +
+          '<p class="client-label">Costello Law Firm workspace</p>' +
+          '<nav class="workspace-nav" aria-label="Workspace">' + navHtml(items) + "</nav>" +
         "</div>" +
-        '<div class="lg-modebar">' +
-          (mode ? '<p class="lg-mode">' + mode + "</p>" : "<p class=\"lg-mode\"></p>") +
-          (updated ? '<p class="lg-updated">' + updated + "</p>" : "") +
+      "</div>" +
+      '<div class="context-band">' +
+        '<div class="content-width context-band-inner">' +
+          (mode ? '<p class="context-mode"><i></i>' + mode + "</p>" : '<p class="context-mode"></p>') +
+          (updated ? '<p class="context-updated">' + updated + "</p>" : "") +
         "</div>" +
-        '<div class="lg-drawer" hidden>' + navHtml(items) + "</div>" +
       "</div>";
 
     var first = document.body.firstElementChild;
@@ -61,18 +70,9 @@
       document.body.insertBefore(header, document.body.firstChild);
     }
 
-    var btn = header.querySelector(".lg-menu");
-    var drawer = header.querySelector(".lg-drawer");
-    btn.addEventListener("click", function () {
-      var open = header.classList.toggle("is-open");
-      drawer.hidden = !open;
-      btn.setAttribute("aria-expanded", open ? "true" : "false");
-      btn.textContent = open ? "Close" : "Menu";
-    });
-
     if (!document.querySelector(".lg-foot")) {
       var foot = document.createElement("footer");
-      foot.className = "lg-foot lg-wrap";
+      foot.className = "lg-foot";
       foot.innerHTML =
         "<p>Prepared by LG Studio for Costello Law Firm</p>" +
         "<p>LG Studio workspace · Costello artifacts remain their own</p>";

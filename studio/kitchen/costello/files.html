@@ -13,10 +13,10 @@
 </head>
 <body class="lg-page lg-files" data-lg-page="files" data-lg-mode="Documents and assets / Signature copy">
   <div class="lg-grain" aria-hidden="true"></div>
-  <main class="lg-wrap lg-main">
+  <main class="lg-wrap lg-main page-intro">
     <header class="art-hero">
       <p class="lg-kicker">Files · The permanent record</p>
-      <h1 class="lg-read">Download and countersign<br>the Website SOW</h1>
+      <h1 class="lg-read">Download and countersign the Website SOW</h1>
       <p class="lg-lede" id="lede">The current website agreement, Brand System Portal, and working proof are available. Expected files remain listed quietly until they are received.</p>
     </header>
 
@@ -100,29 +100,33 @@
       "<span class=\"file-name\">" + escapeHtml(fileName(item.href)) + "</span></div>";
   }
   var signCount = 0;
+  function returnMailto() {
+    return "mailto:luis@lgpractice.com?subject=" +
+      encodeURIComponent("Costello Website SOW · countersigned PDF") +
+      "&body=" + encodeURIComponent("Attaching the countersigned Website SOW.");
+  }
   function priorityArtifact(item) {
     signCount += 1;
     var titleId = "sign-title-" + signCount;
-    var meta = item.version ? "<p class=\"art-meta\">" + escapeHtml(item.version) + "</p>" : "";
-    return "<article class=\"art-priority\" aria-labelledby=\"" + titleId + "\">" +
-      "<div class=\"art-priority-main\">" +
-        "<p class=\"lg-kicker\">" + escapeHtml(item.kicker || "Website SOW · Signature copy") + "</p>" +
-        "<h3 id=\"" + titleId + "\">" + escapeHtml(item.title) + "</h3>" +
-        meta +
-        fileStrip(item) +
-        "<ol class=\"file-steps\">" +
-          "<li>Download the signed PDF</li>" +
-          "<li>Add Costello Law Firm’s signature</li>" +
-          "<li>Reply to Luis with the countersigned PDF</li>" +
-        "</ol>" +
+    var meta = item.note
+      ? "<p class=\"art-meta\">" + escapeHtml(item.note) + "</p>"
+      : (item.version ? "<p class=\"art-meta\">" + escapeHtml(item.version) + "</p>" : "");
+    return "<article class=\"art-priority primary-sheet\" aria-labelledby=\"" + titleId + "\">" +
+      "<p class=\"lg-status\"><i></i>" + escapeHtml(item.kicker || "Website SOW · Signature copy") + "</p>" +
+      "<h3 id=\"" + titleId + "\">" + escapeHtml(item.title) + "</h3>" +
+      meta +
+      fileStrip(item) +
+      "<ol class=\"file-steps\">" +
+        "<li>Download the signed PDF</li>" +
+        "<li>Add Costello Law Firm’s signature</li>" +
+        "<li>Reply to Luis with the countersigned PDF</li>" +
+      "</ol>" +
+      "<div class=\"art-cta\">" +
+        "<a class=\"lg-go\" href=\"" + fileHref(item.href) + "\">Download the signed PDF</a>" +
+        "<a class=\"lg-go is-ghost\" href=\"" + returnMailto() + "\">Return the countersigned PDF</a>" +
       "</div>" +
-      "<div class=\"art-priority-side\">" +
-        "<p class=\"art-support\">" + escapeHtml(item.note || "") + "</p>" +
-        "<div class=\"art-cta\">" +
-          "<a class=\"lg-go is-teal\" href=\"" + fileHref(item.href) + "\">" +
-            escapeHtml(item.cta || "Download signed PDF") + "</a>" +
-        "</div>" +
-      "</div></article>";
+      "<p class=\"art-support\">The signed source is on this page. Return the countersigned PDF to Luis by email so the workspace record can be updated.</p>" +
+      "</article>";
   }
   function artifactActions(item) {
     var links = [];
@@ -142,25 +146,27 @@
     var marker = kind
       ? "<span class=\"art-mark\">" + fileIcon(kind) + "</span>"
       : "<span class=\"art-mark\" aria-hidden=\"true\"></span>";
-    var identity = "<div class=\"art-identity\"><p class=\"art-title\"><a href=\"" + fileHref(item.href) + "\">" +
+    var identity = "<div class=\"art-identity\">" + marker +
+      "<div><p class=\"art-title\"><a href=\"" + fileHref(item.href) + "\">" +
       escapeHtml(item.title) + "</a></p>" +
       (kind === "PDF" || kind === "DOCX"
         ? "<p class=\"file-name\">" + escapeHtml(fileName(item.href)) + "</p>"
         : "") +
-      "</div>";
+      "</div></div>";
     var note = "<p class=\"art-note\">" + escapeHtml(item.note || "") + "</p>";
     var status = item.status
       ? "<p class=\"art-status" + statusClass(item.status) + "\">" + escapeHtml(item.status) + "</p>"
       : "<p class=\"art-status\"></p>";
-    return "<div class=\"art-row" + secondary + "\">" + marker + identity + note + status + artifactActions(item) + "</div>";
+    return "<div class=\"art-row" + secondary + "\">" + identity + note +
+      "<div class=\"art-end\">" + status + artifactActions(item) + "</div></div>";
   }
   function expectedRow(item) {
     return "<div class=\"art-row is-secondary\">" +
-      "<span class=\"art-mark\" aria-hidden=\"true\"></span>" +
-      "<div class=\"art-identity\"><p class=\"art-title\">" + escapeHtml(item.label) + "</p></div>" +
+      "<div class=\"art-identity\"><span class=\"art-mark\" aria-hidden=\"true\"></span>" +
+      "<div><p class=\"art-title\">" + escapeHtml(item.label) + "</p></div></div>" +
       "<p class=\"art-note\">" + escapeHtml(item.note || "") + "</p>" +
-      "<p class=\"art-status" + statusClass(item.status) + "\">" + escapeHtml(item.status || "") + "</p>" +
-      "<div class=\"art-actions\"></div></div>";
+      "<div class=\"art-end\"><p class=\"art-status" + statusClass(item.status) + "\">" +
+      escapeHtml(item.status || "") + "</p></div></div>";
   }
   function categoryBody(cat) {
     var html = "";
@@ -283,6 +289,29 @@
         "<p>" + details.join(" · ") + ".</p>" +
       "</details></aside>";
   }
+  function planTabName(item, index) {
+    if (/website/i.test(item.id || item.title || "")) return "Website launch";
+    if (/referral/i.test(item.id || item.title || "")) return "Referral letters";
+    if (/marketing/i.test(item.id || item.title || "")) return "Firm marketing";
+    return item.title || ("Plan " + (index + 1));
+  }
+  function planSwitch(items, state) {
+    var inputs = "";
+    var labels = "";
+    var panels = "";
+    items.forEach(function (item, index) {
+      var id = "plan-tab-" + item.id;
+      inputs += "<input class=\"plan-tab-input\" type=\"radio\" name=\"workspace-plans\" id=\"" + id + "\"" +
+        (index === 0 ? " checked" : "") + ">";
+      labels += "<label class=\"plan-tab\" for=\"" + id + "\">" +
+        "<span class=\"plan-tab-num\">" + String(index + 1).padStart(2, "0") + "</span>" +
+        "<span class=\"plan-tab-name\">" + escapeHtml(planTabName(item, index)) + "</span></label>";
+      panels += planCard(item, state);
+    });
+    return "<div class=\"plan-switch\">" + inputs +
+      "<div class=\"plan-tablist\">" + labels + "</div>" +
+      "<div class=\"plan-tabpanels\">" + panels + "</div></div>";
+  }
   function planCard(item, state) {
     var reference = !item.href;
     var badge = item.kind ? "<span class=\"file-badge\">" + escapeHtml(item.kind) + "</span>" : "";
@@ -348,9 +377,7 @@
       document.getElementById("plans-intro").innerHTML = (plans.intro || []).map(function (line) {
         return "<p>" + escapeHtml(line) + "</p>";
       }).join("");
-      document.getElementById("plans-list").innerHTML = (plans.items || []).map(function (item) {
-        return planCard(item, state);
-      }).join("");
+      document.getElementById("plans-list").innerHTML = planSwitch(plans.items || [], state);
       document.getElementById("cats").innerHTML = orderedCategories(manifest.categories).map(function (cat) {
         if (!(cat.items && cat.items.length)) return "";
         var open = cat.id === "agreements" ? " open" : "";
