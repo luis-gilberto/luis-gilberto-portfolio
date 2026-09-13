@@ -70,6 +70,16 @@
       document.body.insertBefore(header, document.body.firstChild);
     }
 
+    var main = document.querySelector("main");
+    if (main && !main.id) main.id = "main";
+    if (!document.querySelector(".lg-skip")) {
+      var skip = document.createElement("a");
+      skip.className = "lg-skip";
+      skip.href = "#main";
+      skip.textContent = "Skip to content";
+      document.body.insertBefore(skip, document.body.firstChild);
+    }
+
     if (!document.querySelector(".lg-foot")) {
       var foot = document.createElement("footer");
       foot.className = "lg-foot";

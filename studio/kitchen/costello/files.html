@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" />
 <link rel="stylesheet" href="../_workspace/shell.css" />
+<link rel="stylesheet" href="../_workspace/ops.css" />
 <link rel="stylesheet" href="files.css" />
 <link rel="stylesheet" href="film.css" />
 </head>
@@ -23,17 +24,21 @@
 
     <div id="priority"></div>
 
-    <section class="art-section" aria-labelledby="cur-title">
+    <section class="art-section" id="current" aria-labelledby="cur-title">
       <header class="art-head">
         <h2 id="cur-title" class="art-label">Current shelf</h2>
         <p class="art-count" id="cur-count"></p>
+        <button type="button" class="lg-copy" data-copy="current">Copy link</button>
       </header>
       <div class="art-register" id="current-list"></div>
     </section>
 
     <section class="lg-connect" id="how-the-work-connects" aria-labelledby="connect-title">
       <div class="lg-connect-intro">
-        <p class="lg-connect-eyebrow">How the work connects</p>
+        <div class="lg-ops-head" style="border:0;padding:0">
+          <p class="lg-connect-eyebrow">How the work connects</p>
+          <button type="button" class="lg-copy" data-copy="how-the-work-connects">Copy link</button>
+        </div>
         <p class="lg-connect-label">The marketing system</p>
         <h2 id="connect-title">One firm story, carried through every expression</h2>
         <p class="lg-connect-copy">A visual model of how the firm’s source material becomes durable expressions, ongoing firm activity and a more consistent market presence over time.</p>
@@ -53,9 +58,10 @@
       <p class="lg-connect-path">Source layer → LG Studio built → Firm-managed</p>
     </section>
 
-    <section class="art-section art-plans" aria-labelledby="plans-title">
+    <section class="art-section art-plans" id="plans" aria-labelledby="plans-title">
       <header class="art-head">
         <h2 id="plans-title" class="art-label">Plans &amp; Operating Maps</h2>
+        <button type="button" class="lg-copy" data-copy="plans">Copy link</button>
       </header>
       <div class="art-plans-intro" id="plans-intro"></div>
       <div class="plan-grid" id="plans-list"></div>
@@ -74,6 +80,7 @@
   </main>
   <script src="../../capabilities/costello/data/costello-project-state.js"></script>
   <script src="../_workspace/shell.js"></script>
+  <script src="../_workspace/deep-link.js"></script>
   <script>
   function fileHref(rel) {
     return CostelloState.href(rel);
@@ -179,7 +186,7 @@
     var status = item.status
       ? "<p class=\"art-status" + statusClass(item.status) + "\">" + escapeHtml(item.status) + "</p>"
       : "<p class=\"art-status\"></p>";
-    return "<div class=\"art-row" + secondary + "\">" + identity + note +
+    return "<div class=\"art-row" + secondary + "\"" + (item.id ? " id=\"" + item.id + "\"" : "") + ">" + identity + note +
       "<div class=\"art-end\">" + status + artifactActions(item) + "</div></div>";
   }
   function expectedRow(item) {
@@ -350,7 +357,7 @@
         "</article>";
     }
     var currentId = currentStepId(item, state);
-    return "<article class=\"plan-card is-track\">" +
+    return "<article class=\"plan-card is-track\" id=\"" + escapeHtml(item.id || "") + "\">" +
       "<div class=\"plan-card-top\">" +
         "<p class=\"plan-status\">" + escapeHtml(item.status || "") + "</p>" +
         badge +
@@ -395,7 +402,8 @@
         if (!(cat.items && cat.items.length)) return "";
         var open = cat.id === "agreements" ? " open" : "";
         var tone = cat.id === "archive" ? " is-archive" : "";
-        return "<details class=\"lg-fold" + tone + "\"" + open + ">" +
+        var catId = cat.id === "review" ? "working" : (cat.id === "strategy" ? "source" : cat.id);
+        return "<details class=\"lg-fold" + tone + "\" id=\"" + catId + "\"" + open + ">" +
           "<summary>" + escapeHtml(cat.label) +
           "<span class=\"art-count\">" + cat.items.length + "</span></summary>" +
           "<div class=\"lg-fold-body art-register\">" + categoryBody(cat) + "</div></details>";
@@ -403,6 +411,28 @@
       var expected = manifest.expected || [];
       document.getElementById("exp-count").textContent = String(expected.length);
       document.getElementById("expected").innerHTML = expected.map(expectedRow).join("");
+      var aliases = {
+        "website-sow": "website-sow-itemized-signed-lg",
+        "letter-sow": "kitchen-review",
+        "print-quote": "connect-quote-014564",
+        "launch-plan": "website-launch-plan",
+        "mailing-plan": "referral-campaign-plan",
+        "agreements": "agreements",
+        "review": "working",
+        "strategy": "source"
+      };
+      Object.keys(aliases).forEach(function (alias) {
+        if (document.getElementById(alias)) return;
+        var target = document.getElementById(aliases[alias]);
+        if (!target) return;
+        var mark = document.createElement("span");
+        mark.id = alias;
+        mark.setAttribute("hidden", "");
+        target.insertBefore(mark, target.firstChild);
+      });
+      if (location.hash && window.LGDeepLink) {
+        LGDeepLink.scrollToId(location.hash.replace(/^#/, ""), false);
+      }
     });
   </script>
 </body>
