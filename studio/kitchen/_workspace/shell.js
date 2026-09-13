@@ -37,6 +37,7 @@
 
   function mount(state) {
     var items = links(state);
+    var home = (items[0] && items[0].href) || "/studio/kitchen/costello/";
     var updated = state && state.meta && state.meta.lastUpdatedLabel
       ? "Last updated · " + state.meta.lastUpdatedLabel
       : "";
@@ -52,7 +53,7 @@
       "</div>" +
       '<div class="client-band">' +
         '<div class="content-width client-band-inner">' +
-          '<p class="client-label">Costello Law Firm workspace</p>' +
+          '<a class="client-label" href="' + home + '">Costello Law Firm workspace</a>' +
           '<nav class="workspace-nav" aria-label="Workspace">' + navHtml(items) + "</nav>" +
         "</div>" +
       "</div>" +

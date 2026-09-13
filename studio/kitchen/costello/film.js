@@ -222,8 +222,8 @@
 
   if (!reduce) frame.src = motionSrc;
 
-  watchBtn.addEventListener("click", function () { open("film", watchBtn); });
-  systemBtn.addEventListener("click", function () { open("system", systemBtn); });
+  watchBtn.addEventListener("click", function (e) { e.preventDefault(); open("film", watchBtn); });
+  systemBtn.addEventListener("click", function (e) { e.preventDefault(); open("system", systemBtn); });
   closeBtn.addEventListener("click", close);
   if (returnBtn) returnBtn.addEventListener("click", close);
 

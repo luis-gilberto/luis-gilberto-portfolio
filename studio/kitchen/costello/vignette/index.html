@@ -174,9 +174,10 @@
   #cz .ov-in{font-family:var(--serif);font-weight:500;font-size:30px;line-height:1.35;color:var(--ivory);max-width:600px;}
   #cl{left:0;top:0;width:1920px;height:1080px;}
   #cl .ov-in{font-family:var(--serif);font-weight:500;font-size:44px;line-height:1.25;color:var(--ivory);max-width:1100px;}
-  .cap{position:absolute;z-index:40;left:96px;top:952px;width:1728px;height:96px;opacity:0;pointer-events:none;transition:opacity .4s ease;}
+  .cap{position:absolute;z-index:40;left:96px;top:952px;width:1728px;height:120px;opacity:0;pointer-events:none;transition:opacity .4s ease;}
   .cap.on{opacity:1;transition:opacity .5s ease;}
   .cap .fam{position:absolute;top:0;white-space:nowrap;}
+  .cap .fam.fam-art{white-space:normal;box-sizing:border-box;max-width:calc(100% - 1540px);}
   .cap .fam .ct{font-family:var(--serif);font-weight:500;font-size:24px;color:var(--ivory);line-height:1.2;margin-bottom:8px;}
   .cap .fam .cm{font-family:var(--mono);font-size:13px;line-height:1.55;color:rgba(247,243,236,.7);letter-spacing:.02em;}
   .cap .mid{position:absolute;left:0;right:0;top:14px;text-align:center;font-family:var(--serif);font-weight:500;font-size:28px;color:var(--ivory);}
@@ -351,10 +352,7 @@
   .legend span{margin-left:0;}
   /* caption taxonomy eyebrow */
   .cap .fam .cx{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:rgba(247,243,236,.55);margin-bottom:7px;}
-  @media (max-width: 900px){
-    .cap .fam[style*="left:1540px"]{white-space:normal;box-sizing:border-box;max-width:calc(100% - 1540px);}
-    .cap .fam[style*="left:1540px"] .ct{line-height:1.2;}
-  }
+  #lbl-art{white-space:normal;max-width:360px;line-height:1.45;}
   /* stewardship track above the propagation sequence */
   .cap .steward{position:absolute;left:0;right:0;top:0;text-align:center;font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:rgba(247,243,236,.34);}
   .cap .seq.hasSteward{top:30px;}
@@ -365,6 +363,11 @@
   .inv .s{font-family:var(--sans);font-weight:300;font-size:22px;line-height:1.5;color:rgba(247,243,236,.78);margin:22px auto 0;max-width:760px;}
   .inv .r{width:26px;height:3px;background:var(--orange);margin:34px auto 0;}
   .inv .m{font-family:var(--mono);font-size:13px;letter-spacing:.07em;color:rgba(247,243,236,.46);margin-top:30px;}
+  .end-go{position:fixed;left:50%;bottom:88px;z-index:108;transform:translateX(-50%);display:flex;flex-wrap:wrap;justify-content:center;gap:10px 12px;width:min(36rem,calc(100% - 32px));opacity:0;pointer-events:none;transition:opacity .5s ease;}
+  .end-go.on{opacity:1;pointer-events:auto;}
+  .end-go a{display:inline-flex;align-items:center;justify-content:center;padding:9px 16px;background:var(--orange);color:#fff;font-family:var(--sans);font-size:15px;font-weight:400;letter-spacing:0;text-decoration:none;line-height:1.2;}
+  .end-go a:hover,.end-go a:focus-visible{background:#D95A0F;color:#fff;}
+  @media (max-width:640px){.end-go{bottom:96px;}}
 </style>
 </head>
 <body>
@@ -494,7 +497,7 @@
   <!-- article cards -->
   <div class="abs art o" id="art1" style="left:1612px;top:700px;transform:rotate(-2deg);"><div class="vq vq-art"></div><i class="h"></i><i></i><i></i><i class="s"></i></div>
   <div class="abs art o" id="art2" style="left:1642px;top:746px;transform:rotate(1deg);"><div class="vq vq-art"></div><i class="h"></i><i></i><i></i><i class="s"></i></div>
-  <div class="abs mono o lbl" id="lbl-art" style="left:1540px;top:894px;"><i class="g g-firm"></i>Articles &amp; thought leadership<br><span style="padding-left:15px">in development</span></div>
+  <div class="abs mono o lbl" id="lbl-art" style="left:1540px;top:894px;"><i class="g g-firm"></i>Articles &amp;<br><span style="padding-left:15px">Thought leadership</span><br><span style="padding-left:15px">in development</span></div>
 
   <!-- response layer -->
   <div class="abs mono o lbl" id="lbl-resp" style="right:96px;top:978px;color:rgba(247,243,236,.45)">What the system is built to produce</div>
@@ -562,6 +565,10 @@
   </div>
 </div>
 <div class="pausemark">Paused · Space to resume</div>
+<div class="end-go" id="end-go">
+  <a href="../plans/costello-website-launch-plan.html">Marketing Plan</a>
+  <a href="../plans/costello-referral-letter-campaign-plan.html">Referral campaign</a>
+</div>
 <div class="bar" id="bar">
   <button class="primary" id="b-play" type="button" title="Play / pause (Space)">Play</button>
   <div class="chs" id="chs"></div>
@@ -594,11 +601,12 @@
   function cardOut(){fcard.classList.remove('on');}
   function center(el,inner,html){inner.innerHTML=html;scrimOn('center',el===cl);el.classList.add('on');}
   function centerOut(el){el.classList.remove('on');scrimOff('center');}
-  function capFam(x,tax,title,lines){cap.innerHTML='<div class="fam" style="left:'+x+'px"><div class="cx">'+tax+'</div><div class="ct">'+title+'</div><div class="cm">'+lines+'</div></div>';cap.classList.add('on');}
+  function capFam(x,tax,title,lines){cap.innerHTML='<div class="fam'+(x===1540?' fam-art':'')+'" style="left:'+x+'px"><div class="cx">'+tax+'</div><div class="ct">'+title+'</div><div class="cm">'+lines+'</div></div>';cap.classList.add('on');}
   function capMid(html){cap.innerHTML='<div class="mid">'+html+'</div>';scrimOn('mid');cap.classList.add('on');}
   function capSeq(lead,words,idx){var h='<div class="steward">SOURCE → BUILT → CARRIED FORWARD</div><div class="seq hasSteward"><span class="lead">'+lead+'</span><span class="sep">·</span>';words.forEach(function(w,i){if(i)h+='<span class="ar">→</span>';h+='<span class="w '+(i<idx?'past':(i===idx?'cur':''))+'">'+w+'</span>';});cap.innerHTML=h+'</div>';cap.classList.add('on');}
   function capOut(){cap.classList.remove('on');scrimOff('mid');}
-  function invite(){clin.innerHTML='<div class="inv"><div class="p">This is the system we see taking shape</div><div class="s">If the firm sees the same possibility, we’d be glad to help carry it forward</div><div class="r"></div><div class="m">Protect the ethos · strengthen every expression · explore what comes next together</div></div>';scrimOn('center',true);cl.classList.add('on');}
+  function endGo(on){var el=$('#end-go');if(el)el.classList.toggle('on',!!on);}
+  function invite(){clin.innerHTML='<div class="inv"><div class="p">This is the system we see taking shape</div><div class="s">If the firm sees the same possibility, we’d be glad to help carry it forward</div><div class="r"></div><div class="m">Protect the ethos · strengthen every expression · explore what comes next together</div></div>';scrimOn('center',true);cl.classList.add('on');endGo(true);}
   var CH=function(n,s){return '<div class="ch">'+n+' · '+s+'</div>';};
   var A=['Source','Letter','Website','Article'],B=['Bio','Letter','Social','Website'];
 var TL=[
@@ -667,7 +675,7 @@ var TL=[
   [64.65,function(){focus(G.art);}],
   [64.85,function(){on('#art1');}],
   [65.25,function(){on('#art2');}],
-  [65.75,function(){capFam(1540,'FIRM-MANAGED','Articles & thought leadership','In development');}],
+  [65.75,function(){capFam(1540,'FIRM-MANAGED','Articles &<br>Thought leadership','In development');}],
   [68.65,function(){capOut();}],
   [69.05,function(){restore();}],
   [69.65,function(){card('<div class="ch">05</div>'+'<div class="line">One story, repeated with purpose</div>');}],
@@ -721,7 +729,7 @@ var END=114.3;
   var svg=$('svg.lines'),clock=0,playing=false,last=0,cursor=0,raf=0,started=false;
   function reset(){
     off(ALL,'in');off('#bo','out');off('.hl','hl');off('.lit','lit');off('.pl','on');off('.vq','settled');
-    fcard.classList.remove('on');cz.classList.remove('on');cl.classList.remove('on');cap.classList.remove('on');scrim.classList.remove('on');scrim.classList.remove('deep');scrimBy=null;
+    fcard.classList.remove('on');cz.classList.remove('on');cl.classList.remove('on');cap.classList.remove('on');scrim.classList.remove('on');scrim.classList.remove('deep');scrimBy=null;endGo(false);
     restore();cursor=0;clock=0;
   }
   function fmt(s){var m=Math.floor(s/60),r=s-m*60;return m+':'+(r<10?'0':'')+r.toFixed(1);}
@@ -799,6 +807,7 @@ var END=114.3;
   var Q=new URLSearchParams(location.search);
   if(Q.get('clean')){
     $('#bar').style.display='none';
+    var eg=$('#end-go');if(eg)eg.style.display='none';
     var pm=document.querySelector('.pausemark');if(pm)pm.style.display='none';
     document.documentElement.style.cursor='none';
     if(Q.get('auto')){$('#poster').classList.add('off');setTimeout(function(){start();},600);}

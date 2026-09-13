@@ -46,12 +46,16 @@
 
   function flash(btn) {
     if (!btn) return;
+    var quiet = btn.hasAttribute("data-copy-quiet");
     var prev = btn.textContent;
+    var prevLabel = btn.getAttribute("aria-label");
     btn.classList.add("is-done");
-    btn.textContent = "Link copied";
+    if (quiet) btn.setAttribute("aria-label", "Link copied");
+    else btn.textContent = "Link copied";
     setTimeout(function () {
       btn.classList.remove("is-done");
-      btn.textContent = prev;
+      if (quiet) btn.setAttribute("aria-label", prevLabel || "Copy section link");
+      else btn.textContent = prev;
     }, 1600);
   }
 
