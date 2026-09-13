@@ -19,8 +19,8 @@
   var webLink = present.querySelector("#present-web");
   var refLink = present.querySelector("#present-ref");
 
-  var motionSrc = "artifacts/how-the-work-connects/Costello_Ecosystem_Master_Frame_motion.html?embed=1";
-  var staticSrc = "artifacts/how-the-work-connects/Costello_Ecosystem_Master_Frame_static.html";
+  var motionSrc = href("kitchen/costello/artifacts/how-the-work-connects/Costello_Ecosystem_Master_Frame_motion.html") + "?embed=1";
+  var staticSrc = href("kitchen/costello/artifacts/how-the-work-connects/Costello_Ecosystem_Master_Frame_static.html");
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var mode = "film";
   var lastFocus = null;
