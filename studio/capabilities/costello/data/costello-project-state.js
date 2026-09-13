@@ -40,7 +40,8 @@
         return href(state.referralMailing.kitchenUrl);
       }
       if (key === "overview") return href(urls.overview || urls.status);
-      if (key === "brand") return href(urls.brand || urls.brandSystem);
+      if (key === "reference") return href(urls.reference || urls.brand || urls.brandSystem);
+      if (key === "brand") return href(urls.reference || urls.brand || urls.brandSystem);
       return href(urls[key]);
     }
   };

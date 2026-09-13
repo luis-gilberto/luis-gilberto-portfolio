@@ -5,21 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Costello Law Firm · Files — LG Studio</title>
 <meta name="robots" content="noindex, nofollow, noarchive" />
+<meta name="theme-color" content="#2C3A4F" />
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="apple-touch-icon" href="icons/workspace-180.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" />
 <link rel="stylesheet" href="../_workspace/shell.css" />
 <link rel="stylesheet" href="../_workspace/ops.css" />
 <link rel="stylesheet" href="files.css" />
-<link rel="stylesheet" href="film.css" />
 </head>
-<body class="lg-page lg-files" data-lg-page="files" data-lg-mode="Documents and assets / Signature copy">
+<body class="lg-page lg-files" data-lg-page="files" data-lg-mode="Engagement record / DocuSign pending">
   <div class="lg-grain" aria-hidden="true"></div>
   <main class="lg-wrap lg-main page-intro">
     <header class="art-hero">
-      <p class="lg-kicker">Files · The permanent record</p>
-      <h1 class="lg-read">Download and countersign the Website SOW</h1>
-      <p class="lg-lede" id="lede">The current website agreement, Brand System Portal, and working proof are available. Expected files remain listed quietly until they are received.</p>
+      <p class="lg-kicker">Files · Engagement record</p>
+      <h1 class="lg-read">The records room</h1>
+      <p class="lg-lede" id="lede">The final website agreement package is prepared for DocuSign. Working proofs, source files, and superseded drafts are held here so the engagement has one canonical record.</p>
     </header>
 
     <div id="priority"></div>
@@ -33,30 +35,7 @@
       <div class="art-register" id="current-list"></div>
     </section>
 
-    <section class="lg-connect" id="how-the-work-connects" aria-labelledby="connect-title">
-      <div class="lg-connect-intro">
-        <div class="lg-ops-head" style="border:0;padding:0">
-          <p class="lg-connect-eyebrow">How the work connects</p>
-          <button type="button" class="lg-copy" data-copy="how-the-work-connects">Copy link</button>
-        </div>
-        <p class="lg-connect-label">The marketing system</p>
-        <h2 id="connect-title">One firm story, carried through every expression</h2>
-        <p class="lg-connect-copy">A visual model of how the firm’s source material becomes durable expressions, ongoing firm activity and a more consistent market presence over time.</p>
-      </div>
-      <div class="lg-connect-stage-wrap">
-        <div class="lg-connect-stage">
-          <img src="vignette/poster.png" alt="" width="1920" height="1080">
-          <div class="lg-connect-veil">
-            <p class="lg-connect-watch">Watch the finished film</p>
-            <p class="lg-connect-runtime">Runtime 1:54</p>
-            <div class="lg-connect-ctas">
-              <a class="lg-go" id="connect-watch" href="vignette/">Watch film</a>
-            </div>
-          </div>
-        </div>
-      </div>
-      <p class="lg-connect-path">Source layer → LG Studio built → Firm-managed</p>
-    </section>
+    <p class="art-orient" id="how-the-work-connects">Need the big picture? <a href="vignette/">Watch How the Work Connects →</a></p>
 
     <section class="art-section art-plans" id="plans" aria-labelledby="plans-title">
       <header class="art-head">
@@ -81,6 +60,7 @@
   <script src="../../capabilities/costello/data/costello-project-state.js"></script>
   <script src="../_workspace/shell.js"></script>
   <script src="../_workspace/deep-link.js"></script>
+  <script src="../_workspace/install.js"></script>
   <script>
   function fileHref(rel) {
     return CostelloState.href(rel);
@@ -117,8 +97,9 @@
   }
   function statusClass(status) {
     var value = String(status || "").toUpperCase();
-    if (/AWAITING|NEED|NOT RECEIVED/.test(value)) return " is-need";
-    if (/SIGNED BY LG|PROOF|COPY APPROVED|CERTIFICATE|CANONICAL|SETTLED/.test(value)) return " is-ok";
+    if (/AWAITING|NEED|NOT RECEIVED|PENDING|PREPARED|CLIENT REVIEW/.test(value)) return " is-need";
+    if (/APPROVED|FINAL|SOURCE|CERTIFICATE/.test(value)) return " is-ok";
+    if (/SUPERSEDED/.test(value)) return " is-archive";
     return "";
   }
   function fileStrip(item) {
@@ -128,33 +109,30 @@
       "<span class=\"file-badge\">" + kind + "</span>" +
       "<span class=\"file-name\">" + escapeHtml(fileName(item.href)) + "</span></div>";
   }
-  var signCount = 0;
-  function returnMailto() {
-    return "mailto:luis@lgpractice.com?subject=" +
-      encodeURIComponent("Costello Website SOW · countersigned PDF") +
-      "&body=" + encodeURIComponent("Attaching the countersigned Website SOW.");
-  }
-  function priorityArtifact(item) {
-    signCount += 1;
-    var titleId = "sign-title-" + signCount;
-    var meta = item.note
-      ? "<p class=\"art-meta\">" + escapeHtml(item.note) + "</p>"
-      : (item.version ? "<p class=\"art-meta\">" + escapeHtml(item.version) + "</p>" : "");
-    return "<article class=\"art-priority primary-sheet\" aria-labelledby=\"" + titleId + "\">" +
-      "<p class=\"lg-status\"><i></i>" + escapeHtml(item.kicker || "Website SOW · Signature copy") + "</p>" +
-      "<h3 id=\"" + titleId + "\">" + escapeHtml(item.title) + "</h3>" +
-      meta +
-      fileStrip(item) +
-      "<ol class=\"file-steps\">" +
-        "<li>Download the signed PDF</li>" +
-        "<li>Add Costello Law Firm’s signature</li>" +
-        "<li>Reply to Luis with the countersigned PDF</li>" +
-      "</ol>" +
-      "<div class=\"art-cta\">" +
-        "<a class=\"lg-go\" href=\"" + fileHref(item.href) + "\">Download the signed PDF</a>" +
-        "<a class=\"lg-go is-ghost\" href=\"" + returnMailto() + "\">Return the countersigned PDF</a>" +
-      "</div>" +
-      "<p class=\"art-support\">The signed source is on this page. Return the countersigned PDF to Luis by email so the workspace record can be updated.</p>" +
+  function packageCard(state) {
+    var pack = (state && state.agreement) || {};
+    var stages = pack.stages || [];
+    var docs = pack.package || [];
+    var phases = pack.phases || [];
+    var stageHtml = "<ol class=\"art-sign-stages\">" + stages.map(function (step) {
+      return "<li class=\"" + (step.current ? "is-now" : "") + "\">" + escapeHtml(step.label) + "</li>";
+    }).join("") + "</ol>";
+    var docsHtml = "<ul class=\"art-package-docs\">" + docs.map(function (doc) {
+      var label = doc.fileLabel ? "<span>" + escapeHtml(doc.fileLabel) + "</span>" : "";
+      return "<li><a href=\"" + fileHref(doc.href) + "\">" + escapeHtml(doc.title) + "</a>" + label + "</li>";
+    }).join("") + "</ul>";
+    var phaseHtml = phases.map(function (phase) {
+      return "<p><strong>" + escapeHtml(phase.title) + "</strong> · " + escapeHtml(phase.fee) +
+        (phase.optional ? " · optional · not authorized" : "") + "</p>";
+    }).join("");
+    return "<article class=\"art-priority primary-sheet\" id=\"agreement-package\" aria-labelledby=\"sign-title-1\">" +
+      "<p class=\"lg-status\"><i></i>" + escapeHtml(pack.statusLabel || "DocuSign · Signature pending") + "</p>" +
+      "<h3 id=\"sign-title-1\">" + escapeHtml(pack.title || "Final agreement package") + "</h3>" +
+      "<p class=\"art-meta\">" + escapeHtml(pack.note || "Prepared for electronic signature. Not executed.") + "</p>" +
+      stageHtml +
+      docsHtml +
+      "<div class=\"art-package-terms\">" + phaseHtml + "</div>" +
+      "<p class=\"art-support\">Routing: Kris Costello signs first. Luis Gilberto Sánchez countersigns. Nari Weaver receives the completed copy.</p>" +
       "</article>";
   }
   function artifactActions(item) {
@@ -183,8 +161,9 @@
         : "") +
       "</div></div>";
     var note = "<p class=\"art-note\">" + escapeHtml(item.note || "") + "</p>";
-    var status = item.status
-      ? "<p class=\"art-status" + statusClass(item.status) + "\">" + escapeHtml(item.status) + "</p>"
+    var stateLabel = item.documentState || item.status;
+    var status = stateLabel
+      ? "<p class=\"art-status" + statusClass(stateLabel) + "\">" + escapeHtml(stateLabel) + "</p>"
       : "<p class=\"art-status\"></p>";
     return "<div class=\"art-row" + secondary + "\"" + (item.id ? " id=\"" + item.id + "\"" : "") + ">" + identity + note +
       "<div class=\"art-end\">" + status + artifactActions(item) + "</div></div>";
@@ -385,12 +364,11 @@
         });
       });
       var current = (manifest.currentIds || []).map(function (id) { return byId[id]; }).filter(Boolean);
-      var priority = current.filter(function (item) { return item.role === "signature-copy"; });
-      var shelf = current.filter(function (item) { return item.role !== "signature-copy"; });
+      var shelf = current.filter(function (item) { return item.role !== "package-agreement" && item.role !== "exhibit"; });
       if (manifest.meta && manifest.meta.note) {
         document.getElementById("lede").textContent = manifest.meta.note;
       }
-      document.getElementById("priority").innerHTML = priority.map(priorityArtifact).join("");
+      document.getElementById("priority").innerHTML = packageCard(state);
       document.getElementById("current-list").innerHTML = shelf.map(artifactRow).join("");
       document.getElementById("cur-count").textContent = shelf.length + " records";
       var plans = manifest.plans || {};
@@ -412,7 +390,8 @@
       document.getElementById("exp-count").textContent = String(expected.length);
       document.getElementById("expected").innerHTML = expected.map(expectedRow).join("");
       var aliases = {
-        "website-sow": "website-sow-itemized-signed-lg",
+        "website-sow": "agreement-package",
+        "agreement-package": "agreement-package",
         "letter-sow": "kitchen-review",
         "print-quote": "connect-quote-014564",
         "launch-plan": "website-launch-plan",

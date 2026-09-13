@@ -150,8 +150,36 @@
     renderInputs(review.inputs || []);
     renderProof(state, review.proof);
     renderProduction(state, review.production || []);
+    renderShaping(review.shaping);
+    renderExplorations((state.kitchen && state.kitchen.explorations) || []);
     showArtifact((review.proof && review.proof.kind) || review.kind || "letter");
     document.body.setAttribute("data-kitchen-review", (state.kitchen && state.kitchen.activeReview) || "letter-1");
+  }
+
+  function renderShaping(shaping) {
+    var list = document.getElementById("shaping-list");
+    var title = document.getElementById("shape-title");
+    if (!list || !shaping) return;
+    if (title && shaping.label) title.textContent = shaping.label;
+    list.innerHTML = (shaping.stages || []).map(function (step) {
+      return "<li><b>" + esc(step.label) + "</b><span>" + esc(step.value) + "</span><em>" + esc(step.state) + "</em></li>";
+    }).join("");
+  }
+
+  function renderExplorations(items) {
+    var host = document.getElementById("explore-list");
+    var first = items && items[0];
+    if (!host || !first) return;
+    text("explore-title", (first.attention || "FOR REFERENCE") + " · " + (first.status || "WORKING DIRECTION"));
+    var heading = document.querySelector(".k-explore h2");
+    if (heading) heading.textContent = first.title;
+    var status = document.querySelector(".k-explore-status");
+    if (status) status.textContent = first.note || "Working direction. Not approved brand strategy.";
+    host.innerHTML =
+      "<div><dt>Source</dt><dd>" + esc(first.source) + "</dd></div>" +
+      "<div><dt>Observation</dt><dd>" + esc(first.observation) + "</dd></div>" +
+      "<div><dt>Working direction</dt><dd>" + esc(first.direction) + "</dd></div>" +
+      "<div><dt>Implication</dt><dd>" + esc(first.implication) + "</dd></div>";
   }
 
   if (!window.CostelloState) return;

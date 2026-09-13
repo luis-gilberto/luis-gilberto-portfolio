@@ -26,65 +26,59 @@
     return n < 10 ? "0" + n : String(n);
   }
 
-  function renderPrimary(state, action) {
-    if (!action) return;
-    text("primary-eyebrow-label", action.eyebrow);
-    text("primary-headline", action.headline);
-    text("primary-context", action.context);
-    text("primary-meta", action.meta);
-    var cta = document.getElementById("mail-cta");
-    if (cta) {
-      cta.textContent = action.ctaLabel || "Open";
-      cta.href = hrefFor(state, action);
-    }
+  function renderState(block) {
+    if (!block) return;
+    text("primary-eyebrow-label", block.eyebrow);
+    text("primary-headline", block.headline);
+    text("primary-context", block.lede);
   }
 
-  function renderInputs(items) {
+  function renderAttention(state, items) {
     var list = document.getElementById("next-input-list");
     if (!list || !items || !items.length) return;
-    list.innerHTML = items.slice(0, 4).map(function (item, i) {
-      var id = i === 3 ? ' id="website-source-materials"' : "";
+    list.innerHTML = items.slice(0, 3).map(function (item, i) {
+      var id = item.id === "website-source-materials" ? " id=\"website-source-materials\"" : "";
+      var href = hrefFor(state, item);
+      var title = href && href !== "#"
+        ? "<a href=\"" + esc(href) + "\"><strong>" + esc(item.title) + "</strong></a>"
+        : "<strong>" + esc(item.title) + "</strong>";
       return "<li" + id + ">" +
         "<b class=\"lg-brief-num\" aria-hidden=\"true\">" + pad(i + 1) + "</b>" +
-        "<div><strong>" + esc(item.title) + "</strong>" +
+        "<div>" + title +
         "<span>" + esc(item.why) + "</span>" +
-        "<em>" + esc(item.timing) + "</em></div></li>";
+        "<em>" + esc(item.attention ? item.attention + " · " + item.timing : item.timing) + "</em></div></li>";
     }).join("");
   }
 
-  function renderNow(state, items) {
-    var row = document.getElementById("right-now-row");
+  function renderStreams(items) {
+    var row = document.getElementById("workstream-list");
     if (!row || !items || !items.length) return;
-    row.innerHTML = items.map(function (item, i) {
+    row.innerHTML = items.map(function (item) {
+      var quiet = /working direction|exploration|for reference/i.test(item.state || "") ? " is-quiet" : "";
       return "<article id=\"" + esc(item.id) + "\">" +
-        "<b class=\"lg-brief-num\" aria-hidden=\"true\">" + pad(i + 1) + "</b>" +
-        "<h3>" + esc(item.label) + "</h3>" +
-        "<p class=\"lg-brief-status\"><i aria-hidden=\"true\"></i>" + esc(item.status) + "</p>" +
-        "<p>" + esc(item.note) + "</p></article>";
+        "<p>" + esc(item.label) + "</p>" +
+        "<p class=\"lg-brief-status" + quiet + "\"><i aria-hidden=\"true\"></i>" + esc(item.state) + "</p>" +
+        "<h3>" + esc(item.phase) + "</h3>" +
+        "<p>" + esc(item.change) + "</p>" +
+        "<p>" + esc(item.next) + "</p></article>";
     }).join("");
   }
 
-  function renderEngagements(items) {
-    var grid = document.getElementById("engagement-grid");
-    if (!grid || !items || !items.length) return;
-    grid.innerHTML = items.map(function (item) {
-      return "<article" + (item.id ? " id=\"" + esc(item.id) + "\"" : "") + ">" +
-        "<div class=\"lg-brief-engage-top\">" +
-        "<p>" + esc(item.kicker) + "</p>" +
-        "<p class=\"lg-brief-status\"><i aria-hidden=\"true\"></i>" + esc(item.status) + "</p>" +
-        "</div>" +
-        "<h3>" + esc(item.title) + "</h3>" +
-        "<p>" + esc(item.scope) + "</p>" +
-        "<p>" + esc(item.next) + "</p>" +
-        "<a href=\"" + esc(item.href) + "\">" + esc(item.link) + "</a></article>";
-    }).join("");
-  }
-
-  function renderVerified(items) {
+  function renderMovement(items) {
     var list = document.getElementById("verified-list");
     if (!list || !items || !items.length) return;
-    list.innerHTML = items.slice(0, 3).map(function (item) {
-      return "<li>" + esc(item) + "</li>";
+    list.innerHTML = items.map(function (item) {
+      if (typeof item === "string") return "<li>" + esc(item) + "</li>";
+      return "<li><strong>" + esc(item.date) + "</strong> " + esc(item.title) +
+        (item.note ? " " + esc(item.note) : "") + "</li>";
+    }).join("");
+  }
+
+  function renderUpcoming(items) {
+    var list = document.getElementById("upcoming-list");
+    if (!list || !items || !items.length) return;
+    list.innerHTML = items.map(function (item) {
+      return "<li><strong>" + esc(item.title) + "</strong><span>" + esc(item.note) + "</span></li>";
     }).join("");
   }
 
@@ -100,28 +94,20 @@
 
   function apply(state) {
     var overview = (state && state.overview) || {};
-    var action = (overview.actions || {})[overview.activePrimaryAction] || null;
-    if (state && state.meta && state.meta.lastUpdatedLabel) {
-      document.body.setAttribute(
-        "data-lg-mode",
-        overview.programLine || document.body.getAttribute("data-lg-mode") || ""
-      );
+    if (overview.programLine) {
+      document.body.setAttribute("data-lg-mode", overview.programLine);
+      var mode = document.querySelector(".context-mode");
+      if (mode) mode.innerHTML = "<i></i>" + overview.programLine;
     }
-    renderPrimary(state, action);
-    renderInputs(overview.nextInputs);
-    renderNow(state, overview.rightNow);
-    renderEngagements(overview.engagements);
-    renderVerified(overview.recentlyVerified);
+    renderState(overview.currentState);
+    renderAttention(state, overview.needsAttention);
+    renderStreams(overview.workstreams);
+    renderMovement(overview.recentMovement);
+    renderUpcoming(overview.upcoming);
     renderDeeper(state, overview.goDeeper);
-
-    var quote = window.CostelloState ? CostelloState.url(state, "connectQuote") : null;
-    document.querySelectorAll("[data-quote]").forEach(function (el) {
-      if (quote) el.href = quote;
-    });
-    var webPlan = document.getElementById("plans-web");
-    var refPlan = document.getElementById("plans-ref");
-    if (webPlan) webPlan.href = "files.html#plans";
-    if (refPlan && window.CostelloState) refPlan.href = CostelloState.href("kitchen/costello/plans/costello-referral-letter-campaign-plan.html");
+    if (state && state.operatingModel && state.operatingModel.note) {
+      text("how-we-work", state.operatingModel.note);
+    }
   }
 
   if (!window.CostelloState) return;

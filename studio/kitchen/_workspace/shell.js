@@ -14,7 +14,8 @@
         var map = {
           overview: "kitchen/costello/",
           kitchen: "kitchen/costello-review/",
-          brand: "kitchen/costello/brand.html",
+          brand: "kitchen/costello/reference.html",
+          reference: "kitchen/costello/reference.html",
           brandSystem: "capabilities/costello/Costello_Brand_Portal_Elevated.html",
           files: "kitchen/costello/files.html"
         };
@@ -23,14 +24,15 @@
     return [
       { id: "overview", label: "Overview", href: url("overview") },
       { id: "kitchen", label: "Kitchen", href: url("kitchen") },
-      { id: "brand", label: "Brand", href: url("brand") },
-      { id: "files", label: "Files", href: url("files") }
+      { id: "files", label: "Files", href: url("files") },
+      { id: "reference", label: "Reference", href: url("reference") }
     ];
   }
 
   function navHtml(items) {
     return items.map(function (item) {
-      var current = item.id === page ? ' aria-current="page"' : "";
+      var here = item.id === page || (item.id === "reference" && page === "brand");
+      var current = here ? ' aria-current="page"' : "";
       return "<a href=\"" + item.href + "\"" + current + ">" + item.label + "</a>";
     }).join("");
   }
@@ -60,7 +62,10 @@
       '<div class="context-band">' +
         '<div class="content-width context-band-inner">' +
           (mode ? '<p class="context-mode"><i></i>' + mode + "</p>" : '<p class="context-mode"></p>') +
-          (updated ? '<p class="context-updated">' + updated + "</p>" : "") +
+          '<div class="context-tools">' +
+            (updated ? '<p class="context-updated">' + updated + "</p>" : "") +
+            '<button type="button" class="lg-install" data-lg-install>Add desktop shortcut</button>' +
+          "</div>" +
         "</div>" +
       "</div>";
 
