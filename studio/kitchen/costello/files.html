@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" />
 <link rel="stylesheet" href="../_workspace/shell.css" />
 <link rel="stylesheet" href="files.css" />
+<link rel="stylesheet" href="film.css" />
 </head>
 <body class="lg-page lg-files" data-lg-page="files" data-lg-mode="Documents and assets / Signature copy">
   <div class="lg-grain" aria-hidden="true"></div>
@@ -30,11 +31,32 @@
       <div class="art-register" id="current-list"></div>
     </section>
 
+    <section class="lg-connect" id="how-the-work-connects" aria-labelledby="connect-title">
+      <div class="lg-connect-intro">
+        <p class="lg-connect-eyebrow">How the work connects</p>
+        <p class="lg-connect-label">The marketing system</p>
+        <h2 id="connect-title">One firm story, carried through every expression</h2>
+        <p class="lg-connect-copy">A visual model of how the firm’s source material becomes durable expressions, ongoing firm activity and a more consistent market presence over time.</p>
+      </div>
+      <div class="lg-connect-stage-wrap">
+        <div class="lg-connect-stage">
+          <img src="vignette/poster.png" alt="" width="1920" height="1080">
+          <div class="lg-connect-veil">
+            <p class="lg-connect-watch">Watch the finished film</p>
+            <p class="lg-connect-runtime">Runtime 1:54</p>
+            <div class="lg-connect-ctas">
+              <a class="lg-go" id="connect-watch" href="vignette/">Watch film</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="lg-connect-path">Source layer → LG Studio built → Firm-managed</p>
+    </section>
+
     <section class="art-section art-plans" aria-labelledby="plans-title">
       <header class="art-head">
         <h2 id="plans-title" class="art-label">Plans &amp; Operating Maps</h2>
       </header>
-      <div class="plan-orient" id="orientation"></div>
       <div class="art-plans-intro" id="plans-intro"></div>
       <div class="plan-grid" id="plans-list"></div>
     </section>
@@ -269,21 +291,20 @@
     var rec = item.recommendation;
     if (!rec) return "";
     var details = [
-      "First-Class postage included",
-      "CASS/NCOA included",
-      "personalization included",
-      "perfect-match fulfillment included",
-      "local Seattle vendor",
-      "next-business-day PDF proof",
-      "five working days from accepted complete package to USPS handoff",
+      "Quote 014564 is the written source for the $1,987.58 total",
+      "vendor guidance, not stated in the quote: proof timing is typically next business day",
+      "vendor guidance, not stated in the quote: approximately five working days from an accepted production package",
       "USPS handoff is not recipient delivery"
     ];
+    var source = rec.sourceHref
+      ? "<p class=\"plan-note-source\"><a href=\"" + fileHref(rec.sourceHref) + "\">" +
+        escapeHtml(rec.sourceLabel || "View quote") + "</a></p>"
+      : "";
     return "<aside class=\"plan-note\">" +
-      "<p class=\"plan-note-kicker\">Production path</p>" +
-      "<p class=\"plan-note-status\">Connect Printing · preferred pending approval</p>" +
-      "<p class=\"plan-note-facts\">" + escapeHtml(rec.quote || "$1,987.58 total") +
-        " · next-business-day PDF proof · five working days to USPS handoff after accepted complete package</p>" +
-      "<p class=\"plan-note-support\">Includes First-Class postage, CASS/NCOA, personalization and perfect-match fulfillment.</p>" +
+      "<p class=\"plan-note-kicker\">Vendor quote</p>" +
+      "<p class=\"plan-note-status\">Connect Printing · $1,987.58 · preferred pending approval</p>" +
+      source +
+      "<p class=\"plan-note-facts\">Vendor guidance · not stated in the quote. Proof timing is typically next business day. Approximately five working days from an accepted production package to USPS handoff.</p>" +
       "<p class=\"plan-note-approval\">" + escapeHtml(rec.approval || "Costello written approval required before third-party spend") + "</p>" +
       "<details class=\"plan-note-more\">" +
         "<summary>View production details</summary>" +
@@ -366,15 +387,6 @@
       document.getElementById("current-list").innerHTML = shelf.map(artifactRow).join("");
       document.getElementById("cur-count").textContent = shelf.length + " records";
       var plans = manifest.plans || {};
-      var orientation = manifest.orientation || {};
-      var orient = orientation.item;
-      document.getElementById("orientation").innerHTML = orient ? (
-        "<a href=\"" + fileHref(orient.href) + "\">" +
-          "<p class=\"plan-orient-kicker\">" + escapeHtml(orientation.label || "Orientation") + " · " + escapeHtml(orient.status || "") + "</p>" +
-          "<h3>" + escapeHtml(orient.title || "How the Work Connects") + "</h3>" +
-          "<p>" + escapeHtml(orient.summary || "") + "</p>" +
-        "</a>"
-      ) : "";
       document.getElementById("plans-intro").innerHTML = (plans.intro || []).map(function (line) {
         return "<p>" + escapeHtml(line) + "</p>";
       }).join("");

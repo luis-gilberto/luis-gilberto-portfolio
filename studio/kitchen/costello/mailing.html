@@ -30,6 +30,7 @@
   h1.lg-read { margin-top: 10px; }
   .lede { margin-top: 10px; max-width: 46em; font-size: 15px; line-height: 1.6; color: var(--ink-soft); }
   .hold { margin-top: 20px; padding: 14px 0; border-top: 1px solid var(--paper-line); color: var(--ink-soft); }
+  .hold.is-need { padding: 14px 0 14px 16px; border-left: 3px solid var(--coral); color: var(--ink); }
   .now { margin-top: 28px; }
   .now-row { display: grid; grid-template-columns: 9rem minmax(0,1fr); gap: 16px; padding: 12px 0; border-top: 1px solid var(--paper-line); }
   .now-row strong { font-family: var(--font-util); font-weight: 500; font-size: 15px; }
@@ -56,27 +57,27 @@
   <main class="lg-wrap lg-main">
     <p class="crumb"><a href="./">Overview</a> · Referral mailing</p>
     <h1 class="lg-read">Letter 1 · final copy pending</h1>
-    <p class="lede" id="lede">Final Letter 1 and the completed mailing list are expected Monday by 12:00 PM. Connect Printing is the preferred path, pending written approval. Production has not been submitted. The printer clock has not started.</p>
+    <p class="lede" id="lede">Final Letter 1 is with Kris. The mailing list is in progress. Both are due Monday, September 14 · 12:00 PM. Connect Printing is the preferred path, pending written approval. Production has not been submitted. The printer clock has not started.</p>
     <section class="now" aria-label="Current state">
       <div class="now-row">
         <strong>Letter 1</strong>
-        <p>Final copy pending</p>
+        <p>Final copy pending · with Kris · due Monday, September 14 · 12:00 PM</p>
       </div>
       <div class="now-row">
         <strong>Mailing list</strong>
-        <p>Final completion in progress</p>
+        <p>In progress · expected Monday morning · required by Monday, September 14 · 12:00 PM</p>
       </div>
       <div class="now-row">
         <strong>Printer</strong>
-        <p>Connect Printing · preferred pending approval</p>
+        <p>Connect Printing · preferred pending approval · <a class="link" id="connect-quote" href="documents/referral/vendors/connect-printing/Connect_Printing_Quote_014564.pdf">View quote</a></p>
       </div>
       <div class="now-row">
         <strong>Production</strong>
-        <p>Not submitted</p>
+        <p>Not submitted · timing follows receipt and package acceptance</p>
       </div>
     </section>
-    <p class="hold" id="hold">Monday noon · final inputs. Then production QA and list normalization. Then Connect written approval. Then PDF proof, production, and USPS handoff. Recipient delivery remains USPS-dependent.</p>
-    <p class="key">Client input · LG Studio action · Printer action</p>
+    <p class="hold is-need" id="hold"><strong>Timing dependency.</strong> Final Letter 1 copy and the mailing list are due Monday, September 14 at 12:00 PM. Any delay in either input may shift production, proofing, USPS handoff, and downstream mailing timing. Delivery dates remain estimates until the final production package is accepted.</p>
+    <p class="key">Client commitment · LG Studio dependency · Vendor guidance · Carrier estimate</p>
     <div class="seq" id="seq"></div>
     <div class="actions">
       <a class="cta" id="cta" href="../costello-review/">Open in Kitchen</a>
@@ -86,10 +87,12 @@
   <script src="../../capabilities/costello/data/costello-project-state.js"></script>
   <script src="../_workspace/shell.js"></script>
   <script>
-  var TYPE = { client: "Client input", studio: "LG Studio action", printer: "Printer action" };
+  var TYPE = { client: "Client commitment", studio: "LG Studio dependency", printer: "Vendor guidance", carrier: "Carrier estimate" };
   CostelloState.load().then(function (state) {
     var mail = state.referralMailing;
     document.getElementById("cta").href = CostelloState.url(state, "kitchen");
+    var quote = document.getElementById("connect-quote");
+    if (quote) quote.href = CostelloState.url(state, "connectQuote");
     document.getElementById("seq").innerHTML = mail.sequence.map(function (step) {
       return '<div class="stop ' + step.state + '">' +
         '<p class="own">' + (TYPE[step.ownerType] || "") + "</p>" +
