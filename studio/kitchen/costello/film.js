@@ -1,5 +1,13 @@
 (function () {
-  var END = 114.3;
+  var FILM = {
+    motion: "kitchen/costello/artifacts/how-the-work-connects/current/Costello_How_The_Work_Connects_motion.html",
+    static: "kitchen/costello/artifacts/how-the-work-connects/current/Costello_How_The_Work_Connects_static.html",
+    poster: "kitchen/costello/artifacts/how-the-work-connects/current/poster.png",
+    end: 114.3,
+    runtime: "1:54"
+  };
+  var END = FILM.end;
+  var RUNTIME = FILM.runtime;
   var stage = document.getElementById("connect-stage");
   var watchBtn = document.getElementById("connect-watch");
   var systemBtn = document.getElementById("connect-system");
@@ -19,8 +27,8 @@
   var webLink = present.querySelector("#present-web");
   var refLink = present.querySelector("#present-ref");
 
-  var motionSrc = href("kitchen/costello/artifacts/how-the-work-connects/Costello_Ecosystem_Master_Frame_motion.html") + "?embed=1";
-  var staticSrc = href("kitchen/costello/artifacts/how-the-work-connects/Costello_Ecosystem_Master_Frame_static.html");
+  var motionSrc = href(FILM.motion) + "?embed=1";
+  var staticSrc = href(FILM.static);
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var mode = "film";
   var lastFocus = null;
@@ -31,6 +39,24 @@
 
   function href(rel) {
     return window.CostelloState ? CostelloState.href(rel) : "/studio/" + rel;
+  }
+
+  function applyFilm(cur) {
+    if (!cur) return;
+    if (cur.motion) {
+      FILM.motion = cur.motion;
+      motionSrc = href(FILM.motion) + "?embed=1";
+    }
+    if (cur.static) {
+      FILM.static = cur.static;
+      staticSrc = href(FILM.static);
+    }
+    if (cur.poster) FILM.poster = cur.poster;
+    if (cur.end) END = cur.end;
+    if (cur.runtime) RUNTIME = cur.runtime;
+    var img = stage.querySelector("img");
+    if (img && FILM.poster) img.src = href(FILM.poster);
+    setTime(0);
   }
 
   if (webLink) webLink.href = href("kitchen/costello/plans/costello-website-launch-plan.html");
@@ -52,7 +78,7 @@
   }
 
   function setTime(sec) {
-    if (timeEl) timeEl.textContent = fmt(sec) + " / 1:54";
+    if (timeEl) timeEl.textContent = fmt(sec) + " / " + RUNTIME;
     if (progress) progress.value = String(Math.round((sec / END) * 1000));
     if (playBtn) {
       var api = film();
@@ -134,7 +160,7 @@
 
   function isMotion() {
     var src = frame.getAttribute("src") || "";
-    return src.indexOf("Costello_Ecosystem_Master_Frame_motion.html") !== -1;
+    return /Costello_How_The_Work_Connects_motion\.html|Costello_Ecosystem_Master_Frame_motion\.html/.test(src);
   }
 
   function kickFilm() {
@@ -220,7 +246,17 @@
     startFilm();
   });
 
-  if (!reduce) frame.src = motionSrc;
+  function preload() {
+    if (!reduce && !frame.getAttribute("src")) frame.src = motionSrc;
+  }
+  if (window.CostelloState && CostelloState.load) {
+    CostelloState.load().then(function (state) {
+      applyFilm(state.film && state.film.current);
+      preload();
+    }).catch(preload);
+  } else {
+    preload();
+  }
 
   watchBtn.addEventListener("click", function (e) { e.preventDefault(); open("film", watchBtn); });
   systemBtn.addEventListener("click", function (e) { e.preventDefault(); open("system", systemBtn); });

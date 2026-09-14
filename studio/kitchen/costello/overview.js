@@ -36,8 +36,8 @@
   function renderAttention(state, items) {
     var list = document.getElementById("next-input-list");
     if (!list || !items || !items.length) return;
-    list.innerHTML = items.slice(0, 3).map(function (item, i) {
-      var id = item.id === "website-source-materials" ? " id=\"website-source-materials\"" : "";
+    list.innerHTML = items.slice(0, 4).map(function (item, i) {
+      var id = item.id ? " id=\"" + esc(item.id) + "\"" : "";
       var href = hrefFor(state, item);
       var title = href && href !== "#"
         ? "<a href=\"" + esc(href) + "\"><strong>" + esc(item.title) + "</strong></a>"

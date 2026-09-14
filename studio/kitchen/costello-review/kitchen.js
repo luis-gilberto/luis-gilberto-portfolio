@@ -151,6 +151,10 @@
     renderProof(state, review.proof);
     renderProduction(state, review.production || []);
     renderShaping(review.shaping);
+    if (review.sourceChanges) {
+      var note = document.getElementById("source-changes");
+      if (note) note.textContent = review.sourceChanges.label + " updated: " + review.sourceChanges.note;
+    }
     renderExplorations((state.kitchen && state.kitchen.explorations) || []);
     showArtifact((review.proof && review.proof.kind) || review.kind || "letter");
     document.body.setAttribute("data-kitchen-review", (state.kitchen && state.kitchen.activeReview) || "letter-1");
