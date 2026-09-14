@@ -219,11 +219,27 @@
   function renderExplorations(items) {
     var host = document.getElementById("explore-list");
     var first = items && items[0];
-    if (!host || !first) return;
-    var heading = document.getElementById("explore-heading") || document.querySelector(".k-explore h2");
-    if (heading) heading.textContent = first.title;
-    var status = document.querySelector(".k-explore-status");
-    if (status) status.textContent = first.note || "Working direction. Not approved brand strategy.";
+    if (!first) return;
+    var heading = document.getElementById("anchor-heading") || document.getElementById("explore-heading");
+    if (heading && first.headline) heading.textContent = first.headline;
+    else if (heading && first.title) heading.textContent = first.title;
+    var status = document.getElementById("anchor-status") || document.querySelector(".k-explore-status");
+    if (status) {
+      var statusText = first.statusLabel || first.note || "FOR REVIEW";
+      status.innerHTML = "<i aria-hidden=\"true\"></i>" + esc(statusText);
+    }
+    var copy = document.getElementById("anchor-copy");
+    if (copy && first.summary) copy.textContent = first.summary;
+    var open = document.getElementById("anchor-open");
+    if (open) {
+      if (first.openHref && window.CostelloState) open.href = CostelloState.href(first.openHref);
+      else if (first.openHref) open.href = first.openHref;
+      open.setAttribute("target", "_blank");
+      open.setAttribute("rel", "noopener noreferrer");
+      if (first.openLabel) open.textContent = first.openLabel;
+      open.setAttribute("aria-label", "Open Positioning Anchor in a new tab");
+    }
+    if (!host) return;
     host.innerHTML =
       "<div><dt>Source</dt><dd>" + esc(first.source) + "</dd></div>" +
       "<div><dt>Observation</dt><dd>" + esc(first.observation) + "</dd></div>" +

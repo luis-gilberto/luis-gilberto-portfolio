@@ -33,18 +33,47 @@
     text("primary-context", block.lede);
   }
 
+  function isWorkspaceHref(href) {
+    if (!href || href === "#") return true;
+    if (href.charAt(0) === "#") return true;
+    try {
+      var path = href;
+      if (/^https?:/i.test(href) && window.location) {
+        var u = new URL(href, window.location.href);
+        if (u.origin !== window.location.origin) return false;
+        path = u.pathname + u.search + u.hash;
+      }
+      path = String(path).replace(/\\/g, "/");
+      return /\/kitchen\/costello\/?$|\/kitchen\/costello\/index\.html|\/kitchen\/costello\/files\.html|\/kitchen\/costello\/reference\.html|\/kitchen\/costello\/brand\.html|\/kitchen\/costello\/mailing\.html|\/kitchen\/costello-review(\/|$)|\/Costello_Control\.html/i.test(path)
+        || /(^|\/)(files|reference|mailing|brand)\.html/i.test(path)
+        || /(^|\/)costello-review(\/|$)/i.test(path);
+    } catch (err) {
+      return false;
+    }
+  }
+
   function renderAttention(state, items) {
     var list = document.getElementById("next-input-list");
     if (!list || !items || !items.length) return;
-    list.innerHTML = items.slice(0, 4).map(function (item, i) {
+    list.innerHTML = items.slice(0, 5).map(function (item, i) {
       var id = item.id ? " id=\"" + esc(item.id) + "\"" : "";
       var href = hrefFor(state, item);
-      var title = href && href !== "#"
-        ? "<a class=\"lg-doc-link\" href=\"" + esc(href) + "\"><strong>" + esc(item.title) + "</strong></a>"
-        : "<strong>" + esc(item.title) + "</strong>";
+      var label = item.ctaLabel || item.title;
+      var openSep = item.openSeparately === true || (href && href !== "#" && !isWorkspaceHref(href) && !item.hrefKey);
+      var title;
+      if (href && href !== "#") {
+        if (openSep) {
+          title = "<a class=\"lg-doc-link\" href=\"" + esc(href) + "\" target=\"_blank\" rel=\"noopener noreferrer\" aria-label=\"Open " + esc(item.title) + " in a new tab\"><strong>" + esc(label) + "</strong></a>";
+        } else {
+          title = "<a class=\"lg-doc-link\" data-lg-nav=\"workspace\" href=\"" + esc(href) + "\"><strong>" + esc(item.title) + "</strong></a>";
+        }
+      } else {
+        title = "<strong>" + esc(item.title) + "</strong>";
+      }
       return "<li" + id + ">" +
         "<b class=\"lg-brief-num\" aria-hidden=\"true\">" + pad(i + 1) + "</b>" +
         "<div>" + title +
+        (item.attention ? "<em class=\"lg-brief-attn\">" + esc(item.attention) + "</em>" : "") +
         "<span>" + esc(item.why) + "</span>" +
         (item.timing ? "<em>" + esc(item.timing) + "</em>" : "") +
         "</div></li>";
