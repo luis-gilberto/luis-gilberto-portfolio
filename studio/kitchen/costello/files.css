@@ -1,5 +1,8 @@
 .lg-files {
-  --art-grid: minmax(16rem, 1.2fr) minmax(16rem, 1.4fr) minmax(12rem, 0.9fr);
+  /* Resilient tracks: minmax(0, …) so columns can shrink without overflowing
+     into neighbors. Large rem mins (former 16rem/16rem/12rem) caused mid-width
+     collisions when the content box was narrower than the sum of mins + gaps. */
+  --art-grid: minmax(0, 1.15fr) minmax(0, 1.25fr) minmax(6.5rem, max-content);
 }
 
 .lg-files .lg-read {
@@ -181,16 +184,22 @@
   color: var(--lg-ink-soft);
 }
 
-.lg-files .art-register { min-width: 0; }
+.lg-files .art-register { min-width: 0; width: 100%; }
 
 .lg-files .art-row {
   display: grid;
   grid-template-columns: var(--art-grid);
-  gap: 12px 28px;
-  align-items: baseline;
+  column-gap: 28px;
+  row-gap: 10px;
+  align-items: start;
+  justify-items: stretch;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
   min-height: 0;
   padding: 16px 0;
   border-top: 1px solid var(--rule);
+  overflow-x: clip;
 }
 
 .lg-files .art-register .art-row:first-child { border-top: 0; }
@@ -201,15 +210,26 @@
   color: var(--lg-ink-faint);
 }
 
+.lg-files .art-row.is-secondary .art-title > a {
+  color: var(--link-document);
+}
+
 .lg-files .art-identity {
   display: flex;
   align-items: flex-start;
   gap: 10px;
   min-width: 0;
+  max-width: 100%;
+}
+
+.lg-files .art-identity > div {
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
 .lg-files .art-mark {
   display: inline-flex;
+  flex: 0 0 auto;
   color: var(--lg-ink-faint);
   transform: translateY(3px);
 }
@@ -217,8 +237,10 @@
 .lg-files .art-end {
   display: grid;
   justify-items: start;
+  align-content: start;
   gap: 6px;
   min-width: 0;
+  max-width: 100%;
 }
 
 .lg-files .art-title {
@@ -230,26 +252,31 @@
   line-height: 1.3;
   color: var(--lg-ink);
   overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .lg-files .art-title a:hover,
 .lg-files .art-title a:focus-visible {
-  color: var(--lg-ink);
+  /* affordance owned by .lg-doc-link / shell document-link rules */
+  color: var(--link-document-hover);
 }
 
 .lg-files .art-note {
   margin: 0;
   min-width: 0;
+  max-width: 100%;
   font-family: var(--lg-util);
   font-size: 15px;
   line-height: 1.6;
   color: var(--lg-ink-soft);
   overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .lg-files .art-status {
   display: block;
-  width: auto;
+  width: max-content;
+  max-width: 100%;
   min-width: 0;
   margin: 0;
   font-family: var(--lg-mono);
@@ -257,6 +284,7 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--lg-ink-soft);
+  overflow-wrap: anywhere;
 }
 
 .lg-files .art-status.is-need { color: var(--lg-coral); }
@@ -277,11 +305,10 @@
   font-size: 13px;
   letter-spacing: 0;
   text-transform: none;
-  color: var(--lg-ink-soft);
   white-space: nowrap;
 }
 
-.lg-files .art-action:hover { color: var(--lg-ink); }
+.lg-files .art-action:hover { color: var(--link-document-hover); }
 
 .lg-files .art-subhead {
   margin: 12px 0 0;
@@ -316,9 +343,13 @@
 
 .lg-files .is-permanent .art-row.is-sign-record,
 .lg-files .is-permanent .art-row.is-sign-record .art-title,
-.lg-files .is-permanent .art-row.is-sign-record .art-note,
-.lg-files .is-permanent .art-row.is-sign-record .art-action {
+.lg-files .is-permanent .art-row.is-sign-record .art-note {
   color: var(--lg-ink-faint);
+}
+
+.lg-files .is-permanent .art-row.is-sign-record .art-title > a,
+.lg-files .is-permanent .art-row.is-sign-record .art-action {
+  color: var(--link-document);
 }
 
 .lg-files .is-permanent .art-row.is-sign-record .art-title {
@@ -739,7 +770,7 @@
   font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--lg-ink-soft);
+  /* document-link color/underline from shell */
 }
 
 .lg-files .plan-note-facts,
@@ -817,11 +848,10 @@
   font-size: 13px;
   letter-spacing: 0;
   text-transform: none;
-  color: var(--lg-ink-soft);
 }
 
 .lg-files .plan-open:hover {
-  color: var(--lg-ink);
+  color: var(--link-document-hover);
 }
 
 .lg-files .plan-ref-note {
@@ -835,6 +865,48 @@
 .lg-files summary:focus-visible {
   outline: 2px solid var(--lg-teal);
   outline-offset: 3px;
+}
+
+/* Tablet / narrow desktop: three equal editorial columns become unsafe.
+   Recompose to identity + status on row 1, description spanning below. */
+@media (max-width: 1100px) {
+  .lg-files .art-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 20px;
+    row-gap: 0;
+  }
+
+  .lg-files .art-identity {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .lg-files .art-end {
+    grid-column: 2;
+    grid-row: 1;
+    justify-items: end;
+    justify-self: end;
+    text-align: right;
+  }
+
+  .lg-files .art-actions {
+    justify-content: flex-end;
+  }
+
+  .lg-files .art-note {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    margin-top: 10px;
+    padding-top: 2px;
+  }
+
+  .lg-files .file-name {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
 }
 
 @media (max-width: 760px) {
@@ -887,9 +959,25 @@
     overflow-wrap: anywhere;
     word-break: break-word;
   }
+
+  /* Mobile: full stack — title/meta → description → status */
   .lg-files .art-row {
-    grid-template-columns: 1fr;
-    gap: 6px;
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: 0;
+    row-gap: 8px;
+  }
+  .lg-files .art-identity,
+  .lg-files .art-note,
+  .lg-files .art-end {
+    grid-column: 1;
+    grid-row: auto;
+    justify-self: stretch;
+    justify-items: start;
+    text-align: left;
+  }
+  .lg-files .art-note {
+    margin-top: 0;
+    padding-top: 0;
   }
   .lg-files .art-end,
   .lg-files .art-actions {
@@ -936,7 +1024,6 @@
   display: inline;
   font-family: var(--lg-display);
   font-size: 18px;
-  color: var(--ink);
 }
 .lg-files .art-package-docs span {
   display: block;
@@ -958,7 +1045,4 @@
   margin-top: 36px;
   font-size: 15px;
   color: var(--ink-soft);
-}
-.lg-files .art-orient a {
-  color: var(--ink);
 }

@@ -19,10 +19,6 @@
     return item.href || item.openHref || item.downloadHref || "#";
   }
 
-  function pad(n) {
-    return n < 10 ? "0" + n : String(n);
-  }
-
   function reviewFrom(state) {
     var kitchen = (state && state.kitchen) || {};
     var reviews = kitchen.reviews || {};
@@ -46,9 +42,18 @@
   function renderStatus(lines) {
     var list = document.getElementById("current-status-list");
     if (!list || !lines || !lines.length) return;
-    list.innerHTML = lines.map(function (line) {
-      return "<li>" + esc(line) + "</li>";
-    }).join("");
+    list.textContent = lines.join(" · ");
+  }
+
+  function reviewCta(item, i) {
+    if (item.ctaLabel) return item.ctaLabel;
+    if (i !== 0) return "";
+    if (/letter 1/i.test(item.title || "")) return "Review Letter 1";
+    return "Review";
+  }
+
+  function isComplete(item) {
+    return /complete|completed|done|received/i.test(item && item.status || "");
   }
 
   function renderInputs(items) {
@@ -58,47 +63,90 @@
       var reserved = { "current-input": true, "questions": true };
       var id = item.id && !reserved[item.id] ? " id=\"" + esc(item.id) + "\"" : "";
       var mail = "mailto:luis@lgpractice.com?subject=" + encodeURIComponent(item.mailtoSubject || "Costello Kitchen");
-      var copyId = item.id || "current-input";
-      var attach = item.attachmentNote
-        ? "<p class=\"k-attach\">" + esc(item.attachmentNote) + "</p>"
-        : "";
-      var owner = item.owner
-        ? "<p class=\"k-owner\">Owner · " + esc(item.owner) + "</p>"
-        : "";
-      return "<li" + id + ">" +
-        "<b class=\"k-num\" aria-hidden=\"true\">" + pad(i + 1) + "</b>" +
-        "<div>" +
-          "<div class=\"k-input-head\">" +
-            "<strong>" + esc(item.title) + "</strong>" +
-            (item.status ? "<em>" + esc(item.status) + "</em>" : "") +
-          "</div>" +
-          "<span>" + esc(item.why) + "</span>" +
-          "<p class=\"k-timing\">" + esc(item.timing) + "</p>" +
-          owner +
-          "<div class=\"lg-respond\">" +
-            "<a href=\"" + mail + "\">Reply by email</a>" +
-            "<button type=\"button\" class=\"lg-copy\" data-copy=\"" + esc(copyId) + "\" data-copy-quiet aria-label=\"Copy section link\">" +
-              "<svg viewBox=\"0 0 16 16\" aria-hidden=\"true\" focusable=\"false\"><path fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\" d=\"M6.2 9.8 4.4 11.6a2.1 2.1 0 1 1-3-3l2.2-2.2a2.1 2.1 0 0 1 3 0M9.8 6.2l1.8-1.8a2.1 2.1 0 1 1 3 3L12.4 9.6a2.1 2.1 0 0 1-3 0M6.4 9.6l3.2-3.2\"/></svg>" +
-            "</button>" +
-          "</div>" +
-          attach +
-        "</div></li>";
+      var why = item.why || "";
+      if (item.attachmentNote && !/attach/i.test(why)) {
+        why = (why ? why + " " : "") + "Send attachments by email or Teams.";
+      }
+      var time = item.timing || "";
+      if (item.owner) time = time ? time + " · " + item.owner : item.owner;
+      var done = isComplete(item);
+      var primary = i === 0 && !done;
+      var cta = !done && reviewCta(item, i);
+      var action = "";
+      if (!done) {
+        action = cta
+          ? "<a class=\"lg-go k-input-go\" href=\"#working-proof\">" + esc(cta) + "</a>"
+          : "<a class=\"k-input-mail\" href=\"" + mail + "\">Reply by email</a>";
+      }
+      var cls = done ? "is-done" : (primary ? "is-primary" : "is-secondary");
+      return "<li" + id + " class=\"" + cls + "\">" +
+        "<strong>" + esc(item.title) + "</strong>" +
+        (why ? "<span class=\"k-input-why\">" + esc(why) + "</span>" : "") +
+        (time ? "<span class=\"k-input-time\">" + esc(time) + "</span>" : "") +
+        action +
+        "</li>";
     }).join("");
   }
 
-  function renderProduction(state, items) {
+  function groupProduction(items) {
+    if (!items || items.length < 4) return items || [];
+    var production = items.filter(function (item) { return /^production$/i.test(item.label); })[0];
+    var printer = items.filter(function (item) { return /^printer$/i.test(item.label); })[0];
+    var timing = items.filter(function (item) { return /^timing$/i.test(item.label); })[0];
+    var record = items.filter(function (item) { return /^record$/i.test(item.label); })[0];
+    if (!production || !printer || !timing || !record) return items;
+    return [
+      production,
+      {
+        label: "Printer + timing",
+        value: printer.value,
+        quote: printer.note,
+        lead: timing.value,
+        note: timing.note,
+        linkLabel: printer.linkLabel,
+        hrefKey: printer.hrefKey,
+        href: printer.href
+      },
+      record
+    ];
+  }
+
+  function renderProduction(state, items, sourceChanges) {
     var row = document.getElementById("production-list");
     if (!row || !items || !items.length) return;
-    row.innerHTML = items.map(function (item, i) {
-      var link = item.linkLabel && (item.hrefKey || item.href)
-        ? "<a href=\"" + esc(hrefFor(state, item)) + "\">" + esc(item.linkLabel) + "</a>"
+    row.innerHTML = groupProduction(items).map(function (item) {
+      var printer = /printer/i.test(item.label || "");
+      var quote = "";
+      if (item.quote) {
+        var qlink = item.linkLabel && (item.hrefKey || item.href)
+          ? " <a class=\"lg-doc-link\" href=\"" + esc(hrefFor(state, item)) + "\">" + esc(item.linkLabel) + "</a>"
+          : "";
+        quote = "<p class=\"k-prod-quote\">" + esc(item.quote) + qlink + "</p>";
+      }
+      var more = "";
+      if (printer && (item.lead || item.note)) {
+        more = "<div class=\"k-prod-more\">" +
+          (item.lead ? "<p>" + esc(item.lead) + "</p>" : "") +
+          (item.note ? "<p>" + esc(item.note) + "</p>" : "") +
+          "</div>";
+      }
+      var note = !printer && item.note ? "<p>" + esc(item.note) + "</p>" : "";
+      var link = !item.quote && item.linkLabel && (item.hrefKey || item.href)
+        ? "<a class=\"lg-doc-link\" href=\"" + esc(hrefFor(state, item)) + "\">" + esc(item.linkLabel) + "</a>"
         : "";
+      var source = "";
+      if (/^record$/i.test(item.label) && sourceChanges) {
+        source = "<p class=\"k-source-note\" id=\"source-changes\">" +
+          esc(sourceChanges.label + " updated: " + sourceChanges.note) + "</p>";
+      }
       return "<article>" +
-        "<b class=\"k-num\" aria-hidden=\"true\">" + pad(i + 1) + "</b>" +
         "<h3>" + esc(item.label) + "</h3>" +
         "<p class=\"k-prod-value\">" + esc(item.value) + "</p>" +
-        (item.note ? "<p>" + esc(item.note) + "</p>" : "") +
+        quote +
+        more +
+        note +
         link +
+        source +
         "</article>";
     }).join("");
   }
@@ -140,7 +188,6 @@
     text("review-eyebrow", review.eyebrow);
     text("review-title", review.title);
     text("review-lede", review.lede);
-    text("status-label", review.statusLabel);
     text("input-title", review.inputLabel);
     if (review.orientation) {
       text("orient-prompt", review.orientation.prompt);
@@ -149,12 +196,8 @@
     renderStatus(review.statusLines);
     renderInputs(review.inputs || []);
     renderProof(state, review.proof);
-    renderProduction(state, review.production || []);
+    renderProduction(state, review.production || [], review.sourceChanges);
     renderShaping(review.shaping);
-    if (review.sourceChanges) {
-      var note = document.getElementById("source-changes");
-      if (note) note.textContent = review.sourceChanges.label + " updated: " + review.sourceChanges.note;
-    }
     renderExplorations((state.kitchen && state.kitchen.explorations) || []);
     showArtifact((review.proof && review.proof.kind) || review.kind || "letter");
     document.body.setAttribute("data-kitchen-review", (state.kitchen && state.kitchen.activeReview) || "letter-1");
@@ -166,7 +209,10 @@
     if (!list || !shaping) return;
     if (title && shaping.label) title.textContent = shaping.label;
     list.innerHTML = (shaping.stages || []).map(function (step) {
-      return "<li><b>" + esc(step.label) + "</b><span>" + esc(step.value) + "</span><em>" + esc(step.state) + "</em></li>";
+      var open = /input|decision|pending|requested|not yet/i.test(
+        [step.label, step.value, step.state].join(" ")
+      );
+      return "<li" + (open ? " class=\"is-open\"" : "") + "><b>" + esc(step.label) + "</b><span>" + esc(step.value) + "</span></li>";
     }).join("");
   }
 
@@ -174,8 +220,7 @@
     var host = document.getElementById("explore-list");
     var first = items && items[0];
     if (!host || !first) return;
-    text("explore-title", (first.attention || "FOR REFERENCE") + " · " + (first.status || "WORKING DIRECTION"));
-    var heading = document.querySelector(".k-explore h2");
+    var heading = document.getElementById("explore-heading") || document.querySelector(".k-explore h2");
     if (heading) heading.textContent = first.title;
     var status = document.querySelector(".k-explore-status");
     if (status) status.textContent = first.note || "Working direction. Not approved brand strategy.";

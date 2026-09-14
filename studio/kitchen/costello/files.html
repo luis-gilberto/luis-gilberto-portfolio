@@ -35,7 +35,7 @@
       <div class="art-register" id="current-list"></div>
     </section>
 
-    <p class="art-orient" id="how-the-work-connects">Need the big picture? <a href="artifacts/how-the-work-connects/current/Costello_How_The_Work_Connects_motion.html">Watch How the Work Connects →</a></p>
+    <p class="art-orient" id="how-the-work-connects">Need the big picture? <a class="lg-doc-link" href="artifacts/how-the-work-connects/current/Costello_How_The_Work_Connects_motion.html">Watch How the Work Connects →</a></p>
 
     <section class="art-section art-plans" id="plans" aria-labelledby="plans-title">
       <header class="art-head">
@@ -119,7 +119,7 @@
     }).join("") + "</ol>";
     var docsHtml = "<ul class=\"art-package-docs\">" + docs.map(function (doc) {
       var label = doc.fileLabel ? "<span>" + escapeHtml(doc.fileLabel) + "</span>" : "";
-      return "<li><a href=\"" + fileHref(doc.href) + "\">" + escapeHtml(doc.title) + "</a>" + label + "</li>";
+      return "<li><a class=\"lg-doc-link\" href=\"" + fileHref(doc.href) + "\">" + escapeHtml(doc.title) + "</a>" + label + "</li>";
     }).join("") + "</ul>";
     var phaseHtml = phases.map(function (phase) {
       return "<p><strong>" + escapeHtml(phase.title) + "</strong> · " + escapeHtml(phase.fee) +
@@ -138,10 +138,10 @@
   function artifactActions(item) {
     var links = [];
     if (item.role === "signature-copy" && item.cta) {
-      links.push("<a class=\"art-action\" href=\"" + fileHref(item.href) + "\">" + escapeHtml(item.cta) + "</a>");
+      links.push("<a class=\"art-action lg-doc-link\" href=\"" + fileHref(item.href) + "\">" + escapeHtml(item.cta) + "</a>");
     }
     (item.actions || []).forEach(function (action) {
-      links.push("<a class=\"art-action\" href=\"" + fileHref(action.href) + "\">" + escapeHtml(action.label) + "</a>");
+      links.push("<a class=\"art-action lg-doc-link\" href=\"" + fileHref(action.href) + "\">" + escapeHtml(action.label) + "</a>");
     });
     return links.length ? "<div class=\"art-actions\">" + links.join("") + "</div>" : "<div class=\"art-actions\"></div>";
   }
@@ -154,7 +154,7 @@
       ? "<span class=\"art-mark\">" + fileIcon(kind) + "</span>"
       : "<span class=\"art-mark\" aria-hidden=\"true\"></span>";
     var title = item.href
-      ? "<p class=\"art-title\"><a href=\"" + fileHref(item.href) + "\">" + escapeHtml(item.title) + "</a></p>"
+      ? "<p class=\"art-title\"><a class=\"lg-doc-link\" href=\"" + fileHref(item.href) + "\">" + escapeHtml(item.title) + "</a></p>"
       : "<p class=\"art-title\">" + escapeHtml(item.title) + "</p>";
     var identity = "<div class=\"art-identity\">" + marker +
       "<div>" + title +
@@ -191,7 +191,7 @@
     return html;
   }
   function orderedCategories(categories) {
-    var preferred = ["agreements", "review", "website-source", "strategy", "final", "assets", "vendor", "archive"];
+    var preferred = ["agreements", "review", "sources", "briefings", "strategy", "brand", "assets", "vendor", "archive"];
     var seen = {};
     var ordered = [];
     preferred.forEach(function (id) {
@@ -285,7 +285,7 @@
       "USPS handoff is not recipient delivery"
     ];
     var source = rec.sourceHref
-      ? "<p class=\"plan-note-source\"><a href=\"" + fileHref(rec.sourceHref) + "\">" +
+      ? "<p class=\"plan-note-source\"><a class=\"lg-doc-link\" href=\"" + fileHref(rec.sourceHref) + "\">" +
         escapeHtml(rec.sourceLabel || "View quote") + "</a></p>"
       : "";
     return "<aside class=\"plan-note\">" +
@@ -349,7 +349,7 @@
       planRecommendation(item) +
       planTrack(item, currentId) +
       "<div class=\"plan-card-foot\">" +
-        "<a class=\"plan-open\" href=\"" + fileHref(item.href) + "\" target=\"_blank\" rel=\"noopener\">Open full plan ↗</a>" +
+        "<a class=\"plan-open lg-doc-link\" href=\"" + fileHref(item.href) + "\" target=\"_blank\" rel=\"noopener\">Open full plan ↗</a>" +
       "</div></article>";
   }
   Promise.all([
@@ -382,7 +382,7 @@
         if (!(cat.items && cat.items.length)) return "";
         var open = cat.id === "agreements" ? " open" : "";
         var tone = cat.id === "archive" ? " is-archive" : "";
-        var catId = cat.id === "review" ? "working" : (cat.id === "strategy" ? "source" : (cat.id === "website-source" ? "source-materials" : cat.id));
+        var catId = cat.id === "review" ? "working" : (cat.id === "strategy" ? "source" : (cat.id === "sources" || cat.id === "website-source" ? "source-materials" : cat.id));
         return "<details class=\"lg-fold" + tone + "\" id=\"" + catId + "\"" + open + ">" +
           "<summary>" + escapeHtml(cat.label) +
           "<span class=\"art-count\">" + cat.items.length + "</span></summary>" +
@@ -394,16 +394,20 @@
       var aliases = {
         "website-sow": "agreement-package",
         "agreement-package": "agreement-package",
-        "letter-sow": "kitchen-review",
+        "letter-sow": "referral-proof",
         "print-quote": "connect-quote-014564",
         "launch-plan": "website-launch-plan",
         "mailing-plan": "referral-campaign-plan",
         "agreements": "agreements",
         "review": "working",
         "strategy": "source",
-        "clio": "clio",
-        "social-media": "social-media",
-        "practice-areas": "practice-areas"
+        "clio": "clio-support-record",
+        "social-media": "social-nari-welcome",
+        "practice-areas": "practice-areas-source",
+        "faq-website-edits": "faq-baseline",
+        "bios-in-development": "bios-baseline",
+        "mailing-list": "mailing-list-corrected",
+        "kitchen-review": "referral-proof"
       };
       Object.keys(aliases).forEach(function (alias) {
         if (document.getElementById(alias)) return;

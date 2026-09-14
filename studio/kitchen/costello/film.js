@@ -54,8 +54,6 @@
     if (cur.poster) FILM.poster = cur.poster;
     if (cur.end) END = cur.end;
     if (cur.runtime) RUNTIME = cur.runtime;
-    var img = stage.querySelector("img");
-    if (img && FILM.poster) img.src = href(FILM.poster);
     setTime(0);
   }
 
@@ -201,7 +199,7 @@
       if (!isMotion()) frame.src = motionSrc;
       else startFilm();
     } else {
-      frame.src = staticSrc;
+      frame.src = motionSrc;
     }
     applyRect(previewRect());
     requestAnimationFrame(function () {
@@ -212,6 +210,8 @@
       present.classList.remove("is-moving");
       if (mode === "film") startFilm();
       else {
+        var api = film();
+        if (api && api.finalFrame) api.finalFrame();
         present.classList.add("is-resolved");
         setTime(END);
       }
@@ -242,8 +242,12 @@
   }
 
   frame.addEventListener("load", function () {
-    if (present.hidden || mode !== "film") return;
-    startFilm();
+    if (present.hidden) return;
+    if (mode === "film") startFilm();
+    if (mode === "system") {
+      var api = film();
+      if (api && api.finalFrame) api.finalFrame();
+    }
   });
 
   function preload() {
@@ -258,7 +262,9 @@
     preload();
   }
 
+  var thumbBtn = document.getElementById("connect-thumb");
   watchBtn.addEventListener("click", function (e) { e.preventDefault(); open("film", watchBtn); });
+  if (thumbBtn) thumbBtn.addEventListener("click", function () { open("film", thumbBtn); });
   systemBtn.addEventListener("click", function (e) { e.preventDefault(); open("system", systemBtn); });
   closeBtn.addEventListener("click", close);
   if (returnBtn) returnBtn.addEventListener("click", close);

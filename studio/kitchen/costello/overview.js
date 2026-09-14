@@ -40,13 +40,14 @@
       var id = item.id ? " id=\"" + esc(item.id) + "\"" : "";
       var href = hrefFor(state, item);
       var title = href && href !== "#"
-        ? "<a href=\"" + esc(href) + "\"><strong>" + esc(item.title) + "</strong></a>"
+        ? "<a class=\"lg-doc-link\" href=\"" + esc(href) + "\"><strong>" + esc(item.title) + "</strong></a>"
         : "<strong>" + esc(item.title) + "</strong>";
       return "<li" + id + ">" +
         "<b class=\"lg-brief-num\" aria-hidden=\"true\">" + pad(i + 1) + "</b>" +
         "<div>" + title +
         "<span>" + esc(item.why) + "</span>" +
-        "<em>" + esc(item.attention ? item.attention + " · " + item.timing : item.timing) + "</em></div></li>";
+        (item.timing ? "<em>" + esc(item.timing) + "</em>" : "") +
+        "</div></li>";
     }).join("");
   }
 
@@ -57,10 +58,11 @@
       var quiet = /working direction|exploration|for reference/i.test(item.state || "") ? " is-quiet" : "";
       return "<article id=\"" + esc(item.id) + "\">" +
         "<p>" + esc(item.label) + "</p>" +
-        "<p class=\"lg-brief-status" + quiet + "\"><i aria-hidden=\"true\"></i>" + esc(item.state) + "</p>" +
         "<h3>" + esc(item.phase) + "</h3>" +
+        "<p class=\"lg-brief-status" + quiet + "\"><i aria-hidden=\"true\"></i>" + esc(item.state) + "</p>" +
         "<p>" + esc(item.change) + "</p>" +
-        "<p>" + esc(item.next) + "</p></article>";
+        (item.next ? "<p class=\"lg-brief-ops\">" + esc(item.next) + "</p>" : "") +
+        "</article>";
     }).join("");
   }
 
@@ -69,8 +71,8 @@
     if (!list || !items || !items.length) return;
     list.innerHTML = items.map(function (item) {
       if (typeof item === "string") return "<li>" + esc(item) + "</li>";
-      return "<li><strong>" + esc(item.date) + "</strong> " + esc(item.title) +
-        (item.note ? " " + esc(item.note) : "") + "</li>";
+      return "<li><time>" + esc(item.date) + "</time><span>" + esc(item.title) +
+        (item.note ? ". " + esc(item.note) : "") + "</span></li>";
     }).join("");
   }
 
