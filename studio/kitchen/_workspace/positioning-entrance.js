@@ -5,18 +5,12 @@
     window.matchMedia &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  var markSvg =
-    '<svg class="lg-pa-mark" viewBox="0 0 14 46" aria-hidden="true" focusable="false">' +
-    '<rect x="1" y="1" width="12" height="12" />' +
-    '<rect x="1" y="17" width="12" height="12" />' +
-    '<rect x="1" y="33" width="12" height="12" />' +
-    "</svg>";
-
   var state = {
     open: false,
     scrollY: 0,
     lastFocus: null,
     openedByRecall: false,
+    statusKind: "draft",
   };
 
   function dismissed() {
@@ -35,6 +29,152 @@
     }
   }
 
+  function onOverview() {
+    return (document.body.getAttribute("data-lg-page") || "") === "overview";
+  }
+
+  function overviewHref(project) {
+    if (window.CostelloState && project) {
+      return CostelloState.url(project, "overview");
+    }
+    if (window.CostelloState) {
+      return CostelloState.href("kitchen/costello/");
+    }
+    return "/studio/kitchen/costello/";
+  }
+
+  function normalizeStatus(positioning) {
+    var raw = "";
+    if (positioning) {
+      raw = positioning.attention || positioning.status || positioning.statusLabel || "";
+    }
+    var key = String(raw || "FOR REVIEW")
+      .toUpperCase()
+      .replace(/[·.]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    if (/\bSUPERSEDED\b/.test(key)) {
+      var newer =
+        (positioning && (positioning.supersededBy || positioning.newerVersionLabel)) ||
+        "the current Positioning Anchor";
+      return {
+        kind: "superseded",
+        eyebrow: "POSITIONING ANCHOR · SUPERSEDED",
+        review: "Superseded",
+        internal: "Replaced by " + newer,
+        application: "SUPERSEDED · SEE CURRENT POSITIONING ANCHOR",
+      };
+    }
+
+    if (/\bAPPROVED\b/.test(key) && !/\bNOT APPROVED\b/.test(key)) {
+      return {
+        kind: "approved",
+        eyebrow: "POSITIONING ANCHOR · APPROVED",
+        review: "Approved",
+        internal: "Internal Governing Reference",
+        application: "GOVERNS · WEBSITE · BIOS · REFERRAL STRATEGY · CAMPAIGNS",
+      };
+    }
+
+    if (/\bCHANGES REQUESTED\b|\bREVISION REQUESTED\b/.test(key)) {
+      return {
+        kind: "changes",
+        eyebrow: "POSITIONING ANCHOR · CHANGES REQUESTED",
+        review: "Changes Requested",
+        internal: "Internal Positioning Draft",
+        application: "PROPOSED APPLICATION · WEBSITE · BIOS · REFERRAL STRATEGY · CAMPAIGNS",
+      };
+    }
+
+    var reviewLabel = /\bIN REVIEW\b/.test(key) ? "In Review" : "For Review";
+    return {
+      kind: "draft",
+      eyebrow: "POSITIONING ANCHOR · WORKING DRAFT",
+      review: reviewLabel,
+      internal: "Internal Positioning Draft",
+      application: "PROPOSED APPLICATION · WEBSITE · BIOS · REFERRAL STRATEGY · CAMPAIGNS",
+    };
+  }
+
+  function applyStatusLabels(labels) {
+    state.statusKind = labels.kind;
+    var root = document.getElementById(ROOT_ID);
+    if (!root) return;
+
+    var eyebrow = root.querySelector(".lg-pa-eyebrow");
+    var review = root.querySelector(".lg-pa-review");
+    var internal = root.querySelector(".lg-pa-internal");
+    var application = root.querySelector(".lg-pa-governs");
+    var panel = root.querySelector(".lg-pa-strategy");
+    var scrim = root.querySelector(".lg-pa-scrim");
+
+    if (eyebrow) eyebrow.textContent = labels.eyebrow;
+    if (review) review.textContent = labels.review;
+    if (internal) internal.textContent = labels.internal;
+    if (application) application.textContent = labels.application;
+    if (panel) {
+      panel.setAttribute("data-status", labels.kind);
+      if (labels.kind === "approved") {
+        var kicker = panel.querySelector(".lg-pa-strategy-kicker");
+        var title = panel.querySelector(".lg-pa-strategy-title");
+        if (kicker) kicker.textContent = "STRATEGIC EXPRESSION · LG STUDIO";
+        if (title && !title.getAttribute("data-locked")) {
+          /* keep proposed wording until approved copy is explicitly swapped elsewhere */
+        }
+      }
+    }
+    if (scrim) scrim.setAttribute("data-status", labels.kind);
+  }
+
+  function markup() {
+    var hideSkip = onOverview();
+    return (
+      '<div class="lg-pa-scrim" id="lg-pa-scrim" hidden role="dialog" aria-modal="true" aria-labelledby="lg-pa-title" aria-describedby="lg-pa-copy" data-status="draft">' +
+      '  <div class="lg-pa-panel">' +
+      '    <header class="lg-pa-head">' +
+      '      <div class="lg-pa-brand">' +
+      '        <p class="lg-pa-firm">Costello Law Firm workspace</p>' +
+      '        <p class="lg-pa-workspace">Strategic Workspace</p>' +
+      "      </div>" +
+      '      <div class="lg-pa-status">' +
+      '        <p class="lg-pa-review">For Review</p>' +
+      '        <span class="lg-pa-status-rule" aria-hidden="true"></span>' +
+      '        <p class="lg-pa-internal">Internal Positioning Draft</p>' +
+      "      </div>" +
+      "    </header>" +
+      '    <div class="lg-pa-body">' +
+      '      <div class="lg-pa-established">' +
+      '        <p class="lg-pa-eyebrow">POSITIONING ANCHOR · WORKING DRAFT</p>' +
+      '        <h1 class="lg-pa-title" id="lg-pa-title">Prepared for Trial,<br />Positioned for Resolution</h1>' +
+      '        <div class="lg-pa-copy" id="lg-pa-copy">' +
+      "          <p>Costello Law Firm represents individuals, professionals, and businesses when a single matter moves across criminal, civil, administrative, regulatory, and licensing proceedings.</p>" +
+      "          <p class=\"lg-pa-ground\">That work is grounded in significant trial experience and advocacy that tells the client\u2019s story with precision.</p>" +
+      "        </div>" +
+      "      </div>" +
+      '      <aside class="lg-pa-strategy" data-status="draft" aria-label="Proposed strategic expression">' +
+      '        <p class="lg-pa-strategy-kicker">PROPOSED STRATEGIC EXPRESSION · LG STUDIO</p>' +
+      '        <h2 class="lg-pa-strategy-title">One matter. Multiple proceedings. One coordinated strategy</h2>' +
+      "        <p class=\"lg-pa-strategy-copy\">The firm\u2019s distinction is its ability to treat overlapping proceedings as one strategy, so each decision in one forum is made with the others in view.</p>" +
+      "      </aside>" +
+      "    </div>" +
+      '    <footer class="lg-pa-foot">' +
+      '      <p class="lg-pa-governs">PROPOSED APPLICATION · WEBSITE · BIOS · REFERRAL STRATEGY · CAMPAIGNS</p>' +
+      '      <div class="lg-pa-actions">' +
+      (hideSkip
+        ? ""
+        : '        <button type="button" class="lg-pa-skip" id="lg-pa-skip">Go directly to overview</button>') +
+      '        <button type="button" class="lg-pa-enter" id="lg-pa-enter">Enter Workspace <span aria-hidden="true">\u2192</span></button>' +
+      "      </div>" +
+      "    </footer>" +
+      "  </div>" +
+      "</div>" +
+      '<button type="button" class="lg-pa-recall" id="lg-pa-recall" hidden aria-label="Open Positioning Anchor">' +
+      "<span>Positioning Anchor</span>" +
+      "</button>"
+    );
+  }
+
   function ensureRoot() {
     var existing = document.getElementById(ROOT_ID);
     if (existing) return existing;
@@ -42,48 +182,7 @@
     var root = document.createElement("div");
     root.id = ROOT_ID;
     root.className = "lg-pa-root";
-    root.innerHTML =
-      '<div class="lg-pa-scrim" id="lg-pa-scrim" hidden role="dialog" aria-modal="true" aria-labelledby="lg-pa-title" aria-describedby="lg-pa-copy">' +
-      '  <div class="lg-pa-panel">' +
-      '    <header class="lg-pa-head">' +
-      '      <div class="lg-pa-brand">' +
-      markSvg +
-      '        <div class="lg-pa-brand-text">' +
-      '          <p class="lg-pa-firm">Costello Law Firm, PLLC</p>' +
-      '          <p class="lg-pa-workspace">Strategic Workspace</p>' +
-      "        </div>" +
-      "      </div>" +
-      '      <div class="lg-pa-status">' +
-      '        <p class="lg-pa-review">For Review</p>' +
-      '        <span class="lg-pa-status-rule" aria-hidden="true"></span>' +
-      '        <p class="lg-pa-internal">Internal Governing Reference</p>' +
-      "      </div>" +
-      "    </header>" +
-      '    <div class="lg-pa-body">' +
-      '      <div class="lg-pa-hero">' +
-      '        <p class="lg-pa-scope">Boutique White-Collar Defense and Litigation</p>' +
-      '        <h1 class="lg-pa-title" id="lg-pa-title">Built for the Problem That Won\u2019t Stay in One Forum</h1>' +
-      "      </div>" +
-      '      <div class="lg-pa-copy" id="lg-pa-copy">' +
-      "        <p>Costello Law Firm represents individuals, professionals, and businesses when a single matter moves across criminal, civil, administrative, regulatory, and licensing proceedings\u2014at once or in sequence.</p>" +
-      "        <p>The firm\u2019s distinction is coordination: treating those proceedings as one strategy, so each decision in one forum is made with the others in view.</p>" +
-      "        <p>That work is grounded in judgment, significant trial experience, and advocacy that tells the client\u2019s story with precision.</p>" +
-      "      </div>" +
-      "    </div>" +
-      '    <footer class="lg-pa-foot">' +
-      '      <p class="lg-pa-governs">Governs \u00b7 Website \u00b7 Bios \u00b7 Referral Strategy \u00b7 Campaigns</p>' +
-      '      <div class="lg-pa-actions">' +
-      '        <button type="button" class="lg-pa-skip" id="lg-pa-skip">Skip</button>' +
-      '        <button type="button" class="lg-pa-enter" id="lg-pa-enter">Enter Workspace <span aria-hidden="true">\u2192</span></button>' +
-      "      </div>" +
-      "    </footer>" +
-      "  </div>" +
-      "</div>" +
-      '<button type="button" class="lg-pa-recall" id="lg-pa-recall" hidden aria-label="Open Positioning Anchor">' +
-      markSvg +
-      "<span>Positioning Anchor</span>" +
-      "</button>";
-
+    root.innerHTML = markup();
     document.body.appendChild(root);
     return root;
   }
@@ -98,13 +197,15 @@
   }
 
   function focusables(container) {
-    return Array.prototype.slice.call(
-      container.querySelectorAll(
-        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    return Array.prototype.slice
+      .call(
+        container.querySelectorAll(
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
       )
-    ).filter(function (el) {
-      return el.offsetParent !== null || el === document.activeElement;
-    });
+      .filter(function (el) {
+        return el.offsetParent !== null || el === document.activeElement;
+      });
   }
 
   function lockScroll() {
@@ -214,17 +315,21 @@
     }
   }
 
-  function bind() {
-    ensureRoot();
+  function bindActions(project) {
     var nodes = els();
     if (!nodes.scrim) return;
 
     nodes.enter.addEventListener("click", function () {
       closeEntrance(true);
     });
-    nodes.skip.addEventListener("click", function () {
-      closeEntrance(true);
-    });
+
+    if (nodes.skip) {
+      nodes.skip.addEventListener("click", function () {
+        setDismissed();
+        window.location.href = overviewHref(project);
+      });
+    }
+
     nodes.recall.addEventListener("click", function () {
       openEntrance(true);
     });
@@ -237,9 +342,27 @@
     }
   }
 
+  function boot(project) {
+    ensureRoot();
+    applyStatusLabels(normalizeStatus(project && project.positioning));
+    bindActions(project);
+  }
+
+  function start() {
+    if (window.CostelloState && typeof CostelloState.load === "function") {
+      CostelloState.load()
+        .then(boot)
+        .catch(function () {
+          boot(null);
+        });
+    } else {
+      boot(null);
+    }
+  }
+
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", bind);
+    document.addEventListener("DOMContentLoaded", start);
   } else {
-    bind();
+    start();
   }
 })();
