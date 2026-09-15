@@ -1,6 +1,15 @@
 (function () {
-  var SW_URL = "/studio/kitchen/sw.js";
-  var SW_SCOPE = "/studio/kitchen/";
+  function kitchenBase() {
+    var path = (location.pathname || "/").replace(/\\/g, "/");
+    var marker = "/kitchen/";
+    var idx = path.indexOf(marker);
+    if (idx >= 0) return path.slice(0, idx + marker.length);
+    return "/studio/kitchen/";
+  }
+
+  var KITCHEN = kitchenBase();
+  var SW_URL = KITCHEN + "sw.js";
+  var SW_SCOPE = KITCHEN;
   var deferred = null;
   var installed = (window.matchMedia && (
     window.matchMedia("(display-mode: standalone)").matches ||
@@ -83,6 +92,9 @@
     }
     if (!swReady && "serviceWorker" in navigator) {
       return "Install is not ready yet — the workspace service worker is still registering. Wait a second and click Install to Desktop again. If nothing appears, use " + name + " Menu → Apps → Install this site as an app (or the install icon in the address bar).";
+    }
+    if (/^https?:\/\/(127\.0\.0\.1|localhost)[:/]/i.test(location.href)) {
+      return "You are on a local preview server. Install from the live unlocked kitchen (luis-gilberto.com) so the desktop app opens the real workspace URL — local installs often 404 because paths differ. In " + name + ", you can also use the address-bar install icon only after switching to the live site.";
     }
     return "Your browser has not offered a native install dialog yet. In " + name + ", open the address-bar install icon, or Menu → Apps / Cast / Save and share → Install this site as an app. Stay on this unlocked kitchen URL when you install.";
   }
