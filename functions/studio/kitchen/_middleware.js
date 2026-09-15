@@ -195,7 +195,7 @@ function unlockPage(url, headers, error, nextPath) {
     </form>
   </main>
 </body>
-</html>`, { status: 401, headers });
+</html>`, { status: 200, headers });
 }
 
 function refererKitchenPath(url) {
