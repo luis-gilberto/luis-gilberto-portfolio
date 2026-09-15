@@ -10,6 +10,16 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  async redirects() {
+    return [
+      {
+        // Exact legacy bookmark / PWA variant — not a wildcard
+        source: "/studio/kitchen/costello/index.html",
+        destination: "https://www.luis-gilberto.com/studio/kitchen/costello/",
+        permanent: false,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
