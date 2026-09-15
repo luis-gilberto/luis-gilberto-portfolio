@@ -106,24 +106,12 @@
     var review = root.querySelector(".lg-pa-review");
     var internal = root.querySelector(".lg-pa-internal");
     var application = root.querySelector(".lg-pa-governs");
-    var panel = root.querySelector(".lg-pa-strategy");
     var scrim = root.querySelector(".lg-pa-scrim");
 
     if (eyebrow) eyebrow.textContent = labels.eyebrow;
     if (review) review.textContent = labels.review;
     if (internal) internal.textContent = labels.internal;
     if (application) application.textContent = labels.application;
-    if (panel) {
-      panel.setAttribute("data-status", labels.kind);
-      if (labels.kind === "approved") {
-        var kicker = panel.querySelector(".lg-pa-strategy-kicker");
-        var title = panel.querySelector(".lg-pa-strategy-title");
-        if (kicker) kicker.textContent = "STRATEGIC EXPRESSION · LG STUDIO";
-        if (title && !title.getAttribute("data-locked")) {
-          /* keep proposed wording until approved copy is explicitly swapped elsewhere */
-        }
-      }
-    }
     if (scrim) scrim.setAttribute("data-status", labels.kind);
   }
 
@@ -145,18 +133,15 @@
       "    </header>" +
       '    <div class="lg-pa-body">' +
       '      <div class="lg-pa-established">' +
-      '        <p class="lg-pa-eyebrow">POSITIONING ANCHOR · WORKING DRAFT</p>' +
-      '        <h1 class="lg-pa-title" id="lg-pa-title">Prepared for Trial,<br />Positioned for Resolution</h1>' +
+      '        <div class="lg-pa-anchor">' +
+      '          <p class="lg-pa-eyebrow">POSITIONING ANCHOR · WORKING DRAFT</p>' +
+      '          <h1 class="lg-pa-title" id="lg-pa-title">Prepared for Trial,<br />Positioned for Resolution</h1>' +
+      "        </div>" +
       '        <div class="lg-pa-copy" id="lg-pa-copy">' +
       "          <p>Costello Law Firm represents individuals, professionals, and businesses when a single matter moves across criminal, civil, administrative, regulatory, and licensing proceedings.</p>" +
       "          <p class=\"lg-pa-ground\">That work is grounded in significant trial experience and advocacy that tells the client\u2019s story with precision.</p>" +
       "        </div>" +
       "      </div>" +
-      '      <aside class="lg-pa-strategy" data-status="draft" aria-label="Proposed strategic expression">' +
-      '        <p class="lg-pa-strategy-kicker">PROPOSED STRATEGIC EXPRESSION · LG STUDIO</p>' +
-      '        <h2 class="lg-pa-strategy-title">One matter. Multiple proceedings. One coordinated strategy</h2>' +
-      "        <p class=\"lg-pa-strategy-copy\">The firm\u2019s distinction is its ability to treat overlapping proceedings as one strategy, so each decision in one forum is made with the others in view.</p>" +
-      "      </aside>" +
       "    </div>" +
       '    <footer class="lg-pa-foot">' +
       '      <p class="lg-pa-governs">PROPOSED APPLICATION · WEBSITE · BIOS · REFERRAL STRATEGY · CAMPAIGNS</p>' +
