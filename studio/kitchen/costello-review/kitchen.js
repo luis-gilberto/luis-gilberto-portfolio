@@ -221,7 +221,11 @@
     var first = items && items[0];
     if (!first) return;
     var heading = document.getElementById("anchor-heading") || document.getElementById("explore-heading");
-    if (heading && first.headline) heading.textContent = first.headline;
+    var headline = first.headline || "";
+    if (/Built for the Problem That Won.t Stay in One Forum/i.test(headline)) {
+      headline = "Prepared for Trial, Positioned for Resolution";
+    }
+    if (heading && headline) heading.textContent = headline;
     else if (heading && first.title) heading.textContent = first.title;
     var status = document.getElementById("anchor-status") || document.querySelector(".k-explore-status");
     if (status) {
@@ -229,7 +233,11 @@
       status.innerHTML = "<i aria-hidden=\"true\"></i>" + esc(statusText);
     }
     var copy = document.getElementById("anchor-copy");
-    if (copy && first.summary) copy.textContent = first.summary;
+    var summary = first.summary || "";
+    if (/Internal governing reference for website/i.test(summary)) {
+      summary = "Current working Positioning Anchor. Uses the firm’s established positioning as its anchor and separates LG Studio’s proposed strategic expression. For review; not approved.";
+    }
+    if (copy && summary) copy.textContent = summary;
     var open = document.getElementById("anchor-open");
     if (open) {
       if (first.openHref && window.CostelloState) open.href = CostelloState.href(first.openHref);
