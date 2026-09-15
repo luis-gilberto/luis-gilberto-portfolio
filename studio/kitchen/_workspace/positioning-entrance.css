@@ -1,14 +1,14 @@
 /* Positioning Anchor entrance — namespaced; does not alter shell globals */
 .lg-pa-root {
-  --lg-pa-canvas: color-mix(in oklch, var(--paper, oklch(0.93 0.012 80)) 72%, white);
-  --lg-pa-raised: color-mix(in oklch, var(--paper-raised, oklch(0.96 0.008 80)) 78%, white);
-  --lg-pa-sunk: color-mix(in oklch, var(--paper-sunk, oklch(0.9 0.016 78)) 55%, oklch(0.92 0.008 240));
+  --lg-pa-canvas: var(--paper, #f3efe6);
+  --lg-pa-raised: var(--paper-raised, #fbfaf6);
+  --lg-pa-sunk: var(--paper-sunk, #e7e0d4);
   --lg-pa-ink: var(--ink, oklch(0.32 0.045 248));
   --lg-pa-ink-soft: var(--ink-soft, oklch(0.45 0.035 245));
   --lg-pa-ink-faint: var(--ink-faint, oklch(0.59 0.025 235));
   --lg-pa-navy: #2e4a6b;
   --lg-pa-orange: #f37021;
-  --lg-pa-rule: color-mix(in oklch, var(--rule, oklch(0.78 0.02 80)) 70%, oklch(0.8 0.01 240));
+  --lg-pa-rule: var(--rule, #d3cab9);
   --lg-pa-display: var(--lg-display, "Libre Baskerville", "Iowan Old Style", Georgia, serif);
   --lg-pa-util: var(--lg-util, "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif);
   --lg-pa-mono: var(--lg-mono, "IBM Plex Mono", monospace);
@@ -34,11 +34,8 @@ html.lg-pa-lock body {
   justify-content: center;
   padding: clamp(12px, 2.5vw, 28px);
   background:
-    linear-gradient(
-      105deg,
-      color-mix(in oklch, var(--lg-pa-sunk), white 28%) 0 58%,
-      color-mix(in oklch, var(--lg-pa-ink), #6a7a8c 74%) 58% 100%
-    );
+    radial-gradient(circle at 50% 38%, rgba(255, 255, 255, 0.08), transparent 36%),
+    linear-gradient(145deg, #111315 0%, #2b2f33 54%, #171a1d 100%);
   opacity: 0;
   transform: translateY(8px);
   transition: opacity 0.42s ease, transform 0.42s ease;
@@ -57,16 +54,17 @@ html.lg-pa-lock body {
   position: relative;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
-  width: min(1120px, 100%);
-  max-height: calc(100vh - 24px);
+  width: min(960px, 100%);
+  max-height: calc(100vh - 48px);
   margin: auto;
   overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.14);
   background: var(--lg-pa-canvas);
   color: var(--lg-pa-ink);
   box-shadow:
-    0 1px 0 color-mix(in oklch, white, transparent 35%),
-    0 28px 64px -36px color-mix(in oklch, var(--lg-pa-ink), transparent 35%),
-    0 8px 24px -16px color-mix(in oklch, var(--lg-pa-ink), transparent 55%);
+    0 1px 0 rgba(255, 255, 255, 0.22),
+    0 42px 96px -36px rgba(0, 0, 0, 0.88),
+    0 14px 36px -22px rgba(0, 0, 0, 0.72);
 }
 
 .lg-pa-panel::before {
@@ -142,7 +140,7 @@ html.lg-pa-lock body {
 }
 
 .lg-pa-scrim[data-status="approved"] .lg-pa-review {
-  color: var(--seal, oklch(0.435 0.048 178));
+  color: var(--lg-pa-navy);
 }
 
 .lg-pa-scrim[data-status="superseded"] .lg-pa-review,
@@ -172,7 +170,7 @@ html.lg-pa-lock body {
 
 .lg-pa-body {
   display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   min-height: 0;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
@@ -180,17 +178,23 @@ html.lg-pa-lock body {
 
 .lg-pa-established {
   position: relative;
-  padding: clamp(28px, 4vw, 44px) clamp(24px, 3.4vw, 40px);
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  align-items: start;
+  gap: clamp(32px, 5vw, 64px);
+  padding: clamp(36px, 5vw, 58px) clamp(28px, 5vw, 56px);
   background:
     linear-gradient(
       165deg,
-      color-mix(in oklch, var(--lg-pa-raised), white 48%) 0%,
-      color-mix(in oklch, var(--lg-pa-canvas), white 18%) 100%
+      color-mix(in oklch, var(--lg-pa-raised), white 30%) 0%,
+      var(--lg-pa-canvas) 100%
     );
-  box-shadow:
-    8px 0 28px -24px color-mix(in oklch, var(--lg-pa-ink), transparent 55%),
-    inset 0 -1px 0 color-mix(in oklch, var(--lg-pa-rule), transparent 30%);
+  box-shadow: inset 0 -1px 0 color-mix(in oklch, var(--lg-pa-rule), transparent 30%);
   z-index: 1;
+}
+
+.lg-pa-anchor {
+  min-width: 0;
 }
 
 .lg-pa-eyebrow {
@@ -216,6 +220,10 @@ html.lg-pa-lock body {
   text-wrap: balance;
 }
 
+.lg-pa-copy {
+  padding-top: 30px;
+}
+
 .lg-pa-copy p {
   margin: 0;
   max-width: 46ch;
@@ -231,46 +239,6 @@ html.lg-pa-lock body {
   color: var(--lg-pa-ink-soft);
 }
 
-.lg-pa-strategy {
-  padding: clamp(28px, 4vw, 44px) clamp(22px, 3vw, 36px);
-  background: color-mix(in oklch, var(--lg-pa-canvas), var(--lg-pa-sunk) 22%);
-  border-left: 1px solid color-mix(in oklch, var(--lg-pa-rule), transparent 18%);
-}
-
-.lg-pa-strategy-kicker {
-  margin: 0 0 14px;
-  font-family: var(--lg-pa-util);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--lg-pa-orange);
-  line-height: 1.45;
-}
-
-.lg-pa-strategy[data-status="approved"] .lg-pa-strategy-kicker {
-  color: var(--lg-pa-navy);
-}
-
-.lg-pa-strategy-title {
-  margin: 0 0 16px;
-  max-width: 18ch;
-  font-family: var(--lg-pa-display);
-  font-weight: 400;
-  font-size: clamp(18px, 1.7vw, 22px);
-  line-height: 1.35;
-  letter-spacing: -0.005em;
-  color: var(--lg-pa-ink);
-}
-
-.lg-pa-strategy-copy {
-  margin: 0;
-  max-width: 34ch;
-  font-family: var(--lg-pa-util);
-  font-size: clamp(13px, 1.15vw, 15px);
-  line-height: 1.65;
-  color: var(--lg-pa-ink-soft);
-}
 
 .lg-pa-foot {
   display: flex;
@@ -445,9 +413,13 @@ html.lg-pa-lock body {
   }
 
   .lg-pa-established {
-    box-shadow:
-      0 10px 28px -24px color-mix(in oklch, var(--lg-pa-ink), transparent 45%),
-      inset 0 -1px 0 color-mix(in oklch, var(--lg-pa-rule), transparent 20%);
+    grid-template-columns: 1fr;
+    gap: 22px;
+    box-shadow: inset 0 -1px 0 color-mix(in oklch, var(--lg-pa-rule), transparent 20%);
+  }
+
+  .lg-pa-copy {
+    padding-top: 0;
   }
 
   .lg-pa-title {
@@ -455,10 +427,6 @@ html.lg-pa-lock body {
     font-size: clamp(24px, 6.4vw, 30px);
   }
 
-  .lg-pa-strategy {
-    border-left: 0;
-    border-top: 1px solid color-mix(in oklch, var(--lg-pa-rule), transparent 18%);
-  }
 
   .lg-pa-foot {
     flex-direction: column;
@@ -485,8 +453,7 @@ html.lg-pa-lock body {
     letter-spacing: 0.1em;
   }
 
-  .lg-pa-copy p,
-  .lg-pa-strategy-copy {
+  .lg-pa-copy p {
     font-size: 15px;
   }
 
