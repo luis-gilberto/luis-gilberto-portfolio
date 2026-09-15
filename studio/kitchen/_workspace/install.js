@@ -1,9 +1,16 @@
 (function () {
+  var SW_URL = "/studio/kitchen/sw.js";
+  var SW_SCOPE = "/studio/kitchen/";
   var deferred = null;
   var installed = (window.matchMedia && (
     window.matchMedia("(display-mode: standalone)").matches ||
     window.matchMedia("(display-mode: minimal-ui)").matches
   )) || window.navigator.standalone === true;
+
+  function registerWorker() {
+    if (!("serviceWorker" in navigator)) return;
+    navigator.serviceWorker.register(SW_URL, { scope: SW_SCOPE, updateViaCache: "none" }).catch(function () {});
+  }
 
   function buttons() {
     return Array.prototype.slice.call(document.querySelectorAll("[data-lg-install]"));
@@ -67,6 +74,7 @@
     hide();
   });
 
+  registerWorker();
   init();
   var n = 0;
   var t = setInterval(function () {
