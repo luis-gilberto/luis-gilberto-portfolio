@@ -64,7 +64,7 @@
           (mode ? '<p class="context-mode"><i></i>' + mode + "</p>" : '<p class="context-mode"></p>') +
           '<div class="context-tools">' +
             (updated ? '<p class="context-updated">' + updated + "</p>" : "") +
-            '<button type="button" class="lg-install" data-lg-install>Add desktop shortcut</button>' +
+            '<button type="button" class="lg-install" data-lg-install>Install to Desktop</button>' +
           "</div>" +
         "</div>" +
       "</div>";

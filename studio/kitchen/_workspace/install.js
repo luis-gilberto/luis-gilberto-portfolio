@@ -16,6 +16,13 @@
     return Array.prototype.slice.call(document.querySelectorAll("[data-lg-install]"));
   }
 
+  function labelButtons() {
+    buttons().forEach(function (btn) {
+      if ((btn.textContent || "").trim()) btn.textContent = "Install to Desktop";
+      if (!btn.getAttribute("aria-label")) btn.setAttribute("aria-label", "Install to Desktop");
+    });
+  }
+
   function hint() {
     var el = document.getElementById("shortcut-hint");
     if (el) return el;
@@ -23,55 +30,77 @@
     el.id = "shortcut-hint";
     el.className = "lg-hint lg-install-hint";
     el.hidden = true;
-    el.textContent = "Chrome or Edge can install this workspace as an app from the address bar, or use Menu → Apps → Install this site as an app. Safari: File → Add to Dock. The shortcut opens the workspace home. Copied section links still take you to the exact place.";
     var header = document.querySelector(".workspace-header");
     if (header && header.parentNode) header.insertAdjacentElement("afterend", el);
     else document.body.appendChild(el);
     return el;
   }
 
-  function hide() {
-    buttons().forEach(function (btn) { btn.hidden = true; });
-    var el = document.getElementById("shortcut-hint");
-    if (el) el.hidden = true;
+  function setHint(text, show) {
+    var el = hint();
+    el.textContent = text;
+    el.hidden = !show;
+    if (show) el.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }
+
+  function guidanceText() {
+    if (installed) {
+      return "This workspace is already installed as an app on this device. Open it from your desktop, Start menu, or dock.";
+    }
+    if (!("BeforeInstallPromptEvent" in window) && !deferred) {
+      var ua = navigator.userAgent || "";
+      if (/Safari/i.test(ua) && !/Chrome|CriOS|Edg/i.test(ua)) {
+        return "Safari does not support one-click install here. Use File → Add to Dock (or Share → Add to Home Screen on iOS). The shortcut opens the workspace home.";
+      }
+      return "Chrome or Edge can install this workspace when the site qualifies. Use the address-bar install icon, or Menu → Apps → Install this site as an app. If that option is missing, the browser has not offered installation yet.";
+    }
+    return "Chrome or Edge can install this workspace as an app from the address bar, or use Menu → Apps → Install this site as an app. Safari: File → Add to Dock.";
   }
 
   function offer() {
-    if (deferred && deferred.prompt) {
-      deferred.prompt();
+    if (installed) {
+      setHint(guidanceText(), true);
       return;
     }
-    var el = hint();
-    el.hidden = !el.hidden;
-    if (!el.hidden) {
-      el.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    if (deferred && typeof deferred.prompt === "function") {
+      deferred.prompt();
+      if (deferred.userChoice) {
+        deferred.userChoice.then(function (choice) {
+          if (!choice || choice.outcome !== "accepted") {
+            setHint("Installation was not completed. You can try again from this control or from the browser’s install menu.", true);
+          }
+        }).catch(function () {});
+      }
+      return;
     }
+    setHint(guidanceText(), true);
   }
 
   function bind(btn) {
     if (!btn || btn.getAttribute("data-lg-bound") === "1") return;
     btn.setAttribute("data-lg-bound", "1");
-    if (installed) {
-      btn.hidden = true;
-      return;
-    }
+    btn.hidden = false;
     btn.addEventListener("click", offer);
   }
 
   function init() {
+    labelButtons();
     buttons().forEach(bind);
   }
 
   window.addEventListener("beforeinstallprompt", function (e) {
     e.preventDefault();
     deferred = e;
+    installed = false;
     buttons().forEach(function (btn) { btn.hidden = false; });
+    var el = document.getElementById("shortcut-hint");
+    if (el) el.hidden = true;
   });
 
   window.addEventListener("appinstalled", function () {
     deferred = null;
     installed = true;
-    hide();
+    setHint("Installed. Open Costello workspace from your desktop, Start menu, or dock.", true);
   });
 
   registerWorker();
