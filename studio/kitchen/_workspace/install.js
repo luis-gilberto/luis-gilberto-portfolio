@@ -11,33 +11,66 @@
   var SW_URL = KITCHEN + "sw.js";
   var SW_SCOPE = KITCHEN;
   var deferred = null;
+  var prompting = false;
+  var phase = "checking";
+  var fallbackTimer = null;
   var installed = (window.matchMedia && (
     window.matchMedia("(display-mode: standalone)").matches ||
     window.matchMedia("(display-mode: minimal-ui)").matches
   )) || window.navigator.standalone === true;
   var swReady = false;
 
-  function registerWorker() {
-    if (!("serviceWorker" in navigator)) return;
-    navigator.serviceWorker.register(SW_URL, { scope: SW_SCOPE, updateViaCache: "none" })
-      .then(function (reg) {
-        swReady = !!(reg && (reg.active || reg.installing || reg.waiting));
-        return navigator.serviceWorker.ready;
-      })
-      .then(function () { swReady = true; })
-      .catch(function () { swReady = false; });
-  }
-
   function buttons() {
     return Array.prototype.slice.call(document.querySelectorAll("[data-lg-install]"));
   }
 
-  function labelButtons() {
+  function browserName() {
+    var ua = navigator.userAgent || "";
+    if (/Edg\//i.test(ua)) return "Edge";
+    if (/Chrome\//i.test(ua) && !/Edg\//i.test(ua)) return "Chrome";
+    if (/Safari/i.test(ua) && !/Chrome|CriOS|Edg/i.test(ua)) return "Safari";
+    if (/Firefox\//i.test(ua)) return "Firefox";
+    return "this browser";
+  }
+
+  function manualLabel() {
+    var name = browserName();
+    if (name === "Edge") return "Install from Edge";
+    if (name === "Chrome") return "Install from Chrome";
+    if (name === "Safari") return "Add to Dock";
+    return "Desktop install help";
+  }
+
+  function bind(btn) {
+    if (!btn || btn.getAttribute("data-lg-bound") === "1") return;
+    btn.setAttribute("data-lg-bound", "1");
+    btn.type = "button";
+    btn.addEventListener("click", offer);
+  }
+
+  function setButton(btn, label, state, hidden, disabled) {
+    bind(btn);
+    btn.textContent = label;
+    btn.setAttribute("aria-label", label);
+    btn.setAttribute("aria-controls", "lg-install-feedback");
+    btn.setAttribute("data-install-state", state);
+    btn.hidden = !!hidden;
+    btn.disabled = !!disabled;
+  }
+
+  function renderButtons() {
     buttons().forEach(function (btn) {
-      btn.textContent = "Install to Desktop";
-      btn.setAttribute("aria-label", "Install to Desktop");
-      btn.setAttribute("aria-controls", "lg-install-feedback");
-      btn.hidden = false;
+      if (installed) {
+        setButton(btn, "Installed", "installed", false, true);
+      } else if (prompting) {
+        setButton(btn, "Opening install…", "prompting", false, true);
+      } else if (deferred) {
+        setButton(btn, "Install to Desktop", "ready", false, false);
+      } else if (phase === "manual") {
+        setButton(btn, manualLabel(), "manual", false, false);
+      } else {
+        setButton(btn, "Checking desktop install…", "checking", true, true);
+      }
     });
   }
 
@@ -49,6 +82,7 @@
     el.id = "lg-install-feedback";
     el.className = "lg-install-feedback";
     el.hidden = true;
+    el.tabIndex = -1;
     el.setAttribute("role", "status");
     el.setAttribute("aria-live", "polite");
 
@@ -70,33 +104,53 @@
     try { el.focus({ preventScroll: true }); } catch (err) { /* ignore */ }
   }
 
-  function browserName() {
-    var ua = navigator.userAgent || "";
-    if (/Edg\//i.test(ua)) return "Edge";
-    if (/Chrome\//i.test(ua) && !/Edg\//i.test(ua)) return "Chrome";
-    if (/Safari/i.test(ua) && !/Chrome|CriOS|Edg/i.test(ua)) return "Safari";
-    if (/Firefox\//i.test(ua)) return "Firefox";
-    return "this browser";
+  function hideManualFeedback() {
+    var el = document.getElementById("lg-install-feedback");
+    if (el && el.getAttribute("data-install-message") === "manual") {
+      el.hidden = true;
+      el.removeAttribute("data-install-message");
+    }
   }
 
   function guidanceText() {
     if (installed) {
-      return "Already installed on this device. Open Costello workspace from your desktop, Start menu, or dock — this button cannot install it twice.";
+      return "Costello workspace is installed. Open it from your desktop, Start menu, or dock.";
     }
+
     var name = browserName();
+    if (name === "Edge") {
+      return "Edge has not made the one-click prompt available on this tab. Use the app-install icon at the right side of the address bar. If it is not visible, choose … → Apps → Install Costello Law Firm workspace.";
+    }
+    if (name === "Chrome") {
+      return "Chrome has not made the one-click prompt available on this tab. Use the install icon in the address bar, or choose Menu → Cast, save and share → Install page as app.";
+    }
     if (name === "Safari") {
-      return "Safari does not support one-click install here. Use File → Add to Dock (Mac) or Share → Add to Home Screen (iOS).";
+      return "On Mac, choose File → Add to Dock. On iPhone or iPad, choose Share → Add to Home Screen.";
     }
     if (name === "Firefox") {
-      return "Firefox does not provide a native install prompt for this workspace. Use Chrome or Edge on this same URL to Install to Desktop.";
+      return "Firefox desktop does not provide this install prompt. Open the same workspace URL in Edge or Chrome to install it as a desktop app.";
     }
-    if (!swReady && "serviceWorker" in navigator) {
-      return "Install is not ready yet — the workspace service worker is still registering. Wait a second and click Install to Desktop again. If nothing appears, use " + name + " Menu → Apps → Install this site as an app (or the install icon in the address bar).";
+    return "Use your browser’s address-bar install control or app-install menu to add this workspace to your desktop.";
+  }
+
+  function showManualGuidance() {
+    var el = feedback();
+    el.setAttribute("data-install-message", "manual");
+    setFeedback(guidanceText(), "info");
+  }
+
+  function finishChoice(choice) {
+    prompting = false;
+    var outcome = choice && choice.outcome;
+    if (outcome === "accepted") {
+      installed = true;
+      phase = "installed";
+      setFeedback("Installed. Open Costello workspace from your desktop, Start menu, or dock.", "ok");
+    } else {
+      phase = "manual";
+      setFeedback("Installation was dismissed. Use the Edge install icon whenever you are ready, or select Install from Edge for the exact menu path.", "info");
     }
-    if (/^https?:\/\/(127\.0\.0\.1|localhost)[:/]/i.test(location.href)) {
-      return "You are on a local preview server. Install from the live unlocked kitchen (luis-gilberto.com) so the desktop app opens the real workspace URL — local installs often 404 because paths differ. In " + name + ", you can also use the address-bar install icon only after switching to the live site.";
-    }
-    return "Your browser has not offered a native install dialog yet. In " + name + ", open the address-bar install icon, or Menu → Apps / Cast / Save and share → Install this site as an app. Stay on this unlocked kitchen URL when you install.";
+    renderButtons();
   }
 
   function offer(ev) {
@@ -110,65 +164,113 @@
       return;
     }
 
-    if (deferred && typeof deferred.prompt === "function") {
-      setFeedback("Opening the browser install dialog…", "info");
-      try {
-        var result = deferred.prompt();
-        if (result && typeof result.then === "function") {
-          result.catch(function () {
-            setFeedback("The browser blocked the install dialog. " + guidanceText(), "warn");
-          });
-        }
-      } catch (err) {
-        setFeedback("The browser blocked the install dialog. " + guidanceText(), "warn");
-        return;
-      }
-      if (deferred.userChoice && typeof deferred.userChoice.then === "function") {
-        deferred.userChoice.then(function (choice) {
-          deferred = null;
-          if (choice && choice.outcome === "accepted") {
-            setFeedback("Install accepted. Finish any browser confirmation, then open Costello workspace from your desktop, Start menu, or dock.", "ok");
-          } else {
-            setFeedback("Install was dismissed. Click Install to Desktop again when you are ready, or use the browser’s install menu.", "warn");
-          }
-        }).catch(function () {
-          setFeedback(guidanceText(), "warn");
-        });
-      }
+    if (!deferred || typeof deferred.prompt !== "function") {
+      phase = "manual";
+      renderButtons();
+      showManualGuidance();
       return;
     }
 
-    setFeedback(guidanceText(), "warn");
+    var promptEvent = deferred;
+    var choicePromise = null;
+    deferred = null;
+    prompting = true;
+    renderButtons();
+    setFeedback("Opening Edge’s install dialog…", "info");
+
+    try {
+      var promptResult = promptEvent.prompt();
+      choicePromise = promptEvent.userChoice || promptResult;
+    } catch (err) {
+      prompting = false;
+      phase = "manual";
+      renderButtons();
+      showManualGuidance();
+      return;
+    }
+
+    if (choicePromise && typeof choicePromise.then === "function") {
+      choicePromise.then(finishChoice).catch(function () {
+        prompting = false;
+        phase = "manual";
+        renderButtons();
+        showManualGuidance();
+      });
+    } else {
+      prompting = false;
+      phase = "manual";
+      renderButtons();
+    }
   }
 
-  function bind(btn) {
-    if (!btn || btn.getAttribute("data-lg-bound") === "1") return;
-    btn.setAttribute("data-lg-bound", "1");
-    btn.hidden = false;
-    btn.type = "button";
-    btn.addEventListener("click", offer);
+  function settleToManual() {
+    if (installed || deferred || prompting) return;
+    phase = "manual";
+    renderButtons();
+  }
+
+  function scheduleFallback() {
+    if (fallbackTimer || phase !== "checking") return;
+    fallbackTimer = window.setTimeout(settleToManual, swReady ? 900 : 1800);
+  }
+
+  function registerWorker() {
+    if (!("serviceWorker" in navigator)) {
+      phase = "manual";
+      renderButtons();
+      return;
+    }
+
+    navigator.serviceWorker.register(SW_URL, { scope: SW_SCOPE, updateViaCache: "none" })
+      .then(function (reg) {
+        swReady = !!(reg && (reg.active || reg.installing || reg.waiting));
+        renderButtons();
+        scheduleFallback();
+        return navigator.serviceWorker.ready;
+      })
+      .then(function () {
+        swReady = true;
+        renderButtons();
+        scheduleFallback();
+      })
+      .catch(function () {
+        swReady = false;
+        phase = "manual";
+        renderButtons();
+      });
+
+    navigator.serviceWorker.addEventListener("controllerchange", function () {
+      swReady = true;
+      renderButtons();
+    });
   }
 
   function init() {
     feedback();
-    labelButtons();
-    buttons().forEach(bind);
+    renderButtons();
+    scheduleFallback();
   }
 
   window.addEventListener("beforeinstallprompt", function (e) {
     e.preventDefault();
     deferred = e;
     installed = false;
-    buttons().forEach(function (btn) { btn.hidden = false; });
-    var el = document.getElementById("lg-install-feedback");
-    if (el && /Opening the browser install dialog/i.test(el.textContent || "")) {
-      /* keep current message */
+    prompting = false;
+    phase = "ready";
+    if (fallbackTimer) {
+      window.clearTimeout(fallbackTimer);
+      fallbackTimer = null;
     }
+    hideManualFeedback();
+    renderButtons();
   });
 
   window.addEventListener("appinstalled", function () {
     deferred = null;
+    prompting = false;
     installed = true;
+    phase = "installed";
+    renderButtons();
     setFeedback("Installed. Open Costello workspace from your desktop, Start menu, or dock.", "ok");
   });
 
@@ -181,11 +283,11 @@
   }
 
   var n = 0;
-  var t = setInterval(function () {
+  var t = window.setInterval(function () {
     n += 1;
     init();
     if ((document.querySelector(".workspace-header") && document.querySelector("[data-lg-install]")) || n > 60) {
-      clearInterval(t);
+      window.clearInterval(t);
     }
   }, 50);
 })();
